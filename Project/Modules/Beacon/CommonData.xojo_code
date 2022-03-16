@@ -32,6 +32,21 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub CloudSyncFinished(Actions() As Dictionary)
+		  For Each Dict As Dictionary In Actions
+		    Var Action As String = Dict.Value("Action")
+		    Var Path As String = Dict.Value("Path")
+		    Var Remote As Boolean = Dict.Value("Remote")
+		    
+		    If Remote And Path.EndsWith(Beacon.FileExtensionTemplate) And (Action = "GET" Or Action = "DELETE") Then
+		      Self.ImportCloudFiles()
+		      Return
+		    End If
+		  Next Dict
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function DefineIndexes() As Beacon.DataIndex()
 		  Var Indexes() As Beacon.DataIndex
 		  Indexes.Add(New Beacon.DataIndex("custom_templates", False, "user_id"))
@@ -194,6 +209,13 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ImportCloudFiles()
+		  Self.BeginTransaction()
+		  
+		  Var CurrentTemplates() As Beacon.Template = Self.GetTemplates(FlagIncludeUserItems)
+		  Var RemoveTemplateUUIDs As New Beacon.StringList
+		  For Idx As Integer = CurrentTemplates.FirstIndex To CurrentTemplates.LastIndex
+		    RemoveTemplateUUIDs.Append(CurrentTemplates(Idx).UUID)
+		  Next Idx
 		  Var PossibleFolders() As String = Array("/Templates/", "/Presets/")
 		  For Each FolderName As String In PossibleFolders
 		    Var FileList() As String = UserCloud.List(FolderName)
@@ -213,6 +235,7 @@ Inherits Beacon.DataSource
 		        Var Template As Beacon.Template = Beacon.Template.FromSaveData(Parsed)
 		        If (Template Is Nil) = False Then
 		          Self.SaveTemplate(Template, False)
+		          RemoveTemplateUUIDs.Remove(Template.UUID)
 		        End If
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Importing cloud template")
@@ -221,7 +244,16 @@ Inherits Beacon.DataSource
 		    
 		    Exit For FolderName
 		  Next FolderName
+		  For Each TemplateUUID As String In RemoveTemplateUUIDs
+		    Self.DeleteTemplate(TemplateUUID)
+		  Next TemplateUUID
 		  
+		  
+		  Var CurrentSelectors() As Beacon.TemplateSelector = Self.GetTemplateSelectors(FlagIncludeUserItems)
+		  Var RemoveSelectorUUIDs As New Beacon.StringList
+		  For Idx As Integer = CurrentSelectors.FirstIndex To CurrentSelectors.LastIndex
+		    RemoveSelectorUUIDs.Append(CurrentSelectors(Idx).UUID)
+		  Next Idx
 		  Var PossibleFiles() As String = Array("/Selectors.json", "/Modifiers.json")
 		  For Each FileName As String In PossibleFiles
 		    Try
@@ -236,6 +268,7 @@ Inherits Beacon.DataSource
 		        Var TemplateSelector As Beacon.TemplateSelector = Beacon.TemplateSelector.FromSaveData(Dict)
 		        If (TemplateSelector Is Nil) = False Then
 		          Self.SaveTemplateSelector(TemplateSelector, False)
+		          RemoveSelectorUUIDs.Remove(TemplateSelector.UUID)
 		        End If
 		      Next Dict
 		      
@@ -244,6 +277,11 @@ Inherits Beacon.DataSource
 		      App.Log(Err, CurrentMethodName, "Importing cloud template selectors")
 		    End Try
 		  Next FileName
+		  For Each SelectorUUID As String In RemoveSelectorUUIDs
+		    Self.DeleteTemplateSelector(SelectorUUID)
+		  Next SelectorUUID
+		  
+		  Self.CommitTransaction()
 		End Sub
 	#tag EndEvent
 
@@ -735,6 +773,10 @@ Inherits Beacon.DataSource
 		  If Instance Is Nil Then
 		    If (Flags And FlagCreateIfNeeded) = FlagCreateIfNeeded Then
 		      Instance = New Beacon.CommonData
+		      If ThreadID = MainThreadID Then
+		        NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
+		      End If
+		      
 		      // Main thread instance is always a hard reference
 		      If (Flags And FlagUseWeakRef) = FlagUseWeakRef And ThreadID <> MainThreadID Then
 		        mInstances.Value(ThreadID) = New WeakRef(Instance)

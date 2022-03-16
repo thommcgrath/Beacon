@@ -189,7 +189,7 @@ Protected Module UpdatesKit
 		    #if DebugBuild
 		      CheckInterval = 3600
 		    #else
-		      CheckInterval = 86400
+		      CheckInterval = 14400
 		    #endif
 		    
 		    #if TargetMacOS

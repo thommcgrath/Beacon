@@ -49,6 +49,21 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub CloudSyncFinished(Actions() As Dictionary)
+		  For Each Dict As Dictionary In Actions
+		    Var Action As String = Dict.Value("Action")
+		    Var Path As String = Dict.Value("Path")
+		    Var Remote As Boolean = Dict.Value("Remote")
+		    
+		    If Remote And Path = "/Ark/Blueprints.json" And (Action = "GET" Or Action = "DELETE") Then
+		      Self.ImportCloudFiles()
+		      Return
+		    End If
+		  Next Dict
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function DefineIndexes() As Beacon.DataIndex()
 		  Var Indexes() As Beacon.DataIndex
 		  Var Categories() As String = Ark.Categories
@@ -577,42 +592,57 @@ Inherits Beacon.DataSource
 		    If EngramsContent Is Nil Then
 		      Continue
 		    End If
-		    LegacyMode = (Filename = "Engrams.json")
+		    LegacyMode = (Filename = "/Engrams.json")
 		    Exit For Filename
 		  Next Filename
-		  If EngramsContent Is Nil Then
-		    Return
-		  End If
 		  
 		  Var Blueprints() As Variant
-		  Try
-		    Var StringContent As String = EngramsContent
-		    Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
+		  If (EngramsContent Is Nil) = False Then
+		    Try
+		      Var StringContent As String = EngramsContent
+		      Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
+		    Catch Err As RuntimeException
+		      Return
+		    End Try
+		  End If
 		  If Not LegacyMode Then
-		    Var Packs As New Beacon.StringList(0)
+		    Self.BeginTransaction()
+		    Var Packs() As Ark.ContentPack = Self.GetContentPacks(Ark.ContentPack.Types.Custom)
+		    Var KeepPacks As New Beacon.StringList
+		    Var RemovePacks As New Beacon.StringList
+		    For Idx As Integer = Packs.FirstIndex To Packs.LastIndex
+		      If Packs(Idx).UUID = Ark.UserContentPackUUID Then
+		        KeepPacks.Append(Packs(Idx).UUID)
+		      Else
+		        RemovePacks.Append(Packs(Idx).UUID)
+		      End If
+		    Next Idx
+		     
 		    Var Unpacked() As Ark.Blueprint
 		    For Each Dict As Dictionary In Blueprints
 		      Try
 		        Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
 		        If (Blueprint Is Nil) = False Then
 		          Unpacked.Add(Blueprint)
-		          If Packs.IndexOf(Blueprint.ContentPackUUID) = -1 Then
-		            Packs.Append(Blueprint.ContentPackUUID)
-		          End If
+		          KeepPacks.Append(Blueprint.ContentPackUUID)
+		          RemovePacks.Append(Blueprint.ContentPackUUID)
 		        ElseIf Dict.HasAllKeys("mod_id", "name", "workshop_id") Then
-		          Self.BeginTransaction()
+		          Var ContentPackUUID As String = Dict.Value("mod_id").StringValue
+		          KeepPacks.Append(ContentPackUUID)
+		          RemovePacks.Remove(ContentPackUUID)
 		          Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id"), False, False, True)
-		          Self.CommitTransaction()
 		        End If
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName)
 		      End Try
 		    Next
 		    
-		    Call Self.SaveBlueprints(Unpacked, Self.GetBlueprints("", Packs, ""), Nil)
+		    // Yes, delete the stuff from the packs we want to **keep** because that happens first. It clears out the mods.
+		    Call Self.SaveBlueprints(Unpacked, Self.GetBlueprints("", KeepPacks, ""), Nil)
+		    For Each ContentPackUUID As String In RemovePacks
+		      Call Self.DeleteContentPack(ContentPackUUID)
+		    Next ContentPackUUID
+		    Self.CommitTransaction()
 		  Else
 		    Self.BeginTransaction()
 		    Self.DeleteDataForContentPack(Ark.UserContentPackUUID)
@@ -2453,6 +2483,15 @@ Inherits Beacon.DataSource
 		  
 		  Self.BeginTransaction()
 		  If (BlueprintsToDelete Is Nil) = False Then
+		    If (BlueprintsToSave Is Nil) = False Then
+		      For Idx As Integer = BlueprintsToSave.FirstIndex To BlueprintsToSave.LastIndex
+		        Var DeleteIdx As Integer = BlueprintsToDelete.IndexOf(BlueprintsToSave(Idx).ObjectID)
+		        If DeleteIdx > -1 Then
+		          BlueprintsToDelete.RemoveAt(DeleteIdx)
+		        End If
+		      Next Idx
+		    End If
+		    
 		    For Each BlueprintUUID As String In BlueprintsToDelete
 		      Var TransactionStarted As Boolean
 		      Try
@@ -2728,6 +2767,10 @@ Inherits Beacon.DataSource
 		  If Instance Is Nil Then
 		    If (Flags And FlagCreateIfNeeded) = FlagCreateIfNeeded Then
 		      Instance = New Ark.DataSource
+		      If ThreadID = MainThreadID Then
+		        NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
+		      End If
+		      
 		      // Main thread instance is always a hard reference
 		      If (Flags And FlagUseWeakRef) = FlagUseWeakRef And ThreadID <> MainThreadID Then
 		        mInstances.Value(ThreadID) = New WeakRef(Instance)

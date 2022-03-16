@@ -1,5 +1,6 @@
 #tag Class
 Protected Class DataSource
+Implements NotificationKit.Receiver
 	#tag Method, Flags = &h1
 		Protected Sub BeginTransaction()
 		  Self.ObtainLock()
@@ -163,6 +164,8 @@ Protected Class DataSource
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
+		  NotificationKit.Ignore(Self, UserCloud.Notification_SyncFinished)
+		  
 		  Self.Close()
 		End Sub
 	#tag EndMethod
@@ -484,6 +487,27 @@ Protected Class DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case UserCloud.Notification_SyncFinished
+		    Var Actions() As Dictionary
+		    Try
+		      Actions = Notification.UserData
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Getting user cloud sync actions")
+		      Return
+		    End Try
+		    
+		    If Actions.Count > 0 Then
+		      RaiseEvent CloudSyncFinished(Actions)
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ObtainLock()
 		  // This method exists to provide easy insertion points for debug data
 		  
@@ -646,6 +670,10 @@ Protected Class DataSource
 
 	#tag Hook, Flags = &h0
 		Event Close()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CloudSyncFinished(Actions() As Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
