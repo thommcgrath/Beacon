@@ -41,20 +41,6 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function IsEncrypted(File As FolderItem) As Boolean
-		  If File Is Nil Or File.Exists = False Or File.Length < 18 Then
-		    Return False
-		  End If
-		  
-		  Var Stream As BinaryStream = BinaryStream.Open(File, False)
-		  Var Mem As MemoryBlock = Stream.Read(18)
-		  Stream.Close
-		  
-		  Return IsEncrypted(Mem)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function IsEncrypted(Data As MemoryBlock) As Boolean
 		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  Return Header <> Nil
