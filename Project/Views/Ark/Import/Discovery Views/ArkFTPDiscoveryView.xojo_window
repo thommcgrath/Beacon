@@ -47,7 +47,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
       TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ServerModeLabel
@@ -598,7 +598,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Visible         =   True
          Width           =   560
       End
-      Begin PushButton BrowseActionButton
+      Begin UITweaks.ResizedPushButton BrowseActionButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   0
@@ -630,7 +630,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Visible         =   True
          Width           =   80
       End
-      Begin PushButton BrowseCancelButton
+      Begin UITweaks.ResizedPushButton BrowseCancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   0

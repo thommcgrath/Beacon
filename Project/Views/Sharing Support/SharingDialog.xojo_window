@@ -498,7 +498,7 @@ Begin BeaconDialog SharingDialog
          Visible         =   True
          Width           =   316
       End
-      Begin PushButton CommunityShareButton
+      Begin UITweaks.ResizedPushButton CommunityShareButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
@@ -541,7 +541,6 @@ Begin BeaconDialog SharingDialog
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

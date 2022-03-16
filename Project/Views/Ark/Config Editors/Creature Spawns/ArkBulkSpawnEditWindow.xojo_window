@@ -239,7 +239,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          Width           =   90
       End
    End
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -271,7 +271,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   True
@@ -555,7 +555,6 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
    End
    Begin Thread ProcessingThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   2

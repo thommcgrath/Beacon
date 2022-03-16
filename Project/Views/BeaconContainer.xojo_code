@@ -7,7 +7,7 @@ Inherits ContainerControl
 		  
 		  #if XojoVersion >= 2018.01
 		    Self.Composited = False
-		    Self.Transparent = TargetMacOS
+		    Self.Transparent = TargetMacOS or TargetLinux
 		  #else
 		    Self.DoubleBuffer = TargetWin32
 		    Self.Transparent = Not Self.DoubleBuffer

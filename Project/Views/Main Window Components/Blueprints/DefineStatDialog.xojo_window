@@ -513,7 +513,7 @@ Begin BeaconDialog DefineStatDialog
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   True

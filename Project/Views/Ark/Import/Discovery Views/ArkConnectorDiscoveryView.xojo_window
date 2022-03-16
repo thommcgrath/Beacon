@@ -330,7 +330,7 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       Visible         =   True
       Width           =   108
    End
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -362,7 +362,7 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   True

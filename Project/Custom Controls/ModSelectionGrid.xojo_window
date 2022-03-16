@@ -113,7 +113,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Visible         =   True
       Width           =   200
    End
-   Begin PushButton NextPageButton
+   Begin UITweaks.ResizedPushButton NextPageButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -145,7 +145,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton PrevPageButton
+   Begin UITweaks.ResizedPushButton PrevPageButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
