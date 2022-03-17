@@ -4,15 +4,17 @@ Inherits Ark.ServerProfile
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  Self.Address = Dict.Value("Address")
-		  Self.ServiceID = Dict.Value("Service ID")
 		  Self.ConfigPath = Dict.Value("Path")
+		  
+		  If Dict.HasKey("Service ID") Then
+		    Self.ServiceID = Dict.Value("Service ID")
+		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  Dict.Value("Address") = Self.Address
-		  Dict.Value("Service ID") = Self.ServiceID
 		  Dict.Value("Path") = Self.ConfigPath
 		  Dict.Value("Provider") = "Nitrado"
 		End Sub
@@ -28,27 +30,6 @@ Inherits Ark.ServerProfile
 	#tag Method, Flags = &h0
 		Function DeployCapable() As Boolean
 		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Ark.ServerProfile) As Integer
-		  If Other = Nil Then
-		    Return 1
-		  End If
-		  
-		  If Not (Other IsA Ark.NitradoServerProfile) Then
-		    Return Super.Operator_Compare(Other)
-		  End If
-		  
-		  Var OtherServiceID As Integer = Ark.NitradoServerProfile(Other).ServiceID
-		  If Self.ServiceID > OtherServiceID Then
-		    Return 1
-		  ElseIf Self.ServiceID < OtherServiceID Then
-		    Return -1
-		  Else
-		    Return 0
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -134,22 +115,15 @@ Inherits Ark.ServerProfile
 		Private mConfigPath As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mServiceID As Integer
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mServiceID
+			  Return Self.ProviderServiceID
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mServiceID <> Value Then
-			    Self.mServiceID = Value
-			    Self.Modified = True
-			  End If
+			  Self.ProviderServiceID = Value
 			End Set
 		#tag EndSetter
 		ServiceID As Integer
@@ -290,14 +264,6 @@ Inherits Ark.ServerProfile
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ServiceID"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -102,6 +102,7 @@ Protected Class ServerProfile
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
 		  Self.mAdminNotes = Dict.Lookup("Admin Notes", "")
 		  Self.mProfileColor = CType(Dict.Lookup("Color", 0).IntegerValue, Beacon.ServerProfile.Colors)
+		  Self.mProviderServiceID = Dict.Lookup("Provider Service ID", Nil)
 		  
 		  If Dict.HasKey("External Account") Then
 		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
@@ -186,6 +187,11 @@ Protected Class ServerProfile
 		    Return 1
 		  End If
 		  
+		  // Use the external identifier as the primary means of comparison
+		  If Self.mProviderServiceID = Other.mProviderServiceID Then
+		    Return 0
+		  End If
+		  
 		  Var MyHash As String = Self.Hash
 		  Var TheirHash As String = Other.Hash
 		  
@@ -248,6 +254,9 @@ Protected Class ServerProfile
 		      Priorities.Add(State.SaveData)
 		    Next
 		    Dict.Value("Config Sets") = Priorities
+		  End If
+		  If IsNull(Self.mProviderServiceID) = False Then
+		    Dict.Value("Provider Service ID") = Self.mProviderServiceID
 		  End If
 		  Return Dict
 		End Function
@@ -400,6 +409,10 @@ Protected Class ServerProfile
 		Private mProfileID As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mProviderServiceID As Variant
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -440,6 +453,23 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		ProfileColor As Beacon.ServerProfile.Colors
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mProviderServiceID
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mProviderServiceID <> Value Then
+			    Self.mProviderServiceID = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ProviderServiceID As Variant
 	#tag EndComputedProperty
 
 

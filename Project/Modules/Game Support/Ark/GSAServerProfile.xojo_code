@@ -4,7 +4,7 @@ Inherits Ark.ServerProfile
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  If Dict.HasKey("TemplateID") Then
-		    Self.mTemplateID = Dict.Value("TemplateID")
+		    Self.ProviderServiceID = Dict.Value("TemplateID")
 		  End If
 		End Sub
 	#tag EndEvent
@@ -12,7 +12,6 @@ Inherits Ark.ServerProfile
 	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  Dict.Value("Provider") = "GameServerApp"
-		  Dict.Value("TemplateID") = Self.mTemplateID
 		End Sub
 	#tag EndEvent
 
@@ -21,7 +20,7 @@ Inherits Ark.ServerProfile
 		Sub Constructor(TemplateID As Integer, TemplateName As String)
 		  // Do not call the parent constructor
 		  Self.Name = TemplateName
-		  Self.mTemplateID = TemplateID
+		  Self.ProviderServiceID = TemplateID
 		  Self.Platform = Ark.ServerProfile.PlatformPC
 		End Sub
 	#tag EndMethod
@@ -38,36 +37,11 @@ Inherits Ark.ServerProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Ark.ServerProfile) As Integer
-		  If Other = Nil Then
-		    Return 1
-		  End If
-		  
-		  If Not (Other IsA Ark.GSAServerProfile) Then
-		    Return Super.Operator_Compare(Other)
-		  End If
-		  
-		  Var OtherTemplateID As Integer = Ark.GSAServerProfile(Other).TemplateID
-		  If Self.TemplateID > OtherTemplateID Then
-		    Return 1
-		  ElseIf Self.TemplateID < OtherTemplateID Then
-		    Return -1
-		  Else
-		    Return 0
-		  End If
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mTemplateID As Integer
-	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mTemplateID
+			  Return Self.ProviderServiceID
 			End Get
 		#tag EndGetter
 		TemplateID As Integer
