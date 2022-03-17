@@ -897,6 +897,7 @@ Inherits Beacon.Project
 		Sub RemoveConfigGroup(InternalName As String, SetName As String)
 		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
 		  If (SetDict Is Nil) = False And SetDict.HasKey(InternalName) Then
+		    SetDict.Remove(InternalName)
 		    Self.ConfigSet(SetName) = SetDict
 		  End If
 		End Sub
