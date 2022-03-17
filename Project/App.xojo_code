@@ -1310,6 +1310,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Var File As FolderItem
 		  If Parent Is Nil Then
+		    File = Dialog.ShowModal()
+		  Else
 		    File = Dialog.ShowModal(Parent.TrueWindow)
 		  End If
 		  If (File Is Nil) = False Then

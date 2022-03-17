@@ -452,6 +452,7 @@ Protected Module UpdatesKit
 		    Dict = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
 		    NotificationKit.Post(Notification_Error, "Invalid definition file.")
+		    App.Log(Err, CurrentMethodName, "Invalid definition file.")
 		    Return
 		  End Try
 		  
@@ -500,6 +501,7 @@ Protected Module UpdatesKit
 		    NotificationKit.Post(Notification_UpdateAvailable, LatestBuild)
 		  Catch Err As RuntimeException
 		    NotificationKit.Post(Notification_Error, "Invalid definition file.")
+		    App.Log(Err, CurrentMethodName, "Invalid definition file.")
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -514,6 +516,7 @@ Protected Module UpdatesKit
 		  End If
 		  
 		  NotificationKit.Post(Notification_Error, Error.Message)
+		  App.Log("Update check socket disconnect: " + Error.Message)
 		End Sub
 	#tag EndMethod
 
@@ -530,6 +533,7 @@ Protected Module UpdatesKit
 		    End If
 		    
 		    NotificationKit.Post(Notification_Error, "The update definition was not found.")
+		    App.Log("Update check definition error " + HTTPStatus.ToString(Locale.Raw, "0"))
 		    Return
 		  End If
 		End Sub
