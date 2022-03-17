@@ -133,12 +133,6 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Behaviors" )  Function All() As Ark.CreatureBehavior()
-		  Return Self.Behaviors
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Behavior(Creature As Ark.Creature) As Ark.CreatureBehavior
 		  If Not Self.mBehaviors.HasKey(Creature.ObjectID) Then
 		    Return Nil

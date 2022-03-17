@@ -85,18 +85,6 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "ProjectState" ) Protected Function LastUsedConfigName(DocumentID As String) As String
-		  Return ProjectState(DocumentID, "Last Config", Ark.Configs.NameLootDrops)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "ProjectState" ) Protected Sub LastUsedConfigName(DocumentID As String, Assigns ConfigName As String)
-		  ProjectState(DocumentID, "Last Config") = ConfigName
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ListSortColumn(Key As String, Assigns Idx As Integer)
 		  Init

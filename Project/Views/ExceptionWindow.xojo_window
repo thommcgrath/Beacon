@@ -1075,7 +1075,11 @@ End
 		  If Self.mSolutionURL <> "" Then
 		    System.GotoURL(Self.mSolutionURL)
 		  Else
-		    App.ShowBugReporter(Self.mExceptionHash)
+		    Var Path As String = "/reportaproblem?build=" + App.BuildNumber.ToString
+		    If Self.mExceptionHash.IsEmpty = False Then
+		      Path = Path + "&exception=" + Self.mExceptionHash
+		    End If
+		    System.GotoURL(Beacon.WebURL(Path))
 		  End If
 		End Sub
 	#tag EndEvent

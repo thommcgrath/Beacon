@@ -96,12 +96,6 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "SpawnPoints" )  Function All() As Ark.SpawnPoint()
-		  Return Self.Points
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function ConfigValueForSpawnPoint(SpawnPoint As Ark.SpawnPoint) As Ark.ConfigValue
 		  Var RenderedEntries() As String
 		  Var Limits As Dictionary = SpawnPoint.Limits

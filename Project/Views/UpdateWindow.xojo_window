@@ -509,7 +509,7 @@ End
 		  Select Case Notification.Name
 		  Case UpdatesKit.Notification_Error
 		    If Self.ShowConfirm("Unable to check for updates.", "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible.", "Report Now", "Cancel") Then
-		      App.ShowBugReporter()
+		      App.StartTicket()
 		    End If
 		    
 		    If UpdatesKit.AvailableUpdateRequired Then
@@ -549,8 +549,8 @@ End
 		    End If
 		  Case UpdatesKit.Notification_DownloadError
 		    Var Message As String = Notification.UserData
-		    If Self.ShowConfirm("Unable to download for update.", Message, "Report Now", "Cancel") Then
-		      App.ShowBugReporter()
+		    If Self.ShowConfirm("Unable to download update.", Message, "Report Now", "Cancel") Then
+		      App.StartTicket()
 		    End If
 		    
 		    Self.Close

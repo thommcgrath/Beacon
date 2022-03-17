@@ -375,13 +375,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function HelpReportAProblem() As Boolean Handles HelpReportAProblem.Action
-			Self.ShowBugReporter()
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function HelpShowWhatsNewWindow() As Boolean Handles HelpShowWhatsNewWindow.Action
 			WhatsNewWindow.Present(99999999)
 			Return True
@@ -651,9 +644,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      System.GotoURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
 		    Case "spawncodes"
 		      Self.ShowSpawnCodes()
-		    Case "reportproblem"
-		      Self.ShowBugReporter()
-		    Case "newhelpticket"
+		    Case "reportproblem", "newhelpticket"
 		      Self.StartTicket()
 		    Case "exit"
 		      Quit
@@ -1310,17 +1301,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  #endif
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowBugReporter(ExceptionHash As String = "")
-		  Var Path As String = "/reportaproblem?build=" + Self.BuildNumber.ToString
-		  If ExceptionHash <> "" Then
-		    Path = Path + "&exception=" + ExceptionHash
-		  End If
-		  
-		  System.GotoURL(Beacon.WebURL(Path))
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
