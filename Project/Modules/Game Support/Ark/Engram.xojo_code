@@ -137,6 +137,7 @@ Implements Ark.Blueprint
 		  End If
 		  
 		  Engram.mPath = Path
+		  Engram.mClassString = ClassString
 		  Engram.mObjectID = ObjectID
 		  Engram.mTags.Add("blueprintable")
 		  

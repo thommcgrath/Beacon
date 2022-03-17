@@ -690,6 +690,10 @@ Protected Module Beacon
 		    ClassString = ClassString.Left(ClassString.Length - 2)
 		  End If
 		  
+		  If ClassString.IsEmpty Then
+		    Return ""
+		  End If
+		  
 		  Var Prefixes() As String = Array("DinoDropInventoryComponent", "DinoSpawnEntries")
 		  Var Blacklist() As String = Array("Character", "BP", "DinoSpawnEntries", "SupplyCrate", "SupplyCreate", "DinoDropInventoryComponent")
 		  

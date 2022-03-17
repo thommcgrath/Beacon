@@ -413,6 +413,11 @@ Protected Module Ark
 		    End Try
 		  End If
 		  
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
+		    // Could not find it using the enabled mods, so let's look through everything
+		    Return ResolveCreature(ObjectID, Path, ClassString, Nil)
+		  End If
+		  
 		  Return Ark.Creature.CreateCustom(ObjectID, Path, ClassString)
 		End Function
 	#tag EndMethod
@@ -467,6 +472,11 @@ Protected Module Ark
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
+		  End If
+		  
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
+		    // Could not find it using the enabled mods, so let's look through everything
+		    Return ResolveEngram(ObjectID, Path, ClassString, Nil)
 		  End If
 		  
 		  Return Ark.Engram.CreateCustom(ObjectID, Path, ClassString)
@@ -525,6 +535,11 @@ Protected Module Ark
 		    End Try
 		  End If
 		  
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
+		    // Could not find it using the enabled mods, so let's look through everything
+		    Return ResolveLootContainer(ObjectID, Path, ClassString, Nil)
+		  End If
+		  
 		  Return Ark.LootContainer.CreateCustom(ObjectID, Path, ClassString)
 		End Function
 	#tag EndMethod
@@ -579,6 +594,11 @@ Protected Module Ark
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
+		  End If
+		  
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
+		    // Could not find it using the enabled mods, so let's look through everything
+		    Return ResolveSpawnPoint(ObjectID, Path, ClassString, Nil)
 		  End If
 		  
 		  Return Ark.SpawnPoint.CreateCustom(ObjectID, Path, ClassString)
