@@ -183,6 +183,16 @@ Inherits Beacon.Thread
 		  If Project.MapMask = CType(0, UInt64) Then
 		    Project.MapMask = Ark.Maps.TheIsland.Mask
 		  End If
+		  If ParsedData.HasKey("SessionName") Then
+		    Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
+		    For Each SessionName As Variant In SessionNames
+		      Try
+		        Project.Title = SessionName.StringValue.GuessEncoding
+		        Exit
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  End If
 		  
 		  If CommandLineOptions Is Nil Then
 		    CommandLineOptions = New Dictionary
@@ -237,16 +247,7 @@ Inherits Beacon.Thread
 		  End Try
 		  
 		  If (Profile Is Nil) = False Then
-		    If ParsedData.HasKey("SessionName") Then
-		      Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
-		      For Each SessionName As Variant In SessionNames
-		        Try
-		          Profile.Name = SessionName.StringValue.GuessEncoding
-		          Exit
-		        Catch Err As RuntimeException
-		        End Try
-		      Next
-		    End If
+		    Profile.Name = Project.Title
 		    
 		    Var ServerPassword, AdminPassword, SpectatorPassword As String
 		    If ParsedData.HasKey("ServerPassword") Then
