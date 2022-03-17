@@ -571,11 +571,12 @@ End
 	#tag Event
 		Sub TextChange()
 		  If Not Self.mSettingUp Then
+		    Var TextValue As String = Me.Text.Trim(Chr(0), Chr(10), Chr(13), Chr(32))
 		    Select Case Self.Switcher.SelectedIndex
 		    Case Self.GameIniIndex
-		      Self.mGameIniContent = Me.Text.Trim
+		      Self.mGameIniContent = TextValue
 		    Case Self.GameUserSettingsIniIndex
-		      Self.mGameUserSettingsIniContent = Me.Text.Trim
+		      Self.mGameUserSettingsIniContent = TextValue
 		    End Select
 		  End If
 		  
