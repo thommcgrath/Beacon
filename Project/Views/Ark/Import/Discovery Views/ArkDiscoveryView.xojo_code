@@ -50,6 +50,12 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function Project() As Ark.Project
+		  Return RaiseEvent GetDestinationProject()
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub PullValuesFromProject(Project As Ark.Project)
 		  If Self.mClosed Then
@@ -111,6 +117,10 @@ Inherits ContainerControl
 
 	#tag Hook, Flags = &h0
 		Event Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetDestinationProject() As Ark.Project
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -1215,7 +1215,7 @@ End
 		  AddHandler mEngine.Discovered, WeakAddressOf mEngine_Discovered
 		  AddHandler mEngine.FilesListed, WeakAddressOf mEngine_FilesListed
 		  AddHandler mEngine.FileListError, WeakAddressOf mEngine_FileListError
-		  Self.mEngine.BeginDiscovery
+		  Self.mEngine.BeginDiscovery(Self.Project)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

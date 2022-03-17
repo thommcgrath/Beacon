@@ -699,7 +699,7 @@ End
 		  Self.mPendingEngines.RemoveAt(0)
 		  
 		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
-		  Engine.BeginDiscovery
+		  Engine.BeginDiscovery(Self.Project)
 		End Sub
 	#tag EndMethod
 

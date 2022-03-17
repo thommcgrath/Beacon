@@ -29,8 +29,9 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub BeginDiscovery()
+		Sub BeginDiscovery(Project As Beacon.Project)
 		  Self.mMode = Self.ModeDiscover
+		  Self.mProject = Project
 		  Self.mRunThread = New Thread
 		  Self.mRunThread.Priority = Thread.LowestPriority
 		  AddHandler Self.mRunThread.Run, WeakAddressOf RunDiscover

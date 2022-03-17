@@ -438,7 +438,7 @@ End
 		  Self.mEngines.Value(Profile.ExternalAccountUUID.StringValue) = Engine
 		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
 		  AddHandler Engine.Wait, WeakAddressOf Engine_Wait
-		  Engine.BeginDiscovery()
+		  Engine.BeginDiscovery(Self.Project)
 		  
 		  Self.mPendingListActions = Self.mPendingListActions + 1
 		  
@@ -550,7 +550,7 @@ End
 		  Self.mEngines.Value(Profile.ExternalAccountUUID.StringValue) = Engine
 		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
 		  AddHandler Engine.Wait, WeakAddressOf Engine_Wait
-		  Engine.BeginDiscovery()
+		  Engine.BeginDiscovery(Self.Project)
 		  
 		  Self.mPendingListActions = Self.mPendingListActions + 1
 		End Sub

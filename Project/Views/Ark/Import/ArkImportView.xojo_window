@@ -1118,6 +1118,11 @@ End
 		  Self.SetPageHeight(NewHeight)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Ark.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events FTPDiscoveryView1
 	#tag Event
@@ -1143,6 +1148,11 @@ End
 		  Self.SetPageHeight(NewHeight)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Ark.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events LocalDiscoveryView1
 	#tag Event
@@ -1167,6 +1177,11 @@ End
 		Sub ShouldResize(NewHeight As Integer)
 		  Self.SetPageHeight(NewHeight)
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Ark.Project
+		  Return Self.mDestinationProject
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events StatusCancelButton
@@ -1229,6 +1244,11 @@ End
 		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Ark.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events OtherDocsList
 	#tag Event
@@ -1274,6 +1294,11 @@ End
 		Sub ShouldResize(NewHeight As Integer)
 		  Self.SetPageHeight(NewHeight)
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Ark.Project
+		  Return Self.mDestinationProject
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher

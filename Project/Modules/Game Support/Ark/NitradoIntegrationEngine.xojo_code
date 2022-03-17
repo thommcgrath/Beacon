@@ -263,7 +263,7 @@ Inherits Ark.IntegrationEngine
 
 	#tag Event
 		Function Discover() As Beacon.DiscoveredData()
-		  Var Servers() As Ark.DiscoveredData
+		  Var Servers() As Beacon.DiscoveredData
 		  
 		  // Get a list of all servers
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
@@ -315,17 +315,22 @@ Inherits Ark.IntegrationEngine
 		        Continue
 		      End If
 		      
-		      Var Details As Dictionary = Dict.Value("details")
-		      Var GameName As String = Details.Value("game")
-		      If GameName.BeginsWith("ARK: Survival Evolved") = False Then
+		      Var Profile As Ark.NitradoServerProfile
+		      Try
+		        Var Details As Dictionary = Dict.Value("details")
+		        Var GameName As String = Details.Value("game")
+		        If GameName.BeginsWith("ARK: Survival Evolved") = False Then
+		          Continue
+		        End If
+		        
+		        Profile = New Ark.NitradoServerProfile
+		        Profile.ExternalAccountUUID = Self.mAccount.UUID
+		        Profile.Name = Details.Value("name")
+		        Profile.ServiceID = Dict.Value("id")
+		        Profile.Address = Details.Value("address")
+		      Catch Err As RuntimeException
 		        Continue
-		      End If
-		      
-		      Var Profile As New Ark.NitradoServerProfile
-		      Profile.ExternalAccountUUID = Self.mAccount.UUID
-		      Profile.Name = Details.Value("name")
-		      Profile.ServiceID = Dict.Value("id")
-		      Profile.Address = Details.Value("address")
+		      End Try
 		      
 		      Self.Log("Retrieving " + Profile.Name + "…")
 		      // Lookup server information

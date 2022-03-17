@@ -92,7 +92,7 @@ Inherits Ark.IntegrationEngine
 		  End If
 		  
 		  Self.Log("Discovering paths…")
-		  Var DiscoveredData() As Ark.DiscoveredData
+		  Var DiscoveredData() As Beacon.DiscoveredData
 		  For Each Path As String In PotentialPaths
 		    Var Data As Ark.DiscoveredData = Self.DiscoverFromPath(Path)
 		    If Data <> Nil Then
