@@ -1,1 +1,8 @@
-../v3/ark/spawn_point.php
+<?php
+
+require(dirname(__FILE__) . '/loader.php');
+
+$manager = new BeaconObjectManager('Ark\SpawnPoint');
+$manager->HandleAPIRequest();
+
+?>

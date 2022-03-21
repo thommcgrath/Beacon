@@ -9,17 +9,7 @@ $project_id = BeaconAPI::ObjectID();
 $method = BeaconAPI::Method();
 $database = BeaconCommon::Database();
 $user_id = null;
-
-$class_name = 'BeaconAPI\Project';
-if (BeaconAPI::GetAPIVersion() < 3) {
-	$class_name = 'Ark\Project';
-} elseif (isset($_SERVER['REQUEST_URI'])) {
-	$parts = explode('/', $_SERVER['PHP_SELF']);
-	array_shift($parts);
-	if ($parts[1] === 'ark') {
-		$class_name = 'Ark\Project';
-	}
-}
+$class_name = '\BeaconAPI\Project';
 
 $subobject = BeaconAPI::ObjectID(1);
 if (is_null($subobject) == false) {
@@ -40,7 +30,7 @@ if (is_null($subobject) == false) {
 	case 'publish':
 		switch ($method) {
 		case 'GET':
-			BeaconAPI::ReplySuccess(array('document_id' => $project_id, 'status' => $project->PublishStatus()));
+			BeaconAPI::ReplySuccess(['document_id' => $project_id, 'status' => $project->PublishStatus()]);
 			break;
 		case 'POST':
 		case 'PUT':
@@ -105,8 +95,8 @@ case 'GET':
 	
 	if ($project_id === null) {
 		// query documents
-		$params = array();
-		$clauses = array();
+		$params = [];
+		$clauses = [];
 		if (isset($_GET['user_id'])) {
 			$clauses[] = 'user_id = ::limit_user_id::';
 			$params['limit_user_id'] = $_GET['user_id'];
@@ -120,12 +110,12 @@ case 'GET':
 		if (isset($_GET['console_only'])) {
 			$clauses[] = 'console_safe = TRUE';
 		}
-		if ($class_name === 'Ark\Project' && isset($_GET['mask'])) {
+		if (isset($_GET['mask'])) {
 			$require_all = isset($_GET['mask_require_all']);
 			if ($require_all) {
-				$clauses[] = '(map & ::mask::) = ::mask::';
+				$clauses[] = '((game_specific->\'map\')::int & ::mask::) = ::mask::';
 			} else {
-				$clauses[] = '(map & ::mask::) > 0';
+				$clauses[] = '((game_specific->\'map\')::int & ::mask::) > 0';
 			}
 			$params['mask'] = $_GET['mask'];
 		}
@@ -242,21 +232,27 @@ case 'POST':
 	$user = BeaconAPI::User();
 	$content_type = BeaconAPI::ContentType();
 	switch ($content_type) {
-	case 'application/json':
-		$file_content = BeaconAPI::Body();
-		$reason = '';
-		if ($class_name::SaveFromContent($project_id, $user, $file_content, $reason) === false) {
-			BeaconAPI::ReplyError($reason);
-		}
-		break;
 	case 'multipart/form-data':
+		if (isset($_POST['game_id']) === false) {
+			BeaconAPI::ReplyError('Must include game_id variable.');
+		}
+		
+		$game_id = $_POST['game_id'];
+		switch ($game_id) {
+		case 'Ark':
+			$class_name = '\Ark\Project';
+			break;
+		default:
+			BeaconAPI::ReplyError('Unknown game ' . $game_id);
+		}
+		
 		$reason = '';
 		if ($class_name::SaveFromMultipart($user, $reason) === false) {
 			BeaconAPI::ReplyError($reason);
 		}
 		break;
 	default:
-		BeaconAPI::ReplyError('Content-Type must be application/json or multipart/form-data.');
+		BeaconAPI::ReplyError('Content-Type must be multipart/form-data.');
 		break;
 	}
 	
@@ -272,7 +268,7 @@ case 'DELETE':
 		BeaconAPI::ReplyError('No document specified');
 	}
 	
-	$paths = array();
+	$paths = [];
 	$user_id = BeaconAPI::UserID();
 	$success = false;
 	$results = $database->Query('SELECT project_id, role FROM ' . $class_name::SchemaName() . '.' . $class_name::AllowedTableName() . ' WHERE project_id = ANY($1) AND user_id = $2;', '{' . $project_id . '}', $user_id);
@@ -319,7 +315,7 @@ function HandleDocumentDataRequest(BeaconAPI\Project $project, $version_id = nul
 	if ($accept !== '') {
 		$pieces = explode(',', $accept);
 		$best_quality = 0;
-		$supported = array('gzip', '*');
+		$supported = ['gzip', '*'];
 		foreach ($pieces as $piece) {
 			$piece = trim($piece);
 			if (strpos($piece, ';') === false) {

@@ -156,7 +156,7 @@ class Mod implements \JsonSerializable {
 	}
 	
 	public function jsonSerialize() {
-		return array(
+		return [
 			'mod_id' => $this->mod_id,
 			'name' => $this->name,
 			'console_safe' => $this->console_safe,
@@ -165,13 +165,13 @@ class Mod implements \JsonSerializable {
 			'workshop_url' => \BeaconWorkshopItem::URLForModID($this->workshop_id),
 			'confirmed' => $this->confirmed,
 			'confirmation_code' => $this->confirmation_code,
-			'resource_url' => \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/mod/' . $this->workshop_id),
-			'confirm_url' => \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/mod/' . $this->workshop_id . '?action=confirm'),
-			'engrams_url' => \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/engram?mod_id=' . $this->workshop_id),
+			'resource_url' => '',
+			'confirm_url' => '',
+			'engrams_url' => '',
 			'spawncodes_url' => \BeaconCommon::AbsoluteURL('/spawn/?mod_id=' . $this->workshop_id),
 			'pull_url' => $this->pull_url,
 			'min_version' => $this->min_version
-		);
+		];
 	}
 }
 

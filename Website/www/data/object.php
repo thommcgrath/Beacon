@@ -135,22 +135,6 @@ function PrepareBlueprintTable(\Ark\Blueprint $blueprint, array &$properties) {
 }
 
 function PrepareCreatureTable(\Ark\Creature $creature, array &$properties) {
-	/*if ($creature->Tamable()) {
-		$taming_diet = $creature->TamingDiet();
-		$tamed_diet = $creature->TamedDiet();
-		$preferred_food = \Ark\GenericObject::GetByObjectID($taming_diet[0]);
-		$properties['Tamable'] = 'Yes';
-		$properties['Taming Method'] = $creature->TamingMethod();
-		$properties['Preferred Food'] = '[' . $preferred_food->Label() . '](/object.php/' . urlencode($preferred_food->ObjectID()) . ')';
-		$properties['Taming Diet'] = '[' . $taming_diet->Label() . '](/object.php/' . urlencode($taming_diet->ObjectID()) . ')';
-		$properties['Tamed Diet'] = '[' . $tamed_diet->Label() . '](/object.php/' . urlencode($tamed_diet->ObjectID()) . ')';
-	} else {
-		$properties['Tamable'] = 'No';
-	}
-	
-	$properties['Rideable'] = $creature->Rideable() ? 'Yes' : 'No';
-	$properties['Carryable'] = $creature->Carryable() ? 'Yes' : 'No';
-	$properties['Breedable'] = $creature->Breedable() ? 'Yes' : 'No';*/
 	$incubation_time = $creature->IncubationTimeSeconds();
 	if (!is_null($incubation_time)) {
 		$properties['Incubation Time'] = BeaconCommon::SecondsToEnglish($incubation_time);
@@ -232,6 +216,13 @@ function PrepareSpawnPointTable(\Ark\SpawnPoint $spawn_point, array &$properties
 	$limits = $spawn_point->Limits();
 	if (is_null($limits)) {
 		$limits = [];
+	} else {
+		$temp = [];
+		foreach ($limits as $limit) {
+			$temp[$limit['creature']['UUID']] = $limit['max_percent'];
+		}
+		$limits = $temp;
+		unset($temp);
 	}
 	
 	if (is_null($spawns)) {
@@ -242,7 +233,7 @@ function PrepareSpawnPointTable(\Ark\SpawnPoint $spawn_point, array &$properties
 	foreach ($spawns as $set) {
 		$entries = $set['entries'];
 		foreach ($entries as $entry) {
-			$creature_id = $entry['creature_id'];
+			$creature_id = $entry['creature']['UUID'];
 			if (in_array($creature_id, $unique_creatures)) {
 				continue;
 			}

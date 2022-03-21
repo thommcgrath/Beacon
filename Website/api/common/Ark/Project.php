@@ -3,79 +3,46 @@
 namespace BeaconAPI\Ark;
 
 class Project extends \BeaconAPI\Project {
-	protected $map_mask = 0;
-	protected $difficulty_value = 0;
-	protected $mod_ids = '{}';
-	protected $editors = '{}';
-	
-	public static function SchemaName() {
-		return 'ark';
+	public function MapMask(): int {
+		return array_key_exists('map', $this->game_specific) ? intval($this->game_specific['map']) : 0;
 	}
 	
-	public static function SQLColumns() {
-		$columns = parent::SQLColumns();
-		if (($key = array_search('game_id', $columns)) !== false) {
-			unset($columns[$key]);
-		}
-		$columns[] = "'Ark' AS game_id";
-		$columns[] = 'map';
-		$columns[] = 'difficulty';
-		$columns[] = 'mods';
-		$columns[] = 'included_editors';
-		return $columns;
-	}
-	
-	protected static function GetFromResult(\BeaconRecordSet $results) {
-		$project = parent::GetFromResult($results);
-		$project->map_mask = intval($results->Field('map'));
-		$project->difficulty_value = floatval($results->Field('difficulty'));
-		$project->mod_ids = is_null($results->Field('mods')) ? '{}' : $results->Field('mods');
-		$project->editors = is_null($results->Field('included_editors')) ? '{}' : $results->Field('included_editors');
-		return $project;
-	}
-	
-	public function jsonSerialize() {
-		$json = parent::jsonSerialize();
-		if (\BeaconAPI::GetAPIVersion() < 3) {
-			$project_id = $json['project_id'];
-			unset($json['project_id']);
-			unset($json['game_id']);
-			$json['document_id'] = $project_id;
-		}
-		$json['map_mask'] = $this->map_mask;
-		$json['difficulty_value'] = $this->difficulty_value;
-		return $json;
-	}
-	
-	public function MapMask() {
-		return $this->map_mask;
-	}
-	
-	public function DifficultyValue() {
+	public function DifficultyValue(): float {
+		return array_key_exists('difficulty', $this->game_specific) ? floatval($this->game_specific['difficulty']) : 0;
 		return $this->difficulty_value;
 	}
 	
-	public function RequiredMods(bool $as_array) {
-		if ($as_array) {
-			if ($this->mod_ids === '{}') {
-				return array();
+	public function RequiredMods(bool $as_array): array|string {
+		if (array_key_exists('mods', $this->game_specific)) {
+			$mods = $this->game_specific['mods'];
+			if ($as_array) {
+				return $mods;
 			} else {
-				return explode(',', substr($this->mod_ids, 1, strlen($this->mod_ids) - 2));
+				return implode(',', $mods);
 			}
 		} else {
-			return $this->mod_ids;
+			if ($as_array) {
+				return [];
+			} else {
+				return '';
+			}
 		}
 	}
 	
-	public function ImplementedConfigs(bool $as_array) {
-		if ($as_array) {
-			if ($this->editors === '{}') {
-				return array();
+	public function ImplementedConfigs(bool $as_array): array|string {
+		if (array_key_exists('included_editors', $this->game_specific)) {
+			$editors = $this->game_specific['included_editors'];
+			if ($as_array) {
+				return $editors;
 			} else {
-				return explode(',', substr($this->editors, 1, strlen($this->editors) - 2));
+				return implode(',', $editors);
 			}
 		} else {
-			return $this->editors;
+			if ($as_array) {
+				return [];
+			} else {
+				return '';
+			}
 		}
 	}
 	
@@ -85,11 +52,11 @@ class Project extends \BeaconAPI\Project {
 		case 'map_mask':
 		case 'map_all':
 			$values[] = intval($value);
-			$clauses[] = 'map & $' . $next_placeholder . ' = $' . $next_placeholder++;
+			$clauses[] = '(game_specific->\'map\')::int & $' . $next_placeholder . ' = $' . $next_placeholder++;
 			break;
 		case 'map_any':
 			$values[] = intval($value);
-			$clauses[] = 'map & $' . $next_placeholder++ . ' != 0';
+			$clauses[] = '(game_specific->\'map\')::int & $' . $next_placeholder++ . ' != 0';
 			break;
 		}
 	}
@@ -158,11 +125,13 @@ class Project extends \BeaconAPI\Project {
 			unset($project['EditorNames'][$idx]);
 		}
 		
-		$row_values['difficulty'] = isset($project['DifficultyValue']) ? $project['DifficultyValue'] : 4;
-		$row_values['map'] = isset($project['Map']) ? $project['Map'] : 4;
+		$row_values['game_specific'] = json_encode([
+			'map' => isset($project['Map']) ? $project['Map'] : 4,
+			'difficulty' => isset($project['DifficultyValue']) ? $project['DifficultyValue'] : 4,
+			'mods' => $mod_ids,
+			'included_editors' => $project['EditorNames']
+		]);
 		$row_values['console_safe'] = $console_safe;
-		$row_values['mods'] = '{' . implode(',', $mod_ids) . '}';
-		$row_values['included_editors'] = '{' . implode(',', $project['EditorNames']) . '}';
 	}
 	
 	public static function SaveFromContent(string $project_id, \BeaconUser $user, $file_content, string &$reason) {
@@ -255,14 +224,6 @@ class Project extends \BeaconAPI\Project {
 		}
 		
 		return self::SaveFromArray($project, $user, $file_content_compressed, $reason);
-	}
-	
-	public function ResourceURL() {
-		if (\BeaconAPI::GetAPIVersion() >= 3) {
-			return \BeaconAPI::URL('/ark/project/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
-		} else {
-			return \BeaconAPI::URL('/document/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
-		}
 	}
 }
 

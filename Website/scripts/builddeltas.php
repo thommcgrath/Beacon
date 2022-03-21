@@ -1,6 +1,27 @@
 #!/usr/bin/php -q
 <?php
 
+$options = getopt('', ['delta_version:']);
+if (array_key_exists('delta_version', $options) === false) {
+	echo "Specify the delta version with --delta_version\n";
+	exit;
+} elseif (is_numeric($options['delta_version']) === false) {
+	echo "Delta version should be an integer.\n";
+	exit;
+}
+$delta_version = intval($options['delta_version']);
+switch ($delta_version) {
+case 6:
+	$api_version = 3;
+	break;
+case 5:
+	$api_version = 2;
+	break;
+default:
+	echo "Delta version $delta_version is not known.\n";
+	exit;
+}
+
 // More memory is needed
 ini_set('memory_limit','512M');
 
@@ -11,7 +32,7 @@ while (ob_get_level() > 0) {
 }
 
 $database = BeaconCommon::Database();
-$sem = sem_get(crc32($database->DatabaseName()), 1);
+$sem = sem_get(crc32($database->DatabaseName() . $delta_version), 1);
 if (sem_acquire($sem) === false) {
 	echo "Could not acquire semaphore\n";
 	exit;
@@ -39,7 +60,7 @@ if ($last_database_update >= $cutoff) {
 	exit;
 }
 
-$required_versions = [6, 5];
+$required_versions = [$delta_version];
 $results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
@@ -59,14 +80,8 @@ if (count($required_versions) == 0) {
 	exit;
 }
 
-$api_version = BeaconAPI::GetAPIVersion();
 foreach ($required_versions as $version) {
 	echo "Building delta for version $version...\n";
-	if ($version >= 6) {
-		BeaconAPI::SetAPIVersion(3);
-	} else {
-		BeaconAPI::SetAPIVersion(2);
-	}
 	
 	$full_data = DataForVersion($version, null);
 	if ($version === 5) {
@@ -132,7 +147,6 @@ foreach ($required_versions as $version) {
 	
 	echo "Delta for version $version uploaded to $delta_path\n";
 }
-BeaconAPI::SetAPIVersion($api_version);
 
 sem_release($sem);
 exit;

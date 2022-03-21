@@ -21,12 +21,6 @@ class SpawnPoint extends \Ark\Blueprint {
 		}
 	}
 	
-	public function jsonSerialize() {
-		$json = parent::jsonSerialize();
-		$json['resource_url'] = \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/spawn_point/' . urlencode($this->ObjectID()));
-		return $json;
-	}
-	
 	public function Spawns() {
 		return $this->groups;
 	}

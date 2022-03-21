@@ -7,8 +7,8 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
-		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(sets_template))) FROM (SELECT spawn_point_set_id, label, weight, spawn_offset, min_distance_from_players_multiplier, min_distance_from_structures_multiplier, min_distance_from_tamed_dinos_multiplier, spread_radius, water_only_minimum_height, offset_before_multiplier, (SELECT array_to_json(array_agg(row_to_json(entries_template))) FROM (SELECT spawn_point_set_entry_id, creature_id, weight, override, min_level_multiplier, max_level_multiplier, min_level_offset, max_level_offset, spawn_offset, (SELECT array_to_json(array_agg(row_to_json(levels_template))) FROM (SELECT difficulty, min_level, max_level FROM ark.spawn_point_set_entry_levels WHERE ark.spawn_point_set_entry_levels.spawn_point_set_entry_id = ark.spawn_point_set_entries.spawn_point_set_entry_id) AS levels_template) AS level_overrides FROM ark.spawn_point_set_entries WHERE ark.spawn_point_set_entries.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id) AS entries_template) AS entries, (SELECT array_to_json(array_agg(row_to_json(replacements_template))) FROM (SELECT target_creature_id AS creature_id, json_object(array_agg(array[replacement_creature_id::text, weight::text])) AS choices FROM ark.spawn_point_set_replacements WHERE ark.spawn_point_set_replacements.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id GROUP BY target_creature_id) AS replacements_template) AS replacements FROM ark.spawn_point_sets WHERE ark.spawn_point_sets.spawn_point_id = ark.spawn_points.object_id) AS sets_template) AS spawn_sets';
-		$columns[] = 'json_object(array(SELECT array[ark.creatures.object_id::text, max_percentage::text] FROM ark.spawn_point_limits INNER JOIN ark.creatures ON (ark.spawn_point_limits.creature_id = ark.creatures.object_id) WHERE ark.spawn_point_limits.spawn_point_id = ark.spawn_points.object_id)) AS spawn_limits';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(sets_template))) FROM (SELECT spawn_point_set_id, label, weight, spawn_offset, min_distance_from_players_multiplier, min_distance_from_structures_multiplier, min_distance_from_tamed_dinos_multiplier, spread_radius, water_only_minimum_height, offset_before_multiplier, (SELECT array_to_json(array_agg(row_to_json(entries_template))) FROM (SELECT spawn_point_set_entry_id, creature_id, creatures.path, creatures.class_string, creatures.mod_id, weight, override, min_level_multiplier, max_level_multiplier, min_level_offset, max_level_offset, spawn_offset, (SELECT array_to_json(array_agg(row_to_json(levels_template))) FROM (SELECT difficulty, min_level, max_level FROM ark.spawn_point_set_entry_levels WHERE ark.spawn_point_set_entry_levels.spawn_point_set_entry_id = ark.spawn_point_set_entries.spawn_point_set_entry_id) AS levels_template) AS level_overrides FROM ark.spawn_point_set_entries INNER JOIN ark.creatures ON (spawn_point_set_entries.creature_id = creatures.object_id) WHERE ark.spawn_point_set_entries.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id) AS entries_template) AS entries, (SELECT array_to_json(array_agg(row_to_json(replacements_template))) FROM (SELECT target_creature_id AS creature_id, targets.path, targets.class_string, targets.mod_id, (SELECT array_to_json(array_agg(row_to_json(choices_template))) FROM (SELECT object_id, path, class_string, mod_id, weight FROM ark.spawn_point_set_replacements INNER JOIN ark.creatures ON (spawn_point_set_replacements.replacement_creature_id = creatures.object_id) WHERE target_creature_id = target_creature_id) AS choices_template) AS choices FROM ark.spawn_point_set_replacements INNER JOIN ark.creatures AS targets ON (spawn_point_set_replacements.target_creature_id = targets.object_id) WHERE ark.spawn_point_set_replacements.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id GROUP BY target_creature_id, targets.path, targets.class_string, targets.mod_id) AS replacements_template) AS replacements FROM ark.spawn_point_sets WHERE ark.spawn_point_sets.spawn_point_id = ark.spawn_points.object_id) AS sets_template) AS spawn_sets';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(limits_template))) FROM (SELECT spawn_point_limits.creature_id, spawn_point_limits.max_percentage, creatures.path, creatures.class_string, creatures.mod_id FROM ark.spawn_point_limits INNER JOIN ark.creatures ON (ark.spawn_point_limits.creature_id = creatures.object_id) WHERE spawn_point_limits.spawn_point_id = spawn_points.object_id) AS limits_template) AS spawn_limits';
 		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(pop_template))) FROM (SELECT ark_identifier, instances_on_map, max_population FROM ark.spawn_point_populations INNER JOIN ark.maps ON (spawn_point_populations.map_id = maps.map_id) WHERE spawn_point_populations.spawn_point_id = spawn_points.object_id ORDER BY ark_identifier) AS pop_template) AS populations';
 		return $columns;
 	}
@@ -22,14 +22,58 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		if (is_null($row->Field('spawn_sets')) === false) {
 			$sets = json_decode($row->Field('spawn_sets'), true);
 			for ($i = 0; $i < count($sets); $i++) {
+				$entries = $sets[$i]['entries'];
+				if (is_null($entries) === false) {
+					for ($entry_idx = 0; $entry_idx < count($entries); $entry_idx++) {
+						$entry = $entries[$entry_idx];
+						$entry['creature'] = [
+							'Schema' => 'Beacon.BlueprintReference',
+							'Version' => 1,
+							'Kind' => 'Creature',
+							'UUID' => $entry['creature_id'],
+							'Path' => $entry['path'],
+							'Class' => $entry['class_string'],
+							'ModUUID' => $entry['mod_id']
+						];
+						unset($entry['creature_id'], $entry['path'], $entry['class_string'], $entry['mod_id']);
+						$entries[$entry_idx] = $entry;
+					}
+					$sets[$i]['entries'] = $entries;
+				}
+				
 				$replacements = $sets[$i]['replacements'];
 				if (is_null($replacements) === false) {
 					for ($j = 0; $j < count($replacements); $j++) {
+						$replacement = $replacements[$j];
+						
 						$choices = $replacements[$j]['choices'];
-						foreach ($choices as $creature_id => $weight) {
-							$choices[$creature_id] = floatval($weight);
+						for ($choice_idx = 0; $choice_idx < count($choices); $choice_idx++) {
+							$choice = $choices[$choice_idx];
+							$choices[$choice_idx] = [
+								'creature' => [
+									'Schema' => 'Beacon.BlueprintReference',
+									'Version' => 1,
+									'Kind' => 'Creature',
+									'UUID' => $choice['object_id'],
+									'Path' => $choice['path'],
+									'Class' => $choice['class_string'],
+									'ModUUID' => $choice['mod_id']
+								],
+								'weight' => $choice['weight']
+							];
 						}
-						$replacements[$j]['choices'] = $choices;
+						$replacements[$j] = [
+							'creature' => [
+								'Schema' => 'Beacon.BlueprintReference',
+								'Version' => 1,
+								'Kind' => 'Creature',
+								'UUID' => $replacement['creature_id'],
+								'Path' => $replacement['path'],
+								'Class' => $replacement['class_string'],
+								'ModUUID' => $replacement['mod_id']
+							],
+							'choices' => $choices
+						];
 					}
 					$sets[$i]['replacements'] = $replacements;
 				}
@@ -44,8 +88,19 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		} else {
 			$decoded = json_decode($row->Field('spawn_limits'), true);
 			$obj->limits = [];
-			foreach ($decoded as $creature_id => $weight) {
-				$obj->limits[$creature_id] = floatval($weight);
+			foreach ($decoded as $limit) {
+				$obj->limits[] = [
+					'creature' => [
+						'Schema' => 'Beacon.BlueprintReference',
+						'Version' => 1,
+						'Kind' => 'Creature',
+						'UUID' => $limit['creature_id'],
+						'Path' => $limit['path'],
+						'ClassString' => $limit['class_string'],
+						'ModUUID' => $limit['mod_id']
+					],
+					'max_percent' => $limit['max_percentage']
+				];
 			}
 		}
 		
@@ -82,6 +137,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		} else {
 			$json['populations'] = $this->populations;
 		}
+		$json['resource_url'] = \BeaconAPI::URL('ark/spawn_point/' . urlencode($this->ObjectID()));
 		return $json;
 	}
 	
@@ -156,7 +212,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 				$inserted = $database->Upsert('ark.spawn_point_set_entries', [
 					'spawn_point_set_entry_id' => $entry['spawn_point_set_entry_id'],
 					'spawn_point_set_id' => $spawn_point_set_id,
-					'creature_id' => $entry['creature_id'],
+					'creature_id' => $entry['creature']['UUID'],
 					'weight' => $entry['weight'],
 					'override' => $entry['override'],
 					'min_level_multiplier' => $entry['min_level_multiplier'],
@@ -201,14 +257,13 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		$keep_replacements = [];
 		if (is_null($replacements) === false) {
 			foreach ($replacements as $replacement) {
-				$target_creature_id = $replacement['creature_id'];
-				$choices = $replacement['choices'];
-				foreach ($choices as $replacement_creature_id => $weight) {
+				$target_creature_id = $replacement['creature']['UUID'];
+				foreach ($replacement['choices'] as $choice) {
 					$inserted = $database->Upsert('ark.spawn_point_set_replacements', [
 						'spawn_point_set_id' => $spawn_point_set_id,
 						'target_creature_id' => $target_creature_id,
-						'replacement_creature_id' => $replacement_creature_id,
-						'weight' => $weight
+						'replacement_creature_id' => $choice['creature']['UUID'],
+						'weight' => $choice['weight']
 					], ['spawn_point_set_id', 'target_creature_id', 'replacement_creature_id']);
 					$keep_replacements[] = $inserted->Field('spawn_point_set_replacement_id');
 				}
@@ -225,7 +280,9 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		$spawn_point_id = $this->ObjectID();
 		$creature_list = [];
 		if (is_null($this->limits) === false) {
-			foreach ($this->limits as $creature_id => $percentage) {
+			foreach ($this->limits as $limit) {
+				$creature_id = $limit['creature']['UUID'];
+				$percentage = $limit['max_percent'];
 				if (\BeaconCommon::IsUUID($creature_id)) {
 					$creature_list[] = $creature_id;
 				} else {

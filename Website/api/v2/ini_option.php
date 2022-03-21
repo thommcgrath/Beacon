@@ -1,1 +1,8 @@
-../v3/ark/ini_option.php
+<?php
+
+require(dirname(__FILE__) . '/loader.php');
+
+$manager = new BeaconObjectManager('Ark\ConfigLine');
+$manager->HandleAPIRequest();
+
+?>

@@ -1,1 +1,8 @@
-../v3/ark/creature.php
+<?php
+
+require(dirname(__FILE__) . '/loader.php');
+
+$manager = new BeaconObjectManager('Ark\Creature');
+$manager->HandleAPIRequest();
+
+?>

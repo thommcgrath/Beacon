@@ -91,7 +91,6 @@ class ConfigLine extends \Ark\GenericObject {
 		$json['max_allowed'] = $this->max_allowed;
 		$json['description'] = $this->description;
 		$json['default_value'] = $this->default_value;
-		$json['resource_url'] = \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/ini_option/' . urlencode($this->ObjectID()));
 		if (is_null($this->nitrado_path) == false && is_null($this->nitrado_format) == false && is_null($this->nitrado_deploy_style) == false) {
 			$json['nitrado_guided_equivalent'] = [
 				'path' => $this->nitrado_path,

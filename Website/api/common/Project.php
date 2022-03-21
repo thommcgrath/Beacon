@@ -2,7 +2,7 @@
 
 namespace BeaconAPI;
 
-class Project implements \JsonSerializable {
+abstract class Project implements \JsonSerializable {
 	const PUBLISH_STATUS_PRIVATE = 'Private';
 	const PUBLISH_STATUS_REQUESTED = 'Requested';
 	const PUBLISH_STATUS_APPROVED = 'Approved';
@@ -11,6 +11,7 @@ class Project implements \JsonSerializable {
 	
 	protected $project_id = '';
 	protected $game_id = '';
+	protected $game_specific = [];
 	protected $user_id = '';
 	protected $owner_id = '';
 	protected $title = '';
@@ -50,24 +51,13 @@ class Project implements \JsonSerializable {
 			'last_update',
 			'revision',
 			'download_count',
-			'published'
+			'published',
+			'game_specific'
 		];
 	}
 	
 	public function jsonSerialize() {
-		return [
-			'project_id' => $this->project_id,
-			'game_id' => $this->game_id,
-			'user_id' => $this->user_id,
-			'owner_id' => $this->owner_id,
-			'name' => $this->title,
-			'description' => $this->description,
-			'revision' => $this->revision,
-			'download_count' => $this->download_count,
-			'last_updated' => $this->last_update->format('Y-m-d H:i:sO'),
-			'console_safe' => $this->console_safe,
-			'resource_url' => $this->ResourceURL()
-		];
+		throw new \Exception('Subclasses need to override.');
 	}
 		
 	public function ProjectID() {
@@ -81,6 +71,13 @@ class Project implements \JsonSerializable {
 	
 	public function GameID() {
 		return $this->game_id;
+	}
+	
+	public function GameURLComponent() {
+		switch ($this->game_id) {
+		case 'Ark':
+			return 'ark';
+		}
 	}
 	
 	public function UserID() {
@@ -237,7 +234,7 @@ class Project implements \JsonSerializable {
 	}
 	
 	public function ResourceURL() {
-		return \BeaconAPI::URL('/project/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
+		return \BeaconAPI::URL('document/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
 	}
 	
 	public static function GetAll() {
@@ -354,9 +351,19 @@ class Project implements \JsonSerializable {
 	}
 	
 	protected static function GetFromResult(\BeaconRecordSet $results) {
-		$project = new static();
+		// This is a factory method. Not my favorite, but it'll do.
+		
+		$game_id = $results->Field('game_id');
+		$project = null;
+		switch ($game_id) {
+		case 'Ark':
+			$project = new \Ark\Project();
+			break;
+		default:
+			throw new \Exception('Unknown game ' . $game_id);
+		}
 		$project->project_id = $results->Field('project_id');
-		$project->game_id = $results->Field('game_id');
+		$project->game_id = $game_id;
 		$project->title = $results->Field('title');
 		$project->description = $results->Field('description');
 		$project->revision = intval($results->Field('revision'));
@@ -366,6 +373,7 @@ class Project implements \JsonSerializable {
 		$project->owner_id = $results->Field('owner_id');
 		$project->published = $results->Field('published');
 		$project->console_safe = boolval($results->Field('console_safe'));
+		$project->game_specific = json_decode($results->Field('game_specific'), true);
 		return $project;
 	}
 	
@@ -580,7 +588,8 @@ class Project implements \JsonSerializable {
 			$row_values = [
 				'title' => $title,
 				'description' => $description,
-				'console_safe' => true
+				'console_safe' => true,
+				'game_specific' => json_encode($this->game_specific)
 			];
 			static::HookRowSaveData($project, $row_values);
 			

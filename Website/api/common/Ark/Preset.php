@@ -27,7 +27,6 @@ class Preset extends \Ark\GenericObject {
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
 		$json['contents'] = $this->contents;
-		$json['resource_url'] = \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/template/' : '/preset/') . urlencode($this->ObjectID()));
 		return $json;
 	}
 	

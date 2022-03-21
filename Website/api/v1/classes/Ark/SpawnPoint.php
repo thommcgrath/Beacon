@@ -34,6 +34,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		} else {
 			$json['limits'] = $this->limits;
 		}
+		$json['resource_url'] = \BeaconAPI::URL('spawn_point/' . urlencode($this->ObjectID()));
 		return $json;
 	}
 }

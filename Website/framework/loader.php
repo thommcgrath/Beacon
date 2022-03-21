@@ -6,6 +6,7 @@ if (ob_get_level()) {
 
 mb_http_output('UTF-8');
 mb_internal_encoding('UTF-8');
+ini_set('serialize_precision', -1);
 
 global $api_version;
 if (isset($_SERVER['API_VERSION'])) {
