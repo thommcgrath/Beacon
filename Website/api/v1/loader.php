@@ -18,7 +18,6 @@ spl_autoload_register(function($class_name) {
 		return;
 	}
 	if (file_exists($file)) {
-		echo "$file\n";
 		include($file);
 	}
 });

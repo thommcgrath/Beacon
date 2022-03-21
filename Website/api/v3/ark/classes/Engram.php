@@ -15,23 +15,25 @@ class Engram extends \BeaconAPI\Ark\Engram {
 			return null;
 		}
 		
-		$recipe = [];
-		foreach ($obj->recipe as $ingredient) {
-			$recipe[] = [
-				'engram' => [
-					'Schema' => 'Beacon.BlueprintReference',
-					'Version' => 1,
-					'Kind' => 'Engram',
-					'UUID' => $ingredient['object_id'],
-					'Path' => $ingredient['path'],
-					'Class' => $ingredient['class_string'],
-					'ModUUID' => $ingredient['mod_id']
-				],
-				'quantity' => $ingredient['quantity'],
-				'exact' => $ingredient['exact']
-			];
+		if (is_null($obj->recipe) === false) {
+			$recipe = [];
+			foreach ($obj->recipe as $ingredient) {
+				$recipe[] = [
+					'engram' => [
+						'Schema' => 'Beacon.BlueprintReference',
+						'Version' => 1,
+						'Kind' => 'Engram',
+						'UUID' => $ingredient['object_id'],
+						'Path' => $ingredient['path'],
+						'Class' => $ingredient['class_string'],
+						'ModUUID' => $ingredient['mod_id']
+					],
+					'quantity' => $ingredient['quantity'],
+					'exact' => $ingredient['exact']
+				];
+			}
+			$obj->recipe = $recipe;
 		}
-		$obj->recipe = $recipe;
 		
 		return $obj;
 	}

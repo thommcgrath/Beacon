@@ -31,10 +31,22 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 			$item_sets = json_decode($row->Field('item_sets'), true);
 			for ($item_set_idx = 0; $item_set_idx < count($item_sets); $item_set_idx++) {
 				$item_set = $item_sets[$item_set_idx];
+				if (is_null($item_set) || isset($item_set['entries']) === false || is_array($item_set['entries']) === false) {
+					continue;
+				}
+				
 				for ($entry_idx = 0; $entry_idx < count($item_set['entries']); $entry_idx++) {
 					$entry = $item_set['entries'][$entry_idx];
+					if (is_null($entry) || isset($entry['options']) === false || is_array($entry['options']) === false) {
+						continue;
+					}
+					
 					for ($option_idx = 0; $option_idx < count($entry['options']); $option_idx++) {
 						$option = $entry['options'][$option_idx];
+						if (is_null($option)) {
+							continue;
+						}
+						
 						$entry['options'][$option_idx] = [
 							'loot_item_set_entry_option_id' => $option['loot_item_set_entry_option_id'],
 							'engram' => [
