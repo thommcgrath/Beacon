@@ -343,7 +343,7 @@ Begin BeaconAutopositionWindow DeployManager
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   True
-         AllowStyledText =   True
+         AllowStyledText =   False
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
