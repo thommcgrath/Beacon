@@ -529,6 +529,7 @@ abstract class Project implements \JsonSerializable {
 		}
 		$title = isset($project['Title']) ? $project['Title'] : '';
 		$description = isset($project['Description']) ? $project['Description'] : '';
+		$game_id = isset($project['GameID']) ? $project['GameID'] : 'Ark';
 		
 		// check if the project already exists
 		$results = $database->Query('SELECT project_id FROM ' . static::SchemaName() . '.' . static::TableName() . ' WHERE project_id = $1;', $project_id);
@@ -592,7 +593,8 @@ abstract class Project implements \JsonSerializable {
 				'title' => $title,
 				'description' => $description,
 				'console_safe' => true,
-				'game_specific' => '{}'
+				'game_specific' => '{}',
+				'game_id' => $game_id
 			];
 			static::HookRowSaveData($project, $row_values);
 			

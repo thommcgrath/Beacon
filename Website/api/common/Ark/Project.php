@@ -62,6 +62,8 @@ class Project extends \BeaconAPI\Project {
 	}
 	
 	protected static function HookValidateMultipart(array &$required_vars, string &$reason) {
+		parent::HookValidateMultipart($required_vars, $reason);
+		
 		$required_vars[] = 'difficulty';
 		$required_vars[] = 'editors';
 		$required_vars[] = 'map';
@@ -116,14 +118,15 @@ class Project extends \BeaconAPI\Project {
 			$console_safe = false;
 		}
 		
-		$idx = array_search('Difficulty', $project['EditorNames']);
-		if ($idx !== false) {
-			unset($project['EditorNames'][$idx]);
+		$editor_names = [];
+		foreach ($project['EditorNames'] as $editor_name) {
+			if ($editor_name === 'Difficulty' || $editor_name === 'Metadata') {
+				continue;
+			}
+			
+			$editor_names[] = $editor_name;
 		}
-		$idx = array_search('Metadata', $project['EditorNames']);
-		if ($idx !== false) {
-			unset($project['EditorNames'][$idx]);
-		}
+		$project['EditorNames'] = $editor_names;
 		
 		$row_values['game_specific'] = json_encode([
 			'map' => isset($project['Map']) ? $project['Map'] : 4,

@@ -24,6 +24,18 @@ class Project extends \BeaconAPI\Ark\Project {
 	public function ResourceURL() {
 		return \BeaconAPI::URL('project/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
 	}
+	
+	protected static function HookValidateMultipart(array &$required_vars, string &$reason) {
+		parent::HookValidateMultipart($required_vars, $reason);
+		$required_vars[] = 'game_id';
+		return true;
+	}
+	
+	protected static function HookMultipartAddProjectValues(array &$project, string &$reason) {
+		parent::HookMultipartAddProjectValues($project, $reason);
+		$project['GameID'] = $_POST['game_id'];
+		return true;
+	}
 }
 
 ?>
