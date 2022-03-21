@@ -94,12 +94,6 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function APIPathComponent() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Clone(Identity As Beacon.Identity) As Beacon.Project
 		  // Yes, run this through JSON first to ensure parsing is exactly as compatible as coming from the
 		  // disk or cloud. The object types put into the dictionary are not always the same as comes back
@@ -125,6 +119,7 @@ Implements ObservationKit.Observable
 		  Dict.Value("uuid") = Self.mUUID
 		  Dict.Value("description") = Self.mDescription
 		  Dict.Value("title") = Self.mTitle
+		  Dict.Value("game_id") = Self.GameID()
 		  
 		  Var Keys() As String
 		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords

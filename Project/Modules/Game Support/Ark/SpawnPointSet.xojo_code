@@ -68,6 +68,25 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreatureReplacementWeight(FromCreatureRef As Ark.BlueprintReference, ToCreatureRef As Ark.BlueprintReference) As NullableDouble
+		  If FromCreatureRef Is Nil Or ToCreatureRef Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  If Not Self.mReplacements.HasBlueprint(FromCreatureRef) Then
+		    Return Nil
+		  End If
+		  
+		  Var Options As Ark.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
+		  If Options.HasAttribute(ToCreatureRef, "Weight") Then
+		    Return Options.Value(ToCreatureRef, "Weight").DoubleValue
+		  End If
+		  
+		  Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreature As Ark.Creature, ToCreature As Ark.Creature) As NullableDouble
 		  If FromCreature Is Nil Or ToCreature Is Nil Then
 		    Return Nil
@@ -241,17 +260,27 @@ Implements Beacon.Countable
 		    
 		    For Each Replacement As Dictionary In Replacements
 		      Try
-		        Var TargetCreatureUUID As String = Replacement.Value("creature_id")
-		        Var Choices As Dictionary = Replacement.Value("choices")
-		        For Each Entry As DictionaryEntry In Choices
-		          Var ReplacementCreatureUUID As String = Entry.Key
-		          Var Weight As Double = Entry.Value
-		          Set.CreatureReplacementWeight(TargetCreatureUUID, ReplacementCreatureUUID) = Weight
-		        Next
+		        If Replacement.HasKey("creature") Then
+		          Var TargetCreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Replacement.Value("creature"))
+		          Var Choices() As Variant = Replacement.Value("choices")
+		          For Each Choice As Dictionary In Choices
+		            Var ReplacementCreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Choice.Value("creature"))
+		            Var Weight As Double = Choice.Value("weight")
+		            Set.CreatureReplacementWeight(TargetCreatureRef, ReplacementCreatureRef) = Weight
+		          Next Choice
+		        ElseIf Replacement.HasKey("creature_id") Then
+		          Var TargetCreatureUUID As String = Replacement.Value("creature_id")
+		          Var Choices As Dictionary = Replacement.Value("choices")
+		          For Each Entry As DictionaryEntry In Choices
+		            Var ReplacementCreatureUUID As String = Entry.Key
+		            Var Weight As Double = Entry.Value
+		            Set.CreatureReplacementWeight(TargetCreatureUUID, ReplacementCreatureUUID) = Weight
+		          Next
+		        End If
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
-		  ElseIf SaveData.HasKey("Replacements") And SaveData.Value("replacements").IsNull = False Then
+		  ElseIf SaveData.HasKey("Replacements") And SaveData.Value("Replacements").IsNull = False Then
 		    Var Replacements As Dictionary = SaveData.Value("Replacements")
 		    If (Replacements Is Nil) = False Then
 		      For Each Entry As DictionaryEntry In Replacements
@@ -472,16 +501,16 @@ Implements Beacon.Countable
 		  
 		  If Self.mReplacements.Count > 0 Then
 		    Var Replacements() As Dictionary
-		    Var TargetCreatures() As Ark.Creature = Self.ReplacedCreatures
-		    For Each TargetCreature As Ark.Creature In TargetCreatures
-		      Var ReplacementCreatures() As Ark.Creature = Self.ReplacementCreatures(TargetCreature)
-		      Var Choices As New Dictionary
-		      For Each ReplacementCreature As Ark.Creature In ReplacementCreatures
-		        Var Weight As Double = Self.CreatureReplacementWeight(TargetCreature, ReplacementCreature)
-		        Choices.Value(ReplacementCreature.ObjectID) = Weight
+		    Var TargetCreatureRefs() As Ark.BlueprintReference = Self.ReplacedCreatureRefs
+		    For Each TargetCreatureRef As Ark.BlueprintReference In TargetCreatureRefs
+		      Var ReplacementCreatureRefs() As Ark.BlueprintReference = Self.ReplacementCreatures(TargetCreatureRef)
+		      Var Choices() As Dictionary
+		      For Each ReplacementCreatureRef As Ark.BlueprintReference In ReplacementCreatureRefs
+		        Var Weight As Double = Self.CreatureReplacementWeight(TargetCreatureRef, ReplacementCreatureRef)
+		        Choices.Add(New Dictionary("creature": ReplacementCreatureRef.SaveData, "weight": weight))
 		      Next
 		      Var ReplacementDict As New Dictionary
-		      ReplacementDict.Value("creature_id") = TargetCreature.ObjectID
+		      ReplacementDict.Value("creature") = TargetCreatureRef.SaveData
 		      ReplacementDict.Value("choices") = Choices
 		      Replacements.Add(ReplacementDict)
 		    Next
@@ -495,6 +524,19 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ReplacedCreatureRefs() As Ark.BlueprintReference()
+		  Var Arr() As Ark.BlueprintReference
+		  Var Blueprints() As Ark.BlueprintReference = Self.mReplacements.References
+		  For Each Blueprint As Ark.BlueprintReference In Blueprints
+		    If Blueprint.IsCreature Then
+		      Arr.Add(Blueprint)
+		    End If
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ReplacedCreatures() As Ark.Creature()
 		  Var Arr() As Ark.Creature
 		  Var Blueprints() As Ark.BlueprintReference = Self.mReplacements.References
@@ -503,6 +545,28 @@ Implements Beacon.Countable
 		      Arr.Add(Ark.Creature(Blueprint.Resolve))
 		    End If
 		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReplacementCreatures(FromCreatureRef As Ark.BlueprintReference) As Ark.BlueprintReference()
+		  Var Arr() As Ark.BlueprintReference
+		  If FromCreatureRef Is Nil Then
+		    Return Arr
+		  End If
+		  
+		  Var Options As Ark.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
+		  If (Options Is Nil) = False Then
+		    Var References() As Ark.BlueprintReference = Options.References
+		    For Each Reference As Ark.BlueprintReference In References
+		      If Reference.IsCreature = False Then
+		        Continue
+		      End If
+		      Arr.Add(Reference)
+		    Next
+		  End If
+		  
 		  Return Arr
 		End Function
 	#tag EndMethod

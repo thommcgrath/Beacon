@@ -733,7 +733,7 @@ End
 #tag Events DownloadLinkLabel
 	#tag Event
 		Sub Open()
-		  Me.Text = BeaconAPI.URL("/" + Self.mProject.APIPathComponent + "/project/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
+		  Me.Text = BeaconAPI.URL("project/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -779,7 +779,7 @@ End
 		  Var Payload As New Dictionary
 		  Payload.Value("status") = DesiredStatus
 		  
-		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("ark/project/" + Self.mProject.UUID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("project/" + Self.mProject.UUID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  APISocket.Start(Request)
 		  
@@ -791,7 +791,7 @@ End
 #tag Events StatusCheckTimer
 	#tag Event
 		Sub Action()
-		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("ark/project/" + Self.mProject.UUID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("project/" + Self.mProject.UUID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
 		  APISocket.Start(Request)
 		  
 		  Var Users() As String = Self.mProject.GetUsers

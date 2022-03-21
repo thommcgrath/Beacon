@@ -248,16 +248,27 @@ Implements Ark.MutableBlueprint
 		Sub Unpack(Dict As Dictionary)
 		  Self.mLimits = New Ark.BlueprintAttributeManager
 		  If Dict.HasKey("limits") Then
-		    Var Limits As Variant = Dict.Value("limits")
-		    If IsNull(Limits) = False And Limits.Type = Variant.TypeObject And Limits.ObjectValue IsA Dictionary Then
-		      Var LimitsDict As Dictionary = Dictionary(Limits.ObjectValue)
-		      For Each Entry As DictionaryEntry In LimitsDict
-		        Var Creature As Ark.Creature = Ark.ResolveCreature(Entry.Key.StringValue, "", "", Nil)
-		        If (Creature Is Nil) = False Then
-		          Self.mLimits.Value(Creature, Self.LimitAttribute) = Entry.Value.DoubleValue
-		        End If
-		      Next
-		    End If
+		    Try
+		      Var Limits As Variant = Dict.Value("limits")
+		      If IsNull(Limits) = False And Limits.Type = Variant.TypeObject And Limits.ObjectValue IsA Dictionary Then
+		        Var LimitsDict As Dictionary = Dictionary(Limits.ObjectValue)
+		        For Each Entry As DictionaryEntry In LimitsDict
+		          Var Creature As Ark.Creature = Ark.ResolveCreature(Entry.Key.StringValue, "", "", Nil)
+		          If (Creature Is Nil) = False Then
+		            Self.mLimits.Value(Creature, Self.LimitAttribute) = Entry.Value.DoubleValue
+		          End If
+		        Next
+		      ElseIf IsNull(Limits) = False And Limits.IsArray And Limits.ArrayElementType = Variant.TypeObject Then
+		        Var Members() As Dictionary = Limits.DictionaryArrayValue
+		        For Each Limit As Dictionary In Members
+		          Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Limit.Value("creature"))
+		          Var MaxPercent As Double = Limit.Value("max_percent").DoubleValue
+		          Self.mLimits.Value(CreatureRef, Self.LimitAttribute) = MaxPercent
+		        Next Limit
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Unpacking limits")
+		    End Try
 		  End If
 		  
 		  Self.mSets.ResizeTo(-1)
@@ -266,7 +277,7 @@ Implements Ark.MutableBlueprint
 		    Try
 		      Sets = Dict.Value("sets").DictionaryArrayValue
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Unpacking spawn point sets value..")
+		      App.Log(Err, CurrentMethodName, "Unpacking spawn point sets value.")
 		    End Try
 		    
 		    For Each PackedSet As Dictionary In Sets

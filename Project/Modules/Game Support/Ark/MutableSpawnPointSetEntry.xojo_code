@@ -13,8 +13,8 @@ Inherits Ark.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Creature(Assigns Value As Ark.Creature)
-		  If Self.mCreature <> Value Then
-		    Self.mCreature = New Ark.BlueprintReference(Value.ImmutableVersion)
+		  If Self.mCreatureRef <> Value Then
+		    Self.mCreatureRef = New Ark.BlueprintReference(Value.ImmutableVersion)
 		    Self.Modified = True
 		  End If
 		End Sub

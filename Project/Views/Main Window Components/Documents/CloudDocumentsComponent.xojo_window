@@ -590,7 +590,7 @@ End
 		    Var Params As New Dictionary
 		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		    
-		    Var NewAttempt As New BeaconAPI.Request("ark/project", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
+		    Var NewAttempt As New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
 		    NewAttempt.Sign(App.IdentityManager.CurrentIdentity)
 		    Self.APISocket.Start(NewAttempt)
 		    Return
@@ -678,10 +678,10 @@ End
 		  Var Request As BeaconAPI.Request
 		  Var Token As String = Preferences.OnlineToken
 		  If Token.IsEmpty Then
-		    Request = New BeaconAPI.Request("ark/project", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
+		    Request = New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
 		    Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Else
-		    Request = New BeaconAPI.Request("ark/project", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
+		    Request = New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
 		    Request.Authenticate(Token)
 		  End If
 		  Self.APISocket.Start(Request)
@@ -1016,7 +1016,7 @@ End
 		  If HitItem.Tag.IsNull = False And HitItem.Tag.Type = Variant.TypeString And HitItem.Tag.StringValue = "versions" Then
 		    If Me.SelectedRowCount = 1 Then
 		      Var Document As BeaconAPI.Document = Me.RowTagAt(Me.SelectedRowIndex)
-		      Var Request As New BeaconAPI.Request("ark/project/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
+		      Var Request As New BeaconAPI.Request("project/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
 		      Request.Authenticate(Preferences.OnlineToken)
 		      BeaconAPI.Send(Request)
 		      

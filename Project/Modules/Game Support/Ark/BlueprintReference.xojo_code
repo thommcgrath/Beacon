@@ -33,6 +33,39 @@ Protected Class BlueprintReference
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateFromDict(Kind As String, Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassStringKey As String, ContentPackUUIDKey As String) As Ark.BlueprintReference
+		  Var ObjectID, Path, ClassString, ContentPackUUID As String
+		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
+		    ObjectID = Dict.Value(ObjectIDKey)
+		  End If
+		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
+		    Path = Dict.Value(PathKey)
+		  End If
+		  If ClassStringKey.IsEmpty = False And Dict.HasKey(ClassStringKey) Then
+		    ClassString = Dict.Value(ClassStringKey)
+		  End If
+		  If ContentPackUUIDKey.IsEmpty = False And Dict.HasKey(ContentPackUUIDKey) Then
+		    ContentPackUUID = Dict.Value(ContentPackUUIDKey)
+		  End If
+		  Return CreateFromDict(Kind, ObjectID, Path, ClassString, ContentPackUUID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateFromDict(Kind As String, ObjectID As String, Path As String, ClassString As String, ContentPackUUID As String) As Ark.BlueprintReference
+		  Var Dict As New Dictionary
+		  Dict.Value("Schema") = "Beacon.BlueprintReference"
+		  Dict.Value("Version") = Version
+		  Dict.Value("Kind") = Kind
+		  Dict.Value("UUID") = ObjectID
+		  Dict.Value("Path") = Path
+		  Dict.Value("Class") = ClassString
+		  Dict.Value("ModUUID") = ContentPackUUID
+		  Return New Ark.BlueprintReference(Dict)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateSaveData(Blueprint As Ark.Blueprint) As Dictionary
 		  Var Ref As New Ark.BlueprintReference(Blueprint)
 		  Return Ref.SaveData
@@ -170,18 +203,23 @@ Protected Class BlueprintReference
 		  If Self.mBlueprint Is Nil Then
 		    Try
 		      Var Version As Integer = Self.mSaveData.Value("Version")
+		      Var Packs As Beacon.StringList
+		      If Self.mSaveData.HasKey("ModUUID") And v4UUID.IsValid(Self.mSaveData.Value("ModUUID").StringValue) Then
+		        Packs = New Beacon.StringList
+		        Packs.Append(Self.mSaveData.Value("ModUUID").StringValue)
+		      End If
 		      Select Case Version
 		      Case 1
 		        Var Kind As String = Self.mSaveData.Value("Kind")
 		        Select Case Kind
 		        Case Self.KindEngram
-		          Self.mBlueprint = Ark.ResolveEngram(Self.mSaveData, "UUID", "Path", "", Nil)
+		          Self.mBlueprint = Ark.ResolveEngram(Self.mSaveData, "UUID", "Path", "Class", Packs)
 		        Case Self.KindCreature
-		          Self.mBlueprint = Ark.ResolveCreature(Self.mSaveData, "UUID", "Path", "", Nil)
+		          Self.mBlueprint = Ark.ResolveCreature(Self.mSaveData, "UUID", "Path", "Class", Packs)
 		        Case Self.KindSpawnPoint
-		          Self.mBlueprint = Ark.ResolveSpawnPoint(Self.mSaveData, "UUID", "Path", "", Nil)
+		          Self.mBlueprint = Ark.ResolveSpawnPoint(Self.mSaveData, "UUID", "Path", "Clas", Packs)
 		        Case Self.KindLootContainer
-		          Self.mBlueprint = Ark.ResolveLootContainer(Self.mSaveData, "UUID", "Path", "", Nil)
+		          Self.mBlueprint = Ark.ResolveLootContainer(Self.mSaveData, "UUID", "Path", "Class", Packs)
 		        End Select
 		      End Select
 		    Catch Err As RuntimeException

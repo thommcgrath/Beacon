@@ -2,7 +2,12 @@
 Protected Class CraftingCostIngredient
 	#tag Method, Flags = &h0
 		Function ClassString() As String
-		  Return Self.mEngram.ClassString
+		  Var ClassString As String = Self.mEngramRef.ClassString
+		  If ClassString.IsEmpty Then
+		    Call Self.mEngramRef.Resolve
+		    ClassString = Self.mEngramRef.ClassString
+		  End If
+		  Return ClassString
 		End Function
 	#tag EndMethod
 
@@ -14,7 +19,7 @@ Protected Class CraftingCostIngredient
 		    Raise Err
 		  End If
 		  
-		  Self.mEngram = Reference
+		  Self.mEngramRef = Reference
 		  Self.mQuantity = Quantity
 		  Self.mRequireExact = RequireExact
 		End Sub
@@ -28,17 +33,32 @@ Protected Class CraftingCostIngredient
 
 	#tag Method, Flags = &h0
 		Function Engram() As Ark.Engram
-		  Return Ark.Engram(Self.mEngram.Resolve).ImmutableVersion
+		  Return Ark.Engram(Self.mEngramRef.Resolve).ImmutableVersion
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Dictionary, ContentPacks As Beacon.StringList) As Ark.CraftingCostIngredient
+		  #Pragma Unused ContentPacks
+		  
 		  If Dict Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  If Dict.HasAllKeys("Blueprint", "Quantity", "Exact") Then
+		  If Dict.HasAllKeys("engram", "quantity", "exact") Then
+		    Try
+		      Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("engram"))
+		      If Reference Is Nil Then
+		        Return Nil
+		      End If
+		      Var Quantity As Integer = Dict.Value("quantity")
+		      Var Exact As Boolean = Dict.Value("exact")
+		      
+		      Return New Ark.CraftingCostIngredient(Reference, Quantity, Exact)
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  ElseIf Dict.HasAllKeys("Blueprint", "Quantity", "Exact") Then
 		    Try
 		      Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
 		      If Reference Is Nil Then
@@ -53,11 +73,10 @@ Protected Class CraftingCostIngredient
 		    End Try
 		  ElseIf (Dict.HasKey("object_id") Or Dict.HasKey("path")) And Dict.HasKey("quantity") And Dict.HasKey("exact") Then
 		    Try
-		      Var Engram As Ark.Engram = Ark.ResolveEngram(Dict, "object_id", "path", "", ContentPacks)
+		      Var Ref As Ark.BlueprintReference = Ark.BlueprintReference.CreateFromDict(Ark.BlueprintReference.KindEngram, Dict, "object_id", "path", "", "")
 		      Var Quantity As Integer = Dict.Value("quantity")
 		      Var Exact As Boolean = Dict.Value("exact")
-		      
-		      Return New Ark.CraftingCostIngredient(Engram, Quantity, Exact)
+		      Return New Ark.CraftingCostIngredient(Ref, Quantity, Exact)
 		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
@@ -132,8 +151,8 @@ Protected Class CraftingCostIngredient
 		    Return 1
 		  End If
 		  
-		  Var MyKey As String = Self.mEngram.ObjectID + ":" + Self.mQuantity.ToString(Locale.Raw, "00000000") + ":" + If(Self.mRequireExact, "True", "False")
-		  Var OtherKey As String = Other.mEngram.ObjectID + ":" + Other.mQuantity.ToString(Locale.Raw, "00000000") + ":" + If(Other.mRequireExact, "True", "False")
+		  Var MyKey As String = Self.mEngramRef.ObjectID + ":" + Self.mQuantity.ToString(Locale.Raw, "00000000") + ":" + If(Self.mRequireExact, "True", "False")
+		  Var OtherKey As String = Other.mEngramRef.ObjectID + ":" + Other.mQuantity.ToString(Locale.Raw, "00000000") + ":" + If(Other.mRequireExact, "True", "False")
 		  
 		  Return MyKey.Compare(OtherKey, ComparisonOptions.CaseInsensitive)
 		End Function
@@ -142,7 +161,7 @@ Protected Class CraftingCostIngredient
 	#tag Method, Flags = &h0
 		Function Pack() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("object_id") = Self.mEngram.ObjectID
+		  Dict.Value("engram") = Self.mEngramRef.SaveData
 		  Dict.Value("quantity") = Self.mQuantity
 		  Dict.Value("exact") = Self.mRequireExact
 		  Return Dict
@@ -157,7 +176,7 @@ Protected Class CraftingCostIngredient
 
 	#tag Method, Flags = &h0
 		Function Reference() As Ark.BlueprintReference
-		  Return Self.mEngram
+		  Return Self.mEngramRef
 		End Function
 	#tag EndMethod
 
@@ -168,9 +187,11 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
+		Function SaveData() As Dictionary
+		  // Yes, this looks just like Pack()
+		  
 		  Var Dict As New Dictionary
-		  Dict.Value("Blueprint") = Self.mEngram.SaveData
+		  Dict.Value("Blueprint") = Self.mEngramRef.SaveData
 		  Dict.Value("Quantity") = Self.mQuantity
 		  Dict.Value("Exact") = Self.mRequireExact
 		  Return Dict
@@ -181,7 +202,7 @@ Protected Class CraftingCostIngredient
 		Shared Function ToJSON(Ingredients() As Ark.CraftingCostIngredient, Pretty As Boolean = False) As String
 		  Var Dicts() As Dictionary
 		  For Each Ingredient As Ark.CraftingCostIngredient In Ingredients
-		    Dicts.Add(Ingredient.ToDictionary)
+		    Dicts.Add(Ingredient.Pack)
 		  Next
 		  Return Beacon.GenerateJSON(Dicts, Pretty)
 		End Function
@@ -189,7 +210,7 @@ Protected Class CraftingCostIngredient
 
 
 	#tag Property, Flags = &h21
-		Private mEngram As Ark.BlueprintReference
+		Private mEngramRef As Ark.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

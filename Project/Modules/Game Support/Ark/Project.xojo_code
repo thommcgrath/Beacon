@@ -259,12 +259,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function APIPathComponent() As String
-		  Return "ark"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Clone(Identity As Beacon.Identity) As Ark.Project
 		  Return Ark.Project(Super.Clone(Identity))
 		End Function

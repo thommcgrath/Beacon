@@ -60,7 +60,7 @@ Implements Beacon.NamedItem
 		  
 		  Var Ingredients() As Dictionary
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
-		    Var Resource As Dictionary = Self.mIngredients(Idx).ToDictionary
+		    Var Resource As Dictionary = Self.mIngredients(Idx).SaveData
 		    If (Resource Is Nil) = False Then
 		      Ingredients.Add(Resource)
 		    End If

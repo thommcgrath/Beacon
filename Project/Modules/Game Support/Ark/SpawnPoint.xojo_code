@@ -321,7 +321,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		    Sets.Add(Set.Pack)
 		  Next
 		  
-		  Var Limits As New Dictionary
+		  Var Limits() As Dictionary
 		  Var References() As Ark.BlueprintReference = Self.mLimits.References
 		  For Each Reference As Ark.BlueprintReference In References
 		    If Reference.IsCreature = False Then
@@ -329,7 +329,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		    End If
 		    
 		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
-		    Limits.Value(Reference.ObjectID) = Limit
+		    Limits.Add(New Dictionary("creature": Reference.SaveData, "max_percent": Limit))
 		  Next
 		  
 		  Dict.Value("sets") = Sets

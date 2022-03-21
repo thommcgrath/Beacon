@@ -8,7 +8,7 @@ Implements Beacon.Validateable
 		  End If
 		  
 		  Self.mUUID = UUID
-		  Self.mEngram = Reference
+		  Self.mEngramRef = Reference
 		  Self.mWeight = Weight
 		End Sub
 	#tag EndMethod
@@ -21,7 +21,7 @@ Implements Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.LootItemSetEntryOption)
-		  Self.mEngram = Source.mEngram
+		  Self.mEngramRef = Source.mEngramRef
 		  Self.mHash = Source.mHash
 		  Self.mWeight = Source.mWeight
 		  Self.mUUID = Source.mUUID
@@ -30,7 +30,7 @@ Implements Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function Engram() As Ark.Engram
-		  Return Ark.Engram(Self.mEngram.Resolve).ImmutableVersion
+		  Return Ark.Engram(Self.mEngramRef.Resolve).ImmutableVersion
 		End Function
 	#tag EndMethod
 
@@ -59,18 +59,24 @@ Implements Beacon.Validateable
 		  End Try
 		  
 		  Var Option As Ark.LootItemSetEntryOption
-		  If Dict.HasKey("engram_id") Then
-		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict.Value("engram_id").StringValue, "", "", Nil)
-		    If Engram Is Nil Then
+		  If Dict.HasKey("engram") Then
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("engram"))
+		    If Reference Is Nil Then
 		      Return Nil
 		    End If
-		    Option = New Ark.LootItemSetEntryOption(Engram, Weight, UUID)
+		    Option = New Ark.LootItemSetEntryOption(Reference, Weight, UUID)
 		  ElseIf Dict.HasKey("Blueprint") Then
 		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
 		    If Reference Is Nil Then
 		      Return Nil
 		    End If
 		    Option = New Ark.LootItemSetEntryOption(Reference, Weight, UUID)
+		  ElseIf Dict.HasKey("engram_id") Then
+		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict.Value("engram_id").StringValue, "", "", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New Ark.LootItemSetEntryOption(Engram, Weight, UUID)
 		  ElseIf Dict.HasAnyKey("UUID", "Path", "Class") Then
 		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict, "UUID", "Path", "Class", Nil)
 		    If Engram Is Nil Then
@@ -86,7 +92,7 @@ Implements Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.mHash.IsEmpty Then
-		    Self.mHash = Beacon.Hash(Self.mEngram.ObjectID.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000"))
+		    Self.mHash = Beacon.Hash(Self.mEngramRef.ObjectID.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000"))
 		  End If
 		  
 		  Return Self.mHash
@@ -110,7 +116,7 @@ Implements Beacon.Validateable
 		Function Pack() As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("loot_item_set_entry_option_id") = Self.mUUID
-		  Dict.Value("engram_id") = Self.mEngram.ObjectID
+		  Dict.Value("engram") = Self.mEngramRef.SaveData
 		  Dict.Value("weight") = Self.mWeight
 		  Return Dict
 		End Function
@@ -118,7 +124,7 @@ Implements Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function Reference() As Ark.BlueprintReference
-		  Return Self.mEngram
+		  Return Self.mEngramRef
 		End Function
 	#tag EndMethod
 
@@ -126,7 +132,7 @@ Implements Beacon.Validateable
 		Function SaveData() As Dictionary
 		  Var Keys As New Dictionary
 		  Keys.Value("UUID") = Self.mUUID
-		  Keys.Value("Blueprint") = Self.mEngram.SaveData
+		  Keys.Value("Blueprint") = Self.mEngramRef.SaveData
 		  Keys.Value("Weight") = Self.mWeight
 		  Return Keys
 		End Function
@@ -143,7 +149,7 @@ Implements Beacon.Validateable
 		  // Part of the Beacon.Validateable interface.
 		  
 		  Try
-		    Var ObjectID As String = Self.mEngram.ObjectID
+		    Var ObjectID As String = Self.mEngramRef.ObjectID
 		    Location = Location + "." + ObjectID
 		    If Issues.HasIssue(Location) Then
 		      Return
@@ -168,7 +174,7 @@ Implements Beacon.Validateable
 
 
 	#tag Property, Flags = &h21
-		Private mEngram As Ark.BlueprintReference
+		Private mEngramRef As Ark.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

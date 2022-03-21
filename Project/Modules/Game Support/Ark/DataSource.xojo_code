@@ -617,7 +617,7 @@ Inherits Beacon.DataSource
 		        RemovePacks.Append(Packs(Idx).UUID)
 		      End If
 		    Next Idx
-		     
+		    
 		    Var Unpacked() As Ark.Blueprint
 		    For Each Dict As Dictionary In Blueprints
 		      Try

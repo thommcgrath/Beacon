@@ -35,6 +35,43 @@ Inherits Ark.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CreatureReplacementWeight(FromCreatureRef As Ark.BlueprintReference, ToCreatureRef As Ark.BlueprintReference, Assigns Weight As NullableDouble)
+		  If FromCreatureRef Is Nil Or ToCreatureRef Is Nil Then
+		    Return
+		  End If
+		  
+		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreatureRef, ToCreatureRef)
+		  If CurrentWeight = Weight Then
+		    Return
+		  End If
+		  
+		  Var Options As Ark.BlueprintAttributeManager
+		  If Self.mReplacements.HasBlueprint(FromCreatureRef) Then
+		    Options = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
+		  Else
+		    If Weight = Nil Then
+		      Return
+		    End If
+		    Options = New Ark.BlueprintAttributeManager
+		  End If
+		  
+		  If Weight = Nil Then
+		    Options.Remove(ToCreatureRef)
+		  Else
+		    Options.Value(ToCreatureRef, "Weight") = Weight.DoubleValue
+		  End If
+		  
+		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreatureRef) Then
+		    Self.mReplacements.Remove(FromCreatureRef)
+		  Else
+		    Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute) = Options
+		  End If
+		  
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CreatureReplacementWeight(FromCreature As Ark.Creature, ToCreature As Ark.Creature, Assigns Weight As NullableDouble)
 		  If FromCreature Is Nil Or ToCreature Is Nil Then
 		    Return
