@@ -882,7 +882,7 @@ Inherits Beacon.DataSource
 		  Var WorkshopID As UInt32 = CRC_32OfStrMBS(PackUUID)
 		  Var Details As New Ark.ContentPack(PackUUID, PackName, False, False, True, WorkshopID)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, PackName, WorkshopID, True, False, True)
+		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, PackName, WorkshopID, True, False, True)
 		  Self.CommitTransaction()
 		  Self.ExportCloudFiles()
 		  Return Details
