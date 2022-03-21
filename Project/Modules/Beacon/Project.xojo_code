@@ -575,6 +575,12 @@ Implements ObservationKit.Observable
 		    Return True
 		  End If
 		  
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    If Profile.Modified Then
+		      Return True
+		    End If
+		  Next Profile
+		  
 		  Return False
 		End Function
 	#tag EndMethod
