@@ -1,6 +1,6 @@
 <?php
 
-require(dirname(__FILE__, 2) . '/loader.php');
+require(dirname(__FILE__) . '/loader.php');
 
 $document_id = BeaconAPI::ObjectID();
 $method = BeaconAPI::Method();

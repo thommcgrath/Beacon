@@ -81,7 +81,7 @@ case 'POST':
 			}
 		}
 	
-		$results = $database->Query('SELECT mod_id, user_id, confirmed FROM mods WHERE ABS(workshop_id) = $1;', $workshop_id);
+		$results = $database->Query('SELECT mod_id, user_id, confirmed FROM ark.mods WHERE ABS(workshop_id) = $1;', $workshop_id);
 		if ($results->RecordCount() == 1) {
 			$mod_user_id = $results->Field('user_id');
 			$mod_uuid = $results->Field('mod_id');
@@ -92,7 +92,7 @@ case 'POST':
 			}
 			
 			try {
-				$database->Query('UPDATE mods SET pull_url = $2 WHERE mod_id = $1;', $mod_uuid, $pull_url);
+				$database->Query('UPDATE ark.mods SET pull_url = $2 WHERE mod_id = $1;', $mod_uuid, $pull_url);
 			} catch (\BeaconQueryException $e) {
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not updated: ' . $e->getMessage());
 			}
@@ -104,7 +104,7 @@ case 'POST':
 			}
 			
 			try {
-				$results = $database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url, min_version) VALUES ($1, $2, $3, $4, 10500000) RETURNING mod_id;', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
+				$results = $database->Query('INSERT INTO ark.mods (workshop_id, name, user_id, pull_url, min_version) VALUES ($1, $2, $3, $4, 10500000) RETURNING mod_id;', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
 				$mod_uuid = $results->Field('mod_id');
 			} catch (BeaconQueryException $e) {
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());

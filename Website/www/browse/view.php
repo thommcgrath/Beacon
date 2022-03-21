@@ -62,7 +62,7 @@ if (count($map_names) >= 3) {
 		
 	$database = BeaconCommon::Database();
 	$mod_ids = $document->RequiredMods(false);
-	$results = $database->Query('SELECT workshop_id, name FROM ark.mods WHERE array_position($1, mod_id) IS NOT NULL ORDER BY name;', $mod_ids);
+	$results = $database->Query('SELECT workshop_id, name FROM ark.mods WHERE array_position($1, mod_id) IS NOT NULL ORDER BY name;', '{' . $mod_ids . '}');
 	$unknown_mods = false;
 	$mod_links = array();
 	while (!$results->EOF()) {

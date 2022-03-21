@@ -1,6 +1,6 @@
 <?php
 
-require(dirname(__FILE__, 2) . '/loader.php');
+require(dirname(__FILE__) . '/loader.php');
 
 // This endpoint can retrieve, save, and delete any blueprint type.
 // It is most useful for mod editing. As such, its usage will be a little

@@ -155,10 +155,10 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		
 		if (array_key_exists('limits', $json)) {
 			$limits = $json['limits'];
-			if (is_null($limits) || (is_array($limits) && \BeaconCommon::IsAssoc($limits) === true)) {
+			if (is_null($limits) || (is_array($limits) && \BeaconCommon::IsAssoc($limits) === false)) {
 				$this->limits = $limits;
 			} else {
-				throw new \Exception('Limits should be an structure of creature uuid keys and percentage values.'); 
+				throw new \Exception('Limits should be an array of structures.'); 
 			}
 		}
 	}

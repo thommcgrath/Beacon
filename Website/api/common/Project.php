@@ -135,56 +135,59 @@ abstract class Project implements \JsonSerializable {
 			if ($current_status == self::PUBLISH_STATUS_APPROVED_PRIVATE) {
 				$new_status = self::PUBLISH_STATUS_APPROVED;
 			} elseif ($current_status == self::PUBLISH_STATUS_PRIVATE) {
-				$new_status = self::PUBLISH_STATUS_REQUESTED;
-				
-				$attachment = array(
-					'title' => $this->title,
-					'text' => $this->description,
-					'fallback' => 'Unable to show response buttons.',
-					'callback_id' => 'publish_document:' . $this->project_id,
-					'actions' => array(
-						array(
-							'name' => 'status',
-							'text' => 'Approve',
-							'type' => 'button',
-							'value' => self::PUBLISH_STATUS_APPROVED,
-							'confirm' => array(
-								'text' => 'Are you sure you want to approve this project?',
-								'ok_text' => 'Approve'
+				if (empty(trim($this->description))) {
+					$new_status = self::PUBLISH_STATUS_DENIED;
+				} else {
+					$new_status = self::PUBLISH_STATUS_REQUESTED;
+					$attachment = array(
+						'title' => $this->title,
+						'text' => $this->description,
+						'fallback' => 'Unable to show response buttons.',
+						'callback_id' => 'publish_document:' . $this->project_id,
+						'actions' => array(
+							array(
+								'name' => 'status',
+								'text' => 'Approve',
+								'type' => 'button',
+								'value' => self::PUBLISH_STATUS_APPROVED,
+								'confirm' => array(
+									'text' => 'Are you sure you want to approve this project?',
+									'ok_text' => 'Approve'
+								)
+							),
+							array(
+								'name' => 'status',
+								'text' => 'Deny',
+								'type' => 'button',
+								'value' => self::PUBLISH_STATUS_DENIED,
+								'confirm' => array(
+									'text' => 'Are you sure you want to reject this project?',
+									'ok_text' => 'Deny'
+								)
 							)
 						),
-						array(
-							'name' => 'status',
-							'text' => 'Deny',
-							'type' => 'button',
-							'value' => self::PUBLISH_STATUS_DENIED,
-							'confirm' => array(
-								'text' => 'Are you sure you want to reject this project?',
-								'ok_text' => 'Deny'
-							)
-						)
-					),
-					'fields' => array()
-				);
-				
-				$user = \BeaconUser::GetByUserID($this->user_id);
-				if (is_null($user) === false) {
-					if ($user->IsAnonymous()) {
-						$username = 'Anonymous';
-					} else {
-						$username = $user->Username() . '#' . $user->Suffix();
-					}
-					$attachment['fields'][] = array(
-						'title' => 'Author',
-						'value' => $username
+						'fields' => array()
 					);
+					
+					$user = \BeaconUser::GetByUserID($this->user_id);
+					if (is_null($user) === false) {
+						if ($user->IsAnonymous()) {
+							$username = 'Anonymous';
+						} else {
+							$username = $user->Username() . '#' . $user->Suffix();
+						}
+						$attachment['fields'][] = array(
+							'title' => 'Author',
+							'value' => $username
+						);
+					}
+					
+					$obj = array(
+						'text' => 'Request to publish project',
+						'attachments' => array($attachment)
+					);
+					\BeaconCommon::PostSlackRaw(json_encode($obj));
 				}
-				
-				$obj = array(
-					'text' => 'Request to publish project',
-					'attachments' => array($attachment)
-				);
-				\BeaconCommon::PostSlackRaw(json_encode($obj));	
 			}
 		} else {
 			if ($current_status == self::PUBLISH_STATUS_APPROVED) {
@@ -556,14 +559,14 @@ abstract class Project implements \JsonSerializable {
 			$encryption_keys = $project['EncryptionKeys'];
 			$allowed_users = array_keys($encryption_keys);
 			
-			$desired_guests = array();
+			$desired_guests = [];
 			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $owner_id);
 			while (!$results->EOF()) {
 				$desired_guests[] = $results->Field('user_id');
 				$results->MoveNext();
 			}
 			
-			$current_guests = array();
+			$current_guests = [];
 			$results = $database->Query('SELECT user_id FROM ' . static::SchemaName() . '.' . static::GuestTableName() . ' WHERE project_id = $1;', $project_id);
 			while (!$results->EOF()) {
 				$current_guests[] = $results->Field('user_id');
@@ -589,7 +592,7 @@ abstract class Project implements \JsonSerializable {
 				'title' => $title,
 				'description' => $description,
 				'console_safe' => true,
-				'game_specific' => json_encode($this->game_specific)
+				'game_specific' => '{}'
 			];
 			static::HookRowSaveData($project, $row_values);
 			

@@ -37,7 +37,7 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 						$option = $entry['options'][$option_idx];
 						$entry['options'][$option_idx] = [
 							'loot_item_set_entry_option_id' => $option['loot_item_set_entry_option_id'],
-							'blueprint' => [
+							'engram' => [
 								'Schema' => 'Beacon.BlueprintReference',
 								'Version' => 1,
 								'Kind' => 'Engram',
@@ -54,7 +54,7 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 				$item_sets[$item_set_idx] = $item_set;
 			}
 			
-			$obj->item_sets = $item_set;
+			$obj->item_sets = $item_sets;
 		} else {
 			$obj->item_sets = null;
 		}
@@ -64,17 +64,13 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 	
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
-		if (\BeaconAPI::GetAPIVersion() >= 3) {
-			// You'd think it would be enough to only implement in the v3 class,
-			// but PHP will load it first when building deltas.
-			$json['min_item_sets'] = $this->min_item_sets;
-			$json['max_item_sets'] = $this->max_item_sets;
-			$json['prevent_duplicates'] = $this->prevent_duplicates;
-			if (is_null($this->item_sets) || count($this->item_sets) == 0) {
-				$json['contents'] = null;
-			} else {
-				$json['contents'] = $this->item_sets;
-			}
+		$json['min_item_sets'] = $this->min_item_sets;
+		$json['max_item_sets'] = $this->max_item_sets;
+		$json['prevent_duplicates'] = $this->prevent_duplicates;
+		if (is_null($this->item_sets) || count($this->item_sets) == 0) {
+			$json['contents'] = null;
+		} else {
+			$json['contents'] = $this->item_sets;
 		}
 		return $json;
 	}
@@ -214,10 +210,10 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 					throw new \Exception('Option ID is not a v4 UUID.');
 				}
 				
-				if (array_key_exists('blueprint', $option)) {
-					$class_string = $option['Blueprint']['Class'];
-					$option['engram_id'] = $option['Blueprint']['UUID'];
-					unset($option['Blueprint']);
+				if (array_key_exists('engram', $option)) {
+					$class_string = $option['engram']['Class'];
+					$option['engram_id'] = $option['engram']['UUID'];
+					unset($option['engram']);
 				} elseif (array_key_exists('engram_id', $option)) {
 					$rows = $database->Query('SELECT class_string FROM ark.engrams WHERE object_id = $1;', $option['engram_id']);
 					if ($rows->RecordCount() !== 1) {

@@ -1,6 +1,6 @@
 <?php
 
-require(dirname(__FILE__, 2) . '/loader.php');
+require(dirname(__FILE__) . '/loader.php');
 
 $method = BeaconAPI::Method();
 if ($method !== 'GET') {
