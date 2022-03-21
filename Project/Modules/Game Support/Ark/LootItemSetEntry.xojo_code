@@ -832,10 +832,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Values.Add("ItemStatClampsMultiplier=" + Self.StatClampMultiplier.PrettyText)
 		  End If
 		  
-		  If Self.SingleItemQuantity Then
-		    Values.Add("bApplyQuantityToSingleItem=True")
-		  End If
-		  
 		  Return "(" + Values.Join(",") + ")"
 		End Function
 	#tag EndMethod
