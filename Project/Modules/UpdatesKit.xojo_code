@@ -88,7 +88,7 @@ Protected Module UpdatesKit
 		      mWinSparkle.CheckUpdateWithUI
 		    #endif
 		  #else
-		    If mChecking Then
+		    If mChecking Or ((mLastCheckTime Is Nil) = False And mLastCheckTime.SecondsFrom1970 > DateTime.Now.SecondsFrom1970 - 30) Then
 		      Return
 		    End If
 		    

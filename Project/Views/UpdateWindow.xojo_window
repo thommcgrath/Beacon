@@ -566,9 +566,15 @@ End
 		  
 		  If mInstance = Nil Then
 		    mInstance = New UpdateWindow
-		    mInstance.ViewPanel.SelectedPanelIndex = UpdateWindow.ViewCheck
-		    mInstance.Show
-		    UpdatesKit.Check()
+		    If UpdatesKit.IsDownloading Then
+		      mInstance.ViewPanel.SelectedPanelIndex = UpdateWindow.ViewDownload
+		      mInstance.Show
+		    Else
+		      mInstance.Show
+		      If UpdatesKit.IsBusy = False Then
+		        UpdatesKit.Check()
+		      End If
+		    End If
 		  Else
 		    mInstance.Show
 		  End If

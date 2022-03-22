@@ -431,6 +431,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem) As MemoryBlock
+		  #Pragma BreakOnExceptions False
 		  Try
 		    Var Stream As TextInputStream = TextInputStream.Open(File)
 		    Var Contents As MemoryBlock = Stream.ReadAll(Nil)
