@@ -265,7 +265,7 @@ function ExpandRecipe($parent, bool $as_array = false, int $level = 1, int $mult
 	
 	$lines = [];
 	foreach ($recipe as $ingredient) {
-		$object_id = $ingredient['object_id'];
+		$object_id = $ingredient['engram']['UUID'];
 		$quantity = $ingredient['quantity'] * $multiplier;
 		$exact = $ingredient['exact'];
 		
