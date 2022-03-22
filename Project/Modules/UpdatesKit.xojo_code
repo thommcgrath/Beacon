@@ -103,7 +103,9 @@ Protected Module UpdatesKit
 		    mSocket.RequestHeader("Cache-Control") = "no-cache"
 		    mSocket.RequestHeader("User-Agent") = App.UserAgent
 		    
-		    mSocket.Send("GET", CheckURL())
+		    Var URL As String = CheckURL()
+		    App.Log("Checking for updates from " + URL)
+		    mSocket.Send("GET", URL)
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -191,6 +193,9 @@ Protected Module UpdatesKit
 		    #else
 		      CheckInterval = 14400
 		    #endif
+		    
+		    Var URL As String = CheckURL()
+		    App.Log("Update check URI is " + URL)
 		    
 		    #if TargetMacOS
 		      If SUUpdaterMBS.IsFrameworkLoaded = False Then
@@ -582,14 +587,17 @@ Protected Module UpdatesKit
 		  IsCheckingAutomatically = Preferences.OnlineEnabled
 		  
 		  #if UseSparkle
+		    Var URL As String = CheckURL()
+		    App.Log("Update check URI changed to " + URL)
+		    
 		    #if TargetMacOS
 		      If (mMacSparkle Is Nil) = False Then
-		        mMacSparkle.FeedURL = CheckURL()
+		        mMacSparkle.FeedURL = URL
 		        mMacSparkle.automaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
 		      End If
 		    #elseif TargetWindows
 		      If (mWinSparkle Is Nil) = False Then
-		        mWinSparkle.AppCastURL = CheckURL()
+		        mWinSparkle.AppCastURL = URL
 		      End If
 		    #endif
 		  #endif
