@@ -1186,7 +1186,7 @@ End
 	#tag Constant, Name = HelpTagPreventGrinding, Type = String, Dynamic = False, Default = \"If checked\x2C the items cannot be fed to the industrial grinder.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HelpTagStatClampMultiplier, Type = String, Dynamic = False, Default = \"If item stat limiting is used on the server\x2C this setting will allow the items to generate above or below the item stat limit. For example\x2C if damage is limited to 1000 in the Item Stat Limits editor\x2C a multiplier of 0.5 would limit to 500 and a multiplier of 2.0 would limit to 1000.", Scope = Private
+	#tag Constant, Name = HelpTagStatClampMultiplier, Type = String, Dynamic = False, Default = \"If item stat limiting is used on the server\x2C this setting will allow the items to generate above or below the item stat limit. For example\x2C if damage is limited to 1000 in the Item Stat Limits editor\x2C a multiplier of 0.5 would limit to 500 and a multiplier of 2.0 would limit to 2000.", Scope = Private
 	#tag EndConstant
 
 
