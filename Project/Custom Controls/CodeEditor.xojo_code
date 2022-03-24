@@ -93,7 +93,11 @@ Implements NotificationKit.Receiver
 		    BaseStyle.ForeColor = &c000000
 		  End If
 		  BaseStyle.Font = "Source Code Pro"
-		  BaseStyle.Size = 12
+		  #if TargetWindows
+		    BaseStyle.Size = 9 // 864 / 96dpi
+		  #else
+		    BaseStyle.Size = 12 // 864 / 72dpi
+		  #endif
 		  
 		  Self.StyleClearAll()
 		  
