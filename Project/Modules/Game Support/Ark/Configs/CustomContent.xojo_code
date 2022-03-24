@@ -296,6 +296,12 @@ Inherits Ark.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function IsDefaultImported() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function ReadContent(Input As String, Rainbow As Dictionary) As String
 		  Input = Input.GuessEncoding
