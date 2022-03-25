@@ -171,6 +171,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  Self.Editor.CheckValues()
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub

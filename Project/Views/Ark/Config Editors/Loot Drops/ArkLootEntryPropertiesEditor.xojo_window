@@ -1051,6 +1051,14 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub CheckValues()
+		  Self.Focus = Nil
+		  Self.WeightField.CheckValue()
+		  Self.StatClampMultiplierField.CheckValue()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function MaxQualityMenu() As PopupMenu
 		  Return Self.QualityMenus(1)
@@ -1147,6 +1155,8 @@ End
 		  EditMaxQuantityCheck.Value = Not EditMaxQuantityCheck.Visible
 		  EditMinQualityCheck.Value = Not EditMinQualityCheck.Visible
 		  EditMinQuantityCheck.Value = Not EditMaxQualityCheck.Visible
+		  EditStatClampMultiplierCheck.Value = Not EditStatClampMultiplierCheck.Visible
+		  EditPreventGrindingCheck.Value = Not EditPreventGrindingCheck.Visible
 		  
 		  Var RightEdge As Integer
 		  If EditMinQualityCheck.Visible Or EditMaxQualityCheck.Visible Or EditChanceCheck.Visible Or EditWeightCheck.Visible Then
@@ -1281,13 +1291,8 @@ End
 #tag Events WeightSlider
 	#tag Event
 		Sub ValueChanged()
-		  If Self.Focus <> WeightField Then
-		    WeightField.DoubleValue = Me.Value
-		  End If
-		  
-		  If Not Self.mIgnoreChanges Then
-		    EditWeightCheck.Value = True
-		    RaiseEvent Changed
+		  If Self.Focus <> Self.WeightField Then
+		    Self.WeightField.DoubleValue = Me.Value
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1310,26 +1315,35 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		  If Self.Focus = Me Then
-		    WeightSlider.Value = Round(Me.DoubleValue)
 		Sub ValueChanged()
+		  Var SliderValue As Integer = Max(Min(Round(Me.DoubleValue), Self.WeightSlider.MaximumValue), Self.WeightSlider.MinimumValue)
+		  If Self.WeightSlider.Value <> SliderValue Then
+		    Self.WeightSlider.Value = SliderValue
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
+		  If Self.mIgnoreChanges = False Then
+		    Self.EditWeightCheck.Value = True
+		    RaiseEvent Changed
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events StatClampMultiplierField
 	#tag Event
-		Sub ValueChanged()
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 100000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
 		  If Not Self.mIgnoreChanges Then
 		    EditStatClampMultiplierCheck.Value = True
 		    RaiseEvent Changed
 		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 0
-		  MaxValue = 100000
 		End Sub
 	#tag EndEvent
 #tag EndEvents

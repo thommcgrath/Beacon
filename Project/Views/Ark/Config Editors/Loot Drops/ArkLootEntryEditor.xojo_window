@@ -1022,6 +1022,8 @@ End
 		    Return
 		  End If
 		  
+		  Self.EntryPropertiesEditor1.CheckValues()
+		  
 		  Var Options() As Ark.LootItemSetEntryOption
 		  For Each Entry As DictionaryEntry In Self.mSelectedEngrams
 		    Options.Add(Entry.Value)

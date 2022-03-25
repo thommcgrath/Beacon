@@ -23,12 +23,6 @@ Inherits UITweaks.ResizedTextField
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub TextChange()
-		  //
-		End Sub
-	#tag EndEvent
-
 
 	#tag Method, Flags = &h0
 		Sub CheckValue()
@@ -62,7 +56,7 @@ Inherits UITweaks.ResizedTextField
 		  End If
 		  If Self.mLastNotifiedValue <> Value Then
 		    Self.mLastNotifiedValue = Value
-		    RaiseEvent TextChange()
+		    RaiseEvent ValueChanged()
 		  End If
 		End Sub
 	#tag EndMethod
