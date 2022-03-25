@@ -574,7 +574,7 @@ End
 #tag EndEvents
 #tag Events RadiusField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.RadiusSlider.Value <> Me.DoubleValue Then
 		    Self.RadiusSlider.Value = Me.DoubleValue
 		  End If

@@ -1136,7 +1136,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If

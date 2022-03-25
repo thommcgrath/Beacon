@@ -697,7 +697,7 @@ End
 #tag EndEvents
 #tag Events MinEntriesField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -728,7 +728,7 @@ End
 #tag EndEvents
 #tag Events MaxEntriesField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -759,7 +759,7 @@ End
 #tag EndEvents
 #tag Events WeightField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If

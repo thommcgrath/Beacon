@@ -513,7 +513,7 @@ End
 #tag EndEvents
 #tag Events MinItemSetsField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -554,7 +554,7 @@ End
 #tag EndEvents
 #tag Events MaxItemSetsField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If

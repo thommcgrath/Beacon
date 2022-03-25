@@ -1433,7 +1433,7 @@ End
 #tag EndEvents
 #tag Events OffsetFields
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1484,7 +1484,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1665,7 +1665,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1698,7 +1698,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1731,7 +1731,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1764,7 +1764,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1797,7 +1797,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1830,7 +1830,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If

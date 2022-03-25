@@ -128,7 +128,7 @@ Inherits UITweaks.ResizedTextField
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TextChange()
+		Event ValueChanged()
 	#tag EndHook
 
 

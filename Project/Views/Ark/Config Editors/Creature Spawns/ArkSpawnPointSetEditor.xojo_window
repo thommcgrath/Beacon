@@ -2145,7 +2145,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2182,7 +2182,7 @@ End
 #tag EndEvents
 #tag Events WaterMinHeightField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2218,7 +2218,7 @@ End
 #tag EndEvents
 #tag Events SpreadRadiusField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2254,7 +2254,7 @@ End
 #tag EndEvents
 #tag Events TameDistanceField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2290,7 +2290,7 @@ End
 #tag EndEvents
 #tag Events StructureDistanceField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2326,7 +2326,7 @@ End
 #tag EndEvents
 #tag Events PlayerDistanceField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2376,7 +2376,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If

@@ -1310,16 +1310,16 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
 		  If Self.Focus = Me Then
 		    WeightSlider.Value = Round(Me.DoubleValue)
+		Sub ValueChanged()
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events StatClampMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditStatClampMultiplierCheck.Value = True
 		    RaiseEvent Changed

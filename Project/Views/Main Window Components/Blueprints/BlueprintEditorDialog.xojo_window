@@ -3299,7 +3299,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
@@ -3312,7 +3312,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
@@ -3390,7 +3390,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
@@ -3410,7 +3410,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub ValueChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
