@@ -228,6 +228,7 @@ Inherits Beacon.Thread
 		    Next
 		    DifficultyScale = DifficultyTotal / Maps.Count
 		    
+		    Var ImpliedDifficulty As Boolean
 		    Var DifficultyValue As Double
 		    If CommandLineOptions.HasKey("OverrideOfficialDifficulty") And CommandLineOptions.DoubleValue("OverrideOfficialDifficulty") > 0 Then
 		      DifficultyValue = CommandLineOptions.DoubleValue("OverrideOfficialDifficulty")
@@ -237,13 +238,16 @@ Inherits Beacon.Thread
 		      DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
 		    ElseIf (Self.mDestinationProject Is Nil) = False Then
 		      DifficultyValue = Self.mDestinationProject.Difficulty.DifficultyValue
+		      ImpliedDifficulty = True
 		    Else
 		      DifficultyValue = DifficultyScale
+		      ImpliedDifficulty = True
 		    End If
 		    
-		    Project.AddConfigGroup(New Ark.Configs.Difficulty(DifficultyValue))
+		    Var DifficultyConfig As New Ark.Configs.Difficulty(DifficultyValue)
+		    DifficultyConfig.IsImplicit = ImpliedDifficulty
+		    Project.AddConfigGroup(DifficultyConfig)
 		  Catch Err As RuntimeException
-		    Project.AddConfigGroup(New Ark.Configs.Difficulty(5.0))
 		  End Try
 		  
 		  If (Profile Is Nil) = False Then

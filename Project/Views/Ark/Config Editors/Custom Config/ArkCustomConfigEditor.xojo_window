@@ -122,6 +122,11 @@ End
 		      Continue
 		    End If
 		    
+		    If CreatedConfig.IsImplicit Then
+		      // This was just there to support other editors, don't import it.
+		      Continue
+		    End If
+		    
 		    If SelfProject.HasConfigGroup(InternalName) Then
 		      Var CurrentConfig As Ark.ConfigGroup = SelfProject.ConfigGroup(InternalName, False)
 		      If (CurrentConfig Is Nil) = False Then

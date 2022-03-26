@@ -342,10 +342,11 @@ Inherits Beacon.Project
 		    If BaseDifficulty Is Nil Then
 		      // Should never happen, but just in case
 		      Clone = New Ark.Configs.Difficulty
+		      Clone.IsImplicit = True
 		    Else
 		      Clone = Ark.Configs.CloneInstance(BaseDifficulty)
+		      Clone.IsImplicit = BaseDifficulty.IsImplicit
 		    End If
-		    Clone.IsImplicit = BaseDifficulty.IsImplicit
 		    Return Clone
 		  End If
 		End Function
