@@ -906,6 +906,7 @@ End
 		  Next
 		  
 		  Config = New Ark.Configs.CraftingCosts
+		  Config.IsImplicit = False
 		  Var NumItems As Integer = EngramDict.KeyCount
 		  Var ProcessedItems As Integer
 		  Self.mProgressWindow.Progress = ProcessedItems / NumItems

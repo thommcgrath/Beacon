@@ -331,7 +331,7 @@ Inherits Beacon.Project
 		    Var Group As Ark.ConfigGroup = Ark.Configs.CreateInstance(InternalName)
 		    If (Group Is Nil) = False Then
 		      Group.IsImplicit = True
-		      Self.AddConfigGroup(Group, InternalName)
+		      Self.AddConfigGroup(Group, SetName)
 		    End If
 		    Return Group
 		  ElseIf SetName <> BaseConfigSetName And InternalName = Ark.Configs.NameDifficulty Then
@@ -516,6 +516,7 @@ Inherits Beacon.Project
 		      If NewSets.Count > 0 Then
 		        If SpawnConfig Is Nil Then
 		          SpawnConfig = Ark.Configs.SpawnPoints(Self.ConfigGroup(Ark.Configs.NameSpawnPoints, True))
+		          SpawnConfig.IsImplicit = False
 		        End If
 		        
 		        Var Override As Ark.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeAppend)

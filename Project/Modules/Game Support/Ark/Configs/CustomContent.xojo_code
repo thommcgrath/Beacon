@@ -60,6 +60,12 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Function HasContent() As Boolean
+		  Return Self.mGameIniContent.IsEmpty = False Or Self.mGameUserSettingsIniContent.IsEmpty = False
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  Var Rainbow As Dictionary
 		  If EncryptedData.HasKey("Rainbow") Then

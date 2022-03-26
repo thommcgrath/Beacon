@@ -42,6 +42,12 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Function HasContent() As Boolean
+		  Return (Self.mCosts Is Nil) = False And Self.mCosts.KeyCount > 0
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

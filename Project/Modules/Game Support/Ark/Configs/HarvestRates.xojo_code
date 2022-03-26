@@ -59,6 +59,12 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Function HasContent() As Boolean
+		  Return Self.mClampResourceHarvestDamage = True Or Self.mDinoHarvestingDamageMultiplier <> 1.0 Or Self.mHarvestAmountMultiplier <> 1.0 Or Self.mHarvestHealthMultiplier <> 1.0 Or Self.mPlayerHarvestingDamageMultiplier <> 1.0 Or Self.mUseOptimizedRates = True Or ((Self.mOverrides Is Nil) = False And Self.mOverrides.Count > 0)
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

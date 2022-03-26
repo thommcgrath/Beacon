@@ -655,9 +655,9 @@ End
 		    Var Temp As Ark.CraftingCost = WorkingConfig.Cost(Engram)
 		    Var Cost As Ark.MutableCraftingCost
 		    If Temp Is Nil Then
-		      Cost = New Ark.MutableCraftingCost(Temp)
-		    Else
 		      Cost = New Ark.MutableCraftingCost(Engram, True)
+		    Else
+		      Cost = New Ark.MutableCraftingCost(Temp)
 		    End If
 		    If Cost.Count = 0 Then
 		      Continue

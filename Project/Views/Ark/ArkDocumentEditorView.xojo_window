@@ -1406,6 +1406,7 @@ End
 		      Self.CurrentConfigName = Tool.FirstGroup
 		    End If
 		    Call Self.CurrentPanel.RunTool(Tool.UUID)
+		    Self.UpdateConfigList()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1539,6 +1540,7 @@ End
 		    End If
 		    
 		    Call Self.CurrentPanel.RunTool(Choice.Tag)
+		    Self.UpdateConfigList()
 		  End Select
 		End Sub
 	#tag EndEvent

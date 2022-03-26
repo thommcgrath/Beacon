@@ -44,6 +44,16 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Function HasContent() As Boolean
+		  For Each Value As NullableDouble In Self.mValues
+		    If IsNull(Value) = False Then
+		      Return True
+		    End If
+		  Next Value
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

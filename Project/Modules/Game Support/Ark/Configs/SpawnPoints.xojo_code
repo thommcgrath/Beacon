@@ -53,6 +53,12 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Function HasContent() As Boolean
+		  Return (Self.mSpawnPoints Is Nil) = False And Self.mSpawnPoints.KeyCount > 0
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  

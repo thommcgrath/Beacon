@@ -111,7 +111,7 @@ End
 		  Var Organizer As New Ark.ConfigOrganizer(Ark.ConfigFileGame, Ark.HeaderShooterGame, Config.GameIniContent)
 		  Organizer.Add(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, Config.GameUserSettingsIniContent)
 		  
-		  For Each CreatedConfig As Ark.ConfigGroup In Project.ImplementedConfigs
+		  For Each CreatedConfig As Ark.ConfigGroup In Project.ImplementedConfigs(Project.ActiveConfigSet)
 		    Var InternalName As String = CreatedConfig.InternalName
 		    If InternalName = Ark.Configs.NameCustomContent Then
 		      Continue

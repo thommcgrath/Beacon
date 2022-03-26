@@ -32,6 +32,7 @@ Inherits BeaconSubview
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = Ark.Configs.CreateInstance(InternalName)
+		    Config.IsImplicit = False
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
