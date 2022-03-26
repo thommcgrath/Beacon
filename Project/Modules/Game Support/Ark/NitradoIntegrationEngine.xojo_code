@@ -496,6 +496,13 @@ Inherits Ark.IntegrationEngine
 		    Return
 		  End Try
 		  
+		  If RequiredFileSize <= 0 Then
+		    // Nothing to download
+		    Transfer.Content = ""
+		    Transfer.Success = True
+		    Return
+		  End If
+		  
 		  Var FetchURL As String
 		  Try
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)

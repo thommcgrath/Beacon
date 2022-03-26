@@ -459,7 +459,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event ShouldDeployProfiles(SelectedProfiles() As Ark.ServerProfile)
+		Event ShouldDeployProfiles(SelectedProfiles() As Beacon.ServerProfile)
 	#tag EndHook
 
 
@@ -645,7 +645,7 @@ End
 		  Else
 		    DeployItem = New MenuItem("Deploy This Server…")
 		  End If
-		  Var DeployProfiles() As Ark.ServerProfile
+		  Var DeployProfiles() As Beacon.ServerProfile
 		  Var NitradoProfiles() As Ark.NitradoServerProfile
 		  Var LocalProfiles() As Ark.LocalServerProfile
 		  For Idx As Integer = 0 To Me.LastRowIndex
@@ -711,7 +711,7 @@ End
 		    Var Board As New Clipboard
 		    Board.Text = ProfileID
 		  Case "Deploy These Servers…", "Deploy This Server…"
-		    Var SelectedProfiles() As Ark.ServerProfile = HitItem.Tag
+		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
 		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)
 		  Case "Open Nitrado Dashboard"
 		    Var NitradoProfiles() As Ark.NitradoServerProfile = HitItem.Tag

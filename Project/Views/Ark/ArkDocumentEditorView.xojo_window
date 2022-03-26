@@ -904,7 +904,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Ark.ServerProfile)
+		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Beacon.ServerProfile)
 		  #Pragma Unused Sender
 		  Self.BeginDeploy(SelectedProfiles)
 		End Sub
