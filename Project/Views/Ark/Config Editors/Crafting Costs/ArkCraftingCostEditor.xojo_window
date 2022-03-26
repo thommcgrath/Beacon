@@ -387,9 +387,9 @@ End
 		    Return
 		  End Select
 		  
-		  Self.Changed = True
 		  Self.mTarget.Add(Ingredient)
 		  Me.RowTagAt(Row) = Ingredient
+		  Self.Changed = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
