@@ -543,7 +543,7 @@ Protected Class IntegrationEngine
 		    Case SimpleHTTP.SynchronousHTTPSocket.Phases.Sending
 		      Var Sent As Int64 = Self.mActiveSocket.SentBytes
 		      Var Total As Int64 = Self.mActiveSocket.SendingBytes
-		      If Total > -1 Then
+		      If Total > 0 Then
 		        Var Percent As Double = Sent / Total
 		        Return "Uploaded " + Beacon.BytesToString(Sent) + " of " + Beacon.BytesToString(Total) + " (" + Percent.ToString(Locale.Current, "0%") + ")"
 		      Else
@@ -552,7 +552,7 @@ Protected Class IntegrationEngine
 		    Case SimpleHTTP.SynchronousHTTPSocket.Phases.Receiving
 		      Var Received As Int64 = Self.mActiveSocket.ReceivedBytes
 		      Var Total As Int64 = Self.mActiveSocket.ReceivingBytes
-		      If Total > -1 Then
+		      If Total > 0 Then
 		        Var Percent As Double = Received / Total
 		        Return "Downloaded " + Beacon.BytesToString(Received) + " of " + Beacon.BytesToString(Total) + " (" + Percent.ToString(Locale.Current, "0%") + ")"
 		      Else
