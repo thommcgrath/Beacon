@@ -30,6 +30,27 @@ Inherits URLConnection
 	#tag EndEvent
 
 	#tag Event
+		Sub FileReceived(URL As String, HTTPStatus As Integer, file As FolderItem)
+		  Var Content As MemoryBlock
+		  Try
+		    Content = File.Read
+		    File.Remove
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.mLastContent = Content
+		  Self.mLastHTTPStatus = HTTPStatus
+		  Self.mLastException = Nil
+		  Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Finished
+		  RaiseEvent PageReceived(URL, HTTPStatus, Content)
+		  If Self.mOriginThread <> Nil Then
+		    Self.mOriginThread.Resume
+		  End If
+		  Self.mOriginThread = Nil
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReceivingProgressed(bytesReceived As Int64, totalBytes As Int64, newData As String)
 		  Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Receiving
 		  Self.mReceivedBytes = BytesReceived + NewData.Bytes
@@ -107,7 +128,11 @@ Inherits URLConnection
 		    Self.RequestHeader("User-Agent") = App.UserAgent
 		    Self.mLastURL = URL
 		    Self.mPhase = SimpleHTTP.SynchronousHTTPSocket.Phases.Connecting
-		    Super.Send(Method, URL)
+		    #if TargetWindows And XojoVersion >= 2022.01
+		      Super.Send(Method, URL, FolderItem.TemporaryFile)
+		    #else
+		      Super.Send(Method, URL)
+		    #endif
 		    If Self.mOriginThread <> Nil Then
 		      Self.mOriginThread.Pause
 		    End If
