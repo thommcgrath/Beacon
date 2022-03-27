@@ -624,7 +624,7 @@ End
 		      If ConfigMap.HasKey(Key) Then
 		        Map = ConfigMap.Value(Key)
 		      End If
-		      ShowAsReplace = Map.IndexOf(Self.mDestination.UUID) > -1
+		      ShowAsReplace = Map.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet) > -1
 		    Else
 		      Self.List.CellValueAt(RowIndex, Self.ColumnConfigSet) = ""
 		    End If
