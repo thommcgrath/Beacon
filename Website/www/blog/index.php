@@ -79,13 +79,6 @@ BeaconTemplate::FinishStyles();
 $results = $database->Query('SELECT article_id, article_slug, subject FROM blog_articles WHERE publish_date < CURRENT_TIMESTAMP ORDER BY publish_date DESC LIMIT 10;');
 
 ?><div id="knowledge_wrapper">
-	<div id="knowledge_main">
-		<?php echo $article_data['html']; ?>
-		<div class="navigation_footer double_column separator-color">
-			<div class="previous_article column"><?php if (!is_null($previous_article)) { ?><a href="/blog/<?php echo $previous_article['slug']; ?>">&laquo; <?php echo htmlentities($previous_article['subject']); ?></a><span class="smaller text-lighter"><br><?php echo htmlentities($previous_article['preview']); ?></span><?php } else { ?>&nbsp;<?php } ?></div>
-			<div class="next_article column"><?php if (!is_null($next_article)) { ?><a href="/blog/<?php echo $next_article['slug']; ?>"><?php echo htmlentities($next_article['subject']); ?> &raquo;</a><span class="smaller text-lighter"><br><?php echo htmlentities($next_article['preview']); ?></span><?php } else { ?>&nbsp;<?php } ?></div>
-		</div>
-	</div>
 	<div id="knowledge_contents">
 		<p>Recent Entries</p>
 		<ul>
@@ -107,6 +100,13 @@ $results = $database->Query('SELECT article_id, article_slug, subject FROM blog_
 			<li><a href="/blog/json.php">JSON Feed</a></li>
 			<li><a href="/blog/rss.php">RSS Feed</a></li>
 		</ul>
+	</div>
+	<div id="knowledge_main">
+		<?php echo $article_data['html']; ?>
+		<div class="navigation_footer double_column separator-color">
+			<div class="previous_article column"><?php if (!is_null($previous_article)) { ?><a href="/blog/<?php echo $previous_article['slug']; ?>">&laquo; <?php echo htmlentities($previous_article['subject']); ?></a><span class="smaller text-lighter"><br><?php echo htmlentities($previous_article['preview']); ?></span><?php } else { ?>&nbsp;<?php } ?></div>
+			<div class="next_article column"><?php if (!is_null($next_article)) { ?><a href="/blog/<?php echo $next_article['slug']; ?>"><?php echo htmlentities($next_article['subject']); ?> &raquo;</a><span class="smaller text-lighter"><br><?php echo htmlentities($next_article['preview']); ?></span><?php } else { ?>&nbsp;<?php } ?></div>
+		</div>
 	</div>
 </div><?php
 
