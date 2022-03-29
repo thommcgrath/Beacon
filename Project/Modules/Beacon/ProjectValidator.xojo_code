@@ -6,7 +6,7 @@ Protected Class ProjectValidator
 		  AddHandler mThread.Run, WeakAddressOf mThread_Run
 		  AddHandler mThread.UserInterfaceUpdate, WeakAddressOf mThread_UserInterfaceUpdate
 		  Self.mShowUITimer = New Timer
-		  Self.mShowUITimer.Period = 2000
+		  Self.mShowUITimer.Period = 1000
 		  Self.mShowUITimer.RunMode = Timer.RunModes.Off
 		  AddHandler mShowUITimer.Action, WeakAddressOf mShowUITimer_Action
 		End Sub
