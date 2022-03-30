@@ -52,8 +52,16 @@
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.8.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert NSAppAccentColorName -string 'BeaconBrand' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert ATSApplicationFontsPath -string 'Fonts/' " + App + ".plist")
+					If DebugBuild = False Then
+					Call DoShellCommand("/usr/bin/plutil -insert SUFeedURL -string 'https://api.usebeacon.app/sparkle.php' " + App + ".plist")
+					Else
+					Call DoShellCommand("/usr/bin/plutil -insert SUFeedURL -string 'https://lab-api.usebeacon.app/sparkle.php' " + App + ".plist")
+					End If
 					Call DoShellCommand("/usr/bin/plutil -insert SUPublicEDKey -string 'E8nLS+ZV7vehv1LV7BOrGFpvVk6SKFdG7JxMvluk4FU=' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert SUEnableInstallerLauncherService -bool YES " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert SUEnableAutomaticChecks -bool YES " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert SUScheduledCheckInterval -integer 14400 " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert SUAutomaticallyUpdate -bool YES " + App + ".plist")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0

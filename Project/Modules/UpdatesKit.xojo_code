@@ -211,7 +211,7 @@ Protected Module UpdatesKit
 		      End If
 		      
 		      Var Updater As New SUUpdaterMBS
-		      Updater.FeedURL = CheckURL()
+		      Updater.FeedURL = URL
 		      Updater.AutomaticallyChecksForUpdates = Preferences.OnlineEnabled
 		      Updater.AutomaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
 		      Updater.UpdateCheckInterval = CheckInterval
