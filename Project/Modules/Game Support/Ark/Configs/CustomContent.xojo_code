@@ -84,7 +84,7 @@ Inherits Ark.ConfigGroup
 		  End If
 		  
 		  If SaveData.HasKey(Ark.ConfigFileGameUserSettings) Then
-		    Self.mGameIniContent = Self.ReadContent(SaveData.Value(Ark.ConfigFileGameUserSettings), Rainbow)
+		    Self.mGameUserSettingsIniContent = Self.ReadContent(SaveData.Value(Ark.ConfigFileGameUserSettings), Rainbow)
 		  End If
 		End Sub
 	#tag EndEvent
