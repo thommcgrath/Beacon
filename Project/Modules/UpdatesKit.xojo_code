@@ -217,6 +217,9 @@ Protected Module UpdatesKit
 		      Updater.UpdateCheckInterval = CheckInterval
 		      Updater.SendsSystemProfile = False
 		      Updater.UserAgentString = App.UserAgent
+		      If Updater.AutomaticallyChecksForUpdates And (Updater.LastUpdateCheckDateTime Is Nil Or DateTime.Now.SecondsFrom1970 - Updater.LastUpdateCheckDateTime.SecondsFrom1970 >= Updater.UpdateCheckInterval) Then 
+		        Updater.CheckForUpdatesInBackground
+		      End If
 		      mMacSparkle = Updater
 		    #elseif TargetWindows
 		      Var SparkleDLL As FolderItem = App.FrameworksFolder.Child("WinSparkle.dll")
