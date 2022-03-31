@@ -508,15 +508,36 @@ End
 		  
 		  Select Case Notification.Name
 		  Case UpdatesKit.Notification_Error
-		    If Self.ShowConfirm("Unable to check for updates.", "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible.", "Report Now", "Cancel") Then
-		      App.StartTicket()
+		    If Self.mErrorShown Then
+		      Return
 		    End If
+		    
+		    Var Reason As String
+		    Try
+		      Reason = Notification.UserData
+		      If Reason.IsEmpty = False Then
+		        Reason = " The updater said: " + Reason
+		        If Reason.EndsWith(".") = False And Reason.EndsWith("!") = False And Reason.EndsWith("?") = False Then
+		          Reason = Reason + "."
+		        End If
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Var ReportError As Boolean = Self.ShowConfirm("Unable to check for updates.", "Uh oh, something seems to be wrong." + Reason + " Please report this problem so it can be fixed as soon as possible.", "Report Now", "Cancel")
+		    Self.mErrorShown = True
 		    
 		    If UpdatesKit.AvailableUpdateRequired Then
 		      Quit
-		    Else
-		      Self.Close
+		      Return
 		    End If
+		    
+		    If ReportError Then
+		      Self.Hide()
+		      App.StartTicket()
+		    End If
+		    
+		    Self.Close
 		  Case UpdatesKit.Notification_NoUpdates
 		    Self.ShowAlert("You are using the latest version.", "Beacon automatically checks for updates on each launch so you won't miss a release.")
 		    Self.Close
@@ -639,6 +660,10 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mErrorShown As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Shared mInstance As UpdateWindow

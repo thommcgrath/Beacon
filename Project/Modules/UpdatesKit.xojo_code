@@ -88,7 +88,7 @@ Protected Module UpdatesKit
 		      mWinSparkle.CheckUpdateWithUI
 		    #endif
 		  #else
-		    If mChecking Or ((mLastCheckTime Is Nil) = False And mLastCheckTime.SecondsFrom1970 > DateTime.Now.SecondsFrom1970 - 30) Then
+		    If mChecking Then
 		      Return
 		    End If
 		    
@@ -459,8 +459,8 @@ Protected Module UpdatesKit
 		  Try
 		    Dict = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
-		    NotificationKit.Post(Notification_Error, "Invalid definition file.")
 		    App.Log(Err, CurrentMethodName, "Invalid definition file.")
+		    NotificationKit.Post(Notification_Error, "Invalid definition file.")
 		    Return
 		  End Try
 		  
@@ -508,8 +508,8 @@ Protected Module UpdatesKit
 		    
 		    NotificationKit.Post(Notification_UpdateAvailable, LatestBuild)
 		  Catch Err As RuntimeException
-		    NotificationKit.Post(Notification_Error, "Invalid definition file.")
 		    App.Log(Err, CurrentMethodName, "Invalid definition file.")
+		    NotificationKit.Post(Notification_Error, "Invalid definition file.")
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -523,8 +523,8 @@ Protected Module UpdatesKit
 		    mSocket = Nil
 		  End If
 		  
-		  NotificationKit.Post(Notification_Error, Error.Message)
 		  App.Log("Update check socket disconnect: " + Error.Message)
+		  NotificationKit.Post(Notification_Error, Error.Message)
 		End Sub
 	#tag EndMethod
 
@@ -540,8 +540,8 @@ Protected Module UpdatesKit
 		      mSocket = Nil
 		    End If
 		    
-		    NotificationKit.Post(Notification_Error, "The update definition was not found.")
 		    App.Log("Update check definition error " + HTTPStatus.ToString(Locale.Raw, "0"))
+		    NotificationKit.Post(Notification_Error, "The update definition was not found.")
 		    Return
 		  End If
 		End Sub
