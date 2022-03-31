@@ -10,7 +10,7 @@ Begin BeaconWindow PreferencesWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   390
+   Height          =   478
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -175,7 +175,7 @@ Begin BeaconWindow PreferencesWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   292
+      Top             =   380
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -217,7 +217,7 @@ Begin BeaconWindow PreferencesWindow
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   328
+         Top             =   416
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -253,7 +253,7 @@ Begin BeaconWindow PreferencesWindow
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   328
+         Top             =   416
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -283,7 +283,7 @@ Begin BeaconWindow PreferencesWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   172
+      Top             =   260
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -314,7 +314,7 @@ Begin BeaconWindow PreferencesWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   240
+         Top             =   328
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -349,7 +349,7 @@ Begin BeaconWindow PreferencesWindow
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   240
+         Top             =   328
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -381,12 +381,108 @@ Begin BeaconWindow PreferencesWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   208
+         Top             =   296
          Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
          Width           =   240
+      End
+   End
+   Begin GroupBox AppearanceGroup
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Appearance"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   76
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   172
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   280
+      Begin PopupMenu DarkModeMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AppearanceGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   128
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   210
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   152
+      End
+      Begin Label DarkModeLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AppearanceGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Theme:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   208
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   76
       End
    End
 End
@@ -403,15 +499,26 @@ End
 
 	#tag Event
 		Sub Open()
+		  Var Delta As Integer
+		  
 		  #if UpdatesKit.UseSparkle
 		    Self.UpdateSoundCheck.Visible = False
 		    
-		    Var Delta As Integer = Self.UpdateSoundCheck.Height + 12
+		    Delta = Self.UpdateSoundCheck.Height + 12
 		    Self.SoundsGroup.Height = Self.SoundsGroup.Height - Delta
 		    Self.UpdatesGroup.Top = Self.UpdatesGroup.Top - Delta
 		    Self.ConnectionsGroup.Top = Self.ConnectionsGroup.Top - Delta
 		    Self.Height = Self.Height - Delta
 		  #endif
+		  
+		  If BeaconUI.DarkModeSupported = False Then
+		    Self.AppearanceGroup.Visible = False
+		    
+		    Delta = Self.AppearanceGroup.Height + 12
+		    Self.UpdatesGroup.Top = Self.UpdatesGroup.Top - Delta
+		    Self.ConnectionsGroup.Top = Self.ConnectionsGroup.Top - Delta
+		    Self.Height = Self.Height - Delta
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -553,6 +660,15 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ChannelLabel
+	#tag Event
+		Sub Open()
+		  Me.SizeToFit
+		  Self.ChannelMenu.Left = Me.Right + 12
+		  Self.ChannelMenu.Width = Self.UpdatesGroup.Width - (Me.Width + 52)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events AutoupdateCheckbox
 	#tag Event
 		Sub Action()
@@ -566,6 +682,50 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Value = Preferences.AutomaticallyDownloadsUpdates
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DarkModeMenu
+	#tag Event
+		Sub Open()
+		  Me.AddRow("Match System", Preferences.DarkModeOptions.FollowSystem)
+		  Me.AddRow("Light", Preferences.DarkModeOptions.ForceLight)
+		  #if TargetMacOS
+		    Me.AddRow("Dark", Preferences.DarkModeOptions.ForceDark)
+		  #endif
+		  
+		  Try
+		    Me.SelectRowWithTag(Preferences.DarkMode)
+		  Catch Err As RuntimeException
+		    Me.SelectedRowIndex = 0
+		  End Try
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Var Mode As Preferences.DarkModeOptions = Me.RowTagAt(Me.SelectedRowIndex)
+		  Preferences.DarkMode = Mode
+		  
+		  #if TargetWindows
+		    Static RestartWarned As Boolean
+		    If RestartWarned = False Then
+		      Self.ShowAlert("A restart is required to see the effect.", "Please relaunch Beacon when you're ready.")
+		      RestartWarned = True
+		    End If
+		  #endif
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DarkModeLabel
+	#tag Event
+		Sub Open()
+		  Me.SizeToFit
+		  Self.DarkModeMenu.Left = Me.Right + 12
+		  Self.DarkModeMenu.Width = Self.AppearanceGroup.Width - (Me.Width + 52)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -415,6 +415,47 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  
+			  Var Default As Integer = CType(DarkModeOptions.FollowSystem, Integer)
+			  #if TargetWindows
+			    If SystemInformationMBS.IsWindows11(True) = False Then
+			      Default = CType(DarkModeOptions.ForceLight, Integer)
+			    End If
+			  #endif
+			  
+			  Var IntValue As Integer = mManager.IntegerValue("Dark Mode", Default)
+			  Return CType(IntValue, DarkModeOptions)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = DarkMode Then
+			    Return
+			  End If
+			  
+			  mManager.IntegerValue("Dark Mode") = CType(Value, Integer)
+			  
+			  #if TargetMacOS
+			    Select Case Value
+			    Case DarkModeOptions.ForceLight
+			      NSAppearanceMBS.SetAppearance(App, NSAppearanceMBS.AppearanceNamed(NSAppearanceMBS.NSAppearanceNameAqua))
+			    Case DarkModeOptions.ForceDark
+			      NSAppearanceMBS.SetAppearance(App, NSAppearanceMBS.AppearanceNamed(NSAppearanceMBS.NSAppearanceNameDarkAqua))
+			    Case DarkModeOptions.FollowSystem
+			      NSAppearanceMBS.SetAppearance(App, Nil)
+			    End Select
+			    
+			    App.AppearanceChanged()
+			  #endif
+			End Set
+		#tag EndSetter
+		Protected DarkMode As Preferences.DarkModeOptions
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Deploy: Create Backup", True)
 			End Get
 		#tag EndGetter
@@ -883,6 +924,13 @@ Protected Module Preferences
 
 	#tag Constant, Name = Notification_RecentsChanged, Type = Text, Dynamic = False, Default = \"Recent Documents Changed", Scope = Protected
 	#tag EndConstant
+
+
+	#tag Enum, Name = DarkModeOptions, Type = Integer, Flags = &h1
+		FollowSystem
+		  ForceLight
+		ForceDark
+	#tag EndEnum
 
 
 	#tag ViewBehavior

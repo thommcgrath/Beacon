@@ -96,6 +96,18 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function DarkModeSupported() As Boolean
+		  #if TargetMacOS
+		    Return True
+		  #elseif TargetWindows
+		    Return SystemInformationMBS.WinMajorVersion >= 10 And SystemInformationMBS.WinBuildNumber >= 18362
+		  #else
+		    Return False
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color, ChangeForeground As Boolean = True, RequiredContrast As Double = 4.5) As Color
 		  If mContrastingColors Is Nil Then
 		    mContrastingColors = New Dictionary

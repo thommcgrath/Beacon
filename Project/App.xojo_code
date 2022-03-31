@@ -4,9 +4,7 @@ Inherits Application
 Implements NotificationKit.Receiver,Beacon.Application
 	#tag Event
 		Sub AppearanceChanged()
-		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
-		  
-		  OmniBar.RebuildColors()
+		  Self.AppearanceChanged()
 		End Sub
 	#tag EndEvent
 
@@ -166,6 +164,22 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    UntitledSeparator6.Visible = False
 		  #endif
 		  Self.RebuildRecentMenu
+		  
+		  If BeaconUI.DarkModeSupported Then
+		    Var DarkMode As Preferences.DarkModeOptions = Preferences.DarkMode
+		    #if TargetWindows
+		      If DarkMode = Preferences.DarkModeOptions.ForceLight Then
+		        System.EnvironmentVariable("XOJO_WIN32_DARKMODE_DISABLED") = "True"
+		      End If
+		    #elseif TargetMacOS
+		      Select Case DarkMode
+		      Case Preferences.DarkModeOptions.ForceLight
+		        NSAppearanceMBS.SetAppearance(Self, NSAppearanceMBS.AppearanceNamed(NSAppearanceMBS.NSAppearanceNameAqua))
+		      Case Preferences.DarkModeOptions.ForceDark
+		        NSAppearanceMBS.SetAppearance(Self, NSAppearanceMBS.AppearanceNamed(NSAppearanceMBS.NSAppearanceNameDarkAqua))
+		      End Select
+		    #endif
+		  End If
 		  
 		  SystemColors.Init
 		  
@@ -399,6 +413,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Function
 	#tag EndMenuHandler
 
+
+	#tag Method, Flags = &h0
+		Sub AppearanceChanged()
+		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
+		  OmniBar.RebuildColors()
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
