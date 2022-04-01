@@ -4899,6 +4899,13 @@ CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON publ
 
 
 --
+-- Name: blog_articles insert_blog_article_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER insert_blog_article_timestamp_trigger BEFORE INSERT ON public.blog_articles FOR EACH ROW EXECUTE FUNCTION public.update_blog_article_timestamp();
+
+
+--
 -- Name: support_articles support_articles_search_sync_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -4937,7 +4944,7 @@ CREATE TRIGGER update_blog_article_hash_trigger BEFORE INSERT OR UPDATE ON publi
 -- Name: blog_articles update_blog_article_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE INSERT OR UPDATE ON public.blog_articles FOR EACH ROW EXECUTE FUNCTION public.update_blog_article_timestamp();
+CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE UPDATE ON public.blog_articles FOR EACH ROW WHEN ((old.content_markdown IS DISTINCT FROM new.content_markdown)) EXECUTE FUNCTION public.update_blog_article_timestamp();
 
 
 --
