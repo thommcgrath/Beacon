@@ -2385,7 +2385,7 @@ UNION
     ('/blog/'::text || (blog_articles.article_slug)::text) AS url,
     NULL::integer AS min_version,
     NULL::integer AS max_version,
-    blog_articles.last_updated AS moment,
+    GREATEST(blog_articles.last_updated, blog_articles.publish_date) AS moment,
     NULL::text AS mac_os_version,
     NULL::text AS win_os_version,
     3 AS stage
