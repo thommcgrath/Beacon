@@ -67,46 +67,45 @@ BeaconErrors::StartWatching();
 (function() {
 	$_SERVER['CSP_NONCE'] = base64_encode(random_bytes(12));
 	
-	$policies = array(
-		'default-src' => array(
+	$policies = [
+		'default-src' => [
 			"'self'",
 			"https://*.beaconapp.cc",
 			"https://*.usebeacon.app",
 			"https://*.stripe.com"
-		),
-		'frame-src' => array(
+		],
+		'frame-src' => [
 			"'self'",
 			"https://www.youtube-nocookie.com",
-			"https://*.vimeo.com",
+			"https://player.vimeo.com",
 			"https://*.stripe.com"
-		),
-		'style-src' => array(
+		],
+		'style-src' => [
 			"'self'",
 			"https://*.typekit.net/"
-		),
-		'script-src' => array(
+		],
+		'script-src' => [
 			"'self'",
 			"https://*.stripe.com"
-		),
-		'font-src' => array(
+		],
+		'font-src' => [
 			"'self'",
 			"https://use.typekit.net"
-		),
-		'object-src' => array(
+		],
+		'object-src' => [
 			"'none'"
-		),
-		'base-uri' => array(
+		],
+		'base-uri' => [
 			"'self'"
-		),
-		'sandbox' => array(
+		],
+		'sandbox' => [
 			'allow-forms',
 			'allow-same-origin',
 			'allow-scripts',
 			'allow-downloads'
-		),
-		'upgrade-insecure-requests' => array(
-		)
-	);
+		],
+		'upgrade-insecure-requests' => []
+	];
 	
 	$browser = isset($_SERVER['HTTP_USER_AGENT']) ? get_browser($_SERVER['HTTP_USER_AGENT'], true) : null;
 	$use_nonces = !(is_array($browser) && $browser['browser'] == 'Edge');
