@@ -77,7 +77,7 @@ BeaconErrors::StartWatching();
 		'frame-src' => array(
 			"'self'",
 			"https://www.youtube-nocookie.com",
-			"https://player.vimeo.com",
+			"https://*.vimeo.com",
 			"https://*.stripe.com"
 		),
 		'style-src' => array(
