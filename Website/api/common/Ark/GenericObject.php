@@ -385,12 +385,13 @@ class GenericObject implements \JsonSerializable {
 		}
 		$arr = array();
 		while (!$results->EOF()) {
-			$arr[] = array(
+			$arr[] = [
 				'object_id' => $results->Field('object_id'),
+				'min_version' => $results->Field('min_version'),
 				'group' => $results->Field('from_table'),
 				'label' => $results->Field('label'),
 				'tag' => $results->Field('tag')
-			);
+			];
 			$results->MoveNext();
 		}
 		return $arr;
