@@ -752,6 +752,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    
 		    For Each Option As Ark.LootItemSetEntryOption In Entry
 		      Var Replacement As New Ark.MutableLootItemSetEntry(Entry)
+		      Replacement.UUID = New v4UUID
 		      Replacement.ResizeTo(0)
 		      Replacement(0) = New Ark.LootItemSetEntryOption(Option)
 		      Replacements.Add(Replacement)

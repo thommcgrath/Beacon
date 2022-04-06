@@ -257,7 +257,7 @@ End
 		    End If
 		  Next
 		  
-		  Self.UpdateEntryList()
+		  Self.UpdateEntryList(Entries)
 		  RaiseEvent Updated
 		End Sub
 	#tag EndMethod
