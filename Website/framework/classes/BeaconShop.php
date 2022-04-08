@@ -31,7 +31,7 @@ abstract class BeaconShop {
 					$licenses = $database->Query('SELECT EXTRACT(epoch FROM GREATEST(MAX(expiration), DATE_TRUNC(\'day\', CURRENT_TIMESTAMP + \'1 day\'))) AS base_expiration FROM licenses INNER JOIN purchases ON (licenses.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 AND licenses.product_id = $2;', $email_id, $product_id);
 					$database->Query('INSERT INTO licenses (purchase_id, product_id, expiration) VALUES ($1, $2, to_timestamp($3));', $purchase_id, $product_id, $update_seconds + intval($licenses->Field('base_expiration')));
 				}
-				$database->Query('DELETE FROM stw_applicants WHERE email_id = $1 AND desired_product = $2;', $email_id, $product_id);
+				$database->Query('DELETE FROM stw_applicants WHERE email_id = $1 AND desired_product = $2 AND generated_purchase_id IS NULL;', $email_id, $product_id);
 				break;
 			case self::ARK_GIFT_ID:
 				for ($i = 1; $i <= $quantity; $i++) {
