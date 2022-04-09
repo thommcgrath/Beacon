@@ -53,7 +53,7 @@ $database->BeginTransaction();
 $generated_purchase_id = BeaconShop::CreateGiftPurchase($email_id, $product_id, 1, 'STW Winner', false);
 $database->Query('UPDATE stw_applicants SET generated_purchase_id = $2, encrypted_email = NULL WHERE applicant_id = $1;', $applicant_id, $generated_purchase_id);
 $database->Query('UPDATE stw_purchases SET generated_purchase_id = $2 WHERE stw_id = $1;', $stw_id, $generated_purchase_id);
-$database->Query('UPDATE purchases SET merchant_reference = $2 WHERE purchase_id = $1;', $generated_purchase_id, $original_purchase_id);
+$database->Query('UPDATE purchases SET merchant_reference = $2 WHERE purchase_id = $1;', $generated_purchase_id, $stw_id);
 BeaconShop::IssuePurchases($generated_purchase_id);
 	
 // Check the applicant and purchase count before committing
