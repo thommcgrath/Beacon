@@ -283,6 +283,10 @@ Implements Beacon.Countable,Iterable
 		    Destination.ResizeTo(Source.LastIndex)
 		    Changed = True
 		  End If
+		  If Destination.TemplateUUID <> Self.UUID Then
+		    Destination.TemplateUUID = Self.UUID
+		    Changed = True
+		  End If
 		  For Idx As Integer = 0 To Source.LastIndex
 		    Var DestinationEntry As Ark.LootItemSetEntry = Destination(Idx)
 		    Var SourceEntry As Ark.LootItemSetEntry = Source(Idx)
