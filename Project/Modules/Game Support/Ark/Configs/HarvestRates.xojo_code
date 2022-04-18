@@ -127,7 +127,7 @@ Inherits Ark.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mClampResourceHarvestDamage = False
-		  Self.mDinoHarvestingDamageMultiplier = 1.0
+		  Self.mDinoHarvestingDamageMultiplier = 3.2
 		  Self.mHarvestAmountMultiplier = 1.0
 		  Self.mHarvestHealthMultiplier = 1.0
 		  Self.mPlayerHarvestingDamageMultiplier = 1.0
