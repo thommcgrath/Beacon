@@ -587,7 +587,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.point", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"310", Scope = Public
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"330", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
@@ -836,7 +836,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.Append(OmniBarItem.CreateTitle("EditorTitle", "Spawn Points"))
+		  Me.Append(OmniBarItem.CreateTitle("EditorTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator("EditorTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Point", IconToolbarAdd, "Override a spawn point."))
 		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected spawn point.", False))
