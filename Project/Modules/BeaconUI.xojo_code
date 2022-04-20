@@ -273,7 +273,11 @@ Protected Module BeaconUI
 		    
 		    MaxWidth = Max(MaxWidth, Ceiling(G.TextWidth(Targets(Idx).Text)))
 		  Next Idx
-		  Return MaxWidth
+		  #if TargetWindows
+		    Return Round(MaxWidth * 1.05)
+		  #else
+		    Return MaxWidth
+		  #endif
 		End Function
 	#tag EndMethod
 

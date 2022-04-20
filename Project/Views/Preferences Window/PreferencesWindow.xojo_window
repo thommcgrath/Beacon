@@ -40,7 +40,7 @@ Begin BeaconWindow PreferencesWindow
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
       TabIndex        =   0
@@ -168,10 +168,10 @@ Begin BeaconWindow PreferencesWindow
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -276,10 +276,10 @@ Begin BeaconWindow PreferencesWindow
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -320,7 +320,7 @@ Begin BeaconWindow PreferencesWindow
          Visible         =   True
          Width           =   162
       End
-      Begin Label ChannelLabel
+      Begin UITweaks.ResizedLabel ChannelLabel
          AllowAutoDeactivate=   True
          Bold            =   False
          DataField       =   ""
@@ -408,7 +408,7 @@ Begin BeaconWindow PreferencesWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -417,7 +417,7 @@ Begin BeaconWindow PreferencesWindow
       Underline       =   False
       Visible         =   True
       Width           =   280
-      Begin PopupMenu DarkModeMenu
+      Begin UITweaks.ResizedPopupMenu DarkModeMenu
          AllowAutoDeactivate=   True
          Bold            =   False
          DataField       =   ""
@@ -429,27 +429,27 @@ Begin BeaconWindow PreferencesWindow
          Height          =   20
          Index           =   -2147483648
          InitialParent   =   "AppearanceGroup"
-         InitialValue    =   ""
+         InitialValue    =   "Match System"
          Italic          =   False
          Left            =   128
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Scope           =   2
          SelectedRowIndex=   0
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   210
+         Top             =   208
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   152
       End
-      Begin Label DarkModeLabel
+      Begin UITweaks.ResizedLabel DarkModeLabel
          AllowAutoDeactivate=   True
          Bold            =   False
          DataField       =   ""
@@ -471,7 +471,7 @@ Begin BeaconWindow PreferencesWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Theme:"
@@ -506,6 +506,7 @@ End
 		    
 		    Delta = Self.UpdateSoundCheck.Height + 12
 		    Self.SoundsGroup.Height = Self.SoundsGroup.Height - Delta
+		    Self.AppearanceGroup.Top = Self.AppearanceGroup.Top - Delta
 		    Self.UpdatesGroup.Top = Self.UpdatesGroup.Top - Delta
 		    Self.ConnectionsGroup.Top = Self.ConnectionsGroup.Top - Delta
 		    Self.Height = Self.Height - Delta
@@ -625,6 +626,15 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events MaxConnectionsLabel
+	#tag Event
+		Sub Open()
+		  Me.SizeToFit
+		  Self.MaxConnectionsField.Left = Me.Right + 12
+		  Self.MaxConnectionsField.Width = Self.ConnectionsGroup.Width - (Me.Width + 52)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ChannelMenu
 	#tag Event
 		Sub Change()
@@ -688,6 +698,7 @@ End
 #tag Events DarkModeMenu
 	#tag Event
 		Sub Open()
+		  Me.RemoveAllRows
 		  Me.AddRow("Match System", Preferences.DarkModeOptions.FollowSystem)
 		  Me.AddRow("Light", Preferences.DarkModeOptions.ForceLight)
 		  #if TargetMacOS
