@@ -367,6 +367,7 @@ End
 		    Next
 		  End If
 		  
+		  Var OriginalScrollPosition As Integer = Self.EntryList.ScrollPosition
 		  Self.EntryList.RemoveAllRows()
 		  
 		  Var ItemSet As Ark.MutableLootItemSet = Self.LootItemSet
@@ -458,10 +459,12 @@ End
 		    EntryList.Selected(Idx) = Selected.IndexOf(Entry.UUID) > -1
 		  Next
 		  
-		  EntryList.Sort
+		  Self.EntryList.Sort
 		  
-		  If ScrollToSelection Then
-		    EntryList.EnsureSelectionIsVisible()
+		  If ScrollToSelection And Self.EntryList.SelectedRowCount > 0 Then
+		    Self.EntryList.EnsureSelectionIsVisible()
+		  Else
+		    Self.EntryList.ScrollPosition = OriginalScrollPosition
 		  End If
 		  
 		  Self.UpdateStatus()
