@@ -45,6 +45,7 @@ abstract class BeaconUpdates {
 			$sql .= ' LIMIT 10';
 		}
 		$sql .= ';';
+		
 		$rows = $database->Query($sql, $values);
 		while ($rows->EOF() === false) {
 			$update_id = $rows->Field('update_id');
@@ -110,7 +111,7 @@ abstract class BeaconUpdates {
 	
 	public static function FindLatestInChannel(int $channel): array {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version FROM updates WHERE stage = $1 ORDER BY build_number DESC LIMIT 1;', $channel);
+		$rows = $database->Query('SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version FROM updates WHERE stage >= $1 ORDER BY build_number DESC LIMIT 1;', $channel);
 		$updates = null;
 		if ($rows->RecordCount() === 0) {
 			return $updates;
