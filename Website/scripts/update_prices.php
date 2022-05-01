@@ -7,31 +7,28 @@ $database = BeaconCommon::Database();
 $usd_prices = $database->Query('SELECT product_id, price FROM product_prices WHERE currency = \'USD\';');
 $other_prices = $database->Query('SELECT product_id, price, currency, price_id FROM product_prices WHERE currency != \'USD\';');
 
-$rates = [];
+$currency_codes = [];
 $currencies = $database->Query('SELECT DISTINCT currency FROM product_prices WHERE currency != \'USD\';');
 while ($currencies->EOF() === false) {
-	$rate = $currencies->Field('currency');
-	
-	$curl = curl_init('https://api.apilayer.com/exchangerates_data/convert?amount=1&from=USD&to=' . $rate);
-	curl_setopt($curl, CURLOPT_HTTPHEADER, [
-		'apikey: ' . BeaconCommon::GetGlobal('APILayer Key')
-	]);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	$body = curl_exec($curl);
-	$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
-	
-	if ($status !== 200) {
-		BeaconCommon::PostSlackMessage('Could not retrieve exchange rate to ' . $rate);
-		$currencies->MoveNext();
-		continue;
-	}
-	
-	$parsed = json_decode($body, true);
-	$rates[$rate] = $parsed['result'];
-		
+	$currency_codes[] = $currencies->Field('currency');
 	$currencies->MoveNext();
 }
+
+$curl = curl_init('https://api.apilayer.com/exchangerates_data/latest?base=USD&symbols=' . implode(',', $currency_codes));
+curl_setopt($curl, CURLOPT_HTTPHEADER, [
+	'apikey: ' . BeaconCommon::GetGlobal('APILayer Key')
+]);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+$body = curl_exec($curl);
+$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+curl_close($curl);
+if ($status !== 200) {
+	echo "Could not retrieve exchange rate info: $body\n";
+	BeaconCommon::PostSlackMessage('Could not retrieve exchange rate info');
+	exit;
+}
+$response = json_decode($body, true);
+$rates = $response['rates'];
 
 $prices = [];
 while ($usd_prices->EOF() === false) {
