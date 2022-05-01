@@ -238,7 +238,8 @@ class BeaconStripeAPI {
 			$response = $this->PostURL('https://api.stripe.com/v1/prices', [
 				'unit_amount' => $amount,
 				'currency' => $currency,
-				'product' => $product_id
+				'product' => $product_id,
+				'tax_behavior' => 'exclusive'
 			], '2020-08-27');
 			
 			if (is_null($response)) {
