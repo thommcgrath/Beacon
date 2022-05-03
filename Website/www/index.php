@@ -3,10 +3,42 @@
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 BeaconTemplate::SetPageDescription('Beacon is Ark\'s easiest server manager that can update and control your Xbox, PS4, and PC Ark servers with a couple clicks.');
 
-$hero_suffix = BeaconCommon::IsWindows() ? 'windows' : 'mac';
-
 $public_build = BeaconCommon::MinVersion();
-$hero_img_prefix = $public_build >= 10500300 ? 'hero15' : 'hero';
+$hero_images = [];
+$hero_width = 1312;
+$hero_height = 764;
+if (BeaconCommon::IsWindows()) {
+	if ($public_build >= 10600300) {
+		$hero_images = [
+			'light' => 'hero16-windows',
+			'dark' => 'hero16-windows-dark'
+		];
+		$hero_width = 1228;
+		$hero_height = 709;
+	} else {
+		$hero_images = [
+			'light' => 'hero15-windows'
+		];
+	}
+} else {
+	$hero_images = [
+		'light' => 'hero15-mac',
+		'dark' => 'hero15-mac-dark'
+	];
+}
+
+/*$hero_light_css = [];
+$hero_light_css_2x = [];
+$hero_dark_css = [];
+$hero_dark_css_2x = [];
+
+$hero_light_css[] = "#hero.$hero_platform {\n\t\tbackground-image: url(" . BeaconCommon::AssetURI($hero_images[$hero_platform]['light'] . '.png') . ");\n}";
+$hero_light_css_2x[] = "\t#hero.$hero_platform {\n\t\t\tbackground-image: url(" . BeaconCommon::AssetURI($hero_images[$hero_platform]['light'] . '@2x.png') . ");\n\t}";
+
+if (isset($hero_images[$hero_platform]['dark'])) {
+	$hero_dark_css[] = "\t#hero.$hero_platform {\n\t\tbackground-image: url(" . BeaconCommon::AssetURI($hero_images[$hero_platform]['dark'] . '.png') . ");\n\t}";
+	$hero_dark_css_2x[] = "\t\t#hero.$hero_platform {\n\t\t\tbackground-image: url(" . BeaconCommon::AssetURI($hero_images[$hero_platform]['dark'] . '@2x.png') . ");\n\t\t}";
+}*/
 
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT COUNT(object_id) AS loot_source_count, experimental FROM ark.loot_sources WHERE min_version <= $1 GROUP BY experimental;', $public_build);
@@ -85,17 +117,9 @@ BeaconTemplate::StartStyles();
 	width: 100%;
 	display: block;
 	background-size: contain;
+	background-image: url(<?php echo BeaconCommon::AssetURI($hero_images['light'] . '.png'); ?>);
 	height: 0px;
-}
-
-#hero.mac {
-	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac.png'); ?>);
-	padding-top: calc(764 / 1312 * 100%);
-}
-
-#hero.windows {
-	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows.png'); ?>);
-	padding-top: calc(764 / 1312 * 100%);
+	padding-top: calc(<?php echo $hero_height . ' / ' . $hero_width; ?> * 100%);
 }
 
 #nitrado_container {
@@ -124,26 +148,26 @@ BeaconTemplate::StartStyles();
 	}
 }
 
+<?php if (isset($hero_images['dark'])) { ?>
 @media (prefers-color-scheme: dark) {
-	#hero.mac {
-		background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac-dark.png'); ?>);
+	#hero {
+		background-image: url(<?php echo BeaconCommon::AssetURI($hero_images['dark'] . '.png'); ?>);
 	}
 }
+<?php } ?>
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-	#hero.mac {
-		background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac@2x.png'); ?>);
+	#hero {
+		background-image: url(<?php echo BeaconCommon::AssetURI($hero_images['light'] . '@2x.png'); ?>);
 	}
 
-	#hero.windows {
-		background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows@2x.png'); ?>);
-	}
-
+	<?php if (isset($hero_images['dark'])) { ?>
 	@media (prefers-color-scheme: dark) {
-		#hero.mac {
-			background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac-dark@2x.png'); ?>);
+		#hero {
+			background-image: url(<?php echo BeaconCommon::AssetURI($hero_images['dark'] . '@2x.png'); ?>);
 		}
 	}
+	<?php } ?>
 }
 
 @media (min-width: 666px) {
@@ -180,7 +204,7 @@ BeaconTemplate::FinishStyles();
 <div id="nitrado_container">
 	<a href="https://www.nitrado-aff.com/5LMHK7/D42TT/"><img id="nitrado_logo" class="white-on-dark" src="/assets/images/spacer.png" alt="Get your server from Nitrado"></a>
 </div>
-<div id="hero_container"><img id="hero" class="<?php echo $hero_suffix; ?>" src="/assets/images/spacer.png" alt="Beacon main window"></div>
+<div id="hero_container"><img id="hero" src="/assets/images/spacer.png" alt="Beacon main window"></div>
 <div id="index_body">
 	<div id="index_features">
 		<div class="feature">
