@@ -9,13 +9,13 @@ if ($method !== 'GET') {
 
 $search_value = BeaconAPI::ObjectID();
 if (is_numeric($search_value)) {
-	$maps = BeaconMap::GetForMask($search_value);
-} elseif (\BeaconCommon::IsUUID($search_value)) {
-	$maps = BeaconMap::GetForMapID($search_value);
+	$maps = Ark\Map::GetForMask($search_value);
+} elseif (BeaconCommon::IsUUID($search_value)) {
+	$maps = Ark\Map::GetForMapID($search_value);
 } elseif (is_string($search_value)) {
-	$maps = BeaconMap::GetNamed($search_value);
+	$maps = Ark\Map::GetNamed($search_value);
 } else {
-	$maps = BeaconMap::GetAll();
+	$maps = Ark\Map::GetAll();
 }
 
 BeaconAPI::ReplySuccess($maps);

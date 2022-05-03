@@ -3393,7 +3393,7 @@ Implements NotificationKit.Receiver
 	#tag Constant, Name = GameEventSelectSQL, Type = String, Dynamic = False, Default = \"SELECT events.event_id\x2C events.label\x2C events.ark_code\x2C events.colors\x2C events.rates\x2C events.engrams FROM events", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements\x2C loot_sources.mod_id\x2C loot_sources.tags", Scope = Private
+	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"loot_sources.path\x2C loot_sources.class_string\x2C loot_sources.label\x2C loot_sources.alternate_label\x2C loot_sources.availability\x2C loot_sources.multiplier_min\x2C loot_sources.multiplier_max\x2C loot_sources.uicolor\x2C loot_sources.sort_order\x2C loot_sources.experimental\x2C loot_sources.notes\x2C loot_sources.requirements\x2C loot_sources.mod_id\x2C loot_sources.tags", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = String, Dynamic = False, Default = \"Database Updated", Scope = Public

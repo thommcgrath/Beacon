@@ -68,7 +68,7 @@ $description = BeaconTemplate::PageDescription();
 				<div><input id="explore_search_field" type="search" placeholder="Search" incremental></div>
 				<ul id="explore_links">
 					<li><a href="/videos/welcome_to_beacon">Video: Welcome to Beacon</a></li>
-					<li><a href="/browse/">Browse Community Files</a></li>
+					<li><a href="/browse/">Browse Community Projects</a></li>
 					<li><a href="/spawn/">Admin Spawn Codes</a></li>
 					<li><a href="/mods/">Supported Mods</a></li>
 					<li><a href="/account/">Beacon Account</a></li>

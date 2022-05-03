@@ -2,7 +2,7 @@
 
 require(dirname(__FILE__) . '/loader.php');
 
-$manager = new BeaconObjectManager('BeaconCreature');
+$manager = new BeaconObjectManager('Ark\Creature');
 $manager->HandleAPIRequest();
 
 ?>

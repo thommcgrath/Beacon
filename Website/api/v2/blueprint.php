@@ -21,9 +21,9 @@ if ($method === 'GET') {
 			BeaconAPI::ReplyError('mod_id should be a v4 UUID', $_GET['mod_id'], 400);
 		}
 		$values['mod_id'] = $mod_id;
-		$rows = $database->Query('SELECT MAX(blueprints.last_update) AS last_update FROM blueprints WHERE blueprints.mod_id = $1 AND blueprints.min_version <= $2;', $mod_id, $min_version);
+		$rows = $database->Query('SELECT MAX(ark.blueprints.last_update) AS last_update FROM ark.blueprints WHERE ark.blueprints.mod_id = $1 AND ark.blueprints.min_version <= $2;', $mod_id, $min_version);
 	} else {
-		$rows = $database->Query('SELECT MAX(blueprints.last_update) AS last_update FROM blueprints WHERE blueprints.min_version <= $1;', $min_version);
+		$rows = $database->Query('SELECT MAX(ark.blueprints.last_update) AS last_update FROM ark.blueprints WHERE ark.blueprints.min_version <= $1;', $min_version);
 	}
 	$timestamp = new DateTime($rows->Field('last_update'));
 	
@@ -36,10 +36,10 @@ if ($method === 'GET') {
 		}
 	}
 	
-	$engrams = BeaconEngram::Get($values, $min_version, $since, true);
-	$creatures = BeaconCreature::Get($values, $min_version, $since, true);
-	$spawn_points = BeaconSpawnPoint::Get($values, $min_version, $since, true);
-	$loot_sources = BeaconLootSource::Get($values, $min_version, $since, true);
+	$engrams = Ark\Engram::Get($values, $min_version, $since, true);
+	$creatures = Ark\Creature::Get($values, $min_version, $since, true);
+	$spawn_points = Ark\SpawnPoint::Get($values, $min_version, $since, true);
+	$loot_sources = Ark\LootSource::Get($values, $min_version, $since, true);
 	
 	BeaconAPI::ReplySuccess([
 		'timestamp' => $timestamp->format('Y-m-d H:i:sO'),
@@ -91,7 +91,7 @@ if ($method === 'GET') {
 	
 	if (count($deletions) > 0) {
 		// Although this looks like a potential for SQL injection, BeaconCommon::IsUUID validated and cleaned up the values.
-		$rows = $database->Query('SELECT DISTINCT mod_id FROM blueprints WHERE object_id IN (\'' . implode('\',\'', $deletions) . '\');');
+		$rows = $database->Query('SELECT DISTINCT mod_id FROM ark.blueprints WHERE object_id IN (\'' . implode('\',\'', $deletions) . '\');');
 		while (!$rows->EOF()) {
 			$mod_id = $rows->Field('mod_id');
 			if (in_array($mod_id, $mod_ids) === false) {
@@ -107,7 +107,7 @@ if ($method === 'GET') {
 	}
 	
 	// Now confirm that the user has write permission for all the mods.
-	$rows = $database->Query('SELECT mod_id, user_id, min_version FROM mods WHERE mod_id IN (\'' . implode('\',\'', $mod_ids) . '\');');
+	$rows = $database->Query('SELECT mod_id, user_id, min_version FROM ark.mods WHERE mod_id IN (\'' . implode('\',\'', $mod_ids) . '\');');
 	$versions = [];
 	while (!$rows->EOF()) {
 		if ($rows->Field('user_id') !== $user_id) {
@@ -132,7 +132,7 @@ if ($method === 'GET') {
 				} else {
 					$values['min_version'] = $versions[$values['mod']['id']];
 				}
-				$obj = BeaconEngram::FromJSON($values);
+				$obj = Ark\Engram::FromJSON($values);
 				$obj->Save();
 			} catch (Exception $err) {
 				$database->Rollback();
@@ -148,7 +148,7 @@ if ($method === 'GET') {
 				} else {
 					$values['min_version'] = $versions[$values['mod']['id']];
 				}
-				$obj = BeaconCreature::FromJSON($values);
+				$obj = Ark\Creature::FromJSON($values);
 				$obj->Save();
 			} catch (Exception $err) {
 				$database->Rollback();
@@ -164,7 +164,7 @@ if ($method === 'GET') {
 				} else {
 					$values['min_version'] = $versions[$values['mod']['id']];
 				}
-				$obj = BeaconSpawnPoint::FromJSON($values);
+				$obj = Ark\SpawnPoint::FromJSON($values);
 				$obj->Save();
 			} catch (Exception $err) {
 				$database->Rollback();
@@ -180,7 +180,7 @@ if ($method === 'GET') {
 				} else {
 					$values['min_version'] = $versions[$values['mod']['id']];
 				}
-				$obj = BeaconLootSource::FromJSON($values);
+				$obj = Ark\LootSource::FromJSON($values);
 				$obj->Save();
 			} catch (Exception $err) {
 				$database->Rollback();
@@ -189,7 +189,7 @@ if ($method === 'GET') {
 		}
 	}
 	if (count($deletions) > 0) {
-		$rows = $database->Query('SELECT blueprints.tableoid::regclass AS tablename, blueprints.object_id FROM blueprints WHERE blueprints.object_id IN (\'' . implode('\',\'', $deletions) . '\');');
+		$rows = $database->Query('SELECT blueprints.tableoid::regclass AS tablename, blueprints.object_id FROM ark.blueprints WHERE blueprints.object_id IN (\'' . implode('\',\'', $deletions) . '\');');
 		while (!$rows->EOF()) {
 			$database->Query('DELETE FROM ' . $rows->Field('tablename') . ' WHERE object_id = $1;', $rows->Field('object_id'));
 			$rows->MoveNext();

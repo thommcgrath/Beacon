@@ -3,9 +3,9 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 if (empty($_GET['mod_id']) == false && BeaconCommon::IsUUID($_GET['mod_id'])) {
-	$mod = BeaconMod::GetByModID($_GET['mod_id']);
+	$mod = \Ark\Mod::GetByModID($_GET['mod_id']);
 } elseif (empty($_GET['workshop_id']) == false) {
-	$mods = BeaconMod::GetByConfirmedWorkshopID($_GET['workshop_id']);
+	$mods = \Ark\Mod::GetByConfirmedWorkshopID($_GET['workshop_id']);
 	if (is_array($mods) && count($mods) == 1) {
 		$mod = $mods[0];
 	}
@@ -19,10 +19,10 @@ if (is_null($mod)) {
 
 BeaconTemplate::SetTitle('Mod: ' . $mod->Name());
 BeaconTemplate::SetPageDescription('Beacon has built-in support for the Ark mod "' . $mod->Name() . '" which means its engrams are already part of Beacon\'s database so you can begin using them immediately.');
-$engrams = BeaconEngram::Get($mod->ModID());
-$loot_sources = BeaconLootSource::Get($mod->ModID());
-$creatures = BeaconCreature::Get($mod->ModID());
-$config_options = BeaconConfigLine::Get($mod->ModID());
+$engrams = \Ark\Engram::Get($mod->ModID());
+$loot_sources = \Ark\LootSource::Get($mod->ModID());
+$creatures = \Ark\Creature::Get($mod->ModID());
+$config_options = \Ark\ConfigLine::Get($mod->ModID());
 $has_engrams = count($engrams) > 0;
 $has_loot_sources = count($loot_sources) > 0;
 $has_creatures = count($creatures) > 0;

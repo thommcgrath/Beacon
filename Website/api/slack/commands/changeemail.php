@@ -57,7 +57,6 @@ try {
 	if ($results->RecordCount() == 0) {
 		$database->Query('UPDATE users SET email_id = $1 WHERE email_id = $2;', $new_email_id, $old_email_id);
 	}
-	$database->Query('UPDATE purchase_codes SET purchaser_email_id = $1 WHERE purchaser_email_id = $2;', $new_email_id, $old_email_id);
 	$database->Query('DELETE FROM email_addresses WHERE email_id = $1;', $old_email_id);
 	$database->Commit();
 	

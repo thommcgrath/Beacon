@@ -22,7 +22,7 @@ if (is_null($mod_id) == false) {
 		exit;
 	}
 	
-	$mod = BeaconMod::GetByConfirmedWorkshopID($workshop_id);
+	$mod = \Ark\Mod::GetByConfirmedWorkshopID($workshop_id);
 	if (is_array($mod) && count($mod) == 1) {
 		$mod_id = $mod[0]->ModID();
 	} else {
@@ -39,7 +39,7 @@ if ($results->RecordCount() == 1) {
 	$build = 0;
 }
 
-$results = $database->Query("SELECT MAX(last_update) FROM objects WHERE min_version <= $1;", array($build));
+$results = $database->Query("SELECT MAX(last_update) FROM ark.objects WHERE min_version <= $1;", array($build));
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 $include_mod_names = true;
 $cache_key = 'spawn_' . (is_null($mod_id) ? 'all' : $mod_id) . '_' . $build . '_' . $last_database_update->format('U');
@@ -50,11 +50,11 @@ if (is_null($cached) || is_null($title)) {
 	ob_start();
 	if ($mod_id === null) {
 		$title = 'All Spawn Codes';
-		$engrams = BeaconEngram::GetAll();
-		$creatures = BeaconCreature::GetAll();
+		$engrams = \Ark\Engram::GetAll();
+		$creatures = \Ark\Creature::GetAll();
 	} else {
-		$engrams = BeaconEngram::Get($mod_id);
-		$creatures = BeaconCreature::Get($mod_id);
+		$engrams = \Ark\Engram::Get($mod_id);
+		$creatures = \Ark\Creature::Get($mod_id);
 		$mod_names = array();
 		foreach ($engrams as $engram) {
 			if (in_array($engram->ModName(), $mod_names) === false) {

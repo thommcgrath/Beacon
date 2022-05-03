@@ -77,7 +77,7 @@ class ObjectManager {
 		}
 		
 		// get the mods the user is allowed to work with
-		$user_mods = \BeaconMod::GetAll(\BeaconAPI::UserID());
+		$user_mods = \Ark\Mod::GetAll(\BeaconAPI::UserID());
 		$mods_by_uuid = array();
 		$mods_by_workshop_id = array();
 		foreach ($user_mods as $mod) {
@@ -90,10 +90,9 @@ class ObjectManager {
 			\BeaconAPI::ReplyError('User has no confirmed mods');
 		}
 		
-		
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
-		$saved = array();
+		$saved = [];
 		foreach ($items as $item) {
 			// If object_id is supplied, use it. If there is already a matching object, confirm its
 			// mod_id is one that the user owns. If there is not a matching object, the mod_id value
@@ -102,6 +101,11 @@ class ObjectManager {
 				$object = $this->class_name::GetByObjectID($item['object_id'], \BeaconCommon::MinVersion());
 				if (is_null($object)) {
 					$object = new $this->class_name($item['object_id']);
+				}
+			} elseif (array_key_exists('id', $item)) {
+				$object = $this->class_name::GetByObjectID($item['id'], \BeaconCommon::MinVersion());
+				if (is_null($object)) {
+					$object = new $this->class_name($item['id']);
 				}
 			} else {
 				$object = new $this->class_name;

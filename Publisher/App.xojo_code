@@ -1,17 +1,17 @@
 #tag Class
 Protected Class App
-Inherits Application
+Inherits DesktopApplication
 	#tag Method, Flags = &h0
 		Function APIKey() As String
-		  Dim File As FolderItem = Self.ApplicationSupport.Child("Key.json")
+		  Var File As FolderItem = Self.ApplicationSupport.Child("Key.json")
 		  If File.Exists Then
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
-		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Contents As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Dim Item As New JSONItem(Contents)
-		    If Item.HasName("apikey") Then
-		      Return Item.Value("apikey").StringValue
+		    Var Parsed As Dictionary = Xojo.ParseJSON(Contents)
+		    If Parsed.HasKey("apikey") Then
+		      Return Parsed.Value("apikey").StringValue
 		    End If
 		  End If
 		End Function
@@ -19,10 +19,10 @@ Inherits Application
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
-		  Dim AppSupport As FolderItem = SpecialFolder.ApplicationData
-		  Dim CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
+		  Var AppSupport As FolderItem = SpecialFolder.ApplicationData
+		  Var CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
 		  Self.CheckFolder(CompanyFolder)
-		  Dim AppFolder As FolderItem = CompanyFolder.Child("Beacon Release Tool")
+		  Var AppFolder As FolderItem = CompanyFolder.Child("Beacon Release Tool")
 		  Self.CheckFolder(AppFolder)
 		  Return AppFolder
 		End Function
@@ -31,32 +31,32 @@ Inherits Application
 	#tag Method, Flags = &h21
 		Private Sub CheckFolder(Folder As FolderItem)
 		  If Folder.Exists Then
-		    If Not Folder.Directory Then
-		      Folder.Delete
-		      Folder.CreateAsFolder
+		    If Not Folder.IsFolder Then
+		      Folder.Remove
+		      Folder.CreateFolder
 		    End If
 		  Else
-		    Folder.CreateAsFolder
+		    Folder.CreateFolder
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function PrivateKey() As String
-		  Dim File As FolderItem = Self.ApplicationSupport.Child("Key.json")
+		  Var File As FolderItem = Self.ApplicationSupport.Child("Key.json")
 		  If File.Exists Then
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
-		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Contents As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Dim Item As New JSONItem(Contents)
-		    Dim Key As String = Item.Value("private").StringValue
+		    Var Item As New JSONItem(Contents)
+		    Var Key As String = Item.Value("private").StringValue
 		    If Not Crypto.RSAVerifyKey(Key) Then
 		      Raise New CryptoException
 		    End If
 		    Return Key
 		  Else
-		    Dim PrivateKey, PublicKey As String
+		    Var PrivateKey, PublicKey As String
 		    If Not Crypto.RSAGenerateKeyPair(2048, PrivateKey, PublicKey) Then
 		      Raise New CryptoException
 		    End If
@@ -67,17 +67,23 @@ Inherits Application
 		      Raise New CryptoException
 		    End If
 		    
-		    Dim Item As New JSONItem()
+		    Var Item As New JSONItem()
 		    Item.Value("private") = PrivateKey
 		    Item.Value("public") = PublicKey
 		    Item.Compact = False
 		    
-		    Dim Stream As TextOutputStream = TextOutputStream.Create(File)
+		    Var Stream As TextOutputStream = TextOutputStream.Create(File)
 		    Stream.Write(Item.ToString)
 		    Stream.Close
 		    
 		    Return PrivateKey
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SignTool(Legacy As Boolean) As FolderItem
+		  Return App.ExecutableFile.Parent.Parent.Child("Helpers").Child("sign_update" + If(Legacy, "_legacy", ""))
 		End Function
 	#tag EndMethod
 
@@ -98,6 +104,150 @@ Inherits Application
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoQuit"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowHiDPI"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BugVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Copyright"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Description"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastWindowIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MajorVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinorVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="NonReleaseVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RegionCode"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StageCode"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Version"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="string"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_CurrentEventTime"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

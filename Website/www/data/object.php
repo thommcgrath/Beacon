@@ -13,9 +13,9 @@ if (isset($_GET['object_id'])) {
 	$database = BeaconCommon::Database();
 	try {
 		if (isset($_GET['workshop_id'])) {
-			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 AND ABS(mods.workshop_id) = $2 ORDER BY blueprints.label;', $_GET['class_string'], abs($_GET['workshop_id']));
+			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM ark.blueprints INNER JOIN ark.mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 AND ABS(mods.workshop_id) = $2 ORDER BY blueprints.label;', $_GET['class_string'], abs($_GET['workshop_id']));
 		} else {
-			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 ORDER BY blueprints.label;', $_GET['class_string']);
+			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM ark.blueprints INNER JOIN ark.mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 ORDER BY blueprints.label;', $_GET['class_string']);
 		}
 		if ($results->RecordCount() === 1) {
 			$object_id = $results->Field('object_id');
@@ -74,26 +74,26 @@ if (count($tags) > 0) {
 	$properties['Tags'] = implode(', ', $links);
 }
 
-if ($obj instanceof BeaconBlueprint) {
+if ($obj instanceof \Ark\Blueprint) {
 	PrepareBlueprintTable($obj, $properties);
 }
 
-if ($obj instanceof BeaconCreature) {
+if ($obj instanceof \Ark\Creature) {
 	$type = 'Creature';
 	PrepareCreatureTable($obj, $properties);
-} elseif ($obj instanceof BeaconEngram) {
+} elseif ($obj instanceof \Ark\Engram) {
 	$type = 'Engram';
 	PrepareEngramTable($obj, $properties);
-} elseif ($obj instanceof BeaconDiet) {
+} elseif ($obj instanceof \Ark\Diet) {
 	$type = 'Diet';
 	PrepareDietTable($obj, $properties);
-} elseif ($obj instanceof BeaconLootSource) {
+} elseif ($obj instanceof \Ark\LootSource) {
 	$type = 'Loot Source';
 	PrepareLootSourceTable($obj, $properties);
-} elseif ($obj instanceof BeaconPreset) {
+} elseif ($obj instanceof \Ark\Preset) {
 	$type = 'Preset';
 	PreparePresetTable($obj, $properties);
-} elseif ($obj instanceof BeaconSpawnPoint) {
+} elseif ($obj instanceof \Ark\SpawnPoint) {
 	$type = 'Spawn Point';
 	PrepareSpawnPointTable($obj, $properties);
 }
@@ -101,7 +101,7 @@ if ($obj instanceof BeaconCreature) {
 $parser = new Parsedown();
 
 echo '<h1><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . (is_null($obj->AlternateLabel()) ? '' : '<br><span class="subtitle">AKA ' . htmlentities($obj->AlternateLabel()) . '</span>') . '</h1>';
-if ($obj instanceof BeaconLootSource && $obj->Experimental()) {
+if ($obj instanceof \Ark\LootSource && $obj->Experimental()) {
 	echo '<p class="notice-block notice-warning">This loot source is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
 }
 echo '<table id="object_details" class="generic">';
@@ -110,17 +110,17 @@ foreach ($properties as $key => $value) {
 }
 echo '</table>';
 
-function PrepareBlueprintTable(BeaconBlueprint $blueprint, array &$properties) {
+function PrepareBlueprintTable(\Ark\Blueprint $blueprint, array &$properties) {
 	$properties['Class'] = $blueprint->ClassString();
 	$properties['Spawn Code'] = '`' . $blueprint->SpawnCode() . '`';
-	$properties['Map Availability'] = implode(', ', BeaconMaps::Names($blueprint->Availability()));
+	$properties['Map Availability'] = implode(', ', \Ark\Maps::Names($blueprint->Availability()));
 	
 	$related_ids = $blueprint->RelatedObjectIDs();
 	$related_items = array();
 	foreach ($related_ids as $id) {
-		$blueprint = BeaconBlueprint::GetByObjectID($id);
+		$blueprint = \Ark\Blueprint::GetByObjectID($id);
 		if (is_null($blueprint)) {
-			$obj = BeaconObject::GetByObjectID($id);
+			$obj = \Ark\GenericObject::GetByObjectID($id);
 			if (is_null($obj)) {
 				continue;
 			}
@@ -134,23 +134,7 @@ function PrepareBlueprintTable(BeaconBlueprint $blueprint, array &$properties) {
 	}
 }
 
-function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
-	/*if ($creature->Tamable()) {
-		$taming_diet = $creature->TamingDiet();
-		$tamed_diet = $creature->TamedDiet();
-		$preferred_food = BeaconObject::GetByObjectID($taming_diet[0]);
-		$properties['Tamable'] = 'Yes';
-		$properties['Taming Method'] = $creature->TamingMethod();
-		$properties['Preferred Food'] = '[' . $preferred_food->Label() . '](/object.php/' . urlencode($preferred_food->ObjectID()) . ')';
-		$properties['Taming Diet'] = '[' . $taming_diet->Label() . '](/object.php/' . urlencode($taming_diet->ObjectID()) . ')';
-		$properties['Tamed Diet'] = '[' . $tamed_diet->Label() . '](/object.php/' . urlencode($tamed_diet->ObjectID()) . ')';
-	} else {
-		$properties['Tamable'] = 'No';
-	}
-	
-	$properties['Rideable'] = $creature->Rideable() ? 'Yes' : 'No';
-	$properties['Carryable'] = $creature->Carryable() ? 'Yes' : 'No';
-	$properties['Breedable'] = $creature->Breedable() ? 'Yes' : 'No';*/
+function PrepareCreatureTable(\Ark\Creature $creature, array &$properties) {
 	$incubation_time = $creature->IncubationTimeSeconds();
 	if (!is_null($incubation_time)) {
 		$properties['Incubation Time'] = BeaconCommon::SecondsToEnglish($incubation_time);
@@ -166,7 +150,7 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 	}
 }
 
-function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
+function PrepareEngramTable(\Ark\Engram $engram, array &$properties) {
 	if (is_null($engram->ItemID()) == false) {
 		$properties['Item ID'] = $engram->ItemID();
 		$properties['Short Spawn Code'] = '`cheat giveitemnum ' . $engram->ItemID() . ' 1 1 0`';
@@ -202,15 +186,15 @@ function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
 	}
 }
 
-function PrepareLootSourceTable(BeaconLootSource $loot_source, array &$properties) {
+function PrepareLootSourceTable(\Ark\LootSource $loot_source, array &$properties) {
 	$properties['Multipliers'] = sprintf('%F - %F', $loot_source->MultiplierMin(), $loot_source->MultiplierMax());
 }
 
-function PrepareDietTable(BeaconDiet $diet, array &$properties) {
+function PrepareDietTable(\Ark\Diet $diet, array &$properties) {
 	$engram_ids = $diet->EngramIDs();
 	$engrams = array();
 	foreach ($engram_ids as $id) {
-		$engram = BeaconEngram::GetByObjectID($id);
+		$engram = \Ark\Engram::GetByObjectID($id);
 		$engrams[] = MarkdownLinkToObject($engram);
 	}
 	$properties['Preferred Foods'] = implode(', ', $engrams);
@@ -218,20 +202,27 @@ function PrepareDietTable(BeaconDiet $diet, array &$properties) {
 	$creature_ids = $diet->CreatureIDs();
 	$creatures = array();
 	foreach ($creature_ids as $id) {
-		$creature = BeaconCreature::GetByObjectID($id);
+		$creature = \Ark\Creature::GetByObjectID($id);
 		$creatures[] = MarkdownLinkToObject($creature);
 	}
 	$properties['Eaten By'] = implode(', ', $creatures);
 }
 
-function PreparePresetTable(BeaconPreset $preset, array &$properties) {
+function PreparePresetTable(\Ark\Preset $preset, array &$properties) {
 }
 
-function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$properties) {
+function PrepareSpawnPointTable(\Ark\SpawnPoint $spawn_point, array &$properties) {
 	$spawns = $spawn_point->Spawns();
 	$limits = $spawn_point->Limits();
 	if (is_null($limits)) {
 		$limits = [];
+	} else {
+		$temp = [];
+		foreach ($limits as $limit) {
+			$temp[$limit['creature']['UUID']] = $limit['max_percent'];
+		}
+		$limits = $temp;
+		unset($temp);
 	}
 	
 	if (is_null($spawns)) {
@@ -242,7 +233,7 @@ function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$propertie
 	foreach ($spawns as $set) {
 		$entries = $set['entries'];
 		foreach ($entries as $entry) {
-			$creature_id = $entry['creature_id'];
+			$creature_id = $entry['creature']['UUID'];
 			if (in_array($creature_id, $unique_creatures)) {
 				continue;
 			}
@@ -252,7 +243,7 @@ function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$propertie
 	
 	$creatures = [];
 	foreach ($unique_creatures as $creature_id) {
-		$creature = BeaconCreature::GetByObjectID($creature_id);
+		$creature = \Ark\Creature::GetByObjectID($creature_id);
 		$label = MarkdownLinkToObject($creature);
 		if (array_key_exists($creature_id, $limits)) {
 			$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creature_id] * 100, 0) . '%)';
@@ -274,11 +265,11 @@ function ExpandRecipe($parent, bool $as_array = false, int $level = 1, int $mult
 	
 	$lines = [];
 	foreach ($recipe as $ingredient) {
-		$object_id = $ingredient['object_id'];
+		$object_id = $ingredient['engram']['UUID'];
 		$quantity = $ingredient['quantity'] * $multiplier;
 		$exact = $ingredient['exact'];
 		
-		$object = BeaconEngram::GetByObjectID($object_id);
+		$object = \Ark\Engram::GetByObjectID($object_id);
 		$lines[] = '- <span class="crafting_quantity">' . number_format($quantity) . 'x</span> ' . MarkdownLinkToObject($object);
 		
 		/*if ($object->IsTagged('harvestable') === false) {
@@ -297,7 +288,7 @@ function ExpandRecipe($parent, bool $as_array = false, int $level = 1, int $mult
 	return implode("\n", $lines);
 }
 
-function MarkdownLinkToObject(BeaconBlueprint $obj) {
+function MarkdownLinkToObject(\Ark\Blueprint $obj) {
 	$path = $obj->ObjectID();
 	
 	return '[' . $obj->Label() . '](/object/' . $path . ')';

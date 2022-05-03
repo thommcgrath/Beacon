@@ -65,29 +65,27 @@ case 'checkout.session.completed':
 		$price_id = $item['price']['id'];
 		$quantity = $item['quantity'];
 		$line_total = $item['amount_total'];
+		$subtotal = $item['amount_subtotal'];
 		$product_price = $item['price']['unit_amount'];
 		$currency = strtoupper($item['currency']);
 		$tax_total = 0;
 		foreach ($item['taxes'] as $tax) {
 			$tax_total += $tax['amount'];
 		}
-		$tax_total = $tax_total;
 		$discount_total = 0;
 		foreach ($item['discounts'] as $discount) {
 			$discount_total += $discount['amount'];
 		}
-		$discount_total = $discount_total;
-		$product_price_paid = $line_total - ($discount_total + $tax_total);
 		
 		$rows = $database->Query('SELECT product_id FROM product_prices WHERE price_id = $1;', $price_id);
 		if ($rows->RecordCount() === 1) {
 			$purchased_products[] = [
 				'product_id' => $rows->Field('product_id'),
 				'quantity' => $quantity,
-				'price' => $product_price / 100,
-				'paid' => $product_price_paid / 100,
-				'tax' => $tax_total / 100,
-				'discount' => $discount_total / 100,
+				'unit_price' => $product_price / 100,
+				'subtotal' => $subtotal / 100,
+				'total_tax' => $tax_total / 100,
+				'total_discount' => $discount_total / 100,
 				'total' => $line_total / 100,
 				'currency' => $currency
 			];
@@ -124,65 +122,61 @@ case 'checkout.session.completed':
 	$purchase_discount = $obj['total_details']['amount_discount'] / 100;
 	$purchase_tax = $obj['total_details']['amount_tax'] / 100;
 	$purchase_id = BeaconCommon::GenerateUUID();
-	$stw_copies = 0;
-	$gift_copies = 0;
 	$database->BeginTransaction();
+	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality, currency) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9, $10);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, $purchase_tax, $purchase_total, $intent_id, $client_reference_id, $billing_locality, $purchase_currency);
 	foreach ($purchased_products as $item) {
 		$product_id = $item['product_id'];
-		$paid_unit_price = $item['paid'];
-		$full_unit_price = $item['price'];
-		$discount_per_unit = $full_unit_price - $paid_unit_price;
+		$unit_price = $item['unit_price'];
 		$quantity = $item['quantity'];
-		$line_total = $paid_unit_price * $quantity;
+		$subtotal = $item['subtotal'];
+		$discount = $item['total_discount'];
+		$tax = $item['total_tax'];
+		$line_total = $item['total'];
 		$currency = $item['currency'];
 		
-		if ($product_id == '972f9fc5-ad64-4f9c-940d-47062e705cc5') {
+		if ($product_id == BeaconShop::ARK_PRODUCT_ID) {
 			// Check to see if there is already a purchase for this user and convert to giftable
-			$results = $database->Query('SELECT SUM(purchase_items.quantity) AS licenses FROM purchase_items INNER JOIN purchases ON (purchase_items.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = uuid_for_email($1) AND purchase_items.product_id = $2 AND purchases.refunded = FALSE;', $email, '972f9fc5-ad64-4f9c-940d-47062e705cc5');
+			$results = $database->Query('SELECT SUM(purchase_items.quantity) AS licenses FROM purchase_items INNER JOIN purchases ON (purchase_items.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = uuid_for_email($1) AND purchase_items.product_id = $2 AND purchases.refunded = FALSE;', $email, $product_id);
 			if ($results->Field('licenses') > 0) {
-				$product_id = '2207d5c1-4411-4854-b26f-bc4b48aa33bf';
+				$product_id = BeaconShop::ARK_GIFT_ID;
 			}
 		}
 		
-		if ($product_id == 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015') {
-			$stw_copies += $quantity;
-		}
-		if ($product_id == '2207d5c1-4411-4854-b26f-bc4b48aa33bf') {
-			$gift_copies += $quantity;
-		}
-		
-		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total, currency) VALUES ($1, $2, $3, $4, $5, $6, $7);', $purchase_id, $product_id, $full_unit_price, $discount_per_unit, $quantity, $line_total, $currency);
+		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', $purchase_id, $product_id, $currency, $quantity, $unit_price, $subtotal, $discount, $tax, $line_total);
 	}
-	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality, currency) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9, $10);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, $purchase_tax, $purchase_total, $intent_id, $client_reference_id, $billing_locality, $purchase_currency);
-	
-	// Make sure the user's email is removed from the raffle
-	$database->Query('DELETE FROM stw_applicants WHERE email_id = uuid_for_email($1);', $email);
-	
-	// And add more prizes to the raffle
-	for ($i = 0; $i < $stw_copies; $i++) {
-		$database->Query('INSERT INTO stw_purchases (original_purchase_id) VALUES ($1);', $purchase_id);
-	}
-	$codes = array();
-	for ($i = 0; $i < $gift_copies; $i++) {
-		$code = BeaconCommon::CreateGiftCode();
-		$database->Query('INSERT INTO purchase_codes (code, source, purchaser_email_id) VALUES ($1, $2, uuid_for_email($3));', $code, 'Purchase ' . $purchase_id, $email);
-		$codes[] = $code;
-	}
+	BeaconShop::IssuePurchases($purchase_id);
 	$database->Commit();
-	
-	if (count($codes) > 0) {
-		$email_body_plain = 'Thanks for purchasing ' . (count($codes) > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <https://usebeacon.app/redeem>.' . "\n\n";
-		$email_body_html = '<p>Thanks for purchasing ' . (count($codes) > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <a href="https://usebeacon.app/redeem">https://usebeacon.app/redeem</a> or by the direct link for a code below.</p>';
-		if (count($codes) > 1) {
-			$email_body_plain .= "Your codes are:\n" . implode("\n", $codes);
-			$email_body_html .= '<p>Your codes are';
-			for ($i = 0; $i < count($codes); $i++) {
-				$email_body_html .= '<br />' . $codes[$i] . ',  Redeem Link: <a href="https://usebeacon.app/redeem/' . $codes[$i] . '">https://usebeacon.app/redeem/' . $codes[$i] . '</a>';
-			}
-			$email_body_html .= '</p>';
+		
+	// Look up gift codes and email them
+	$codes = [];
+	$results = $database->Query('SELECT code, product_name FROM gift_codes INNER JOIN products ON (gift_codes.product_id = products.product_id) WHERE source_purchase_id = $1;', $purchase_id);
+	$code_count = $results->RecordCount();
+	while ($results->EOF() === false) {
+		$product_name = $results->Field('product_name');
+		$code = $results->Field('code');
+		if (array_key_exists($product_name, $codes)) {
+			$codes[$product_name][] = $code;
 		} else {
-			$email_body_plain .= "Your code is " . $codes[0];
-			$email_body_html .= '<p>Your code is ' . $codes[0] . ' and can be redeemed using <a href="https://usebeacon.app/redeem/' . $codes[0] . '">https://usebeacon.app/redeem/' . $codes[0] . '</a></p>';
+			$codes[$product_name] = [$code];
+		}
+		$results->MoveNext();
+	}
+	
+	if ($code_count > 0) {
+		$email_body_plain = 'Thanks for purchasing ' . ($code_count > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <https://usebeacon.app/redeem>.';
+		$email_body_html = '<p>Thanks for purchasing ' . ($code_count > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <a href="https://usebeacon.app/redeem">https://usebeacon.app/redeem</a> or by the direct link for a code below.</p>';
+		foreach ($codes as $product_name => $product_codes) {
+			if (count($product_codes) > 1) {
+				$email_body_plain .= "\n\nYour \"$product_name\" codes are:\n" . implode("\n", $product_codes);
+				$email_body_html .= '<p>Your &quot;' . htmlentities($product_name) . '&quot; codes are';
+				foreach ($product_codes as $code) {
+					$email_body_html .= '<br />' . htmlentities($code) . ',  Redeem Link: <a href="https://usebeacon.app/redeem/' . urlencode($code) . '">https://usebeacon.app/redeem/' . htmlentities($code) . '</a>';
+				}
+				$email_body_html .= '</p>';
+			} else {
+				$email_body_plain .= "\n\nYour \"$product_name\" code is: " . $product_codes[0];
+				$email_body_html .= '<p>Your &quot;' . htmlentities($product_name) . '&quot; code is ' . htmlentities($product_codes[0]) . ' and can be redeemed using <a href="https://usebeacon.app/redeem/' . urlencode($product_codes[0]) . '">https://usebeacon.app/redeem/' . htmlentities($product_codes[0]) . '</a></p>';
+			}
 		}
 		$email_body_plain .= "\n\nYou can also view the status of all purchased gift codes at <https://usebeacon.app/account/#omni>.";
 		$email_body_html .= '<p>You can also view the status of all purchased gift codes at <a href="https://usebeacon.app/account/#omni">https://usebeacon.app/account/#omni</a></p>';
@@ -199,37 +193,26 @@ case 'charge.refunded':
 	$charge_data = $data['object'];
 	$merchant_reference = $charge_data['payment_intent'];
 	
-	$database->BeginTransaction();
-	$results = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $merchant_reference);
-	if ($results->RecordCount() != 1) {
-		$database->Rollback();
-		http_response_code(404);
-		echo 'PaymentIntent not found';
-		exit;
-	}
-	$database->Query('UPDATE purchases SET refunded = TRUE WHERE merchant_reference = $1 AND refunded = FALSE;', $merchant_reference);
-	$database->Commit();
-	
 	http_response_code(200);
-	echo 'Refund processed';
-	exit;
+	if (BeaconShop::RevokePurchases($merchant_reference)) {
+		echo 'Refund processed';
+	} else {
+		BeaconCommon::PostSlackMessage('The refund webhook failed');
+		echo 'Did not process refund';
+	}
 	
 	break;
 case 'charge.dispute.created':
 	$dispute = $data['object'];
 	$merchant_reference = $dispute['payment_intent'];
 	
-	$database->BeginTransaction();
-	$results = $database->Query('SELECT purchase_id, purchaser_email FROM purchases WHERE merchant_reference = $1;', $merchant_reference);
-	if ($results->RecordCount() != 1) {
-		$database->Rollback();
-		http_response_code(404);
-		echo 'PaymentIntent not found';
-		exit;
+	http_response_code(200);
+	if (BeaconShop::RevokePurchases($merchant_reference, true)) {
+		echo 'Despite processed';
+	} else {
+		BeaconCommon::PostSlackMessage('The dispute webhook failed');
+		echo 'Did not process dispute';
 	}
-	$database->Query('UPDATE users SET banned = TRUE WHERE email_id = $1;', $results->Field('purchaser_email'));
-	$database->Query('UPDATE purchases SET refunded = TRUE WHERE purchase_id = $1 AND refunded = FALSE;', $results->Field('purchase_id'));
-	$database->Commit();
 	
 	break;
 default:

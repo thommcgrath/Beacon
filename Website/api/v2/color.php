@@ -9,9 +9,9 @@ if ($method !== 'GET') {
 
 $search_value = BeaconAPI::ObjectID();
 if (is_numeric($search_value)) {
-	$colors = BeaconColor::GetForID($search_value);
+	$colors = Ark\Color::GetForID($search_value);
 } else {
-	$colors = BeaconColor::GetAll();
+	$colors = Ark\Color::GetAll();
 }
 
 BeaconAPI::ReplySuccess($colors);

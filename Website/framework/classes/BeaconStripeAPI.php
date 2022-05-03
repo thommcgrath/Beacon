@@ -57,6 +57,26 @@ class BeaconStripeAPI {
 		}
 	}
 	
+	protected function DeleteURL(string $url, string $stripe_version) {
+		$curl = curl_init($url);
+		$headers = [
+			'Authorization: Bearer ' . $this->api_secret,
+			'Stripe-Version: ' . $stripe_version
+		];
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+		$body = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		
+		if ($status === 200) {
+			return json_decode($body, true);
+		} else {
+			return null;
+		}
+	}
+	
 	public function GetPaymentIntent(string $intent_id) {
 		return $this->GetURL('https://api.stripe.com/v1/payment_intents/' . $intent_id, '2020-08-27');
 	}
@@ -175,6 +195,64 @@ class BeaconStripeAPI {
 	
 	public function GetCountrySpec(string $country_code) {
 		return $this->GetURL('https://api.stripe.com/v1/country_specs/' . $country_code, '2020-08-27');
+	}
+	
+	public function UpdatedProductPrice(string $price_id, int $amount) {
+		$response = $this->GetURL('https://api.stripe.com/v1/prices/' . $price_id, '2020-08-27');
+		if (is_null($response)) {
+			return false;
+		}
+		
+		$new_price_id = null;
+		$product_id = $response['product'];
+		$currency = $response['currency'];
+		$old_amount = $response['unit_amount'];
+		if ($old_amount === $amount) {
+			return $price_id;
+		}
+		
+		// See if there is already an archived price
+		$response = $this->GetURL('https://api.stripe.com/v1/prices/search?query=' . urlencode("product:'$product_id' AND currency:'$currency'"), '2020-08-27');
+		if (is_null($response)) {
+			return false;
+		}
+		$results = $response['data'];
+		foreach ($results as $price) {
+			if ($price['unit_amount'] != $amount) {
+				continue;
+			}
+			
+			$new_price_id = $price['id'];
+			if ($price['active'] == false) {
+				// Need to reactivate the price
+				$response = $this->PostURL('https://api.stripe.com/v1/prices/' . $new_price_id, ['active' => 'true'], '2020-08-27');
+				if (is_null($response)) {
+					return false;
+				}
+			}
+			
+			break;
+		}
+		
+		if (is_null($new_price_id)) {
+			$response = $this->PostURL('https://api.stripe.com/v1/prices', [
+				'unit_amount' => $amount,
+				'currency' => $currency,
+				'product' => $product_id,
+				'tax_behavior' => 'exclusive'
+			], '2020-08-27');
+			
+			if (is_null($response)) {
+				return false;
+			}
+			
+			$new_price_id = $response['id'];
+		}
+		
+		// Deactivate the old price
+		$response = $this->PostURL('https://api.stripe.com/v1/prices/' . $price_id, ['active' => 'false'], '2020-08-27');
+		
+		return $new_price_id;
 	}
 }
 

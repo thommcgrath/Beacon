@@ -13,7 +13,7 @@ $ism = ($ism > 0) ? $ism : 1.0;
 $iam = ($iam > 0) ? $iam : 1.0;
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT value::INTEGER FROM game_variables WHERE key = $1;', 'Cuddle Period');
+$results = $database->Query('SELECT value::INTEGER FROM ark.game_variables WHERE key = $1;', 'Cuddle Period');
 if ($results->RecordCount() != 1) {
 	http_response_code(500);
 	echo "There was a problem loading the default imprint interval.";
@@ -122,7 +122,7 @@ BeaconTemplate::FinishStyles();
 			$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM updates;');
 			$min_version = $results->Field('newest_build');
 			
-			$creatures = BeaconCreature::GetAll($min_version);
+			$creatures = \Ark\Creature::GetAll($min_version);
 			foreach ($creatures as $creature) {
 				if (is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
 					continue;

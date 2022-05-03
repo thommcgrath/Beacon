@@ -8,29 +8,6 @@ if (isset($_GET['slug']) == false) {
 	exit;
 }
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-.embedded_youtube_video {
-	position: relative;
-	padding-bottom: 56.25%;
-	padding-top: 30px;
-	height: 0;
-	overflow: hidden;
-}
-
-.embedded_youtube_video iframe, .embedded_youtube_video object, .embedded_youtube_video embed {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-}
-
-</style>
-<?php
-BeaconTemplate::FinishStyles();
-
 $slug = $_GET['slug'];
 $database = BeaconCommon::Database();
 

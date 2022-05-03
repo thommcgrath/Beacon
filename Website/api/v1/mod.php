@@ -14,10 +14,10 @@ $database = BeaconCommon::Database();
 switch ($method) {
 case 'GET':
 	if (is_null($workshop_id)) {
-		$mods = BeaconMod::GetAll($user_id);
+		$mods = \Ark\Mod::GetAll($user_id);
 		BeaconAPI::ReplySuccess($mods);
 	} else {
-		$mods = BeaconMod::GetByWorkshopID($user_id, $workshop_id);
+		$mods = \Ark\Mod::GetByWorkshopID($user_id, $workshop_id);
 		if (count($mods) == 0) {
 			BeaconAPI::ReplyError('Mod not found', null, 404);
 		}
@@ -80,10 +80,10 @@ case 'POST':
 			}
 		}
 	
-		$results = $database->Query('SELECT user_id FROM mods WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id);
+		$results = $database->Query('SELECT user_id FROM ark.mods WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id);
 		if ($results->RecordCount() == 1) {
 			try {
-				$database->Query('UPDATE mods SET pull_url = $3 WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id, $pull_url);
+				$database->Query('UPDATE ark.mods SET pull_url = $3 WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id, $pull_url);
 			} catch (\BeaconQueryException $e) {
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not updated: ' . $e->getMessage());
 			}
@@ -95,13 +95,13 @@ case 'POST':
 			}
 			
 			try {
-				$database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url, min_version) VALUES ($1, $2, $3, $4, 10500000);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
+				$database->Query('INSERT INTO ark.mods (workshop_id, name, user_id, pull_url, min_version) VALUES ($1, $2, $3, $4, 10500000);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
 			} catch (BeaconQueryException $e) {
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
 			}
 		}
 		
-		$mods[] = BeaconMod::GetByWorkshopID(BeaconAPI::UserID(), $workshop_id)[0];
+		$mods[] = \Ark\Mod::GetByWorkshopID(BeaconAPI::UserID(), $workshop_id)[0];
 	}
 	$database->Commit();
 		
@@ -116,7 +116,7 @@ case 'DELETE':
 		BeaconAPI::ReplyError('No mod specified');
 	}
 	
-	$mods = BeaconMod::GetByWorkshopID($user_id, $workshop_id);
+	$mods = \Ark\Mod::GetByWorkshopID($user_id, $workshop_id);
 	if (count($mods) == 0) {
 		BeaconAPI::ReplyError('No mods found.', null, 404);
 	}

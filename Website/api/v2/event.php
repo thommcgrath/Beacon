@@ -8,12 +8,12 @@ if ($method !== 'GET') {
 }
 
 $search_value = BeaconAPI::ObjectID();
-if (\BeaconCommon::IsUUID($search_value)) {
-	$events = BeaconEvent::GetForUUID($search_value);
+if (BeaconCommon::IsUUID($search_value)) {
+	$events = Ark\Event::GetForUUID($search_value);
 } elseif (is_string($search_value)) {
-	$events = BeaconEvent::GetForArkCode($search_value);
+	$events = Ark\Event::GetForArkCode($search_value);
 } else {
-	$events = BeaconEvent::GetAll();
+	$events = Ark\Event::GetAll();
 }
 
 BeaconAPI::ReplySuccess($events);

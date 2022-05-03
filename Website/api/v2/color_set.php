@@ -9,9 +9,9 @@ if ($method !== 'GET') {
 
 $search_value = BeaconAPI::ObjectID();
 if (BeaconCommon::IsUUID($search_value)) {
-	$sets = BeaconColorSet::GetForUUID($search_value);
+	$sets = Ark\ColorSet::GetForUUID($search_value);
 } else {
-	$sets = BeaconColorSet::GetAll();
+	$sets = Ark\ColorSet::GetAll();
 }
 
 BeaconAPI::ReplySuccess($sets);

@@ -6,40 +6,34 @@ if (ob_get_level()) {
 
 mb_http_output('UTF-8');
 mb_internal_encoding('UTF-8');
+ini_set('serialize_precision', -1);
 
 global $api_version;
 if (isset($_SERVER['API_VERSION'])) {
 	$api_version = $_SERVER['API_VERSION'];
 }
 if (is_int($api_version) === false || isset($api_version) === false || empty($api_version)) {
-	$api_version = 2;
+	$api_version = 3;
 }
 $_SERVER['API_VERSION'] = $api_version;
 
 spl_autoload_register(function($class_name) {
 	$filename = str_replace('\\', '/', $class_name) . '.php';
+	$paths = [dirname(__FILE__) . '/classes/' . $filename];
+	$path_parts = explode('\\', $class_name, 2);
 	
-	// check the global classes
-	$file = dirname(__FILE__) . '/classes/' . $filename;
-	if (file_exists($file)) {
-		include($file);
-		return;
+	if (count($path_parts) === 2 && $path_parts[0] === 'BeaconAPI') {
+		$paths[] = dirname(__FILE__, 2) . '/api/common/' . str_replace('\\', '/', $path_parts[1]) . '.php';
+	} elseif (count($path_parts) === 2) {
+		$paths[] = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/' . strtolower($path_parts[0]) . '/classes/' . str_replace('\\', '/', $path_parts[1]) . '.php';
 	}
+	$paths[] = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/classes/' . $filename;
 	
-	// check the common API
-	if (substr($class_name, 0, 10) === 'BeaconAPI\\') {
-		$file = dirname(__FILE__, 2) . '/api/common/' . str_replace('\\', '/', substr($class_name, 10)) . '.php';
-		if (file_exists($file)) {
-			include($file);
+	foreach ($paths as $path) {
+		if (file_exists($path)) {
+			include($path);
 			return;
 		}
-	}
-	
-	// check the versioned api too
-	$file = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/classes/' . $filename;
-	if (file_exists($file)) {
-		include($file);
-		return;
 	}
 });
 
@@ -73,46 +67,45 @@ BeaconErrors::StartWatching();
 (function() {
 	$_SERVER['CSP_NONCE'] = base64_encode(random_bytes(12));
 	
-	$policies = array(
-		'default-src' => array(
+	$policies = [
+		'default-src' => [
 			"'self'",
 			"https://*.beaconapp.cc",
 			"https://*.usebeacon.app",
 			"https://*.stripe.com"
-		),
-		'frame-src' => array(
+		],
+		'frame-src' => [
 			"'self'",
 			"https://www.youtube-nocookie.com",
 			"https://player.vimeo.com",
 			"https://*.stripe.com"
-		),
-		'style-src' => array(
+		],
+		'style-src' => [
 			"'self'",
 			"https://*.typekit.net/"
-		),
-		'script-src' => array(
+		],
+		'script-src' => [
 			"'self'",
 			"https://*.stripe.com"
-		),
-		'font-src' => array(
+		],
+		'font-src' => [
 			"'self'",
 			"https://use.typekit.net"
-		),
-		'object-src' => array(
+		],
+		'object-src' => [
 			"'none'"
-		),
-		'base-uri' => array(
+		],
+		'base-uri' => [
 			"'self'"
-		),
-		'sandbox' => array(
+		],
+		'sandbox' => [
 			'allow-forms',
 			'allow-same-origin',
 			'allow-scripts',
 			'allow-downloads'
-		),
-		'upgrade-insecure-requests' => array(
-		)
-	);
+		],
+		'upgrade-insecure-requests' => []
+	];
 	
 	$browser = isset($_SERVER['HTTP_USER_AGENT']) ? get_browser($_SERVER['HTTP_USER_AGENT'], true) : null;
 	$use_nonces = !(is_array($browser) && $browser['browser'] == 'Edge');

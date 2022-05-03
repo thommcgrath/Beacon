@@ -1,885 +1,610 @@
-#tag Window
-Begin Window EditorWindow
-   BackColor       =   &cFFFFFF00
+#tag DesktopWindow
+Begin DesktopWindow EditorWindow
    Backdrop        =   0
-   CloseButton     =   True
+   BackgroundColor =   &cFFFFFF00
    Composite       =   True
-   Frame           =   0
+   DefaultLocation =   2
    FullScreen      =   False
-   FullScreenButton=   False
-   HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   True
+   HasFullScreenButton=   False
+   HasMaximizeButton=   True
+   HasMinimizeButton=   True
    Height          =   578
    ImplicitInstance=   False
    MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   True
-   MaxWidth        =   32000
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MenuBar         =   1391144959
    MenuBarVisible  =   True
-   MinHeight       =   578
-   MinimizeButton  =   True
-   MinWidth        =   720
-   Placement       =   2
+   MinimumHeight   =   578
+   MinimumWidth    =   720
    Resizeable      =   True
    Title           =   "Publisher"
+   Type            =   0
    Visible         =   True
    Width           =   720
-   Begin TextField MacPathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
+   Begin URLConnection UploadSocket
+      AllowCertificateValidation=   False
+      HTTPStatusCode  =   0
       Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin DesktopButton SelectFolderButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Select Build Folder"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
       Italic          =   False
-      Left            =   179
-      LimitText       =   0
+      Left            =   469
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
+      LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   429
-   End
-   Begin Label MacPathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Mac File:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   147
-   End
-   Begin Label WinComboPathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Windows Combo File:"
-      TextAlign       =   2
+      Tooltip         =   ""
+      Top             =   166
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   139
+   End
+   Begin DesktopLabel ShortPreviewLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Banner Text:"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
+      Tooltip         =   ""
+      Top             =   234
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   147
    End
-   Begin TextField WinComboPathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+   Begin DesktopTextField ShortPreviewField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   179
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   429
-   End
-   Begin TextField BuildNumberField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   179
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   15
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   190
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   176
-   End
-   Begin Label BuildLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Build:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   190
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   147
-   End
-   Begin TextField VersionField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   179
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   156
-      Transparent     =   True
+      Tooltip         =   ""
+      Top             =   234
+      Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
-      Width           =   176
+      Width           =   521
    End
-   Begin Label VersionLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+   Begin DesktopCanvas HorizontalSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
       Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
+      Height          =   1
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Multiline       =   False
       Scope           =   2
-      Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Short Version:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   156
+      Tooltip         =   ""
+      Top             =   308
+      Transparent     =   False
+      Visible         =   True
+      Width           =   720
+   End
+   Begin DesktopButton ActionButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Begin"
+      Default         =   False
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   620
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   268
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   147
+      Width           =   80
    End
-   Begin TextArea NotesArea
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   True
-      BackColor       =   &cFFFFFF00
+   Begin DesktopTextArea NotesArea
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   True
+      AllowStyledText =   True
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
-      Height          =   279
-      HelpTag         =   ""
+      HasBorder       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      Height          =   269
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
       Left            =   0
-      LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Multiline       =   True
       ReadOnly        =   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollbarVertical=   True
-      Styled          =   True
-      TabIndex        =   21
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   299
-      Transparent     =   True
-      Underline       =   False
-      UnicodeMode     =   0
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   720
-   End
-   Begin PushButton ActionButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Begin"
-      Default         =   False
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   620
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   19
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   258
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin Canvas HorizontalSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   20
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   298
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   720
-   End
-   Begin Xojo.Net.HTTPSocket UploadSocket
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-      ValidateCertificates=   False
-   End
-   Begin TextField ShortPreviewField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   179
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   17
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   224
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   521
-   End
-   Begin Label ShortPreviewLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   16
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Banner Text:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   224
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   147
-   End
-   Begin PushButton SelectWinComboButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   620
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   55
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin PushButton SelectMacButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   620
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   21
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin PushButton SelectFolderButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select Installers Folder"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   179
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   18
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   258
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   169
-   End
-   Begin Label Win64PathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Windows 64-bit File:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   88
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   147
-   End
-   Begin TextField Win64PathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   179
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   88
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   429
-   End
-   Begin PushButton SelectWin64Button
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   620
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   89
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin Label Win32PathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Windows 32-bit File:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   122
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   147
-   End
-   Begin TextField Win32PathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   179
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   122
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   429
-   End
-   Begin PushButton SelectWin32Button
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   620
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
       Scope           =   2
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   123
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   309
+      Transparent     =   True
+      Underline       =   False
+      UnicodeMode     =   0
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   720
+   End
+   Begin DesktopLabel VersionLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Short Version:"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   166
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   147
+   End
+   Begin DesktopTextField VersionField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   179
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   166
+      Transparent     =   True
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   176
+   End
+   Begin DesktopLabel BuildLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Build:"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   200
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   147
+   End
+   Begin DesktopTextField BuildNumberField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   179
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   200
+      Transparent     =   True
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   176
+   End
+   Begin DesktopListBox FileList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
+      Bold            =   False
+      ColumnCount     =   5
+      ColumnWidths    =   "*,120,60,60,60"
+      DefaultRowHeight=   26
+      DropIndicatorVisible=   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   134
+      Index           =   -2147483648
+      InitialValue    =   "File	Platform	ARM64	x86	x86_64"
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   False
+      RowSelectionType=   1
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   680
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
+   Begin DesktopButton AddFileButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Add File"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   620
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   166
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  #if TargetMacOS
+		    Var Win As NSWindowMBS = Self.NSWindowMBS
+		    Win.TitlebarAppearsTransparent = True
+		  #endif
+		  
+		  App.AllowAutoQuit = True
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub AddFile(File As FolderItem, Arch As Integer = 0)
+		  Var Platform As String
+		  If File.Name.EndsWith(".exe") Then
+		    Platform = Download.PlatformWindows
+		  ElseIf File.Name.EndsWith(".dmg") Then
+		    Platform = Download.PlatformMac
+		  End If
+		  
+		  Var Version As String = Self.VersionField.Text.Trim
+		  Var Path As String = File.Name
+		  Var Temp As FolderItem = File.Parent
+		  While (Temp Is Nil) = False
+		    Path = Temp.Name + "/" + Path
+		    If Temp.Name <> Version Then
+		      Temp = Temp.Parent
+		    Else
+		      Temp = Nil
+		    End If
+		  Wend
+		  
+		  Self.FileList.AddRow(Path, Platform)
+		  Var RowIdx As Integer = Self.FileList.LastAddedRowIndex
+		  Self.FileList.RowTagAt(RowIdx) = File
+		  If (Arch And Download.ArchARM64) = Download.ArchARM64 Then
+		    Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnARM64) = True
+		  End If
+		  If (Arch And Download.ArchIntel32) = Download.ArchIntel32 Then
+		    Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnIntel32) = True
+		  End If
+		  If (Arch And Download.ArchIntel64) = Download.ArchIntel64 Then
+		    Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnIntel64) = True
+		  End
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddFiles(Folder As FolderItem, Arch As Integer = 0)
+		  If Folder.IsFolder = False Then
+		    Self.AddFile(Folder, Arch)
+		    Return
+		  End If
+		  
+		  For Each File As FolderItem In Folder.Children
+		    Select Case File.Name
+		    Case "Beacon.dmg"
+		      Self.AddFile(File, If(Arch <> 0, Arch, Download.ArchARM64 Or Download.ArchIntel64))
+		    Case "Install_Beacon.exe"
+		      Self.AddFile(File, If(Arch <> 0, Arch, Download.ArchIntel32 Or Download.ArchIntel64))
+		    Case "Combo"
+		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel32 Or Download.ArchIntel64))
+		    Case "x64", "x86_64"
+		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel64))
+		    Case "x86"
+		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel32))
+		    End Select
+		  Next File
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Begin()
-		  Self.mMacPath = ""
-		  Self.mMacSignature = ""
-		  Self.mWinComboPath = ""
-		  Self.mWinComboSignature = ""
-		  Self.mWin64Path = ""
-		  Self.mWin64Signature = ""
-		  Self.mWin32Path = ""
-		  Self.mWin32Signature = ""
+		  Var HumanVersion As String = Self.VersionField.Text.Trim
 		  
-		  Self.mUploadQueue = New Dictionary
-		  If Self.mMacFile <> Nil And Self.mMacFile.Exists Then
-		    Self.mMacPath = EncodeURLComponent(Self.mMacFile.Name)
-		    Self.mUploadQueue.Value(Self.mMacPath) = Self.mMacFile
-		  End If
-		  If Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists Then
-		    Self.mWinComboPath = EncodeURLComponent(Self.mWinComboFile.Name)
-		    Self.mUploadQueue.Value(Self.mWinComboPath) = Self.mWinComboFile
-		  End If
-		  If Self.mWin64File <> Nil And Self.mWin64File.Exists Then
-		    Self.mWin64Path = "x86_64/" + EncodeURLComponent(Self.mWin64File.Name)
-		    Self.mUploadQueue.Value(Self.mWin64Path) = Self.mWin64File
-		  End If
-		  If Self.mWin32File <> Nil And Self.mWin32File.Exists Then
-		    Self.mWin32Path = "x86/" + EncodeURLComponent(Self.mWin32File.Name)
-		    Self.mUploadQueue.Value(Self.mWin32Path) = Self.mWin32File
-		  End If
+		  Var RSAKey As String = App.PrivateKey
+		  
+		  Var Queue As New Dictionary
+		  Var Downloads() As Download
+		  For RowIdx As Integer = 0 To Self.FileList.LastRowIndex
+		    Var File As FolderItem = Self.FileList.RowTagAt(RowIdx)
+		    Var Platform As String = Self.FileList.CellTextAt(RowIdx, Self.ColumnPlatform)
+		    Var Arch As Integer
+		    If Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnARM64) Then
+		      Arch = Arch Or Download.ArchARM64
+		    End If
+		    If Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnIntel32) Then
+		      Arch = Arch Or Download.ArchIntel32
+		    End If
+		    If Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnIntel64) Then
+		      Arch = Arch Or Download.ArchIntel64
+		    End If
+		    
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Contents As MemoryBlock = Stream.ReadAll
+		    Stream.Close
+		    
+		    Var RSASignature As String = Self.SignRSA(RSAKey, Contents)
+		    If RSASignature.IsEmpty Then
+		      MessageBox("No RSA signature for " + File.NativePath + " generated")
+		      Return
+		    End If
+		    Var DSASignature As String = Self.SignDSA(File)
+		    If DSASignature.IsEmpty Then
+		      MessageBox("No DSA signature for " + File.NativePath + " generated")
+		      Return
+		    End If
+		    Var EdDSASignature As String = Self.SignEdDSA(File)
+		    If EdDSASignature.IsEmpty Then
+		      MessageBox("No EdDSA signature for " + File.NativePath + " generated")
+		      Return
+		    End If
+		    
+		    Var Path As String = Download.SuggestedPath(Arch, Platform)
+		    Var URL As String = "https://releases.usebeacon.app/" + If(DebugBuild, "Debug/", "") + HumanVersion + "/" + Path
+		    Var DownloadObj As New Download(Contents, URL, Arch, Platform)
+		    DownloadObj.AddSignature(New DownloadSignature(RSASignature, DownloadSignature.SignatureRSA))
+		    DownloadObj.AddSignature(New DownloadSignature(DSASignature, DownloadSignature.SignatureDSA))
+		    DownloadObj.AddSignature(New DownloadSignature(EdDSASignature, DownloadSignature.SignatureEdDSA))
+		    Queue.Value(DownloadObj.UUID) = DownloadObj
+		    Downloads.Add(DownloadObj)
+		  Next RowIdx
+		  
+		  Self.mUploadQueue = Queue
+		  Self.mDownloads = Downloads
+		  Self.mDisplayVersion = HumanVersion
 		  
 		  Self.mProgress = New ProgressSheet
-		  Self.mProgress.ShowWithin(Self)
+		  Self.mProgress.Show(Self)
 		  
 		  Self.CheckEnabled()
 		  Self.NextQueueItem()
@@ -888,16 +613,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Dim Enabled As Boolean = True
-		  Dim HasWindowsFile As Boolean = (Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists) Or (Self.mWin64File <> Nil And Self.mWin64File.Exists) Or (Self.mWin32File <> Nil And Self.mWin32File.Exists)
+		  Var HasMacFile, HasWindowsFile As Boolean
+		  For RowIdx As Integer = 0 To Self.FileList.LastRowIndex
+		    Select Case Self.FileList.CellTextAt(RowIdx, Self.ColumnPlatform)
+		    Case Download.PlatformMac
+		      HasMacFile = True
+		    Case Download.PlatformWindows
+		      HasWindowsFile = True
+		    End Select
+		  Next RowIdx
 		  
-		  If Self.mUploadQueue <> Nil And Self.mUploadQueue.Count > 0 Then
-		    Enabled = False
-		  End If
-		  If Enabled And (Self.mMacFile = Nil Or Self.mMacFile.Exists = False) Then
-		    Enabled = False
-		  End If
-		  If Enabled And HasWindowsFile = False Then
+		  Var Enabled As Boolean = HasMacFile And HasWindowsFile
+		  
+		  If Self.mUploadQueue <> Nil And Self.mUploadQueue.KeyCount > 0 Then
 		    Enabled = False
 		  End If
 		  If Enabled And Self.mBannerText = "" Then
@@ -923,6 +651,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Function DictionaryToInsertSQL(TableName As String, Dict As Dictionary) As String
+		  Var Columns(), Values() As String
+		  For Each Entry As DictionaryEntry In Dict
+		    Columns.Add("""" + Entry.Key + """")
+		    Values.Add(Entry.Value)
+		  Next Entry
+		  
+		  Return "INSERT INTO """ + TableName + """ (" + String.FromArray(Columns, ", ") + ") VALUES (" + String.FromArray(Values, ", ") + ");"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Error(Message As String)
 		  If Self.mProgress <> Nil Then
 		    Self.mProgress.Close
@@ -933,13 +673,13 @@ End
 		  Self.mUploadQueue = New Dictionary
 		  Self.CheckEnabled()
 		  
-		  MsgBox(Message)
+		  MessageBox(Message)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Finish()
-		  If Self.mUploadQueue <> Nil And Self.mUploadQueue.Count > 0 Then
+		  If Self.mUploadQueue <> Nil And Self.mUploadQueue.KeyCount > 0 Then
 		    Return
 		  End If
 		  
@@ -948,47 +688,54 @@ End
 		    Self.mProgress = Nil
 		  End If
 		  
-		  Dim Root As String = "https://releases.beaconapp.cc/" + EncodeURLComponent(Self.mDisplayVersion)
+		  Var DeltaVersion As Integer = 4
+		  If Self.mBuildNumber >= 10600000 Then
+		    DeltaVersion = 6
+		  ElseIf Self.mBuildNumber >= 10500000 Then
+		    DeltaVersion = 5
+		  End If
 		  
-		  Dim InsertData As New Dictionary
-		  InsertData.Value("build_number") = Str(Self.mBuildNumber, "-0")
+		  Var Statements() As String
+		  Statements.Add("DELETE FROM updates WHERE build_number = " + Self.mBuildNumber.ToString(Locale.Raw, "0") + ";")
+		  
+		  Var UpdateUUID As String = New v4UUID
+		  Var InsertData As New Dictionary
+		  InsertData.Value("update_id") = "'" + UpdateUUID + "'"
+		  InsertData.Value("build_number") = Self.mBuildNumber.ToString(Locale.Raw, "0")
 		  InsertData.Value("build_display") = "'" + Self.mDisplayVersion + "'"
 		  InsertData.Value("notes") = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
-		  InsertData.Value("stage") = Str(Self.mStageCode, "-0")
-		  InsertData.Value("preview") = "'" + ReplaceAll(Self.mBannerText, "'", "''") + "'"
+		  InsertData.Value("stage") = Self.mStageCode.ToString(Locale.Raw, "0")
+		  InsertData.Value("preview") = "'" + Self.mBannerText.ReplaceAll("'", "''") + "'"
 		  InsertData.Value("min_mac_version") = "'10.12.0'"
 		  InsertData.Value("min_win_version") = "'6.1.7601'"
-		  InsertData.Value("delta_version") = If(Self.mBuildNumber >= 10500000, 5, 4)
+		  InsertData.Value("delta_version") = DeltaVersion
 		  InsertData.Value("published") = "'" + DateTime.Now.SQLDateTime + "'"
+		  Statements.Add(Self.DictionaryToInsertSQL("updates", InsertData))
 		  
-		  If Self.mMacFile <> Nil And Self.mMacFile.Exists And Self.mMacSignature <> "" And Self.mMacPath <> "" Then
-		    InsertData.Value("mac_url") = "'" + ReplaceAll(Root + "/" + Self.mMacPath, "'", "''") + "'"
-		    InsertData.Value("mac_signature") = "'" + Self.mMacSignature + "'"
-		  End If
-		  If Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists And Self.mWinComboSignature <> "" And Self.mWinComboPath <> "" Then
-		    InsertData.Value("win_combo_url") = "'" + ReplaceAll(Root + "/" + Self.mWinComboPath, "'", "''") + "'"
-		    InsertData.Value("win_combo_signature") = "'" + Self.mWinComboSignature + "'"
-		  End If
-		  If Self.mWin64File <> Nil And Self.mWin64File.Exists And Self.mWin64Signature <> "" And Self.mWin64Path <> "" Then
-		    InsertData.Value("win_64_url") = "'" + ReplaceAll(Root + "/" + Self.mWin64Path, "'", "''") + "'"
-		    InsertData.Value("win_64_signature") = "'" + Self.mWin64Signature + "'"
-		  End If
-		  If Self.mWin32File <> Nil And Self.mWin32File.Exists And Self.mWin32Signature <> "" And Self.mWin32Path <> "" Then
-		    InsertData.Value("win_32_url") = "'" + ReplaceAll(Root + "/" + Self.mWin32Path, "'", "''") + "'"
-		    InsertData.Value("win_32_signature") = "'" + Self.mWin32Signature + "'"
-		  End If
+		  For Each DownloadObj As Download In Self.mDownloads
+		    Var Dict As New Dictionary
+		    Dict.Value("download_id") = "'" + DownloadObj.UUID + "'"
+		    Dict.Value("update_id") = "'" + UpdateUUID + "'"
+		    Dict.Value("url") = "'" + DownloadObj.URL + "'"
+		    Dict.Value("platform") = "'" + DownloadObj.Platform + "'"
+		    Dict.Value("architectures") = DownloadObj.Arch
+		    Statements.Add(Self.DictionaryToInsertSQL("download_urls", Dict))
+		    
+		    Var Signatures() As DownloadSignature = DownloadObj.Signatures
+		    For Each Signature As DownloadSignature In Signatures
+		      Var SignData As New Dictionary
+		      SignData.Value("signature_id") = "'" + Signature.UUID + "'"
+		      SignData.Value("download_id") = "'" + DownloadObj.UUID + "'"
+		      SignData.Value("format") = "'" + Signature.Format + "'"
+		      SignData.Value("signature") = "'" + Signature.Signature + "'"
+		      Statements.Add(Self.DictionaryToInsertSQL("download_signatures", SignData))
+		    Next Signature
+		  Next DownloadObj
 		  
-		  Dim Columns(), Values() As String
-		  For I As Integer = 0 To InsertData.Count - 1
-		    Columns.Append("""" + InsertData.Key(I) + """")
-		    Values.Append(InsertData.Value(InsertData.Key(I)))
-		  Next
+		  Var Board As New Clipboard
+		  Board.Text = String.FromArray(Statements, EndOfLine)
 		  
-		  Dim SQL As String = "INSERT INTO ""updates"" (" + Join(Columns, ", ") + ") VALUES (" + Join(Values, ", ") + ");"
-		  Dim Board As New Clipboard
-		  Board.Text = SQL
-		  
-		  MsgBox("Insert statement has been copied to the clipboard.")
+		  MessageBox("Insert statements have been copied to the clipboard.")
 		  
 		  Self.CheckEnabled
 		End Sub
@@ -996,50 +743,66 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub NextQueueItem()
-		  If Self.mUploadQueue.Count = 0 Then
+		  If Self.mUploadQueue.KeyCount = 0 Then
 		    Self.Finish()
 		    Return
 		  End If
 		  
-		  Dim Path As String = Self.mUploadQueue.Key(0)
-		  Dim File As FolderItem = Self.mUploadQueue.Value(Path)
-		  Self.mUploadQueue.Remove(Path)
+		  Var UUID As String = Self.mUploadQueue.Key(0)
+		  Var DownloadObj As Download = Self.mUploadQueue.Value(UUID)
+		  Self.mUploadQueue.Remove(UUID)
 		  
-		  Dim Stream As BinaryStream = BinaryStream.Open(File, False)
-		  Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
+		  Var Host As String = "storage.bunnycdn.com"
 		  
-		  Dim Host As String
-		  #if DebugBuild
-		    Host = "private-anon-166a449bae-bunnycdnstorage.apiary-mock.com"
-		  #else
-		    Host = "storage.bunnycdn.com"
-		  #endif
-		  
-		  Dim ParentURL As String = "https://" + Host + "/beacon-releases/" + EncodeURLComponent(Self.mDisplayVersion)
-		  Dim UploadURL As String = ParentURL + "/" + Path
+		  Var Path As String = DownloadObj.Path + "/" + DownloadObj.Filename
+		  Var UploadURL As String = "https://" + Host + "/beacon-releases/" + DownloadObj.Path + "/" + DownloadObj.Filename
 		  
 		  Self.mProgress.Caption = "Uploading " + Path
 		  
 		  Self.UploadSocket.ClearRequestHeaders()
-		  Self.UploadSocket.SetRequestContent(Contents.Convert, "application/octet-stream")
-		  Self.UploadSocket.RequestHeader("AccessKey") = App.APIKey.ToText
-		  Self.UploadSocket.Send("PUT", UploadURL.ToText)
+		  Self.UploadSocket.SetRequestContent("Checksum", DownloadObj.Checksum)
+		  Self.UploadSocket.SetRequestContent(DownloadObj.Contents, "application/octet-stream")
+		  Self.UploadSocket.RequestHeader("AccessKey") = App.APIKey
+		  Self.UploadSocket.Send("PUT", UploadURL)
 		  System.DebugLog("Uploading to " + UploadURL)
-		  
-		  Dim Signature As String = EncodeHex(Crypto.RSASign(Contents, App.PrivateKey)).Lowercase
-		  
-		  Select Case Path
-		  Case Self.mMacPath
-		    Self.mMacSignature = Signature
-		  Case Self.mWinComboPath
-		    Self.mWinComboSignature = Signature
-		  Case Self.mWin64Path
-		    Self.mWin64Signature = Signature
-		  Case Self.mWin32Path
-		    Self.mWin32Signature = Signature
-		  End Select
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignDSA(File As FolderItem) As String
+		  Var Sh As New Shell
+		  Sh.Execute(App.SignTool(True).ShellPath + " " + File.ShellPath + " " + App.ApplicationSupport.Child("dsa_priv.pem").ShellPath)
+		  Return Sh.Result.Trim
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignEdDSA(File As FolderItem) As String
+		  Var Sh As New Shell
+		  Sh.Execute(App.SignTool(False).ShellPath + " -f " + App.ApplicationSupport.Child("ed25519").ShellPath + " " + File.ShellPath)
+		  
+		  Var Result As String = Sh.Result.Trim
+		  Var StartPos As Integer = Result.IndexOf("sparkle:edSignature=""")
+		  If StartPos = -1 Then
+		    // There is a problem
+		    Return ""
+		  End If
+		  
+		  StartPos = StartPos + 21
+		  Var EndPos As Integer = Result.IndexOf(StartPos, """")
+		  If EndPos = -1 Then
+		    // What?
+		    EndPos = Result.Length
+		  End If
+		  
+		  Return Result.Middle(StartPos, EndPos - StartPos)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignRSA(Key As String, Content As MemoryBlock) As String
+		  Return EncodeHex(Crypto.RSASign(Content, Key)).Lowercase
+		End Function
 	#tag EndMethod
 
 
@@ -1056,15 +819,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMacFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMacPath As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMacSignature As String
+		Private mDownloads() As Download
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1083,96 +838,106 @@ End
 		Private mUploadQueue As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mWin32File As FolderItem
-	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mWin32Path As String
-	#tag EndProperty
+	#tag Constant, Name = ColumnARM64, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
-	#tag Property, Flags = &h21
-		Private mWin32Signature As String
-	#tag EndProperty
+	#tag Constant, Name = ColumnFile, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
 
-	#tag Property, Flags = &h21
-		Private mWin64File As FolderItem
-	#tag EndProperty
+	#tag Constant, Name = ColumnIntel32, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
 
-	#tag Property, Flags = &h21
-		Private mWin64Path As String
-	#tag EndProperty
+	#tag Constant, Name = ColumnIntel64, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
 
-	#tag Property, Flags = &h21
-		Private mWin64Signature As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWinComboFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWinComboPath As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWinComboSignature As String
-	#tag EndProperty
+	#tag Constant, Name = ColumnPlatform, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events MacPathField
+#tag Events UploadSocket
 	#tag Event
-		Sub DropObject(obj As DragItem, action As Integer)
-		  #Pragma Unused Action
-		  Do
-		    If Obj.FolderItemAvailable = False Then
-		      Continue
-		    End If
-		    
-		    Self.mMacFile = Obj.FolderItem
-		    Me.Value = Self.mMacFile.NativePath
-		    Self.CheckEnabled
-		    Return
-		  Loop Until Obj.NextItem = False
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  #Pragma Unused Content
+		  
+		  If HTTPStatus = 201 Then
+		    Timer.CallLater(10, AddressOf NextQueueItem)
+		  Else
+		    Self.Error("Unable to upload build to " + URL + ": " + Str(HTTPStatus, "-0"))
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.AcceptFileDrop(AppFileTypes.DiskImage)
+		Sub SendingProgressed(bytesSent As Int64, bytesLeft As Int64)
+		  If Self.mProgress <> Nil Then
+		    Self.mProgress.Progress = BytesSent / BytesLeft
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  Self.Error(e.Message)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events WinComboPathField
+#tag Events SelectFolderButton
 	#tag Event
-		Sub Open()
-		  Me.AcceptFileDrop(AppFileTypes.WindowsExecutable)
+		Sub Pressed()
+		  Var Dialog As New SelectFolderDialog
+		  Dialog.SuggestedFileName = Self.VersionField.Text
+		  
+		  Var Folder As FolderItem = Dialog.ShowModal(Self)
+		  If Folder Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.VersionField.Text = Folder.Name
+		  Self.AddFiles(Folder)
 		End Sub
 	#tag EndEvent
+#tag EndEvents
+#tag Events ShortPreviewField
 	#tag Event
-		Sub DropObject(obj As DragItem, action As Integer)
-		  #Pragma Unused Action
-		  Do
-		    If Obj.FolderItemAvailable = False Then
-		      Continue
-		    End If
-		    
-		    Self.mWinComboFile = Obj.FolderItem
-		    Me.Value = Self.mWinComboFile.NativePath
-		    Self.CheckEnabled
-		    Return
-		  Loop Until Obj.NextItem = False
+		Sub TextChanged()
+		  Self.mBannerText = Me.Text.Trim
+		  Self.CheckEnabled
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HorizontalSeparator
+	#tag Event
+		Sub Paint(g As Graphics, areas() As Rect)
+		  #Pragma Unused Areas
+		  
+		  G.DrawingColor = &cCCCCCC
+		  G.FillRectangle(0, 0, G.Width, G.Height)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ActionButton
+	#tag Event
+		Sub Pressed()
+		  Self.Begin()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NotesArea
+	#tag Event
+		Sub TextChanged()
+		  Self.mNotesText = Me.Text.Trim
+		  Self.CheckEnabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events VersionField
 	#tag Event
-		Sub TextChange()
-		  Dim Parser As New Regex
+		Sub TextChanged()
+		  Var Parser As New Regex
 		  Parser.SearchPattern = "^(\d+)\.(\d+)\.(\d+)(([a-z\.]+)(\d+))?$"
 		  
-		  Dim Matches As RegexMatch = Parser.Search(Me.Text.Trim)
+		  Var Matches As RegexMatch = Parser.Search(Me.Text.Trim)
 		  If Matches = Nil Then
 		    Self.mDisplayVersion = ""
 		    Self.mBuildNumber = 0
@@ -1181,11 +946,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim MajorVersion As Integer = Val(Matches.SubExpressionString(1))
-		  Dim MinorVersion As Integer = Val(Matches.SubExpressionString(2))
-		  Dim BugVersion As Integer = Val(Matches.SubExpressionString(3))
-		  Dim StageCode As Integer = 3
-		  Dim NonReleaseVersion As Integer
+		  Var MajorVersion As Integer = Val(Matches.SubExpressionString(1))
+		  Var MinorVersion As Integer = Val(Matches.SubExpressionString(2))
+		  Var BugVersion As Integer = Val(Matches.SubExpressionString(3))
+		  Var StageCode As Integer = 3
+		  Var NonReleaseVersion As Integer
 		  If Matches.SubExpressionCount > 4 Then
 		    NonReleaseVersion = Val(Matches.SubExpressionString(6))
 		    Select Case Matches.SubExpressionString(5)
@@ -1200,7 +965,7 @@ End
 		    End Select
 		  End If
 		  
-		  Dim BuildNumber As Integer = (MajorVersion * 10000000) + (MinorVersion * 100000) + (BugVersion * 1000) + (StageCode * 100) + NonReleaseVersion
+		  Var BuildNumber As Integer = (MajorVersion * 10000000) + (MinorVersion * 100000) + (BugVersion * 1000) + (StageCode * 100) + NonReleaseVersion
 		  Self.BuildNumberField.Text = Str(BuildNumber, "0")
 		  Self.mStageCode = StageCode
 		  Self.mDisplayVersion = Me.Text.Trim
@@ -1208,220 +973,61 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events NotesArea
+#tag Events FileList
 	#tag Event
-		Sub TextChange()
-		  Self.mNotesText = Me.Text.Trim
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ActionButton
-	#tag Event
-		Sub Action()
-		  Self.Begin()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events HorizontalSeparator
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  G.ForeColor = &cCCCCCC
-		  G.FillRect(0, 0, G.Width, G.Height)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UploadSocket
-	#tag Event
-		Sub Error(err as RuntimeException)
-		  Self.Error(Err.Reason)
+		Sub Opening()
+		  Me.AcceptFileDrop(AppFileTypes.DiskImage + AppFileTypes.WindowsExecutable)
+		  
+		  Me.ColumnTypeAt(Self.ColumnARM64) = DesktopListBox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnIntel32) = DesktopListbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnIntel64) = DesktopListbox.CellTypes.CheckBox
+		  
+		  Me.ColumnAlignmentAt(Self.ColumnARM64) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnIntel32) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnIntel64) = DesktopListbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  If HTTPStatus = 201 Then
-		    Xojo.Core.Timer.CallLater(10, AddressOf NextQueueItem)
-		  Else
-		    Self.Error("Unable to upload build to " + URL + ": " + Str(HTTPStatus, "-0"))
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SendProgress(BytesSent as Int64, BytesLeft as Int64)
-		  If Self.mProgress <> Nil Then
-		    Self.mProgress.Progress = BytesSent / BytesLeft
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ShortPreviewField
-	#tag Event
-		Sub TextChange()
-		  Self.mBannerText = Me.Text.Trim
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SelectWinComboButton
-	#tag Event
-		Sub Action()
-		  Dim Dialog As New OpenDialog
-		  Dialog.SuggestedFileName = "Install_Beacon.exe"
-		  Dialog.Filter = AppFileTypes.WindowsExecutable
-		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mWinComboFile = File
-		  Self.WinComboPathField.Text = File.NativePath
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SelectMacButton
-	#tag Event
-		Sub Action()
-		  Dim Dialog As New OpenDialog
-		  Dialog.SuggestedFileName = "Beacon.dmg"
-		  Dialog.Filter = AppFileTypes.DiskImage
-		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mMacFile = File
-		  Self.MacPathField.Text = File.NativePath
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SelectFolderButton
-	#tag Event
-		Sub Action()
-		  Dim Dialog As New SelectFolderDialog
-		  Dialog.SuggestedFileName = "Installers"
-		  
-		  Dim Folder As FolderItem = Dialog.ShowModalWithin(Self)
-		  If Folder = Nil Then
-		    Return
-		  End If
-		  
-		  Try
-		    Self.mMacFile = Folder.Child("Mac").Child("Output").Child("Beacon.dmg")
-		    Self.MacPathField.Text = Self.mMacFile.NativePath
-		  Catch Err As RuntimeException
-		    Self.mMacFile = Nil
-		    Self.MacPathField.Text = ""
-		  End Try
-		  
-		  Try
-		    Self.mWinComboFile = Folder.Child("Windows").Child("Output").Child("Combo").Child("Install_Beacon.exe")
-		    Self.WinComboPathField.Text = Self.mWinComboFile.NativePath
-		  Catch Err As RuntimeException
-		    Self.mWinComboFile = Nil
-		    Self.WinComboPathField.Text = ""
-		  End Try
-		  
-		  Try
-		    Self.mWin64File = Folder.Child("Windows").Child("Output").Child("x64").Child("Install_Beacon.exe")
-		    Self.Win64PathField.Text = Self.mWin64File.NativePath
-		  Catch Err As RuntimeException
-		    Self.mWin64File = Nil
-		    Self.Win64PathField.Text = ""
-		  End Try
-		  
-		  Try
-		    Self.mWin32File = Folder.Child("Windows").Child("Output").Child("x86").Child("Install_Beacon.exe")
-		    Self.Win32PathField.Text = Self.mWin32File.NativePath
-		  Catch Err As RuntimeException
-		    Self.mWin32File = Nil
-		    Self.Win32PathField.Text = ""
-		  End Try
-		  
-		  Self.CheckEnabled()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Win64PathField
-	#tag Event
-		Sub DropObject(obj As DragItem, action As Integer)
+		Sub DropObject(obj As DragItem, action As DragItem.Types)
 		  #Pragma Unused Action
 		  Do
 		    If Obj.FolderItemAvailable = False Then
 		      Continue
 		    End If
 		    
-		    Self.mWin64File = Obj.FolderItem
-		    Me.Value = Self.mWin64File.NativePath
-		    Self.CheckEnabled
-		    Return
-		  Loop Until Obj.NextItem = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.AcceptFileDrop(AppFileTypes.WindowsExecutable)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SelectWin64Button
-	#tag Event
-		Sub Action()
-		  Dim Dialog As New OpenDialog
-		  Dialog.SuggestedFileName = "Install_Beacon.exe"
-		  Dialog.Filter = AppFileTypes.WindowsExecutable
-		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mWin64File = File
-		  Self.Win64PathField.Text = File.NativePath
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Win32PathField
-	#tag Event
-		Sub DropObject(obj As DragItem, action As Integer)
-		  #Pragma Unused Action
-		  Do
-		    If Obj.FolderItemAvailable = False Then
-		      Continue
+		    If Obj.FolderItem.IsFolder Then
+		      Self.VersionField.Text = Obj.FolderItem.Name
 		    End If
-		    
-		    Self.mWin32File = Obj.FolderItem
-		    Me.Value = Self.mWin32File.NativePath
-		    Self.CheckEnabled
+		    Self.AddFiles(Obj.FolderItem)
 		    Return
 		  Loop Until Obj.NextItem = False
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.AcceptFileDrop(AppFileTypes.WindowsExecutable)
-		End Sub
+		Function KeyDown(key As String) As Boolean
+		  If Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127) Then
+		    For RowIdx As Integer = Me.LastRowIndex DownTo 0
+		      If Me.RowSelectedAt(RowIdx) Then
+		        Me.RemoveRowAt(RowIdx)
+		      End If
+		    Next RowIdx
+		    Return True
+		  End If
+		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events SelectWin32Button
+#tag Events AddFileButton
 	#tag Event
-		Sub Action()
-		  Dim Dialog As New OpenDialog
-		  Dialog.SuggestedFileName = "Install_Beacon.exe"
-		  Dialog.Filter = AppFileTypes.WindowsExecutable
+		Sub Pressed()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = AppFileTypes.WindowsExecutable + AppFileTypes.DiskImage
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self)
-		  If File = Nil Then
+		  Var File As FolderItem = Dialog.ShowModal(Self)
+		  If File Is Nil Then
 		    Return
 		  End If
 		  
-		  Self.mWin32File = File
-		  Self.Win32PathField.Text = File.NativePath
-		  Self.CheckEnabled
+		  Self.AddFile(File)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1539,8 +1145,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1603,7 +1209,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
