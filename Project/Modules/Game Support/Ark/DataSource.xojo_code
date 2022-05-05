@@ -99,7 +99,7 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub ExportCloudFiles()
 		  Var Packed() As Dictionary
-		  Var UserPacks() As Ark.ContentPack = Self.GetContentPacks()
+		  Var UserPacks() As Ark.ContentPack = Self.GetContentPacks(Ark.ContentPack.Types.Custom)
 		  If UserPacks.Count > 0 Then
 		    Var Packs As New Beacon.StringList()
 		    For Each Pack As Ark.ContentPack In UserPacks
@@ -625,7 +625,7 @@ Inherits Beacon.DataSource
 		        If (Blueprint Is Nil) = False Then
 		          Unpacked.Add(Blueprint)
 		          KeepPacks.Append(Blueprint.ContentPackUUID)
-		          RemovePacks.Append(Blueprint.ContentPackUUID)
+		          RemovePacks.Remove(Blueprint.ContentPackUUID)
 		        ElseIf Dict.HasAllKeys("mod_id", "name", "workshop_id") Then
 		          Var ContentPackUUID As String = Dict.Value("mod_id").StringValue
 		          KeepPacks.Append(ContentPackUUID)
