@@ -451,7 +451,7 @@ abstract class BeaconCloudStorage {
 			$file_exists = true;
 			if ($results->Field('hash') === $hash && $results->Field('deleted') === false) {
 				// nope, same file
-				//return true;
+				return true;
 			}
 		}
 		
