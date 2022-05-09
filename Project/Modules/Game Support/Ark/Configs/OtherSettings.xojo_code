@@ -45,6 +45,32 @@ Inherits Ark.ConfigGroup
 		        End If
 		      End If
 		      
+		      If Key.ValueType = Ark.ConfigKey.ValueTypes.TypeText Then
+		        Var AllowedChars As Variant = Key.Constraint("allowed_chars")
+		        Var DisallowedChars As Variant = Key.Constraint("disallowed_chars")
+		        If IsNull(AllowedChars) = False Then
+		          Var Filter As New Regex
+		          Filter.SearchPattern = "[^" + AllowedChars.StringValue + "]+"
+		          Filter.ReplacementPattern = ""
+		          Filter.Options.ReplaceAllMatches = True
+		          Value = Filter.Replace(Value.StringValue)
+		        ElseIf IsNull(DisallowedChars) = False Then
+		          Var Filter As New Regex
+		          Filter.SearchPattern = "[" + DisallowedChars.StringValue + "]+"
+		          Filter.ReplacementPattern = ""
+		          Filter.Options.ReplaceAllMatches = True
+		          Value = Filter.Replace(Value.StringValue)
+		        End If
+		        
+		        Var TrimChars As Variant = Key.Constraint("trim_chars")
+		        If IsNull(TrimChars) = False Then
+		          Var Chars() As Variant = TrimChars
+		          For Each Char As String In Chars
+		            Value = Value.StringValue.Trim(Char)
+		          Next Char
+		        End If
+		      End If
+		      
 		      If ConsoleSafe Then
 		        Var RequiredPlatform As Variant = Key.Constraint("platform")
 		        Var SupportedOnPlatform As Boolean = True
