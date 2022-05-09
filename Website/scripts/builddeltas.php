@@ -1,7 +1,8 @@
 #!/usr/bin/php -q
 <?php
 
-$options = getopt('', ['delta_version:']);
+$options = getopt('', ['delta_version:', 'force']);
+
 if (array_key_exists('delta_version', $options) === false) {
 	echo "Specify the delta version with --delta_version\n";
 	exit;
@@ -21,6 +22,8 @@ default:
 	echo "Delta version $delta_version is not known.\n";
 	exit;
 }
+
+$force = array_key_exists('force', $options);
 
 // More memory is needed
 ini_set('memory_limit','512M');
@@ -52,7 +55,7 @@ $last_database_update = BeaconCommon::NewestUpdateTimestamp();
 $cutoff = new DateTime();
 $cutoff->sub(new DateInterval('PT15M'));
 
-if ($last_database_update >= $cutoff) {
+if ($force == false && $last_database_update >= $cutoff) {
 	$ready = clone $last_database_update;
 	$ready->add(new DateInterval('PT15M'));
 	echo "Database has changes that will be ready at " . $ready->format('Y-m-d H:i:s') . " UTC if nothing else changes.\n";
