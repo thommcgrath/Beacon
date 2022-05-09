@@ -374,6 +374,12 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RequiresOmni() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SupportsMerging() As Boolean
 		  Return True
 		End Function

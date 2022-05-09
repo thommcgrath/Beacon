@@ -740,6 +740,12 @@ Inherits Ark.ConfigGroup
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function RequiresOmni() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SaveEntryString(ForEngram As Ark.Engram)
 		  If (ForEngram Is Nil) = False And ForEngram.EntryString.IsEmpty = False Then

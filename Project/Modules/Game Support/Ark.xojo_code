@@ -208,7 +208,7 @@ Protected Module Ark
 
 	#tag Method, Flags = &h1
 		Protected Function OmniPurchased(Identity As Beacon.Identity) As Boolean
-		  Return Identity.IsOmniFlagged(Ark.OmniFlag)
+		  Return (Identity Is Nil) = False And Identity.IsOmniFlagged(Ark.OmniFlag)
 		End Function
 	#tag EndMethod
 
