@@ -26,7 +26,7 @@ abstract class BeaconUpdates {
 		$database = BeaconCommon::Database();
 		$updates = [];
 		$values = [$channel, $current_build];
-		$sql = 'SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version, CASE WHEN UPPER_INC(lock_versions) THEN UPPER(lock_versions) ELSE UPPER(lock_versions) - 1 END AS critical_version FROM updates WHERE stage >= $1 AND build_number > $2';
+		$sql = 'SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version, CASE WHEN lock_versions @> $2::INTEGER THEN CASE WHEN UPPER_INC(lock_versions) THEN UPPER(lock_versions) ELSE UPPER(lock_versions) - 1 END END AS critical_version FROM updates WHERE stage >= $1 AND build_number > $2';
 		if (is_null($device_os) === false) {
 			list($device_platform, $osversion) = explode(' ', $device_os, 2);
 			switch ($device_platform) {

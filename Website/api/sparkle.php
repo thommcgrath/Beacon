@@ -74,6 +74,7 @@ echo "\t\t<title>Beacon Version History</title>\n";
 echo "\t\t<link>https://" . BeaconCommon::APIDomain() . "/sparkle.php?arch=" . $arch_str . "</link>\n";
 echo "\t\t<language>en</language>\n";
 
+$enclosures = [];
 $parser = new Parsedown();
 foreach ($updates as $update) {
 	echo "\t\t<item>\n";
@@ -96,17 +97,25 @@ foreach ($updates as $update) {
 		echo "\t\t\t<sparkle:criticalUpdate sparkle:version=\"" . BuildNumberToCFBundleVersion($update['required_if_below']) . "\"></sparkle:criticalUpdate>\n";
 	}
 	
-	if (array_key_exists($platform, $update['files'])) {
-		foreach ($update['files'][$platform] as $url => $signatures) {
-			PrintEnclosure($url, $signatures, $platform);
-		}
-	} else {
-		foreach ($update['files'] as $file_platform => $files) {
-			foreach ($files as $url => $signatures) {
-				PrintEnclosure($url, $signatures, $file_platform);
+	if (count($enclosures) === 0) {
+		if (array_key_exists($platform, $update['files'])) {
+			foreach ($update['files'][$platform] as $url => $signatures) {
+				$enclosures[] = GetEnclosure($url, $signatures, $platform);
+			}
+		} else {
+			foreach ($update['files'] as $file_platform => $files) {
+				foreach ($files as $url => $signatures) {
+					$enclosures[] = GetEnclosure($url, $signatures, $file_platform);
+				}
 			}
 		}
-	}	
+	}
+	
+	foreach ($enclosures as $enclosure) {
+		if (empty($enclosure) === false) {
+			echo $enclosure;
+		}
+	}
 	
 	echo "\t\t</item>\n";
 }
@@ -128,21 +137,23 @@ function BuildNumberToCFBundleVersion(int $build_number): string {
 	return number_format($major_version, 0, '') . '.' . number_format($minor_version, 0, '', '') . '.' . number_format($bug_version, 0, '', '') . '.' . number_format($stage_code, 0, '', '') . '.' . number_format($non_release_version, 0, '', '');
 }
 
-function PrintEnclosure(string $url, array $signatures, string $platform): void {
+function GetEnclosure(string $url, array $signatures, string $platform): string {
 	if (array_key_exists(BeaconUpdates::SIGNATURE_ED25519, $signatures) === false || array_key_exists(BeaconUpdates::SIGNATURE_DSA, $signatures) === false) {
-		return;
+		return '';
 	}
 	
-	echo "\t\t\t" . '<enclosure url="' . htmlentities(BeaconCommon::SignDownloadURL($url)) . '" type="application/octet-stream"';
+	$enclosure = "\t\t\t" . '<enclosure url="' . htmlentities(BeaconCommon::SignDownloadURL($url)) . '" type="application/octet-stream"';
 	switch ($platform) {
 	case BeaconUpdates::PLATFORM_MACOS:
-		echo ' sparkle:os="macos" sparkle:edSignature="' . $signatures[BeaconUpdates::SIGNATURE_ED25519] . '"';
+		$enclosure .= ' sparkle:os="macos" sparkle:edSignature="' . $signatures[BeaconUpdates::SIGNATURE_ED25519] . '"';
 		break;
 	case BeaconUpdates::PLATFORM_WINDOWS:
-		echo ' sparkle:os="windows" sparkle:dsaSignature="' . $signatures[BeaconUpdates::SIGNATURE_DSA] . '" sparkle:installerArguments="/SILENT /SP- /NOICONS /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS"';
+		$enclosure .= ' sparkle:os="windows" sparkle:dsaSignature="' . $signatures[BeaconUpdates::SIGNATURE_DSA] . '" sparkle:installerArguments="/SILENT /SP- /NOICONS /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS"';
 		break;
 	}
-	echo " />\n";
+	$enclosure .= " />\n";
+	
+	return $enclosure;
 }
 
 ?>
