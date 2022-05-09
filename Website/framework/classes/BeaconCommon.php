@@ -575,7 +575,7 @@ abstract class BeaconCommon {
 		return BeaconCommon::GenerateRandomKey(9, '23456789ABCDEFGHJKMNPQRSTUVWXYZ');
 	}
 	
-	public static function SignDownloadURL(string $url, int $expires = 3600) {
+	public static function SignDownloadURL(string $url, int $expires = 21600) {
 		if (strtolower(substr($url, 0, 29)) === 'https://releases.beaconapp.cc') {
 			$path = substr($url, 29);
 		} elseif (strtolower(substr($url, 0, 30)) === 'https://releases.usebeacon.app') {
