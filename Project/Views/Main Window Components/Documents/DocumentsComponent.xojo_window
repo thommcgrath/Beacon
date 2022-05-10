@@ -287,8 +287,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_LoadError(Sender As Beacon.ProjectController, Reason As String)
-		  #Pragma Unused Reason
-		  
 		  Self.DetachControllerEvents(Sender)
 		  
 		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
@@ -305,13 +303,19 @@ End
 		    End If
 		  Next
 		  
+		  If Reason.EndsWith(".") = False Then
+		    Reason = Reason.Trim + "."
+		  End If
+		  
+		  Reason = "Reason: """ + Reason + """"
+		  
 		  If RecentIdx > -1 Then
-		    If Self.ShowConfirm("Unable to load """ + Sender.Name + """", "The project could not be loaded. It may have been deleted. Would you like to remove it from the recent projects list?", "Remove", "Keep") Then
+		    If Self.ShowConfirm("Unable to load project """ + Sender.Name + """", Reason + EndOfLine + EndOfLine + "This project is in your recent projects list. Would you like to remove it from the list?", "Remove", "Keep") Then
 		      Recents.RemoveAt(RecentIdx)
 		      Preferences.RecentDocuments = Recents
 		    End If
 		  Else
-		    Self.ShowAlert("Unable to load """ + Sender.Name + """", "The project could not be loaded. It may have been deleted.")
+		    Self.ShowAlert("Unable to load project """ + Sender.Name + """", Reason)
 		  End If
 		End Sub
 	#tag EndMethod

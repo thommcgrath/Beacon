@@ -222,7 +222,7 @@ Protected Class ProjectController
 		  Case Beacon.ProjectURL.TypeCloud
 		    // authenticated api request
 		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		    Socket.RequestHeader("Accept-Encoding") = "gzip"
+		    Socket.RequestHeader("Accept-Encoding") = "gzip=1.0, identity=0.5"
 		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading))
@@ -231,11 +231,12 @@ Protected Class ProjectController
 		    Else
 		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
 		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
+		      Return
 		    End If
 		  Case Beacon.ProjectURL.TypeWeb
 		    // basic https request
 		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		    Socket.RequestHeader("Accept-Encoding") = "gzip"
+		    Socket.RequestHeader("Accept-Encoding") = "gzip=1.0, identity=0.5"
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading))
 		    If Socket.LastHTTPStatus >= 200 Then
@@ -243,6 +244,7 @@ Protected Class ProjectController
 		    Else
 		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
 		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
+		      Return
 		    End If
 		  Case Beacon.ProjectURL.TypeLocal
 		    // just a local file
