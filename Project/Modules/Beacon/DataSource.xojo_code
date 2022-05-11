@@ -62,7 +62,6 @@ Implements NotificationKit.Receiver
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("COMMIT TRANSACTION;")
-		    Self.mLastCommitTime = System.Microseconds
 		  Else
 		    Self.SQLExecute("RELEASE SAVEPOINT " + Savepoint + ";")
 		  End If
@@ -747,10 +746,6 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mIndexes() As Beacon.DataIndex
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLastCommitTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

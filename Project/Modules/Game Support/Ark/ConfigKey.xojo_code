@@ -26,6 +26,7 @@ Protected Class ConfigKey
 		  Self.mNitradoDeployStyle = Source.mNitradoDeployStyle
 		  Self.mUIGroup = Source.mUIGroup
 		  Self.mContentPackUUID = Source.mContentPackUUID
+		  Self.mGSAPlaceholder = Source.mGSAPlaceholder
 		End Sub
 	#tag EndMethod
 
@@ -38,7 +39,7 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackUUID As String)
+		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackUUID As String, GSAPlaceholder As NullableString)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mUUID = ObjectID
@@ -52,6 +53,7 @@ Protected Class ConfigKey
 		  Self.mContentPackUUID = ContentPackUUID
 		  Self.mCustomSort = CustomSort
 		  Self.mConstraints = Constraints
+		  Self.mGSAPlaceholder = GSAPlaceholder
 		  
 		  If (NitradoPath Is Nil) = False Then
 		    Self.mNitradoPaths = NitradoPath.Split(";")
@@ -88,6 +90,12 @@ Protected Class ConfigKey
 	#tag Method, Flags = &h0
 		Function File() As String
 		  Return Self.mFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GSAPlaceholder() As NullableString
+		  Return Self.mGSAPlaceholder
 		End Function
 	#tag EndMethod
 
@@ -249,6 +257,10 @@ Protected Class ConfigKey
 
 	#tag Property, Flags = &h21
 		Private mFile As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGSAPlaceholder As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

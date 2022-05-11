@@ -26,6 +26,11 @@ Inherits Ark.ConfigGroup
 		        Continue
 		      End If
 		      
+		      If Profile IsA Ark.GSAServerProfile And (Key.GSAPlaceholder Is Nil) = False Then
+		        Configs.Add(New Ark.ConfigValue(Key, Key.Key + "=" + Key.GSAPlaceholder.StringValue, Key.SimplifiedKey))
+		        Continue
+		      End If
+		      
 		      Var Requirements As Variant = Key.Constraint("other")
 		      If IsNull(Requirements) = False Then
 		        Var Dict As Dictionary = Requirements
