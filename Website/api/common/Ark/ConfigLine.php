@@ -35,6 +35,7 @@ class ConfigLine extends \Ark\GenericObject {
 	protected $ui_group = null;
 	protected $constraints = null;
 	protected $custom_sort = null;
+	protected $gsa_placeholder = null;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -52,6 +53,7 @@ class ConfigLine extends \Ark\GenericObject {
 		$columns[] = 'ui_group';
 		$columns[] = 'constraints';
 		$columns[] = 'custom_sort';
+		$columns[] = 'gsa_placeholder';
 		return $columns;
 	}
 	
@@ -78,6 +80,7 @@ class ConfigLine extends \Ark\GenericObject {
 		$obj->ui_group = $row->Field('ui_group');
 		$obj->constraints = is_null($row->Field('constraints')) ? null : json_decode($row->Field('constraints'), true);
 		$obj->custom_sort = $row->Field('custom_sort');
+		$obj->gsa_placeholder = $row->Field('gsa_placeholder');
 		return $obj;
 	}
 	
@@ -101,6 +104,7 @@ class ConfigLine extends \Ark\GenericObject {
 		$json['ui_group'] = $this->ui_group;
 		$json['custom_sort'] = $this->custom_sort;
 		$json['constraints'] = $this->constraints;
+		$json['gsa_placeholder'] = $this->gsa_placeholder;
 		return $json;
 	}
 	
@@ -134,6 +138,8 @@ class ConfigLine extends \Ark\GenericObject {
 			return $this->constraints;
 		case 'custom_sort':
 			return $this->custom_sort;
+		case 'gsa_placeholder':
+			return $this->gsa_placeholder;
 		default:
 			return parent::GetColumnValue($column);
 		}
@@ -187,6 +193,9 @@ class ConfigLine extends \Ark\GenericObject {
 		if (array_key_exists('custom_sort', $json)) {
 			$this->custom_sort = $json['custom_sort'];
 		}
+		if (array_key_exists('gsa_placeholder', $json)) {
+			$this->gsa_placeholder = $json['gsa_placeholder'];
+		}
 	}
 	
 	public function NativeEditorInVersion() {
@@ -231,6 +240,10 @@ class ConfigLine extends \Ark\GenericObject {
 	
 	public function Constraints() {
 		return $this->constraints;
+	}
+	
+	public function GSAPlaceholder() {
+		return $this->gsa_placeholder;
 	}
 }
 
