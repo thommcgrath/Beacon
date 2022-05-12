@@ -187,8 +187,8 @@ Protected Class ServerProfile
 		    Return 1
 		  End If
 		  
-		  // Use the external identifier as the primary means of comparison
-		  If Self.mProviderServiceID = Other.mProviderServiceID Then
+		  // Use the external identifier as the primary means of comparison, if present
+		  If IsNull(Self.mProviderServiceID) = False And Self.mProviderServiceID = Other.mProviderServiceID Then
 		    Return 0
 		  End If
 		  
