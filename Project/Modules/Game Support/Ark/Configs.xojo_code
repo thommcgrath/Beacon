@@ -43,6 +43,7 @@ Protected Module Configs
 		  Static Generated As DateTime
 		  Var Now As DateTime = DateTime.Now
 		  If Tools.LastIndex = -1 Or ((Generated Is Nil) = False And Generated.DayOfYear <> Now.DayOfYear) Then
+		    Tools.ResizeTo(-1)
 		    Tools.Add(New Ark.ProjectTool("Adjust All Crafting Costs", "24376f12-c256-440c-87ca-2c8309a7a754", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Replace Crafting Ingredient", "6600245b-54b4-4b85-8f26-3792084ca2fa", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Setup Fibercraft Server", "94eced5b-be7d-441a-a5b3-f4a9bf40a856", NameCraftingCosts))
