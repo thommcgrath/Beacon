@@ -17,6 +17,7 @@ Inherits Ark.ConfigGroup
 		  Self.mGlobalItemDecompositionTimeMultiplier = Source.mGlobalItemDecompositionTimeMultiplier
 		  Self.mGlobalSpoilingTimeMultiplier = Source.mGlobalSpoilingTimeMultiplier
 		  Self.mOnlyAutoDestroyCoreStructures = Source.mOnlyAutoDestroyCoreStructures
+		  Self.mOnlyDecayUnsnappedCoreStructures = Source.mOnlyDecayUnsnappedCoreStructures
 		  Self.mPvEDinoDecayPeriodMultiplier = Source.mPvEDinoDecayPeriodMultiplier
 		  Self.mPvEStructureDecayDestructionPeriod = Source.mPvEStructureDecayDestructionPeriod
 		  Self.mPvEStructureDecayPeriodMultiplier = Source.mPvEStructureDecayPeriodMultiplier
