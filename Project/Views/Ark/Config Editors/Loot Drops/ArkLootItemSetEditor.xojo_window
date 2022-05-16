@@ -240,7 +240,7 @@ End
 		  Next
 		  
 		  Var Entries() As Ark.LootItemSetEntry = ArkLootEntryEditor.Present(Self, Self.Project.ContentPacks, Sources, Prefilter)
-		  If Entries = Nil Or Entries.LastIndex <> Sources.LastIndex Then
+		  If Entries Is Nil Or Entries.Count <> Sources.Count Then
 		    Return
 		  End If
 		  

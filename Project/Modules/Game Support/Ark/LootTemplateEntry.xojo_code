@@ -343,6 +343,7 @@ Implements Beacon.Countable,Iterable
 		  Entry.SingleItemQuantity = Self.mSingleItemQuantity
 		  Entry.StatClampMultiplier = Self.mStatClampMultiplier
 		  Entry.RawWeight = Self.mWeight
+		  Entry.UUID = Self.mUUID
 		  Entry.Modified = False
 		  
 		  // It's ok to reference the source objects here, they are not mutable
@@ -367,6 +368,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mSingleItemQuantity = Source.SingleItemQuantity
 		  Self.mStatClampMultiplier = Source.StatClampMultiplier
 		  Self.mWeight = Source.RawWeight
+		  Self.mUUID = Source.UUID
 		  
 		  // It's ok to reference the source objects here, they are not mutable
 		  For Each Option As Ark.LootItemSetEntryOption In Source

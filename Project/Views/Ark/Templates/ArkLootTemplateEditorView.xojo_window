@@ -886,7 +886,7 @@ End
 		  End If
 		  
 		  Var NewEntries() As Ark.LootItemSetEntry = ArkLootEntryEditor.Present(Self.TrueWindow, Entries)
-		  If NewEntries = Nil Then
+		  If NewEntries Is Nil Or NewEntries.Count <> Entries.Count Then
 		    Return
 		  End If
 		  
