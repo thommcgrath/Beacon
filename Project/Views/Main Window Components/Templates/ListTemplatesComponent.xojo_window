@@ -186,10 +186,21 @@ End
 		    Return
 		  End If
 		  
+		  Var SiblingNames() As String
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    Var Sibling As Beacon.Template = Self.List.RowTagAt(Idx)
+		    SiblingNames.Add(Sibling.Label)
+		  Next Idx
+		  
 		  Var Clones() As Beacon.Template
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.Selected(Idx) Then
-		      Clones.Add(Self.CloneTemplate(Self.List.RowTagAt(Idx)))
+		    If Self.List.Selected(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Var Clone As Beacon.Template = Self.CloneTemplate(Self.List.RowTagAt(Idx), SiblingNames)
+		    If (Clone Is Nil) = False Then
+		      Clones.Add(Clone)
 		    End If
 		  Next
 		  
@@ -210,8 +221,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CloneTemplate(Source As Beacon.Template) As Beacon.Template
-		  Return Beacon.Template.FromSaveData(Source.SaveData)
+		Private Function CloneTemplate(Source As Beacon.Template, SiblingNames() As String) As Beacon.Template
+		  Var SaveData As String
+		  Try
+		    Var SaveDict As Dictionary = Source.SaveData
+		    SaveDict.Value("ID") = v4UUID.Create.StringValue
+		    SaveDict.Value("Label") = Beacon.FindUniqueLabel(SaveDict.Value("Label").StringValue, SiblingNames)
+		    SiblingNames.Add(SaveDict.Value("Label").StringValue)
+		    SaveData = Beacon.GenerateJSON(SaveDict, False)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Could not generate JSON for template save data")
+		    Return Nil
+		  End Try
+		  Return Beacon.Template.FromSaveData(SaveData)
 		End Function
 	#tag EndMethod
 
