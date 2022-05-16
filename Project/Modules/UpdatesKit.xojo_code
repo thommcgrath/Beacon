@@ -92,20 +92,32 @@ Protected Module UpdatesKit
 		      Return
 		    End If
 		    
-		    mChecking = True
-		    mLastCheckTime = DateTime.Now
-		    
-		    mSocket = New URLConnection
-		    mSocket.AllowCertificateValidation = True
-		    AddHandler mSocket.Error, AddressOf mSocket_Error
-		    AddHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
-		    AddHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
-		    mSocket.RequestHeader("Cache-Control") = "no-cache"
-		    mSocket.RequestHeader("User-Agent") = App.UserAgent
-		    
-		    Var URL As String = CheckURL()
-		    App.Log("Checking for updates from " + URL)
-		    mSocket.Send("GET", URL)
+		    Var OldLastCheckTime As DateTime = mLastCheckTime
+		    Try
+		      mChecking = True
+		      mLastCheckTime = DateTime.Now
+		      
+		      mSocket = New URLConnection
+		      mSocket.AllowCertificateValidation = True
+		      AddHandler mSocket.Error, AddressOf mSocket_Error
+		      AddHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
+		      AddHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
+		      mSocket.RequestHeader("Cache-Control") = "no-cache"
+		      mSocket.RequestHeader("User-Agent") = App.UserAgent
+		      
+		      Var URL As String = CheckURL()
+		      App.Log("Checking for updates from " + URL)
+		      mSocket.Send("GET", URL)
+		    Catch Err As RuntimeException
+		      mChecking = False
+		      mLastCheckTime = OldLastCheckTime
+		      RemoveHandler mSocket.Error, AddressOf mSocket_Error
+		      RemoveHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
+		      RemoveHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
+		      mSocket = Nil
+		      App.Log(Err, CurrentMethodName, "Initiating update check")
+		      NotificationKit.Post(Notification_Error, Err.Message)
+		    End Try
 		  #endif
 		End Sub
 	#tag EndMethod
