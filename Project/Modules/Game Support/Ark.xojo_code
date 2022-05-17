@@ -827,7 +827,7 @@ Protected Module Ark
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Extends Blueprint As Ark.Blueprint, Mask As UInt64) As Boolean
-		  Return Mask = CType(0, UInt64) Or Blueprint.Availability = CType(0, UInt64) Or (Blueprint.Availability And Mask) > CType(0, UInt64)
+		  Return Mask = CType(0, UInt64) Or (Blueprint.Availability And Mask) > CType(0, UInt64)
 		End Function
 	#tag EndMethod
 
