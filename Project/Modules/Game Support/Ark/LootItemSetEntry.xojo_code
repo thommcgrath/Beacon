@@ -87,18 +87,22 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Ark.LootItemSetEntry
+		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSetEntry
 		  Var Entry As New Ark.MutableLootItemSetEntry
 		  
-		  Try
-		    If Dict.HasKey("loot_item_set_entry_id") Then
-		      Entry.UUID = Dict.Value("loot_item_set_entry_id")
-		    ElseIf Dict.HasKey("UUID") Then
-		      Entry.UUID = Dict.Value("UUID")
-		    End If
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading UUID value")
-		  End Try
+		  If NewUUID Then
+		    Entry.UUID = v4UUID.Create.StringValue
+		  Else
+		    Try
+		      If Dict.HasKey("loot_item_set_entry_id") Then
+		        Entry.UUID = Dict.Value("loot_item_set_entry_id")
+		      ElseIf Dict.HasKey("UUID") Then
+		        Entry.UUID = Dict.Value("UUID")
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading UUID value")
+		    End Try
+		  End If
 		  
 		  Try
 		    If Dict.HasKey("weight") Then
@@ -174,7 +178,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  For Idx As Integer = 0 To Children.LastIndex
 		    Try
-		      Var Option As Ark.LootItemSetEntryOption = Ark.LootItemSetEntryOption.FromSaveData(Dictionary(Children(Idx)))
+		      Var Option As Ark.LootItemSetEntryOption = Ark.LootItemSetEntryOption.FromSaveData(Dictionary(Children(Idx)), NewUUID)
 		      If (Option Is Nil) = False Then
 		        Entry.Add(Option)
 		      End If
@@ -561,8 +565,8 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Return 0
 		  End If
 		  
-		  Var SelfHash As String = Self.Hash
-		  Var OtherHash As String = Other.Hash
+		  Var SelfHash As String = Self.mUUID + ":" + Self.Hash
+		  Var OtherHash As String = Other.mUUID + ":" + Other.Hash
 		  
 		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseSensitive)
 		End Function

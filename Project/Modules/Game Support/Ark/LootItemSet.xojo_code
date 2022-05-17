@@ -46,17 +46,21 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Ark.LootItemSet
+		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
-		  Try
-		    If Dict.HasKey("loot_item_set_id") Then
-		      Set.UUID = Dict.Value("loot_item_set_id")
-		    ElseIf Dict.HasKey("UUID") Then
-		      Set.UUID = Dict.Value("UUID")
-		    End If
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading UUID value")
-		  End Try
+		  If NewUUID Then
+		    Set.UUID = v4UUID.Create.StringValue
+		  Else
+		    Try
+		      If Dict.HasKey("loot_item_set_id") Then
+		        Set.UUID = Dict.Value("loot_item_set_id")
+		      ElseIf Dict.HasKey("UUID") Then
+		        Set.UUID = Dict.Value("UUID")
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading UUID value")
+		    End Try
+		  End If
 		  
 		  Try
 		    If Dict.HasKey("NumItemsPower") Then
@@ -117,7 +121,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  
 		  For Idx As Integer = 0 To Children.LastIndex
 		    Try
-		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)))
+		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dictionary(Children(Idx)), NewUUID)
 		      If (Entry Is Nil) = False Then
 		        Set.Add(Entry)
 		      End If

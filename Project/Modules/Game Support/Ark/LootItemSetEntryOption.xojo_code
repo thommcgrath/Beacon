@@ -35,17 +35,21 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Ark.LootItemSetEntryOption
+		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSetEntryOption
 		  Var UUID As String
-		  Try
-		    If Dict.HasKey("loot_item_set_entry_option_id") Then
-		      UUID = Dict.Value("loot_item_set_entry_option_id")
-		    ElseIf Dict.HasKey("UUID") Then
-		      UUID = Dict.Value("UUID")
-		    End If
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading UUID value")
-		  End Try
+		  If NewUUID Then
+		    UUID = v4UUID.Create.StringValue
+		  Else
+		    Try
+		      If Dict.HasKey("loot_item_set_entry_option_id") Then
+		        UUID = Dict.Value("loot_item_set_entry_option_id")
+		      ElseIf Dict.HasKey("UUID") Then
+		        UUID = Dict.Value("UUID")
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading UUID value")
+		    End Try
+		  End If
 		  
 		  Var Weight As Double = 0.5
 		  Try

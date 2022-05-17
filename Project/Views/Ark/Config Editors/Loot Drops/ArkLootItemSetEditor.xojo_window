@@ -602,7 +602,7 @@ End
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		  If Info.FullName = "Dictionary" Then
 		    // Single item
-		    Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Parsed)
+		    Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Parsed, True)
 		    If (Entry Is Nil) = False Then
 		      Self.LootItemSet.Add(Entry)
 		      Modified = True
@@ -611,7 +611,7 @@ End
 		    // Multiple items
 		    Var Dicts() As Variant = Parsed
 		    For Each Dict As Dictionary In Dicts
-		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict)
+		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict, True)
 		      If Entry <> Nil Then
 		        Self.LootItemSet.Add(Entry)
 		        Modified = True

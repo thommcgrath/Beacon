@@ -1080,7 +1080,7 @@ End
 		    
 		    Var NewItemSets() As Ark.LootItemSet
 		    For Each Dict As Dictionary In Dicts
-		      Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dict)
+		      Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dict, True)
 		      If Set = Nil Then
 		        Continue
 		      End If
