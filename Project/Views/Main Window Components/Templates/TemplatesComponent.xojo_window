@@ -177,7 +177,7 @@ End
 
 	#tag Event
 		Sub ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
-		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("You have " + NumPages.ToString + " presets with unsaved changes. Do you want to review these changes before quitting?", "If you don't review your presets, all your changes will be lost.", "Review Changes…", "Cancel", "Discard Changes")
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("You have " + NumPages.ToString + " templates with unsaved changes. Do you want to review these changes before quitting?", "If you don't review your templates, all your changes will be lost.", "Review Changes…", "Cancel", "Discard Changes")
 		  Select Case Choice
 		  Case BeaconUI.ConfirmResponses.Action
 		    ShouldClose = False
@@ -355,7 +355,7 @@ End
 #tag Events Nav
 	#tag Event
 		Sub Open()
-		  Var ListItem As OmniBarItem = OmniBarItem.CreateTab("PresetList", "Presets")
+		  Var ListItem As OmniBarItem = OmniBarItem.CreateTab("PresetList", "Templates")
 		  ListItem.Toggled = True
 		  Self.PresetsList.LinkedOmniBarItem = ListItem
 		  

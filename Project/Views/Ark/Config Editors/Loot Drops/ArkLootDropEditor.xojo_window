@@ -1141,22 +1141,22 @@ End
 		    Preset = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Organizer.Template.TemplateUUID)
 		  Next
 		  
-		  Var CreateItem As New MenuItem("Create Preset…", Targets)
+		  Var CreateItem As New MenuItem("Create Template…", Targets)
 		  CreateItem.Name = "createpreset"
 		  CreateItem.Enabled = Targets.LastIndex = 0
 		  If Preset <> Nil And CreateItem.Enabled Then
-		    CreateItem.Text = "Update """ + Preset.Label + """ Preset…"
+		    CreateItem.Text = "Update """ + Preset.Label + """ Template…"
 		  End If
 		  Base.AddMenu(CreateItem)
 		  
-		  Var ReconfigureItem As New MenuItem("Rebuild From Preset", Targets)
+		  Var ReconfigureItem As New MenuItem("Rebuild From Template", Targets)
 		  ReconfigureItem.Name = "reconfigure"
 		  ReconfigureItem.Enabled = Preset <> Nil
 		  If ReconfigureItem.Enabled Then
 		    If Targets.LastIndex = 0 Then
-		      ReconfigureItem.Text = "Rebuild From """ + Preset.Label + """ Preset"
+		      ReconfigureItem.Text = "Rebuild From """ + Preset.Label + """ Template"
 		    Else
-		      ReconfigureItem.Text = "Rebuild From Presets"
+		      ReconfigureItem.Text = "Rebuild From Templates"
 		    End If
 		  End If
 		  Base.AddMenu(ReconfigureItem)
@@ -1251,9 +1251,9 @@ End
 		    
 		    If AffectedItemSets.LastIndex = -1 Then
 		      If Targets.LastIndex = 0 Then
-		        Self.ShowAlert("No changes made", "This item set is already identical to the preset.")
+		        Self.ShowAlert("No changes made", "This item set is already identical to the template.")
 		      Else
-		        Self.ShowAlert("No changes made", "All item sets already match their preset.")
+		        Self.ShowAlert("No changes made", "All item sets already match their template.")
 		      End If
 		      Return True
 		    End If
@@ -1263,7 +1263,7 @@ End
 		    
 		    If Targets.LastIndex > 0 Then
 		      // Editor will be disabled, so it won't be obvious something happened.
-		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their preset.")
+		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their template.")
 		    End If
 		  Case "copyjson"
 		    If Targets.LastIndex = 0 Then
@@ -1402,7 +1402,7 @@ End
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTitle("Title", "Item Sets"))
 		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
-		  Me.Append(OmniBarItem.CreateButton("AddSetButton", "New Item Set", IconToolbarAddMenu, "Add a new empty item set. Hold to add a preset from a menu."))
+		  Me.Append(OmniBarItem.CreateButton("AddSetButton", "New Item Set", IconToolbarAddMenu, "Add a new empty item set. Hold to add a template from a menu."))
 		  Me.Append(OmniBarItem.CreateButton("SimulatorButton", "Simulator", IconToolbarSimulate, "Simulate loot selection for this loot drop.", False))
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
 		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))

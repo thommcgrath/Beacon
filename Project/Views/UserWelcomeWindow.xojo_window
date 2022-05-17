@@ -408,7 +408,7 @@ Begin Window UserWelcomeWindow
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "Using your Beacon account, you can sync files, engrams, creatures, and presets between computers."
+         Text            =   "Using your Beacon account, you can sync files, engrams, creatures, and templates between computers."
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"

@@ -640,7 +640,7 @@ End
 		Private Sub RebuildAllItemSets()
 		  Var NumChanges As Integer = Self.Config(True).RebuildItemSets(Self.Project.MapMask, Self.Project.ContentPacks)
 		  If NumChanges = 0 Then
-		    Self.ShowAlert("No item sets changed", "All item sets are already configured according to their presets.")
+		    Self.ShowAlert("No item sets changed", "All item sets are already configured according to their templates.")
 		    Return
 		  End If
 		  
@@ -648,9 +648,9 @@ End
 		  Self.Changed = Self.Changed Or Self.Project.Modified
 		  
 		  If NumChanges = 1 Then
-		    Self.ShowAlert("1 item set changed", "Rebuilding changed 1 item set to match its preset.")
+		    Self.ShowAlert("1 item set changed", "Rebuilding changed 1 item set to match its template.")
 		  Else
-		    Self.ShowAlert(NumChanges.ToString(Locale.Current, ",##0") + " item sets changed", "Rebuilding changed " + NumChanges.ToString(Locale.Current, ",##0") + " item sets to match their presets.")
+		    Self.ShowAlert(NumChanges.ToString(Locale.Current, ",##0") + " item sets changed", "Rebuilding changed " + NumChanges.ToString(Locale.Current, ",##0") + " item sets to match their templates.")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1046,7 +1046,7 @@ End
 		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddContainerButton", "New Drop", IconToolbarAddMenu, "Define an additional loot drop override. Hold to quickly add a container from a menu."))
 		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected loot drop.", False))
-		  Me.Append(OmniBarItem.CreateButton("RebuildButton", "Rebuild", IconToolbarRebuild, "Rebuild all item sets using their presets.", False))
+		  Me.Append(OmniBarItem.CreateButton("RebuildButton", "Rebuild", IconToolbarRebuild, "Rebuild all item sets using their templates.", False))
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
 		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
 		  
