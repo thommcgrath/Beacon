@@ -744,7 +744,7 @@ End
 		  End Select
 		  
 		  Var Parts() As String = Issue.Location.Split(".")
-		  If Parts.Count <> 3 Then
+		  If Parts.Count < 3 Then
 		    Break
 		    App.Log("Unknown issue path " + Issue.Location)
 		    Return

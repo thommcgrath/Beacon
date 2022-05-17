@@ -589,18 +589,28 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GoToChild(ItemSet As Ark.LootItemSet, Entry As Ark.LootItemSetEntry = Nil, Option As Ark.LootItemSetEntryOption = Nil) As Boolean
-		  For I As Integer = 0 To Self.SetList.RowCount - 1
-		    If Ark.LootItemSetOrganizer(Self.SetList.RowTagAt(I)).Template = ItemSet Then
-		      Self.SetList.SelectedRowIndex = I
-		      Self.SetList.EnsureSelectionIsVisible()
-		      If Entry <> Nil Then
-		        Return Self.Editor.GoToChild(Entry, Option)
-		      Else
-		        Return True
-		      End If
+		Function GoToChild(ItemSetUUID As String, EntryUUID As String = "", EngramClass As String = "") As Boolean
+		  For Idx As Integer = 0 To Self.SetList.LastRowIndex
+		    Var Organizer As Ark.LootItemSetOrganizer = Self.SetList.RowTagAt(Idx)
+		    If Organizer Is Nil Then
+		      Continue
 		    End If
-		  Next
+		    
+		    Var ItemSet As Ark.LootItemSet = Organizer.Template
+		    If ItemSet Is Nil Or ItemSet.UUID <> ItemSetUUID Then
+		      Continue
+		    End If
+		    
+		    Self.SetList.SelectedRowIndex = Idx
+		    Self.SetList.EnsureSelectionIsVisible()
+		    
+		    If EntryUUID.IsEmpty = False Then
+		      Return Self.Editor.GoToChild(EntryUUID, EngramClass)
+		    Else
+		      Return True
+		    End If
+		  Next Idx
+		  
 		  Self.SetList.SelectedRowIndex = -1
 		  Return False
 		End Function

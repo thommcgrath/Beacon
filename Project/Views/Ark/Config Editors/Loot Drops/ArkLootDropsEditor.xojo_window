@@ -454,40 +454,21 @@ End
 
 	#tag Event
 		Sub ShowIssue(Issue As Beacon.Issue)
-		  If Issue.UserData Is Nil Then
-		    Return
+		  Var LocationParts() As String = Issue.Location.Split(".")
+		  // ConfigSet is 0, ConfigName is 1
+		  Var DropClass As String = LocationParts(2)
+		  Var ItemSetUUID, EntryUUID, EngramClass As String
+		  If LocationParts.LastIndex > 2 Then
+		    ItemSetUUID = LocationParts(3)
+		  End If
+		  If LocationParts.LastIndex > 3 Then
+		    EntryUUID = LocationParts(4)
+		  End If
+		  If LocationParts.LastIndex > 4 Then
+		    EngramClass = LocationParts(5)
 		  End If
 		  
-		  Select Case Issue.UserData
-		  Case IsA Ark.LootContainer
-		    Var Container As Ark.LootContainer = Issue.UserData
-		    Call Self.GoToChild(Container)
-		  Case IsA Dictionary
-		    Var Dict As Dictionary = Issue.UserData
-		    Var Container As Ark.LootContainer
-		    Var Set As Ark.LootItemSet
-		    Var Entry As Ark.LootItemSetEntry
-		    Var Option As Ark.LootItemSetEntryOption
-		    If Dict.HasKey("LootSource") Then
-		      Container = Dict.Value("LootSource")
-		      If Dict.HasKey("ItemSet") Then
-		        Set = Dict.Value("ItemSet")
-		        If Dict.HasKey("Entry") Then
-		          Entry = Dict.Value("Entry")
-		          If Dict.HasKey("Option") Then
-		            Option = Dict.Value("Option")
-		          End If
-		        End If
-		      End If
-		    End If
-		    Call Self.GoToChild(Container, Set, Entry, Option)
-		  Case IsA Ark.LootItemSet
-		    
-		  Case IsA Ark.LootItemSetEntry
-		    
-		  Case IsA Ark.LootItemSetEntryOption
-		    
-		  End Select
+		  Call Self.GoToChild(DropClass, ItemSetUUID, EntryUUID, EngramClass)
 		End Sub
 	#tag EndEvent
 
@@ -586,18 +567,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GoToChild(Container As Ark.LootContainer, ItemSet As Ark.LootItemSet = Nil, Entry As Ark.LootItemSetEntry = Nil, Option As Ark.LootItemSetEntryOption = Nil) As Boolean
-		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.RowTagAt(I) = Container Then
-		      Self.List.SelectedRowIndex = I
-		      Self.List.EnsureSelectionIsVisible()
-		      If ItemSet <> Nil Then
-		        Return Self.Editor.GoToChild(ItemSet, Entry, Option)
-		      Else
-		        Return True
-		      End If
+		Function GoToChild(DropClass As String, ItemSetUUID As String = "", EntryUUID As String = "", EngramClass As String = "") As Boolean
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    Var Container As Ark.LootContainer = Self.List.RowTagAt(Idx)
+		    If Container Is Nil Or Container.ClassString <> DropClass Then
+		      Continue
 		    End If
-		  Next
+		    
+		    Self.List.SelectedRowIndex = Idx
+		    Self.List.EnsureSelectionIsVisible()
+		    
+		    If ItemSetUUID.IsEmpty = False Then
+		      Return Self.Editor.GoToChild(ItemSetUUID, EntryUUID, EngramClass)
+		    Else
+		      Return True
+		    End If
+		  Next Idx
+		  
 		  Self.List.SelectedRowIndex = -1
 		  Return False
 		End Function

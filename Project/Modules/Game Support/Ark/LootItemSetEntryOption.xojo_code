@@ -153,8 +153,7 @@ Implements Beacon.Validateable
 		  // Part of the Beacon.Validateable interface.
 		  
 		  Try
-		    Var ObjectID As String = Self.mEngramRef.ObjectID
-		    Location = Location + "." + ObjectID
+		    Location = Location + "." + Self.mEngramRef.ClassString
 		    If Issues.HasIssue(Location) Then
 		      Return
 		    End If

@@ -263,17 +263,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GoToChild(Entry As Ark.LootItemSetEntry, Option As Ark.LootItemSetEntryOption = Nil) As Boolean
-		  For I As Integer = 0 To Self.EntryList.RowCount - 1
-		    If Self.EntryList.RowTagAt(I) = Entry Then
-		      Self.EntryList.SelectedRowIndex = I
-		      Self.EntryList.EnsureSelectionIsVisible()
-		      If Option <> Nil And Option.Engram <> Nil Then
-		        Self.EditSelectedEntries(Option.Engram.ClassString)
-		      End If
-		      Return True
+		Function GoToChild(EntryUUID As String, EngramClass As String = "") As Boolean
+		  For Idx As Integer = 0 To Self.EntryList.LastRowIndex
+		    Var Entry As Ark.LootItemSetEntry = Self.EntryList.RowTagAt(Idx)
+		    If Entry Is Nil Or Entry.UUID <> EntryUUID Then
+		      Continue
 		    End If
-		  Next
+		    
+		    Self.EntryList.SelectedRowIndex = Idx
+		    Self.EntryList.EnsureSelectionIsVisible()
+		    
+		    If EngramClass.IsEmpty = False Then
+		      Self.EditSelectedEntries(EngramClass)
+		    End If
+		    
+		    Return True
+		  Next Idx
+		  
 		  Self.EntryList.SelectedRowIndex = -1
 		  Return False
 		End Function
