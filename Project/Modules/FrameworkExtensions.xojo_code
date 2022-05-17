@@ -433,9 +433,18 @@ Protected Module FrameworkExtensions
 		Function Read(Extends File As FolderItem) As MemoryBlock
 		  #Pragma BreakOnExceptions False
 		  Try
-		    Var Stream As TextInputStream = TextInputStream.Open(File)
-		    Var Contents As MemoryBlock = Stream.ReadAll(Nil)
+		    Const ChunkSize = 256000
+		    
+		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
+		    Var Contents As New MemoryBlock(Stream.Length)
+		    Var Offset As Integer = 0
+		    While Stream.EndOfFile = False
+		      Var ReadBytes As Integer = Min(ChunkSize, Stream.Length - Offset)
+		      Contents.StringValue(Offset, ReadBytes) = Stream.Read(ReadBytes, Nil)
+		      Offset = Offset + ReadBytes
+		    Wend
 		    Stream.Close
+		    
 		    Return Contents
 		  Catch Err As RuntimeException
 		    Return Nil
