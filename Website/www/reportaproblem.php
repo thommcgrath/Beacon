@@ -263,6 +263,8 @@ case 'POST':
 				'error_reason' => 'Unable to save exception data.'
 			), JSON_PRETTY_PRINT);
 			exit;
+		} elseif (empty($comments) === false) {
+			BeaconExceptions::AddComments($exception_id, $comments, $user_id);
 		}
 	}
 	
