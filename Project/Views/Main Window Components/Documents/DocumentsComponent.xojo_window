@@ -247,6 +247,12 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ShouldCloseView(View As BeaconSubview)
+		  Call Self.DiscardView(View)
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub AttachControllerEvents(Controller As Beacon.ProjectController)
@@ -359,7 +365,7 @@ End
 		  End If
 		  
 		  Var Page As DocumentEditorView = DocumentEditorView(View)
-		  If Not Page.ConfirmClose(AddressOf ShowView) Then
+		  If Not Page.ConfirmClose() Then
 		    Return False
 		  End If
 		  

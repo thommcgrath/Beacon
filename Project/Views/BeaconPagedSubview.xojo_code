@@ -44,6 +44,9 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
+		  AddHandler Page.WantsClose, AddressOf View_WantsClose
+		  AddHandler Page.WantsFrontmost, AddressOf View_WantsFrontmost
+		  
 		  Self.mPages.Add(Page)
 		  
 		  Page.AddObserver(Self, "ViewID")
@@ -77,7 +80,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
+		Function ConfirmClose() As Boolean
 		  Const AllowClose = True
 		  Const BlockClose = False
 		  
@@ -88,10 +91,8 @@ Implements ObservationKit.Observer
 		  Case 0
 		    Return AllowClose
 		  Case 1
-		    If Beacon.SafeToInvoke(Callback) Then
-		      Callback.Invoke(Self)
-		    End If
-		    Return ModifiedViews(0).ConfirmClose(AddressOf ShowView)
+		    Self.RequestFrontmost()
+		    Return ModifiedViews(0).ConfirmClose()
 		  Else
 		    Var ShouldClose As Boolean = True
 		    Var ShouldFocus As Boolean
@@ -100,9 +101,7 @@ Implements ObservationKit.Observer
 		      Return AllowClose
 		    Else
 		      If ShouldFocus Then
-		        If Callback <> Nil Then
-		          Callback.Invoke(Self)
-		        End If
+		        Self.RequestFrontmost()
 		      End If
 		      Return BlockClose
 		    End If
@@ -305,6 +304,8 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  Self.mPages(Idx).RemoveObserver(Self, "ViewID")
+		  RemoveHandler Self.mPages(Idx).WantsClose, AddressOf View_WantsClose
+		  RemoveHandler Self.mPages(Idx).WantsFrontmost, AddressOf View_WantsFrontmost
 		  Self.mPages.RemoveAt(Idx)
 		  
 		  Var Panel As PagePanel = Self.ViewsPanel
@@ -341,6 +342,19 @@ Implements ObservationKit.Observer
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub View_WantsClose(Sender As BeaconSubview)
+		  RaiseEvent ShouldCloseView(Sender)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub View_WantsFrontmost(Sender As BeaconSubview)
+		  Self.RequestFrontmost()
+		  Self.ShowView(Sender)
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
@@ -356,6 +370,10 @@ Implements ObservationKit.Observer
 
 	#tag Hook, Flags = &h0
 		Event ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldCloseView(View As BeaconSubview)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

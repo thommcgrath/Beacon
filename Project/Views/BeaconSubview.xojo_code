@@ -41,7 +41,7 @@ Implements ObservationKit.Observable
 			End If
 			
 			If Self.Changed Then
-			Return RaiseEvent ShouldSave
+			RaiseEvent ShouldSave(False)
 			End If
 		End Function
 	#tag EndMenuHandler
@@ -77,10 +77,6 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
-	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub BringToFrontDelegate(Sender As BeaconSubview)
-	#tag EndDelegateDeclaration
-
 	#tag Method, Flags = &h0
 		Function Busy() As Boolean
 		  Return Self.mProgress > Self.ProgressNone
@@ -100,19 +96,18 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
-		  If Not Self.Changed Then
+		Function ConfirmClose() As Boolean
+		  If Self.HasModifications = False Then
 		    Return True
 		  End If
 		  
-		  If Beacon.SafeToInvoke(Callback) Then
-		    Callback.Invoke(Self)
-		  End If
+		  Self.RequestFrontmost()
 		  
 		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Do you want to save the changes made to the " + Self.ViewType(False, True) + " """ + Self.ViewTitle + """?", "Your changes will be lost if you don't save them.", "Save", "Cancel", "Don't Save")
 		  Select Case Choice
 		  Case BeaconUI.ConfirmResponses.Action
-		    Return RaiseEvent ShouldSave()
+		    RaiseEvent ShouldSave(True)
+		    Return False
 		  Case BeaconUI.ConfirmResponses.Cancel
 		    Return False
 		  Case BeaconUI.ConfirmResponses.Alternate
@@ -135,7 +130,7 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
-		  If Self.Changed Then
+		  If Self.HasModifications Then
 		    FileSave.Enabled = True
 		  End If
 		  
@@ -196,6 +191,12 @@ Implements ObservationKit.Observable
 		  
 		  Self.mObservers.Value(Key) = Refs
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub RequestClose()
+		  RaiseEvent WantsClose
 		End Sub
 	#tag EndMethod
 
@@ -278,11 +279,15 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShouldSave() As Boolean
+		Event ShouldSave(CloseWhenFinished As Boolean)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Shown(UserData As Variant = Nil)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event WantsClose()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

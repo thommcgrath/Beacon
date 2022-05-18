@@ -154,10 +154,10 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Function ShouldSave() As Boolean
+		Sub ShouldSave(CloseWhenFinished As Boolean)
+		  Self.mCloseAfterPublish = CloseWhenFinished
 		  Self.mController.Publish
-		  Return True
-		End Function
+		End Sub
 	#tag EndEvent
 
 
@@ -229,6 +229,12 @@ End
 		    Return
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasModifications() As Boolean
+		  Return Self.mController.HasUnpublishedChanges
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -700,22 +706,29 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_PublishFinished(Sender As BlueprintController, Success As Boolean, Reason As String)
-		  If Success Then
-		    Self.mController.LoadBlueprints()
-		  Else
+		  If Success = False Then
 		    Self.UpdatePublishButton()
-		  End If
-		  
-		  If Success Then
-		    If Sender.UseSaveTerminology = False Then
-		      Self.ShowAlert("Your changes have been published.", "Because Beacon generates new update files every 15 minutes, it may take some time for the changes to be available to users.")
-		    End If
-		  Else
+		    
 		    If Sender.UseSaveTerminology Then
 		      Self.ShowAlert("Beacon was unable to save the changes.", Reason)
 		    Else
 		      Self.ShowAlert("Beacon was unable to publish the requested changes.", Reason)
 		    End If
+		    
+		    Return
+		  End If
+		  
+		  Self.Changed = False
+		  
+		  If Sender.UseSaveTerminology = False Then
+		    Self.ShowAlert("Your changes have been published.", "Because Beacon generates new update files every 15 minutes, it may take some time for the changes to be available to users.")
+		  End If
+		  
+		  If Self.mCloseAfterPublish Then
+		    Self.RequestClose()
+		  Else
+		    // No reason to load the blueprints if we're about to close
+		    Self.mController.LoadBlueprints()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -871,6 +884,10 @@ End
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mCloseAfterPublish As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mContentToImport As String

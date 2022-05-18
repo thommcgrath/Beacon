@@ -43,8 +43,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Function ShouldSave() As Boolean
-		  Call RaiseEvent ShouldSave
+		Sub ShouldSave(CloseWhenFinished As Boolean)
+		  Self.mCloseAfterSave = CloseWhenFinished
+		  
+		  RaiseEvent ShouldSave(CloseWhenFinished)
 		  
 		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then  
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
@@ -52,8 +54,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  Else
 		    Self.SaveAs()
 		  End If
-		  Return True
-		End Function
+		End Sub
 	#tag EndEvent
 
 
@@ -216,6 +217,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    // Safe to cleanup the autosave
 		    Self.CleanupAutosave()
 		  End If
+		  
+		  If Self.mCloseAfterSave Then
+		    Self.RequestClose()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -346,7 +351,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShouldSave() As Boolean
+		Event ShouldSave(CloseWhenFinished As Boolean)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -360,6 +365,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mAutoSaveTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCloseAfterSave As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -347,13 +347,15 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Function ShouldSave() As Boolean
+		Sub ShouldSave(CloseWhenFinished As Boolean)
+		  #Pragma Unused CloseWhenFinished
+		  
 		  If Self.mUpdateUITag <> "" Then
 		    CallLater.Cancel(Self.mUpdateUITag)
 		    Self.mUpdateUITag = ""
 		    Self.UpdateUI()
 		  End If
-		End Function
+		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -489,17 +491,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
+		Function ConfirmClose() As Boolean
 		  If Self.Progress <> BeaconSubview.ProgressNone Then
-		    If Beacon.SafeToInvoke(Callback) Then
-		      Callback.Invoke(Self)
-		    End If
+		    Self.RequestFrontmost()
 		    
 		    Self.ShowAlert(Self.ViewTitle + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
 		    Return False
 		  End If
 		  
-		  Return Super.ConfirmClose(Callback)
+		  Return Super.ConfirmClose()
 		End Function
 	#tag EndMethod
 

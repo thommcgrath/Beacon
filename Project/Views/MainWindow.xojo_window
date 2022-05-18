@@ -343,15 +343,15 @@ End
 		  Const AllowClose = False
 		  Const BlockClose = True
 		  
-		  If Self.DocumentsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		  If Self.DocumentsComponent1.ConfirmClose() = False Then
 		    Return BlockClose
 		  End If
 		  
-		  If Self.BlueprintsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		  If Self.BlueprintsComponent1.ConfirmClose() = False Then
 		    Return BlockClose
 		  End If
 		  
-		  If Self.TemplatesComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		  If Self.TemplatesComponent1.ConfirmClose() = False Then
 		    Return BlockClose
 		  End If
 		  

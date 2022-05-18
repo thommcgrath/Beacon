@@ -199,6 +199,14 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ShouldCloseView(View As BeaconSubview)
+		  If View IsA TemplateEditorView Then
+		    Call Self.CloseView(TemplateEditorView(View))
+		  End If
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Function CloseTemplate(Template As Beacon.Template) As Boolean
@@ -224,7 +232,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function CloseView(View As TemplateEditorView) As Boolean
-		  If View.CanBeClosed = False Or View.ConfirmClose(WeakAddressOf ShowView) = False Then
+		  If View.CanBeClosed = False Or View.ConfirmClose() = False Then
 		    Return False
 		  End If
 		  

@@ -766,10 +766,12 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Function ShouldSave() As Boolean
-		  Self.Save()
-		  Return True
-		End Function
+		Sub ShouldSave(CloseWhenFinished As Boolean)
+		  Self.mCloseAfterSave = CloseWhenFinished
+		  If Self.Save() And Self.mCloseAfterSave Then
+		    Self.RequestClose()
+		  End If
+		End Sub
 	#tag EndEvent
 
 
@@ -798,7 +800,7 @@ End
 			Return False
 			End If
 			
-			Self.Save()
+			Call Self.Save()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -816,7 +818,7 @@ End
 			Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 			If (File Is Nil) = False Then
 			Self.mSaveFile = File
-			Self.Save()
+			Call Self.Save()
 			End If
 			Return True
 		End Function
@@ -994,22 +996,31 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Save()
-		  If Self.mSaveFile = Nil Then
-		    Beacon.CommonData.SharedInstance.SaveTemplate(Self.mTemplate)
-		    Self.ViewID = Self.mTemplate.UUID
-		  Else
-		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		    Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, Self.mSaveFile)
-		    AddHandler Writer.Finished, AddressOf Writer_Finished
-		    Writer.Start
-		  End If
+		Private Function Save() As Boolean
+		  Const SaveComplete = True
+		  Const SavePending = False
+		  
 		  If (Self.LinkedOmniBarItem Is Nil) = False Then
 		    Self.LinkedOmniBarItem.Caption = Self.mTemplate.Label
 		  End If
-		  Self.Changed = False
-		  NotificationKit.Post("Template Saved", Self.mTemplate)
-		End Sub
+		  
+		  If Self.mSaveFile Is Nil Then
+		    Beacon.CommonData.SharedInstance.SaveTemplate(Self.mTemplate)
+		    Self.ViewID = Self.mTemplate.UUID
+		    
+		    Self.Changed = False
+		    NotificationKit.Post("Template Saved", Self.mTemplate)
+		    
+		    Return SaveComplete
+		  End If
+		  
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		  Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, Self.mSaveFile)
+		  AddHandler Writer.Finished, AddressOf Writer_Finished
+		  Writer.Start
+		  
+		  Return SavePending
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1157,11 +1168,22 @@ End
 		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As FolderItem)
 		  #Pragma Unused Sender
 		  
+		  Self.Changed = False
+		  NotificationKit.Post("Template Saved", Self.mTemplate)
+		  
 		  Self.Progress = BeaconSubview.ProgressNone
 		  Self.ViewID = EncodeHex(Crypto.MD5(Destination.NativePath))
+		  
+		  If Self.mCloseAfterSave Then
+		    Self.RequestClose()
+		  End If
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mCloseAfterSave As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSaveFile As FolderItem

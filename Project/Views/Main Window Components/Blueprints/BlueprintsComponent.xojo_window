@@ -162,10 +162,16 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ShouldCloseView(View As BeaconSubview)
+		  Call Self.CloseView(View)
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Function CloseView(View As BeaconSubview) As Boolean
-		  If View.CanBeClosed = False Or View.ConfirmClose(WeakAddressOf ShowView) = False Then
+		  If View.CanBeClosed = False Or View.ConfirmClose() = False Then
 		    Return False
 		  End If
 		  
