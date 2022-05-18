@@ -343,16 +343,10 @@ End
 		  Const AllowClose = False
 		  Const BlockClose = True
 		  
-		  If Self.DocumentsComponent1.ConfirmClose() = False Then
-		    Return BlockClose
-		  End If
+		  Var ReturnValue As Boolean = AllowClose
 		  
-		  If Self.BlueprintsComponent1.ConfirmClose() = False Then
-		    Return BlockClose
-		  End If
-		  
-		  If Self.TemplatesComponent1.ConfirmClose() = False Then
-		    Return BlockClose
+		  If Self.DocumentsComponent1.ConfirmClose() = False Or Self.BlueprintsComponent1.ConfirmClose() = False Or Self.TemplatesComponent1.ConfirmClose() = False Then
+		    ReturnValue = BlockClose
 		  End If
 		  
 		  If Self.Busy Then
@@ -363,10 +357,10 @@ End
 		      AddHandler mBusyWatcher.Action, WeakAddressOf mBusyWatcher_Action
 		    End If
 		    Self.mBusyWatcher.RunMode = Timer.RunModes.Multiple
-		    Return BlockClose
+		    ReturnValue = BlockClose
 		  End If
 		  
-		  Return AllowClose
+		  Return ReturnValue
 		End Function
 	#tag EndEvent
 

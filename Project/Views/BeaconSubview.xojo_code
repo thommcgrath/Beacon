@@ -97,8 +97,15 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ConfirmClose() As Boolean
+		  Const AllowClose = True
+		  Const BlockClose = False
+		  
 		  If Self.HasModifications = False Then
-		    Return True
+		    Return AllowClose
+		  End If
+		  
+		  If Self.Busy() Then
+		    Return BlockClose
 		  End If
 		  
 		  Self.RequestFrontmost()
@@ -107,12 +114,12 @@ Implements ObservationKit.Observable
 		  Select Case Choice
 		  Case BeaconUI.ConfirmResponses.Action
 		    RaiseEvent ShouldSave(True)
-		    Return False
+		    Return BlockClose
 		  Case BeaconUI.ConfirmResponses.Cancel
-		    Return False
+		    Return BlockClose
 		  Case BeaconUI.ConfirmResponses.Alternate
 		    Self.DiscardChanges()
-		    Return True
+		    Return AllowClose
 		  End Select
 		End Function
 	#tag EndMethod
