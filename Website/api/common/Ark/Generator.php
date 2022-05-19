@@ -48,18 +48,31 @@ class Generator {
 		} else {
 			$loot_sources_json = [];
 		}
-		$new_lines = array(
+		$new_lines = [
 			sprintf('SupplyCrateLootQualityMultiplier=%F', $this->quality_scale)
-		);
+		];
 		
 		foreach ($loot_sources_json as $json) {
-			$class = $json['SupplyCrateClassString'];
-			$definition = \Ark\LootSource::Get($class);
-			if (count($definition) != 1) {
+			$definition = [];
+			if (array_key_exists('Reference', $json)) {
+				$uuid = $json['Reference']['UUID'];
+				$class = $json['Reference']['Class'];
+				$definition = \Ark\LootSource::Get($uuid);
+			} elseif (array_key_exists('SupplyCrateClassString', $json)) {
+				$class = $json['SupplyCrateClassString'];
+				$definition = \Ark\LootSource::Get($class);
+			} else {
+				continue;
+			}
+			if (count($definition) === 0) {
 				$definition = new \Ark\LootSource();
-				$definition->SetMultiplierMin($json['Multiplier_Min']);
-				$definition->SetMultiplierMax($json['Multiplier_Max']);
-				$definition->SetAvailability($json['Availability']);
+				if (\BeaconCommon::HasAllKeys($json, 'Multiplier_Min', 'Multiplier_Max', 'Availability')) {
+					$definition->SetMultiplierMin($json['Multiplier_Min']);
+					$definition->SetMultiplierMax($json['Multiplier_Max']);
+					$definition->SetAvailability($json['Availability']);
+				} else {
+					$definition->SetAvailability($this->map_mask);
+				}
 			} else {
 				$definition = $definition[0];
 			}
@@ -67,24 +80,41 @@ class Generator {
 				continue;
 			}
 			
-			$random_without_replacement = boolval($json['bSetsRandomWithoutReplacement']);
+			$random_without_replacement = true;
+			if (array_key_exists('PreventDuplicates', $json)) {
+				$random_without_replacement = boolval($json['PreventDuplicates']);
+			} elseif (array_key_exists('bSetsRandomWithoutReplacement', $json)) {
+				$random_without_replacement = boolval($json['bSetsRandomWithoutReplacement']);
+			}
+			
 			$min_item_sets = intval($json['MinItemSets']);
 			$max_item_sets = intval($json['MaxItemSets']);
 			
-			$sets = array();
+			$append_mode = false;
+			if (array_key_exists('AppendMode', $json)) {
+				$append_mode = boolval($json['AppendMode']);
+			} elseif (array_key_exists('bAppendMode', $json)) {
+				$append_mode = boolval($json['bAppendMode']);
+			}
+			
+			$sets = [];
 			$total_weight = $this->SumOfItemSetWeights($json['ItemSets']);
 			foreach ($json['ItemSets'] as $item_set) {
 				$sets[] = $this->RenderItemSet($definition, $item_set, $total_weight);
 			}
 			
-			$keys = array(
-				sprintf('SupplyCrateClassString="%s"', $class),
-				sprintf('MinItemSets=%u', $min_item_sets),
-				sprintf('MaxItemSets=%u', $max_item_sets),
-				'NumItemSetsPower=1',
-				sprintf('bSetsRandomWithoutReplacement=%s', $random_without_replacement ? 'true' : 'false'),
-				sprintf('ItemSets=(%s)', implode(',', $sets))
-			);
+			$keys = [
+				sprintf('SupplyCrateClassString="%s"', $class)
+			];
+			if ($append_mode) {
+				$keys[] = 'bAppendItemSets=True';
+			} else {
+				$keys[] = sprintf('MinItemSets=%u', $min_item_sets);
+				$keys[] = sprintf('MaxItemSets=%u', $max_item_sets);
+				$keys[] = 'NumItemSetsPower=1';
+				$keys[] = sprintf('bSetsRandomWithoutReplacement=%s', $random_without_replacement ? 'true' : 'false');
+			}
+			$keys[] = sprintf('ItemSets=(%s)', implode(',', $sets));
 			
 			$new_lines[] = sprintf('ConfigOverrideSupplyCrateItems=(%s)', implode(',', $keys));
 		}
@@ -93,7 +123,7 @@ class Generator {
 		$input = str_replace(chr(13) . chr(10), chr(10), $input);
 		$input = str_replace(chr(13), chr(10), $input);
 		$lines = explode(chr(10), $input);
-		$groups = array();
+		$groups = [];
 		$current_group = '';
 		
 		foreach ($lines as $line) {
@@ -117,21 +147,21 @@ class Generator {
 			if (array_key_exists($current_group, $groups)) {
 				$group_lines = $groups[$current_group];
 			} else {
-				$group_lines = array();
+				$group_lines = [];
 			}
 			
 			$group_lines[] = $line;
 			$groups[$current_group] = $group_lines;
 		}
 		
-		$shooter_group = array();
+		$shooter_group = [];
 		if (array_key_exists('/script/shootergame.shootergamemode', $groups)) {
 			$shooter_group = $groups['/script/shootergame.shootergamemode'];
 		}
 		$shooter_group = array_merge($shooter_group, $new_lines);
 		$groups['/script/shootergame.shootergamemode'] = $shooter_group;
 		
-		$output_lines = array();
+		$output_lines = [];
 		foreach ($groups as $header => $lines) {
 			if ($header !== '') {
 				$output_lines[] = '[' . $header . ']';
@@ -207,12 +237,12 @@ class Generator {
 		$relative_weight = round(($local_weight / $weight_total) * 1000);
 		
 		$entries_weight_sum = $this->SumOfEntryWeights($entries);
-		$children = array();
+		$children = [];
 		foreach ($entries as $entry) {
 			$children[] = $this->RenderEntry($source, $entry, $entries_weight_sum);
 		}
 		
-		$keys = array(
+		$keys = [
 			sprintf('SetName="%s"', $name),
 			sprintf('MinNumItems=%u', $min_entries),
 			sprintf('MaxNumItems=%u', $max_entries),
@@ -220,7 +250,7 @@ class Generator {
 			sprintf('SetWeight=%u', $relative_weight),
 			sprintf('bItemsRandomWithoutReplacement=%s', $random_without_replacement ? 'true' : 'false'),
 			sprintf('ItemEntries=(%s)', implode(',', $children))
-		);
+		];
 		
 		return '(' . implode(',', $keys) . ')';
 	}
@@ -235,8 +265,8 @@ class Generator {
 		$max_quantity = intval($entry['MaxQuantity']);
 		$min_quantity = intval($entry['MinQuantity']);
 		
-		$classes = array();
-		$relative_weights = array();
+		$classes = [];
+		$relative_weights = [];
 		$options_weight_sum = 0;
 		foreach ($items as $item) {
 			$options_weight_sum = $options_weight_sum + max(floatval($item['Weight']), 0.0001);
@@ -251,7 +281,7 @@ class Generator {
 			$relative_weights[] = sprintf('%u', round((max(floatval($item['Weight']), 0.0001) / $options_weight_sum) * 1000));
 		}
 		
-		$keys = array(
+		$keys = [
 			sprintf('EntryWeight=%u', $relative_weight),
 			sprintf('MinQuantity=%u', $min_quantity),
 			sprintf('MaxQuantity=%u', $max_quantity),
@@ -261,7 +291,7 @@ class Generator {
 			sprintf('MaxQuality=%F', $this->QualityTagToValue($max_quality_tag, $source->MultiplierMax())),
 			sprintf('ItemClassStrings=(%s)', implode(',', $classes)),
 			sprintf('ItemsWeights=(%s)', implode(',', $relative_weights))
-		);
+		];
 		
 		return '(' . implode(',', $keys) . ')';
 	}
