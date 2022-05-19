@@ -188,6 +188,7 @@ Protected Module UpdatesKit
 		  mIsDownloading = True
 		  mDownloadStart = System.Microseconds
 		  mDownloader = New URLConnection
+		  mDownloader.RequestHeader("User-Agent") = App.UserAgent
 		  AddHandler mDownloader.ReceivingProgressed, AddressOf mDownloader_ReceivingProgressed
 		  AddHandler mDownloader.FileReceived, AddressOf mDownloader_FileReceived
 		  AddHandler mDownloader.Error, AddressOf mDownloader_Error
