@@ -380,7 +380,7 @@ End
 		  Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Row)
 		  Select Case Column
 		  Case Self.ColumnQuantity
-		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Val(Me.CellValueAt(Row, Column)), Ingredient.RequireExact)
+		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Max(Val(Me.CellValueAt(Row, Column)), 1), Ingredient.RequireExact)
 		  Case Self.ColumnRequireExact
 		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  Else
