@@ -1,0 +1,11 @@
+{% if page.configkeys %}
+<div class="affected_ini_keys">
+{% if page.configkeys.size == 1 %}
+The {{page.title}} config editor affects the {{page.configkeys.first}} config key.
+{% elsif page.configkeys.size == 2 %}
+The {{page.title}} config editor affects the {{page.configkeys.first}} and {{page.configkeys.last}} config keys.
+{% else %}
+{% assign skiplast = page.configkeys.size | minus: 1 %}The {{page.title}} config editor affects the {% for key in page.configkeys limit: skiplast %}{{key}}, {% endfor %} and {{page.configkeys.last}} config keys.
+{% endif %}
+</div>
+{% endif %}

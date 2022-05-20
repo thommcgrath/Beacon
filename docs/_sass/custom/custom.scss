@@ -28,3 +28,14 @@ blockquote {
 .site-logo {
 	background-position: center center;
 }
+
+div.affected_ini_keys {
+	text-shadow: 0 1px 0 $body-background-color;
+	color: $body-text-color;
+	border: 1px solid mix($body-background-color, $body-text-color, 90%);
+	background-color: mix($body-background-color, $body-text-color, 97%);
+	font-size: 0.8em;
+	padding: 15px;
+	margin-top: 20px;
+	font-weight: 300;
+}

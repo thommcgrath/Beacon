@@ -1,0 +1,4 @@
+Use the user button in the top right of Beacon's window. You will see one of three things:
+1. _Enable Cloud & Community_ which means Beacon is set not to communicate with Beacon's server at all. Click _Enable Cloud & Community_ to open the welcome window. Choose _Log In With Email_ to continue.
+2. _Sign In_ means Beacon is set to use its community features anonymously. Click _Sign In_ to open the welcome window. Choose _Log In With Email_ to continue.
+3. A username or email address means the account is already signed in. If you need to change the account, choose _Sign Out_. At the welcome window, click _Log In With Email_ to continue.

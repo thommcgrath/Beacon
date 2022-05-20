@@ -1,0 +1,1 @@
+Tags can be clicked to change how the list is filtered. Gray tags are neutral and have no effect on the filtering. Blue tags are required, which means the list will only show items that have all of the blue tags. Red tags are excluded, which means the list will hide items that have any of the red tags.
