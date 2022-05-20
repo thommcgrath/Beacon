@@ -1,1 +1,23 @@
+title: Beacon Help
+email: help@usebeacon.app
+description: >-
+  Guides for Beacon, a server manager for Ark: Survival Evolved
+baseurl: "/"
+url: "https://help.usebeacon.app"
+twitter_username: usebeaconhq
+github_username:  thommcgrath
+logo: "/images/beacon-header-color.svg"
+
 remote_theme: just-the-docs/just-the-docs
+plugins:
+  - jekyll-feed
+  
+last_edit_timestamp: true
+last_edit_time_format: "%b %e %Y at %I:%M %p"
+
+gh_edit_link: true
+gh_edit_link_text: "Edit this page on GitHub"
+gh_edit_repository: "https://github.com/thommcgrath/Beacon"
+gh_edit_branch: "master"
+gh_edit_source: "docs"
+gh_edit_view_mode: "edit"
