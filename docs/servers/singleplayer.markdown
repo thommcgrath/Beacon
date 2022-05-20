@@ -1,7 +1,7 @@
 ---
 title: Using Beacon with Ark Single Player
 parent: Server Management
-nav_order: 1
+nav_order: 2
 ---
 # Using Beacon with Ark Single Player
 Beacon is fully able to work with the `Game.ini` and `GameUserSettings.ini` files on the three PC versions of the game, but the console versions of the game provide no access to the single player ini files. The only difficulty is finding the ini files on the system.

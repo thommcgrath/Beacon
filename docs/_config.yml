@@ -21,3 +21,10 @@ gh_edit_repository: "https://github.com/thommcgrath/Beacon"
 gh_edit_branch: "master"
 gh_edit_source: "docs"
 gh_edit_view_mode: "edit"
+
+aux_links_new_tab: true
+aux_links:
+  "Ark Config File Reference":
+    - "https://ark.fandom.com/wiki/Server_configuration"
+  "Beacon System Status":
+    - "https://status.usebeacon.app/"

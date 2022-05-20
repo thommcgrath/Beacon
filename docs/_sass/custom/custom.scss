@@ -3,12 +3,18 @@ blockquote {
 	color: $body-text-color;
 	margin-top: 10px;
 	margin-bottom: 10px;
-	margin-left: 50px;
+	margin-left: 5%;
+	margin-right: 5%;
 	padding-left: 15px;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-right: 15px;
 	border-left: 3px solid mix($body-background-color, $body-text-color, 50%);
+	
+	a {
+		word-wrap: break-word;
+		white-space: normal !important;
+	}
 	
 	p:first-child {
 		margin-top: 0px;
