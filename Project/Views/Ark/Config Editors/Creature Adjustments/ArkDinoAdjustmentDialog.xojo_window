@@ -260,7 +260,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
    Begin PagePanel Pages
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   200
+      Height          =   168
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -278,7 +278,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabStop         =   True
       Top             =   158
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField
@@ -872,39 +872,6 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          VisualState     =   0
          Width           =   454
       End
-      Begin CheckBox PreventTransferCheck
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Prevent Transfer"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   152
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   13
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   "When checked, the creature cannot be downloaded from an obelisk."
-         Top             =   332
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         VisualState     =   0
-         Width           =   454
-      End
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
@@ -1037,6 +1004,39 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Visible         =   True
       Width           =   356
    End
+   Begin CheckBox PreventTransferCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Prevent Transfer"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   152
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "When checked, the creature cannot be downloaded from an obelisk."
+      Top             =   332
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   0
+      Width           =   454
+   End
 End
 #tag EndWindow
 
@@ -1103,8 +1103,8 @@ End
 		        Win.TameResistanceField.Text = Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.ModeMultipliersRadio.Value = True
 		        Win.PreventTamingCheck.Value = Behavior.ProhibitTaming
-		        Win.PreventTransferCheck.Value = Behavior.ProhibitTransfer
 		      End If
+		      Win.PreventTransferCheck.Value = Behavior.ProhibitTransfer
 		    End If
 		  End If
 		  Win.ShowModalWithin(Parent.TrueWindow)
@@ -1125,8 +1125,8 @@ End
 		    Behavior.TamedDamageMultiplier = CDbl(Win.TameDamageField.Text)
 		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Text)
 		    Behavior.ProhibitTaming = Win.PreventTamingCheck.Value
-		    Behavior.ProhibitTransfer = Win.PreventTransferCheck.Value
 		  End If
+		  Behavior.ProhibitTransfer = Win.PreventTransferCheck.Value
 		  
 		  If IsNull(EditCreature) = False And TargetCreature <> EditCreature Then
 		    Config.RemoveBehavior(EditCreature)
@@ -1220,7 +1220,7 @@ End
 	#tag Constant, Name = HeightDisable, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"200", Scope = Private
+	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"168", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = HeightReplace, Type = Double, Dynamic = False, Default = \"32", Scope = Private
@@ -1308,6 +1308,8 @@ End
 		    Return
 		  End If
 		  
+		  Var PreventTransfer As Boolean = Self.PreventTransferCheck.Value
+		  
 		  If Self.ModeReplaceRadio.Value Then
 		    If IsNull(Self.SelectedReplacement) Then
 		      Self.ShowAlert("You haven't selected a replacement creature", "If you wan to replace the creature with nothing, choose the ""Disable Creature"" button.")
@@ -1319,7 +1321,6 @@ End
 		    Var TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Text)
 		    Var TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Text)
 		    Var PreventTaming As Boolean = Self.PreventTamingCheck.Value
-		    Var PreventTransfer As Boolean = Self.PreventTransferCheck.Value
 		    
 		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Then
 		      Self.ShowAlert("You have a multiplier that doesn't make sense", "It's ok to make the multipliers really small, but they must be at least zero.")

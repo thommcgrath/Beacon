@@ -317,6 +317,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
+      ExcludeTagCaption=   ""
       Height          =   67
       HelpTag         =   ""
       Index           =   -2147483648
@@ -327,6 +328,8 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      NeutralTagCaption=   ""
+      RequireTagCaption=   ""
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False

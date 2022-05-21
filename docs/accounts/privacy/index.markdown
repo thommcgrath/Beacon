@@ -42,3 +42,4 @@ There aren't any. Beacon does not utilize analytics of any kind, even on the web
 - [Bunny.net](https://bunny.net/privacy): Used for download hosting. Three days of anonymous download logs are stored.
 - [Have I Been Pwned](https://haveibeenpwned.com/privacy): During signup, passwords are anonymously checked against the world's largest database of leaked passwords.
 - [Postmark](https://postmarkapp.com/privacy-policy): Emails sent by Beacon are routed through Postmark to reduce the chances of messages going to spam boxes.
+- [Wasabi](https://wasabi.com/legal/privacy-policy/): Used for long-term storage of user cloud files. Projects use their standard encryption techniques, everything else is end-to-end encrypted.

@@ -346,9 +346,15 @@ End
 		    
 		    If Behavior.ProhibitSpawning Then
 		      Label = Label + EndOfLine + "Disabled"
+		      If Behavior.ProhibitTransfer Then
+		        Label = Label + ", cannot be transferred"
+		      End If
 		      Self.List.AddRow(Label)
 		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
 		      Label = Label + EndOfLine + "Replaced with " + Behavior.ReplacementCreature.Label
+		      If Behavior.ProhibitTransfer Then
+		        Label = Label + ", cannot be transferred"
+		      End If
 		      Self.List.AddRow(Label)
 		    Else
 		      If Behavior.ProhibitTaming And Behavior.ProhibitTransfer Then

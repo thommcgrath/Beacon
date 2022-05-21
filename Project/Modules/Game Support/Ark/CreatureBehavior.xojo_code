@@ -92,7 +92,6 @@ Protected Class CreatureBehavior
 		    Behavior.mTamedDamageMultiplier = Dict.Lookup("Tamed Damage Multiplier", 1.0)
 		    Behavior.mTamedResistanceMultiplier = Dict.Lookup("Tamed Resistance Multiplier", 1.0)
 		    Behavior.mProhibitTaming = Dict.Lookup("Prevent Taming", False)
-		    Behavior.mProhibitTransfer = Dict.Lookup("Prohibit Transfer", False)
 		    Behavior.mSpawnWeightMultiplier = Dict.Lookup("Spawn Weight Multiplier", 1.0)
 		    If Dict.HasKey("Spawn Limit Percent") Then
 		      Behavior.mSpawnLimitPercent = Dict.Value("Spawn Limit Percent").DoubleValue
@@ -100,6 +99,7 @@ Protected Class CreatureBehavior
 		      Behavior.mSpawnLimitPercent = Nil
 		    End If
 		  End If
+		  Behavior.mProhibitTransfer = Dict.Lookup("Prohibit Transfer", False)
 		  
 		  Return Behavior
 		End Function
@@ -209,15 +209,15 @@ Protected Class CreatureBehavior
 		    If Self.mProhibitTaming Then
 		      Dict.Value("Prevent Taming") = True
 		    End If
-		    If Self.mProhibitTransfer Then
-		      Dict.Value("Prohibit Transfer") = True
-		    End If
 		    If Self.mSpawnWeightMultiplier <> 1.0 Then
 		      Dict.Value("Spawn Weight Multiplier") = Self.mSpawnWeightMultiplier
 		    End If
 		    If (Self.mSpawnLimitPercent Is Nil) = False Then
 		      Dict.Value("Spawn Limit Percent") = Self.mSpawnLimitPercent.DoubleValue
 		    End If
+		  End If
+		  If Self.mProhibitTransfer Then
+		    Dict.Value("Prohibit Transfer") = True
 		  End If
 		  Return Dict
 		End Function
