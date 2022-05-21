@@ -6,6 +6,10 @@ configkeys:
 ---
 {% include editortitle.markdown %}
 
+In this tutorial we're going to change the crafting cost for narcotics.
+
+{% include omninotice.markdown %}
+
 ### Step 1: Choose an Engram
 
 {% include image.html file="selecttarget.png" file2x="selecttarget@2x.png" caption="For this tutorial, we will be editing the Narcotic recipe." %}
