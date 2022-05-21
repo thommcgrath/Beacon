@@ -1,1 +1,1 @@
-{% if {{include.url}} %}<a target="_blank" href="{{include.url}}">{% endif %}<img src="{{include.file}}" {% if {{include.file2x}} %}srcset="{{include.file}} 1x, {{include.file2x}} 2x"{% endif %} title="{{include.caption}}">{% if {{include.url}} %}</a>{% endif %}
+<p class="screenshot"><img src="{{include.file}}" {% if {{include.file2x}} %}srcset="{{include.file}} 1x, {{include.file2x}} 2x" {% endif %}alt="" title="{{include.caption}}"></p>

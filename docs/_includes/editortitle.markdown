@@ -1,0 +1,1 @@
+# The {{page.title}} Editor
