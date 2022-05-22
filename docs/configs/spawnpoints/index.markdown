@@ -104,4 +104,8 @@ Armed with this `SE_Dunes` spawn point, the next step is to find that in Beacon.
 
 {% include image.html file="dunes.png" file2x="dunes@2x.png" caption="The SE_Dunes point from the wiki is the Open Desert point in Beacon." %}
 
+Another option is to set the search field to _Creatures_ instead and search for the creature you're looking for. This will give you the same results as the wiki's spawn maps, but without the visuals of course.
+
+{% include image.html file="mantis.png" file2x="mantis@2x.png" caption="Searching for spawn points based on creature." %}
+
 {% include affectedkeys.html %}
