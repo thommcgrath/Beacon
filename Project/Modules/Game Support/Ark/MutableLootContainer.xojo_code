@@ -87,11 +87,22 @@ Implements Ark.MutableBlueprint
 		    Return
 		  End Try
 		  
+		  // Sometimes the defaults have duplicated sets, which confuses Beacon's multi-editor.
+		  Var Names() As String
+		  
 		  Var Children() As Variant = Parsed
 		  Self.mItemSets.ResizeTo(-1)
 		  For Each SaveData As Dictionary In Children
 		    Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(SaveData)
 		    If (Set Is Nil) = False Then
+		      Var Label As String = Set.Label
+		      Var AdjustedLabel As String = Beacon.FindUniqueLabel(Label, Names)
+		      If AdjustedLabel <> Label Then
+		        Var Mutable As New Ark.MutableLootItemSet(Set)
+		        Mutable.Label = AdjustedLabel
+		        Set = New Ark.LootItemSet(Mutable)
+		      End If
+		      Names.Add(AdjustedLabel)
 		      Self.mItemSets.Add(Set)
 		    End If
 		  Next
