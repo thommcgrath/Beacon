@@ -96,16 +96,16 @@ The Ark wiki has spawn maps available to help visualize each point.
 - [Crystal Isles Spawn Map](https://ark.fandom.com/wiki/Spawn_Map_(Crystal_Isles))
 - [Lost Island Spawn Map](https://ark.fandom.com/wiki/Spawn_Map_(Lost_Island))
 
-By using creatures that you know spawn in an area, the spawn maps can help figure out which spawn point to choose. For example, if you were trying to add dodos to the volcano area of Ragnarok, you could check the Ragnarok spawn map for mantis. This will show you `SE_Dunes` and `SE_WyvernTrench`. Since we know we're not looking for the desert, the `SE_WyvernTrench` point is the the one we want to add Dodos to.
+By using creatures that you know spawn in an area, the spawn maps can help figure out which spawn point to choose. For example, if you were trying to add wolves to the lighthouse area of Ragnarok, you could check the Ragnarok spawn map for ovis. This will show you `SE_Oasis`, `Snow`, `Grassland`, and `Ragnarok_Scotland`. Using the checkboxes above the map, spawn points can be turned off until we can figure out which is the one for the lighthouse area. In this case, we're looking for `Ragnarok_Scotland`.
 
-**Pay attention to the rectangles on the spawn map.** Use the checkboxes above the map to turn points on and off to make it easier to visualize which rectangles belong to each point. Each of these rectangles represents a single spawn point instance. Each instance has its own limits. This means if you were to add a large creature such as Magmasaur to the `SE_Dunes` point, even with a limit to allow only 1, there could be up to 113 Magmasaurs in the desert. **For this reason, you are advised to keep similar creatures together.**
+**Pay attention to the rectangles on the spawn map.** Each of these rectangles represents a single spawn point instance. Each instance has its own population limits. This means if you were to add a major creature such as Magmasaur to a spawn point with a lot of rectangles, such as the `SE_Dunes` point, even with a limit to allow only 1 there could be up to 113 Magmasaurs in the desert. **For this reason, you are advised to keep similar creatures together.**
 
-Armed with this `SE_Dunes` spawn point, the next step is to find that in Beacon. The wiki, Ark, and Beacon each use their own naming system since spawn points don't officially have names. The wiki's names are based on the spawn point's class string, which Beacon will search. Drop the `SE` prefix and put `Dunes` into the search field in the _Add Spawn Points_ dialog, and you'll see "Open Desert" in the list. That's the one you're looking in this case.
+Armed with this `Ragnarok_Scotland` spawn point, the next step is to find that in Beacon. The wiki, Ark, and Beacon each use their own naming system since spawn points don't officially have names. The wiki's names are based on the spawn point's class string, which Beacon will search. Sometimes it is necessary to drop the first part of the wiki's name, such as `SE` in the case of the Scorched Earth spawn points. In this instance, searching for `Ragnarok_Scotland` shows the "Lighthouse" point in Beacon. That's the one we're looking for.
 
-{% include image.html file="dunes.png" file2x="dunes@2x.png" caption="The SE_Dunes point from the wiki is the Open Desert point in Beacon." %}
+{% include image.html file="scotland.png" file2x="scotland@2x.png" caption="The Ragnarok_Scotland point from the wiki is the Lighthouse point in Beacon." %}
 
 Another option is to set the search field to _Creatures_ instead and search for the creature you're looking for. This will give you the same results as the wiki's spawn maps, but without the visuals of course.
 
-{% include image.html file="mantis.png" file2x="mantis@2x.png" caption="Searching for spawn points based on creature." %}
+{% include image.html file="ovis.png" file2x="ovis@2x.png" caption="Searching for spawn points based on creature." %}
 
 {% include affectedkeys.html %}
