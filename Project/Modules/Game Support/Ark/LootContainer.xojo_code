@@ -126,7 +126,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Function Count() As Integer
 		  // Part of the Beacon.Countable interface.
 		  
-		  
+		  Return Self.mItemSets.Count
 		End Function
 	#tag EndMethod
 
@@ -675,6 +675,10 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  For Each Set As Ark.LootItemSet In Self.mItemSets
 		    Set.Validate(Location + "." + Self.ClassString, Issues, Project)
 		  Next Set
+		  
+		  If Self.Count < Self.RequiredItemSetCount Then
+		    Issues.Add(New Beacon.Issue(Location + "." + Self.ClassString, "Loot drop '" + Self.Label + "' requires at least " + Self.RequiredItemSetCount.ToString(Locale.Current, "0") + " item sets."))
+		  End If
 		End Sub
 	#tag EndMethod
 
