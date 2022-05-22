@@ -100,33 +100,30 @@ Inherits Ark.ConfigGroup
 		    End If
 		    
 		    // 2021-11-06: Always include EngramLevelRequirement and EngramPointsCost because Ark is dumb and will assume 0 if you do not
+		    // 2022-05-21: Must include the level requirement if changed, even if auto unlocked
 		    
-		    If ExplicitAutoUnlocked = False And EffectivelyHidden = False Then
-		      Var Level, Points As NullableDouble
-		      Var RemovePrereq As NullableBoolean
+		    If EffectivelyHidden = False Then
+		      Var OfficialLevel As NullableDouble = Engram.RequiredPlayerLevel
+		      Var OfficialPoints As NullableDouble = Engram.RequiredUnlockPoints
+		      Var EffectiveLevel As NullableDouble = Coalesce(Self.RequiredPlayerLevel(Engram), OfficialLevel)
+		      Var EffectivePoints As NullableDouble = Coalesce(Self.RequiredPoints(Engram), OfficialPoints)
+		      Var RemovePrereq As Boolean = If(Self.RemovePrerequisites(Engram) Is Nil, False, Self.RemovePrerequisites(Engram).BooleanValue)
 		      
-		      If Self.EffectivelyAutoUnlocked(Engram) Then
-		        // Auto unlocked engrams have no need for points and no prerequisites
-		        Level = Coalesce(Self.RequiredPlayerLevel(Engram), Engram.RequiredPlayerLevel)
-		      ElseIf Engram.ManualUnlock Then
-		        // Since it is not auto unlocked, only include the following values if the engram supports manual unlocking
-		        Level = Coalesce(Self.RequiredPlayerLevel(Engram), Engram.RequiredPlayerLevel)
-		        Points = Coalesce(Self.RequiredPoints(Engram), Engram.RequiredUnlockPoints)
-		        RemovePrereq = Self.RemovePrerequisites(Engram)
+		      If EffectiveLevel Is Nil Or EffectivePoints Is Nil Then
+		        // Not enough information to continue
+		        Continue
 		      End If
 		      
-		      If (Level Is Nil) = False Then
-		        Arguments.Add("EngramLevelRequirement=" + Level.IntegerValue.ToString)
-		      End If
-		      If (Points Is Nil) = False Then
-		        Arguments.Add("EngramPointsCost=" + Points.IntegerValue.ToString)
-		      End If
-		      If (RemovePrereq Is Nil) = False Then
-		        Arguments.Add("RemoveEngramPreReq=" + If(RemovePrereq.BooleanValue, "True", "False"))
+		      If EffectiveLevel <> OfficialLevel Or EffectivePoints <> OfficialPoints Or RemovePrereq = True Then
+		        Arguments.Add("EngramLevelRequirement=" + EffectiveLevel.IntegerValue.ToString)
+		        Arguments.Add("EngramPointsCost=" + EffectivePoints.IntegerValue.ToString)
+		        If RemovePrereq = True Then
+		          Arguments.Add("RemoveEngramPreReq=" + If(RemovePrereq, "True", "False"))
+		        End If
 		      End If
 		    End If
 		    
-		    If Arguments.LastIndex > -1 Then
+		    If Arguments.Count > 0 Then
 		      Arguments.AddAt(0, "EngramClassName=""" + EntryString + """")
 		      OverrideEntries.Add(EntryString)
 		      OverrideConfigs.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideNamedEngramEntries=(" + Arguments.Join(",") + ")", "OverrideNamedEngramEntries:" + EntryString))

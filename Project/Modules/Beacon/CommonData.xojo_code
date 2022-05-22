@@ -119,9 +119,11 @@ Inherits Beacon.DataSource
 		  
 		  For Each Dict As Dictionary In Deletions
 		    Try
-		      Var MinVersion As Integer = Dict.Value("min_version").IntegerValue
-		      If MinVersion > BuildNumber Then
-		        Continue
+		      If Dict.HasKey("min_version") Then
+		        Var MinVersion As Integer = Dict.Value("min_version").IntegerValue
+		        If MinVersion > BuildNumber Then
+		          Continue
+		        End If
 		      End If
 		      
 		      Var ObjectID As String = Dict.Value("object_id").StringValue
