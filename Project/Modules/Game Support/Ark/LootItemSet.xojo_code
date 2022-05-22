@@ -518,7 +518,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function RawWeight() As Double
-		  Return Self.mSetWeight
+		  Return Max(Self.mSetWeight, 0.00001)
 		End Function
 	#tag EndMethod
 

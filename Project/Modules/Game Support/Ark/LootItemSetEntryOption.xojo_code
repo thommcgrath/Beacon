@@ -171,7 +171,7 @@ Implements Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function Weight() As Double
-		  Return Self.mWeight
+		  Return Max(Self.mWeight, 0.00001)
 		End Function
 	#tag EndMethod
 
