@@ -1,7 +1,7 @@
 ---
 title: Server Management
 has_children: true
-nav_order: 1
+nav_order: 3
 ---
 # Server Management
 Hello World
