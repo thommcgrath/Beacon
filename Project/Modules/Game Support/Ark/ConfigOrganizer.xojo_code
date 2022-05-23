@@ -333,6 +333,9 @@ Protected Class ConfigOrganizer
 		Sub Remove(Keys() As Ark.ConfigKey)
 		  Self.mIndex.BeginTransaction
 		  For Each Key As Ark.ConfigKey In Keys
+		    If Key Is Nil Then
+		      Continue
+		    End If
 		    Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND simplekey = ?3;", Key.File, Key.Header, Key.Key)
 		    While Rows.AfterLastRow = False
 		      Var Hash As String = Rows.Column("hash").StringValue
