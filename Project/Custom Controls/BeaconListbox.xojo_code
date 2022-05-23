@@ -193,12 +193,7 @@ Inherits Listbox
 
 	#tag Event
 		Sub Change()
-		  If Self.mBlockSelectionChangeCount > 0 Then
-		    Self.mFireChangeWhenUnlocked = True
-		    Return
-		  End If
-		  
-		  RaiseEvent Change
+		  Self.HandleChange()
 		End Sub
 	#tag EndEvent
 
@@ -276,6 +271,12 @@ Inherits Listbox
 
 	#tag Event
 		Sub DoubleClick()
+		  If Self.SelectedRowCount <> Self.mLastChangeCount Or Self.SelectedRowIndex <> Self.mLastChangeIndex Then
+		    // Rapidly changing rows, act as regular click
+		    Self.HandleChange()
+		    Return
+		  End If
+		  
 		  If IsEventImplemented("DoubleClick") Then
 		    RaiseEvent DoubleClick
 		  Else
@@ -592,6 +593,19 @@ Inherits Listbox
 		      Self.ScrollPosition = Self.SelectedRowIndex
 		    End If
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub HandleChange()
+		  If Self.mBlockSelectionChangeCount <= 0 Then
+		    RaiseEvent Change
+		  Else
+		    Self.mFireChangeWhenUnlocked = True
+		  End If
+		  
+		  Self.mLastChangeIndex = Self.SelectedRowIndex
+		  Self.mLastChangeCount = Self.SelectedRowCount
 		End Sub
 	#tag EndMethod
 
@@ -946,6 +960,14 @@ Inherits Listbox
 
 	#tag Property, Flags = &h21
 		Private mForwardKeyUp As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastChangeCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastChangeIndex As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
