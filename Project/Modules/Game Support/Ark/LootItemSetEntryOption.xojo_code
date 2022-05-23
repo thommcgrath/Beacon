@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootItemSetEntryOption
-Implements Beacon.Validateable
+Implements Beacon.Validateable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Sub Constructor(Reference As Ark.BlueprintReference, Weight As Double, UUID As String = "")
 		  If UUID.IsEmpty Then
@@ -127,6 +127,14 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RawWeight() As Double
+		  // Part of the Ark.Weighted interface.
+		  
+		  Return Max(Self.mWeight, 0.00001)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Reference() As Ark.BlueprintReference
 		  Return Self.mEngramRef
 		End Function
@@ -167,12 +175,6 @@ Implements Beacon.Validateable
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Weight() As Double
-		  Return Max(Self.mWeight, 0.00001)
-		End Function
 	#tag EndMethod
 
 

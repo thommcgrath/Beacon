@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointSet
-Implements Beacon.Countable
+Implements Beacon.Countable, Ark.Weighted
 	#tag Method, Flags = &h0
 		Function Clone() As Ark.SpawnPointSet
 		  Var Clone As New Ark.SpawnPointSet(Self)
@@ -524,6 +524,14 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RawWeight() As Double
+		  // Part of the Ark.Weighted interface.
+		  
+		  Return Max(Self.mWeight, 0.00001)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ReplacedCreatureRefs() As Ark.BlueprintReference()
 		  Var Arr() As Ark.BlueprintReference
 		  Var Blueprints() As Ark.BlueprintReference = Self.mReplacements.References
@@ -610,7 +618,7 @@ Implements Beacon.Countable
 		  SaveData.Value("ID") = Self.mID.StringValue
 		  SaveData.Value("Type") = "SpawnPointSet"
 		  SaveData.Value("Label") = Self.Label
-		  SaveData.Value("Weight") = Self.Weight
+		  SaveData.Value("Weight") = Self.RawWeight
 		  SaveData.Value("Entries") = Entries
 		  SaveData.Value("Offset Before Multiplier") = Self.mOffsetBeforeMultiplier
 		  SaveData.Value("Color Set Class") = Self.mColorSetClass
@@ -648,12 +656,6 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function WaterOnlyMinimumHeight() As NullableDouble
 		  Return Self.mWaterOnlyMinimumHeight
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Weight() As Double
-		  Return Self.mWeight
 		End Function
 	#tag EndMethod
 

@@ -593,7 +593,7 @@ End
 		    
 		    Var Idx As Integer = Self.mEngramRowIndexes.Lookup(Path, -1)
 		    If Idx = -1 Then
-		      Var WeightValue As Double = Option.Weight * 100
+		      Var WeightValue As Double = Option.RawWeight * 100
 		      Var Weight As String = WeightValue.PrettyText
 		      
 		      EngramList.AddRow("", Option.Engram.Label, Option.Engram.ContentPackName, Weight)
@@ -721,7 +721,7 @@ End
 		  For Each Engram As Ark.Engram In Engrams
 		    Var Weight As String = ""
 		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
-		      Var WeightValue As Double = Ark.LootItemSetEntryOption(Self.mSelectedEngrams.Value(Engram.ObjectID)).Weight * 100
+		      Var WeightValue As Double = Ark.LootItemSetEntryOption(Self.mSelectedEngrams.Value(Engram.ObjectID)).RawWeight * 100
 		      Weight = WeightValue.PrettyText
 		    End If
 		    

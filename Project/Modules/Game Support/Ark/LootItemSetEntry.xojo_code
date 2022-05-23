@@ -704,10 +704,10 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Var WeightLookup As New Dictionary
 		  Var Sum, Weights() As Double
 		  For Each Entry As Ark.LootItemSetEntryOption In Self.mOptions
-		    If Entry.Weight = 0 Then
+		    If Entry.RawWeight = 0 Then
 		      Return Selections
 		    End If
-		    Sum = Sum + Entry.Weight
+		    Sum = Sum + Entry.RawWeight
 		    Weights.Add(Sum * 100000)
 		    WeightLookup.Value(Sum * 100000) = Entry
 		  Next
@@ -781,7 +781,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  For I As Integer = 0 To Self.mOptions.LastIndex
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
 		    Classes(I) = """" + Self.mOptions(I).Engram.ClassString + """"
-		    Weights(I) = Beacon.PrettyText(Self.mOptions(I).Weight * 100)
+		    Weights(I) = Beacon.PrettyText(Self.mOptions(I).RawWeight * 100)
 		  Next
 		  
 		  Var BaseArbitraryQuality As Double = Ark.Configs.Difficulty.BaseArbitraryQuality(Difficulty)

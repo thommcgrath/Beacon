@@ -470,7 +470,7 @@ Inherits Beacon.Project
 		          If Entry.Creature = ReplacedCreature Then
 		            If NewSet = Nil Then
 		              NewSet = New Ark.MutableSpawnPointSet()
-		              NewSet.Weight = Set.Weight
+		              NewSet.Weight = Set.RawWeight
 		              NewSet.Label = ReplacementCreature.Label + " (Converted)"
 		              If IsNull(Set.SpreadRadius) Then
 		                NewSet.SpreadRadius = 650

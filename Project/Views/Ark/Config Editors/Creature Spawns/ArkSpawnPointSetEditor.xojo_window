@@ -1633,7 +1633,7 @@ End
 		  Self.mSettingUp = True
 		  
 		  Self.NameField.Text = Set.Label
-		  Self.WeightField.DoubleValue = Set.Weight
+		  Self.WeightField.DoubleValue = Set.RawWeight
 		  Self.OffsetBeforeMultiplierCheck.Value = Set.LevelOffsetBeforeMultiplier
 		  
 		  If Set.GroupOffset <> Nil Then

@@ -326,6 +326,40 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function PickWeightedMember(Members() As Ark.Weighted) As Ark.Weighted
+		  If Members Is Nil Or Members.Count = 0 Then
+		    Return Nil
+		  ElseIf Members.Count = 1 Then
+		    Return Members(0)
+		  End If
+		  
+		  Var SumOfWeights As Double
+		  For Idx As Integer = Members.FirstIndex To Members.LastIndex
+		    SumOfWeights = SumOfWeights + Members(Idx).RawWeight
+		  Next Idx
+		  
+		  Var Result As Double = System.Random.Number
+		  Var CumulativeChance As Double
+		  For Idx As Integer = Members.FirstIndex To Members.LastIndex
+		    Var Chance As Double = Members(Idx).RawWeight / SumOfWeights
+		    Var MinChance As Double = CumulativeChance
+		    Var MaxChance As Double = CumulativeChance + Chance
+		    CumulativeChance = MaxChance
+		    
+		    If Result >= MinChance And Result < MaxChance Then
+		      Return Members(Idx)
+		    End If
+		  Next Idx
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PickWeightedMember(Extends Members() As Ark.Weighted) As Ark.Weighted
+		  Return PickWeightedMember(Members)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub RemoveTag(Extends Blueprint As Ark.MutableBlueprint, ParamArray TagsToRemove() As String)
 		  Blueprint.RemoveTags(TagsToRemove)

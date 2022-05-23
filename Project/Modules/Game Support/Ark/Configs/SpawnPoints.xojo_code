@@ -194,7 +194,7 @@ Inherits Ark.ConfigGroup
 		    
 		    Var Members(2) As String
 		    Members(0) = "AnEntryName=""" + Set.Label + """"
-		    Members(1) = "EntryWeight=" + Set.Weight.PrettyText
+		    Members(1) = "EntryWeight=" + Set.RawWeight.PrettyText
 		    Members(2) = "NPCsToSpawnStrings=(" + CreatureClasses.Join(",") + ")"
 		    
 		    If IncludeLevels Then
