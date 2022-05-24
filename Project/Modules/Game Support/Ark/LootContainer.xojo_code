@@ -335,9 +335,11 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  If Containers.Count > 0 Then
 		    Container = New Ark.MutableLootContainer(Containers(0))
 		  Else
+		    Var Path As String = Ark.UnknownBlueprintPath("LootContainers", ClassString)
+		    Var UUID As String = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Path)
 		    Var UIColor As String = Dict.Lookup("UIColor", "FFFFFF00")
-		    Container = New Ark.MutableLootContainer()
-		    Container.Path = Ark.UnknownBlueprintPath("LootContainers", ClassString)
+		    
+		    Container = New Ark.MutableLootContainer(Path, UUID)
 		    Container.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
 		    Container.Availability = Ark.Maps.UniversalMask
 		    Container.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
