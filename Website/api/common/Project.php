@@ -22,6 +22,7 @@ abstract class Project implements \JsonSerializable {
 	protected $download_count = 0;
 	protected $published = self::PUBLISH_STATUS_PRIVATE;
 	protected $content = [];
+	protected $storage_path = null;
 	
 	public static function SchemaName() {
 		return 'public';
@@ -52,7 +53,8 @@ abstract class Project implements \JsonSerializable {
 			'revision',
 			'download_count',
 			'published',
-			'game_specific'
+			'game_specific',
+			'storage_path'
 		];
 	}
 	
@@ -377,6 +379,7 @@ abstract class Project implements \JsonSerializable {
 		$project->published = $results->Field('published');
 		$project->console_safe = boolval($results->Field('console_safe'));
 		$project->game_specific = json_decode($results->Field('game_specific'), true);
+		$project->storage_path = $results->Field('storage_path');
 		return $project;
 	}
 	
@@ -399,11 +402,14 @@ abstract class Project implements \JsonSerializable {
 	}
 	
 	public function CloudStoragePath() {
-		return static::GenerateCloudStoragePath($this->OwnerID(), $this->ProjectID());
+		if (is_null($this->storage_path)) {
+			$this->storage_path = static::GenerateCloudStoragePath($this->project_id);
+		}
+		return $this->storage_path;
 	}
 	
-	public static function GenerateCloudStoragePath(string $user_id, string $project_id) {
-		return '/' . strtolower($user_id) . '/Documents/' . strtolower($project_id) . '.beacon';
+	protected static function GenerateCloudStoragePath(string $project_id) {
+		return '/Projects/' . strtolower($project_id) . '.beacon';
 	}
 	
 	protected static function HookValidateMultipart(array &$required_vars, string &$reason) {
@@ -532,11 +538,14 @@ abstract class Project implements \JsonSerializable {
 		$game_id = isset($project['GameID']) ? $project['GameID'] : 'Ark';
 		
 		// check if the project already exists
-		$results = $database->Query('SELECT project_id FROM ' . static::SchemaName() . '.' . static::TableName() . ' WHERE project_id = $1;', $project_id);
+		$results = $database->Query('SELECT project_id, storage_path FROM ' . static::SchemaName() . '.' . static::TableName() . ' WHERE project_id = $1;', $project_id);
 		$new_project = $results->RecordCount() == 0;
+		$storage_path = null;
 		
 		// confirm write permission of the project
 		if ($new_project == false) {
+			$storage_path = $results->Field('storage_path');
+			
 			$results = $database->Query('SELECT role, owner_id FROM ' . static::SchemaName() . '.' . static::AllowedTableName() . ' WHERE project_id = $1 AND user_id = $2;', $project_id, $user->UserID());
 			if ($results->RecordCount() == 0) {
 				$reason = 'Access denied for project ' . $project_id . '.';
@@ -545,6 +554,8 @@ abstract class Project implements \JsonSerializable {
 			$role = $results->Field('role');
 			$owner_id = $results->Field('owner_id');
 		} else {
+			$storage_path = static::GenerateCloudStoragePath($project_id);
+			
 			if ($user->IsChildAccount()) {
 				$role = 'Team';
 				$owner_id = $user->ParentAccountID();
@@ -583,7 +594,7 @@ abstract class Project implements \JsonSerializable {
 			}
 		}
 		
-		if (\BeaconCloudStorage::PutFile(self::GenerateCloudStoragePath($owner_id, $project_id), $contents) === false) {
+		if (\BeaconCloudStorage::PutFile($storage_path, $contents) === false) {
 			$reason = 'Unable to upload project to cloud storage platform.';
 			return false;
 		}
@@ -603,8 +614,10 @@ abstract class Project implements \JsonSerializable {
 			
 			$database->BeginTransaction();
 			if ($new_project) {
-				$columns = ['project_id', 'user_id', 'last_update'];
-				$placeholders = ['$1', '$2', 'CURRENT_TIMESTAMP'];
+				$columns = ['project_id', 'user_id', 'last_update', 'storage_path'];
+				$values[] = $storage_path;
+				$placeholders = ['$1', '$2', 'CURRENT_TIMESTAMP', '$3'];
+				$placeholder++;
 				foreach ($row_values as $column => $value) {
 					$columns[] = $database->EscapeIdentifier($column);
 					$values[] = $value;
@@ -639,8 +652,7 @@ abstract class Project implements \JsonSerializable {
 	}
 	
 	public function Versions(): array {
-		$path = self::GenerateCloudStoragePath($this->OwnerID(), $this->DocumentID());
-		$versions = \BeaconCloudStorage::VersionsForFile($path);
+		$versions = \BeaconCloudStorage::VersionsForFile($this->storage_path);
 		if ($versions === false) {
 			return [];
 		}
