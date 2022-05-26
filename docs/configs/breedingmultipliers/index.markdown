@@ -18,6 +18,8 @@ configkeys:
 ---
 {% include editortitle.markdown %}
 
+Ark has a lot of breeding settings allowing admins to control things like baby mature speed, imprint frequency, and mating cooldown. This guide will help Ark server admins understand how these settings work together and find just the right values for each.
+
 {% include image.html file="multipliers.png" file2x="multipliers@2x.png" caption="The Breeding Multipliers editor has lots of settings to control dino breeding." %}
 
 > Because this editor has descriptions beneath each of the multipliers, this guide will cover only the major multipliers.

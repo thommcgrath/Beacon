@@ -4,6 +4,8 @@ parent: Config Editors
 ---
 {% include editortitle.markdown %}
 
+Ark server admins are able to insert additional lines to their Game.ini and GameUserSettings.ini files that Beacon does not have built-in support for.
+
 ## Using the Editor
 
 When using the Custom Config editor, there are two tabs at the top to switch between the GameUserSettings.ini and Game.ini files. You can edit each just like a normal file.
