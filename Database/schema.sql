@@ -1744,6 +1744,7 @@ CREATE TABLE ark.ini_options (
     ui_group public.citext,
     constraints jsonb,
     custom_sort public.citext,
+    gsa_placeholder public.citext,
     CONSTRAINT ini_options_check CHECK ((((nitrado_path IS NULL) AND (nitrado_format IS NULL) AND (nitrado_deploy_style IS NULL)) OR ((nitrado_path IS NOT NULL) AND (nitrado_format IS NOT NULL) AND (nitrado_deploy_style IS NOT NULL)))),
     CONSTRAINT ini_options_check1 CHECK (((file IS DISTINCT FROM 'CommandLineFlag'::public.ini_file) OR ((file = 'CommandLineFlag'::public.ini_file) AND (value_type = 'Boolean'::public.ini_value_type)))),
     CONSTRAINT ini_options_max_allowed_check CHECK (((max_allowed IS NULL) OR (max_allowed >= 1)))
@@ -6078,7 +6079,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.oauth_tokens TO thezaz_website
 -- Name: TABLE product_prices; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT ON TABLE public.product_prices TO thezaz_website;
+GRANT SELECT,UPDATE ON TABLE public.product_prices TO thezaz_website;
 
 
 --
