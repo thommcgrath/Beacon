@@ -642,7 +642,7 @@ Begin BeaconAutopositionWindow DeployManager
       Begin CheckBox NukeConfigCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
-         Caption         =   "Erase server Game.ini and GameUserSetting.ini files"
+         Caption         =   "Erase server Game.ini and GameUserSettings.ini files"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
