@@ -59,7 +59,7 @@ The _Unlock Points_ list on the right shows the number of engram points earned a
 
 ## Use the Wizard to Make Large Changes Quickly
 
-{% include image.html file="wizard.png" file2x="wizard@2x.png" caption="Use the engram wizard to choose from many common engram unlock designs." %}
+{% include image.html file="engramwizard.png" file2x="engramwizard@2x.png" caption="Use the engram wizard to choose from many common engram unlock designs." %}
 
 Press the _Auto Control_ button to open a simple dialog with a _Design_ menu. The following options are available:
 

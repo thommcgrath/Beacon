@@ -30,7 +30,7 @@ At the time of this writing, Ark reserves the final 75 levels for ascension: 70 
 
 Clicking the _Auto Levels_ will bring up the _Experience Wizard_ which allows you to define a number of levels at once.
 
-{% include image.html file="wizard.png" file2x="wizard@2x.png" caption="This dialog allows you to define many levels at the same time." %}
+{% include image.html file="xpwizard.png" file2x="xpwizard@2x.png" caption="This dialog allows you to define many levels at the same time." %}
 
 Similar to the _Set Experience for Level_ dialog, this dialog will show you which level you'll be defining next as the _Starting Level_ field. In _Additional Levels_ you would decide how many additional levels you want to be adding. When doing so, the _Ending Level_ field will update. And _Additional XP_ is the amount of experience **in addition to the previous experience**. The list below will show exactly how much experience will be assigned to each level.
 
@@ -38,7 +38,7 @@ The curve editor on the right allows you to adjust how the experience is distrib
 
 By dragging the blue circles, you can influence how the value in _Additional XP_ is distributed to the levels in _Additional Levels_. Use the values in the list to preview the outcome.
 
-{% include image.html file="wizard_curve.png" file2x="wizard_curve@2x.png" caption="Dragging the blue circle in the lower left all the way to the right changes the curve to make it easier to start, and require more experience at higher levels." %}
+{% include image.html file="xpwizard_curve.png" file2x="xpwizard_curve@2x.png" caption="Dragging the blue circle in the lower left all the way to the right changes the curve to make it easier to start, and require more experience at higher levels." %}
 
 ## Tweaking the Defaults
 

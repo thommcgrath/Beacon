@@ -15,7 +15,7 @@ Ark allows server admins to define maximum values for the game's 8 item stats, w
 
 By default, no stats are limited. To limit a stat, check the checkbox next to it. Values can be entered into the field to the right of the stat or using the column in the list below. For example, if you wanted to limit Damage to 200%, check the checkbox next to Damage, then enter 200 into the Damage column next to either Longneck Rifle or Assault Rifle. The field next to Damage will compute the correct value to use. If you wanted to limit Damage to that of official servers, use the value 19800 in the field next to Damage. The list will show 298% next to both Longneck Rifle and Assault Rifle.
 
-{% include image.html file="twoninetyeight.png" file2x="twonintyeight@2x.png" caption="Damage limited to 298% like on official servers." %}
+{% include image.html file="twoninetyeight.png" file2x="twoninetyeight@2x.png" caption="Damage limited to 298% like on official servers." %}
 
 It is not practical for Beacon to compute the effective limits for every item, so Beacon displays a few items to demonstrate the effects. The Raptor Saddle is used for demonstrating basic saddle armor, and the Doedicurus Saddle demonstrates "tank" saddle armor. Longneck Rifle and Assault Rifle share the same damage values, but they have different durability values.
 
