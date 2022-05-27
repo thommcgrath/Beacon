@@ -6,6 +6,18 @@ Implements Ark.MutableBlueprint
 		Sub Add(ItemSet As Ark.LootItemSet)
 		  Var Idx As Integer = Self.IndexOf(ItemSet)
 		  If Idx = -1 Then
+		    Var CurrentNames() As String
+		    For Each Set As Ark.LootItemSet In Self.mItemSets
+		      CurrentNames.Add(Set.Label)
+		    Next Set
+		    
+		    Var Label As String = Beacon.FindUniqueLabel(ItemSet.Label, CurrentNames)
+		    If Label <> ItemSet.Label Then
+		      Var Mutable As New Ark.MutableLootItemSet(ItemSet)
+		      Mutable.Label = Label
+		      ItemSet = Mutable
+		    End If
+		    
 		    Self.mItemSets.Add(ItemSet.ImmutableVersion)
 		    Self.Modified = True
 		  End If

@@ -448,6 +448,11 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function FindUniqueLabel(DesiredLabel As String, Siblings() As String) As String
+		  If Siblings.IndexOf(DesiredLabel) = -1 Then
+		    // Not in the array
+		    Return DesiredLabel
+		  End If
+		  
 		  Var Counter As Integer = 1
 		  
 		  Var Words() As String = DesiredLabel.Split(" ")

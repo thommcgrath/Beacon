@@ -435,7 +435,7 @@ End
 		Private Sub AddSets(Sets() As Ark.LootItemSet)
 		  For Each Container As Ark.MutableLootContainer In Self.mContainers
 		    For Each NewSet As Ark.LootItemSet In Sets
-		      Call Container.Add(New Ark.LootItemSet(NewSet))
+		      Container.Add(New Ark.LootItemSet(NewSet))
 		    Next
 		  Next
 		  
