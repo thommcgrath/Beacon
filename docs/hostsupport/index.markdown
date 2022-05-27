@@ -22,6 +22,6 @@ GPORTAL, while popular, has a few bad behaviors that do not work well with Beaco
 
 There are too many Ark hosts to list here individually, but if they are not listed here **assume they are compatible**. If you can copy and paste the ini files in their control panel, you can use Beacon's Smart Copy feature. Beacon will not be able to help with your launch options or starting, stopping, or restarting your servers.
 
-## How to Support More Hosts
+## Supporting More Hosts
 
 If you are a hosting provider with an API Beacon could use to interact with customer servers, please [get in touch](mailto:help@usebeacon.app)! We'd love to improve Beacon's support for your host. We'll support any host that has the technical capability.

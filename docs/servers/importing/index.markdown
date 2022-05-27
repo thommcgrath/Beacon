@@ -3,7 +3,7 @@ title: Importing an Existing Config
 parent: Server Management
 nav_order: 0
 ---
-# Importing an Existing Config
+# {{page.title}}
 Importing is a very powerful feature of Beacon. For Nitrado and FTP servers, importing provides a way to link a server to a project to enable Beacon's deploy feature. For everybody else, importing is a way to bring existing config data into Beacon so you don't start from scratch.
 
 To start, create a new Beacon project and press the import button in the project toolbar. You'll be asked where you want to import from.
