@@ -46,7 +46,7 @@ while ($other_prices->EOF() === false) {
 	$stripe_price_id = $other_prices->Field('price_id');
 	
 	$usd_price = $prices[$product_id]['USD'];
-	$new_price = round(($usd_price * $rates[$currency]) * 100) / 100;
+	$new_price = round(($usd_price * $rates[$currency]) * 1.01 * 100) / 100; // To handle Stripe's 1% conversion fee
 	$new_price = ceil($new_price * 4) / 4;
 	$prices[$product_id][$currency] = $new_price;
 	
