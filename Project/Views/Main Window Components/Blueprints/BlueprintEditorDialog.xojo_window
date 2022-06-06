@@ -45,7 +45,7 @@ Begin BeaconDialog BlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   4
+      Value           =   0
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -2321,6 +2321,8 @@ End
 		  
 		  If (Engram.RequiredPlayerLevel Is Nil) = False Then
 		    Self.EngramPlayerLevelField.Text = Engram.RequiredPlayerLevel.IntegerValue.ToString(Locale.Current, ",##0")
+		  ElseIf Engram.EntryString.IsEmpty = False Then
+		    Self.EngramPlayerLevelField.Text = "Tek"
 		  End If
 		  
 		  If (Engram.RequiredUnlockPoints Is Nil) = False Then
@@ -2700,6 +2702,7 @@ End
 		    End If
 		    
 		    Var UnlocksByTek As Boolean = RequiredLevelString = "Tek"
+		    Var RequireValidPoints As Boolean
 		    If RequiredLevelString.IsEmpty = False Then 
 		      If IsNumeric(RequiredLevelString) = False And UnlocksByTek = False Then
 		        Self.ShowAlert("Invalid Required Level Value", "Required player level must be numeric or Tek.")
@@ -2709,7 +2712,8 @@ End
 		      If UnlocksByTek Then
 		        Engram.RequiredPlayerLevel = Nil
 		      Else
-		        Engram.RequiredPlayerLevel = CDbl(RequiredLevelString)
+		        Engram.RequiredPlayerLevel = Round(CDbl(RequiredLevelString))
+		        RequireValidPoints = True
 		      End If
 		    Else
 		      Engram.RequiredPlayerLevel = Nil
@@ -2717,16 +2721,19 @@ End
 		    
 		    If RequiredPointsString.IsEmpty = False Then
 		      If UnlocksByTek Then
-		        Self.ShowAlert("Invalid Points Value", "Engrams unlocked by Tek do not have point requirements.")
-		        Return False
-		      ElseIf IsNumeric(RequiredPointsString) = False Then
+		        Engram.RequiredUnlockPoints = Nil
+		      ElseIf IsNumeric(RequiredPointsString) Then
+		        Engram.RequiredUnlockPoints = Round(CDbl(RequiredPointsString))
+		      Else
 		        Self.ShowAlert("Invalid Points Value", "Required engram points must be numeric.")
 		        Return False
 		      End If
-		      
-		      Engram.RequiredUnlockPoints = CDbl(RequiredPointsString)
 		    Else
-		      Engram.RequiredUnlockPoints = Nil
+		      If RequireValidPoints Then
+		        Engram.RequiredUnlockPoints = 0
+		      Else
+		        Engram.RequiredUnlockPoints = Nil
+		      End If
 		    End If
 		  ElseIf RequiredLevelString.IsEmpty = False Or RequiredPointsString.IsEmpty = False Then
 		    Self.ShowAlert("Entry string is required to set level and point requirements.", "If you want to set level and point requirements for this engram, please provide the engram's entry string so Beacon can control it in the Engram Control editor.")
