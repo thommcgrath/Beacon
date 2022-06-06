@@ -2556,6 +2556,11 @@ Inherits Beacon.DataSource
 		        Var CacheDict As Dictionary
 		        If Results.RowCount = 1 Then
 		          If LocalModsOnly And Results.Column("is_user_blueprint").BooleanValue = False Then
+		            If (ErrorDict Is Nil) = False Then
+		              Var UnsupportedErr As New UnsupportedOperationException
+		              UnsupportedErr.Message = "Cannot update built-in blueprint."
+		              ErrorDict.Value(Blueprint.ObjectID) = UnsupportedErr
+		            End If
 		            Continue
 		          End If
 		          UpdateObjectID = Results.Column("object_id").StringValue
