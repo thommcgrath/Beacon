@@ -92,11 +92,8 @@ Inherits Ark.ConfigGroup
 		    End If
 		    
 		    Var Arguments() As String
-		    If Self.mOverrides.HasAttribute(Engram, Self.KeyHidden) Then
-		      Var Hidden As Boolean = Self.mOverrides.Value(Engram, Self.KeyHidden).BooleanValue
-		      If Hidden <> Whitelisting Then
-		        Arguments.Add("EngramHidden=" + If(Hidden, "True", "False"))
-		      End If
+		    If EffectivelyHidden <> Whitelisting Then
+		      Arguments.Add("EngramHidden=" + If(EffectivelyHidden, "True", "False"))
 		    End If
 		    
 		    // 2021-11-06: Always include EngramLevelRequirement and EngramPointsCost because Ark is dumb and will assume 0 if you do not
@@ -109,12 +106,7 @@ Inherits Ark.ConfigGroup
 		      Var EffectivePoints As NullableDouble = Coalesce(Self.RequiredPoints(Engram), OfficialPoints)
 		      Var RemovePrereq As Boolean = If(Self.RemovePrerequisites(Engram) Is Nil, False, Self.RemovePrerequisites(Engram).BooleanValue)
 		      
-		      If EffectiveLevel Is Nil Or EffectivePoints Is Nil Then
-		        // Not enough information to continue
-		        Continue
-		      End If
-		      
-		      If Whitelisting = True Or EffectiveLevel <> OfficialLevel Or EffectivePoints <> OfficialPoints Or RemovePrereq = True Then
+		      If (EffectiveLevel Is Nil) = False And (EffectivePoints Is Nil) = False And (Whitelisting = True Or EffectiveLevel <> OfficialLevel Or EffectivePoints <> OfficialPoints Or RemovePrereq = True) Then
 		        Arguments.Add("EngramLevelRequirement=" + EffectiveLevel.IntegerValue.ToString)
 		        Arguments.Add("EngramPointsCost=" + EffectivePoints.IntegerValue.ToString)
 		        If RemovePrereq = True Then
