@@ -114,7 +114,7 @@ Inherits Ark.ConfigGroup
 		        Continue
 		      End If
 		      
-		      If EffectiveLevel <> OfficialLevel Or EffectivePoints <> OfficialPoints Or RemovePrereq = True Then
+		      If Whitelisting = True Or EffectiveLevel <> OfficialLevel Or EffectivePoints <> OfficialPoints Or RemovePrereq = True Then
 		        Arguments.Add("EngramLevelRequirement=" + EffectiveLevel.IntegerValue.ToString)
 		        Arguments.Add("EngramPointsCost=" + EffectivePoints.IntegerValue.ToString)
 		        If RemovePrereq = True Then
