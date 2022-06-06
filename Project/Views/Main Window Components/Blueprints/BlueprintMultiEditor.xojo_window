@@ -18,12 +18,12 @@ Begin BeaconDialog BlueprintMultiEditor
    MenuBar         =   0
    MenuBarVisible  =   True
    MinimumHeight   =   400
-   MinimumWidth    =   540
+   MinimumWidth    =   640
    Resizeable      =   True
    Title           =   "Edit Blueprints"
    Type            =   8
    Visible         =   True
-   Width           =   540
+   Width           =   640
    Begin TagPicker Picker
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -58,7 +58,7 @@ Begin BeaconDialog BlueprintMultiEditor
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   368
+      Width           =   468
    End
    Begin UITweaks.ResizedLabel MapLabel
       AutoDeactivate  =   True
@@ -231,7 +231,7 @@ Begin BeaconDialog BlueprintMultiEditor
       Underline       =   False
       Value           =   "Edit Blueprints"
       Visible         =   True
-      Width           =   500
+      Width           =   600
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
@@ -247,7 +247,7 @@ Begin BeaconDialog BlueprintMultiEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   446
+      Left            =   546
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -279,7 +279,7 @@ Begin BeaconDialog BlueprintMultiEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   354
+      Left            =   454
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -446,9 +446,10 @@ End
 		  Delta = NewHeight - Me.Height
 		  Me.Height = NewHeight
 		  
-		  Self.MapLabel.Top = Self.MapLabel.Top + Delta
-		  Self.MapSelector.Top = Self.MapSelector.Top + Delta
-		  Self.MapSelector.Height = Self.MapSelector.Height - Delta
+		  Self.MinimumHeight = Me.Top + Me.Height + 6 + Self.MapSelector.DesiredHeight + 14 + Self.ActionButton.Height + 20
+		  Self.Height = Max(Self.Height, Self.MinimumHeight)
+		  Self.MapLabel.Top = Me.Top + Me.Height + 12
+		  Self.MapSelector.Top = Self.MapLabel.Top - 6
 		End Sub
 	#tag EndEvent
 #tag EndEvents
