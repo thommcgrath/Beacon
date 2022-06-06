@@ -41,6 +41,7 @@ Implements Ark.MutableBlueprint
 		Sub Constructor(Path As String, ObjectID As String)
 		  Super.Constructor()
 		  Self.mObjectID = ObjectID
+		  Self.mAvailability = Ark.Maps.UniversalMask
 		  Self.Path = Path
 		  Self.Label = Beacon.LabelFromClassString(Self.ClassString)
 		  Self.Modified = False

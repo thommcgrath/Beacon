@@ -627,9 +627,9 @@ End
 		    Var Blueprint As Ark.Blueprint
 		    Select Case Command
 		    Case "giveitem"
-		      Blueprint = Ark.ResolveEngram("", Path, "", New Beacon.StringList(Ark.UserContentPackUUID))
+		      Blueprint = New Ark.MutableEngram(Path, New v4UUID)
 		    Case "spawndino"
-		      Blueprint = Ark.ResolveCreature("", Path, "", New Beacon.StringList(Ark.UserContentPackUUID))
+		      Blueprint = New Ark.MutableCreature(Path, New v4UUID)
 		    End Select
 		    
 		    If Blueprint Is Nil Then
