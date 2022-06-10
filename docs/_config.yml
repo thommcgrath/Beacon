@@ -25,6 +25,6 @@ gh_edit_view_mode: "edit"
 aux_links_new_tab: true
 aux_links:
   "Ark Config File Reference":
-    - "https://ark.fandom.com/wiki/Server_configuration"
+    - "https://ark.wiki.gg/wiki/Server_configuration"
   "Beacon System Status":
     - "https://status.usebeacon.app/"
