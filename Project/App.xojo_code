@@ -207,6 +207,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_ShowMainWindow)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_RequestUser)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_StartDataUpdateChecking)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckScreenSize)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SubmitExceptions)
 		  If BeaconUI.WebContentSupported Then
@@ -988,6 +989,19 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_StartDataUpdateChecking()
+		  Var DataUpdateTimer As Timer = New Timer
+		  DataUpdateTimer.RunMode = Timer.RunModes.Multiple
+		  DataUpdateTimer.Period = 21600000 // 6 hours
+		  AddHandler DataUpdateTimer.Action, WeakAddressOf mDataUpdateTimer_Action
+		  
+		  Self.mDataUpdateTimer = DataUpdateTimer
+		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_SubmitExceptions()
 		  ExceptionWindow.SubmitPendingReports()
 		  Self.NextLaunchQueueTask()
@@ -1069,6 +1083,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Const Chars = Self.MBSKey
 		  Return DefineEncoding(DecodeBase64(Chars.Middle(46, 1) + Chars.Middle(33, 1) + Chars.Middle(20, 1) + Chars.Middle(41, 1) + Chars.Middle(7, 1) + Chars.Middle(13, 1) + Chars.Middle(9, 1) + Chars.Middle(33, 1) + Chars.Middle(0, 1) + Chars.Middle(36, 1) + Chars.Middle(26, 1) + Chars.Middle(4, 1) + Chars.Middle(12, 1) + Chars.Middle(18, 1) + Chars.Middle(16, 1) + Chars.Middle(42, 1) + Chars.Middle(16, 1) + Chars.Middle(1, 1) + Chars.Middle(6, 1) + Chars.Middle(31, 1) + Chars.Middle(12, 1) + Chars.Middle(18, 1) + Chars.Middle(23, 1) + Chars.Middle(5, 1) + Chars.Middle(45, 1) + Chars.Middle(9, 1) + Chars.Middle(31, 1) + Chars.Middle(44, 1) + Chars.Middle(38, 1) + Chars.Middle(47, 1) + Chars.Middle(6, 1) + Chars.Middle(41, 1) + Chars.Middle(12, 1) + Chars.Middle(34, 1) + Chars.Middle(1, 1) + Chars.Middle(50, 1) + Chars.Middle(7, 1) + Chars.Middle(33, 1) + Chars.Middle(16, 1) + Chars.Middle(28, 1) + Chars.Middle(16, 1) + Chars.Middle(43, 1) + Chars.Middle(23, 1) + Chars.Middle(51, 1) + Chars.Middle(15, 1) + Chars.Middle(13, 1) + Chars.Middle(4, 1) + Chars.Middle(51, 1) + Chars.Middle(12, 1) + Chars.Middle(13, 1) + Chars.Middle(38, 1) + Chars.Middle(11, 1) + Chars.Middle(2, 1) + Chars.Middle(11, 1) + Chars.Middle(20, 1) + Chars.Middle(22, 1) + Chars.Middle(45, 1) + Chars.Middle(1, 1) + Chars.Middle(10, 1) + Chars.Middle(44, 1) + Chars.Middle(45, 1) + Chars.Middle(13, 1) + Chars.Middle(21, 1) + Chars.Middle(4, 1) + Chars.Middle(7, 1) + Chars.Middle(34, 1) + Chars.Middle(30, 1) + Chars.Middle(1, 1) + Chars.Middle(37, 1) + Chars.Middle(34, 1) + Chars.Middle(38, 1) + Chars.Middle(11, 1) + Chars.Middle(14, 1) + Chars.Middle(17, 1) + Chars.Middle(20, 1) + Chars.Middle(1, 1) + Chars.Middle(46, 1) + Chars.Middle(24, 1) + Chars.Middle(23, 1) + Chars.Middle(39, 1) + Chars.Middle(7, 1) + Chars.Middle(36, 1) + Chars.Middle(9, 1) + Chars.Middle(19, 1) + Chars.Middle(16, 1) + Chars.Middle(27, 1) + Chars.Middle(31, 1) + Chars.Middle(33, 1) + Chars.Middle(10, 1) + Chars.Middle(3, 1) + Chars.Middle(16, 1) + Chars.Middle(33, 1) + Chars.Middle(10, 1) + Chars.Middle(3, 1) + Chars.Middle(10, 1) + Chars.Middle(28, 1) + Chars.Middle(16, 1) + Chars.Middle(43, 1) + Chars.Middle(22, 1) + Chars.Middle(1, 1) + Chars.Middle(7, 1) + Chars.Middle(36, 1) + Chars.Middle(1, 1) + Chars.Middle(51, 1) + Chars.Middle(0, 1) + Chars.Middle(17, 1) + Chars.Middle(16, 1) + Chars.Middle(42, 1) + Chars.Middle(16, 1) + Chars.Middle(8, 1) + Chars.Middle(4, 1) + Chars.Middle(18, 1) + Chars.Middle(10, 1) + Chars.Middle(26, 1) + Chars.Middle(16, 1) + Chars.Middle(19, 1) + Chars.Middle(22, 1) + Chars.Middle(36, 1) + Chars.Middle(4, 1) + Chars.Middle(29, 1) + Chars.Middle(9, 1) + Chars.Middle(1, 1) + Chars.Middle(6, 1) + Chars.Middle(34, 1) + Chars.Middle(15, 1) + Chars.Middle(13, 1) + Chars.Middle(26, 1) + Chars.Middle(17, 1) + Chars.Middle(6, 1) + Chars.Middle(19, 1) + Chars.Middle(6, 1) + Chars.Middle(1, 1) + Chars.Middle(37, 1) + Chars.Middle(34, 1) + Chars.Middle(22, 1) + Chars.Middle(50, 1) + Chars.Middle(6, 1) + Chars.Middle(49, 1) + Chars.Middle(30, 1) + Chars.Middle(42, 1) + Chars.Middle(15, 1) + Chars.Middle(25, 1) + Chars.Middle(26, 1) + Chars.Middle(19, 1) + Chars.Middle(22, 1) + Chars.Middle(41, 1) + Chars.Middle(45, 1) + Chars.Middle(41, 1) + Chars.Middle(7, 1) + Chars.Middle(38, 1) + Chars.Middle(1, 1) + Chars.Middle(14, 1) + Chars.Middle(10, 1) + Chars.Middle(35, 1) + Chars.Middle(37, 1) + Chars.Middle(20, 1) + Chars.Middle(10, 1) + Chars.Middle(9, 1) + Chars.Middle(51, 1) + Chars.Middle(32, 1) + Chars.Middle(7, 1) + Chars.Middle(24, 1) + Chars.Middle(9, 1) + Chars.Middle(54, 1) + Chars.Middle(38, 1) + Chars.Middle(38, 1) + Chars.Middle(15, 1) + Chars.Middle(50, 1) + Chars.Middle(22, 1) + Chars.Middle(27, 1) + Chars.Middle(6, 1) + Chars.Middle(25, 1) + Chars.Middle(53, 1) + Chars.Middle(3, 1) + Chars.Middle(23, 1) + Chars.Middle(31, 1) + Chars.Middle(38, 1) + Chars.Middle(34, 1) + Chars.Middle(51, 1) + Chars.Middle(53, 1) + Chars.Middle(10, 1) + Chars.Middle(25, 1) + Chars.Middle(39, 1) + Chars.Middle(25, 1) + Chars.Middle(10, 1) + Chars.Middle(13, 1) + Chars.Middle(7, 1) + Chars.Middle(40, 1) + Chars.Middle(12, 1) + Chars.Middle(53, 1) + Chars.Middle(51, 1) + Chars.Middle(3, 1) + Chars.Middle(10, 1) + Chars.Middle(3, 1) + Chars.Middle(25, 1) + Chars.Middle(11, 1) + Chars.Middle(52, 1) + Chars.Middle(45, 1) + Chars.Middle(48, 1) + Chars.Middle(48, 1)),Encodings.UTF8)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDataUpdateTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  If Preferences.OnlineEnabled = False Or Self.IdentityManager Is Nil Or Self.IdentityManager.CurrentIdentity Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.SyncGamedata(True, False)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1446,6 +1472,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mDataSources() As Beacon.DataSource
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDataUpdateTimer As Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
