@@ -53,6 +53,7 @@ SetupIconFile=../../Artwork/App.ico
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 AppMutex=com.thezaz.beacon
+SetupMutex=com.thezaz.beacon.setup
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

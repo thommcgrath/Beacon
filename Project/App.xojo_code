@@ -22,10 +22,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  UpdatesKit.Cleanup
 		  
-		  If Self.mMutex <> Nil Then
-		    Self.mMutex.Leave
-		  End If
-		  
 		  #if UpdatesKit.UseSparkle = False
 		    If Self.mLaunchOnQuit Then
 		      Self.Log("Launching " + Self.mUpdateFile.NativePath)
@@ -123,8 +119,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Self.Log(Self.UserAgent)
 		  
-		  Var Lock As New Mutex("com.thezaz.beacon" + If(DebugBuild, ".debug", ""))
-		  If Not Lock.TryEnter Then
+		  #if TargetWindows
+		    Var SetupMutex As New WindowsMutexMBS
+		    SetupMutex.Create("com.thezaz.beacon.setup")
+		    If SetupMutex.Lasterror <> 0 Or SetupMutex.TryLock = False Then
+		      BeaconUI.ShowAlert("Beacon's installer is currently running", "The installer may be running in the background. Please wait for it to finish before launching Beacon.")
+		      Quit
+		      Return
+		    End If
+		  #endif
+		  
+		  If Self.GetMutex() = False Then
 		    #if Not TargetMacOS
 		      Var StartTime As Double = System.Microseconds
 		      Var PushSocket As New IPCSocket
@@ -145,7 +150,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Quit
 		    Return
 		  Else
-		    Self.mMutex = Lock
 		    #if Not TargetMacOS
 		      Self.mHandoffSocket = New IPCSocket
 		      Self.mHandoffSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
@@ -536,6 +540,24 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h0
 		Function GenericLootSourceIcon() As Picture
 		  Return IconLootStandard
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetMutex() As Boolean
+		  Var MutexName As String = "com.thezaz.beacon"
+		  #if DebugBuild
+		    MutexName = MutexName + ".debug"
+		  #endif
+		  
+		  #if TargetWindows
+		    Static Lock As New WindowsMutexMBS
+		    Lock.Create(MutexName)
+		    Return Lock.LastError = 0 And Lock.TryLock
+		  #else
+		    Static Lock As New Mutex(MutexName)
+		    Return Lock.TryEnter
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -1526,10 +1548,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mMainWindow As MainWindow
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMutex As Mutex
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
