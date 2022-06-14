@@ -494,14 +494,6 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpReportAProblem
-         SpecialMenu = 0
-         Index = -2147483648
-         Text = "Report a Problem…"
-         AutoEnabled = True
-         AutoEnable = True
-         Visible = True
-      End
       Begin MenuItem HelpCreateOfflineAuthorizationRequest
          SpecialMenu = 0
          Index = -2147483648
