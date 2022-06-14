@@ -48,10 +48,14 @@ try {
 	}
 	$database->Query('UPDATE purchases SET purchaser_email = $1 WHERE purchaser_email = $2;', $new_email_id, $old_email_id);
 	$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $old_email_id);
-	$results = $database->Query('SELECT applicant_id FROM stw_applicants WHERE email_id = $1;', $new_email_id);
+	$results = $database->Query('SELECT applicant_id, generated_purchase_id FROM stw_applicants WHERE email_id = $1;', $new_email_id);
 	if ($results->RecordCount() == 0) {
-		$encrypted_email = BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Email_Encryption_Key'), $to_address);
-		$database->Query('UPDATE stw_applicants SET email_id = $1, encrypted_email = $2 WHERE email_id = $3;', $new_email_id, bin2hex($encrypted_email), $old_email_id);
+		if (is_null($results->Field('generated_purchase_id'))) {
+			$encrypted_email = BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Email_Encryption_Key'), $to_address);
+			$database->Query('UPDATE stw_applicants SET email_id = $1, encrypted_email = $2 WHERE email_id = $3;', $new_email_id, bin2hex($encrypted_email), $old_email_id);
+		} else {
+			$database->Query('UPDATE stw_applicants SET email_id = $1 WHERE email_id = $2;', $new_email_id, $old_email_id);	
+		}
 	}
 	$results = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $new_email_id);
 	if ($results->RecordCount() == 0) {
