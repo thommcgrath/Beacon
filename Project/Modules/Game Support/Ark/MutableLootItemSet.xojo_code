@@ -22,7 +22,7 @@ Inherits Ark.LootItemSet
 		  Var MissingWeight, MinQualitySum, MaxQualitySum As Double
 		  Var EntryCount As Double
 		  Var References As New Dictionary
-		  For Idx As Integer = Self.mEntries.FirstIndex To Sources.LastIndex
+		  For Idx As Integer = Self.mEntries.LastIndex DownTo Self.mEntries.FirstIndex
 		    If UUIDs.IndexOf(Self.mEntries(Idx).UUID) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
 		      Continue
 		    End If
@@ -40,10 +40,14 @@ Inherits Ark.LootItemSet
 		    MinQualitySum = MinQualitySum + Self.mEntries(Idx).MinQuality.BaseValue
 		    MaxQualitySum = MaxQualitySum + Self.mEntries(Idx).MaxQuality.BaseValue
 		    
-		    Var MutableEntry As New Ark.MutableLootItemSetEntry(Self.mEntries(Idx))
-		    MutableEntry.ChanceToBeBlueprint = 0
-		    MutableEntry.RawWeight = AdjustedWeight
-		    Self.mEntries(Idx) = MutableEntry
+		    If Self.mEntries(Idx).ChanceToBeBlueprint < 1 Then
+		      Var MutableEntry As New Ark.MutableLootItemSetEntry(Self.mEntries(Idx))
+		      MutableEntry.ChanceToBeBlueprint = 0
+		      MutableEntry.RawWeight = AdjustedWeight
+		      Self.mEntries(Idx) = MutableEntry
+		    Else
+		      Self.mEntries.RemoveAt(Idx)
+		    End If
 		    Self.Modified = True
 		  Next Idx
 		  

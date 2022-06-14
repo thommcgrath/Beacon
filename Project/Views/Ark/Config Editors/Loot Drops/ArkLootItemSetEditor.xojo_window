@@ -681,6 +681,8 @@ End
 		    If (BlueprintEntry Is Nil) = False Then
 		      Self.UpdateEntryList(BlueprintEntry)
 		      RaiseEvent Updated
+		    Else
+		      Self.ShowAlert("No changes necessary", "This feature only works on item set entries with a chance to become a blueprint.")
 		    End If
 		    Return True
 		  Case "splitengrams"
