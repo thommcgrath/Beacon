@@ -120,12 +120,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.Log(Self.UserAgent)
 		  
 		  #if TargetWindows
-		    Var SetupMutex As New WindowsMutexMBS
-		    SetupMutex.Create("com.thezaz.beacon.setup")
-		    If SetupMutex.Lasterror <> 0 Or SetupMutex.TryLock = False Then
-		      BeaconUI.ShowAlert("Beacon's installer is currently running", "The installer may be running in the background. Please wait for it to finish before launching Beacon.")
-		      Quit
-		      Return
+		    Var CommandLine As String = System.CommandLine
+		    Var SkipSetupCheck As Boolean = CommandLine.EndsWith("/NOSETUPCHECK") Or CommandLine.IndexOf(" /NOSETUPCHECK ") > -1
+		    
+		    If SkipSetupCheck = False Then
+		      Var SetupMutex As New WindowsMutexMBS
+		      SetupMutex.Create("com.thezaz.beacon.setup")
+		      If SetupMutex.Lasterror <> 0 Or SetupMutex.TryLock = False Then
+		        BeaconUI.ShowAlert("Beacon's installer is currently running", "The installer may be running in the background. Please wait for it to finish before launching Beacon.")
+		        Quit
+		        Return
+		      End If
 		    End If
 		  #endif
 		  
