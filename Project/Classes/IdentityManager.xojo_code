@@ -40,6 +40,8 @@ Protected Class IdentityManager
 		Private Sub APICallback_GetSessionToken(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
+		  Var ClearLogin As Boolean = True
+		  
 		  If Response.Success Then
 		    Try
 		      Var Dict As Dictionary = Response.JSON
@@ -47,12 +49,19 @@ Protected Class IdentityManager
 		      Preferences.OnlineToken = Token
 		      
 		      Self.RefreshUserDetails()
+		      ClearLogin = False
 		    Catch Err As RuntimeException
-		      
+		      App.Log(Err, CurrentMethodName, "Parsing new session token")
 		    End Try
 		  End If
 		  
 		  Self.FinishProcess()
+		  
+		  If ClearLogin Then
+		    Self.CurrentIdentity(False) = Nil
+		    Preferences.OnlineToken = ""
+		    RaiseEvent NeedsLogin
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -80,17 +89,22 @@ Protected Class IdentityManager
 		Private Sub APICallback_RefreshUserDetails(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
+		  Var ShowLogin As Boolean
+		  
 		  If Response.Success Then
 		    Try
 		      Var Identity As Beacon.Identity
-		      If Self.mUserPassword <> "" Then
+		      If Self.mUserPassword.IsEmpty = False Then
 		        Identity = Beacon.Identity.FromUserDictionary(Response.JSON, Self.mUserPassword)
 		        Self.CurrentIdentity(False) = Identity
 		      ElseIf Self.CurrentIdentity <> Nil Then
 		        Identity = Self.CurrentIdentity.Clone
 		        If Identity.ConsumeUserDictionary(Response.JSON) Then
-		          Call Identity.Validate()
-		          Self.CurrentIdentity(False) = Identity
+		          If Identity.Validate() Then
+		            Self.CurrentIdentity(False) = Identity
+		          Else
+		            ShowLogin = True
+		          End If
 		        End If
 		      End If
 		      UserCloud.Sync() // Will only trigger is necessary
@@ -102,9 +116,19 @@ Protected Class IdentityManager
 		    Self.GetSessionToken()
 		  ElseIf Response.HTTPStatus = 0 Then
 		    Self.mLastError = Response.Message
+		    
+		    If Self.mCurrentIdentity Is Nil Or Self.mCurrentIdentity.Validate() = False Then
+		      ShowLogin = True
+		    End If
 		  End If
 		  
 		  Self.FinishProcess()
+		  
+		  If ShowLogin Then
+		    Preferences.OnlineToken = ""
+		    Self.CurrentIdentity(False) = Nil
+		    RaiseEvent NeedsLogin
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -311,7 +335,7 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  If Preferences.OnlineToken = "" Then
+		  If Preferences.OnlineToken = "" And (Self.mCurrentIdentity Is Nil) = False And Self.mCurrentIdentity.Validate() = True Then
 		    Self.GetSessionToken()
 		    Return
 		  End If

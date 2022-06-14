@@ -1129,7 +1129,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Sub mIdentityManager_NeedsLogin(Sender As IdentityManager)
 		  #Pragma Unused Sender
 		  
-		  UserWelcomeWindow.Present(False)
+		  Call CallLater.Schedule(100, AddressOf ShowLoginWindow)
 		End Sub
 	#tag EndMethod
 
@@ -1348,6 +1348,28 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  #endif
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowLoginWindow()
+		  Var RestoreMainWindow As Boolean
+		  If (Self.mMainWindow Is Nil) = False And Self.mMainWindow.Visible Then
+		    Self.mMainWindow.Hide
+		    RestoreMainWindow = True
+		  End If
+		  
+		  UserWelcomeWindow.Present(False, AddressOf ShowLoginWindowMessage)
+		  
+		  If RestoreMainWindow Then
+		    Self.mMainWindow.Show
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowLoginWindowMessage(WelcomeWindow As UserWelcomeWindow)
+		  WelcomeWindow.ShowAlert("Please sign in again", "There was a problem with your user data. You will need to sign in again.")
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

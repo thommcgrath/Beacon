@@ -2,7 +2,9 @@
 Protected Module BeaconAPI
 	#tag Method, Flags = &h1
 		Protected Sub Send(Request As BeaconAPI.Request)
-		  If mSharedSocket = Nil Then
+		  // We really want only one socket here so that things queue and stay in order
+		  
+		  If mSharedSocket Is Nil Then
 		    mSharedSocket = New BeaconAPI.Socket
 		  End If
 		  mSharedSocket.Start(Request)

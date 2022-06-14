@@ -1604,7 +1604,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection ConfirmCodeCreationSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1613,7 +1612,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection CheckForConfirmationSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1622,7 +1620,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection VerifyConfirmationCodeSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1631,7 +1628,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection IdentitySuggestionSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1640,7 +1636,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection SubmitIdentitySocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1649,7 +1644,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection LoginSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1687,6 +1681,11 @@ End
 		  Else
 		    Preferences.OnlineEnabled = False
 		  End If
+		  
+		  If Beacon.SafeToInvoke(Self.mExecuteAfterPresent) Then
+		    Self.mExecuteAfterPresent.Invoke(Self)
+		  End If
+		  Self.mExecuteAfterPresent = Nil
 		End Sub
 	#tag EndEvent
 
@@ -1733,11 +1732,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(LoginOnly As Boolean = False)
+		Private Sub Constructor(LoginOnly As Boolean, ExecuteAfterPresent As UserWelcomeWindow.ExecuteAfterPresentDelegate)
 		  Self.mLoginOnly = LoginOnly
+		  Self.mExecuteAfterPresent = ExecuteAfterPresent
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
+
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Sub ExecuteAfterPresentDelegate(WelcomeWindow As UserWelcomeWindow)
+	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h21
 		Private Sub HandleAnonymous()
@@ -1787,12 +1791,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(LoginOnly As Boolean)
+		Shared Sub Present(LoginOnly As Boolean, ExecuteAfterPresent As UserWelcomeWindow.ExecuteAfterPresentDelegate = Nil)
 		  If (mInstance Is Nil) = False Or (Thread.Current Is Nil) = False Then
 		    Return
 		  End If
 		  
-		  mInstance = New UserWelcomeWindow(LoginOnly)
+		  mInstance = New UserWelcomeWindow(LoginOnly, ExecuteAfterPresent)
 		  mInstance.ShowModal()
 		  mInstance = Nil
 		End Sub
@@ -1963,6 +1967,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfirmEncryptionKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mExecuteAfterPresent As UserWelcomeWindow.ExecuteAfterPresentDelegate
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

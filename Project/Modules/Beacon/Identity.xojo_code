@@ -105,6 +105,8 @@ Protected Class Identity
 		  Catch Err As RuntimeException
 		  End Try
 		  
+		  Self.mIsValid = Nil
+		  
 		  Return True
 		End Function
 	#tag EndMethod
@@ -368,6 +370,10 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function Validate() As Boolean
+		  If (Self.mIsValid Is Nil) = False Then
+		    Return Self.mIsValid.BooleanValue
+		  End If
+		  
 		  If (Self.mSignature Is Nil) = False Then
 		    Var Fields(3) As String
 		    Fields(0) = Beacon.HardwareID
@@ -398,6 +404,7 @@ Protected Class Identity
 		    Var CheckData As String = Fields.Join(" ")
 		    If Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
 		      // It is valid, now return so the reset code below does not fire
+		      Self.mIsValid = True
 		      Return True
 		    End If
 		  End If
@@ -408,6 +415,7 @@ Protected Class Identity
 		  
 		  Self.mUsername = ""
 		  Self.mLicenses.ResizeTo(-1)
+		  Self.mIsValid = False
 		  Return False
 		End Function
 	#tag EndMethod
@@ -445,6 +453,10 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mIdentifier As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsValid As NullableBoolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

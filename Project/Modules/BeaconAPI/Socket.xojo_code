@@ -110,7 +110,7 @@ Protected Class Socket
 		  Self.ActiveRequest.InvokeCallback(Response)
 		  Self.ActiveRequest = Nil
 		  
-		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
+		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(10, WeakAddressOf AdvanceQueue)
 		End Sub
 	#tag EndMethod
 
@@ -120,7 +120,7 @@ Protected Class Socket
 		  
 		  Self.ActiveRequest.InvokeCallback(New BeaconAPI.Response(Err))
 		  Self.ActiveRequest = Nil
-		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
+		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(10, WeakAddressOf AdvanceQueue)
 		End Sub
 	#tag EndMethod
 
