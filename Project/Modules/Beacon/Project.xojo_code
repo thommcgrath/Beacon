@@ -550,6 +550,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasConfigSet(SetName As String) As Boolean
+		  Return Self.mConfigSets.HasKey(SetName)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasUser(UserID As String) As Boolean
 		  Return Self.mEncryptedPasswords.HasKey(UserID.Lowercase)
 		End Function

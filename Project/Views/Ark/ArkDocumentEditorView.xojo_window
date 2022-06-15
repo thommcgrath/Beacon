@@ -613,13 +613,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandleConfigPickerClick()
+		  Var Menu As New MenuItem
+		  Menu.AddMenu(New MenuItem("Create and switch to new config set…", "beacon:createandswitch"))
+		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  
 		  Var SetNames() As String = Self.Project.ConfigSetNames
 		  SetNames.Sort
-		  
-		  Var Menu As New MenuItem
 		  For Each SetName As String In SetNames
 		    Var Item As New MenuItem(SetName, SetName)
-		    Item.HasCheckMark = SetName = Self.ActiveConfigSet 
+		    Item.HasCheckMark = SetName = Self.ActiveConfigSet
+		    If SetName = Beacon.Project.BaseConfigSetName Then
+		      Item.Shortcut = "B"
+		    End If
 		    Menu.AddMenu(Item)
 		  Next
 		  
@@ -653,6 +658,20 @@ End
 		        
 		        App.MainWindow.ShowHelp()
 		        Component.LoadURL(HelpURL)
+		      case "createandswitch"
+		        Var NewSetName As String = ConfigSetNamingWindow.Present(Self)
+		        If NewSetName.IsEmpty Then
+		          Return
+		        End If
+		        
+		        If Self.Project.HasConfigSet(NewSetName) Then
+		          Self.ActiveConfigSet = NewSetName
+		          Self.ShowAlert("You have been switched to the " + NewSetName + " config set.", "This project already has a " + NewSetName + " config set, so it has been switched to.")
+		          Return
+		        End If
+		        
+		        Self.Project.AddConfigSet(NewSetName)
+		        Self.ActiveConfigSet = NewSetName
 		      End Select
 		    Else
 		      Self.ActiveConfigSet = Choice.Tag.StringValue
