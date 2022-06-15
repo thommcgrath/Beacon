@@ -536,8 +536,10 @@ End
 		      Self.AddFile(File, If(Arch <> 0, Arch, Download.ArchARM64 Or Download.ArchIntel64))
 		    Case "Install_Beacon.exe"
 		      Self.AddFile(File, If(Arch <> 0, Arch, Download.ArchIntel32 Or Download.ArchIntel64))
-		    Case "Combo"
+		    Case "Combo", "x64_x86"
 		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel32 Or Download.ArchIntel64))
+		    Case "arm64_x64_x86"
+		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel32 Or Download.ArchIntel64 Or Download.ArchARM64))
 		    Case "x64", "x86_64"
 		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel64))
 		    Case "x86"

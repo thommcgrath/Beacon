@@ -101,11 +101,11 @@ Protected Class Download
 		  If (Arch And ArchARM64) = ArchARM64 Then
 		    Pieces.Add("arm64")
 		  End If
-		  If (Arch And ArchIntel32) = ArchIntel32 Then
-		    Pieces.Add("x86")
-		  End If
 		  If (Arch And ArchIntel64) = ArchIntel64 Then
 		    Pieces.Add("x64")
+		  End If
+		  If (Arch And ArchIntel32) = ArchIntel32 Then
+		    Pieces.Add("x86")
 		  End If
 		  Var Path As String = String.FromArray(Pieces, "_")
 		  

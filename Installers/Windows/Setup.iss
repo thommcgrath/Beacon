@@ -44,7 +44,7 @@ ChangesAssociations=yes
 #elif defined(x86)
   OutputDir=Output\{#MyAppVersion}\x86
 #else
-  OutputDir=Output\{#MyAppVersion}\Combo
+  OutputDir=Output\{#MyAppVersion}\arm64_x64_x86
   #define x64 1
   #define x86 1
   #define arm64 1
