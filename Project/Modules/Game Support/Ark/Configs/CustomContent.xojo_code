@@ -347,6 +347,12 @@ Inherits Ark.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function WriteContent(Input As String, Rainbow As Dictionary) As String
 		  Var Pos As Integer
