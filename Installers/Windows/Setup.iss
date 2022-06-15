@@ -2,7 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Beacon"
-#ifdef x64
+#if defined(arm64)
+  #define MyAppVersion Trim(GetFileProductVersion("..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\Beacon.exe"))
+#elif defined(x64)
   #define MyAppVersion Trim(GetFileProductVersion("..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\Beacon.exe"))
 #else
   #define MyAppVersion Trim(GetFileProductVersion("..\..\Project\Builds - Beacon\Windows\Beacon\Beacon.exe"))
@@ -34,21 +36,18 @@ ChangesAssociations=yes
 #ifndef x86
   ArchitecturesInstallIn64BitMode=x64 arm64
 #endif
-#ifdef arm64
+#if defined(arm64)
+  ArchitecturesAllowed=arm64
   OutputDir=Output\{#MyAppVersion}\arm64
+#elif defined(x64)
+  OutputDir=Output\{#MyAppVersion}\x64
+#elif defined(x86)
+  OutputDir=Output\{#MyAppVersion}\x86
 #else
-  #ifdef x64
-    OutputDir=Output\{#MyAppVersion}\x64
-  #else
-    #ifdef x86
-      OutputDir=Output\{#MyAppVersion}\x86
-    #else
-      OutputDir=Output\{#MyAppVersion}\Combo
-      #define x64 1
-      #define x86 1
-      #define arm64 1
-    #endif
-  #endif
+  OutputDir=Output\{#MyAppVersion}\Combo
+  #define x64 1
+  #define x86 1
+  #define arm64 1
 #endif
 SignTool=TheZAZ /d $qBeacon$q /du $qhttps://usebeaon.app$q $f
 SignToolRunMinimized=true
