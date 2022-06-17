@@ -1170,23 +1170,31 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function SanitizeFilename(Filename As String, MaxLength As Integer = 0) As String
-		  // Windows doesn't seem to agree with trailing whitespace
-		  Filename = Filename.Trim(EndOfLine.CRLF, EndOfLine.CR, EndOfLine.LF, ".")
-		  
 		  Var Searcher As New Regex
 		  Searcher.Options.ReplaceAllMatches = True
 		  
+		  // Remove path separators
 		  Searcher.SearchPattern = "[/\\:]"
 		  Searcher.ReplacementPattern = "-"
 		  Filename = Searcher.Replace(Filename)
 		  
+		  // Remove control characters
 		  Searcher.SearchPattern = "[<>""|?*\x00-\x1F]+"
 		  Searcher.ReplacementPattern = ""
 		  Filename = Searcher.Replace(Filename)
 		  
-		  Searcher.SearchPattern = "(\s+-+)|(-+\s+)|(\s{2,})"
+		  // Remove lone hyphens
+		  Searcher.SearchPattern = "(\s+-+)|(-+\s+)"
 		  Searcher.ReplacementPattern = " "
 		  Filename = Searcher.Replace(Filename)
+		  
+		  // Remove double whitespace
+		  Searcher.SearchPattern = "\s{2,}"
+		  Searcher.ReplacementPattern = " "
+		  Filename = Searcher.Replace(Filename)
+		  
+		  // Windows doesn't seem to agree with trailing whitespace
+		  Filename = Filename.Trim(EndOfLine.CRLF, EndOfLine.CR, EndOfLine.LF, ".", " ", Encodings.ASCII.Chr(9))
 		  
 		  If MaxLength > 0 And Filename.Length > MaxLength Then
 		    // Remove hyphens first
