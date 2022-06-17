@@ -1147,6 +1147,21 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Read(Extends File As FolderItem, Identity As Beacon.Identity) As MemoryBlock
+		  // Do not catch exceptions here so that they bubble up
+		  
+		  Var Content As MemoryBlock = File.Read
+		  If (Identity Is Nil) = False And BeaconEncryption.IsEncrypted(Content) Then
+		    Content = BeaconEncryption.SymmetricDecrypt(Identity.UserCloudKey, Content)
+		  End If
+		  If Beacon.IsCompressed(Content) Then
+		    Content = Beacon.Decompress(Content)
+		  End If
+		  Return Content
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function SafeToInvoke(Callback As Variant) As Boolean
 		  Return Callback.IsNull = False And (GetDelegateWeakMBS(Callback) = False Or (GetDelegateTargetMBS(Callback) Is Nil) = False)

@@ -399,12 +399,8 @@ End
 	#tag Method, Flags = &h21
 		Private Function DecryptFile(SourceFile As FolderItem, DestinationFile As FolderItem, Identity As Beacon.Identity) As Boolean
 		  Try
-		    Var SourceContent As MemoryBlock = SourceFile.Read
-		    Var DestinationContent As MemoryBlock = BeaconEncryption.SymmetricDecrypt(Identity.UserCloudKey, SourceContent)
-		    If Beacon.IsCompressed(DestinationContent) Then
-		      DestinationContent = Beacon.Decompress(DestinationContent)
-		    End If
-		    Return DestinationFile.Write(DestinationContent)
+		    Var SourceContent As MemoryBlock = SourceFile.Read(Identity)
+		    Return DestinationFile.Write(SourceContent)
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try
