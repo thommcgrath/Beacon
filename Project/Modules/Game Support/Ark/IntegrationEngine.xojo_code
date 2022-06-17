@@ -4,7 +4,9 @@ Inherits Beacon.IntegrationEngine
 	#tag Event
 		Sub Deploy(InitialServerState As Integer)
 		  Var Project As Ark.Project = Self.Project
+		  Self.EnterResourceIntenseMode()
 		  Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Self.Profile)
+		  Self.ExitResourceIntenseMode()
 		  
 		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
 		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(Organizer)
@@ -51,13 +53,17 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Var RewriteError As RuntimeException
 		  
+		  Self.EnterResourceIntenseMode()
 		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, If(Self.NukeEnabled = False, GameIniOriginal, ""), Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.UUID, Project.LegacyTrustKey, Format, RewriteError)
+		  Self.ExitResourceIntenseMode()
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
+		  Self.EnterResourceIntenseMode()
 		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, If(Self.NukeEnabled = False, GameUserSettingsIniOriginal, ""), Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.UUID, Project.LegacyTrustKey, Format, RewriteError)
+		  Self.ExitResourceIntenseMode()
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return

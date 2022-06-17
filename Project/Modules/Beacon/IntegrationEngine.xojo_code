@@ -80,6 +80,17 @@ Protected Class IntegrationEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub EnterResourceIntenseMode()
+		  If Self.mResourceIntenseLock Is Nil Then
+		    Self.mResourceIntenseLock = New CriticalSection
+		  End If
+		  
+		  Self.mResourceIntenseLock.Enter
+		  Self.mInResourceIntenseMode = True
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Errored() As Boolean
 		  Return Self.mErrored
@@ -101,6 +112,17 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub ErrorMessage(Assigns Value As String)
 		  Self.mErrorMessage = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ExitResourceIntenseMode()
+		  If Self.mResourceIntenseLock Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mInResourceIntenseMode = False
+		  Self.mResourceIntenseLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -188,6 +210,12 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IsInResourceIntenseMode() As Boolean
+		  Return Self.mInResourceIntenseMode
 		End Function
 	#tag EndMethod
 
@@ -818,6 +846,10 @@ Protected Class IntegrationEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mInResourceIntenseMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLabel As String
 	#tag EndProperty
 
@@ -847,6 +879,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mProject As Beacon.Project
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mResourceIntenseLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
