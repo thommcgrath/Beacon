@@ -64,6 +64,16 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  #if TargetMacOS
+		    Var Win As NSWindowMBS = Self.NSWindowMBS
+		    Win.TitlebarAppearsTransparent = True
+		  #endif
+		End Sub
+	#tag EndEvent
+
+
 #tag EndWindowCode
 
 #tag ViewBehavior

@@ -259,7 +259,6 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Width           =   80
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -397,6 +396,21 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Function DecryptFile(SourceFile As FolderItem, DestinationFile As FolderItem, Identity As Beacon.Identity) As Boolean
+		  Try
+		    Var SourceContent As MemoryBlock = SourceFile.Read
+		    Var DestinationContent As MemoryBlock = BeaconEncryption.SymmetricDecrypt(Identity.UserCloudKey, SourceContent)
+		    If Beacon.IsCompressed(DestinationContent) Then
+		      DestinationContent = Beacon.Decompress(DestinationContent)
+		    End If
+		    Return DestinationFile.Write(DestinationContent)
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
@@ -406,6 +420,66 @@ End
 		    Var Identity As Beacon.Identity = Notification.UserData
 		    Self.UpdateUI(Identity)
 		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowDecrypt()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.AllowMultipleSelections = True
+		  
+		  If Dialog.ShowModal(Self.TrueWindow) Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Files() As FolderItem
+		  For Each File As FolderItem In Dialog.SelectedFiles
+		    Files.Add(File)
+		  Next File
+		  
+		  If Files.Count = 1 Then
+		    Var Extension As String = Files(0).Extension
+		    Var BaseName As String = Files(0).Name.Left(Files(0).Name.Length - Extension.Length)
+		    
+		    Var SaveDialog As New SaveFileDialog
+		    SaveDialog.SuggestedFileName = BaseName + " (Decrypted)" + Extension
+		    SaveDialog.InitialFolder = Files(0).Parent
+		    Var Destination As FolderItem = SaveDialog.ShowModal(Self.TrueWindow)
+		    If Destination Is Nil Then
+		      Return
+		    End If
+		    
+		    If Self.DecryptFile(Files(0), Destination, App.IdentityManager.CurrentIdentity) Then
+		      Self.ShowAlert(Files(0).DisplayName + " has been decrypted", "")
+		    Else
+		      Self.ShowAlert(Files(0).DisplayName + " could not be decrypted", "The file may have been encrypted for another identity.")
+		    End If
+		  Else
+		    Var FolderDialog As New SelectFolderDialog
+		    FolderDialog.InitialFolder = Files(0).Parent
+		    FolderDialog.SuggestedFileName = "Decrypted Files"
+		    Var Destination As FolderItem = FolderDialog.ShowModal(Self.TrueWindow)
+		    If Destination Is Nil Then
+		      Return
+		    End If
+		    
+		    Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		    Var DecryptedCount As Integer
+		    For Each InputFile As FolderItem In Files
+		      Var OutputFile As FolderItem = Destination.Child(InputFile.Name)
+		      If Self.DecryptFile(InputFile, OutputFile, Identity) Then
+		        DecryptedCount = DecryptedCount + 1
+		      End If
+		    Next InputFile
+		    
+		    If DecryptedCount = Files.Count Then
+		      Self.ShowAlert("Good news, all files were decrypted.", "")
+		    ElseIf DecryptedCount = 0 Then
+		      Self.ShowAlert("None of the files could be decrypted.", "They may have been encrypted for another identity.")
+		    Else
+		      Self.ShowAlert(Language.NounWithQuantity(DecryptedCount, "file was", "files were") + " decrypted.", "The remaining files may have been encrypted for another identity.")
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -461,6 +535,8 @@ End
 		    Self.ShowExportIdentity()
 		  Case "ImportIdentity"
 		    Self.ShowImportIdentity()
+		  Case "DecryptFile"
+		    Self.ShowDecrypt()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -468,6 +544,8 @@ End
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateButton("ExportIdentity", "Export", IconToolbarExport, "Create a backup of your identity file."))
 		  Me.Append(OmniBarItem.CreateButton("ImportIdentity", "Import", IconToolbarImport, "Restore an identity file backup."))
+		  Me.Append(OmniBarItem.CreateSpace)
+		  Me.Append(OmniBarItem.CreateButton("DecryptFile", "Decrypt File", IconToolbarUnlock, "Decrypt a file that was encrypted with your active identity."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
