@@ -425,9 +425,7 @@ End
 		    Self.Autosave()
 		    
 		    If Not Self.ReadyToDeploy Then
-		      If Self.ShowConfirm("This project is not ready for deploy.", "You must import at least one server with this project to use the deploy feature.", "Import a Server", "Cancel") Then 
-		        Self.BeginImport(True)
-		      End If
+		      Self.ShowAlert("This project is not ready for deploy.", "You must import at least one server into this project to use the deploy feature. Use the Import button in the top left.") 
 		      Return
 		    End If
 		    
