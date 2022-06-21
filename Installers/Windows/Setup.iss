@@ -40,6 +40,7 @@ ChangesAssociations=yes
   ArchitecturesAllowed=arm64
   OutputDir=Output\{#MyAppVersion}\arm64
 #elif defined(x64)
+  ArchitecturesAllowed=x64
   OutputDir=Output\{#MyAppVersion}\x64
 #elif defined(x86)
   OutputDir=Output\{#MyAppVersion}\x86
