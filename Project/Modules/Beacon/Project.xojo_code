@@ -201,11 +201,20 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function ConfigSetStates() As Beacon.ConfigSetState()
 		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
-		  Var Clone() As Beacon.ConfigSetState
-		  Var Names() As String
+		  Var Clone(0) As Beacon.ConfigSetState
+		  
+		  // First should always be an enabled base
+		  Clone(0) = New Beacon.ConfigSetState(Self.BaseConfigSetName, True)
+		  
+		  Var Names() As String = Array(Self.BaseConfigSetName)
 		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
 		    // Do not include any states for sets that don't exist. Should be zero, but just to be sure.
 		    If Self.mConfigSets.HasKey(State.Name) = False Then
+		      Continue
+		    End If
+		    
+		    // Do not include duplicate states
+		    If Names.IndexOf(State.Name) > -1 Then
 		      Continue
 		    End If
 		    
@@ -219,9 +228,6 @@ Implements ObservationKit.Observable
 		      Clone.Add(New Beacon.ConfigSetState(Entry.Key.StringValue, False))
 		    End If
 		  Next
-		  
-		  // First should always be an enabled base
-		  Clone(0) = New Beacon.ConfigSetState(Self.BaseConfigSetName, True)
 		  
 		  Return Clone
 		End Function
@@ -540,6 +546,12 @@ Implements ObservationKit.Observable
 		    Users.Add(Entry.Key)
 		  Next
 		  Return Users
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasConfigSet(SetName As String) As Boolean
+		  Return Self.mConfigSets.HasKey(SetName)
 		End Function
 	#tag EndMethod
 
