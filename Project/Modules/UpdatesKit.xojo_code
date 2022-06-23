@@ -1,6 +1,30 @@
 #tag Module
 Protected Module UpdatesKit
 	#tag Method, Flags = &h1
+		Protected Function AppArchitecture() As UpdatesKit.Architectures
+		  #if TargetX86
+		    #if Target64Bit
+		      Return Architectures.x86_64
+		    #elseif Target32Bit
+		      Return Architectures.x86
+		    #else
+		      Return Architectures.Unknown
+		    #endif
+		  #elseif TargetARM
+		    #if Target64Bit
+		      Return Architectures.arm64
+		    #elseif Target32Bit
+		      Return Architectures.arm
+		    #else
+		      Return Architectures.Unknown
+		    #endif
+		  #else
+		    Return Architectures.Unknown
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function AvailableDisplayVersion() As String
 		  Return mAvailableDisplayVersion
 		End Function
@@ -269,54 +293,6 @@ Protected Module UpdatesKit
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function Is64Bit() As Boolean
-		  #if Target64Bit
-		    // If we're already executing 64-bit code, then we know it's a 64-bit system
-		    Return True
-		  #endif
-		  
-		  #if TargetWin32 Then
-		    Soft Declare Function GetCurrentProcess Lib "kernel32"  As Integer
-		    Var ProcessID As Integer = GetCurrentProcess
-		    
-		    If System.IsFunctionAvailable("IsWow64Process2", "kernel32") Then
-		      Soft Declare Function IsWow64Process2 Lib "kernel32" (Handle As Integer, ByRef ProcessMachine As UInt16, ByRef NativeMachine As UInt16) As Boolean
-		      
-		      Var ProcessMachine, NativeMachine As UInt16
-		      If Not IsWow64Process2(ProcessID, ProcessMachine, NativeMachine) Then
-		        Return False
-		      End If
-		      
-		      Return NativeMachine = &h200 Or NativeMachine = &h8664 Or NativeMachine = &hAA64 Or NativeMachine = &h284
-		    ElseIf System.IsFunctionAvailable("IsWow64Process", "kernel32") Then
-		      Soft Declare Function IsWow64Process Lib "kernel32" (Handle As Integer, ByRef Wow64Process As Boolean) As Boolean
-		      
-		      Var Wow64Process As Boolean
-		      If Not IsWow64Process(ProcessID, Wow64Process) Then
-		        Return False
-		      End If
-		      
-		      Return Wow64Process
-		    End If
-		  #elseif TargetLinux
-		    Var ID As New CPUIDMBS
-		    Return ID.Flags(CPUIDMBS.kFeatureLM)
-		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function IsARM() As Boolean
-		  #if TargetARM
-		    // Since the code is already compiled ARM, we know this to be true
-		    Return True
-		  #endif
-		  
-		  Return SystemInformationMBS.IsARM Or SystemInformationMBS.IsTranslated = 1
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function IsBusy() As Boolean
 		  Return mChecking
@@ -391,6 +367,55 @@ Protected Module UpdatesKit
 		Protected Function IsUpdateAvailable() As Boolean
 		  #if Not UseSparkle
 		    Return mAvailableDisplayVersion.IsEmpty = False
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function MachineArchitecture() As UpdatesKit.Architectures
+		  #if TargetMacOS
+		    #if TargetARM
+		      Return Architectures.arm64
+		    #else
+		      Return If(SystemInformationMBS.IsTranslated = 1, Architectures.arm64, Architectures.x86_64)
+		    #endif
+		  #elseif TargetWindows
+		    Soft Declare Function GetCurrentProcess Lib "kernel32"  As Integer
+		    Var ProcessID As Integer = GetCurrentProcess
+		    
+		    If System.IsFunctionAvailable("IsWow64Process2", "kernel32") Then
+		      Soft Declare Function IsWow64Process2 Lib "kernel32" (Handle As Integer, ByRef ProcessMachine As UInt16, ByRef NativeMachine As UInt16) As Boolean
+		      
+		      Var ProcessMachine, NativeMachine As UInt16
+		      If Not IsWow64Process2(ProcessID, ProcessMachine, NativeMachine) Then
+		        Return Architectures.x86
+		      End If
+		      
+		      Select Case NativeMachine
+		      Case &h014c
+		        Return Architectures.x86
+		      Case &h01c0
+		        Return Architectures.arm
+		      Case &h8664, &h200
+		        Return Architectures.x86_64
+		      Case &haa64
+		        Return Architectures.arm64
+		      Else
+		        Return Architectures.Unknown
+		      End Select
+		    ElseIf System.IsFunctionAvailable("IsWow64Process", "kernel32") Then
+		      Soft Declare Function IsWow64Process Lib "kernel32" (Handle As Integer, ByRef Wow64Process As Boolean) As Boolean
+		      
+		      Var Wow64Process As Boolean
+		      If IsWow64Process(ProcessID, Wow64Process) = False Then
+		        Return Architectures.x86
+		      End If
+		      
+		      Return If(Wow64Process, Architectures.x86_64, Architectures.x86)
+		    End If
+		  #else
+		    // Just return the app architecture
+		    Return AppArchitecture()
 		  #endif
 		End Function
 	#tag EndMethod
@@ -635,18 +660,31 @@ Protected Module UpdatesKit
 		  Else
 		    Params.Value("stage") = Preferences.UpdateChannel.ToString(Locale.Raw, "0")
 		  End If
-		  If IsARM Then
-		    If Is64Bit Then
-		      Params.Value("arch") = "arm64"
-		    Else
-		      Params.Value("arch") = "arm"
-		    End If
-		  Else
-		    If Is64Bit Then
-		      Params.Value("arch") = "x64"
-		    Else
-		      Params.Value("arch") = "x86"
-		    End If
+		  
+		  Var Arch As UpdatesKit.Architectures = MachineArchitecture()
+		  Select Case Arch
+		  Case Architectures.arm
+		    Params.Value("arch") = "arm"
+		  Case Architectures.arm64
+		    Params.Value("arch") = "arm64"
+		  Case Architectures.x86
+		    Params.Value("arch") = "x86"
+		  Case Architectures.x86_64
+		    Params.Value("arch") = "x64"
+		  End Select
+		  
+		  Var CurrentArch As UpdatesKit.Architectures = AppArchitecture()
+		  If Arch <> CurrentArch Then
+		    Select Case CurrentArch
+		    Case Architectures.arm
+		      Params.Value("arch_compat") = "arm"
+		    Case Architectures.arm64
+		      Params.Value("arch_compat") = "arm64"
+		    Case Architectures.x86
+		      Params.Value("arch_compat") = "x86"
+		    Case Architectures.x86_64
+		      Params.Value("arch_compat") = "x64"
+		    End Select
 		  End If
 		  
 		  Params.Value("osversion") = OSVersion
@@ -821,6 +859,15 @@ Protected Module UpdatesKit
 		  ProductType As UInt8
 		Reserved As UInt8
 	#tag EndStructure
+
+
+	#tag Enum, Name = Architectures, Type = Integer, Flags = &h1
+		Unknown
+		  x86
+		  x86_64
+		  arm
+		arm64
+	#tag EndEnum
 
 
 	#tag ViewBehavior
