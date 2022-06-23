@@ -127,6 +127,11 @@ Implements NotificationKit.Receiver
 		  Measure.Graphics.FontUnit = FontUnits.Point
 		  
 		  Var GutterWidth As Integer = Ceiling(Measure.Graphics.TextWidth(LineCount)) + 10
+		  #if TargetWindows
+		    If (Self.TrueWindow Is Nil) = False Then
+		      GutterWidth = GutterWidth * Self.TrueWindow.ScaleFactor
+		    End If
+		  #endif
 		  Var Margin As ScintillaMarginMBS = Self.Margin(0)
 		  Margin.Width = GutterWidth
 		End Sub
