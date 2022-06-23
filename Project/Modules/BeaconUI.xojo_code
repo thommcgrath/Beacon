@@ -335,44 +335,6 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub ResizeCells(Extends Target As DesktopSegmentedButton)
-		  #if TargetMacOS
-		    Var Handle As Ptr = Target.Handle
-		    
-		    Declare Function sel_registerName Lib "/usr/lib/libobjc.dylib" (Name As CString) As Ptr
-		    Declare Function RespondsToSelector Lib "Cocoa.framework" Selector "respondsToSelector:" (Target As Ptr, Sel As Ptr) As Boolean
-		    If RespondsToSelector(Handle, sel_registerName("setSegmentDistribution:")) Then
-		      Declare Sub SetSegmentDistribution Lib "AppKit" Selector "setSegmentDistribution:" (Target As Ptr, Value As Integer)
-		      SetSegmentDistribution(Handle, 2)
-		      
-		      Var CellCount As Integer = Target.SegmentCount
-		      For I As Integer = 0 To CellCount - 1
-		        Var Cell As Segment = Target.SegmentAt(I)
-		        Cell.Width = 0
-		      Next
-		      
-		      Return
-		    End If
-		  #endif
-		  
-		  Var CellCount As Integer = Target.SegmentCount
-		  Var AvailableWidth As Integer = Target.Width - (CellCount + 3)
-		  Var BaseCellWidth As Integer = Floor(AvailableWidth / CellCount)
-		  Var Remainder As Integer = AvailableWidth - (BaseCellWidth * CellCount)
-		  
-		  For I As Integer = 0 To CellCount - 1
-		    Var CellWidth As Integer = BaseCellWidth
-		    If I < Remainder Then
-		      CellWidth = CellWidth + 1
-		    End If
-		    
-		    Var Cell As Segment = Target.SegmentAt(I)
-		    Cell.Width = CellWidth
-		  Next
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target64Bit))
 		Sub ShowAlert(Extends Win As MobileScreen, Message As String, Explanation As String)
 		  Win.ShowAlert(Message, Explanation)

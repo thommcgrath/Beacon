@@ -26,30 +26,6 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
    Transparent     =   True
    Visible         =   True
    Width           =   512
-   BeginDesktopSegmentedButton DesktopSegmentedButton ViewSelector
-      Enabled         =   True
-      Height          =   24
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   10
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   2
-      Segments        =   "Universal\n\nFalse\rSteam Only\n\nFalse\rCustom\n\nFalse"
-      SelectionStyle  =   0
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   False
-      Tooltip         =   ""
-      Top             =   10
-      Transparent     =   False
-      Visible         =   True
-      Width           =   280
-   End
    Begin CheckBox ModCheckbox
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -212,15 +188,42 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Visible         =   False
       Width           =   472
    End
+   Begin BeaconSegmentedControl ViewSelector
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowMultipleSelection=   False
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Universal	Steam Only	Custom"
+      Left            =   10
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   11
+      Transparent     =   True
+      Visible         =   True
+      Width           =   280
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ViewSelector.Width = 280 // Because the design-time size is not being respected
-		  Self.ViewSelector.ResizeCells
-		  Self.ViewSelector.SegmentAt(0).Selected = True
 		  Self.BuildCheckboxes()
 		  RaiseEvent Open
 		End Sub
@@ -243,8 +246,8 @@ End
 		  Var HeaderHeight As Integer = PaddingTop + Max(Self.ViewSelector.Height, Self.FilterField.Height) + InnerSpacing
 		  
 		  Var RequiredType As Ark.ContentPack.Types
-		  For Idx As Integer = 0 To Self.ViewSelector.LastSegmentIndex
-		    If Self.ViewSelector.SegmentAt(Idx).Selected Then
+		  For Idx As Integer = 0 To Self.ViewSelector.LastIndex
+		    If Self.ViewSelector.Segment(Idx).Selected Then
 		      Select Case Idx
 		      Case PageUniversal
 		        RequiredType = Ark.ContentPack.Types.Universal
@@ -421,20 +424,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events ViewSelector
-	#tag Event
-		Sub Pressed(segmentIndex as integer)
-		  #Pragma Unused SegmentIndex
-		  
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Self.mOffset = 0
-		  Self.BuildCheckboxes()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ModCheckbox
 	#tag Event
 		Sub Action(index as Integer)
@@ -471,6 +460,23 @@ End
 		Sub Action()
 		  Self.mOffset = Self.mOffset - Self.ResultsPerPage
 		  Self.BuildCheckboxes
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ViewSelector
+	#tag Event
+		Sub Change()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.mOffset = 0
+		  Self.BuildCheckboxes()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Segment(0).Selected = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

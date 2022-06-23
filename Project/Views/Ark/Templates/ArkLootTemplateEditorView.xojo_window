@@ -50,30 +50,6 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       Value           =   0
       Visible         =   True
       Width           =   740
-      BeginDesktopSegmentedButton DesktopSegmentedButton MapSelector
-         Enabled         =   True
-         Height          =   24
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rGenesis\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse\rValguero\n\nFalse\rCrystal Isles\n\nFalse"
-         SelectionStyle  =   1
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   61
-         Transparent     =   False
-         Visible         =   True
-         Width           =   660
-      End
       Begin Label LockExplanationLabel
          AutoDeactivate  =   True
          Bold            =   False
@@ -589,7 +565,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   "#ColumnDescription"
-         Height          =   399
+         Height          =   401
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -615,7 +591,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   105
+         Top             =   103
          Transparent     =   True
          TypeaheadColumn =   1
          Underline       =   False
@@ -685,6 +661,36 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+      Begin BeaconSegmentedControl MapSelector
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowMultipleSelection=   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Enabled         =   True
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   ""
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   3
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   61
+         Transparent     =   True
+         Visible         =   True
+         Width           =   700
+      End
    End
    Begin OmniBar TemplateToolbar
       Alignment       =   0
@@ -741,18 +747,13 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.MapSelector.RemoveAllSegments
+		  Self.MapSelector.LockChangeEvent
+		  Self.MapSelector.RemoveAll
 		  Var AllMaps() As Ark.Map = Ark.Maps.All
 		  For Each Map As Ark.Map In AllMaps
-		    Var MapSegment As New Segment
-		    MapSegment.Caption = Map.Name
-		    MapSegment.Enabled = True
-		    Self.MapSelector.AddSegment(MapSegment)
+		    Self.MapSelector.Add(Map.Name)
 		  Next
-		  
-		  Self.MapSelector.Width = Self.MapSelector.SegmentCount * 110 // Because the design-time size is not being respected
-		  Self.MapSelector.ResizeCells
-		  Self.MinimumWidth = Self.MapSelector.Width + 40
+		  Self.MapSelector.UnlockChangeEvent
 		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent
@@ -933,7 +934,7 @@ End
 		  Var Maps() As Ark.Map
 		  Var AllMaps() As Ark.Map = Ark.Maps.All
 		  For Idx As Integer = 0 To Self.MapSelector.SegmentCount - 1
-		    Var Cell As Segment = Self.MapSelector.SegmentAt(Idx)
+		    Var Cell As BeaconSegment = Self.MapSelector.Segment(Idx)
 		    If Not Cell.Selected Then
 		      Continue
 		    End If
@@ -1096,7 +1097,7 @@ End
 		  Var Mask As UInt64 = Preferences.LastPresetMapFilter
 		  Var AllMaps() As Ark.Map = Ark.Maps.All
 		  For Idx As Integer = 0 To AllMaps.LastIndex
-		    Self.MapSelector.SegmentAt(Idx).Selected = (Mask And AllMaps(Idx).Mask) = AllMaps(Idx).Mask
+		    Self.MapSelector.Segment(Idx).Selected = (Mask And AllMaps(Idx).Mask) = AllMaps(Idx).Mask
 		  Next
 		  
 		  Var Maps() As Ark.Map = Self.FilteredMaps()
@@ -1245,29 +1246,6 @@ End
 		  If (ModifiersTab Is Nil) = False Then
 		    ModifiersTab.Toggled = Me.SelectedPanelIndex = Self.PageModifiers
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MapSelector
-	#tag Event
-		Sub Pressed(segmentIndex as integer)
-		  #Pragma Unused segmentIndex
-		  
-		  If Self.mUpdating = True Then
-		    Return
-		  End If
-		  
-		  Self.mUpdating = True
-		  
-		  Var Maps() As Ark.Map = Self.FilteredMaps
-		  Preferences.LastPresetMapFilter = Maps.Mask
-		  
-		  For I As Integer = ContentsList.RowCount - 1 DownTo 0
-		    Var Entry As Ark.LootTemplateEntry = ContentsList.RowTagAt(I)
-		    Self.PutEntryInRow(Entry, I, Maps, ContentsList.Selected(I))
-		  Next
-		  
-		  Self.mUpdating = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1675,6 +1653,27 @@ End
 	#tag Event
 		Sub DoubleClick()
 		  Self.ShowModifierEditor(True)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapSelector
+	#tag Event
+		Sub Change()
+		  If Self.mUpdating = True Then
+		    Return
+		  End If
+		  
+		  Self.mUpdating = True
+		  
+		  Var Maps() As Ark.Map = Self.FilteredMaps
+		  Preferences.LastPresetMapFilter = Maps.Mask
+		  
+		  For I As Integer = ContentsList.RowCount - 1 DownTo 0
+		    Var Entry As Ark.LootTemplateEntry = ContentsList.RowTagAt(I)
+		    Self.PutEntryInRow(Entry, I, Maps, ContentsList.Selected(I))
+		  Next
+		  
+		  Self.mUpdating = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

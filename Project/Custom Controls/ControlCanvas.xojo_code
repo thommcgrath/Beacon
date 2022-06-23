@@ -212,9 +212,8 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		Protected Function Highlighted() As Boolean
 		  Var Highlighted As Boolean = True
 		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
-		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
-		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
-		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
+		    Var Win As NSWindowMBS = Self.NSViewMBS.Window
+		    Highlighted = Win.isKeyWindow Or Win.isMainWindow
 		  #endif
 		  Return Highlighted
 		End Function
