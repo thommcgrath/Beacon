@@ -817,7 +817,7 @@ Begin BeaconDialog RegisterModDialog
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   134
+         Top             =   168
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -849,7 +849,7 @@ Begin BeaconDialog RegisterModDialog
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   134
+         Top             =   168
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -881,12 +881,126 @@ Begin BeaconDialog RegisterModDialog
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   134
+         Top             =   168
          Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
          Width           =   296
+      End
+      Begin UITweaks.ResizedTextField NameWorkshopField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   "123456789"
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   184
+      End
+      Begin UITweaks.ResizedLabel NameWorkshopLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   7
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Workshop ID:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   100
+      End
+      Begin UITweaks.ResizedLabel NameWorkshopOptionalLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   328
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   8
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "(Optional)"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   172
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
@@ -914,6 +1028,10 @@ End
 		    Self.Height = Self.HeightIntro
 		    Self.MaximumHeight = Self.HeightIntro
 		  End If
+		  
+		  Self.NameWorkshopLabel.SizeToFit
+		  Self.NameWorkshopField.Left = Self.NameWorkshopLabel.Right + 12
+		  Self.NameWorkshopField.Width = Self.NameWorkshopOptionalLabel.Left - (12 + Self.NameWorkshopField.Left)
 		End Sub
 	#tag EndEvent
 
@@ -1023,7 +1141,7 @@ End
 	#tag Constant, Name = HeightIntro, Type = Double, Dynamic = False, Default = \"196", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightName, Type = Double, Dynamic = False, Default = \"174", Scope = Private
+	#tag Constant, Name = HeightName, Type = Double, Dynamic = False, Default = \"208", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageConfirm, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -1157,7 +1275,18 @@ End
 #tag Events NameActionButton
 	#tag Event
 		Sub Action()
-		  Var ContentPack As Ark.ContentPack = Ark.DataSource.SharedInstance.CreateLocalContentPack(Self.NameInputField.Text.Trim)
+		  Var ModName As String = Self.NameInputField.Text.Trim
+		  If ModName.IsEmpty Then
+		    Self.ShowAlert("Your mod should have a name", "It doesn't really make sense not to have one, does it?")
+		    Return
+		  End If
+		  
+		  Var WorkshopID As NullableString = Self.NameWorkshopField.Text.Trim
+		  If WorkshopID.IsEmpty Then
+		    WorkshopID = Nil
+		  End If
+		  
+		  Var ContentPack As Ark.ContentPack = Ark.DataSource.SharedInstance.CreateLocalContentPack(ModName, WorkshopID)
 		  Self.mModUUID = ContentPack.UUID
 		  
 		  If Self.NameShowInstructionsCheck.Value Then

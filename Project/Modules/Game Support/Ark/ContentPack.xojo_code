@@ -7,7 +7,7 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(UUID As String, Name As String, ConsoleSafe As Boolean, DefaultEnabled As Boolean, IsLocal As Boolean, WorkshopID As NullableDouble = Nil)
+		Sub Constructor(UUID As String, Name As String, ConsoleSafe As Boolean, DefaultEnabled As Boolean, IsLocal As Boolean, WorkshopID As NullableString = Nil)
 		  Self.mUUID = UUID
 		  Self.mName = Name.Trim
 		  Self.mConsoleSafe = ConsoleSafe
@@ -70,7 +70,7 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function WorkshopID() As NullableDouble
+		Function WorkshopID() As NullableString
 		  Return Self.mWorkshopID
 		End Function
 	#tag EndMethod
@@ -97,7 +97,7 @@ Protected Class ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWorkshopID As NullableDouble
+		Private mWorkshopID As NullableString
 	#tag EndProperty
 
 

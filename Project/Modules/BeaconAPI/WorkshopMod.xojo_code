@@ -55,7 +55,9 @@ Protected Class WorkshopMod
 		  Self.mName = Source.Value("name")
 		  Self.mResourceURL = Source.Value("resource_url")
 		  Self.mWorkshopURL = Source.Value("workshop_url")
-		  Self.mWorkshopID = Source.Value("workshop_id").UInt32Value
+		  If IsNull(Source.Value("workshop_id")) = False Then
+		    Self.mWorkshopID = Source.Value("workshop_id").StringValue
+		  End If
 		  If Source.Value("pull_url") <> Nil Then
 		    Self.mPullURL = Source.Value("pull_url")
 		  End If
@@ -108,13 +110,13 @@ Protected Class WorkshopMod
 		  ModInfo.mConfirmed = True
 		  ModInfo.mModID = Ark.UserContentPackUUID
 		  ModInfo.mName = Ark.UserContentPackName
-		  ModInfo.mWorkshopID = CRC_32OfStrMBS(ModInfo.mModID)
+		  ModInfo.mWorkshopID = Nil
 		  Return ModInfo
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function WorkshopID() As UInt32
+		Function WorkshopID() As NullableString
 		  Return Self.mWorkshopID
 		End Function
 	#tag EndMethod
@@ -163,7 +165,7 @@ Protected Class WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWorkshopID As UInt32
+		Private mWorkshopID As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

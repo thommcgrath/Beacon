@@ -337,8 +337,8 @@ End
 		    Else
 		      If Mods(Idx).IsLocalMod Then
 		        LocalUUIDs.Add(Mods(Idx).ModID)
-		      Else
-		        WorkshopIDs.Add(Mods(Idx).WorkshopID.ToString(Locale.Raw, "0"))
+		      ElseIf (Mods(Idx).WorkshopID Is Nil) = False Then
+		        WorkshopIDs.Add(Mods(Idx).WorkshopID)
 		      End If
 		    End If
 		  Next Idx
