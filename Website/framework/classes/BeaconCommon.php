@@ -16,7 +16,14 @@ abstract class BeaconCommon {
 	public static function StartSession() {
 		if (session_status() == PHP_SESSION_NONE) {
 			session_name('beacon');
-			session_set_cookie_params(0, '/', '', true, true);
+			session_set_cookie_params([
+				'lifetime' => 3600,
+				'path' => '/',
+				'domain' => '',
+				'secure' => true,
+				'httponly' => true,
+				'samesite' => 'Strict'
+			]);
 			session_start();
 		}
 	}
