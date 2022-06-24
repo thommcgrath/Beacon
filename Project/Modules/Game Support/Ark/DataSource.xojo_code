@@ -24,7 +24,7 @@ Inherits Beacon.DataSource
 		    Self.SQLExecute("CREATE TABLE tags_" + Category + " (object_id TEXT COLLATE NOCASE NOT NULL REFERENCES " + Category + "(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, tag TEXT COLLATE NOCASE NOT NULL, PRIMARY KEY (object_id, tag));")
 		  Next Category
 		  
-		  Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5);", Ark.UserContentPackUUID, Ark.UserContentPackName, True, True, True)
+		  Self.ReplaceUserBlueprints()
 		End Sub
 	#tag EndEvent
 
@@ -103,7 +103,7 @@ Inherits Beacon.DataSource
 		  If UserPacks.Count > 0 Then
 		    Var Packs As New Beacon.StringList()
 		    For Each Pack As Ark.ContentPack In UserPacks
-		      If Pack.IsLocal = False Then
+		      If Pack.IsLocal = False Or Pack.UUID = Ark.UserContentPackUUID Then
 		        Continue
 		      End If
 		      
@@ -646,7 +646,9 @@ Inherits Beacon.DataSource
 		          Var ContentPackUUID As String = Dict.Value("mod_id").StringValue
 		          KeepPacks.Append(ContentPackUUID)
 		          RemovePacks.Remove(ContentPackUUID)
-		          Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id"), False, False, True)
+		          If ContentPackUUID <> Ark.UserContentPackUUID Then
+		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id"), False, False, True)
+		          End If
 		        End If
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName)
@@ -724,6 +726,15 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub ObtainLock()
 		  mLock.Enter
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackUUID)
+		  If Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Then
+		    Self.ReplaceUserBlueprints()
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -905,6 +916,10 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function DeleteContentPack(ContentPackUUID As String) As Boolean
+		  If ContentPackUUID = Ark.UserContentPackUUID Then
+		    Return False
+		  End If
+		  
 		  Self.BeginTransaction()
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND is_local = 1;", ContentPackUUID)
@@ -1290,7 +1305,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPackWithWorkshopID(WorkshopID As Integer) As Ark.ContentPack
+		Function GetContentPackWithWorkshopID(WorkshopID As UInt32) As Ark.ContentPack
 		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs WHERE workshop_id IS NOT NULL AND workshop_id = ?1;", WorkshopID)
 		  If Results.RowCount = 1 Then
 		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableDouble.FromVariant(Results.Column("workshop_id").Value))
@@ -2177,6 +2192,15 @@ Inherits Beacon.DataSource
 		  End If
 		  Return Self.mOfficialPlayerLevelData
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ReplaceUserBlueprints()
+		  Var WorkshopID As UInt32 = CRC_32OfStrMBS(Ark.UserContentPackUUID)
+		  Self.BeginTransaction()
+		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, workshop_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Ark.UserContentPackUUID, WorkshopID, Ark.UserContentPackName, True, True, True)
+		  Self.CommitTransaction()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
