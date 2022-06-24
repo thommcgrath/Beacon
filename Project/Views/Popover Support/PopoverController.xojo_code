@@ -7,10 +7,10 @@ Protected Class PopoverController
 		  If Container IsA PopoverContainer Then
 		    Var L, R, T, B As Integer
 		    PopoverContainer(Container).GetPadding(L, T, R, B)
-		    Self.mPaddingLeft = L
-		    Self.mPaddingTop = T
-		    Self.mPaddingRight = R
-		    Self.mPaddingBottom = B
+		    Self.mPaddingLeft = 20 - L
+		    Self.mPaddingTop = 20 - T
+		    Self.mPaddingRight = 20 - R
+		    Self.mPaddingBottom = 20 - B
 		  Else
 		    Var MinX, MinY As Integer
 		    Var ContainerBound As Integer = Container.ControlCount - 1
@@ -61,7 +61,7 @@ Protected Class PopoverController
 		    If NSPopoverMBS.Available Then
 		      Var ViewController As New NSViewControllerMBS
 		      ViewController.View = Instance.NSViewMBS
-		      ViewController.View.SetBoundsOrigin(New NSPointMBS(Self.mPaddingLeft * -1, Self.mPaddingTop)) // No idea why the X should be negative here
+		      ViewController.View.SetBoundsOrigin(New NSPointMBS(Self.mPaddingLeft * -1, Self.mPaddingBottom)) // No idea why the X should be negative here
 		      
 		      Self.mPopover = New BeaconPopover
 		      Self.mPopover.ContentViewController = ViewController
