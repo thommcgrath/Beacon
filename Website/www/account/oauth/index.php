@@ -13,7 +13,12 @@ if (BeaconCommon::HasAllKeys($_GET, 'requestid', 'provider', 'pubkey') === false
 	exit;
 }
 
-BeaconCommon::StartSession();
+if (BeaconCommon::StartSession() === false) {
+	http_response_code(500);
+	echo '<h1>Error</h1>';
+	echo '<p>Session did not start</p>';
+	exit;
+}
 
 $provider = strtolower($_GET['provider']);
 $public_key = BeaconEncryption::PublicKeyToPEM($_GET['pubkey']);

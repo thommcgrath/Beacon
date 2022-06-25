@@ -19,7 +19,12 @@ if (!BeaconCommon::HasAllKeys($_GET, 'code', 'state')) {
 	exit;
 }
 
-BeaconCommon::StartSession();
+if (BeaconCommon::StartSession() === false) {
+	http_response_code(500);
+	echo '<h1>Error</h1>';
+	echo '<p>Session was not started</p>';
+	exit;
+}
 
 if (!BeaconCommon::HasAllKeys($_SESSION, 'OAUTH_REQUEST_ID', 'OAUTH_AUTH_STATE', 'OAUTH_PROVIDER', 'OAUTH_PUBLIC_KEY')) {
 	http_response_code(400);

@@ -14,7 +14,8 @@ abstract class BeaconCommon {
 	}
 	
 	public static function StartSession() {
-		if (session_status() == PHP_SESSION_NONE) {
+		switch (session_status()) {
+		case PHP_SESSION_NONE:
 			session_name('beacon');
 			session_set_cookie_params([
 				'lifetime' => 3600,
@@ -22,9 +23,13 @@ abstract class BeaconCommon {
 				'domain' => '',
 				'secure' => true,
 				'httponly' => true,
-				'samesite' => 'Strict'
+				'samesite' => 'Lax'
 			]);
-			session_start();
+			return session_start();
+		case PHP_SESSION_ACTIVE:
+			return true;
+		default:
+			return false;
 		}
 	}
 	
