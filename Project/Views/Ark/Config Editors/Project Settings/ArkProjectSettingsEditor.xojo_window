@@ -251,7 +251,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Text            =   "Windows Store Compatibility:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   ""
+      Tooltip         =   "#HelpUWPMode"
       Top             =   450
       Transparent     =   False
       Underline       =   False
@@ -283,7 +283,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#HelpUWPMode"
       Top             =   450
       Transparent     =   False
       Underline       =   False
@@ -318,7 +318,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Text            =   "Force Console Compatibility:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   ""
+      Tooltip         =   "#HelpConsoleMode"
       Top             =   418
       Transparent     =   False
       Underline       =   False
@@ -353,7 +353,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Text            =   "Compress Project:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   ""
+      Tooltip         =   "#HelpCompressed"
       Top             =   482
       Transparent     =   False
       Underline       =   False
@@ -388,7 +388,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Text            =   "Allow UCS-2 Files:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   ""
+      Tooltip         =   "#HelpAllowUCS"
       Top             =   514
       Transparent     =   False
       Underline       =   False
@@ -417,7 +417,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#HelpConsoleMode"
       Top             =   418
       Transparent     =   True
       Visible         =   True
@@ -445,7 +445,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#HelpCompressed"
       Top             =   482
       Transparent     =   True
       Visible         =   True
@@ -473,7 +473,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#HelpAllowUCS"
       Top             =   514
       Transparent     =   True
       Visible         =   True
@@ -509,13 +509,16 @@ End
 	#tag EndMethod
 
 
-	#tag Constant, Name = ModColumnConsoleSafe, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = HelpAllowUCS, Type = String, Dynamic = False, Default = \"When two-byte characters are used in the server name or message of the day\x2C Ark needs the ini file formatted differently\x2C but this different format is not compatible with most text editors. When this setting is off\x2C Beacon will remove two-byte characters\x2C keeping the ini files compatible with all text editors.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ModColumnEnabled, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag Constant, Name = HelpCompressed, Type = String, Dynamic = False, Default = \"When enabled\x2C the project will be compressed to save disk space. Turn this setting off to save the project as a plain text JSON file.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ModColumnName, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = HelpConsoleMode, Type = String, Dynamic = False, Default = \"Turns off any Steam-exclusive mods so their contents are not accidentally used in the project. Custom mods are not affected.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HelpUWPMode, Type = String, Dynamic = False, Default = \"Use the [ShooterGameMode_Options] header instead of [/script/shootergame.shootergamemode] as needed by the Windows Store version of Ark.", Scope = Private
 	#tag EndConstant
 
 
