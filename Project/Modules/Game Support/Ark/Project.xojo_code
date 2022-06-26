@@ -49,6 +49,7 @@ Inherits Beacon.Project
 		  PlainData.Value("IsConsole") = Self.ConsoleSafe
 		  PlainData.Value("Map") = Self.MapMask
 		  PlainData.Value("ModSelections") = Self.mContentPacks
+		  PlainData.Value("UWPCompatibilityMode") = CType(Self.UWPMode, Integer)
 		End Sub
 	#tag EndEvent
 
@@ -139,6 +140,7 @@ Inherits Beacon.Project
 		  
 		  Self.AllowUCS2 = PlainData.Lookup("AllowUCS", Self.AllowUCS2).BooleanValue
 		  Self.ConsoleSafe = PlainData.Lookup("IsConsole", Self.ConsoleSafe).BooleanValue
+		  Self.UWPMode = CType(PlainData.Lookup("UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
 		  
 		  If PlainData.HasKey("Map") Then
 		    Self.MapMask = PlainData.Value("Map")
@@ -928,6 +930,21 @@ Inherits Beacon.Project
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UWPMode() As Ark.Project.UWPCompatibilityModes
+		  Return Self.mUWPMode
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UWPMode(Assigns Value As Ark.Project.UWPCompatibilityModes)
+		  If Self.mUWPMode <> Value Then
+		    Self.mUWPMode = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h1
 		Protected mAllowUCS2 As Boolean
@@ -944,6 +961,17 @@ Inherits Beacon.Project
 	#tag Property, Flags = &h1
 		Protected mMapMask As UInt64
 	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mUWPMode As Ark.Project.UWPCompatibilityModes
+	#tag EndProperty
+
+
+	#tag Enum, Name = UWPCompatibilityModes, Type = Integer, Flags = &h0
+		Automatic
+		  Never
+		Always
+	#tag EndEnum
 
 
 	#tag ViewBehavior

@@ -33,7 +33,7 @@ Inherits Ark.ConfigGroup
 		  #Pragma Unused Profile
 		  
 		  Var Organizer As New Ark.ConfigOrganizer(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, Self.CleanupContent(Self.mGameUserSettingsIniContent, Ark.HeaderServerSettings, Profile))
-		  Organizer.Add(Ark.ConfigFileGame, Ark.HeaderShooterGame, Self.CleanupContent(Self.mGameIniContent, Ark.HeaderShooterGame, Profile))
+		  Organizer.Add(Ark.ConfigFileGame, Ark.HeaderShooterGame, Self.CleanupContent(Self.mGameIniContent.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame), Ark.HeaderShooterGame, Profile))
 		  
 		  Var PotentialCommandLineValues() As Ark.ConfigValue = Organizer.FilteredValues(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings)
 		  

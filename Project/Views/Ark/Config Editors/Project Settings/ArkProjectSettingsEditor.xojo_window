@@ -54,7 +54,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -89,7 +89,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Title:"
@@ -116,7 +116,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   343
+      Height          =   311
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -137,7 +137,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   False
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -173,7 +173,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Description:"
@@ -187,105 +187,6 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Underline       =   False
       Visible         =   True
       Width           =   100
-   End
-   Begin CheckBox UncompressedCheckbox
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Disable project compression"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   "Project compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   132
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      State           =   0
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   482
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   476
-   End
-   Begin CheckBox AllowUCSCheckbox
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Generate UCS-2 files when necessary"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   "Some letters and symbols cannot be displayed using a normal ini file. UCS-2 files may be used instead, but are more difficult to work with and may display incorrectly in some text editors and host control panels."
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   132
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      State           =   0
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   514
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   476
-   End
-   Begin CheckBox ConsoleModeCheck
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "Maintain console compatibility"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   132
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   "When enabled, mods that are not safe for consoles will be forced off."
-      Top             =   450
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      VisualState     =   0
-      Width           =   476
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
@@ -313,7 +214,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   12
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -321,6 +222,262 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Transparent     =   True
       Visible         =   True
       Width           =   628
+   End
+   Begin UITweaks.ResizedLabel UWPModeLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Windows Store Compatibility:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   450
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   249
+   End
+   Begin UITweaks.ResizedPopupMenu UWPModeMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Automatic\nNever\nAlways"
+      Italic          =   False
+      Left            =   393
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   450
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   132
+   End
+   Begin Label ConsoleModeLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Force Console Compatibility:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   418
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   249
+   End
+   Begin Label CompressedLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Compress Project:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   482
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   249
+   End
+   Begin Label AllowUCSLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Allow UCS-2 Files:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   514
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   249
+   End
+   Begin SwitchControl ConsoleModeSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   393
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   418
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin SwitchControl CompressedSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   393
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   482
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin SwitchControl AllowUCSSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   393
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   514
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
    End
 End
 #tag EndWindow
@@ -330,9 +487,17 @@ End
 		Sub SetupUI()
 		  Self.TitleField.Text = Self.Project.Title
 		  Self.DescriptionArea.Text = Self.Project.Description
-		  Self.UncompressedCheckbox.Value = Not Self.Project.UseCompression
-		  Self.AllowUCSCheckbox.Value = Self.Project.AllowUCS2
-		  Self.ConsoleModeCheck.Value = Self.Project.ConsoleSafe
+		  Self.CompressedSwitch.Value(False) = Self.Project.UseCompression
+		  Self.AllowUCSSwitch.Value(False) = Self.Project.AllowUCS2
+		  Self.ConsoleModeSwitch.Value(False) = Self.Project.ConsoleSafe
+		  Self.UWPModeMenu.SelectedRowIndex = CType(Self.Project.UWPMode, Integer)
+		  
+		  BeaconUI.SizeToFit(Self.ConsoleModeLabel, Self.UWPModeLabel, Self.CompressedLabel, Self.AllowUCSLabel)
+		  Var ControlLeft As Integer = Self.ConsoleModeLabel.Right + 12
+		  Self.ConsoleModeSwitch.Left = ControlLeft
+		  Self.UWPModeMenu.Left = ControlLeft
+		  Self.CompressedSwitch.Left = ControlLeft
+		  Self.AllowUCSSwitch.Left = ControlLeft
 		End Sub
 	#tag EndEvent
 
@@ -384,35 +549,28 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events UncompressedCheckbox
+#tag Events ConfigToolbar
 	#tag Event
-		Sub Action()
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UWPModeMenu
+	#tag Event
+		Sub Change()
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.UseCompression = Not Me.Value
+		  Self.Project.UWPMode = CType(Me.SelectedRowIndex, Ark.Project.UWPCompatibilityModes)
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AllowUCSCheckbox
-	#tag Event
-		Sub Action()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Self.Project.AllowUCS2 = Me.Value
-		  Self.Changed = True
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ConsoleModeCheck
+#tag Events ConsoleModeSwitch
 	#tag Event
 		Sub Action()
 		  If Self.SettingUp Then
@@ -436,10 +594,31 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ConfigToolbar
+#tag Events CompressedSwitch
 	#tag Event
-		Sub Open()
-		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Project.UseCompression = Me.Value
+		  Self.Changed = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AllowUCSSwitch
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Project.AllowUCS2 = Me.Value
+		  Self.Changed = True
+		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

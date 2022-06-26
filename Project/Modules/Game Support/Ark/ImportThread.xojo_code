@@ -36,6 +36,12 @@ Inherits Beacon.Thread
 		  // Fix smart quotes
 		  Content = Content.SanitizeIni
 		  
+		  // The UWP/Windows Store version uses Ark.HeaderShooterGameUWP instead of Ark.HeaderShooterGame because it's inbred
+		  If Content.IndexOf("[" + Ark.HeaderShooterGameUWP + "]") > -1 Then
+		    Content = Content.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
+		    Self.mData.GameIniContent = Self.mData.GameIniContent.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
+		  End If
+		  
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
 		  

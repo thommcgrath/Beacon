@@ -36,7 +36,7 @@ Inherits Global.Thread
 		  Var Error As RuntimeException
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameIni) = Self.FlagCreateGameIni Then
-		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Error)
+		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Project.UWPMode, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -47,7 +47,7 @@ Inherits Global.Thread
 		  End If
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameUserSettingsIni) = Self.FlagCreateGameUserSettingsIni Then
-		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Error)
+		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Project.UWPMode, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -183,10 +183,10 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, Format As Ark.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, Format As Ark.Rewriter.EncodingFormat, UWPMode As Ark.Project.UWPCompatibilityModes, ByRef Error As RuntimeException) As String
 		  // This version will not contain the [Beacon] sections in the output
 		  Try
-		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, "", "", Format, Error)
+		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, "", "", Format, UWPMode, Error)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try
@@ -194,12 +194,21 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, ProjectUUID As String, LegacyTrustKey As String, Format As Ark.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, ProjectUUID As String, LegacyTrustKey As String, Format As Ark.Rewriter.EncodingFormat, UWPMode As Ark.Project.UWPCompatibilityModes, ByRef Error As RuntimeException) As String
 		  // This is the new master method
 		  
 		  Try
 		    InitialContent = InitialContent.GuessEncoding.SanitizeIni
 		    Var DesiredLineEnding As String = InitialContent.DetectLineEnding
+		    
+		    Var ConvertToUWP As Boolean
+		    Select Case UWPMode
+		    Case Ark.Project.UWPCompatibilityModes.Automatic
+		      ConvertToUWP = InitialContent.IndexOf("[" + Ark.HeaderShooterGameUWP + "]") > -1
+		    Case Ark.Project.UWPCompatibilityModes.Always
+		      ConvertToUWP = True
+		    End Select
+		    InitialContent = InitialContent.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
 		    
 		    // Get the initial values into an organizer
 		    Var ParsedValues As New Ark.ConfigOrganizer(File, DefaultHeader, InitialContent)
@@ -384,7 +393,11 @@ Inherits Global.Thread
 		    // Remove excess junk that sneaks in from who knows where.
 		    FinalOrganizer.Remove(Ark.ConfigFileGameUserSettings, "/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C")
 		    
-		    Return ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
+		    Var Output As String = ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
+		    If ConvertToUWP Then
+		      Output = Output.ReplaceAll(Ark.HeaderShooterGame, Ark.HeaderShooterGameUWP)
+		    End If
+		    Return Output
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try
@@ -395,7 +408,7 @@ Inherits Global.Thread
 		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Project As Ark.Project, Identity As Beacon.Identity, Profile As Ark.ServerProfile, Format As Ark.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
 		  Try
 		    Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Identity, Profile)
-		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Error)
+		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Project.UWPMode, Error)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try
