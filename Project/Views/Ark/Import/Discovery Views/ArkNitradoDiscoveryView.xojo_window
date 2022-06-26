@@ -694,7 +694,7 @@ End
 		Sub AuthenticationError(Reason As String)
 		  #Pragma Unused Reason
 		  
-		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Beacon is unable to communicate with its server", "Check Beacon's ""System Status"" page to make sure this isn't a problem with Beacon. It Beacon is working normally, check your internet connection.", "System Status", "Cancel", "Help")
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Beacon is unable to communicate with its server", "Check Beacon's ""System Status"" page to make sure this isn't a problem with Beacon. If Beacon is working normally, check your internet connection.", "System Status", "Cancel", "Help")
 		  Select Case Choice
 		  Case BeaconUI.ConfirmResponses.Action
 		    System.GotoURL("https://status.usebeacon.app/")
