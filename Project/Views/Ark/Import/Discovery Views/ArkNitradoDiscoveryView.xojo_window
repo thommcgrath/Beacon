@@ -369,6 +369,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
       End
    End
    Begin Beacon.OAuth2Client AuthClient
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
