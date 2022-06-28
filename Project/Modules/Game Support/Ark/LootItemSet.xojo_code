@@ -108,11 +108,11 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  
 		  Var Children() As Dictionary
 		  Try
-		    If Dict.HasKey("entries") Then
+		    If Dict.HasKey("entries") And IsNull(Dict.Value("entries")) = False Then
 		      Children = Dict.Value("entries").DictionaryArrayValue
-		    ElseIf Dict.HasKey("ItemEntries") Then
+		    ElseIf Dict.HasKey("ItemEntries") And IsNull(Dict.Value("ItemEntries")) = False Then
 		      Children = Dict.Value("ItemEntries").DictionaryArrayValue
-		    ElseIf Dict.HasKey("Items") Then
+		    ElseIf Dict.HasKey("Items") And IsNull(Dict.Value("Items")) = False Then
 		      Children = Dict.Value("Items").DictionaryArrayValue
 		    End If
 		  Catch Err As RuntimeException
