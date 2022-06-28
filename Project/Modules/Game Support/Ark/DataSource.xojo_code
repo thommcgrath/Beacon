@@ -103,11 +103,11 @@ Inherits Beacon.DataSource
 		  If UserPacks.Count > 0 Then
 		    Var Packs As New Beacon.StringList()
 		    For Each Pack As Ark.ContentPack In UserPacks
+		      Packs.Append(Pack.UUID)
+		      
 		      If Pack.IsLocal = False Or Pack.UUID = Ark.UserContentPackUUID Then
 		        Continue
 		      End If
-		      
-		      Packs.Append(Pack.UUID)
 		      
 		      Var Dict As New Dictionary
 		      Dict.Value("mod_id") = Pack.UUID
@@ -120,45 +120,48 @@ Inherits Beacon.DataSource
 		      Packed.Add(Dict)
 		    Next
 		    
-		    Var Engrams() As Ark.Engram = Self.GetEngrams("", Packs, "")
-		    For Each Engram As Ark.Engram In Engrams
-		      Var Dict As Dictionary = Engram.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
+		    // Check this, because an empty array will select *everything*
+		    If Packs.Count > 0 Then
+		      Var Engrams() As Ark.Engram = Self.GetEngrams("", Packs, "")
+		      For Each Engram As Ark.Engram In Engrams
+		        Var Dict As Dictionary = Engram.Pack
+		        If Dict Is Nil Then
+		          Continue
+		        End If
+		        
+		        Packed.Add(Dict)
+		      Next
 		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var Creatures() As Ark.Creature = Self.GetCreatures("", Packs, "")
-		    For Each Creature As Ark.Creature In Creatures
-		      Var Dict As Dictionary = Creature.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
+		      Var Creatures() As Ark.Creature = Self.GetCreatures("", Packs, "")
+		      For Each Creature As Ark.Creature In Creatures
+		        Var Dict As Dictionary = Creature.Pack
+		        If Dict Is Nil Then
+		          Continue
+		        End If
+		        
+		        Packed.Add(Dict)
+		      Next
 		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var SpawnPoints() As Ark.SpawnPoint = Self.GetSpawnPoints("", Packs, "")
-		    For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
-		      Var Dict As Dictionary = SpawnPoint.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
+		      Var SpawnPoints() As Ark.SpawnPoint = Self.GetSpawnPoints("", Packs, "")
+		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
+		        Var Dict As Dictionary = SpawnPoint.Pack
+		        If Dict Is Nil Then
+		          Continue
+		        End If
+		        
+		        Packed.Add(Dict)
+		      Next
 		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var Containers() As Ark.LootContainer = Self.GetLootContainers("", Packs, "")
-		    For Each Container As Ark.LootContainer In Containers
-		      Var Dict As Dictionary = Container.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
-		      
-		      Packed.Add(Dict)
-		    Next
+		      Var Containers() As Ark.LootContainer = Self.GetLootContainers("", Packs, "")
+		      For Each Container As Ark.LootContainer In Containers
+		        Var Dict As Dictionary = Container.Pack
+		        If Dict Is Nil Then
+		          Continue
+		        End If
+		        
+		        Packed.Add(Dict)
+		      Next
+		    End If
 		  End If
 		  
 		  If Packed.Count > 0 Then
@@ -699,10 +702,12 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub ImportTruncate()
 		  // Icons and content packs must be deleted last
-		  Var TableNames() As String = Array("color_sets", "colors", "config_help", "content_packs", "creatures", "engrams", "events", "game_variables", "ini_options", "loot_containers", "maps", "spawn_points", "loot_icons", "content_packs")
+		  Var TableNames() As String = Array("color_sets", "colors", "config_help", "creatures", "engrams", "events", "game_variables", "ini_options", "loot_containers", "maps", "spawn_points", "loot_icons")
 		  For Each TableName As String In TableNames
 		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(TableName) + ";")
 		  Next TableName
+		  
+		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id != $1;", Ark.UserContentPackUUID)
 		End Sub
 	#tag EndEvent
 
