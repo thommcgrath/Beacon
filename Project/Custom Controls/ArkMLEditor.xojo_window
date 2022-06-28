@@ -232,7 +232,7 @@ Begin ContainerControl ArkMLEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   1
       Transparent     =   True
       Visible         =   True
       Width           =   1
