@@ -1,23 +1,23 @@
 #tag Module
 Protected Module Language
 	#tag Method, Flags = &h0
-		Function EnglishOxfordList(Extends Items() As String) As String
-		  Return EnglishOxfordList(Items)
+		Function EnglishOxfordList(Extends Items() As String, Conjunction As String = "and") As String
+		  Return EnglishOxfordList(Items, Conjunction)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EnglishOxfordList(Items() As String) As String
+		Protected Function EnglishOxfordList(Items() As String, Conjunction As String = "and") As String
 		  If Items.LastIndex = -1 Then
 		    Return ""
 		  ElseIf Items.LastIndex = 0 Then
 		    Return Items(0)
 		  ElseIf Items.LastIndex = 1 Then
-		    Return Items(0) + " and " + Items(1)
+		    Return Items(0) + " " + Conjunction + " " + Items(1)
 		  Else
 		    Var LastItem As String = Items(Items.LastIndex)
 		    Items.RemoveAt(Items.LastIndex)
-		    Var List As String = Items.Join(", ") + ", and " + LastItem
+		    Var List As String = Items.Join(", ") + ", " + Conjunction + " " + LastItem
 		    Items.Add(LastItem) // Gotta put it back
 		    Return List
 		  End If
