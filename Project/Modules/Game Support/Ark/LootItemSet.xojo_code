@@ -342,11 +342,19 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  If Dict.HasKey("ItemEntries") Then
 		    Children = Dict.Value("ItemEntries")
 		  End If
-		  For Each Child As Dictionary In Children
-		    Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.ImportFromConfig(Child, Multipliers, Difficulty, ContentPacks)
-		    If Entry <> Nil Then
-		      Set.Add(Entry)
-		    End If
+		  For Each Child As Variant In Children
+		    Try
+		      If IsNull(Child) Or (Child IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      
+		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.ImportFromConfig(Dictionary(Child), Multipliers, Difficulty, ContentPacks)
+		      If Entry <> Nil Then
+		        Set.Add(Entry)
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Loading item set from Beacon project")
+		    End Try
 		  Next
 		  
 		  If Dict.HasKey("MinNumItems") Then
