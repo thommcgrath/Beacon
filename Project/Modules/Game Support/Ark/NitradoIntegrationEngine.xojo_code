@@ -545,6 +545,12 @@ Inherits Ark.IntegrationEngine
 	#tag EndEvent
 
 	#tag Event
+		Sub OverrideUWPMode(ByRef UWPMode As Ark.Project.UWPCompatibilityModes)
+		  UWPMode = Ark.Project.UWPCompatibilityModes.Never
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadyToUpload()
 		  // Since the process is about to upload, we need to find the log file and determine how long to wait
 		  // First we need to look up the current time, since we cannot trust the user's clock

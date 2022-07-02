@@ -49,15 +49,18 @@ Inherits Beacon.IntegrationEngine
 		    Format = Ark.Rewriter.EncodingFormat.ASCII
 		  End If
 		  
+		  Var UWPMode As Ark.Project.UWPCompatibilityModes = Project.UWPMode
+		  RaiseEvent OverrideUWPMode(UWPMode)
+		  
 		  Var RewriteError As RuntimeException
 		  
-		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, If(Self.NukeEnabled = False, GameIniOriginal, ""), Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Project.UWPMode, RewriteError)
+		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, If(Self.NukeEnabled = False, GameIniOriginal, ""), Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.UUID, Project.LegacyTrustKey, Format, UWPMode, RewriteError)
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
-		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, If(Self.NukeEnabled = False, GameUserSettingsIniOriginal, ""), Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Project.UWPMode, RewriteError)
+		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, If(Self.NukeEnabled = False, GameUserSettingsIniOriginal, ""), Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.UUID, Project.LegacyTrustKey, Format, UWPMode, RewriteError)
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return
@@ -184,6 +187,10 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Hook, Flags = &h0
 		Event ApplySettings(Organizer As Ark.ConfigOrganizer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event OverrideUWPMode(ByRef UWPMode As Ark.Project.UWPCompatibilityModes)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
