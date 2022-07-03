@@ -518,7 +518,7 @@ End
 	#tag Constant, Name = HelpConsoleMode, Type = String, Dynamic = False, Default = \"Turns off any Steam-exclusive mods so their contents are not accidentally used in the project. Custom mods are not affected.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HelpUWPMode, Type = String, Dynamic = False, Default = \"Use the [ShooterGameMode_Options] header instead of [/script/shootergame.shootergamemode] as needed by the Windows Store version of Ark.", Scope = Private
+	#tag Constant, Name = HelpUWPMode, Type = String, Dynamic = False, Default = \"Use the [ShooterGameMode_Options] header needed by the Windows Store version of Ark in single player.", Scope = Private
 	#tag EndConstant
 
 
