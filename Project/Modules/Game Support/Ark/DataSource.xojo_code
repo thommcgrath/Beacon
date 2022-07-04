@@ -760,6 +760,22 @@ Inherits Beacon.DataSource
 
 
 	#tag Method, Flags = &h0
+		Function AdditionalSupportFiles() As Dictionary
+		  Var Files As Dictionary = Super.AdditionalSupportFiles
+		  If Files Is Nil Then
+		    Files = New Dictionary
+		  End If
+		  
+		  Var Blueprints As MemoryBlock = UserCloud.Read("/Ark/Blueprints.json")
+		  If (Blueprints Is Nil) = False And Blueprints.Size > 2 Then
+		    Files.Value("Blueprints.json") = Blueprints
+		  End If
+		  
+		  Return Files
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As Ark.Blueprint) As Boolean
 		  If Item Is Nil Then
 		    Return False

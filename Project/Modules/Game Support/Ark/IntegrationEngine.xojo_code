@@ -5,6 +5,10 @@ Inherits Beacon.IntegrationEngine
 		Sub Deploy(InitialServerState As Integer)
 		  Var Project As Ark.Project = Self.Project
 		  Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Self.Profile)
+		  If Organizer Is Nil Then
+		    Self.SetError("Could not generate new config data. Log files may have more info.")
+		    Return
+		  End If
 		  
 		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
 		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(Organizer)

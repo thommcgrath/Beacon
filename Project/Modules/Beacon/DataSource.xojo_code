@@ -1,6 +1,12 @@
 #tag Class
 Protected Class DataSource
 Implements NotificationKit.Receiver
+	#tag Method, Flags = &h0
+		Function AdditionalSupportFiles() As Dictionary
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub BeginTransaction()
 		  Self.ObtainLock()
