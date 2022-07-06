@@ -369,6 +369,9 @@ Protected Class IntegrationEngine
 		  
 		  // Give the implementor time to setup
 		  RaiseEvent Begin
+		  If Self.Finished Then
+		    Return
+		  End If
 		  
 		  // Start by querying the server
 		  If Self.SupportsStatus Then
@@ -386,9 +389,18 @@ Protected Class IntegrationEngine
 		  // Let the game-specific engine do its work
 		  RaiseEvent Deploy(InitialServerState)
 		  
+		  If Self.Finished Then
+		    Return
+		  End If
+		  
 		  // And start the server if it was already running
 		  If Self.SupportsRestarting And (InitialServerState = Self.StateRunning Or InitialServerState = Self.StateStarting) Then
 		    Self.StartServer()
+		  End If
+		  
+		  
+		  If Self.Finished Then
+		    Return
 		  End If
 		  
 		  Self.Log("Finished")
@@ -414,6 +426,10 @@ Protected Class IntegrationEngine
 		    If Self.Errored = False Then
 		      Self.SetError("Discovery implementation incomplete.")
 		    End If
+		    Return
+		  End If
+		  
+		  If Self.Finished Then
 		    Return
 		  End If
 		  
@@ -682,6 +698,10 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Wait(Controller As Beacon.TaskWaitController)
+		  If Self.Finished Then
+		    Return
+		  End If
+		  
 		  If Thread.Current = Nil Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wait cannot be called on the main thread."
@@ -705,6 +725,10 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Wait(Milliseconds As Double)
+		  If Self.Finished Then
+		    Return
+		  End If
+		  
 		  If Thread.Current = Nil Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wait cannot be called on the main thread."
