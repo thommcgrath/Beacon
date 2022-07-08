@@ -1198,7 +1198,7 @@ End
 #tag Events OtherDocsActionButton
 	#tag Event
 		Sub Action()
-		  Var Projects() As Ark.Project
+		  Var Projects() As Beacon.Project
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
 		    If Not OtherDocsList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
