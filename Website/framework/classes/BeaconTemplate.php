@@ -3,30 +3,30 @@
 abstract class BeaconTemplate {
 	protected static $template_name = 'default';
 	protected static $title = '';
-	protected static $script_lines = array();
-	protected static $style_lines = array();
-	protected static $header_lines = array();
+	protected static $script_lines = [];
+	protected static $style_lines = [];
+	protected static $header_lines = [];
 	protected static $body_class = '';
 	protected static $page_description = '';
 	protected static $use_photoswipe = false;
 	protected static $current_modal = null;
 	protected static $modals = [];
 	
-	protected static function CacheKey() {
+	protected static function CacheKey(): string {
 		return md5($_SERVER['REQUEST_URI']);
 	}
 	
-	public static function Start() {
+	public static function Start(): void {
 		ob_start();
 		register_shutdown_function('BeaconTemplate::Finish');
 	}
 	
-	public static function Cancel() {
+	public static function Cancel(): void {
 		ob_end_clean();
 		self::$template_name = null;
 	}
 	
-	public static function SetTemplate(string $template_name) {
+	public static function SetTemplate(string $template_name): void {
 		$template_name = preg_replace('/[^a-zA-Z0-9]+/', '', $template_name);
 		$file = BeaconCommon::FrameworkPath() . '/templates/' . $template_name . '.php';
 		if (!file_exists($file)) {
@@ -35,7 +35,7 @@ abstract class BeaconTemplate {
 		self::$template_name = $template_name;
 	}
 	
-	public static function Finish() {
+	public static function Finish(): void {
 		if (ob_get_level() === 0 || is_null(self::$template_name)) {
 			return;
 		}
@@ -53,7 +53,7 @@ abstract class BeaconTemplate {
 		require($file);
 	}
 	
-	public static function Title() {
+	public static function Title(): string {
 		$title = 'Beacon';
 		if (self::$title !== '') {
 			$title .= ': ' . self::$title;
@@ -63,23 +63,23 @@ abstract class BeaconTemplate {
 		return $title;
 	}
 	
-	public static function SetTitle(string $title) {
+	public static function SetTitle(string $title): void {
 		self::$title = $title;
 	}
 	
-	public static function AddHeaderLine(string $line) {
+	public static function AddHeaderLine(string $line): void {
 		self::$header_lines[] = $line;
 	}
 	
-	public static function ExtraHeaderLines() {
-		$script = array();
+	public static function ExtraHeaderLines(): array {
+		$script = [];
 		if (count(self::$script_lines) > 0) {
 			$script = self::$script_lines;
 			array_unshift($script, '<script nonce="' . htmlentities($_SERVER['CSP_NONCE']) . '">');
 			$script[] = '</script>';
 		}
 		
-		$style = array();
+		$style = [];
 		if (count(self::$style_lines) > 0) {
 			$style = self::$style_lines;
 			$content = implode("\n", $style);
@@ -88,7 +88,7 @@ abstract class BeaconTemplate {
 			$cached = BeaconCache::Get($content_hash);
 			if (is_null($cached)) {
 				$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/sass --style=compressed --stdin';
-				$spec = array(0 => array('pipe', 'r'), 1 => array('pipe', 'w'), 2 => array('pipe', 'w'));
+				$spec = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
 				$process = proc_open($cmd, $spec, $pipes);
 				if (is_resource($process)) {
 					fwrite($pipes[0], $content);
@@ -119,11 +119,11 @@ abstract class BeaconTemplate {
 		return array_merge(self::$header_lines, $style, $script);
 	}
 	
-	public static function ExtraHeaderContent($separator = "\n") {
+	public static function ExtraHeaderContent(string $separator = "\n"): string {
 		return implode($separator, self::ExtraHeaderLines());
 	}
 	
-	private static function URLWithModificationTime($url) {
+	private static function URLWithModificationTime(string $url): string {
  		if (substr($url, 0, 1) == '/') {
  			$pos = strpos($url, '?');
  			if ($pos !== false) {
@@ -148,19 +148,19 @@ abstract class BeaconTemplate {
  		return $url;
  	}
 	
-	public static function AddStylesheet(string $url) {
+	public static function AddStylesheet(string $url): void {
 		self::$header_lines[] = '<link href="' . htmlentities(static::URLWithModificationTime($url)) . '" type="text/css" rel="stylesheet" nonce="' . $_SERVER['CSP_NONCE'] . '">';
 	}
 	
-	public static function AddScript(string $url) {
+	public static function AddScript(string $url): void {
 		self::$header_lines[] = '<script src="' . htmlentities(static::URLWithModificationTime($url)) . '" nonce="' . $_SERVER['CSP_NONCE'] . '"></script>';
 	}
 	
-	public static function StartScript() {
+	public static function StartScript(): void {
 		ob_start();
 	}
 	
-	public static function FinishScript() {
+	public static function FinishScript(): void {
 		$content = trim(ob_get_contents());
 		ob_end_clean();
 		
@@ -174,11 +174,11 @@ abstract class BeaconTemplate {
 		}
 	}
 	
-	public static function StartStyles() {
+	public static function StartStyles(): void {
 		ob_start();
 	}
 	
-	public static function FinishStyles() {
+	public static function FinishStyles(): void {
 		$content = trim(ob_get_contents());
 		ob_end_clean();
 		
@@ -192,12 +192,12 @@ abstract class BeaconTemplate {
 		}
 	}
 	
-	public static function StartModal(string $id) {
+	public static function StartModal(string $id): void {
 		self::$current_modal = $id;
 		ob_start();
 	}
 	
-	public static function FinishModal() {
+	public static function FinishModal(): void {
 		$content = trim(ob_get_contents());
 		ob_end_clean();
 		
@@ -206,13 +206,13 @@ abstract class BeaconTemplate {
 		self::$modals[$id] = $content;
 	}
 	
-	public static function IsHTML() {
+	public static function IsHTML(): bool {
 		if (php_sapi_name() == "cli") {
 			return false;
 		}
 		
 		$headers = headers_list();
-		$dict = array();
+		$dict = [];
 		foreach ($headers as $header) {
 			$header = strtolower($header);
 			if (!strstr($header, ':')) {
@@ -233,31 +233,31 @@ abstract class BeaconTemplate {
 		}
 	}
 	
-	public static function Modals() {
+	public static function Modals(): array {
 		return array_keys(self::$modals);
 	}
 	
-	public static function ModalContent(string $id) {
+	public static function ModalContent(string $id): string {
 		return self::$modals[$id];
 	}
 	
-	public static function BodyClass() {
+	public static function BodyClass(): string {
 		return static::$body_class;
 	}
 	
-	public static function SetBodyClass(string $class_name) {
+	public static function SetBodyClass(string $class_name): void {
 		static::$body_class = $class_name;
 	}
 	
-	public static function PageDescription() {
+	public static function PageDescription(): string {
 		return static::$page_description;
 	}
 	
-	public static function SetPageDescription(string $page_description) {
+	public static function SetPageDescription(string $page_description): void {
 		static::$page_description = $page_description;
 	}
 	
-	public static function PhotoSwipeDOM() {
+	public static function PhotoSwipeDOM(): void {
 		if (!static::$use_photoswipe) {
 			return;
 		}

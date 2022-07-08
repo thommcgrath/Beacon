@@ -5,11 +5,11 @@ class BeaconLogin {
 	public $with_remember_me = true;
 	public $session_consumer_uri = '';
 	
-	public function Show() {
+	public function Show(): void {
 		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('login.scss'));
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
 		
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(false);
 		$results = $database->Query('SELECT generate_username() AS username;');
 		$default_username = $results->Field('username');
 		
@@ -52,18 +52,18 @@ class BeaconLogin {
 		<?php
 	}
 	
-	public static function GenerateUsername() {
-		$database = BeaconCommon::Database();
+	public static function GenerateUsername(): string {
+		$database = BeaconCommon::Database(false);
 		$results = $database->Query('SELECT generate_username() AS username;');
 		return $results->Field('username');
 	}
 	
-	public static function GenerateVerificationCode(string $email, $key = null) {
+	public static function GenerateVerificationCode(string $email, ?string $key = null): ?string {
 		if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			return null;
 		}
 		
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(true);
 		$code = BeaconCommon::GenerateRandomKey(6, '0123456789');
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM email_verification WHERE email_id = uuid_for_email($1);', $email);
@@ -78,7 +78,7 @@ class BeaconLogin {
 		return $code;
 	}
 	
-	public static function GenerateVerificationLink(string $email, $password = null) {
+	public static function GenerateVerificationLink(string $email, ?string $password = null): ?string {
 		$code = static::GenerateVerificationCode($email);
 		if (is_null($code)) {
 			return null;
@@ -96,7 +96,7 @@ class BeaconLogin {
 		return BeaconCommon::AbsoluteURL($path);
 	}
 	
-	public static function SendVerification(string $email, $key = null, string $subject = 'Enter code $code in Beacon to verify your email address') {
+	public static function SendVerification(string $email, ?string $key = null, string $subject = 'Enter code $code in Beacon to verify your email address'): bool {
 		$code = static::GenerateVerificationCode($email, $key);
 		if (is_null($code)) {
 			return false;
@@ -111,7 +111,7 @@ class BeaconLogin {
 		return BeaconEmail::SendMail($email, $subject, $plain, $html);
 	}
 	
-	public static function SendTeamWelcome(string $email, string $password, string $parent, string $subject = 'Welcome to your Beacon Team') {
+	public static function SendTeamWelcome(string $email, string $password, string $parent, string $subject = 'Welcome to your Beacon Team'): bool {
 		$link = static::GenerateVerificationLink($email, $password);
 		if (is_null($link)) {
 			return false;
@@ -123,7 +123,7 @@ class BeaconLogin {
 		return BeaconEmail::SendMail($email, $subject, $plain, $html);
 	}
 	
-	public static function SendForcedPasswordChangeEmail(string $email, string $password, string $subject = 'Please change your Beacon account password') {
+	public static function SendForcedPasswordChangeEmail(string $email, string $password, string $subject = 'Please change your Beacon account password'): bool {
 		$link = static::GenerateVerificationLink($email, $password);
 		if (is_null($link)) {
 			return false;

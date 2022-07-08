@@ -7,7 +7,7 @@ class BeaconSearch {
 	private $raw_response = null;
 	
 	public function SaveObject(string $object_id, bool $autocommit = true) {
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(false);
 		$rows = $database->Query('SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.preview, search_contents.meta_content, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, mods.mod_id, mods.name AS mod_name FROM search_contents LEFT JOIN ark.mods ON (search_contents.mod_id = mods.mod_id) WHERE (mods.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_contents.id = $1;', $object_id);
 		if ($rows->RecordCount() === 0) {
 			return false;
@@ -18,7 +18,7 @@ class BeaconSearch {
 		}
 	}
 	
-	public function DeleteObject(string $object_id, bool $autocommit = true) {
+	public function DeleteObject(string $object_id, bool $autocommit = true): bool {
 		$this->requests[] = [
 			'action' => 'deleteObject',
 			'body' => [
@@ -27,10 +27,12 @@ class BeaconSearch {
 		];
 		if ($autocommit) {
 			return $this->Commit();
+		} else {
+			return true;
 		}
 	}
 	
-	private function SaveObjectRows(BeaconRecordSet $rows) {
+	private function SaveObjectRows(BeaconRecordSet $rows): void {
 		while ($rows->EOF() === false) {
 			$this->requests[] = [
 				'action' => 'updateObject',
@@ -53,11 +55,11 @@ class BeaconSearch {
 		}
 	}
 	
-	public function Rollback() {
+	public function Rollback(): void {
 		$this->requests = [];
 	}
 	
-	public function Commit() {
+	public function Commit(): bool {
 		if (count($this->requests) === 0) {
 			return true;
 		}
@@ -88,7 +90,7 @@ class BeaconSearch {
 		return false;
 	}
 	
-	public function Search(string $query, int|null $client_version, int $result_count, string|null $type = null) {
+	public function Search(string $query, int|null $client_version, int $result_count, string|null $type = null): array {
 		$app_id = BeaconCommon::GetGlobal('Algolia Application ID');
 		$index = BeaconCommon::GetGlobal('Algolia Index Name');
 		$api_key = BeaconCommon::GetGlobal('Algolia API Key');
@@ -131,20 +133,20 @@ class BeaconSearch {
 		return $this->results;
 	}
 	
-	public function Results() {
+	public function Results(): array {
 		return $this->results;
 	}
 	
-	public function TotalResultCount() {
+	public function TotalResultCount(): int {
 		return $this->total_result_count;
 	}
 	
-	public function RawResponse() {
+	public function RawResponse(): ?string {
 		return $this->raw_response;
 	}
 	
-	public function Sync() {
-		$database = BeaconCommon::Database();
+	public function Sync(): void {
+		$database = BeaconCommon::Database(true);
 		$database->BeginTransaction();
 		$rows = $database->Query('SELECT object_id FROM search_sync WHERE action = $1;', 'Delete');
 		while ($rows->EOF() === false) {

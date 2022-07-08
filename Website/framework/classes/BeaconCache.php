@@ -3,14 +3,14 @@
 abstract class BeaconCache {
 	protected static $mem = null;
 	
-	protected static function Init() {
+	protected static function Init(): void {
 		if (is_null(static::$mem)) {
 			static::$mem  = new Memcached();
 			static::$mem->addServer('127.0.0.1', 11211);
 		}
 	}
 	
-	public static function Get(string $key) {
+	public static function Get(string $key): mixed {
 		static::Init();
 		$key = BeaconCommon::EnvironmentName() . '.' . $key;
 		$value = static::$mem->get($key);
@@ -24,7 +24,7 @@ abstract class BeaconCache {
 		}
 	}
 	
-	public static function Set(string $key, $value, $ttl = 0) {
+	public static function Set(string $key, mixed $value, int $ttl = 0): void {
 		static::Init();
 		$key = BeaconCommon::EnvironmentName() . '.' . $key;
 		static::$mem->set($key, $value, $ttl);
@@ -34,7 +34,7 @@ abstract class BeaconCache {
 		}
 	}
 	
-	public static function Remove(string $key) {
+	public static function Remove(string $key): void {
 		static::Init();
 		$key = BeaconCommon::EnvironmentName() . '.' . $key;
 		static::$mem->delete($key, $value);

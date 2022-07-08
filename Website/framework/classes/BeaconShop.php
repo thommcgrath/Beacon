@@ -7,8 +7,8 @@ abstract class BeaconShop {
 	const ARK2_GIFT_ID = '61653d69-2ccc-4f29-857a-7e44f1010d57';
 	const STW_ID = 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015';
 	
-	public static function IssuePurchases(string $purchase_id) {
-		$database = \BeaconCommon::Database();
+	public static function IssuePurchases(string $purchase_id): void {
+		$database = \BeaconCommon::Database(true);
 		$results = $database->Query('SELECT issued, refunded, purchaser_email FROM purchases WHERE purchase_id = $1;', $purchase_id);
 		if ($results->RecordCount() === 0 || $results->Field('issued') === true || $results->Field('refunded') === true) {
 			return;
@@ -57,8 +57,8 @@ abstract class BeaconShop {
 		$database->Commit();
 	}
 	
-	public static function RevokePurchases(string $purchase_id, bool $is_disputed = false) {
-		$database = \BeaconCommon::Database();
+	public static function RevokePurchases(string $purchase_id, bool $is_disputed = false): bool {
+		$database = \BeaconCommon::Database(true);
 		if (BeaconCommon::IsUUID($purchase_id) === false) {
 			$results = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $purchase_id);
 			if ($results->RecordCount() !== 1) {
@@ -99,7 +99,7 @@ abstract class BeaconShop {
 		return true;
 	}
 	
-	public static function FormatPrice(float $price, string $currency, bool $with_suffix = true) {
+	public static function FormatPrice(float $price, string $currency, bool $with_suffix = true): string {
 		switch ($currency) {
 		case 'USD':
 			$decimal_character = '.';
@@ -116,8 +116,8 @@ abstract class BeaconShop {
 		return $currency_symbol . number_format($price, 2, $decimal_character, $thousands_character) . ($with_suffix ?  ' ' . $currency : '');
 	}
 	
-	public static function CreateGiftPurchase(string $email, string $product_id, int $quantity, string $notes, bool $process = false) {
-		$database = BeaconCommon::Database();
+	public static function CreateGiftPurchase(string $email, string $product_id, int $quantity, string $notes, bool $process = false): string {
+		$database = BeaconCommon::Database(true);
 		$database->BeginTransaction();
 		
 		if (BeaconCommon::IsUUID($email)) {

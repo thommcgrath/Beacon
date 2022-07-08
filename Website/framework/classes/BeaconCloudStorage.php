@@ -5,18 +5,18 @@ abstract class BeaconCloudStorage {
 	const FAILED_TO_WARM_CACHE = 500;
 	const STORAGE_LIMIT = 2147483648;
 	
-	private static function BucketName() {
+	private static function BucketName(): string {
 		return BeaconCommon::InProduction() ? 'beacon-usercloud' : 'beacon-usercloud-dev';
 	}
 	
-	private static function CleanupRemotePath(string $remote_path) {
+	private static function CleanupRemotePath(string $remote_path): string {
 		if (substr($remote_path, 0, 1) != '/') {
 			$remote_path = '/' . $remote_path;
 		}
 		return $remote_path;
 	}
 	
-	private static function LocalPath(string $remote_path, $version_id = null) {
+	private static function LocalPath(string $remote_path, ?string $version_id = null): string {
 		$local_path = '/srv' . static::ResourcePath($remote_path);
 		if (is_null($version_id) === false) {
 			$local_path .= '-' . $version_id;
@@ -24,13 +24,13 @@ abstract class BeaconCloudStorage {
 		return $local_path;
 	}
 	
-	private static function ResourcePath(string $remote_path) {
+	private static function ResourcePath(string $remote_path): string {
 		return '/' . static::BucketName() . static::CleanupRemotePath($remote_path);
 	}
 	
-	private static function CleanupLocalCache(int $required_bytes) {
+	private static function CleanupLocalCache(int $required_bytes): void {
 		$hostname = gethostname();
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(true);
 		$target_bytes = max(static::STORAGE_LIMIT - $required_bytes, 0);
 		
 		$database->BeginTransaction();
@@ -73,7 +73,7 @@ abstract class BeaconCloudStorage {
 		$database->Commit();
 	}
 	
-	private static function DeleteLocalPath(string $local_path, bool $is_dir = false, string $root = '') {
+	private static function DeleteLocalPath(string $local_path, bool $is_dir = false, string $root = ''): void {
 		if (empty($root)) {
 			$root = static::LocalPath('/');
 		}
@@ -101,7 +101,7 @@ abstract class BeaconCloudStorage {
 		static::DeleteLocalPath($parent_path, true, $root);
 	}
 	
-	private static function MimeForPath(string $local_path) {
+	private static function MimeForPath(string $local_path): string {
 		$extension = strtolower(pathinfo($local_path, PATHINFO_EXTENSION));
 		
 		switch ($extension) {
@@ -124,7 +124,7 @@ abstract class BeaconCloudStorage {
 		}
 	}
 	
-	private static function BuildSignedURL(string $remote_path, string $method) {
+	private static function BuildSignedURL(string $remote_path, string $method): string {
 		$resource_path = static::ResourcePath($remote_path);
 		$signing_path = $resource_path;
 		$pos = strpos($signing_path, '?');
@@ -156,14 +156,14 @@ abstract class BeaconCloudStorage {
 		}
 		
 		$expiration = time() + 60;
-		$str_to_sign = implode("\n", array($method, '', '', $expiration, $signing_path));
+		$str_to_sign = implode("\n", [$method, '', '', $expiration, $signing_path]);
 		$signature = base64_encode(hash_hmac('sha1', $str_to_sign, BeaconCommon::GetGlobal('Storage_Password'), true));
 		return 'https://' . BeaconCommon::GetGlobal('Storage_Host') . $resource_path . (strpos($resource_path, '?') === false ? '?' : '&') . 'AWSAccessKeyId=' . urlencode(BeaconCommon::GetGlobal('Storage_Username')) . '&Expires=' . urlencode($expiration) . '&Signature=' . urlencode($signature);
 	}
 	
-	private static function WarmFile(string $remote_path, $version_id) {
+	private static function WarmFile(string $remote_path, ?string $version_id): int {
 		$remote_path = static::CleanupRemotePath($remote_path);
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(true);
 		$results = $database->Query('SELECT hash, size_in_bytes FROM usercloud WHERE remote_path = $1;', $remote_path);
 		if ($results->RecordCount() == 0) {
 			return static::FILE_NOT_FOUND;
@@ -173,7 +173,6 @@ abstract class BeaconCloudStorage {
 			$remote_path .= '?versionId=' . urlencode($version_id);
 		}
 		$file_id = crc32($remote_path);
-		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query('SELECT pg_advisory_xact_lock($1);', $file_id);
 		$local_exists = file_exists($local_path);
@@ -242,27 +241,27 @@ abstract class BeaconCloudStorage {
 		return $local_path;
 	}
 	
-	public static function DetailsForFile(string $remote_path) {
-		$database = BeaconCommon::Database();
+	public static function DetailsForFile(string $remote_path): array|bool {
+		$database = BeaconCommon::Database(false);
 		$remote_path = static::CleanupRemotePath($remote_path);
 		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted, header FROM usercloud WHERE remote_path = $1;', $remote_path);
 		if ($results->RecordCount() !== 1) {
 			return false;
 		}
 		
-		return array(
+		return [
 			'path' => $results->Field('remote_path'),
 			'type' => $results->Field('content_type'),
 			'size' => intval($results->Field('size_in_bytes')),
 			'modified' => $results->Field('modified'),
 			'deleted' => $results->Field('deleted'),
 			'header' => $results->Field('header')
-		);
+		];
 	}
 	
-	public static function RunQueue() {
+	public static function RunQueue(): void {
 		$hostname = gethostname();
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(true);
 		
 		$curl = curl_init();
 		if ($curl === false) {
@@ -289,16 +288,16 @@ abstract class BeaconCloudStorage {
 			$content_type = $results->Field('content_type');
 			$date = gmdate('Y-m-d\TH:i:s\Z', time());
 			$resource_path = static::ResourcePath($remote_path);
-			$str_to_sign = implode("\n", array($request_method, '', $content_type, $date, $resource_path));
+			$str_to_sign = implode("\n", [$request_method, '', $content_type, $date, $resource_path]);
 			$signature = base64_encode(hash_hmac('sha1', $str_to_sign, BeaconCommon::GetGlobal('Storage_Password'), true));
 			
 			curl_setopt($curl, CURLOPT_URL, 'https://' . BeaconCommon::GetGlobal('Storage_Host') . $resource_path);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+			curl_setopt($curl, CURLOPT_HTTPHEADER, [
 					'Authorization: AWS ' . BeaconCommon::GetGlobal('Storage_Username') . ':' . $signature,
 					'Date: ' . $date,
 					'Content-Type: ' . $content_type
-				)
+				]
 			);
 			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 			switch ($request_method) {
@@ -350,17 +349,17 @@ abstract class BeaconCloudStorage {
 		static::CleanupLocalCache(0);
 	}
 	
-	public static function ListFiles(string $remote_path) {
+	public static function ListFiles(string $remote_path): array {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		if (substr($remote_path, -1, 1) != '/') {
 			$remote_path .= '/';
 		}
 		
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(false);
 		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted, header, hash FROM usercloud WHERE remote_path LIKE $1;', "$remote_path%");
-		$files = array();
+		$files = [];
 		while (!$results->EOF()) {
-			$files[] = array(
+			$files[] = [
 				'path' => $results->Field('remote_path'),
 				'type' => $results->Field('content_type'),
 				'size' => intval($results->Field('size_in_bytes')),
@@ -368,13 +367,13 @@ abstract class BeaconCloudStorage {
 				'deleted' => $results->Field('deleted'),
 				'header' => $results->Field('header'),
 				'hash' => $results->Field('hash')
-			);
+			];
 			$results->MoveNext();
 		}
 		return $files;
 	}
 	
-	public static function GetFile(string $remote_path, bool $with_exceptions = false, $version_id = null) {
+	public static function GetFile(string $remote_path, bool $with_exceptions = false, ?string $version_id = null): string {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		
 		$local_path = static::WarmFile($remote_path, $version_id);
@@ -389,7 +388,7 @@ abstract class BeaconCloudStorage {
 		return file_get_contents($local_path);
 	}
 	
-	public static function StreamFile(string $remote_path, $version_id = null) {
+	public static function StreamFile(string $remote_path, ?string $version_id = null): bool {
 		$local_path = static::WarmFile($remote_path, $version_id);
 		if (is_int($local_path)) {
 			switch ($local_path) {
@@ -435,7 +434,7 @@ abstract class BeaconCloudStorage {
 		return true;		
 	}
 	
-	public static function PutFile(string $remote_path, $file_contents) {
+	public static function PutFile(string $remote_path, string $file_contents): bool {
 		// determine if the file has changed
 		$legacy_mode = is_array($file_contents) === false;
 		if ($legacy_mode) {
@@ -444,7 +443,7 @@ abstract class BeaconCloudStorage {
 			$hash = hash_file('sha256', $file_contents['tmp_name']);
 		}
 		
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(true);
 		$file_exists = false;
 		$results = $database->Query('SELECT hash, deleted FROM usercloud WHERE remote_path = $1;', $remote_path);
 		if ($results->RecordCount() == 1) {
@@ -514,7 +513,7 @@ abstract class BeaconCloudStorage {
 		return true;
 	}
 	
-	public static function DeleteFile(string $remote_path) {
+	public static function DeleteFile(string $remote_path): void {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		$local_path = static::LocalPath($remote_path);
 		if (file_exists($local_path)) {
@@ -522,7 +521,7 @@ abstract class BeaconCloudStorage {
 		}
 		
 		$hostname = gethostname();
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(true);
 		$database->BeginTransaction();
 		$database->Query('UPDATE usercloud SET modified = CURRENT_TIMESTAMP, deleted = TRUE WHERE remote_path = $1;', $remote_path);
 		$database->Query('DELETE FROM usercloud_queue WHERE hostname = $1 AND remote_path = $2;', $hostname, $remote_path);
@@ -531,7 +530,7 @@ abstract class BeaconCloudStorage {
 		$database->Commit();
 	}
 	
-	public static function VersionsForFile(string $remote_path) {
+	public static function VersionsForFile(string $remote_path): array|bool {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		$path = '/?versions&prefix=' . urlencode(substr($remote_path, 1));
 		$url = static::BuildSignedURL($path, 'GET');

@@ -2,11 +2,11 @@
 
 abstract class BeaconExceptions {
 	// Truncates a stack trace to only lines that actually mean something.
-	public static function CleanupStackTrace(string $trace) {
+	public static function CleanupStackTrace(string $trace): array {
 		$trace = str_replace(chr(13) . chr(10), chr(10), $trace); // CRLF to LF
 		$trace = str_replace(chr(13), chr(10), $trace); // CR to LF
 		$raw_lines = explode(chr(10), $trace);
-		$meaningful_lines = array();
+		$meaningful_lines = [];
 		foreach ($raw_lines as $line) {
 			$line = trim($line);
 			if (empty($line)) {
@@ -21,8 +21,8 @@ abstract class BeaconExceptions {
 	}
 	
 	// Finds an exception based on its trace, but does not change anything.
-	public static function FindException(string $trace, string $type, string $client_hash) {
-		$database = BeaconCommon::Database();
+	public static function FindException(string $trace, string $type, string $client_hash): ?string {
+		$database = BeaconCommon::Database(false);
 		$results = $database->Query('SELECT DISTINCT exception_id FROM exception_signatures WHERE client_hash = $1 LIMIT 1;', $client_hash);
 		if ($results->RecordCount() === 1) {
 			return $results->Field('exception_id');
@@ -57,7 +57,7 @@ abstract class BeaconExceptions {
 	}	
 	
 	// Records the exception and returns the uuid or null on error.
-	public static function RecordException(string $trace, string $type, string $reason, string $client_hash, int $client_build, $user_id) {
+	public static function RecordException(string $trace, string $type, string $reason, string $client_hash, int $client_build, ?string $user_id): string {
 		$exception_id = static::FindException($trace, $type, $client_hash);
 		if (is_null($exception_id) === false && static::UpdateException($exception_id, $trace, $client_hash, $client_build, $user_id)) {
 			return $exception_id;
@@ -67,8 +67,8 @@ abstract class BeaconExceptions {
 	}
 	
 	// Updates an existing exception with additional data and returns true or false.
-	private static function UpdateException(string $exception_id, string $trace, string $client_hash, int $client_build, $user_id) {
-		$database = BeaconCommon::Database();
+	private static function UpdateException(string $exception_id, string $trace, string $client_hash, int $client_build, ?string $user_id): bool {
+		$database = BeaconCommon::Database(true);
 		$results = $database->Query('SELECT solution_build, min_reported_build, max_reported_build, location, reason FROM exceptions WHERE exception_id = $1;', $exception_id);
 		if ($results->RecordCount() == 0) {
 			return false;
@@ -79,7 +79,7 @@ abstract class BeaconExceptions {
 		$solution_build = $results->Field('solution_build');
 		$min_build = $results->Field('min_reported_build');
 		$max_build = $results->Field('max_reported_build');
-		$changes = array();
+		$changes = [];
 		if (is_null($solution_build) == false && $client_build >= $solution_build) {
 			// This previously solved exception is no longer solved.
 			$changes['solution_build'] = null;
@@ -93,7 +93,7 @@ abstract class BeaconExceptions {
 		}
 		$database->BeginTransaction();
 		if (count($changes) > 0) {
-			$database->Update('exceptions', $changes, array('exception_id' => $exception_id));
+			$database->Update('exceptions', $changes, ['exception_id' => $exception_id]);
 		}
 		$database->Query('INSERT INTO exception_signatures (exception_id, client_build, client_hash, trace) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING;', $exception_id, $client_build, $client_hash, $trace);
 		if (is_null($user_id) == false) {
@@ -103,27 +103,27 @@ abstract class BeaconExceptions {
 		
 		if (count($changes) > 0) {
 			$details_url = BeaconCommon::AbsoluteURL('/reportaproblem?uuid=' . urlencode($exception_id) . '&action=view');
-			$arr = array(
-				'attachments' => array(
-					array(
+			$arr = [
+				'attachments' => [
+					[
 						'title' => 'An exception in ' . $location . ' has been updated.',
 						'title_link' => $details_url,
 						'text' => $reason,
-						'fields' => array(
-							array(
+						'fields' => [
+							[
 								'title' => 'Min Version',
 								'value' => BeaconCommon::BuildNumberToVersion(min($client_build, $min_build)),
 								'short' => true
-							),
-							array(
+							],
+							[
 								'title' => 'Max Version',
 								'value' => BeaconCommon::BuildNumberToVersion(max($client_build, $max_build)),
 								'short' => true
-							)
-						)
-					)
-				)
-			);
+							]
+						]
+					]
+				]
+			];
 			BeaconCommon::PostSlackRaw(json_encode($arr));
 		}
 		
@@ -131,7 +131,7 @@ abstract class BeaconExceptions {
 	}
 	
 	// Records a new exception and returns the uuid or null on error.
-	private static function CreateException(string $trace, string $type, string $reason, string $client_hash, int $client_build, $user_id) {
+	private static function CreateException(string $trace, string $type, string $reason, string $client_hash, int $client_build, ?string $user_id): ?string {
 		$trace_cleaned = static::CleanupStackTrace($trace);
 		if (count($trace_cleaned) == 0) {
 			return null;
@@ -139,7 +139,7 @@ abstract class BeaconExceptions {
 		
 		$location = $trace_cleaned[0];
 		$exception_id = BeaconCommon::GenerateUUID();
-		$database = BeaconCommon::Database();
+		$database = BeaconCommon::Database(true);
 		$database->BeginTransaction();
 		$database->Query('INSERT INTO exceptions (exception_id, min_reported_build, max_reported_build, exception_class, location, reason, trace) VALUES ($1, $2, $2, $3, $4, $5, $6);', $exception_id, $client_build, $type, $location, $reason, $trace);
 		$database->Query('INSERT INTO exception_signatures (exception_id, client_build, client_hash, trace) VALUES ($1, $2, $3, $4);', $exception_id, $client_build, $client_hash, $trace);
@@ -149,29 +149,29 @@ abstract class BeaconExceptions {
 		$database->Commit();
 		
 		$details_url = BeaconCommon::AbsoluteURL('/reportaproblem?uuid=' . urlencode($exception_id) . '&action=view');
-		$arr = array(
-			'attachments' => array(
-				array(
+		$arr = [
+			'attachments' => [
+				[
 					'title' => 'New ' . $type . ' in ' . $location . ' reported',
 					'title_link' => $details_url,
 					'text' => $reason,
-					'fields' => array(
-						array(
+					'fields' => [
+						[
 							'title' => 'Version',
 							'value' => BeaconCommon::BuildNumberToVersion($client_build),
 							'short' => true
-						)
-					)
-				)
-			)
-		);
+						]
+					]
+				]
+			]
+		];
 		BeaconCommon::PostSlackRaw(json_encode($arr));
 		
 		return $exception_id;
 	}
 	
 	// Returns a value between 0 and 1, the higher the value, the better the match.
-	private static function CompareTraces(array $left_trace, array $right_trace) {
+	private static function CompareTraces(array $left_trace, array $right_trace): float {
 		if (count($left_trace) == 0 || count($right_trace) == 0) {
 			return 0;
 		}
@@ -193,9 +193,9 @@ abstract class BeaconExceptions {
 	}
 	
 	// Add comments to exception
-	public static function AddComments(string $exception_id, string $comments, $user_id) {
+	public static function AddComments(string $exception_id, string $comments, ?string $user_id): bool {
 		try {
-			$database = BeaconCommon::Database();
+			$database = BeaconCommon::Database(true);
 			$database->BeginTransaction();
 			$database->Query('INSERT INTO exception_comments (exception_id, comments, user_id) VALUES ($1, $2, $3);', $exception_id, $comments, $user_id);
 			$database->Commit();
@@ -205,31 +205,31 @@ abstract class BeaconExceptions {
 			
 			if (is_null($results->Field('solution_build'))) {
 				$details_url = BeaconCommon::AbsoluteURL('/reportaproblem?uuid=' . urlencode($exception_id) . '&action=view');
-				$arr = array(
-					'attachments' => array(
-						array(
+				$arr = [
+					'attachments' => [
+						[
 							'title' => 'New exception comment',
 							'title_link' => $details_url,
 							'text' => $comments,
-							'fields' => array(
-								array(
+							'fields' => [
+								[
 									'title' => 'Location',
 									'value' => $location,
 									'short' => false
-								)
-							)
-						)
-					)
-				);
+								]
+							]
+						]
+					]
+				];
 				
 				if (!is_null($user_id)) {
 					$user = BeaconUser::GetByUserID($user_id);
 					if (!is_null($user)) {
-						$arr['attachments'][0]['fields'][] = array(
+						$arr['attachments'][0]['fields'][] = [
 							'title' => 'User',
 							'value' => $user->Username() . '#' . $user->Suffix(),
 							'short' => false
-						);
+						];
 					}
 				}
 				
