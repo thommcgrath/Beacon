@@ -3,9 +3,9 @@
 abstract class BeaconDatabase {
 	const CONNECTION_READONLY = 'readonly';
 	const CONNECTION_WRITABLE = 'writable';
-	const CONNECTION_VALID_MODES = [static::CONNECTION_READONLY, static::CONNECTION_WRITABLE];
+	const CONNECTION_VALID_MODES = [self::CONNECTION_READONLY, self::CONNECTION_WRITABLE];
 	
-	private string $mode = static::CONNECTION_WRITABLE;
+	private string $mode = self::CONNECTION_WRITABLE;
 	private mixed $connection = null;
 	
 	private array $settings = [];
@@ -28,8 +28,8 @@ abstract class BeaconDatabase {
 	abstract public function EscapeBinary(string $binary);
 	abstract public function UnescapeBinary(string $string);
 	
-	public function __construct(string $default_mode, \BeaconDatabaseSettings $write_settings, ?\BeaconDatabaseSettings $read_settings);
-		if (in_array(static::CONNECTION_VALID_MODES, $default_mode) === false) {
+	public function __construct(string $default_mode, \BeaconDatabaseSettings $write_settings, ?\BeaconDatabaseSettings $read_settings) {
+		if (in_array($default_mode, self::CONNECTION_VALID_MODES) === false) {
 			throw new \Exception('Default mode is not a valid connection mode.');
 		}
 		if (is_null($write_settings)) {
@@ -37,24 +37,24 @@ abstract class BeaconDatabase {
 		}
 		
 		$this->settings = [
-			static::CONNECTION_WRITABLE => $write_settings
+			self::CONNECTION_WRITABLE => $write_settings
 		];
 		$this->connections = [
-			static::CONNECTION_WRITABLE => null;
+			self::CONNECTION_WRITABLE => null
 		];
 		
 		if (is_null($read_settings) === false) {
-			$this->settings[static::CONNECTION_READONLY] = $read_settings;
-			$this->connections[static::CONNECTION_READONLY] = null;
+			$this->settings[self::CONNECTION_READONLY] = $read_settings;
+			$this->connections[self::CONNECTION_READONLY] = null;
 		} else {
-			$default_mode = static::CONNECTION_WRITABLE;
+			$default_mode = self::CONNECTION_WRITABLE;
 		}
 		
 		$this->mode = $default_mode;
 	}
 	
 	public static function Create(string $host, int $port, string $databasename, string $username, string $password) {
-		return new static(static::CONNECTION_WRITABLE, new \BeaconDatabaseSettings($host, $post, $databasename, $username, $password));
+		return new static(self::CONNECTION_WRITABLE, new \BeaconDatabaseSettings($host, $post, $databasename, $username, $password));
 	}
 	
 	public function ConnectionMode(): string {

@@ -117,7 +117,7 @@ abstract class BeaconCommon {
 		return self::$database;
 	}
 	
-	public static function SetupDatabase(BeaconDatabaseSettings $write_settings, BeaconDatabaseSetting $read_settings): void {
+	public static function SetupDatabase(BeaconDatabaseSettings $write_settings, BeaconDatabaseSettings $read_settings): void {
 		self::$database = new BeaconPostgreSQLDatabase(BeaconDatabase::CONNECTION_READONLY, $write_settings, $read_settings);
 	}
 	

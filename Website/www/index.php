@@ -27,19 +27,6 @@ if (BeaconCommon::IsWindows()) {
 	];
 }
 
-/*$hero_light_css = [];
-$hero_light_css_2x = [];
-$hero_dark_css = [];
-$hero_dark_css_2x = [];
-
-$hero_light_css[] = "#hero.$hero_platform {\n\t\tbackground-image: url(" . BeaconCommon::AssetURI($hero_images[$hero_platform]['light'] . '.png') . ");\n}";
-$hero_light_css_2x[] = "\t#hero.$hero_platform {\n\t\t\tbackground-image: url(" . BeaconCommon::AssetURI($hero_images[$hero_platform]['light'] . '@2x.png') . ");\n\t}";
-
-if (isset($hero_images[$hero_platform]['dark'])) {
-	$hero_dark_css[] = "\t#hero.$hero_platform {\n\t\tbackground-image: url(" . BeaconCommon::AssetURI($hero_images[$hero_platform]['dark'] . '.png') . ");\n\t}";
-	$hero_dark_css_2x[] = "\t\t#hero.$hero_platform {\n\t\t\tbackground-image: url(" . BeaconCommon::AssetURI($hero_images[$hero_platform]['dark'] . '@2x.png') . ");\n\t\t}";
-}*/
-
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT COUNT(object_id) AS loot_source_count, experimental FROM ark.loot_sources WHERE min_version <= $1 GROUP BY experimental;', $public_build);
 while (!$results->EOF()) {
