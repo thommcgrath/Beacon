@@ -469,49 +469,23 @@ Inherits Beacon.Project
 		      For Each Set As Ark.SpawnPointSet In SpawnPoint
 		        Var NewSet As Ark.MutableSpawnPointSet
 		        For Each Entry As Ark.SpawnPointSetEntry In Set
-		          If Entry.Creature = ReplacedCreature Then
-		            If NewSet = Nil Then
-		              NewSet = New Ark.MutableSpawnPointSet()
-		              NewSet.Weight = Set.RawWeight
-		              NewSet.Label = ReplacementCreature.Label + " (Converted)"
-		              If IsNull(Set.SpreadRadius) Then
-		                NewSet.SpreadRadius = 650
-		              Else
-		                NewSet.SpreadRadius = Set.SpreadRadius
-		              End If
-		            End If
-		            
-		            Const SpreadMultiplierHigh = 1.046153846
-		            Const SpreadMultiplierLow = 0.523076923
-		            
-		            Var NewEntry As Ark.MutableSpawnPointSetEntry
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 0.7
-		            NewSet.Append(NewEntry)
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 1.0
-		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh), 0.0)
-		            NewSet.Append(NewEntry)
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 0.2
-		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow), 0.0)
-		            NewSet.Append(NewEntry)
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 0.25
-		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow) * -1, 0.0)
-		            NewSet.Append(NewEntry)
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 0.6
-		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh) * -1, 0.0)
-		            NewSet.Append(NewEntry)
+		          If Entry.Creature <> ReplacedCreature Then
+		            Continue
 		          End If
+		          
+		          If NewSet Is Nil Then
+		            NewSet = New Ark.MutableSpawnPointSet(Set)
+		            NewSet.Label = ReplacementCreature.Label + " (Converted)"
+		            NewSet.RemoveAll()
+		            NewSet.ID = New v4UUID
+		          End If
+		          
+		          Var NewEntry As New Ark.MutableSpawnPointSetEntry(Entry)
+		          NewEntry.Creature = ReplacementCreature
+		          NewEntry.ID = New v4UUID
+		          NewSet.Append(NewEntry)
 		        Next
-		        If (NewSet Is Nil) = False Then
+		        If (NewSet Is Nil) = False And NewSet.Count > 0 Then
 		          NewSets.Add(NewSet)
 		        End If
 		      Next

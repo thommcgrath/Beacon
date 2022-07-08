@@ -240,6 +240,17 @@ Inherits Ark.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RemoveAll()
+		  If Self.mEntries.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mEntries.RemoveAll
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SpreadRadius(Assigns Value As NullableDouble)
 		  If Self.mSpreadRadius <> Value Then
 		    Self.mSpreadRadius = Value
