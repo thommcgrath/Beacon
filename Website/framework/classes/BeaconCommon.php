@@ -4,13 +4,10 @@ abstract class BeaconCommon {
 	const DBKEY_READONLY = 'reader';
 	const DBKEY_WRITABLE = 'writer';
 	
-	protected static $databases = [
-		self::DBKEY_READONLY => null,
-		self::DBKEY_WRITABLE => null
-	];
-	protected static $globals = array();
-	protected static $min_version = -1;
-	protected static $versions = [];
+	protected static ?BeaconDatabase $database = null;
+	protected static array $globals = [];
+	protected static int $min_version = -1;
+	protected static array $versions = [];
 	
 	public static function GenerateUUID(): string {
 		$data = random_bytes(16);
@@ -72,7 +69,7 @@ abstract class BeaconCommon {
 	
 	public static function NewestVersionForStage(int $stage): int {
 		if (array_key_exists($stage, static::$versions) === false) {
-			$database = static::Database(false);
+			$database = static::Database();
 			$builds = $database->Query('SELECT build_number FROM updates WHERE stage >= $1 ORDER BY build_number DESC LIMIT 1;', $stage);
 			if ($builds->RecordCount() == 1) {
 				static::$versions[$stage] = intval($builds->Field('build_number'));
@@ -82,7 +79,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function NewestUpdateTimestamp(int $build = 99999999): DateTime {
-		$database = static::Database(false);
+		$database = static::Database();
 		$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM ark.objects INNER JOIN ark.mods ON (objects.mod_id = mods.mod_id) WHERE GREATEST(objects.min_version, mods.min_version) <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM ark.deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM ark.game_variables) UNION (SELECT MAX(last_update) AS stamp FROM ark.mods WHERE min_version <= $1 AND confirmed = TRUE AND include_in_deltas = TRUE) UNION (SELECT MAX(maps.last_update) AS stamp FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(last_update) AS stamp FROM ark.events) UNION (SELECT MAX(last_update) AS stamp FROM ark.colors) UNION (SELECT MAX(last_update) AS stamp FROM ark.color_sets)) AS merged;', $build);
 		return new DateTime($results->Field('stamp'));
 	}
@@ -116,20 +113,12 @@ abstract class BeaconCommon {
 		return $uri_path . '?mtime=' . filemtime($asset_path);
 	}
 	
-	private static function DatabaseKey(bool $writable): string {
-		return $writable ? self::DBKEY_WRITABLE : self::DBKEY_READONLY;
+	public static function Database(): ?BeaconDatabase {
+		return self::$database;
 	}
 	
-	public static function Database(bool $writable = true): BeaconPostgreSQLDatabase {
-		$key = self::DatabaseKey($writable);
-		if (self::$databases[$key] === null) {
-			trigger_error('Database has not been setup', E_USER_ERROR);
-		}
-		return self::$databases[$key];
-	}
-	
-	public static function SetupDatabase(bool $writable, string $databasename, string $username, string $password): void {
-		self::$databases[self::DatabaseKey($writable)] = new BeaconPostgreSQLDatabase('127.0.0.1', 5432, $databasename, $username, $password);
+	public static function SetupDatabase(BeaconDatabaseSettings $write_settings, BeaconDatabaseSetting $read_settings): void {
+		self::$database = new BeaconPostgreSQLDatabase(BeaconDatabase::CONNECTION_READONLY, $write_settings, $read_settings);
 	}
 	
 	public static function GenerateRandomKey(int $length = 12, string $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'): string {
@@ -322,7 +311,7 @@ abstract class BeaconCommon {
 			return $obj;
 		}
 		
-		$database = static::Database(false);
+		$database = static::Database();
 		if (static::IsUUID($object_id)) {
 			$results = $database->Query('SELECT objects.object_id, objects.tableoid::regclass AS tablename FROM ark.objects INNER JOIN ark.mods ON (objects.mod_id = mods.mod_id) WHERE objects.object_id = $1 AND mods.confirmed = TRUE;', $object_id);
 		} elseif ($workshop_id > 0) {
@@ -439,7 +428,7 @@ abstract class BeaconCommon {
 	
 	public static function BuildNumberToVersion(int $build_number): string {
 		if ($build_number < 10000000) {
-			$database = static::Database(false);
+			$database = static::Database();
 			$results = $database->Query('SELECT build_display FROM updates WHERE build_number = $1;', $build_number);
 			if ($results->RecordCount() == 1) {
 				return $results->Field('build_display');
@@ -694,7 +683,7 @@ abstract class BeaconCommon {
 		}
 		
 		if ($build_number === 0) {
-			$database = static::Database(false);
+			$database = static::Database();
 			$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
 			if ($builds->RecordCount() == 1) {
 				$build_number = intval($builds->Field('build_number'));
@@ -725,7 +714,7 @@ abstract class BeaconCommon {
 		}
 		$base = $minor + ($stage * 100);
 		
-		$database = self::Database(false);
+		$database = self::Database();
 		$results = $database->Query('SELECT EXTRACT(epoch FROM published) AS published FROM updates WHERE build_number >= $1 AND stage >= $2 AND stage <= $3 ORDER BY build_number LIMIT 1;', $base, $min_stage, $max_stage);
 		if ($results->RecordCount() === 0) {
 			return date('Y-m-d H:i:sO', time());

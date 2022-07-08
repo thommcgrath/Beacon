@@ -40,7 +40,7 @@ class BeaconArticleMetadata {
 	
 	public static function GetByArticleID($article_id): ?static {
 		$columns = static::Columns();
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		if (BeaconCommon::IsUUID($article_id)) {
 			$results = $database->Query('SELECT ' . implode(', ', $columns) . ' FROM articles WHERE article_id = $1;', $article_id);
 			if ($results->RecordCount() == 1) {
@@ -67,7 +67,7 @@ class BeaconArticleMetadata {
 	
 	public static function GetRecentArticles(int $count, int $offset, string $type): array {
 		$columns = static::Columns();
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT ' . implode(', ', $columns) . ' FROM articles WHERE type = $1 ORDER BY publish_time DESC LIMIT $2 OFFSET $3;', $type, $count, $offset);
 		$articles = [];
 		while (!$results->EOF()) {
@@ -79,14 +79,14 @@ class BeaconArticleMetadata {
 	
 	public static function GetCount(string $type): int {
 		$columns = static::Columns();
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT COUNT(article_id) AS article_count FROM articles WHERE type = $1;', $type);
 		return intval($results->Field('article_count'));
 	}
 	
 	public static function GetAll(string $type): array {
 		$columns = static::Columns();
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT ' . implode(', ', $columns) . ' FROM articles WHERE type = $1 ORDER BY title;', $type);
 		$articles = [];
 		while (!$results->EOF()) {

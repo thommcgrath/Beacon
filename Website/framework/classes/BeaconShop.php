@@ -8,7 +8,7 @@ abstract class BeaconShop {
 	const STW_ID = 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015';
 	
 	public static function IssuePurchases(string $purchase_id): void {
-		$database = \BeaconCommon::Database(true);
+		$database = \BeaconCommon::Database();
 		$results = $database->Query('SELECT issued, refunded, purchaser_email FROM purchases WHERE purchase_id = $1;', $purchase_id);
 		if ($results->RecordCount() === 0 || $results->Field('issued') === true || $results->Field('refunded') === true) {
 			return;
@@ -58,7 +58,7 @@ abstract class BeaconShop {
 	}
 	
 	public static function RevokePurchases(string $purchase_id, bool $is_disputed = false): bool {
-		$database = \BeaconCommon::Database(true);
+		$database = \BeaconCommon::Database();
 		if (BeaconCommon::IsUUID($purchase_id) === false) {
 			$results = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $purchase_id);
 			if ($results->RecordCount() !== 1) {
@@ -117,7 +117,7 @@ abstract class BeaconShop {
 	}
 	
 	public static function CreateGiftPurchase(string $email, string $product_id, int $quantity, string $notes, bool $process = false): string {
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		
 		if (BeaconCommon::IsUUID($email)) {

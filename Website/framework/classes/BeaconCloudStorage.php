@@ -30,7 +30,7 @@ abstract class BeaconCloudStorage {
 	
 	private static function CleanupLocalCache(int $required_bytes): void {
 		$hostname = gethostname();
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$target_bytes = max(static::STORAGE_LIMIT - $required_bytes, 0);
 		
 		$database->BeginTransaction();
@@ -163,7 +163,7 @@ abstract class BeaconCloudStorage {
 	
 	private static function WarmFile(string $remote_path, ?string $version_id): int {
 		$remote_path = static::CleanupRemotePath($remote_path);
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT hash, size_in_bytes FROM usercloud WHERE remote_path = $1;', $remote_path);
 		if ($results->RecordCount() == 0) {
 			return static::FILE_NOT_FOUND;
@@ -242,7 +242,7 @@ abstract class BeaconCloudStorage {
 	}
 	
 	public static function DetailsForFile(string $remote_path): array|bool {
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$remote_path = static::CleanupRemotePath($remote_path);
 		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted, header FROM usercloud WHERE remote_path = $1;', $remote_path);
 		if ($results->RecordCount() !== 1) {
@@ -261,7 +261,7 @@ abstract class BeaconCloudStorage {
 	
 	public static function RunQueue(): void {
 		$hostname = gethostname();
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		
 		$curl = curl_init();
 		if ($curl === false) {
@@ -355,7 +355,7 @@ abstract class BeaconCloudStorage {
 			$remote_path .= '/';
 		}
 		
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted, header, hash FROM usercloud WHERE remote_path LIKE $1;', "$remote_path%");
 		$files = [];
 		while (!$results->EOF()) {
@@ -443,7 +443,7 @@ abstract class BeaconCloudStorage {
 			$hash = hash_file('sha256', $file_contents['tmp_name']);
 		}
 		
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$file_exists = false;
 		$results = $database->Query('SELECT hash, deleted FROM usercloud WHERE remote_path = $1;', $remote_path);
 		if ($results->RecordCount() == 1) {
@@ -521,7 +521,7 @@ abstract class BeaconCloudStorage {
 		}
 		
 		$hostname = gethostname();
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query('UPDATE usercloud SET modified = CURRENT_TIMESTAMP, deleted = TRUE WHERE remote_path = $1;', $remote_path);
 		$database->Query('DELETE FROM usercloud_queue WHERE hostname = $1 AND remote_path = $2;', $hostname, $remote_path);

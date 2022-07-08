@@ -22,7 +22,7 @@ abstract class BeaconExceptions {
 	
 	// Finds an exception based on its trace, but does not change anything.
 	public static function FindException(string $trace, string $type, string $client_hash): ?string {
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT DISTINCT exception_id FROM exception_signatures WHERE client_hash = $1 LIMIT 1;', $client_hash);
 		if ($results->RecordCount() === 1) {
 			return $results->Field('exception_id');
@@ -68,7 +68,7 @@ abstract class BeaconExceptions {
 	
 	// Updates an existing exception with additional data and returns true or false.
 	private static function UpdateException(string $exception_id, string $trace, string $client_hash, int $client_build, ?string $user_id): bool {
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT solution_build, min_reported_build, max_reported_build, location, reason FROM exceptions WHERE exception_id = $1;', $exception_id);
 		if ($results->RecordCount() == 0) {
 			return false;
@@ -139,7 +139,7 @@ abstract class BeaconExceptions {
 		
 		$location = $trace_cleaned[0];
 		$exception_id = BeaconCommon::GenerateUUID();
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query('INSERT INTO exceptions (exception_id, min_reported_build, max_reported_build, exception_class, location, reason, trace) VALUES ($1, $2, $2, $3, $4, $5, $6);', $exception_id, $client_build, $type, $location, $reason, $trace);
 		$database->Query('INSERT INTO exception_signatures (exception_id, client_build, client_hash, trace) VALUES ($1, $2, $3, $4);', $exception_id, $client_build, $client_hash, $trace);
@@ -195,7 +195,7 @@ abstract class BeaconExceptions {
 	// Add comments to exception
 	public static function AddComments(string $exception_id, string $comments, ?string $user_id): bool {
 		try {
-			$database = BeaconCommon::Database(true);
+			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
 			$database->Query('INSERT INTO exception_comments (exception_id, comments, user_id) VALUES ($1, $2, $3);', $exception_id, $comments, $user_id);
 			$database->Commit();

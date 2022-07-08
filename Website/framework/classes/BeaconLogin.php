@@ -9,7 +9,7 @@ class BeaconLogin {
 		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('login.scss'));
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
 		
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT generate_username() AS username;');
 		$default_username = $results->Field('username');
 		
@@ -53,7 +53,7 @@ class BeaconLogin {
 	}
 	
 	public static function GenerateUsername(): string {
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT generate_username() AS username;');
 		return $results->Field('username');
 	}
@@ -63,7 +63,7 @@ class BeaconLogin {
 			return null;
 		}
 		
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$code = BeaconCommon::GenerateRandomKey(6, '0123456789');
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM email_verification WHERE email_id = uuid_for_email($1);', $email);

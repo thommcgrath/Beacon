@@ -7,7 +7,7 @@ class BeaconSearch {
 	private $raw_response = null;
 	
 	public function SaveObject(string $object_id, bool $autocommit = true) {
-		$database = BeaconCommon::Database(false);
+		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.preview, search_contents.meta_content, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, mods.mod_id, mods.name AS mod_name FROM search_contents LEFT JOIN ark.mods ON (search_contents.mod_id = mods.mod_id) WHERE (mods.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_contents.id = $1;', $object_id);
 		if ($rows->RecordCount() === 0) {
 			return false;
@@ -146,7 +146,7 @@ class BeaconSearch {
 	}
 	
 	public function Sync(): void {
-		$database = BeaconCommon::Database(true);
+		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$rows = $database->Query('SELECT object_id FROM search_sync WHERE action = $1;', 'Delete');
 		while ($rows->EOF() === false) {
