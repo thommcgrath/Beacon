@@ -174,8 +174,8 @@ Protected Class ConfigKey
 		    Return Self.mUUID.Operator_Compare(Other.mUUID)
 		  End If
 		  
-		  Var StringOne As String = Self.mFile + "." + Self.mHeader + "." + Self.mKey
-		  Var StringTwo As String = Other.mFile + "." + Other.mHeader + "." + Other.mKey
+		  Var StringOne As String = Self.Signature
+		  Var StringTwo As String = Other.Signature
 		  Return StringOne.Compare(StringTwo, ComparisonOptions.CaseInsensitive, Locale.Raw)
 		End Function
 	#tag EndMethod
@@ -306,6 +306,15 @@ Protected Class ConfigKey
 	#tag Property, Flags = &h21
 		Private mValueType As Ark.ConfigKey.ValueTypes
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mFile + "." + Self.mHeader + "." + Self.mKey
+			End Get
+		#tag EndGetter
+		Signature As String
+	#tag EndComputedProperty
 
 
 	#tag Enum, Name = NitradoDeployStyles, Type = Integer, Flags = &h0

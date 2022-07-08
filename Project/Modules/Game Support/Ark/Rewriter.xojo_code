@@ -197,7 +197,6 @@ Inherits Global.Thread
 		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, ProjectUUID As String, LegacyTrustKey As String, Format As Ark.Rewriter.EncodingFormat, UWPMode As Ark.Project.UWPCompatibilityModes, Nuke As Boolean, ByRef Error As RuntimeException) As String
 		  // This is the new master method
 		  
-		  
 		  Try
 		    // Even if we're about to nuke the file, determine the mode so the file can be rebuilt in the same format
 		    InitialContent = InitialContent.GuessEncoding.SanitizeIni
@@ -211,8 +210,17 @@ Inherits Global.Thread
 		    End Select
 		    If Nuke Then
 		      InitialContent = ""
-		    Else
-		      InitialContent = InitialContent.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
+		    End If
+		    
+		    // Convert into UWP mode
+		    If ConvertToUWP Then
+		      #if DebugBuild
+		        Var TargetKey As New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_Player")
+		        Var ReplacementKey As New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGameUWP, "PerLevelStatsMultiplier_Player")
+		        Organizer.Swap(TargetKey, ReplacementKey)
+		      #else
+		        #Pragma Error "This isn't ready"
+		      #endif
 		    End If
 		    
 		    // Get the initial values into an organizer
@@ -404,11 +412,7 @@ Inherits Global.Thread
 		    // Remove excess junk that sneaks in from who knows where.
 		    FinalOrganizer.Remove(Ark.ConfigFileGameUserSettings, "/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C")
 		    
-		    Var Output As String = ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
-		    If ConvertToUWP Then
-		      Output = Output.ReplaceAll(Ark.HeaderShooterGame, Ark.HeaderShooterGameUWP)
-		    End If
-		    Return Output
+		    Return ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try
