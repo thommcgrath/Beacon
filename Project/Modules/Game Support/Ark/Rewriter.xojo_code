@@ -214,13 +214,16 @@ Inherits Global.Thread
 		    
 		    // Convert into UWP mode
 		    If ConvertToUWP Then
-		      #if DebugBuild
-		        Var TargetKey As New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PerLevelStatsMultiplier_Player")
-		        Var ReplacementKey As New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGameUWP, "PerLevelStatsMultiplier_Player")
+		      Organizer = Organizer.Clone
+		      
+		      Var UWPKeys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetUWPConfigKeys()
+		      For Each TargetKey As Ark.ConfigKey In UWPKeys
+		        Var ReplacementKey As Ark.ConfigKey = TargetKey.UWPVersion()
+		        If TargetKey = ReplacementKey Then
+		          Continue
+		        End If
 		        Organizer.Swap(TargetKey, ReplacementKey)
-		      #else
-		        #Pragma Error "This isn't ready"
-		      #endif
+		      Next TargetKey
 		    End If
 		    
 		    // Get the initial values into an organizer

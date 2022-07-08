@@ -27,6 +27,7 @@ Protected Class ConfigKey
 		  Self.mUIGroup = Source.mUIGroup
 		  Self.mContentPackUUID = Source.mContentPackUUID
 		  Self.mGSAPlaceholder = Source.mGSAPlaceholder
+		  Self.mUWPChanges = Source.mUWPChanges
 		End Sub
 	#tag EndMethod
 
@@ -39,7 +40,7 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackUUID As String, GSAPlaceholder As NullableString)
+		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackUUID As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mUUID = ObjectID
@@ -54,6 +55,7 @@ Protected Class ConfigKey
 		  Self.mCustomSort = CustomSort
 		  Self.mConstraints = Constraints
 		  Self.mGSAPlaceholder = GSAPlaceholder
+		  Self.mUWPChanges = UWPChanges
 		  
 		  If (NitradoPath Is Nil) = False Then
 		    Self.mNitradoPaths = NitradoPath.Split(";")
@@ -201,6 +203,42 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function UWPVersion() As Ark.ConfigKey
+		  If Self.mUWPChanges Is Nil Or Self.mUWPChanges.KeyCount = 0 Then
+		    Return Self
+		  End If
+		  
+		  Var Copy As New Ark.ConfigKey(Self)
+		  Copy.mUUID = Nil
+		  
+		  Var Changed As Boolean
+		  For Each Entry As DictionaryEntry In Self.mUWPChanges
+		    Try
+		      Select Case Entry.Key
+		      Case "file"
+		        Copy.mFile = Entry.Value
+		        Changed = True
+		      Case "header"
+		        Copy.mHeader = Entry.Value
+		        Changed = True
+		      Case "key"
+		        Copy.mKey = Entry.Value
+		        Changed = True
+		      End Select
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Making UWP version")
+		    End Try
+		  Next Entry
+		  
+		  If Not Changed Then
+		    Return Self
+		  End If
+		  
+		  Return Copy
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ValuesEqual(FirstValue As String, SecondValue As String) As Boolean
 		  Select Case Self.mValueType
 		  Case ValueTypes.TypeNumeric
@@ -301,6 +339,10 @@ Protected Class ConfigKey
 
 	#tag Property, Flags = &h21
 		Private mUUID As v4UUID
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUWPChanges As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
