@@ -112,6 +112,28 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BeaconKey(Key As String) As String
+		  Return Self.mExtraBeaconKeys.Lookup(Key, "").StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BeaconKey(Key As String, Assigns Value As String)
+		  Self.mExtraBeaconKeys.Value(Key) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BeaconKeys() As String()
+		  Var Keys() As String
+		  For Each Entry As DictionaryEntry In Self.mExtraBeaconKeys
+		    Keys.Add(Entry.Key)
+		  Next Entry
+		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Build(ForFile As String) As String
 		  Var Headers() As String = Self.Headers(ForFile)
 		  If ForFile = Ark.ConfigFileGameUserSettings And Headers.IndexOf(Ark.HeaderServerSettings) = -1 Then
@@ -151,6 +173,9 @@ Protected Class ConfigOrganizer
 		  For Each Entry As DictionaryEntry In Self.mValues
 		    Clone.mValues.Value(Entry.Key) = Entry.Value
 		  Next
+		  For Each Entry As DictionaryEntry In Self.mExtraBeaconKeys
+		    Clone.mExtraBeaconKeys.Value(Entry.Key) = Entry.Value
+		  Next Entry
 		  Return Clone
 		End Function
 	#tag EndMethod
@@ -158,6 +183,7 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mValues = New Dictionary
+		  Self.mExtraBeaconKeys = New Dictionary
 		  Self.mIndex = New SQLiteDatabase
 		  Self.mIndex.Connect
 		  Self.mIndex.ExecuteSQL("CREATE TABLE keymap (hash TEXT NOT NULL PRIMARY KEY COLLATE NOCASE, file TEXT NOT NULL COLLATE NOCASE, header TEXT NOT NULL COLLATE NOCASE, simplekey TEXT NOT NULL COLLATE NOCASE, sortkey TEXT NOT NULL COLLATE NOCASE);")
@@ -411,6 +437,9 @@ Protected Class ConfigOrganizer
 		End Sub
 	#tag EndMethod
 
+	#tag Property, Flags = &h21
+		Private mExtraBeaconKeys As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIndex As SQLiteDatabase

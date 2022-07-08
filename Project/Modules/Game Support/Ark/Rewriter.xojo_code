@@ -341,6 +341,12 @@ Inherits Global.Thread
 		        Var Keys() As String = FinalOrganizer.Keys(File, Header)
 		        FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", "ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))", "ManagedKeys:" + Header))
 		      Next
+		      
+		      Var BeaconKeys() As String = Organizer.BeaconKeys
+		      For Each BeaconKey As String In BeaconKeys
+		        Var BeaconKeyValue As String = Organizer.BeaconKey(BeaconKey)
+		        FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", BeaconKey + "=" + BeaconKeyValue))
+		      Next BeaconKey
 		    End If
 		    
 		    // Now add everything remaining in Parsed to Final

@@ -611,6 +611,8 @@ Inherits Beacon.Project
 		      Organizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "ServerPassword=" + Profile.ServerPassword.StringValue))
 		    End If
 		    
+		    Organizer.BeaconKey("Maps") = Profile.Mask.ToString(Locale.Raw, "0")
+		    
 		    Return Organizer
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Generating a config organizer")
