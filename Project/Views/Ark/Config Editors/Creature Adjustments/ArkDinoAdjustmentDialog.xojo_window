@@ -260,7 +260,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
    Begin PagePanel Pages
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   168
+      Height          =   136
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -278,7 +278,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabStop         =   True
       Top             =   158
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField
@@ -839,39 +839,6 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Visible         =   True
          Width           =   356
       End
-      Begin CheckBox PreventTamingCheck
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Prevent Taming"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   152
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   12
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   "When checked, the creature cannot be tamed."
-         Top             =   300
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         VisualState     =   0
-         Width           =   454
-      End
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
@@ -893,7 +860,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -925,7 +892,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -1025,11 +992,44 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "When checked, the creature cannot be downloaded from an obelisk."
       Top             =   332
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   0
+      Width           =   454
+   End
+   Begin CheckBox PreventTamingCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Prevent Taming"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   152
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "When checked, the creature cannot be tamed."
+      Top             =   300
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1102,8 +1102,8 @@ End
 		        Win.TameDamageField.Text = Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.TameResistanceField.Text = Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.ModeMultipliersRadio.Value = True
-		        Win.PreventTamingCheck.Value = Behavior.ProhibitTaming
 		      End If
+		      Win.PreventTamingCheck.Value = Behavior.ProhibitTaming
 		      Win.PreventTransferCheck.Value = Behavior.ProhibitTransfer
 		    End If
 		  End If
@@ -1124,8 +1124,8 @@ End
 		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Text)
 		    Behavior.TamedDamageMultiplier = CDbl(Win.TameDamageField.Text)
 		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Text)
-		    Behavior.ProhibitTaming = Win.PreventTamingCheck.Value
 		  End If
+		  Behavior.ProhibitTaming = Win.PreventTamingCheck.Value
 		  Behavior.ProhibitTransfer = Win.PreventTransferCheck.Value
 		  
 		  If IsNull(EditCreature) = False And TargetCreature <> EditCreature Then
@@ -1220,7 +1220,7 @@ End
 	#tag Constant, Name = HeightDisable, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"168", Scope = Private
+	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"136", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = HeightReplace, Type = Double, Dynamic = False, Default = \"32", Scope = Private
