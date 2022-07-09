@@ -673,6 +673,38 @@ Begin ServerViewContainer FTPServerView
          Visible         =   True
          Width           =   600
       End
+      Begin CheckBox VerifyCertificateCheck
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Verify Certificate"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   381
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   14
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   197
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   199
+      End
    End
    Begin OmniBar ControlToolbar
       Alignment       =   0
@@ -724,6 +756,7 @@ End
 		  Self.PassField.Text = Self.mProfile.Password
 		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
 		  Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniPath
+		  Self.VerifyCertificateCheck.Value = Self.mProfile.VerifyHost
 		  Self.ModeMenu.SelectByTag(Self.mProfile.Mode)
 		  
 		  Self.SettingsView.RefreshUI()
@@ -772,6 +805,8 @@ End
 		Sub Change()
 		  Self.mProfile.Mode = Me.Tag
 		  Self.Changed = Self.mProfile.Modified
+		  Self.VerifyCertificateCheck.Visible = Self.mProfile.Mode = Ark.FTPServerProfile.ModeAuto Or Self.mProfile.Mode = Ark.FTPServerProfile.ModeFTPTLS
+		  Self.VerifyCertificateCheck.Caption = If(Self.mProfile.Mode = Ark.FTPServerProfile.ModeAuto, "Verify Certificate (TLS Only)", "Verify Certificate")
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -849,6 +884,14 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Profile = Self.mProfile
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events VerifyCertificateCheck
+	#tag Event
+		Sub Action()
+		  Self.mProfile.VerifyHost = Me.Value
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
