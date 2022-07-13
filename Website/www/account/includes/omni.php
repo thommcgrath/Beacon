@@ -199,9 +199,9 @@ BeaconTemplate::FinishScript();
 ?><p>Thanks for purchasing Beacon Omni! Your support means a lot.</p>
 <div id="section-activation" class="omni-section">
 	<h2>Activating Beacon Omni</h2>
-	<h3><a href="#with-internet" id="omni_show_instructions_internet">Method 1: Sign into your account in Beacon</a></h3>
+	<h3><a href="#with-internet" id="omni_show_instructions_internet">Option 1: Sign into your account in Beacon</a></h3>
 	<div id="omni_instructions_internet" class="hidden"><?php include(BeaconCommon::WebRoot() . '/omni/welcome/instructions.php'); ?></div>
-	<h3><a href="#without-internet" id="omni_show_instructions_no_internet">Method 2: Use an activation file for a computer without internet</a></h3>
+	<h3><a href="#without-internet" id="omni_show_instructions_no_internet">Option 2: Use an activation file for a computer without internet</a></h3>
 	<div id="omni_instructions_no_internet" class="hidden">
 		<div class="signin_step separator-color">
 			<div id="img_signin_auth" class="img_signin separator-color">&nbsp;</div>
