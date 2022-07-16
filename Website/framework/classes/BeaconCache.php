@@ -12,7 +12,7 @@ abstract class BeaconCache {
 	
 	public static function Get(string $key): mixed {
 		static::Init();
-		$key = BeaconCommon::EnvironmentName() . '.' . $key;
+		$key = BeaconCommon::Domain() . ':' . $key;
 		$value = static::$mem->get($key);
 		$status = static::$mem->getResultCode();
 		if ($status == 0) {
@@ -26,7 +26,7 @@ abstract class BeaconCache {
 	
 	public static function Set(string $key, mixed $value, int $ttl = 0): void {
 		static::Init();
-		$key = BeaconCommon::EnvironmentName() . '.' . $key;
+		$key = BeaconCommon::Domain() . ':' . $key;
 		static::$mem->set($key, $value, $ttl);
 		$status = static::$mem->getResultCode();
 		if ($status != 0) {
@@ -36,7 +36,7 @@ abstract class BeaconCache {
 	
 	public static function Remove(string $key): void {
 		static::Init();
-		$key = BeaconCommon::EnvironmentName() . '.' . $key;
+		$key = BeaconCommon::Domain() . ':' . $key;
 		static::$mem->delete($key, $value);
 		$status = static::$mem->getResultCode();
 		if ($status != 0) {

@@ -37,15 +37,15 @@ abstract class BeaconCommon {
 	}
 	
 	public static function EnvironmentName(): string {
-		return basename(dirname(__FILE__, 4));
+		return self::GetGlobal('Environment_Name', 'bork');
 	}
 	
 	public static function InProduction(): bool {
-		return static::EnvironmentName() === 'live';
+		return self::GetGlobal('Production', false);
 	}
 	
 	public static function InDevelopment(): bool {
-		return static::EnvironmentName() !== 'live';
+		return !self::InProduction();
 	}
 	
 	public static function FrameworkPath(): string {
@@ -166,33 +166,15 @@ abstract class BeaconCommon {
 	}
 	
 	public static function Domain(): string {
-		if (isset($_SERVER['HTTP_HOST']) && (strtolower(substr($_SERVER['HTTP_HOST'], -12)) === 'beaconapp.cc')) {
-			return 'beaconapp.cc';
-		} else {
-			return 'usebeacon.app';
-		}
+		return self::GetGlobal('Web_Domain', '');
 	}
 	
 	public static function APIDomain(): string {
-		$domain = self::Domain();
-		$environment = self::EnvironmentName();
-		if ($environment === 'live') {
-			return 'api.' . $domain;
-		} elseif ($domain === 'beaconapp.cc') {
-			return 'api.' . $environment . '.' . $domain;
-		} else {
-			return $environment . '-api.' . $domain;
-		}
+		return self::GetGlobal('API_Domain', '');
 	}
 	
 	public static function AbsoluteURL(string $path): string {
-		// Because the host can be spoofed, only trust it in development.
-		if (self::InProduction()) {
-			$url = 'https://' . self::Domain() . $path;
-		} else {
-			$url = 'https://' . self::EnvironmentName() . '.' . self::Domain() . $path;
-		}
-		return $url;
+		return 'https://' . self::Domain() . $path;
 	}
 	
 	public static function HasAllKeys(array $arr, ...$keys): bool {

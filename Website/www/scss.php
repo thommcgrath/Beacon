@@ -41,7 +41,7 @@ if (is_array($cached)) {
 	}
 }
 
-$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/sass --style=compressed ' . escapeshellarg($path) . ' 2>&1';
+$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/' . BeaconCommon::GetGlobal('SASS_Filename', 'sass') . ' --style=compressed ' . escapeshellarg($path) . ' 2>&1';
 $content = trim(shell_exec($cmd));
 
 $cached = array(

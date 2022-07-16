@@ -87,7 +87,7 @@ abstract class BeaconTemplate {
 			
 			$cached = BeaconCache::Get($content_hash);
 			if (is_null($cached)) {
-				$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/sass --style=compressed --stdin';
+				$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/' . BeaconCommon::GetGlobal('SASS_Filename', 'sass') . ' --style=compressed --stdin';
 				$spec = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
 				$process = proc_open($cmd, $spec, $pipes);
 				if (is_resource($process)) {
