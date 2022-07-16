@@ -17,6 +17,7 @@ Inherits Ark.ServerProfile
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
 		  Self.mMode = Dict.Lookup("Mode", ModeAuto)
 		  Self.mMask = Dict.Lookup("Mask", 0)
+		  Self.mVerifyHost = Dict.Lookup("Verify Host", True)
 		End Sub
 	#tag EndEvent
 
@@ -31,6 +32,7 @@ Inherits Ark.ServerProfile
 		  Dict.Value("GameUserSettings.ini Path") = Self.mGameUserSettingsIniPath
 		  Dict.Value("Mode") = Self.mMode
 		  Dict.Value("Mask") = Self.mMask
+		  Dict.Value("Verify Host") = Self.mVerifyHost
 		End Sub
 	#tag EndEvent
 
@@ -63,6 +65,7 @@ Inherits Ark.ServerProfile
 		  Self.Password = Profile.Password
 		  Self.Port = Profile.Port
 		  Self.Username = Profile.Username
+		  Self.VerifyHost = Profile.VerifyHost
 		End Sub
 	#tag EndMethod
 
@@ -223,6 +226,10 @@ Inherits Ark.ServerProfile
 		Private mUsername As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mVerifyHost As Boolean
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -278,6 +285,23 @@ Inherits Ark.ServerProfile
 			End Set
 		#tag EndSetter
 		Username As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mVerifyHost
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mVerifyHost <> Value Then
+			    Self.mVerifyHost = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		VerifyHost As Boolean
 	#tag EndComputedProperty
 
 

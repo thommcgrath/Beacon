@@ -344,25 +344,30 @@ End
 		    Var Creature As Ark.Creature = Behavior.TargetCreature
 		    Var Label As String = Creature.Label
 		    
+		    Var TameTransferSuffix As String
+		    If Behavior.ProhibitTaming And Behavior.ProhibitTransfer Then
+		      TameTransferSuffix = "cannot be tamed or transferred"
+		    ElseIf Behavior.ProhibitTaming Then
+		      TameTransferSuffix = "cannot be tamed"
+		    ElseIf Behavior.ProhibitTransfer Then
+		      TameTransferSuffix = "cannot be transferred"
+		    End If
+		    
 		    If Behavior.ProhibitSpawning Then
 		      Label = Label + EndOfLine + "Disabled"
-		      If Behavior.ProhibitTransfer Then
-		        Label = Label + ", cannot be transferred"
+		      If TameTransferSuffix.IsEmpty = False Then
+		        Label = Label + ", " + TameTransferSuffix
 		      End If
 		      Self.List.AddRow(Label)
 		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
 		      Label = Label + EndOfLine + "Replaced with " + Behavior.ReplacementCreature.Label
-		      If Behavior.ProhibitTransfer Then
-		        Label = Label + ", cannot be transferred"
+		      If TameTransferSuffix.IsEmpty = False Then
+		        Label = Label + ", " + TameTransferSuffix
 		      End If
 		      Self.List.AddRow(Label)
 		    Else
-		      If Behavior.ProhibitTaming And Behavior.ProhibitTransfer Then
-		        Label = Label + EndOfLine + "Cannot be tamed or transferred"
-		      ElseIf Behavior.ProhibitTaming Then
-		        Label = Label + EndOfLine + "Cannot be tamed"
-		      ElseIf Behavior.ProhibitTransfer Then
-		        Label = Label + EndOfLine + "Cannot be transferred"
+		      If TameTransferSuffix.IsEmpty = False Then
+		        Label = Label + EndOfLine + TameTransferSuffix.Left(1).Uppercase + TameTransferSuffix.Middle(1)
 		      End If
 		      Self.List.AddRow(Label, Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####"))
 		    End If

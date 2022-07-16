@@ -522,6 +522,26 @@ Inherits Ark.IntegrationEngine
 		Private mSocketLock As CriticalSection
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSocket.OptionSSLVerifyHost = 2
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value Then
+			    Self.mSocket.OptionSSLVerifyHost = 2
+			    Self.mSocket.OptionSSLVerifyPeer = 1
+			  Else
+			    Self.mSocket.OptionSSLVerifyHost = 0
+			    Self.mSocket.OptionSSLVerifyPeer = 0
+			  End If
+			End Set
+		#tag EndSetter
+		VerifyHost As Boolean
+	#tag EndComputedProperty
+
 
 	#tag ViewBehavior
 		#tag ViewProperty

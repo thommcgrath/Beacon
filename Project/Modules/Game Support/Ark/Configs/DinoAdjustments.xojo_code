@@ -40,9 +40,6 @@ Inherits Ark.ConfigGroup
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
 		        Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "TamedDinoClassResistanceMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")", "TamedDinoClassResistanceMultipliers:" + Behavior.TargetCreature.ClassString))
 		      End If
-		      If Behavior.ProhibitTaming Then
-		        Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventDinoTameClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventDinoTameClassNames:" + Behavior.TargetCreature.ClassString))
-		      End If
 		      
 		      #if EnableSpawnWeights
 		        If Behavior.SpawnWeightMultiplier <> 1.0 Or (Behavior.SpawnLimitPercent Is Nil) = False Then
@@ -57,6 +54,9 @@ Inherits Ark.ConfigGroup
 		          Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoSpawnWeightMultipliers=" + Elements.Join(","), "DinoSpawnWeightMultipliers:" + Behavior.TargetCreature.ClassString))
 		        End If
 		      #endif
+		    End If
+		    If Behavior.ProhibitTaming Then
+		      Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventDinoTameClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventDinoTameClassNames:" + Behavior.TargetCreature.ClassString))
 		    End If
 		    If Behavior.ProhibitTransfer Then
 		      Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventTransferForClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventTransferForClassNames:" + Behavior.TargetCreature.ClassString))

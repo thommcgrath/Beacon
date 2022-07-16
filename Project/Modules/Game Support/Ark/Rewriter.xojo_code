@@ -197,7 +197,6 @@ Inherits Global.Thread
 		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, ProjectUUID As String, LegacyTrustKey As String, Format As Ark.Rewriter.EncodingFormat, UWPMode As Ark.Project.UWPCompatibilityModes, Nuke As Boolean, ByRef Error As RuntimeException) As String
 		  // This is the new master method
 		  
-		  
 		  Try
 		    // Even if we're about to nuke the file, determine the mode so the file can be rebuilt in the same format
 		    InitialContent = InitialContent.GuessEncoding.SanitizeIni
@@ -211,8 +210,20 @@ Inherits Global.Thread
 		    End Select
 		    If Nuke Then
 		      InitialContent = ""
-		    Else
-		      InitialContent = InitialContent.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
+		    End If
+		    
+		    // Convert into UWP mode
+		    If ConvertToUWP Then
+		      Organizer = Organizer.Clone
+		      
+		      Var UWPKeys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetUWPConfigKeys()
+		      For Each TargetKey As Ark.ConfigKey In UWPKeys
+		        Var ReplacementKey As Ark.ConfigKey = TargetKey.UWPVersion()
+		        If TargetKey = ReplacementKey Then
+		          Continue
+		        End If
+		        Organizer.Swap(TargetKey, ReplacementKey)
+		      Next TargetKey
 		    End If
 		    
 		    // Get the initial values into an organizer
@@ -341,6 +352,12 @@ Inherits Global.Thread
 		        Var Keys() As String = FinalOrganizer.Keys(File, Header)
 		        FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", "ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))", "ManagedKeys:" + Header))
 		      Next
+		      
+		      Var BeaconKeys() As String = Organizer.BeaconKeys
+		      For Each BeaconKey As String In BeaconKeys
+		        Var BeaconKeyValue As String = Organizer.BeaconKey(BeaconKey)
+		        FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", BeaconKey + "=" + BeaconKeyValue))
+		      Next BeaconKey
 		    End If
 		    
 		    // Now add everything remaining in Parsed to Final
@@ -398,11 +415,7 @@ Inherits Global.Thread
 		    // Remove excess junk that sneaks in from who knows where.
 		    FinalOrganizer.Remove(Ark.ConfigFileGameUserSettings, "/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C")
 		    
-		    Var Output As String = ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
-		    If ConvertToUWP Then
-		      Output = Output.ReplaceAll(Ark.HeaderShooterGame, Ark.HeaderShooterGameUWP)
-		    End If
-		    Return Output
+		    Return ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try
