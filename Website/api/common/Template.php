@@ -9,7 +9,7 @@ class Template implements \JsonSerializable {
 	protected $min_version;
 	protected $contents;
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'id' => $this->object_id,
 			'game' => $this->game_id,

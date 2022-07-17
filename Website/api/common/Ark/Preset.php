@@ -24,7 +24,7 @@ class Preset extends \Ark\GenericObject {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['contents'] = $this->contents;
 		return $json;

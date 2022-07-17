@@ -79,7 +79,7 @@ class Event implements \JsonSerializable {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'event_id' => $this->event_id,
 			'label' => $this->event_name,

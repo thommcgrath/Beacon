@@ -26,7 +26,7 @@ class GameVariable implements \JsonSerializable {
 		return $topics;
 	}
 
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return array(
 			'key' => $this->key,
 			'value' => $this->value

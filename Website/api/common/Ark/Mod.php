@@ -155,7 +155,7 @@ class Mod implements \JsonSerializable {
 		return $sql;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'mod_id' => $this->mod_id,
 			'name' => $this->name,

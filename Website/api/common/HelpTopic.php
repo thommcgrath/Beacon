@@ -30,7 +30,7 @@ class HelpTopic implements \JsonSerializable {
 		return $topics;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return array(
 			'topic' => $this->config_name,
 			'title' => $this->title,

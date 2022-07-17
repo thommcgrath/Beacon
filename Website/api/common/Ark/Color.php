@@ -60,7 +60,7 @@ class Color implements \JsonSerializable {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'color_id' => $this->color_id,
 			'label' => $this->color_name,

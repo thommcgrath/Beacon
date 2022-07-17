@@ -643,7 +643,7 @@ class User implements \JsonSerializable {
 		];
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$arr = [
 			'user_id' => $this->user_id,
 			'username' => $this->username,

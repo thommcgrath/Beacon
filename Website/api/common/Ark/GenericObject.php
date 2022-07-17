@@ -397,7 +397,7 @@ class GenericObject implements \JsonSerializable {
 		return $arr;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return array(
 			'id' => $this->object_id,
 			'label' => $this->label,
