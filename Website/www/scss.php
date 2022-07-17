@@ -26,7 +26,7 @@ if ($scss_path != false) {
 	return;
 }
 
-if (strpos($path, $_SERVER['DOCUMENT_ROOT']) !== 0) {
+if (strpos($path, realpath($_SERVER['DOCUMENT_ROOT'])) !== 0) {
 	http_response_code(404);
 	return;
 }
