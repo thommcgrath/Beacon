@@ -1,0 +1,29 @@
+#reporter_container {
+	max-width: 460px;
+	margin-top: 40px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 40px;
+	text-align: center;
+}
+
+#reporter_disclaimer {
+	font-size: smaller;
+	color: rgba(0, 0, 0, 0.5);
+	text-align: right;
+	width: 300px;
+	margin-left: auto;
+}
+
+#technical_details {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
+	padding: 20px;
+	font-size: smaller;
+	display: none;
+	overflow-x: auto;
+}
+
+#show_technical_details {
+	font-size: smaller;
+}

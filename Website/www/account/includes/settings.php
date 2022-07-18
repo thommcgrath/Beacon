@@ -111,17 +111,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <?php
 BeaconTemplate::FinishScript();
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-a.username-suggestion {
-	font-style: italic;
-}
-
-</style>
-<?php
-BeaconTemplate::FinishStyles();
-
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT generate_username() AS username;');
 $suggested_username = $results->Field('username');

@@ -17,18 +17,7 @@ if ($purchase->RecordCount() === 0) {
 	BeaconCommon::Redirect('/account/#omni');
 }
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-h1 span.tag {
-	margin-left: 12px;
-	font-weight: 400;
-	font-size: smaller;
-	border-radius: 8px;
-}
-
-</style><?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 $purchase_seconds = intval($purchase->Field('purchase_date'));
 $purchase_currency = $purchase->Field('currency');

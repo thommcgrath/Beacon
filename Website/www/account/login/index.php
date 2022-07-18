@@ -142,17 +142,7 @@ if (is_null($session) == false) {
 	}
 }
 
-BeaconTemplate::StartStyles();
-?><style>
-
-#login_container {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 600px;
-}
-
-</style><?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 ?>
 <div id="login_container">

@@ -59,34 +59,7 @@ if (is_null($article_data)) {
 
 BeaconTemplate::SetTitle($article_data['title']);
 BeaconTemplate::SetPageDescription($article_data['preview']);
-
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-.next_article, .previous_article {
-	text-align: center;
-}
-
-.navigation_footer {
-	line-height: 1.0em;
-	border-top-width: 1px;
-	border-top-style: solid;
-	margin-top: 30px;
-}
-
-@media (min-width: 840px) {
-	.next_article {
-		text-align: right;
-	}
-	
-	.previous_article {
-		text-align: left;
-	}
-}
-
-</style>
-<?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('blog.css'));
 
 $results = $database->Query('SELECT article_id, article_slug, subject FROM blog_articles WHERE publish_date < CURRENT_TIMESTAMP ORDER BY publish_date DESC LIMIT 10;');
 

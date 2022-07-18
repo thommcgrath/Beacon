@@ -4,7 +4,6 @@ abstract class BeaconTemplate {
 	protected static $template_name = 'default';
 	protected static $title = '';
 	protected static $script_lines = [];
-	protected static $style_lines = [];
 	protected static $header_lines = [];
 	protected static $body_class = '';
 	protected static $page_description = '';
@@ -79,44 +78,7 @@ abstract class BeaconTemplate {
 			$script[] = '</script>';
 		}
 		
-		$style = [];
-		if (count(self::$style_lines) > 0) {
-			$style = self::$style_lines;
-			$content = implode("\n", $style);
-			$content_hash = md5($content);
-			
-			$cached = BeaconCache::Get($content_hash);
-			if (is_null($cached)) {
-				$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/' . BeaconCommon::GetGlobal('SASS_Filename', 'sass') . ' --style=compressed --stdin';
-				$spec = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
-				$process = proc_open($cmd, $spec, $pipes);
-				if (is_resource($process)) {
-					fwrite($pipes[0], $content);
-					fclose($pipes[0]);
-					
-					$cached = trim(stream_get_contents($pipes[1]));
-					$err = trim(stream_get_contents($pipes[2]));
-					fclose($pipes[1]);
-					fclose($pipes[2]);
-					
-					proc_close($process);
-					
-					if (empty($cached)) {
-						$cached = "/*Error:\n\n" . htmlentities($err) . "\n\n*/\n\n$content";
-					}
-					
-					BeaconCache::Set($content_hash, $cached);
-				} else {
-					$cached = $content;
-				}
-			}
-						
-			$style = explode("\n", $cached);
-			array_unshift($style, '<style type="text/css" nonce="' . htmlentities($_SERVER['CSP_NONCE']) . '" hash="' . $content_hash . '">');
-			$style[] = '</style>';
-		}
-		
-		return array_merge(self::$header_lines, $style, $script);
+		return array_merge(self::$header_lines, $script);
 	}
 	
 	public static function ExtraHeaderContent(string $separator = "\n"): string {
@@ -171,24 +133,6 @@ abstract class BeaconTemplate {
 			}
 			
 			self::$script_lines[] = $line;
-		}
-	}
-	
-	public static function StartStyles(): void {
-		ob_start();
-	}
-	
-	public static function FinishStyles(): void {
-		$content = trim(ob_get_contents());
-		ob_end_clean();
-		
-		$lines = explode("\n", $content);
-		foreach ($lines as $line) {
-			if (substr($line, 0, 7) == '<style ' || substr($line, 0, 7) == '<style>' || substr($line, -8) == '</style>') {
-				continue;
-			}
-			
-			self::$style_lines[] = $line;
 		}
 	}
 	

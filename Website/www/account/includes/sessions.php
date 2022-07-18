@@ -4,39 +4,6 @@ $sessions = BeaconSession::GetForUser($user);
 
 BeaconTemplate::AddStyleSheet('/assets/css/flags.css');
 
-BeaconTemplate::StartStyles();
-?><style>
-#session_table {
-	max-width: 100%;
-	
-	.country_column, .revoke_column {
-		width: 75px;
-	}
-	
-	.address_column {
-		width: 150px;
-	}
-	
-	.flag-icon {
-		margin-right: 8px;
-	}
-	
-	.self {
-		font-weight: normal;
-		font-size: 10pt;
-	}
-	
-	td.country_column, td.revoke_column {
-		text-align: center;
-	}
-	
-	.remote-address {
-		/*word-break: break-all*/
-	}
-}
-</style><?php
-BeaconTemplate::FinishStyles();
-
 BeaconTemplate::StartScript(); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function(event) {

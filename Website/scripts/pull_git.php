@@ -48,7 +48,8 @@ $commands = [
 	'cd ' . escapeshellarg($root),
 	'git clean -fd',
 	'git pull',
-	'git reset --hard ' . escapeshellarg($desired_hash)
+	'git reset --hard ' . escapeshellarg($desired_hash),
+	'sudo systemctl reload nginx'
 ];
 
 $command = implode(' && ', $commands) . ' 2>&1';

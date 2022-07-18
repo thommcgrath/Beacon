@@ -83,6 +83,10 @@ pre {
 
 a {
 	word-break: break-word;
+	
+	&.username-suggestion {
+		font-style: italic;
+	}
 }
 
 .source-code-font {

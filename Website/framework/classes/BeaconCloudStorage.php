@@ -161,7 +161,7 @@ abstract class BeaconCloudStorage {
 		return 'https://' . BeaconCommon::GetGlobal('Storage_Host') . $resource_path . (strpos($resource_path, '?') === false ? '?' : '&') . 'AWSAccessKeyId=' . urlencode(BeaconCommon::GetGlobal('Storage_Username')) . '&Expires=' . urlencode($expiration) . '&Signature=' . urlencode($signature);
 	}
 	
-	private static function WarmFile(string $remote_path, ?string $version_id): int {
+	private static function WarmFile(string $remote_path, ?string $version_id): int|string {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT hash, size_in_bytes FROM usercloud WHERE remote_path = $1;', $remote_path);
