@@ -407,6 +407,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.RadiusField.DoubleValue = Self.RadiusSlider.Value
+		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 
