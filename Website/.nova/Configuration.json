@@ -1,0 +1,16 @@
+{
+  "index.enabled" : true,
+  "index.symbolicate" : true,
+  "php.interpreter" : "\/opt\/homebrew\/bin\/php",
+  "php.validate" : "onChange",
+  "VineCode.Sass.cssStyle" : "Compressed",
+  "VineCode.Sass.errorCss" : "No",
+  "VineCode.Sass.execPath" : "\/opt\/homebrew\/bin\/sass",
+  "VineCode.Sass.sourceMap" : "None",
+  "workspace.art_style" : 1,
+  "workspace.color" : 11,
+  "workspace.name" : "Beacon Local",
+  "workspace.preview_root" : "www",
+  "workspace.preview_type" : "custom",
+  "workspace.preview_url" : "https:\/\/local.usebeacon.app"
+}
