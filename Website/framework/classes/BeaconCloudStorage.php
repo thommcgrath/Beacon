@@ -434,7 +434,7 @@ abstract class BeaconCloudStorage {
 		return true;		
 	}
 	
-	public static function PutFile(string $remote_path, string $file_contents): bool {
+	public static function PutFile(string $remote_path, string|array $file_contents): bool {
 		// determine if the file has changed
 		$legacy_mode = is_array($file_contents) === false;
 		if ($legacy_mode) {
