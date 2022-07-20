@@ -276,14 +276,16 @@ abstract class BeaconCloudStorage {
 			}
 			
 			$bucket_path = $results->Field('bucket');
+			$bucket_name = substr($bucket_path, strpos($bucket_path, '/'));
 			$remote_path = $results->Field('remote_path');
 			$local_path = static::LocalPath($remote_path);
 			$request_method = $results->Field('request_method');
 			$content_type = $results->Field('content_type');
 			$date = gmdate('Y-m-d\TH:i:s\Z', time());
 			$resource_path = static::CleanupRemotePath($remote_path);
-			$str_to_sign = implode("\n", [$request_method, '', $content_type, $date, $resource_path]);
+			$str_to_sign = implode("\n", [$request_method, '', $content_type, $date, $bucket_name . $resource_path]);
 			$signature = base64_encode(hash_hmac('sha1', $str_to_sign, BeaconCommon::GetGlobal('Storage_Password'), true));
+			$response = false;
 			
 			curl_setopt($curl, CURLOPT_URL, 'https://' . $bucket_path . $resource_path);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
