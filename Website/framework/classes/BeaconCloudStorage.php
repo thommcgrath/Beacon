@@ -494,7 +494,7 @@ abstract class BeaconCloudStorage {
 		if ($file_exists) {
 			$database->Query('UPDATE usercloud SET content_type = $2, size_in_bytes = $3, hash = $4, modified = CURRENT_TIMESTAMP, deleted = FALSE, header = $5 WHERE remote_path = $1;', $remote_path, $content_type, $filesize, $hash, $header_bytes);
 		} else {
-			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash, modified, header, bucket) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, $5, $6);', $remote_path, $content_type, $filesize, $hash, $header_bytes, BeaconCommon::GetGlobal('Storage_Host') . '/' . BeaconCommon::GetGlobal('Storage_Bucket'));
+			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash, modified, header, bucket) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, $5, $6);', $remote_path, $content_type, $filesize, $hash, $header_bytes, BeaconCommon::GetGlobal('Storage_Bucket'));
 		}
 		if (is_null($cache_id)) {
 			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4);', $hostname, $remote_path, $filesize, $hash); 
