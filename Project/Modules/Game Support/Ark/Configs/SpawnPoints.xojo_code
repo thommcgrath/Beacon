@@ -122,17 +122,11 @@ Inherits Ark.ConfigGroup
 		    Var CreatureClasses(), LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelMultiplierMembers(), MinLevelOffsetMembers(), MaxLevelMultiplierMembers(), MaxLevelOffsetMembers(), LevelOverrideMembers() As String
 		    Var IncludeLevels, IncludeOffsets, IncludeSpawnChance, IncludeMinLevelMultiplier, IncludeMaxLevelMultiplier, IncludeMinLevelOffset, IncludeMaxLevelOffset, IncludeLevelOverride As Boolean
 		    Var Entries() As Ark.SpawnPointSetEntry = Set.Entries
-		    Var SpawnSum As Double
 		    
 		    For Each Entry As Ark.SpawnPointSetEntry In Entries
 		      IncludeLevels = IncludeLevels Or Entry.LevelCount > 0
 		      IncludeOffsets = IncludeOffsets Or Entry.Offset <> Nil
-		      If Entry.SpawnChance <> Nil Then
-		        SpawnSum = SpawnSum + Entry.SpawnChance
-		        IncludeSpawnChance = True
-		      Else
-		        SpawnSum = SpawnSum + 1.0
-		      End If
+		      IncludeSpawnChance = IncludeSpawnChance Or (Entry.SpawnChance Is Nil) = False
 		      IncludeMinLevelMultiplier = IncludeMinLevelMultiplier Or Entry.MinLevelMultiplier <> Nil
 		      IncludeMinLevelOffset = IncludeMinLevelOffset Or Entry.MinLevelOffset <> Nil
 		      IncludeMaxLevelMultiplier = IncludeMaxLevelMultiplier Or Entry.MaxLevelMultiplier <> Nil
@@ -167,7 +161,7 @@ Inherits Ark.ConfigGroup
 		        End If
 		      End If
 		      If IncludeSpawnChance Then
-		        Var Chance As Double = If(Entry.SpawnChance <> Nil, Entry.SpawnChance.DoubleValue, 1.0) / SpawnSum
+		        Var Chance As Double = If((Entry.SpawnChance Is Nil) = False, Max(Min(Entry.SpawnChance.DoubleValue, 1.0), 0.0), 1.0)
 		        SpawnChanceMembers.Add(Chance.PrettyText)
 		      End If
 		      If IncludeMinLevelMultiplier Then

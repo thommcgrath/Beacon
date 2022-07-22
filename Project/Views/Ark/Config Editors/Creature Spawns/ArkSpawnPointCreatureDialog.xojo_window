@@ -403,7 +403,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       Top             =   118
       Transparent     =   False
       Underline       =   False
-      Value           =   "Weight:"
+      Value           =   "Spawn Chance:"
       Visible         =   True
       Width           =   128
    End
@@ -1155,6 +1155,41 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          Width           =   172
       End
    End
+   Begin UITweaks.ResizedLabel SpawnChancePercentLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   246
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "%"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   118
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   20
+   End
 End
 #tag EndWindow
 
@@ -1223,7 +1258,8 @@ End
 		    Self.OffsetFields(2).DoubleValue = CommonOffset.Z
 		  End If
 		  If CommonSpawnChance <> Nil Then
-		    Self.SpawnChanceField.DoubleValue = CommonSpawnChance
+		    Var Percent As Double = Max(Min(CommonSpawnChance.DoubleValue, 1.0), 0.0) * 100
+		    Self.SpawnChanceField.DoubleValue = Percent
 		  End If
 		  If CommonMinLevelMultiplier <> Nil Then
 		    Self.LevelMultiplierMinField.DoubleValue = CommonMinLevelMultiplier
@@ -1471,8 +1507,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 0.00001
-		  MaxValue = 1000000
+		  MinValue = 0.01
+		  MaxValue = 100
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1555,7 +1591,7 @@ End
 		    
 		    If Self.mEditedFields.IndexOf(Self.SpawnChanceField) > -1 Then
 		      If Self.SpawnChanceField.Text <> "" Then
-		        Entry.SpawnChance = Self.SpawnChanceField.DoubleValue
+		        Entry.SpawnChance = Self.SpawnChanceField.DoubleValue / 100
 		      Else
 		        Entry.SpawnChance = Nil
 		      End If

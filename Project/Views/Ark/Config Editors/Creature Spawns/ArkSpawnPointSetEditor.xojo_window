@@ -1547,13 +1547,14 @@ End
 		    If Entry.Offset <> Nil Then
 		      Figures.Add("Offset: " + Entry.Offset.X.PrettyText + "," + Entry.Offset.Y.PrettyText + "," + Entry.Offset.Z.PrettyText)
 		    End If
-		    If Entry.SpawnChance <> Nil Then
-		      Figures.Add("Weight: " + Entry.SpawnChance.DoubleValue.PrettyText)
+		    If (Entry.SpawnChance Is Nil) = False Then
+		      Var Percent As Double = Max(Min(Entry.SpawnChance.DoubleValue, 1.0), 0.0) * 100
+		      Figures.Add("Chance: " + Percent.PrettyText(2) + "%")
 		    End If
 		    If Entry.LevelCount > 0 Or Entry.MinLevelOffset <> Nil Or Entry.MaxLevelOffset <> Nil Or Entry.MinLevelMultiplier <> Nil Or Entry.MaxLevelMultiplier <> Nil Then
 		      Var Difficulty As Double = Self.Project.Difficulty.DifficultyValue
 		      Var LevelRange As Beacon.Range = Entry.LevelRangeForDifficulty(Difficulty, Set.LevelOffsetBeforeMultiplier)
-		      Figures.Add("Level Range Override: " + LevelRange.Min.PrettyText() + " to " + LevelRange.Max.PrettyText())
+		      Figures.Add("Level Override: " + LevelRange.Min.PrettyText() + " to " + LevelRange.Max.PrettyText())
 		    End If
 		    Figures.Sort
 		    
