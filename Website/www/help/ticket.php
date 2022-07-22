@@ -225,7 +225,7 @@ if (count($users) === 0) {
 		'auth_key' => BeaconCommon::GetGlobal('CleanTalk Auth Key'),
 		'sender_email' => $email,
 		'sender_nickname' => $name,
-		'sender_ip' => \BeaconCommon::RemoteAddr(),
+		'sender_ip' => \BeaconCommon::RemoteAddr(false),
 		'message' => $body,
 		'js_on' => 1,
 		'submit_time' => $time_submitting,

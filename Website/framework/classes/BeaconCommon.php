@@ -624,16 +624,45 @@ abstract class BeaconCommon {
 		return (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && stripos(strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'gzip') !== false);
 	}
 	
-	public static function RemoteAddr(): string {
+	public static function AnonymizeIP(string $addr): string {
+		$unknown_addr = str_contains($addr, ':') ? '::' : '0.0.0.0';
+		
+		$converted = @inet_pton($addr);
+		if ($converted === false) {
+			return $unknown_addr;
+		}
+		
+		if (strlen($converted) === 4) {
+			$converted = substr($converted, 0, 3) . "\0";
+		} elseif (strlen($converted) === 16) {
+			$converted = substr($converted, 0, 6) . "\0\0\0\0\0\0\0\0\0\0";
+		} else {
+			return $unknown_addr;
+		}
+		
+		$anon = @inet_ntop($converted);
+		if ($anon === false) {
+			return $unknown_addr;
+		}
+		return $anon;
+	}
+	
+	public static function RemoteAddr(bool $anonymous = true): string {
+		$addr = '';
 		if (empty($_SERVER['HTTP_CF_CONNECTING_IP']) === false) {
-			return $_SERVER['HTTP_CF_CONNECTING_IP'];
+			$addr = $_SERVER['HTTP_CF_CONNECTING_IP'];
 		} elseif (empty($_SERVER['HTTP_TRUE_CLIENT_IP']) === false) {
-			return $_SERVER['HTTP_TRUE_CLIENT_IP'];
+			$addr = $_SERVER['HTTP_TRUE_CLIENT_IP'];
 		} elseif (empty($_SERVER['HTTP_X_FORWARDED_FOR']) === false) {
 			$arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-			return $arr[0];
+			$addr = $arr[0];
 		} else {
-			return $_SERVER['REMOTE_ADDR'];
+			$addr = $_SERVER['REMOTE_ADDR'];
+		}
+		if ($anonymous) {
+			return self::AnonymizeIP($addr);
+		} else {
+			return $addr;
 		}
 	}
 	

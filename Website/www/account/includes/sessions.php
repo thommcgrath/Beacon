@@ -41,7 +41,6 @@ echo '<table class="generic" id="session_table">';
 echo '<thead><tr><th>Device</th><th class="address_column low-priority">Address</th><th class="country_column low-priority">Country</th><th class="revoke_column low-priority">Actions</th></tr></thead>';
 
 $user_addr = \BeaconCommon::RemoteAddr();
-$is_ipv6 = strpos($user_addr, ':');
 $current_session = $session;
 foreach ($sessions as $session) {
 	$remote_ip = $session->RemoteAddr();
@@ -53,7 +52,7 @@ foreach ($sessions as $session) {
 	
 	$address_html = '<span class="remote-address">' . str_replace(':', ':<wbr>', htmlentities($session->RemoteAddr())) . '</span>';
 	if ($self) {
-		$address_html .= '<span class="self text-lighter"><br>(' . ($is_ipv6 ? 'This is your current device' : 'This is your current address') . ')</span>';
+		$address_html .= '<span class="self text-lighter"><br>(This is your current network)</span>';
 	}
 	
 	$flag_html = '<span class="flag-icon flag-icon-' . strtolower($session->RemoteCountry()) . '"></span>' . $session->RemoteCountry();
