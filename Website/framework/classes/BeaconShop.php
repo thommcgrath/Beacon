@@ -144,6 +144,31 @@ abstract class BeaconShop {
 		
 		return $purchase_id;
 	}
+	
+	public static function TrackAffiliateClick(string $code): string {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT code FROM affiliate_links WHERE code = $1;', $code);
+		$client_reference_id = BeaconCommon::GenerateUUID();
+		
+		if ($rows->RecordCount() === 1) {
+			$code = $rows->Field('code'); // Just because
+			
+			$database->BeginTransaction();
+			$database->Query('INSERT INTO affiliate_tracking (code, client_reference_id, click_time) VALUES ($1, $2, CURRENT_TIMESTAMP);', $code, $client_reference_id);
+			$database->Commit();
+			
+			setcookie('beacon_affiliate', $client_reference_id, [
+				'expires' => time() + 86430,
+				'path' => '/omni',
+				'domain' => '',
+				'secure' => true,
+				'httponly' => true,
+				'samesite' => 'Strict'
+			]);
+		}
+		
+		return $client_reference_id;
+	}
 }
 
 ?>
