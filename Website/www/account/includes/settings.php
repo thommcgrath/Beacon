@@ -28,7 +28,12 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			case 436:
 			case 437:
 			case 439:
-				dialog.show('Unable to change password', obj.message);
+				try {
+					var obj = JSON.parse(content);
+					dialog.show('Unable to change password', obj.message);
+				} catch (e) {
+					dialog.show('Unable to change password', e.message);
+				}
 				break;
 			case 438:
 				known_vulnerable_password = password;

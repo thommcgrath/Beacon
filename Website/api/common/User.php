@@ -523,7 +523,7 @@ class User implements \JsonSerializable {
 	public static function ValidatePassword(string $password) {
 		$passlen = strlen($password);
 		
-		if ($passlen < 8) {
+		if ($passlen < 8 || $passlen > 256) {
 			return false;
 		}
 		
