@@ -213,17 +213,19 @@ Inherits Global.Thread
 		    End If
 		    
 		    // Convert into UWP mode
-		    If ConvertToUWP Then
+		    If ConvertToUWP And File = Ark.ConfigFileGame Then
 		      Organizer = Organizer.Clone
 		      
-		      Var UWPKeys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetUWPConfigKeys()
-		      For Each TargetKey As Ark.ConfigKey In UWPKeys
-		        Var ReplacementKey As Ark.ConfigKey = TargetKey.UWPVersion()
-		        If TargetKey = ReplacementKey Then
-		          Continue
-		        End If
-		        Organizer.Swap(TargetKey, ReplacementKey)
-		      Next TargetKey
+		      Var GameIniValues() As Ark.ConfigValue = Organizer.FilteredValues(Ark.ConfigFileGame, Ark.HeaderShooterGame)
+		      Var ClonedKeys() As Ark.ConfigKey
+		      Var ClonedValues() As Ark.ConfigValue
+		      For Each Value As Ark.ConfigValue In GameIniValues
+		        Var SiblingKey As New Ark.ConfigKey(Value.Details.File, Ark.HeaderShooterGameUWP, Value.Details.Key)
+		        ClonedKeys.Add(SiblingKey)
+		        ClonedValues.Add(New Ark.ConfigValue(SiblingKey, Value.Command, Value.SortKey))
+		      Next Value
+		      Organizer.Add(ClonedValues)
+		      Organizer.AddManagedKeys(ClonedKeys)
 		    End If
 		    
 		    // Get the initial values into an organizer
