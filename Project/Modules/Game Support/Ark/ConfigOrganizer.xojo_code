@@ -106,6 +106,10 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
 		Sub AddManagedKeys(Keys() As Ark.ConfigKey)
 		  For Idx As Integer = Keys.FirstIndex To Keys.LastIndex
+		    If Keys(Idx) Is Nil Then
+		      Continue
+		    End If
+		    
 		    Self.mManagedKeys.Value(Keys(Idx).Signature) = Keys(Idx)
 		  Next
 		End Sub
