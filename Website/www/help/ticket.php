@@ -42,7 +42,12 @@ if (BeaconUser::ValidateEmail($email) === false) {
 }
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+$results = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
+if ($results->RecordCount() === 0 || is_null($results->Field('email_id'))) {
+	$database->BeginTransaction();
+	$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+	$database->Commit();
+}
 $email_id = $results->Field('email_id');
 
 $user_id = null;

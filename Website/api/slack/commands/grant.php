@@ -32,7 +32,9 @@ default:
 $database = BeaconCommon::Database();
 
 // get a uuid for this address
+$database->BeginTransaction();
 $results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+$database->Commit();
 $email_id = $results->Field('email_id');
 
 // see if the person already owns Omni
