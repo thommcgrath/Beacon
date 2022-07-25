@@ -670,7 +670,20 @@ End
 		    Win.mOriginalEntry = New Ark.LootItemSetEntry(Sources(0))
 		  End If
 		  
-		  Win.EntryPropertiesEditor1.Setup(Win.mOriginalEntry) // This is ok to be nil
+		  Var DefaultEntry As Ark.LootItemSetEntry
+		  If Win.mOriginalEntry Is Nil Then
+		    Try
+		      Var Defaults As Dictionary = Preferences.ArkLootItemSetEntryDefaults
+		      If (Defaults Is Nil) = False Then
+		        DefaultEntry = Ark.LootItemSetEntry.FromSaveData(Defaults)
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  Else
+		    DefaultEntry = Win.mOriginalEntry
+		  End If
+		  Win.EntryPropertiesEditor1.Setup(DefaultEntry) // This is ok to be nil
+		  
 		  Win.SetupUI(Prefilter)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
@@ -1070,6 +1083,8 @@ End
 		  For Idx As Integer = 0 To Entries.LastIndex
 		    Self.mCreatedEntries(Idx) = New Ark.LootItemSetEntry(Entries(Idx))
 		  Next Idx
+		  
+		  Preferences.ArkLootItemSetEntryDefaults = Entries(0).SaveData
 		  
 		  Self.Hide
 		End Sub

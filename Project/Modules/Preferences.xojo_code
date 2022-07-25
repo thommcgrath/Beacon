@@ -327,6 +327,22 @@ Protected Module Preferences
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.DictionaryValue("Ark Loot Item Set Entry Defaults", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.DictionaryValue("Ark Loot Item Set Entry Defaults") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkLootItemSetEntryDefaults As Dictionary
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get

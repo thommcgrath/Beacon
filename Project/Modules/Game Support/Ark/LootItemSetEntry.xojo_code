@@ -3,6 +3,11 @@ Protected Class LootItemSetEntry
 Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function CanBeBlueprint() As Boolean
+		  // This could be a new entry
+		  If Self.mOptions.Count = 0 Then
+		    Return True
+		  End If
+		  
 		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
 		    If Option.Engram.IsTagged("blueprintable") Then
 		      Return True
@@ -659,22 +664,26 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData(ForDefaults As Boolean = False) As Dictionary
 		  Var Children() As Dictionary
 		  For Each Item As Ark.LootItemSetEntryOption In Self.mOptions
 		    Children.Add(Item.SaveData)
 		  Next
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("UUID") = Self.mUUID
-		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
-		  Keys.Value("Items") = Children
+		  If ForDefaults = False Then
+		    Keys.Value("UUID") = Self.mUUID
+		    Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
+		    Keys.Value("Items") = Children
+		  End If
 		  Keys.Value("MinQuality") = Self.MinQuality.Key
 		  Keys.Value("MaxQuality") = Self.MaxQuality.Key
 		  Keys.Value("MinQuantity") = Self.MinQuantity
 		  Keys.Value("MaxQuantity") = Self.MaxQuantity
 		  Keys.Value("Weight") = Self.RawWeight
-		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  If ForDefaults = False Then
+		    Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  End If
 		  Keys.Value("PreventGrinding") = Self.PreventGrinding
 		  Keys.Value("StatClampMultiplier") = Self.StatClampMultiplier
 		  Keys.Value("SingleItemQuantity") = Self.SingleItemQuantity
