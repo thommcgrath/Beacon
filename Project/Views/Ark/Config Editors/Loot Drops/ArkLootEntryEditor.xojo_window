@@ -1084,7 +1084,7 @@ End
 		    Self.mCreatedEntries(Idx) = New Ark.LootItemSetEntry(Entries(Idx))
 		  Next Idx
 		  
-		  Preferences.ArkLootItemSetEntryDefaults = Entries(0).SaveData
+		  Preferences.ArkLootItemSetEntryDefaults = Entries(0).SaveData(True)
 		  
 		  Self.Hide
 		End Sub

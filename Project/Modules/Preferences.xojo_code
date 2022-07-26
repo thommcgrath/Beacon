@@ -805,7 +805,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.StringValue("Servers List Name Style", ServersConfigEditor.ListNamesFull)
+			  Return mManager.StringValue("Servers List Name Style", ArkServersListbox.NamesFull)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -820,7 +820,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.StringValue("Servers List Sorted Value", ServersConfigEditor.ListSortByName)
+			  Return mManager.BooleanValue("Servers List Show Ids", False)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mManager.BooleanValue("Servers List Show Ids") = Value
+			End Set
+		#tag EndSetter
+		Protected ServersListShowIds As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.StringValue("Servers List Sorted Value", ArkServersListbox.SortByName)
 			End Get
 		#tag EndGetter
 		#tag Setter
