@@ -26,7 +26,7 @@ Begin ArkConfigEditor ServersConfigEditor
    Transparent     =   True
    Visible         =   True
    Width           =   856
-   Begin ArkServersListbox ServerList
+   Begin ServersListbox ServerList
       AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -303,17 +303,17 @@ End
 		Private Sub HandleViewMenu(ItemRect As Rect)
 		  Var Base As New MenuItem
 		  
-		  Var ViewFullNames As New MenuItem("Use Full Server Names", ArkServersListbox.NamesFull)
-		  Var ViewAbbreviatedNames As New MenuItem("Use Abbreviated Server Names", ArkServersListbox.NamesAbbreviated)
-		  Var SortByName As New MenuItem("Sort By Name", ArkServersListbox.SortByName)
-		  Var SortByAddress As New MenuItem("Sort By Address", ArkServersListbox.SortByAddress)
-		  Var SortByColor As New MenuItem("Sort By Color", ArkServersListbox.SortByColor)
+		  Var ViewFullNames As New MenuItem("Use Full Server Names", ServersListbox.NamesFull)
+		  Var ViewAbbreviatedNames As New MenuItem("Use Abbreviated Server Names", ServersListbox.NamesAbbreviated)
+		  Var SortByName As New MenuItem("Sort By Name", ServersListbox.SortByName)
+		  Var SortByAddress As New MenuItem("Sort By Address", ServersListbox.SortByAddress)
+		  Var SortByColor As New MenuItem("Sort By Color", ServersListbox.SortByColor)
 		  Var ShowServerIds As New MenuItem("Show Server Ids")
-		  ViewFullNames.HasCheckMark = Preferences.ServersListNameStyle = ArkServersListbox.NamesFull
-		  ViewAbbreviatedNames.HasCheckMark = Preferences.ServersListNameStyle = ArkServersListbox.NamesAbbreviated
-		  SortByName.HasCheckMark = Preferences.ServersListSortedValue = ArkServersListbox.SortByName
-		  SortByAddress.HasCheckMark = Preferences.ServersListSortedValue = ArkServersListbox.SortByAddress
-		  SortByColor.HasCheckMark = Preferences.ServersListSortedValue = ArkServersListbox.SortByColor
+		  ViewFullNames.HasCheckMark = Preferences.ServersListNameStyle = ServersListbox.NamesFull
+		  ViewAbbreviatedNames.HasCheckMark = Preferences.ServersListNameStyle = ServersListbox.NamesAbbreviated
+		  SortByName.HasCheckMark = Preferences.ServersListSortedValue = ServersListbox.SortByName
+		  SortByAddress.HasCheckMark = Preferences.ServersListSortedValue = ServersListbox.SortByAddress
+		  SortByColor.HasCheckMark = Preferences.ServersListSortedValue = ServersListbox.SortByColor
 		  ShowServerIds.HasCheckMark = Preferences.ServersListShowIds
 		  Base.AddMenu(ViewFullNames)
 		  Base.AddMenu(ViewAbbreviatedNames)
@@ -619,7 +619,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function GetProject() As Ark.Project
+		Function GetProject() As Beacon.Project
 		  Return Self.Project
 		End Function
 	#tag EndEvent

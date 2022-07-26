@@ -24,7 +24,7 @@ Begin BeaconAutopositionWindow DeployManager
    Type            =   0
    Visible         =   True
    Width           =   800
-   Begin BeaconListbox ServerList
+   Begin ServersListbox ServerList
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
@@ -726,30 +726,31 @@ End
 		  Self.ReviewChangesCheckbox.Value = Preferences.DeployReviewChanges
 		  Self.RunAdvisorCheckbox.Value = Preferences.DeployRunAdvisor
 		  
-		  Var ProfileBound As Integer = Self.Project.ServerProfileCount - 1
-		  For Idx As Integer = 0 To ProfileBound
-		    Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
-		    If Profile.DeployCapable = False Then
-		      Continue
-		    End If
-		    
-		    Var Label As String = Profile.Name
-		    If Profile.SecondaryName.Length > 0 Then
-		      Label = Label + EndOfLine + Profile.SecondaryName
-		    End If
-		    Self.ServerList.AddRow("", Label)
-		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
-		    If Self.PreselectProfileUUIDs.Count = 0 Then
-		      Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Profile.Enabled
-		    Else
-		      Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Self.PreselectProfileUUIDs.IndexOf(Profile.ProfileID) > -1
-		    End If
-		  Next
+		  
+		  
+		  // Var ProfileBound As Integer = Self.Project.ServerProfileCount - 1
+		  // For Idx As Integer = 0 To ProfileBound
+		  // Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
+		  // If Profile.DeployCapable = False Then
+		  // Continue
+		  // End If
+		  // 
+		  // Var Label As String = Profile.Name
+		  // If Profile.SecondaryName.Length > 0 Then
+		  // Label = Label + EndOfLine + Profile.SecondaryName
+		  // End If
+		  // Self.ServerList.AddRow("", Label)
+		  // Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
+		  // If Self.PreselectProfileUUIDs.Count = 0 Then
+		  // Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Profile.Enabled
+		  // Else
+		  // Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Self.PreselectProfileUUIDs.IndexOf(Profile.ProfileID) > -1
+		  // End If
+		  // Next
 		  
 		  Self.ServerList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
 		  Self.ServerList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
-		  Self.ServerList.SortingColumn = 1
-		  Self.ServerList.Sort
+		  Self.ServerList.UpdateList()
 		  
 		  Self.CheckOptionsActionEnabled
 		End Sub
@@ -1273,52 +1274,27 @@ End
 	#tag Event
 		Sub Open()
 		  Me.TypeaheadColumn = 1
+		  Me.SortingColumn = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
-		  #Pragma Unused BackgroundColor
-		  
-		  If Row >= Me.RowCount Or Column <> 1 Then
-		    Return
-		  End If
-		  
-		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Row)
-		  If Profile.ProfileColor = Beacon.ServerProfile.Colors.None Then
-		    Return
-		  End If
-		  
-		  Select Case Profile.ProfileColor
-		  Case Beacon.ServerProfile.Colors.Blue
-		    G.DrawingColor = SystemColors.SystemBlueColor
-		  Case Beacon.ServerProfile.Colors.Brown
-		    G.DrawingColor = SystemColors.SystemBrownColor
-		  Case Beacon.ServerProfile.Colors.Green
-		    G.DrawingColor = SystemColors.SystemGreenColor
-		  Case Beacon.ServerProfile.Colors.Grey
-		    G.DrawingColor = SystemColors.SystemGrayColor
-		  Case Beacon.ServerProfile.Colors.Indigo
-		    G.DrawingColor = SystemColors.SystemIndigoColor
-		  Case Beacon.ServerProfile.Colors.Orange
-		    G.DrawingColor = SystemColors.SystemOrangeColor
-		  Case Beacon.ServerProfile.Colors.Pink
-		    G.DrawingColor = SystemColors.SystemPinkColor
-		  Case Beacon.ServerProfile.Colors.Purple
-		    G.DrawingColor = SystemColors.SystemPurpleColor
-		  Case Beacon.ServerProfile.Colors.Red
-		    G.DrawingColor = SystemColors.SystemRedColor
-		  Case Beacon.ServerProfile.Colors.Teal
-		    G.DrawingColor = SystemColors.SystemTealColor
-		  Case Beacon.ServerProfile.Colors.Yellow
-		    G.DrawingColor = SystemColors.SystemYellowColor
-		  End Select
-		  G.FillRectangle(G.Width - 3, 0, 3, G.Height)
-		  
-		  If Me.Selected(Row) And IsHighlighted Then
-		    G.DrawingColor = TextColor
-		    G.DrawLine(G.Width - 4, 0, G.Width - 4, G.Height)
+		Function GetProject() As Beacon.Project
+		  Return Self.Project
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub CustomizeProfileRow(Profile As Beacon.ServerProfile, RowIndex As Integer)
+		  If Self.PreselectProfileUUIDs.Count = 0 Then
+		    Me.CellCheckBoxValueAt(RowIndex, 0) = Profile.Enabled
+		  Else
+		    Me.CellCheckBoxValueAt(RowIndex, 0) = Self.PreselectProfileUUIDs.IndexOf(Profile.ProfileID) > -1
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function BlockUpdate() As Boolean
+		  Return Me.ColumnAt(0).WidthActual = 0
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreateBackupCheckbox

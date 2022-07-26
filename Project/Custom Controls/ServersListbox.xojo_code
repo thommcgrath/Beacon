@@ -1,42 +1,43 @@
 #tag Class
-Protected Class ArkServersListbox
+Protected Class ServersListbox
 Inherits BeaconListbox
 	#tag Event
 		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused Column
 		  #Pragma Unused BackgroundColor
 		  
-		  If Row >= Me.RowCount Or Column <> Self.mMainColumn Then
+		  If Row >= Me.RowCount Or Column <> Self.SortingColumn Then
+		    RaiseEvent CellBackgroundPaint(G, Row, Column, BackgroundColor, TextColor, IsHighlighted)
 		    Return
 		  End If
 		  
-		  Var Profile As Ark.ServerProfile = Me.RowTagAt(Row)
-		  If Profile.ProfileColor = Ark.ServerProfile.Colors.None Then
+		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Row)
+		  If Profile.ProfileColor = Beacon.ServerProfile.Colors.None Then
 		    Return
 		  End If
 		  
 		  Select Case Profile.ProfileColor
-		  Case Ark.ServerProfile.Colors.Blue
+		  Case Beacon.ServerProfile.Colors.Blue
 		    G.DrawingColor = SystemColors.SystemBlueColor
-		  Case Ark.ServerProfile.Colors.Brown
+		  Case Beacon.ServerProfile.Colors.Brown
 		    G.DrawingColor = SystemColors.SystemBrownColor
-		  Case Ark.ServerProfile.Colors.Green
+		  Case Beacon.ServerProfile.Colors.Green
 		    G.DrawingColor = SystemColors.SystemGreenColor
-		  Case Ark.ServerProfile.Colors.Grey
+		  Case Beacon.ServerProfile.Colors.Grey
 		    G.DrawingColor = SystemColors.SystemGrayColor
-		  Case Ark.ServerProfile.Colors.Indigo
+		  Case Beacon.ServerProfile.Colors.Indigo
 		    G.DrawingColor = SystemColors.SystemIndigoColor
-		  Case Ark.ServerProfile.Colors.Orange
+		  Case Beacon.ServerProfile.Colors.Orange
 		    G.DrawingColor = SystemColors.SystemOrangeColor
-		  Case Ark.ServerProfile.Colors.Pink
+		  Case Beacon.ServerProfile.Colors.Pink
 		    G.DrawingColor = SystemColors.SystemPinkColor
-		  Case Ark.ServerProfile.Colors.Purple
+		  Case Beacon.ServerProfile.Colors.Purple
 		    G.DrawingColor = SystemColors.SystemPurpleColor
-		  Case Ark.ServerProfile.Colors.Red
+		  Case Beacon.ServerProfile.Colors.Red
 		    G.DrawingColor = SystemColors.SystemRedColor
-		  Case Ark.ServerProfile.Colors.Teal
+		  Case Beacon.ServerProfile.Colors.Teal
 		    G.DrawingColor = SystemColors.SystemTealColor
-		  Case Ark.ServerProfile.Colors.Yellow
+		  Case Beacon.ServerProfile.Colors.Yellow
 		    G.DrawingColor = SystemColors.SystemYellowColor
 		  End Select
 		  G.FillRectangle(G.Width - 3, 0, 3, G.Height)
@@ -50,8 +51,8 @@ Inherits BeaconListbox
 
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  If Column <> Self.mMainColumn Then
-		    Return False
+		  If Column <> Self.SortingColumn Then
+		    Return RaiseEvent CompareRows(Row1, Row2, Column, Result)
 		  End If
 		  
 		  Var Sort1 As String = Me.CellTagAt(Row1, Column)
@@ -61,17 +62,6 @@ Inherits BeaconListbox
 		End Function
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Sub ColumnTypeAt(Index As Integer, Assigns _value As CellTypes)
-		  If Index = 0 And _value = Listbox.CellTypes.CheckBox Then
-		    Self.mMainColumn = 1
-		  Else
-		    Self.mMainColumn = 0
-		  End If
-		  Super.ColumnTypeAt(Index) = _value
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function ProfileNames() As Dictionary
@@ -98,7 +88,7 @@ Inherits BeaconListbox
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Project() As Ark.Project
+		Protected Function Project() As Beacon.Project
 		  Return RaiseEvent GetProject
 		End Function
 	#tag EndMethod
@@ -107,7 +97,7 @@ Inherits BeaconListbox
 		Sub UpdateList()
 		  // Updates the list, maintaining the current selection
 		  
-		  Var Profiles() As Ark.ServerProfile
+		  Var Profiles() As Beacon.ServerProfile
 		  For Idx As Integer = 0 To Self.LastRowIndex
 		    If Self.Selected(Idx) = False Then
 		      Continue
@@ -120,14 +110,18 @@ Inherits BeaconListbox
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateList(SelectProfiles() As Ark.ServerProfile, WithChangeEvent As Boolean)
+		Sub UpdateList(SelectProfiles() As Beacon.ServerProfile, WithChangeEvent As Boolean)
+		  If RaiseEvent BlockUpdate Then
+		    Return
+		  End If
+		  
 		  Var Profiles() As Beacon.ServerProfile = Self.Project.ServerProfiles(Self.mFilter)
 		  
 		  Self.SelectionChangeBlocked = True
 		  Self.RowCount = Profiles.Count
 		  
 		  Var SelectIDs() As String
-		  For Each Profile As Ark.ServerProfile In SelectProfiles
+		  For Each Profile As Beacon.ServerProfile In SelectProfiles
 		    If Profile Is Nil Then
 		      Continue
 		    End If
@@ -161,11 +155,11 @@ Inherits BeaconListbox
 		      SortName = "color" + CType(Profile.ProfileColor, Integer).ToString(Locale.Raw, "00") + ":" + SortName
 		    End Select
 		    
-		    If Self.CellValueAt(Idx, 0) <> Name Then
-		      Self.CellValueAt(Idx, 0) = Name
+		    If Self.CellValueAt(Idx, Self.SortingColumn) <> Name Then
+		      Self.CellValueAt(Idx, Self.SortingColumn) = Name
 		    End If
-		    If Self.CellTagAt(Idx, 0) <> SortName Then
-		      Self.CellTagAt(Idx, 0) = SortName
+		    If Self.CellTagAt(Idx, Self.SortingColumn) <> SortName Then
+		      Self.CellTagAt(Idx, Self.SortingColumn) = SortName
 		    End If
 		    If Self.RowTagAt(Idx) <> Profile Then
 		      Self.RowTagAt(Idx) = Profile
@@ -173,6 +167,8 @@ Inherits BeaconListbox
 		    If Self.Selected(Idx) <> Selected Then
 		      Self.Selected(Idx) = Selected
 		    End If
+		    
+		    RaiseEvent CustomizeProfileRow(Profile, Idx)
 		  Next
 		  Self.Sort
 		  Self.SelectionChangeBlocked(WithChangeEvent) = False
@@ -180,10 +176,10 @@ Inherits BeaconListbox
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateList(SelectProfile As Ark.ServerProfile, WithChangeEvent As Boolean)
+		Sub UpdateList(SelectProfile As Beacon.ServerProfile, WithChangeEvent As Boolean)
 		  // Updates the list, selecting the requested profile
 		  
-		  Var Profiles(0) As Ark.ServerProfile
+		  Var Profiles(0) As Beacon.ServerProfile
 		  Profiles(0) = SelectProfile
 		  Self.UpdateList(Profiles, WithChangeEvent)
 		End Sub
@@ -191,7 +187,23 @@ Inherits BeaconListbox
 
 
 	#tag Hook, Flags = &h0
-		Event GetProject() As Ark.Project
+		Event BlockUpdate() As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CustomizeProfileRow(Profile As Beacon.ServerProfile, RowIndex As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetProject() As Beacon.Project
 	#tag EndHook
 
 
@@ -214,10 +226,6 @@ Inherits BeaconListbox
 
 	#tag Property, Flags = &h21
 		Private mFilter As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMainColumn As Integer
 	#tag EndProperty
 
 

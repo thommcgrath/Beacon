@@ -805,7 +805,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.StringValue("Servers List Name Style", ArkServersListbox.NamesFull)
+			  Return mManager.StringValue("Servers List Name Style", ServersListbox.NamesFull)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -835,7 +835,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.StringValue("Servers List Sorted Value", ArkServersListbox.SortByName)
+			  Return mManager.StringValue("Servers List Sorted Value", ServersListbox.SortByName)
 			End Get
 		#tag EndGetter
 		#tag Setter
