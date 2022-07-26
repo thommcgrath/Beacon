@@ -84,17 +84,18 @@ When removing creatures from a spawn point, most options are not useful at all. 
 Figuring out which spawn point to use can take practice, so here are some tips the community has learned.
 
 The Ark wiki has spawn maps available to help visualize each point.
-- [The Island Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(The_Island))
-- [Scorched Earth Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Scorched_Earth))
-- [Aberration Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Aberration))
-- [Extinction Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Extinction))
-- [Genesis Part 1 Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Genesis:_Part_1))
-- [Genesis Part 2 Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Genesis:_Part_2))
-- [The Center Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(The_Center))
-- [Ragnarok Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Ragnarok))
-- [Valguero Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Valguero))
-- [Crystal Isles Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Crystal_Isles))
-- [Lost Island Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map_(Lost_Island))
+- [The Island Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/The_Island)
+- [Scorched Earth Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Scorched_Earth)
+- [Aberration Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Aberration)
+- [Extinction Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Extinction)
+- [Genesis Part 1 Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Genesis:_Part_1)
+- [Genesis Part 2 Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Genesis:_Part_2)
+- [The Center Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/The_Center)
+- [Ragnarok Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Ragnarok)
+- [Valguero Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Valguero)
+- [Crystal Isles Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Crystal_Isles)
+- [Lost Island Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Lost_Island)
+- [Fjordur Spawn Map](https://ark.wiki.gg/wiki/Spawn_Map/Fjordur)
 
 By using creatures that you know spawn in an area, the spawn maps can help figure out which spawn point to choose. For example, if you were trying to add wolves to the lighthouse area of Ragnarok, you could check the Ragnarok spawn map for ovis. This will show you `SE_Oasis`, `Snow`, `Grassland`, and `Ragnarok_Scotland`. Using the checkboxes above the map, spawn points can be turned off until we can figure out which is the one for the lighthouse area. In this case, we're looking for `Ragnarok_Scotland`.
 
