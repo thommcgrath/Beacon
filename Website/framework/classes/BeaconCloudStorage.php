@@ -189,27 +189,51 @@ abstract class BeaconCloudStorage {
 			
 			$parent = dirname($local_path);
 			if (file_exists($parent) == false) {
-				mkdir($parent, 0770, true);
+				mkdir($parent, 0750, true);
+				chgrp($parent, 'cacheshare');
 			} elseif (is_dir($parent) == false) {
 				unlink($parent);
-				mkdir($parent, 0770, true);
+				mkdir($parent, 0750, true);
+				chgrp($parent, 'cacheshare');
 			}
 			
-			$url = static::BuildSignedURL($bucket_path, $remote_path, 'GET');
-			$remote_handle = @fopen($url, 'rb');
-			if (strpos($http_response_header[0], ' 200 ') === false || is_null($remote_handle)) {
-				$database->Rollback();
-				return static::FAILED_TO_WARM_CACHE;
+			$session = null;
+			$remote_handle = null;
+			
+			// See if the file in question is pending upload somewhere else
+			$results = $database->Query('SELECT hostname FROM usercloud_queue WHERE remote_path = $1 AND request_method = $2 AND hostname != $3;', $remote_path, 'PUT', $hostname);
+			if ($results->RecordCount() > 0) {
+				$session = ssh2_connect($results->Field('hostname'), 22);
+				$keyfile = BeaconCommon::FrameworkPath() . '/keys/cacheshare';
+				ssh2_auth_pubkey_file($session, 'cacheshare', $keyfile . '.pub', $keyfile, BeaconCommon::GetGlobal('CacheShare Secret'));
+				$remote_handle = @fopen("ssh2.sftp://$session/beacon-usercloud$remote_path", 'rb');
+				if (empty($remote_handle)) {
+					$database->Rollback();
+					return static::FAILED_TO_WARM_CACHE;
+				}
+			} else {
+				$remote_handle = @fopen(static::BuildSignedURL($bucket_path, $remote_path, 'GET'), 'rb');
+				if (strpos($http_response_header[0], ' 200 ') === false || empty($remote_handle)) {
+					$database->Rollback();
+					return static::FAILED_TO_WARM_CACHE;
+				}
 			}
+			
 			$local_handle = fopen($local_path, 'wb');
 			while (!feof($remote_handle)) {
 				$chunk = fread($remote_handle, 1024);
 				fwrite($local_handle, $chunk);
 			}
 			fclose($local_handle);
-			fclose($remote_handle);
+			if (empty($remote_handle) === false) {
+				fclose($remote_handle);
+			}
+			if (empty($session) === false) {
+				unset($session);
+			}
 			
-			chmod($local_path, 0660);
+			chmod($local_path, 0640);
+			chgrp($local_path, 'cacheshare');
 			
 			$cached_size = filesize($local_path);
 			$cached_hash = hash_file('sha256', $local_path);
@@ -472,10 +496,12 @@ abstract class BeaconCloudStorage {
 		$content_type = static::MimeForPath($local_path);
 		$parent = dirname($local_path);
 		if (file_exists($parent) == false) {
-			mkdir($parent, 0770, true);
+			mkdir($parent, 0750, true);
+			chgrp($parent, 'cacheshare');
 		} elseif (is_dir($parent) == false) {
 			unlink($parent);
-			mkdir($parent, 0770, true);
+			mkdir($parent, 0750, true);
+			chgrp($parent, 'cacheshare');
 		}
 		if ($legacy_mode) {
 			file_put_contents($local_path, $file_contents);
@@ -489,7 +515,8 @@ abstract class BeaconCloudStorage {
 		if (is_null($header_bytes) === false) {
 			$header_bytes = bin2hex($header_bytes);
 		}
-		chmod($local_path, 0660);
+		chmod($local_path, 0640);
+		chgrp($local_path, 'cacheshare');
 		
 		// update the database
 		$database->BeginTransaction();
