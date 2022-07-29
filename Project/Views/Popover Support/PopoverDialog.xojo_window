@@ -92,6 +92,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.SwapButtons
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As PopoverController)
 		  // Calling the overridden superclass constructor.

@@ -642,6 +642,7 @@ Begin BeaconDialog ArkExportWindow
    End
    Begin Ark.Rewriter SharedRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""
@@ -772,16 +773,25 @@ End
 		    Return
 		  End If
 		  
-		  Var SearchingFor As String
-		  Select Case Mode
+		  Var RequiredHeader() As String
+		  Select Case Self.CurrentMode
 		  Case Ark.Rewriter.ModeGameIni
-		    SearchingFor = "[" + Ark.HeaderShooterGame + "]"
+		    RequiredHeader = Array(Ark.HeaderShooterGame, Ark.HeaderShooterGameUWP)
 		  Case Ark.Rewriter.ModeGameUserSettingsIni
-		    SearchingFor = "[" + Ark.HeaderServerSettings + "]"
+		    RequiredHeader = Array(Ark.HeaderServerSettings)
+		  Else
+		    Return
 		  End Select
 		  
 		  Var ClipboardContents As String = Board.Text
-		  If ClipboardContents.IndexOf(SearchingFor) <= -1 Then
+		  Var HeaderFound As Boolean
+		  For Each Header As String In RequiredHeader
+		    If ClipboardContents.IndexOf("[" + Header + "]") > -1 Then
+		      HeaderFound = True
+		      Exit
+		    End If
+		  Next Header
+		  If HeaderFound = False Then
 		    Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyInstructionsMessage, Filename), Language.ReplacePlaceholders(SmartCopyInstructionsExplanation, Filename))
 		    Return
 		  End If
@@ -817,12 +827,12 @@ End
 		    Return
 		  End If
 		  
-		  Var RequiredHeader As String
+		  Var RequiredHeader() As String
 		  Select Case Self.CurrentMode
 		  Case Ark.Rewriter.ModeGameIni
-		    RequiredHeader = "[" + Ark.HeaderShooterGame + "]"
+		    RequiredHeader = Array(Ark.HeaderShooterGame, Ark.HeaderShooterGameUWP)
 		  Case Ark.Rewriter.ModeGameUserSettingsIni
-		    RequiredHeader = "[" + Ark.HeaderServerSettings + "]"
+		    RequiredHeader = Array(Ark.HeaderServerSettings)
 		  Else
 		    Return
 		  End Select
@@ -848,8 +858,15 @@ End
 		  End Try
 		  Content = Content.GuessEncoding
 		  
-		  If Content.IndexOf(RequiredHeader) <= -1 Then
-		    Self.ShowAlert("Incorrect ini file detected.", "Beacon is expecting to find the " + RequiredHeader + " header in this file before rewriting, but cannot find it. Make sure you select the correct file config file.")
+		  Var HeaderFound As Boolean
+		  For Each Header As String In RequiredHeader
+		    If Content.IndexOf("[" + Header + "]") > -1 Then
+		      HeaderFound = True
+		      Exit
+		    End If
+		  Next Header
+		  If HeaderFound = False Then
+		    Self.ShowAlert("Incorrect ini file detected.", "Beacon is expecting to find the " + Language.EnglishOxfordList(RequiredHeader, "or") + " header in this file before rewriting, but cannot find it. Make sure you select the correct file config file.")
 		    Return
 		  End If
 		  

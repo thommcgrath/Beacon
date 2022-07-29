@@ -8,6 +8,8 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		    Return False
 		  End If
 		  
+		  Self.AdjustMouseCoordinates(X, Y)
+		  
 		  If Self.ScrollingEnabled And X >= Self.Width - Self.ScrollTrackWidth Then
 		    Var ThumbRect As Rect = Self.ScrollThumbRect
 		    If (ThumbRect Is Nil) = False And ThumbRect.Contains(X, Y) Then
@@ -28,6 +30,8 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
+		  Self.AdjustMouseCoordinates(X, Y)
+		  
 		  If Self.mMouseDownInTrack = False Then
 		    RaiseEvent MouseDrag(X, Y)
 		    Return
@@ -84,6 +88,8 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		    Return
 		  End If
 		  
+		  Self.AdjustMouseCoordinates(X, Y)
+		  
 		  Var TrackRect As Rect = Self.ScrollTrackRect
 		  Self.ScrollActive = TrackRect.Contains(X, Y)
 		  
@@ -93,6 +99,8 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 
 	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
+		  Self.AdjustMouseCoordinates(X, Y)
+		  
 		  If Self.mMouseDownInTrack = False Then
 		    Var DeltaX As Integer = System.MouseX - X
 		    Var DeltaY As Integer = System.MouseY - Y
@@ -123,6 +131,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		    Return False
 		  End If
 		  
+		  Self.AdjustMouseCoordinates(X, Y)
 		  Var WheelData As New BeaconUI.ScrollEvent(Self.ScrollSpeed, DeltaX, DeltaY)
 		  
 		  If IsEventImplemented("MouseWheel") Then
@@ -196,6 +205,19 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub AdjustMouseCoordinates(ByRef X As Integer, ByRef Y As Integer)
+		  #if TargetMacOS
+		    Var Location As NSPointMBS = NSApplicationMBS.SharedApplication.CurrentEvent.LocationInWindow
+		    Var View As NSViewMBS = Self.NSViewMBS
+		    Var Localized As NSPointMBS = View.ConvertPointFromView(Location, Nil)
+		    
+		    X = Floor(Localized.X)
+		    Y = Floor(View.Bounds.Height - Localized.Y)
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub AnimationStep(Identifier As String, Value As Double)
 		  // Part of the AnimationKit.ValueAnimator interface.
@@ -212,9 +234,8 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		Protected Function Highlighted() As Boolean
 		  Var Highlighted As Boolean = True
 		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
-		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
-		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
-		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
+		    Var Win As NSWindowMBS = Self.NSViewMBS.Window
+		    Highlighted = Win.isKeyWindow Or Win.isMainWindow
 		  #endif
 		  Return Highlighted
 		End Function

@@ -105,10 +105,36 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Sub AddManagedKeys(Keys() As Ark.ConfigKey)
-		  For Idx As Integer = 0 To Keys.LastIndex
-		    Self.mManagedKeys.Add(Keys(Idx))
+		  For Idx As Integer = Keys.FirstIndex To Keys.LastIndex
+		    If Keys(Idx) Is Nil Then
+		      Continue
+		    End If
+		    
+		    Self.mManagedKeys.Value(Keys(Idx).Signature) = Keys(Idx)
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BeaconKey(Key As String) As String
+		  Return Self.mExtraBeaconKeys.Lookup(Key, "").StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BeaconKey(Key As String, Assigns Value As String)
+		  Self.mExtraBeaconKeys.Value(Key) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BeaconKeys() As String()
+		  Var Keys() As String
+		  For Each Entry As DictionaryEntry In Self.mExtraBeaconKeys
+		    Keys.Add(Entry.Key)
+		  Next Entry
+		  Return Keys
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -151,6 +177,12 @@ Protected Class ConfigOrganizer
 		  For Each Entry As DictionaryEntry In Self.mValues
 		    Clone.mValues.Value(Entry.Key) = Entry.Value
 		  Next
+		  For Each Entry As DictionaryEntry In Self.mExtraBeaconKeys
+		    Clone.mExtraBeaconKeys.Value(Entry.Key) = Entry.Value
+		  Next Entry
+		  For Each Entry As DictionaryEntry In Self.mManagedKeys
+		    Clone.mManagedKeys.Value(Entry.Key) = Entry.Value
+		  Next Entry
 		  Return Clone
 		End Function
 	#tag EndMethod
@@ -158,6 +190,8 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mValues = New Dictionary
+		  Self.mExtraBeaconKeys = New Dictionary
+		  Self.mManagedKeys = New Dictionary
 		  Self.mIndex = New SQLiteDatabase
 		  Self.mIndex.Connect
 		  Self.mIndex.ExecuteSQL("CREATE TABLE keymap (hash TEXT NOT NULL PRIMARY KEY COLLATE NOCASE, file TEXT NOT NULL COLLATE NOCASE, header TEXT NOT NULL COLLATE NOCASE, simplekey TEXT NOT NULL COLLATE NOCASE, sortkey TEXT NOT NULL COLLATE NOCASE);")
@@ -321,10 +355,9 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
 		Function ManagedKeys() As Ark.ConfigKey()
 		  Var Results() As Ark.ConfigKey
-		  Results.ResizeTo(Self.mManagedKeys.LastIndex)
-		  For Idx As Integer = 0 To Self.mManagedKeys.LastIndex
-		    Results(Idx) = Self.mManagedKeys(Idx)
-		  Next
+		  For Each Entry As DictionaryEntry In Self.mManagedKeys
+		    Results.Add(Entry.Value)
+		  Next Entry
 		  Return Results
 		End Function
 	#tag EndMethod
@@ -411,13 +444,44 @@ Protected Class ConfigOrganizer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Swap(TargetKey As Ark.ConfigKey, ReplacementKey As Ark.ConfigKey)
+		  If TargetKey Is Nil Or ReplacementKey Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Values() As Ark.ConfigValue = Self.FilteredValues(TargetKey)
+		  If Values.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Self.Remove(Values)
+		  Self.Remove(ReplacementKey)
+		  
+		  If Self.mManagedKeys.HasKey(TargetKey.Signature) Then
+		    Self.mManagedKeys.Remove(TargetKey.Signature)
+		    Self.mManagedKeys.Value(ReplacementKey.Signature) = ReplacementKey
+		  End If
+		  
+		  Var Replacements() As Ark.ConfigValue
+		  For Each Value As Ark.ConfigValue In Values
+		    Replacements.Add(New Ark.ConfigValue(ReplacementKey, Value.Command, Value.SortKey))
+		  Next Value
+		  Self.Add(Replacements)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mExtraBeaconKeys As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIndex As SQLiteDatabase
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mManagedKeys() As Ark.ConfigKey
+		Private mManagedKeys As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

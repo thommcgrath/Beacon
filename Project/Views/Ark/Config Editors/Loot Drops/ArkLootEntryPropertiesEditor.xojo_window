@@ -1261,7 +1261,7 @@ End
 		  
 		  Var Qualities() As Ark.Quality = Ark.Qualities.All
 		  For Each Quality As Ark.Quality In Qualities
-		    Me.AddRow(Quality.Label, Quality.BaseValue)
+		    Me.AddRow(Quality.Label + " (Quality " + Quality.BaseValue.PrettyText + ")", Quality.BaseValue)
 		  Next
 		  
 		  Me.SelectedRowIndex = 0

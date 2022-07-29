@@ -196,6 +196,12 @@ Inherits Ark.IntegrationEngine
 	#tag EndEvent
 
 	#tag Event
+		Sub OverrideUWPMode(ByRef UWPMode As Ark.Project.UWPCompatibilityModes)
+		  UWPMode = Ark.Project.UWPCompatibilityModes.Never
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub UploadFile(Transfer As Beacon.IntegrationTransfer)
 		  If (Self.Profile IsA Ark.GSAServerProfile) = False Then
 		    Transfer.Success = False

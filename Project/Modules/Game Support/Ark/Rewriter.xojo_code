@@ -36,7 +36,7 @@ Inherits Global.Thread
 		  Var Error As RuntimeException
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameIni) = Self.FlagCreateGameIni Then
-		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Error)
+		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Project.UWPMode, False, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -47,7 +47,7 @@ Inherits Global.Thread
 		  End If
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameUserSettingsIni) = Self.FlagCreateGameUserSettingsIni Then
-		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Error)
+		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Project.UWPMode, False, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -183,10 +183,10 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, Format As Ark.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, Format As Ark.Rewriter.EncodingFormat, UWPMode As Ark.Project.UWPCompatibilityModes, Nuke As Boolean, ByRef Error As RuntimeException) As String
 		  // This version will not contain the [Beacon] sections in the output
 		  Try
-		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, "", "", Format, Error)
+		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, "", "", Format, UWPMode, Nuke, Error)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try
@@ -194,12 +194,39 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, ProjectUUID As String, LegacyTrustKey As String, Format As Ark.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Ark.ConfigOrganizer, ProjectUUID As String, LegacyTrustKey As String, Format As Ark.Rewriter.EncodingFormat, UWPMode As Ark.Project.UWPCompatibilityModes, Nuke As Boolean, ByRef Error As RuntimeException) As String
 		  // This is the new master method
 		  
 		  Try
+		    // Even if we're about to nuke the file, determine the mode so the file can be rebuilt in the same format
 		    InitialContent = InitialContent.GuessEncoding.SanitizeIni
 		    Var DesiredLineEnding As String = InitialContent.DetectLineEnding
+		    Var ConvertToUWP As Boolean
+		    Select Case UWPMode
+		    Case Ark.Project.UWPCompatibilityModes.Automatic
+		      ConvertToUWP = InitialContent.IndexOf("[" + Ark.HeaderShooterGameUWP + "]") > -1
+		    Case Ark.Project.UWPCompatibilityModes.Always
+		      ConvertToUWP = True
+		    End Select
+		    If Nuke Then
+		      InitialContent = ""
+		    End If
+		    
+		    // Convert into UWP mode
+		    If ConvertToUWP And File = Ark.ConfigFileGame Then
+		      Organizer = Organizer.Clone
+		      
+		      Var GameIniValues() As Ark.ConfigValue = Organizer.FilteredValues(Ark.ConfigFileGame, Ark.HeaderShooterGame)
+		      Var ClonedKeys() As Ark.ConfigKey
+		      Var ClonedValues() As Ark.ConfigValue
+		      For Each Value As Ark.ConfigValue In GameIniValues
+		        Var SiblingKey As New Ark.ConfigKey(Value.Details.File, Ark.HeaderShooterGameUWP, Value.Details.Key)
+		        ClonedKeys.Add(SiblingKey)
+		        ClonedValues.Add(New Ark.ConfigValue(SiblingKey, Value.Command, Value.SortKey))
+		      Next Value
+		      Organizer.Add(ClonedValues)
+		      Organizer.AddManagedKeys(ClonedKeys)
+		    End If
 		    
 		    // Get the initial values into an organizer
 		    Var ParsedValues As New Ark.ConfigOrganizer(File, DefaultHeader, InitialContent)
@@ -327,6 +354,12 @@ Inherits Global.Thread
 		        Var Keys() As String = FinalOrganizer.Keys(File, Header)
 		        FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", "ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))", "ManagedKeys:" + Header))
 		      Next
+		      
+		      Var BeaconKeys() As String = Organizer.BeaconKeys
+		      For Each BeaconKey As String In BeaconKeys
+		        Var BeaconKeyValue As String = Organizer.BeaconKey(BeaconKey)
+		        FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", BeaconKey + "=" + BeaconKeyValue))
+		      Next BeaconKey
 		    End If
 		    
 		    // Now add everything remaining in Parsed to Final
@@ -338,41 +371,166 @@ Inherits Global.Thread
 		        // More junk
 		        Var QualityValues() As Ark.ConfigValue
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "ActiveLingeringWorldTiles=10"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "AmbientSoundVolume=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bAllowAnimationStaggering=True"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bCameraViewBob=True"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bChatBubbles=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bChatShowSteamName=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bChatShowTribeName=True"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bCraftablesShowAllItems=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bDisableBloom=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bDisableLightShafts=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bDisableMeleeCameraSwingAnims=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bDisableMenuTransitions=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bDisableTPVCameraInterpolation=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bDisableTorporEffect=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bDistanceFieldShadowing=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bEnableColorGrading=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bEnableHDROutput=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bEnableInventoryItemTooltips=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bExtraLevelStreamingDistance=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bFPVClimbingGear=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bFPVGlidingGear=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bFilmGrain=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bFirstPersonRiding=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bFloatingNames=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bForceTPVCameraOffset=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bHasCompletedGen2=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bHasSeenGen2Intro=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bHideFloatingPlayerNames=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bHideGamepadItemSelectionModifier=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bHideServerInfo=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bHighQualityAnisotropicFiltering=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bHighQualityLODs=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bHostSessionHasBeenOpened=True"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bInvertLookY=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bJoinNotifications=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bLocalInventoryCraftingShowAllItems=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bLocalInventoryItemsShowAllItems=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bLowQualityAnimations=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bLowQualityVFX=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bMotionBlur=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bNoBloodEffects=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bNoTooltipDelay=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bPreventBiomeWalls=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bPreventColorizedItemNames=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bPreventCrosshair=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bPreventHitMarkers=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bPreventInventoryOpeningSounds=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bPreventItemCraftingSounds=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bQuickToggleItemNames=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bRemoteInventoryCraftingShowAllItems=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bRemoteInventoryItemsShowAllItems=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bRemoteInventoryShowCraftables=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bRemoteInventoryShowEngrams=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bRequestDefaultCharacterItemsOnce=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bReverseTribeLogOrder=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bShowChatBox=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bShowRTSKeyBinds=True"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bShowStatusNotificationMessages=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bShowedGenesis2DLCBackground=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bShowedGenesisDLCBackground=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bSpectatorManualFloatingNames=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bSuppressAdminIcon=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bTemperatureF=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bThirdPersonPlayer=False"))
-		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseDesktopResolutionForFullscreen=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bToggleExtendedHUDInfo=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bToggleToTalk=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseDFAO=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseDesktopResolutionForFullscreen=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseDistanceFieldAmbientOcclusion=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseLowQualityLevelStreaming=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseOldThirdPersonCameraOffset=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseOldThirdPersonCameraTrace=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseSSAO=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseSimpleDistanceMovement=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bUseVSync=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bViewedARK2Trailer=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "bViewedAnimatedSeriesTrailer=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "CameraShakeScale=0.100000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "CharacterAudioVolume=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "ClientNetQuality=3"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "CompanionIsHiddenState=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "CompanionReactionVerbosity=3"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "CompanionSubtitleVerbosityLevel=3"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "DOFSettingInterpTime=0.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "DisableDefaultCharacterItems=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "DisableMenuMusic=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "DisableSubtitles=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "EmoteKeyBind1=0"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "EmoteKeyBind2=0"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "EnableDeathReactions=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "EnableEmoteReactions=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "EnableEnvironmentalReactions=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "EnableMovementSounds=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "EnableRespawnReactions=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "EnableSayHelloReactions=True"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "FOVMultiplier=1.000000"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "FullscreenMode=2"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "Gamma1=2.200000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "Gamma2=3.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "GammaCorrection=0.500000"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "GraphicsQuality=2"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "GroundClutterDensity=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "HideItemTextOverlay=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "HighQualityMaterials=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "HighQualitySurfaces=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LODScalar=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastAutoFavorite=True"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastConfirmedFullscreenMode=2"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastDLCTypeSearchType=-1"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastJoinedSessionPerCategory="" """))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastPVESearchType=-1"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastServerSearchHideFull=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastServerSearchProtected=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastServerSearchType=0"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastServerSort=2"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastServerSortAsc=True"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastUserConfirmedResolutionSizeX=1280"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LastUserConfirmedResolutionSizeY=720"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LocalCraftingSortType=0"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LocalItemSortType=0"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LookLeftRightSensitivity=1.000000"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "LookUpDownSensitivity=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl0="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl1="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl2="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl3="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl4="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl5="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl6="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl7="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl8="))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MacroCtrl9="))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MasterAudioVolume=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MaxAscensionLevel=0"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "MusicAudioVolume=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "PlayActionWheelClickSound=True"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "PreventDetailGraphics=False"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "RemoteCraftingSortType=0"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "RemoteItemSortType=0"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "ResolutionSizeX=1280"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "ResolutionSizeY=720"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "SFXAudioVolume=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "ShowExplorerNoteSubtitles=False"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "TrueSkyQuality=0.270000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "UIQuickbarScaling=0.750000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "UIScaling=1.000000"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "VSyncMode=1"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "Version=5"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "VersionMetaTag=1"))
+		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "VoiceAudioVolume=1.000000"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "WindowPosX=-1"))
 		        QualityValues.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, QualityHeader, "WindowPosY=-1"))
+		        
 		        FinalOrganizer.Add(QualityValues)
 		      End If
 		      
@@ -392,10 +550,10 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Project As Ark.Project, Identity As Beacon.Identity, Profile As Ark.ServerProfile, Format As Ark.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Project As Ark.Project, Identity As Beacon.Identity, Profile As Ark.ServerProfile, Format As Ark.Rewriter.EncodingFormat, Nuke As Boolean, ByRef Error As RuntimeException) As String
 		  Try
 		    Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Identity, Profile)
-		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Error)
+		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Project.UWPMode, Nuke, Error)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try

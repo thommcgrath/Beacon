@@ -903,6 +903,39 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Visible         =   True
          Width           =   1
       End
+      Begin CheckBox VerifyCertificateCheck
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Verify Certificate (TLS Only)"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   312
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   14
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   238
+         Transparent     =   False
+         Underline       =   False
+         Value           =   True
+         Visible         =   True
+         VisualState     =   1
+         Width           =   268
+      End
    End
    Begin Timer StatusWatcher
       Enabled         =   True
@@ -1089,6 +1122,9 @@ End
 #tag Events ServerModeMenu
 	#tag Event
 		Sub Change()
+		  Self.VerifyCertificateCheck.Visible = Me.SelectedRowIndex = 0 Or Me.SelectedRowIndex = 2
+		  Self.VerifyCertificateCheck.Caption = If(Me.SelectedRowIndex = 0, "Verify Certificate (TLS Only)", "Verify Certificate")
+		  
 		  Self.CheckServerActionButton
 		End Sub
 	#tag EndEvent
@@ -1196,6 +1232,7 @@ End
 		  Self.mProfile.Port = CDbl(Self.ServerPortField.Text)
 		  Self.mProfile.Username = Self.ServerUserField.Text
 		  Self.mProfile.Password = Self.ServerPassField.Text
+		  Self.mProfile.VerifyHost = Self.VerifyCertificateCheck.Value
 		  
 		  Select Case Self.ServerModeMenu.SelectedRowIndex
 		  Case 1
@@ -1211,6 +1248,7 @@ End
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		  
 		  Self.mEngine = New Ark.FTPIntegrationEngine(Self.mProfile)
+		  Self.mEngine.VerifyHost = Self.VerifyCertificateCheck.Value
 		  AddHandler mEngine.Wait, WeakAddressOf mEngine_Wait
 		  AddHandler mEngine.Discovered, WeakAddressOf mEngine_Discovered
 		  AddHandler mEngine.FilesListed, WeakAddressOf mEngine_FilesListed

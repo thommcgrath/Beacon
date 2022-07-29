@@ -128,19 +128,33 @@ class Session implements \JsonSerializable {
 	}
 	
 	public function jsonSerialize() {
-		return array(
+		return [
 			'session_id' => $this->session_id,
 			'user_id' => $this->user_id,
 			'valid_until' => $this->valid_until
-		);
+		];
 	}
 	
 	public function SendCookie(bool $temporary = false) {
-		setcookie(self::COOKIE_NAME, $this->session_id, ($temporary ? 0 : $this->Expiration()->getTimestamp()), '/', '', true, true);
+		setcookie(self::COOKIE_NAME, $this->session_id, [
+			'expires' => ($temporary ? 0 : $this->Expiration()->getTimestamp()),
+			'path' => '/account',
+			'domain' =>'',
+			'secure' => true,
+			'httponly' =>true,
+			'samesite' => 'Strict'
+		]);
 	}
 	
 	public static function RemoveCookie() {
-		setcookie(self::COOKIE_NAME, '', 0, '/', '', true, true);
+		setcookie(self::COOKIE_NAME, '', [
+			'expires' => 0,
+			'path' => '/account',
+			'domain' => '',
+			'secure' => true,
+			'httponly' =>true,
+			'samesite' => 'Strict'
+		]);
 	}
 	
 	public static function GetFromCookie() {

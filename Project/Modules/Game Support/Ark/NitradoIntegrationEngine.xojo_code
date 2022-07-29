@@ -123,7 +123,7 @@ Inherits Ark.IntegrationEngine
 		      ExtraGameIni = "[" + Ark.HeaderShooterGame + "]" + EndOfLine.UNIX + ExtraGameIni
 		    End If
 		    Var RewriteError As RuntimeException
-		    Var ExtraGameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, ExtraGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, ExtraGameIniOrganizer, Self.Project.UUID, Self.Project.LegacyTrustKey, If(Self.Project.AllowUCS2, Ark.Rewriter.EncodingFormat.UCS2AndASCII, Ark.Rewriter.EncodingFormat.ASCII), RewriteError)
+		    Var ExtraGameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, ExtraGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, ExtraGameIniOrganizer, Self.Project.UUID, Self.Project.LegacyTrustKey, If(Self.Project.AllowUCS2, Ark.Rewriter.EncodingFormat.UCS2AndASCII, Ark.Rewriter.EncodingFormat.ASCII), Ark.Project.UWPCompatibilityModes.Never, Self.NukeEnabled, RewriteError)
 		    If (RewriteError Is Nil) = False Then
 		      Self.SetError(RewriteError)
 		      Return False
@@ -541,6 +541,12 @@ Inherits Ark.IntegrationEngine
 		    Transfer.SetError("Nitrado returned no content")
 		  End If
 		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub OverrideUWPMode(ByRef UWPMode As Ark.Project.UWPCompatibilityModes)
+		  UWPMode = Ark.Project.UWPCompatibilityModes.Never
 		End Sub
 	#tag EndEvent
 

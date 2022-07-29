@@ -1212,6 +1212,21 @@ End
 		    Next Idx
 		  End If
 		  
+		  For Each DataSource As Beacon.DataSource In App.DataSources
+		    Var FilesDict As Dictionary = DataSource.AdditionalSupportFiles
+		    If FilesDict Is Nil Or FilesDict.KeyCount = 0 Then
+		      Continue
+		    End If
+		    
+		    For Each FileEntry As DictionaryEntry In FilesDict
+		      Var Filename As String = FileEntry.Key
+		      Var Data As MemoryBlock = FileEntry.Value
+		      If Not Self.AddToArchive("Game Data/" + DataSource.Identifier + "/" + Filename, Data) Then
+		        Return
+		      End If
+		    Next FileEntry
+		  Next DataSource
+		  
 		  Self.mTicketArchive.Close
 		  
 		  Var ArchiveBytes As MemoryBlock = Self.mTicketArchive.MemoryData

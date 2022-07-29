@@ -613,6 +613,7 @@ End
 		Private Sub HandleConfigPickerClick()
 		  Var Menu As New MenuItem
 		  Menu.AddMenu(New MenuItem("Create and switch to new config set…", "beacon:createandswitch"))
+		  Menu.AddMenu(New MenuItem("Manage config sets…", "beacon:manage"))
 		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		  
 		  Var SetNames() As String = Self.Project.ConfigSetNames
@@ -627,7 +628,6 @@ End
 		  Next
 		  
 		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		  Menu.AddMenu(New MenuItem("Manage config sets…", "beacon:manage"))
 		  Menu.AddMenu(New MenuItem("Learn more about config sets…", "beacon:help"))
 		  
 		  Var Origin As Point = Self.ConfigSetPicker.GlobalizeCoordinate(Self.mConfigPickerMenuOrigin)

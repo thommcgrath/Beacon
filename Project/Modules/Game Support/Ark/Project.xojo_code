@@ -49,6 +49,7 @@ Inherits Beacon.Project
 		  PlainData.Value("IsConsole") = Self.ConsoleSafe
 		  PlainData.Value("Map") = Self.MapMask
 		  PlainData.Value("ModSelections") = Self.mContentPacks
+		  PlainData.Value("UWPCompatibilityMode") = CType(Self.UWPMode, Integer)
 		End Sub
 	#tag EndEvent
 
@@ -139,6 +140,7 @@ Inherits Beacon.Project
 		  
 		  Self.AllowUCS2 = PlainData.Lookup("AllowUCS", Self.AllowUCS2).BooleanValue
 		  Self.ConsoleSafe = PlainData.Lookup("IsConsole", Self.ConsoleSafe).BooleanValue
+		  Self.UWPMode = CType(PlainData.Lookup("UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
 		  
 		  If PlainData.HasKey("Map") Then
 		    Self.MapMask = PlainData.Value("Map")
@@ -467,49 +469,23 @@ Inherits Beacon.Project
 		      For Each Set As Ark.SpawnPointSet In SpawnPoint
 		        Var NewSet As Ark.MutableSpawnPointSet
 		        For Each Entry As Ark.SpawnPointSetEntry In Set
-		          If Entry.Creature = ReplacedCreature Then
-		            If NewSet = Nil Then
-		              NewSet = New Ark.MutableSpawnPointSet()
-		              NewSet.Weight = Set.RawWeight
-		              NewSet.Label = ReplacementCreature.Label + " (Converted)"
-		              If IsNull(Set.SpreadRadius) Then
-		                NewSet.SpreadRadius = 650
-		              Else
-		                NewSet.SpreadRadius = Set.SpreadRadius
-		              End If
-		            End If
-		            
-		            Const SpreadMultiplierHigh = 1.046153846
-		            Const SpreadMultiplierLow = 0.523076923
-		            
-		            Var NewEntry As Ark.MutableSpawnPointSetEntry
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 0.7
-		            NewSet.Append(NewEntry)
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 1.0
-		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh), 0.0)
-		            NewSet.Append(NewEntry)
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 0.2
-		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow), 0.0)
-		            NewSet.Append(NewEntry)
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 0.25
-		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow) * -1, 0.0)
-		            NewSet.Append(NewEntry)
-		            
-		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
-		            NewEntry.SpawnChance = 0.6
-		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh) * -1, 0.0)
-		            NewSet.Append(NewEntry)
+		          If Entry.Creature <> ReplacedCreature Then
+		            Continue
 		          End If
+		          
+		          If NewSet Is Nil Then
+		            NewSet = New Ark.MutableSpawnPointSet(Set)
+		            NewSet.Label = ReplacementCreature.Label + " (Converted)"
+		            NewSet.RemoveAll()
+		            NewSet.ID = New v4UUID
+		          End If
+		          
+		          Var NewEntry As New Ark.MutableSpawnPointSetEntry(Entry)
+		          NewEntry.Creature = ReplacementCreature
+		          NewEntry.ID = New v4UUID
+		          NewSet.Append(NewEntry)
 		        Next
-		        If (NewSet Is Nil) = False Then
+		        If (NewSet Is Nil) = False And NewSet.Count > 0 Then
 		          NewSets.Add(NewSet)
 		        End If
 		      Next
@@ -608,6 +584,8 @@ Inherits Beacon.Project
 		    If (Profile.ServerPassword Is Nil) = False Then
 		      Organizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "ServerPassword=" + Profile.ServerPassword.StringValue))
 		    End If
+		    
+		    Organizer.BeaconKey("Maps") = Profile.Mask.ToString(Locale.Raw, "0")
 		    
 		    Return Organizer
 		  Catch Err As RuntimeException
@@ -928,6 +906,21 @@ Inherits Beacon.Project
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UWPMode() As Ark.Project.UWPCompatibilityModes
+		  Return Self.mUWPMode
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UWPMode(Assigns Value As Ark.Project.UWPCompatibilityModes)
+		  If Self.mUWPMode <> Value Then
+		    Self.mUWPMode = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h1
 		Protected mAllowUCS2 As Boolean
@@ -944,6 +937,17 @@ Inherits Beacon.Project
 	#tag Property, Flags = &h1
 		Protected mMapMask As UInt64
 	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mUWPMode As Ark.Project.UWPCompatibilityModes
+	#tag EndProperty
+
+
+	#tag Enum, Name = UWPCompatibilityModes, Type = Integer, Flags = &h0
+		Automatic
+		  Never
+		Always
+	#tag EndEnum
 
 
 	#tag ViewBehavior

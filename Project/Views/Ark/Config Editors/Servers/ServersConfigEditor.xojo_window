@@ -26,7 +26,7 @@ Begin ArkConfigEditor ServersConfigEditor
    Transparent     =   True
    Visible         =   True
    Width           =   856
-   Begin BeaconListbox ServerList
+   Begin ServersListbox ServerList
       AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -187,6 +187,8 @@ Begin ArkConfigEditor ServersConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -198,6 +200,7 @@ Begin ArkConfigEditor ServersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   6
@@ -224,13 +227,13 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.UpdateList()
+		  Self.ServerList.UpdateList()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub SetupUI()
-		  Self.UpdateList()
+		  Self.ServerList.UpdateList()
 		End Sub
 	#tag EndEvent
 
@@ -300,22 +303,26 @@ End
 		Private Sub HandleViewMenu(ItemRect As Rect)
 		  Var Base As New MenuItem
 		  
-		  Var ViewFullNames As New MenuItem("Use Full Server Names", Self.ListNamesFull)
-		  Var ViewAbbreviatedNames As New MenuItem("Use Abbreviated Server Names", Self.ListNamesAbbreviated)
-		  Var SortByName As New MenuItem("Sort By Name", Self.ListSortByName)
-		  Var SortByAddress As New MenuItem("Sort By Address", Self.ListSortByAddress)
-		  Var SortByColor As New MenuItem("Sort By Color", Self.ListSortByColor)
-		  ViewFullNames.HasCheckMark = Preferences.ServersListNameStyle = Self.ListNamesFull
-		  ViewAbbreviatedNames.HasCheckMark = Preferences.ServersListNameStyle = Self.ListNamesAbbreviated
-		  SortByName.HasCheckMark = Preferences.ServersListSortedValue = Self.ListSortByName
-		  SortByAddress.HasCheckMark = Preferences.ServersListSortedValue = Self.ListSortByAddress
-		  SortByColor.HasCheckMark = Preferences.ServersListSortedValue = Self.ListSortByColor
+		  Var ViewFullNames As New MenuItem("Use Full Server Names", ServersListbox.NamesFull)
+		  Var ViewAbbreviatedNames As New MenuItem("Use Abbreviated Server Names", ServersListbox.NamesAbbreviated)
+		  Var SortByName As New MenuItem("Sort By Name", ServersListbox.SortByName)
+		  Var SortByAddress As New MenuItem("Sort By Address", ServersListbox.SortByAddress)
+		  Var SortByColor As New MenuItem("Sort By Color", ServersListbox.SortByColor)
+		  Var ShowServerIds As New MenuItem("Show Server Ids")
+		  ViewFullNames.HasCheckMark = Preferences.ServersListNameStyle = ServersListbox.NamesFull
+		  ViewAbbreviatedNames.HasCheckMark = Preferences.ServersListNameStyle = ServersListbox.NamesAbbreviated
+		  SortByName.HasCheckMark = Preferences.ServersListSortedValue = ServersListbox.SortByName
+		  SortByAddress.HasCheckMark = Preferences.ServersListSortedValue = ServersListbox.SortByAddress
+		  SortByColor.HasCheckMark = Preferences.ServersListSortedValue = ServersListbox.SortByColor
+		  ShowServerIds.HasCheckMark = Preferences.ServersListShowIds
 		  Base.AddMenu(ViewFullNames)
 		  Base.AddMenu(ViewAbbreviatedNames)
 		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		  Base.AddMenu(SortByName)
 		  Base.AddMenu(SortByAddress)
 		  Base.AddMenu(SortByColor)
+		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(ShowServerIds)
 		  
 		  Var Position As Point = Self.GlobalPosition
 		  Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
@@ -326,10 +333,13 @@ End
 		  Select Case Choice
 		  Case ViewFullNames, ViewAbbreviatedNames
 		    Preferences.ServersListNameStyle = Choice.Tag.StringValue
-		    Self.UpdateList()
+		    Self.ServerList.UpdateList()
 		  Case SortByName, SortByAddress, SortByColor
 		    Preferences.ServersListSortedValue = Choice.Tag.StringValue
-		    Self.UpdateList()
+		    Self.ServerList.UpdateList()
+		  Case ShowServerIds
+		    Preferences.ServersListShowIds = Not Preferences.ServersListShowIds
+		    Self.ServerList.UpdateList()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -341,119 +351,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ProfileNames() As Dictionary
-		  Var Bound As Integer = Self.Project.ServerProfileCount - 1
-		  Var Names() As String
-		  Var Profiles() As Beacon.ServerProfile
-		  Names.ResizeTo(Bound)
-		  Profiles.ResizeTo(Bound)
-		  For Idx As Integer = 0 To Bound
-		    Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
-		    Names(Idx) = Profile.Name
-		    Profiles(Idx) = Profile
-		  Next Idx
-		  If Preferences.ServersListNameStyle = Self.ListNamesAbbreviated Then
-		    Names = Language.FilterServerNames(Names)
-		  End If
-		  
-		  Var Lookup As New Dictionary
-		  For Idx As Integer = 0 To Bound
-		    Lookup.Value(Profiles(Idx).ProfileID) = If(Names(Idx).IsEmpty = False, Names(Idx), Profiles(Idx).Name)
-		  Next Idx
-		  Return Lookup
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UpdateList()
-		  // Updates the list, maintaining the current selection
-		  
-		  Var Profiles() As Ark.ServerProfile
-		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
-		    If Self.ServerList.Selected(Idx) = False Then
-		      Continue
-		    End If
-		    
-		    Profiles.Add(Self.ServerList.RowTagAt(Idx))
-		  Next
-		  Self.UpdateList(Profiles, False)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UpdateList(SelectProfiles() As Ark.ServerProfile, WithChangeEvent As Boolean)
-		  Var Profiles() As Beacon.ServerProfile = Self.Project.ServerProfiles(Self.FilterField.Text)
-		  
-		  Self.ServerList.SelectionChangeBlocked = True
-		  Self.ServerList.RowCount = Profiles.Count
-		  
-		  Var SelectIDs() As String
-		  For Each Profile As Ark.ServerProfile In SelectProfiles
-		    If Profile Is Nil Then
-		      Continue
-		    End If
-		    SelectIDs.Add(Profile.ProfileID)
-		  Next
-		  
-		  Var SortBy As String = Preferences.ServersListSortedValue
-		  Var AddressMatcher As New Regex
-		  AddressMatcher.SearchPattern = "^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}):(\d{1,5})$"
-		  
-		  Var Names As Dictionary = Self.ProfileNames()
-		  For Idx As Integer = Profiles.FirstIndex To Profiles.LastIndex
-		    Var Profile As Beacon.ServerProfile = Profiles(Idx)
-		    Var SortName As String = Names.Value(Profile.ProfileID)
-		    Var Name As String = SortName + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
-		    Var Selected As Boolean = SelectIDs.IndexOf(Profile.ProfileID) > -1
-		    
-		    Select Case SortBy
-		    Case Self.ListSortByAddress
-		      SortName = If(Profile.SecondaryName.IsEmpty = False, Profile.SecondaryName, SortName)
-		      Var Matches As RegexMatch = AddressMatcher.Search(SortName)
-		      If (Matches Is Nil) = False Then
-		        Var First As Integer = Matches.SubExpressionString(1).ToInteger
-		        Var Second As Integer = Matches.SubExpressionString(2).ToInteger
-		        Var Third As Integer = Matches.SubExpressionString(3).ToInteger
-		        Var Fourth As Integer = Matches.SubExpressionString(4).ToInteger
-		        Var Port As Integer = Matches.SubExpressionString(5).ToInteger
-		        SortName = First.ToString(Locale.Raw, "000") + "." + Second.ToString(Locale.Raw, "000") + "." + Third.ToString(Locale.Raw, "000") + "." + Fourth.ToString(Locale.Raw, "000") + ":" + Port.ToString(Locale.Raw, "00000")
-		      End If
-		    Case Self.ListSortByColor
-		      SortName = "color" + CType(Profile.ProfileColor, Integer).ToString(Locale.Raw, "00") + ":" + SortName
-		    End Select
-		    
-		    If Self.ServerList.CellValueAt(Idx, 0) <> Name Then
-		      Self.ServerList.CellValueAt(Idx, 0) = Name
-		    End If
-		    If Self.ServerList.CellTagAt(Idx, 0) <> SortName Then
-		      Self.ServerList.CellTagAt(Idx, 0) = SortName
-		    End If
-		    If Self.ServerList.RowTagAt(Idx) <> Profile Then
-		      Self.ServerList.RowTagAt(Idx) = Profile
-		    End If
-		    If Self.ServerList.Selected(Idx) <> Selected Then
-		      Self.ServerList.Selected(Idx) = Selected
-		    End If
-		  Next
-		  Self.ServerList.Sort
-		  Self.ServerList.SelectionChangeBlocked(WithChangeEvent) = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UpdateList(SelectProfile As Ark.ServerProfile, WithChangeEvent As Boolean)
-		  // Updates the list, selecting the requested profile
-		  
-		  Var Profiles(0) As Ark.ServerProfile
-		  Profiles(0) = SelectProfile
-		  Self.UpdateList(Profiles, WithChangeEvent)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
 		  Self.Changed = Sender.Changed
-		  Self.UpdateList()
+		  Self.ServerList.UpdateList()
 		End Sub
 	#tag EndMethod
 
@@ -513,22 +413,6 @@ End
 	#tag Property, Flags = &h21
 		Private mViews As Dictionary
 	#tag EndProperty
-
-
-	#tag Constant, Name = ListNamesAbbreviated, Type = String, Dynamic = False, Default = \"abbreviated", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ListNamesFull, Type = String, Dynamic = False, Default = \"full", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ListSortByAddress, Type = String, Dynamic = False, Default = \"address", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ListSortByColor, Type = String, Dynamic = False, Default = \"color", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ListSortByName, Type = String, Dynamic = False, Default = \"name", Scope = Public
-	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -735,62 +619,9 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  If Column <> 0 Then
-		    Return False
-		  End If
-		  
-		  Var Sort1 As String = Me.CellTagAt(Row1, Column)
-		  Var Sort2 As String = Me.CellTagAt(Row2, Column)
-		  Result = Sort1.Compare(Sort2, ComparisonOptions.CaseInsensitive)
-		  Return True
+		Function GetProject() As Beacon.Project
+		  Return Self.Project
 		End Function
-	#tag EndEvent
-	#tag Event
-		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
-		  #Pragma Unused Column
-		  #Pragma Unused BackgroundColor
-		  
-		  If Row >= Me.RowCount Then
-		    Return
-		  End If
-		  
-		  Var Profile As Ark.ServerProfile = Me.RowTagAt(Row)
-		  If Profile.ProfileColor = Ark.ServerProfile.Colors.None Then
-		    Return
-		  End If
-		  
-		  Select Case Profile.ProfileColor
-		  Case Ark.ServerProfile.Colors.Blue
-		    G.DrawingColor = SystemColors.SystemBlueColor
-		  Case Ark.ServerProfile.Colors.Brown
-		    G.DrawingColor = SystemColors.SystemBrownColor
-		  Case Ark.ServerProfile.Colors.Green
-		    G.DrawingColor = SystemColors.SystemGreenColor
-		  Case Ark.ServerProfile.Colors.Grey
-		    G.DrawingColor = SystemColors.SystemGrayColor
-		  Case Ark.ServerProfile.Colors.Indigo
-		    G.DrawingColor = SystemColors.SystemIndigoColor
-		  Case Ark.ServerProfile.Colors.Orange
-		    G.DrawingColor = SystemColors.SystemOrangeColor
-		  Case Ark.ServerProfile.Colors.Pink
-		    G.DrawingColor = SystemColors.SystemPinkColor
-		  Case Ark.ServerProfile.Colors.Purple
-		    G.DrawingColor = SystemColors.SystemPurpleColor
-		  Case Ark.ServerProfile.Colors.Red
-		    G.DrawingColor = SystemColors.SystemRedColor
-		  Case Ark.ServerProfile.Colors.Teal
-		    G.DrawingColor = SystemColors.SystemTealColor
-		  Case Ark.ServerProfile.Colors.Yellow
-		    G.DrawingColor = SystemColors.SystemYellowColor
-		  End Select
-		  G.FillRectangle(G.Width - 3, 0, 3, G.Height)
-		  
-		  If Me.Selected(Row) And IsHighlighted Then
-		    G.DrawingColor = TextColor
-		    G.DrawLine(G.Width - 4, 0, G.Width - 4, G.Height)
-		  End If
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
@@ -814,7 +645,7 @@ End
 		    Profile.Name = "An Ark Server"
 		    
 		    Self.Project.AddServerProfile(Profile)
-		    Self.UpdateList(Profile, True)
+		    Self.ServerList.UpdateList(Profile, True)
 		  Case "ViewOptionsButton"
 		    Self.HandleViewMenu(ItemRect)
 		  End Select
@@ -837,7 +668,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.UpdateList()
+		  Self.ServerList.Filter = Me.Text.Trim
 		End Sub
 	#tag EndEvent
 #tag EndEvents

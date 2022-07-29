@@ -36,6 +36,12 @@ Inherits Beacon.Thread
 		  // Fix smart quotes
 		  Content = Content.SanitizeIni
 		  
+		  // The UWP/Windows Store version uses Ark.HeaderShooterGameUWP instead of Ark.HeaderShooterGame because it's inbred
+		  If Content.IndexOf("[" + Ark.HeaderShooterGameUWP + "]") > -1 Then
+		    Content = Content.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
+		    Self.mData.GameIniContent = Self.mData.GameIniContent.ReplaceAll(Ark.HeaderShooterGameUWP, Ark.HeaderShooterGame)
+		  End If
+		  
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
 		  
@@ -206,7 +212,7 @@ Inherits Beacon.Thread
 		    Var ActiveMods As String = ParsedData.StringValue("ActiveMods", "")
 		    Var ModIDs() As String = ActiveMods.Split(",")
 		    For Each ModID As String In ModIDs
-		      Var ContentPack As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPackWithWorkshopID(ModID.ToInteger)
+		      Var ContentPack As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPackWithWorkshopID(ModID)
 		      If (ContentPack Is Nil) = False Then
 		        Project.ContentPackEnabled(ContentPack) = True
 		      End If

@@ -7,6 +7,10 @@ Inherits Beacon.IntegrationEngine
 		  Self.EnterResourceIntenseMode()
 		  Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Self.Identity, Self.Profile)
 		  Self.ExitResourceIntenseMode()
+		  If Organizer Is Nil Then
+		    Self.SetError("Could not generate new config data. Log files may have more info.")
+		    Return
+		  End If
 		  
 		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
 		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(Organizer)
@@ -51,10 +55,13 @@ Inherits Beacon.IntegrationEngine
 		    Format = Ark.Rewriter.EncodingFormat.ASCII
 		  End If
 		  
+		  Var UWPMode As Ark.Project.UWPCompatibilityModes = Project.UWPMode
+		  RaiseEvent OverrideUWPMode(UWPMode)
+		  
 		  Var RewriteError As RuntimeException
 		  
 		  Self.EnterResourceIntenseMode()
-		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, If(Self.NukeEnabled = False, GameIniOriginal, ""), Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.UUID, Project.LegacyTrustKey, Format, RewriteError)
+		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameIniOriginal, Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.UUID, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
 		  Self.ExitResourceIntenseMode()
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
@@ -62,7 +69,7 @@ Inherits Beacon.IntegrationEngine
 		  End If
 		  
 		  Self.EnterResourceIntenseMode()
-		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, If(Self.NukeEnabled = False, GameUserSettingsIniOriginal, ""), Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.UUID, Project.LegacyTrustKey, Format, RewriteError)
+		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.UUID, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
 		  Self.ExitResourceIntenseMode()
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
@@ -190,6 +197,10 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Hook, Flags = &h0
 		Event ApplySettings(Organizer As Ark.ConfigOrganizer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event OverrideUWPMode(ByRef UWPMode As Ark.Project.UWPCompatibilityModes)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

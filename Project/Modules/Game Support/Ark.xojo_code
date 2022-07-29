@@ -821,13 +821,21 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ValidateIniContent(Content As String, RequiredHeaders() As String) As String()
+		Protected Function ValidateIniContent(Content As String, RequiredHeaders() As Beacon.StringList) As String()
 		  Var MissingHeaders() As String
-		  For Each RequiredHeader As String In RequiredHeaders
-		    If Content.IndexOf(RequiredHeader) = -1 Then
-		      MissingHeaders.Add(RequiredHeader)
+		  For Each HeaderChoices As Beacon.StringList In RequiredHeaders
+		    Var Found As Boolean = False
+		    For Each HeaderChoice As String In HeaderChoices
+		      If Content.IndexOf("[" + HeaderChoice + "]") > -1 Then
+		        Found = True
+		        Exit
+		      End If
+		    Next
+		    
+		    If Found = False Then
+		      MissingHeaders.Add("[" + HeaderChoices(0) + "]")
 		    End If
-		  Next
+		  Next HeaderChoices
 		  MissingHeaders.Sort
 		  Return MissingHeaders
 		End Function
@@ -835,11 +843,11 @@ Protected Module Ark
 
 	#tag Method, Flags = &h1
 		Protected Function ValidateIniContent(Content As String, Filename As String) As String()
-		  Var RequiredHeaders() As String
+		  Var RequiredHeaders() As Beacon.StringList
 		  If Filename = Ark.ConfigFileGame Then
-		    RequiredHeaders = Array("[" + Ark.HeaderShooterGame + "]")
+		    RequiredHeaders = Array(New Beacon.StringList(Ark.HeaderShooterGame, Ark.HeaderShooterGameUWP))
 		  ElseIf Filename = Ark.ConfigFileGameUserSettings Then
-		    RequiredHeaders = Array("[SessionSettings]", "[" + Ark.HeaderServerSettings + "]", "[/Script/ShooterGame.ShooterGameUserSettings]")
+		    RequiredHeaders = Array(New Beacon.StringList(Ark.HeaderSessionSettings), New Beacon.StringList(Ark.HeaderServerSettings), New Beacon.StringList(Ark.HeaderShooterGameUserSettings))
 		  End If
 		  Return Ark.ValidateIniContent(Content, RequiredHeaders)
 		End Function
@@ -910,7 +918,16 @@ Protected Module Ark
 	#tag Constant, Name = HeaderServerSettings, Type = String, Dynamic = False, Default = \"ServerSettings", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = HeaderSessionSettings, Type = String, Dynamic = False, Default = \"SessionSettings", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = HeaderShooterGame, Type = String, Dynamic = False, Default = \"/script/shootergame.shootergamemode", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HeaderShooterGameUserSettings, Type = String, Dynamic = False, Default = \"/Script/ShooterGame.ShooterGameUserSettings", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HeaderShooterGameUWP, Type = String, Dynamic = False, Default = \"ShooterGameMode_Options", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"Ark", Scope = Protected

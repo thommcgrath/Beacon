@@ -24,7 +24,7 @@ Setting _XP For Level_ to 5 and pressing _OK_ will put the level into the list. 
 
 ## Ascension
 
-At the time of this writing, Ark reserves the final 75 levels for ascension: 70 earned by defeating bosses and 5 chibi levels. Beacon will show you which levels are locked by ascension in the _Ascension Required_ column. You will not be able to export or deploy until enough levels have been defined to cover ascension. It is not possible to remove the ascension requirement.
+At the time of this writing, Ark reserves the final 85 levels for [ascension](https://ark.wiki.gg/wiki/Ascension): 60 earned by defeating bosses, 5 chibi levels, 10 for explorer notes, and 10 for Fjordur runes. Beacon will show you which levels are locked by ascension in the _Ascension Required_ column. You will not be able to export or deploy until enough levels have been defined to cover ascension. It is not possible to remove the ascension requirement.
 
 ## Using the Wizard
 

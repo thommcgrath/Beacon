@@ -327,6 +327,22 @@ Protected Module Preferences
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.DictionaryValue("Ark Loot Item Set Entry Defaults", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.DictionaryValue("Ark Loot Item Set Entry Defaults") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkLootItemSetEntryDefaults As Dictionary
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
@@ -789,7 +805,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.StringValue("Servers List Name Style", ServersConfigEditor.ListNamesFull)
+			  Return mManager.StringValue("Servers List Name Style", ServersListbox.NamesFull)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -804,7 +820,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.StringValue("Servers List Sorted Value", ServersConfigEditor.ListSortByName)
+			  Return mManager.BooleanValue("Servers List Show Ids", False)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mManager.BooleanValue("Servers List Show Ids") = Value
+			End Set
+		#tag EndSetter
+		Protected ServersListShowIds As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.StringValue("Servers List Sorted Value", ServersListbox.SortByName)
 			End Get
 		#tag EndGetter
 		#tag Setter

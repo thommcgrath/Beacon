@@ -22,7 +22,7 @@ Inherits Ark.ConfigGroup
 		      Var Value As Variant = Entry.Value
 		      Var StringValue As String
 		      
-		      If Project.ContentPackEnabled(Key.ContentPackUUID) = False Then
+		      If Key Is Nil Or Project.ContentPackEnabled(Key.ContentPackUUID) = False Then
 		        Continue
 		      End If
 		      

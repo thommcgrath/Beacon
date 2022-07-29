@@ -41,6 +41,7 @@ Protected Module Tests
 		    TestArkML()
 		    TestFilenames()
 		    TestIntervalParsing()
+		    TestIniValidation()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -222,6 +223,19 @@ Protected Module Tests
 		  Call Assert(Sanitized = "Capture the Flag 2.0 by Reptar's Raptors", "Did not sanitize filename `" + Servername + "` correctly. Expected `Capture the Flag 2.0 by Reptar's Raptors`, got `" + Sanitized + "`.")
 		  Call Assert(SanitizedAndShort = "Capture th…s Raptors", "Did not sanitize filename `" + Servername + "` to 20 characters correctly. Expected `Capture th…s Raptors`, got `" + SanitizedAndShort + "`.")
 		  Call Assert(SanitizedAndVeryShort = "Captu…ptors", "Did not sanitize filename `" + Servername + "` to 11 characters correctly. Expected `Captu…ptors`, got `" + SanitizedAndVeryShort + "`.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestIniValidation()
+		  Const EOL = &u10
+		  Const GameIni = "[" + Ark.HeaderShooterGame + "]" + EOL + "Setting=Value"
+		  Const GameIniUWP = "[" + Ark.HeaderShooterGameUWP + "]" + EOL + "Setting=Value"
+		  Const GameUserSettings = "[" + Ark.HeaderSessionSettings + "]" + EOL + "SessionName=Toast" + EOL + "[" + Ark.HeaderServerSettings + "]" + EOL + "Setting=Value" + EOL + "[" + Ark.HeaderShooterGameUserSettings + "]" + EOL + "Graphics=High"
+		  
+		  Call Assert(Ark.ValidateIniContent(GameIni, Ark.ConfigFileGame).Count = 0, "Game.ini failed validation in normal mode")
+		  Call Assert(Ark.ValidateIniContent(GameIniUWP, Ark.ConfigFileGame).Count = 0, "Game.ini failed validation in uwp mode")
+		  Call Assert(Ark.ValidateIniContent(GameUserSettings, Ark.ConfigFileGameUserSettings).Count = 0, "GameUserSettings.ini failed validation")
 		End Sub
 	#tag EndMethod
 

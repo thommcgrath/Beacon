@@ -12,3 +12,6 @@ If Discord isn't an option, or for private questions such as those about account
 
 # Bug Reports
 Bugs should be reported on [GitHub](https://github.com/thommcgrath/Beacon/issues). Anybody can create an account and this is more helpful than email when it comes to bug tracking.
+
+# Paid Assistance
+If you would like to hire somebody to help you with your Ark config, see [Game Server Gurus](https://gameservergurus.com). *Game Server Gurus is not affiliated with Beacon or The ZAZ Studios*.

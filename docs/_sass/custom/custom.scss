@@ -1,3 +1,5 @@
+$keyword-color: #2E4CB8;
+
 blockquote {
 	background-color: mix($body-background-color, $body-text-color, 97%);
 	color: $body-text-color;
@@ -42,4 +44,8 @@ div.affected_ini_keys {
 
 p.screenshot {
 	text-align: center;
+}
+
+.ui-keyword {
+	font-weight: 500;
 }

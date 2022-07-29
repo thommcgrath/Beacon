@@ -153,7 +153,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   214
+      Height          =   216
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -172,7 +172,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   88
+      Top             =   86
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -217,30 +217,6 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Visible         =   True
       Width           =   560
    End
-   BeginDesktopSegmentedButton DesktopSegmentedButton FilterSelector
-      Enabled         =   True
-      Height          =   24
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   380
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   2
-      Segments        =   "Spawn Points\n\nTrue\rCreatures\n\nFalse"
-      SelectionStyle  =   0
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   52
-      Transparent     =   False
-      Visible         =   True
-      Width           =   200
-   End
    Begin UITweaks.ResizedLabel FilterLabel
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -269,7 +245,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   53
+      Top             =   52
       Transparent     =   False
       Underline       =   False
       Value           =   "Filter:"
@@ -429,6 +405,36 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Visible         =   True
       Width           =   284
    End
+   Begin BeaconSegmentedControl FilterSelector
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowMultipleSelection=   False
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Spawn Points	Creatures"
+      Left            =   380
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   52
+      Transparent     =   True
+      Visible         =   True
+      Width           =   200
+   End
 End
 #tag EndWindow
 
@@ -551,9 +557,10 @@ End
 		#tag Setter
 			Set
 			  If Self.FilterMode <> Value Then
-			    If Self.FilterSelector.SelectedSegmentIndex <> Value Then
-			      Self.FilterSelector.SelectedSegmentIndex = Value
-			    End If
+			    Self.FilterSelector.LockChangeEvent
+			    Self.FilterSelector.Segment(0).Selected = (Value = 0)
+			    Self.FilterSelector.Segment(1).Selected = (Value = 1)
+			    Self.FilterSelector.UnlockChangeEvent
 			    
 			    Var Hint As String = ""
 			    Select Case Value
@@ -698,19 +705,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events FilterSelector
-	#tag Event
-		Sub Pressed(segmentIndex as integer)
-		  Self.FilterMode = SegmentIndex
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.Width = Me.SegmentCount * 100
-		  Me.ResizeCells
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events OverrideRadio
 	#tag Event
 		Sub Action()
@@ -736,6 +730,23 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.UpdateFilter()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterSelector
+	#tag Event
+		Sub Change()
+		  For Idx As Integer = 0 To Me.LastIndex
+		    If Me.Segment(Idx).Selected Then
+		      Self.FilterMode = Idx
+		      Return
+		    End If
+		  Next Idx
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Segment(0).Selected = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -48,17 +48,28 @@ if ($maintenance_mode !== true) {
 	}
 }
 if ($maintenance_mode === true) {
-	http_response_code(503);
-	$message = "Beacon services are offline for just a moment, but we'll be back as soon as possible!";
-	if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'api')) {
-		header('Content-Type: application/json');
-		echo json_encode(array('message' => $message, 'details' => null), JSON_PRETTY_PRINT);
+	$should_exit = true;
+	if (php_sapi_name() == "cli") {
+		if (getenv('BEACON_RUN_IN_MAINTENANCE_MODE') === 'yes') {
+			$should_exit = false;
+		} else {
+			echo "Maintenance mode is active.\n";
+		}
 	} else {
-		BeaconTemplate::SetTemplate('maintenance');
-		BeaconTemplate::Start();
-		echo $message;
+		http_response_code(503);
+		$message = "Beacon services are offline for just a moment, but we'll be back as soon as possible!";
+		if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'api')) {
+			header('Content-Type: application/json');
+			echo json_encode(array('message' => $message, 'details' => null), JSON_PRETTY_PRINT);
+		} else {
+			BeaconTemplate::SetTemplate('maintenance');
+			BeaconTemplate::Start();
+			echo $message;
+		}
 	}
-	exit;
+	if ($should_exit) {
+		exit;
+	}
 }
 
 BeaconErrors::SetSecureMode(BeaconCommon::InProduction());

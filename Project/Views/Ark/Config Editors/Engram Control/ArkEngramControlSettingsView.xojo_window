@@ -10,7 +10,7 @@ Begin ContainerControl ArkEngramControlSettingsView
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   257
+   Height          =   237
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -25,7 +25,7 @@ Begin ContainerControl ArkEngramControlSettingsView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   488
+   Width           =   468
    Begin CheckBox AutoUnlockCheck
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -40,7 +40,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   10
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -51,7 +51,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   10
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -72,7 +72,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   40
+      Left            =   30
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -88,7 +88,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   42
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -108,7 +108,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   10
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -119,7 +119,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   152
+      Top             =   142
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -140,7 +140,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   40
+      Left            =   30
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -156,7 +156,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   184
+      Top             =   174
       Transparent     =   False
       Underline       =   False
       Visible         =   True

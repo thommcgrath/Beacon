@@ -10,7 +10,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   280
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -25,31 +25,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   532
-   BeginDesktopSegmentedButton DesktopSegmentedButton ViewSelector
-      Enabled         =   True
-      Height          =   24
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   2
-      Segments        =   "Universal\n\nFalse\rSteam Only\n\nFalse\rCustom\n\nFalse"
-      SelectionStyle  =   0
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   False
-      Tooltip         =   ""
-      Top             =   20
-      Transparent     =   False
-      Visible         =   True
-      Width           =   280
-   End
+   Width           =   512
    Begin CheckBox ModCheckbox
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -64,7 +40,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Index           =   0
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   10
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -75,7 +51,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   64
+      Top             =   54
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -94,7 +70,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Hint            =   "Filter Mods"
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   312
+      Left            =   302
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -108,7 +84,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
-      Top             =   21
+      Top             =   11
       Transparent     =   False
       Visible         =   True
       Width           =   200
@@ -139,7 +115,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   260
+      Top             =   250
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -171,7 +147,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   260
+      Top             =   250
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -210,7 +186,37 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Transparent     =   False
       Underline       =   False
       Visible         =   False
-      Width           =   492
+      Width           =   472
+   End
+   Begin BeaconSegmentedControl ViewSelector
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowMultipleSelection=   False
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Universal	Steam Only	Custom"
+      Left            =   10
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   11
+      Transparent     =   True
+      Visible         =   True
+      Width           =   280
    End
 End
 #tag EndWindow
@@ -218,9 +224,6 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ViewSelector.Width = 280 // Because the design-time size is not being respected
-		  Self.ViewSelector.ResizeCells
-		  Self.ViewSelector.SegmentAt(0).Selected = True
 		  Self.BuildCheckboxes()
 		  RaiseEvent Open
 		End Sub
@@ -231,16 +234,20 @@ End
 		Private Sub BuildCheckboxes()
 		  Self.mSettingUp = True
 		  
-		  Const EdgePadding = 20
 		  Const MinWidth = 532
+		  Const InnerSpacing = 20
 		  
 		  Const PageUniversal = 0
 		  Const PageSteam = 1
 		  Const PageLocal = 2
 		  
+		  Var PaddingLeft, PaddingTop, PaddingRight, PaddingBottom As Integer
+		  Self.GetPadding(PaddingLeft, PaddingTop, PaddingRight, PaddingBottom)
+		  Var HeaderHeight As Integer = PaddingTop + Max(Self.ViewSelector.Height, Self.FilterField.Height) + InnerSpacing
+		  
 		  Var RequiredType As Ark.ContentPack.Types
-		  For Idx As Integer = 0 To Self.ViewSelector.LastSegmentIndex
-		    If Self.ViewSelector.SegmentAt(Idx).Selected Then
+		  For Idx As Integer = 0 To Self.ViewSelector.LastIndex
+		    If Self.ViewSelector.Segment(Idx).Selected Then
 		      Select Case Idx
 		      Case PageUniversal
 		        RequiredType = Ark.ContentPack.Types.Universal
@@ -275,8 +282,8 @@ End
 		  
 		  Self.mMap.ResizeTo(Packs.LastIndex)
 		  
-		  Var NextLeft As Integer = EdgePadding
-		  Var NextTop As Integer = (EdgePadding * 2) + Self.ViewSelector.Height
+		  Var NextLeft As Integer = PaddingLeft
+		  Var NextTop As Integer = HeaderHeight
 		  For Idx As Integer = Packs.FirstIndex To Packs.LastIndex
 		    Var Check As CheckBox = New ModCheckbox
 		    Check.Caption = Packs(Idx).Name
@@ -287,21 +294,21 @@ End
 		    Self.mMap(Idx) = Packs(Idx).UUID
 		    
 		    If (Idx + 1) Mod ColumnCount = 0 Then
-		      NextLeft = EdgePadding
+		      NextLeft = PaddingLeft
 		      NextTop = NextTop + Check.Height + 12
 		    Else
 		      NextLeft = NextLeft + Check.Width + 12
 		    End If
 		  Next Idx
 		  
-		  Var ViewHeight As Integer = (RowCount * 20) + ((RowCount - 1) * 12) + (Self.ViewSelector.Height + (EdgePadding * 3))
+		  Var ViewHeight As Integer = HeaderHeight + (RowCount * 20) + ((RowCount - 1) * 12) + PaddingBottom
 		  If Self.mResultCount = 0 Then
 		    Self.PrevPageButton.Visible = False
 		    Self.NextPageButton.Visible = False
-		    ViewHeight = ViewHeight + Self.NoResultsLabel.Height + EdgePadding
-		    Self.NoResultsLabel.Top = Self.ViewSelector.Top + Self.ViewSelector.Height + EdgePadding
+		    ViewHeight = HeaderHeight + Self.NoResultsLabel.Height + PaddingBottom
+		    Self.NoResultsLabel.Top = HeaderHeight
 		  ElseIf Self.mResultCount > Self.ResultsPerPage Then
-		    ViewHeight = ViewHeight + Self.NextPageButton.Height + EdgePadding
+		    ViewHeight = ViewHeight + Self.NextPageButton.Height + InnerSpacing
 		    Self.PrevPageButton.Visible = True
 		    Self.NextPageButton.Visible = True
 		    Self.PrevPageButton.Enabled = Self.mOffset > 0
@@ -313,7 +320,7 @@ End
 		  
 		  Self.NoResultsLabel.Visible = (Self.mResultCount = 0)
 		  
-		  Self.Width = Max(MinWidth, (ColumnCount * CheckboxWidth) + ((ColumnCount - 1) * 12) + (EdgePadding * 2))
+		  Self.Width = Max(MinWidth, (ColumnCount * CheckboxWidth) + ((ColumnCount - 1) * 12) + PaddingLeft + PaddingRight)
 		  Self.Height = ViewHeight
 		  
 		  Var TopBarWidth As Integer = Self.ViewSelector.Width + 12 + Self.FilterField.Width
@@ -361,10 +368,10 @@ End
 		Sub GetPadding(ByRef PaddingLeft As Integer, ByRef PaddingTop As Integer, ByRef PaddingRight As Integer, ByRef PaddingBottom As Integer)
 		  // Part of the PopoverContainer interface.
 		  
-		  PaddingLeft = 0
-		  PaddingTop = 0
-		  PaddingRight = 0
-		  PaddingBottom = 0
+		  PaddingLeft = 10
+		  PaddingTop = 10
+		  PaddingRight = 10
+		  PaddingBottom = 10
 		End Sub
 	#tag EndMethod
 
@@ -417,20 +424,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events ViewSelector
-	#tag Event
-		Sub Pressed(segmentIndex as integer)
-		  #Pragma Unused SegmentIndex
-		  
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Self.mOffset = 0
-		  Self.BuildCheckboxes()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ModCheckbox
 	#tag Event
 		Sub Action(index as Integer)
@@ -467,6 +460,23 @@ End
 		Sub Action()
 		  Self.mOffset = Self.mOffset - Self.ResultsPerPage
 		  Self.BuildCheckboxes
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ViewSelector
+	#tag Event
+		Sub Change()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.mOffset = 0
+		  Self.BuildCheckboxes()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Segment(0).Selected = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

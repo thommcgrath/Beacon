@@ -3,7 +3,7 @@ Protected Class DataSource
 Inherits Beacon.DataSource
 	#tag Event
 		Sub BuildSchema()
-		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER UNIQUE, is_local BOOLEAN NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id TEXT UNIQUE, is_local BOOLEAN NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL, label TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE SET DEFAULT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', min_item_sets INTEGER NOT NULL DEFAULT 1, max_item_sets INTEGER NOT NULL DEFAULT 1, prevent_duplicates BOOLEAN NOT NULL DEFAULT 1, contents TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
@@ -14,7 +14,7 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE spawn_point_populations (population_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, spawn_point_id TEXT COLLATE NOCASE NOT NULL REFERENCES spawn_points(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, map_id TEXT COLLATE NOCASE NOT NULL REFERENCES maps(ark_identifier) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, instances INTEGER NOT NULL, target_population INTEGER NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT, gsa_placeholder TEXT COLLATE NOCASE);")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT, gsa_placeholder TEXT COLLATE NOCASE, uwp_changes TEXT);")
 		  Self.SQLExecute("CREATE TABLE events (event_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, ark_code TEXT NOT NULL, rates TEXT NOT NULL, colors TEXT NOT NULL, engrams TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE colors (color_id INTEGER NOT NULL PRIMARY KEY, color_uuid TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, hex_value TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE color_sets (color_set_id TEXT COLLATE NOCASE PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL);")
@@ -24,7 +24,7 @@ Inherits Beacon.DataSource
 		    Self.SQLExecute("CREATE TABLE tags_" + Category + " (object_id TEXT COLLATE NOCASE NOT NULL REFERENCES " + Category + "(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, tag TEXT COLLATE NOCASE NOT NULL, PRIMARY KEY (object_id, tag));")
 		  Next Category
 		  
-		  Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5);", Ark.UserContentPackUUID, Ark.UserContentPackName, True, True, True)
+		  Self.ReplaceUserBlueprints()
 		End Sub
 	#tag EndEvent
 
@@ -103,11 +103,11 @@ Inherits Beacon.DataSource
 		  If UserPacks.Count > 0 Then
 		    Var Packs As New Beacon.StringList()
 		    For Each Pack As Ark.ContentPack In UserPacks
-		      If Pack.IsLocal = False Then
+		      Packs.Append(Pack.UUID)
+		      
+		      If Pack.IsLocal = False Or Pack.UUID = Ark.UserContentPackUUID Then
 		        Continue
 		      End If
-		      
-		      Packs.Append(Pack.UUID)
 		      
 		      Var Dict As New Dictionary
 		      Dict.Value("mod_id") = Pack.UUID
@@ -115,50 +115,53 @@ Inherits Beacon.DataSource
 		      If Pack.WorkshopID Is Nil Then
 		        Dict.Value("workshop_id") = Nil
 		      Else
-		        Dict.Value("workshop_id") = Pack.WorkshopID.IntegerValue
+		        Dict.Value("workshop_id") = Pack.WorkshopID.StringValue
 		      End If
 		      Packed.Add(Dict)
 		    Next
 		    
-		    Var Engrams() As Ark.Engram = Self.GetEngrams("", Packs, "")
-		    For Each Engram As Ark.Engram In Engrams
-		      Var Dict As Dictionary = Engram.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
+		    // Check this, because an empty array will select *everything*
+		    If Packs.Count > 0 Then
+		      Var Engrams() As Ark.Engram = Self.GetEngrams("", Packs, "")
+		      For Each Engram As Ark.Engram In Engrams
+		        Var Dict As Dictionary = Engram.Pack
+		        If Dict Is Nil Then
+		          Continue
+		        End If
+		        
+		        Packed.Add(Dict)
+		      Next
 		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var Creatures() As Ark.Creature = Self.GetCreatures("", Packs, "")
-		    For Each Creature As Ark.Creature In Creatures
-		      Var Dict As Dictionary = Creature.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
+		      Var Creatures() As Ark.Creature = Self.GetCreatures("", Packs, "")
+		      For Each Creature As Ark.Creature In Creatures
+		        Var Dict As Dictionary = Creature.Pack
+		        If Dict Is Nil Then
+		          Continue
+		        End If
+		        
+		        Packed.Add(Dict)
+		      Next
 		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var SpawnPoints() As Ark.SpawnPoint = Self.GetSpawnPoints("", Packs, "")
-		    For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
-		      Var Dict As Dictionary = SpawnPoint.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
+		      Var SpawnPoints() As Ark.SpawnPoint = Self.GetSpawnPoints("", Packs, "")
+		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
+		        Var Dict As Dictionary = SpawnPoint.Pack
+		        If Dict Is Nil Then
+		          Continue
+		        End If
+		        
+		        Packed.Add(Dict)
+		      Next
 		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var Containers() As Ark.LootContainer = Self.GetLootContainers("", Packs, "")
-		    For Each Container As Ark.LootContainer In Containers
-		      Var Dict As Dictionary = Container.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
-		      
-		      Packed.Add(Dict)
-		    Next
+		      Var Containers() As Ark.LootContainer = Self.GetLootContainers("", Packs, "")
+		      For Each Container As Ark.LootContainer In Containers
+		        Var Dict As Dictionary = Container.Pack
+		        If Dict Is Nil Then
+		          Continue
+		        End If
+		        
+		        Packed.Add(Dict)
+		      Next
+		    End If
 		  End If
 		  
 		  If Packed.Count > 0 Then
@@ -180,7 +183,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 101
+		  Return 103
 		End Function
 	#tag EndEvent
 
@@ -204,7 +207,7 @@ Inherits Beacon.DataSource
 		    Var ModName As String = ModData.Value("name").StringValue
 		    Var ConsoleSafe As Boolean = ModData.Value("console_safe").BooleanValue
 		    Var DefaultEnabled As Boolean = ModData.Value("default_enabled").BooleanValue
-		    Var WorkshopID As UInt32 = ModData.Value("workshop_id").UInt32Value
+		    Var WorkshopID As String = ModData.Value("workshop_id").StringValue
 		    If ModData.HasKey("min_version") And ModData.Value("min_version").IntegerValue > BuildNumber Then
 		      // This mod is too new
 		      Continue
@@ -395,7 +398,7 @@ Inherits Beacon.DataSource
 		        
 		      End Try
 		      
-		      Var Values(19) As Variant
+		      Var Values(20) As Variant
 		      Values(0) = ObjectID.StringValue
 		      Values(1) = Dict.Value("label")
 		      Values(2) = ModID.StringValue
@@ -434,6 +437,12 @@ Inherits Beacon.DataSource
 		      If Dict.HasKey("gsa_placeholder") And IsNull(Dict.Value("gsa_placeholder")) = False Then
 		        Values(19) = Dict.Value("gsa_placeholder")
 		      End If
+		      If Dict.HasKey("uwp_changes") And IsNull(Dict.Value("uwp_changes")) = False Then
+		        Try
+		          Values(20) = Beacon.GenerateJSON(Dict.Value("uwp_changes"), False)
+		        Catch JSONErr As RuntimeException
+		        End Try
+		      End If
 		      
 		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ObjectID.StringValue, File, Header, Key)
 		      If Results.RowCount > 1 Then
@@ -443,10 +452,10 @@ Inherits Beacon.DataSource
 		        // Update
 		        Var OriginalObjectID As v4UUID = Results.Column("object_id").StringValue
 		        Values.Add(OriginalObjectID.StringValue)
-		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19, gsa_placeholder = ?20 WHERE object_id = ?21;", Values)
+		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19, gsa_placeholder = ?20, uwp_changes = ?21 WHERE object_id = ?22;", Values)
 		      Else
 		        // Insert
-		        Self.SQLExecute("INSERT INTO ini_options (object_id, label, content_pack_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group, custom_sort, constraints, gsa_placeholder) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20);", Values)
+		        Self.SQLExecute("INSERT INTO ini_options (object_id, label, content_pack_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group, custom_sort, constraints, gsa_placeholder, uwp_changes) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21);", Values)
 		      End If
 		    Next Dict
 		  End If
@@ -646,7 +655,9 @@ Inherits Beacon.DataSource
 		          Var ContentPackUUID As String = Dict.Value("mod_id").StringValue
 		          KeepPacks.Append(ContentPackUUID)
 		          RemovePacks.Remove(ContentPackUUID)
-		          Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id"), False, False, True)
+		          If ContentPackUUID <> Ark.UserContentPackUUID Then
+		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id"), True, False, True)
+		          End If
 		        End If
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName)
@@ -697,10 +708,12 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub ImportTruncate()
 		  // Icons and content packs must be deleted last
-		  Var TableNames() As String = Array("color_sets", "colors", "config_help", "content_packs", "creatures", "engrams", "events", "game_variables", "ini_options", "loot_containers", "maps", "spawn_points", "loot_icons", "content_packs")
+		  Var TableNames() As String = Array("color_sets", "colors", "config_help", "creatures", "engrams", "events", "game_variables", "ini_options", "loot_containers", "maps", "spawn_points", "loot_icons")
 		  For Each TableName As String In TableNames
 		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(TableName) + ";")
 		  Next TableName
+		  
+		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id != $1;", Ark.UserContentPackUUID)
 		End Sub
 	#tag EndEvent
 
@@ -728,6 +741,15 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub Open()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackUUID)
+		  If Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Then
+		    Self.ReplaceUserBlueprints()
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReleaseLock()
 		  mLock.Leave
 		End Sub
@@ -742,6 +764,22 @@ Inherits Beacon.DataSource
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function AdditionalSupportFiles() As Dictionary
+		  Var Files As Dictionary = Super.AdditionalSupportFiles
+		  If Files Is Nil Then
+		    Files = New Dictionary
+		  End If
+		  
+		  Var Blueprints As MemoryBlock = UserCloud.Read("/Ark/Blueprints.json")
+		  If (Blueprints Is Nil) = False And Blueprints.Size > 2 Then
+		    Files.Value("Blueprints.json") = Blueprints
+		  End If
+		  
+		  Return Files
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As Ark.Blueprint) As Boolean
@@ -885,12 +923,15 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateLocalContentPack(PackName As String) As Ark.ContentPack
+		Function CreateLocalContentPack(PackName As String, WorkshopID As NullableString) As Ark.ContentPack
 		  Var PackUUID As String = New v4UUID
-		  Var WorkshopID As UInt32 = CRC_32OfStrMBS(PackUUID)
-		  Var Details As New Ark.ContentPack(PackUUID, PackName, False, False, True, WorkshopID)
+		  Var WorkshopIDVar As Variant
+		  If (WorkshopID Is Nil) = False Then
+		    WorkshopIDVar = WorkshopID.StringValue
+		  End If
+		  Var Details As New Ark.ContentPack(PackUUID, PackName, True, False, True, Nil)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, PackName, WorkshopID, True, False, True)
+		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, workshop_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, WorkshopIDVar, PackName, Details.ConsoleSafe, Details.DefaultEnabled, Details.IsLocal)
 		  Self.CommitTransaction()
 		  Self.ExportCloudFiles()
 		  Return Details
@@ -905,6 +946,10 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function DeleteContentPack(ContentPackUUID As String) As Boolean
+		  If ContentPackUUID = Ark.UserContentPackUUID Then
+		    Return False
+		  End If
+		  
 		  Self.BeginTransaction()
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND is_local = 1;", ContentPackUUID)
@@ -1263,7 +1308,7 @@ Inherits Beacon.DataSource
 		  Var Packs() As Ark.ContentPack
 		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
 		  While Not Results.AfterLastRow
-		    Packs.Add(New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableDouble.FromVariant(Results.Column("workshop_id").Value)))
+		    Packs.Add(New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableString.FromVariant(Results.Column("workshop_id").Value)))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Packs
@@ -1284,16 +1329,16 @@ Inherits Beacon.DataSource
 		  
 		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs WHERE content_pack_id = ?1;", ContentPackUUID)
 		  If Results.RowCount = 1 Then
-		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableDouble.FromVariant(Results.Column("workshop_id").Value))
+		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableString.FromVariant(Results.Column("workshop_id").Value))
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPackWithWorkshopID(WorkshopID As Integer) As Ark.ContentPack
+		Function GetContentPackWithWorkshopID(WorkshopID As String) As Ark.ContentPack
 		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs WHERE workshop_id IS NOT NULL AND workshop_id = ?1;", WorkshopID)
 		  If Results.RowCount = 1 Then
-		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableDouble.FromVariant(Results.Column("workshop_id").Value))
+		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableString.FromVariant(Results.Column("workshop_id").Value))
 		  End If
 		End Function
 	#tag EndMethod
@@ -2075,6 +2120,19 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetUWPConfigKeys() As Ark.ConfigKey()
+		  Var SQL As String = Self.ConfigKeySelectSQL + " WHERE uwp_changes IS NOT NULL;"
+		  Var Results() As Ark.ConfigKey
+		  Try
+		    Results = Self.RowSetToConfigKeys(Self.SQLSelect(SQL))
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		  End Try
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetVariable(Key As String, Default As Variant = Nil) As Variant
 		  Var Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
@@ -2180,6 +2238,14 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ReplaceUserBlueprints()
+		  Self.BeginTransaction()
+		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5);", Ark.UserContentPackUUID, Ark.UserContentPackName, True, True, True)
+		  Self.CommitTransaction()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ResetCaches()
 		  Self.mEngramCache = New Dictionary
 		  Self.mCreatureCache = New Dictionary
@@ -2276,7 +2342,18 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		      
-		      Var Key As New Ark.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackUUID, GSAPlaceholder)
+		      Var UWPChanges As Dictionary
+		      If IsNull(Results.Column("uwp_changes").Value) = False Then
+		        Try
+		          Var Parsed As Variant = Beacon.ParseJSON(Results.Column("uwp_changes").StringValue)
+		          If IsNull(Parsed) = False And Parsed IsA Dictionary Then
+		            UWPChanges = Parsed
+		          End If
+		        Catch JSONErr As JSONException
+		        End Try
+		      End If
+		      
+		      Var Key As New Ark.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackUUID, GSAPlaceholder, UWPChanges)
 		      Self.mConfigKeyCache.Value(ObjectID) = Key
 		      Keys.Add(Key)
 		      Results.MoveToNextRow
@@ -2868,7 +2945,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C gsa_placeholder\x2C content_pack_id FROM ini_options", Scope = Private
+	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C gsa_placeholder\x2C content_pack_id\x2C uwp_changes FROM ini_options", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = CreatureColorSelectSQL, Type = String, Dynamic = False, Default = \"SELECT colors.color_id\x2C colors.label\x2C colors.hex_value FROM colors", Scope = Private

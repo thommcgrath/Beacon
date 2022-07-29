@@ -709,7 +709,7 @@ BeaconTemplate::FinishScript();
 			<td colspan="3">Other Stuff</td>
 		</tr>
 		<tr>
-			<td>Beacon Share The Wealth<br><span class="smaller text-lighter">This of this like a tip jar. Beacon Share The Wealth is an optional purchase that allows you to show further financial support by gifting copies of Beacon Omni to <em>random</em> users at a reduced cost. <a href="stw">Learn More</a></span></td>
+			<td>Beacon Share The Wealth<br><span class="smaller text-lighter">Think of this like a tip jar. Beacon Share The Wealth is an optional purchase that allows you to show further financial support by gifting copies of Beacon Omni to <em>random</em> users at a reduced cost. <a href="stw">Learn More</a></span></td>
 			<td class="quantity_column"><input class="text-center" type="number" value="0" id="stw_quantity_field" min="0" max="10"></td>
 			<td class="price_column"><?php echo htmlentities($product_details[KEY_STW]['price_formatted']); ?>
 		</tr>

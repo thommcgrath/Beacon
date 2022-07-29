@@ -891,10 +891,14 @@ End
 		      Return
 		    End If
 		    
+		    If Engram.IsTagged("forged") Then
+		      Continue
+		    End If
+		    
 		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
-		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
+		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "{""required"":[""blueprintable""],""excluded"":[""generic"",""forged""]}")
 		  For Each Engram As Ark.Engram In Engrams
 		    If Self.mProgressWindow.CancelPressed Then
 		      Self.mProgressWindow.Close
