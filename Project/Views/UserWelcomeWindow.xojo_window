@@ -2027,6 +2027,12 @@ End
 		  System.GotoURL(Beacon.WebURL("/help/about_user_privacy"))
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.SizeToFit
+		  Me.Left = Self.PagePanel1.Left + ((Self.PagePanel1.Width - Me.Width) / 2)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ContinueAnonymousButton
 	#tag Event
