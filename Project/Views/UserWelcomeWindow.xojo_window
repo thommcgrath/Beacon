@@ -2253,11 +2253,10 @@ End
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
 		  
 		  If Not SystemColors.IsDarkMode Then
-		    G.DrawingColor = &c713a9a
-		    G.FillRectangle(0, 0, G.Width, G.Height)
+		    G.DrawPicture(LoginSidebarBackground, 0, 0)
 		  End If
 		  
-		  G.DrawPicture(LoginSidebar, 0, 0)
+		  G.DrawPicture(LoginSidebarLogo, 0, 0)
 		  
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(G.Width - 1, 0, G.Width - 1, G.Height)
