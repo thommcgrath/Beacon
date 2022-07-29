@@ -179,14 +179,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DeepDelete(Extends File As FolderItem) As Boolean
+		Function DeepDelete(Extends File As FolderItem, FollowAlias As Boolean = True) As Boolean
 		  If Not File.Exists Then
 		    Return True
 		  End If
 		  
-		  If File.IsFolder Then
+		  If FollowAlias = False And TargetWindows And WindowsJunctionMBS.IsDirectoryJunction(File) Then
+		    If Not WindowsJunctionMBS.DeleteJunction(File) Then
+		      Return False
+		    End If
+		  ElseIf File.IsFolder And (FollowAlias Or File.IsAlias = False) Then
 		    For I As Integer = File.Count - 1 DownTo 0
-		      If Not File.ChildAt(I).DeepDelete Then
+		      If Not File.ChildAt(I, FollowAlias).DeepDelete(FollowAlias) Then
 		        Return False
 		      End If
 		    Next
@@ -198,8 +202,6 @@ Protected Module FrameworkExtensions
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try
-		  
-		  
 		End Function
 	#tag EndMethod
 

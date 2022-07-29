@@ -385,6 +385,10 @@ End
 		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Register Mod", IconToolbarAdd, "Register your mod with Beacon."))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EditModBlueprints", "Edit Blueprints", IconToolbarEdit, "Edit the blueprints provided by the selected mod.", Self.ModsList.SelectedRowCount = 1))
+		  #if TargetWindows
+		    Me.Append(OmniBarItem.CreateSpace)
+		    Me.Append(OmniBarItem.CreateButton("DiscoverMods", "Discover Mods", IconToolbarSettings, "Launch a dedicated server to discover mod data."))
+		  #endif
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -400,6 +404,8 @@ End
 		    End If
 		  Case "EditModBlueprints"
 		    Self.ModsList.DoEdit()
+		  Case "DiscoverMods"
+		    ModDiscoveryDialog.Present(Self)
 		  End Select
 		End Sub
 	#tag EndEvent

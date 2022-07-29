@@ -379,6 +379,34 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Var Default As String
+			  #if TargetWindows
+			    Default = "C:\Program Files (x86)\Steam\steamapps\common\ARK"
+			  #elseif TargetLinux
+			    Default = SpecialFolder.UserHome + "/.steam/steam/steamapps/common/ARK"
+			  #elseif TargetMacOS
+			    // This is pointless, but whatever
+			    Default = SpecialFolder.ApplicationData.NativePath + "/Steam/SteamApps/common/ARK"
+			  #endif
+			  Return mManager.StringValue("Ark Steam Path", Default)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If ArkSteamPath = Value Then
+			    Return
+			  End If
+			  
+			  mManager.StringValue("Ark Steam Path") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSteamPath As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Automatically Downloads Updates", True)
 			End Get
 		#tag EndGetter

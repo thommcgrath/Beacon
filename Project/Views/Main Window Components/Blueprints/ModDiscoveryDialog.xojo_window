@@ -1,0 +1,1064 @@
+#tag Window
+Begin BeaconDialog ModDiscoveryDialog
+   Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
+   Composite       =   False
+   DefaultLocation =   1
+   FullScreen      =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
+   Height          =   400
+   ImplicitInstance=   False
+   MacProcID       =   0
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
+   MenuBar         =   0
+   MenuBarVisible  =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Resizeable      =   False
+   Title           =   "Mod Discovery"
+   Type            =   8
+   Visible         =   True
+   Width           =   600
+   Begin PagePanel Pages
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   400
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   True
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   3
+      Panels          =   ""
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   False
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   False
+      Value           =   2
+      Visible         =   True
+      Width           =   600
+      Begin UITweaks.ResizedPushButton IntroActionButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "OK"
+         Default         =   True
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   360
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton IntroCancelButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   408
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   360
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin Label IntroMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Automatic Mod Discovery"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   376
+      End
+      Begin UITweaks.ResizedTextField IntroArkPathField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   118
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   356
+      End
+      Begin UITweaks.ResizedLabel IntroArkPathLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Ark Path:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   118
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   100
+      End
+      Begin UITweaks.ResizedPushButton IntroArkPathButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Choose…"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   119
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin Label IntroExplanationLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   54
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "This feature will use an installed copy of Ark from Steam to launch a dedicated server, collect mod info using the DataDumper mod, and end the server. Enter the mod ids of the desired mods below."
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   52
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label IntroSteamLabel
+         AllowAutoDeactivate=   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   380
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Requires Ark on Steam"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   200
+      End
+      Begin UITweaks.ResizedTextField IntroModsField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   8
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   152
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   448
+      End
+      Begin UITweaks.ResizedLabel IntroModsLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   9
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Desired Mod IDs:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   152
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   100
+      End
+      Begin UITweaks.ResizedPushButton FinishedActionButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "OK"
+         Default         =   True
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   360
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+   End
+   Begin Thread RunThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
+   Begin Shell RunShell
+      Arguments       =   ""
+      Backend         =   ""
+      Canonical       =   False
+      ExecuteMode     =   2
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+      TimeOut         =   0
+   End
+   Begin Timer RunTimer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   3000
+      RunMode         =   0
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin TCPSocket RunSocket
+      Address         =   "127.0.0.1"
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Port            =   0
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+End
+#tag EndWindow
+
+#tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.IntroArkPathField.Text = Preferences.ArkSteamPath
+		  
+		  Self.IntroSteamLabel.TextColor = SystemColors.SystemRedColor
+		  
+		  BeaconUI.SizeToFit(Self.IntroArkPathLabel, Self.IntroModsLabel)
+		  
+		  Self.IntroArkPathField.Left = Self.IntroArkPathLabel.Left + Self.IntroArkPathLabel.Width + 12
+		  Self.IntroModsField.Left = Self.IntroArkPathField.Left
+		  Self.IntroArkPathField.Width = Self.IntroArkPathButton.Left - (12 + Self.IntroArkPathField.Left)
+		  Self.IntroModsField.Width = Self.Width - (20 + Self.IntroModsField.Left)
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Shared Function BuildCommand(Type As Int32, Command As String) As MemoryBlock
+		  Var CommandLen As Integer = Command.Bytes
+		  Var Mem As New MemoryBlock(CommandLen + 14)
+		  Mem.LittleEndian = True
+		  Mem.Int32Value(0) = CommandLen + 10 // Size
+		  Mem.Int32Value(4) = System.Random.InRange(1, 9999) // ID
+		  Mem.Int32Value(8) = Type // Type
+		  Mem.StringValue(12, CommandLen) = Command
+		  Return Mem
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Present(Parent As Window)
+		  Var Win As New ModDiscoveryDialog
+		  If Parent Is Nil Then
+		    Win.ShowModal()
+		  Else
+		    Win.ShowModalWithin(Parent.TrueWindow)
+		  End If
+		  Win.Close
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mArkRoot As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMods As Beacon.StringList
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRCONAuthenticated As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRCONAuthResponse As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRCONPassword As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRCONPort As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRunShell As Shell
+	#tag EndProperty
+
+
+	#tag Constant, Name = PageFinished, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageIntro, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageWorking, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+
+#tag EndWindowCode
+
+#tag Events IntroActionButton
+	#tag Event
+		Sub Action()
+		  Var ArkFolder As FolderItem
+		  Try
+		    ArkFolder = New FolderItem(Self.IntroArkPathField.Text, FolderItem.PathModes.Native)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Ark path is not valid", "Beacon was able to resolve the entered path. Use the choose button to select the folder containing the ShooterGame folder.")
+		    Return
+		  End Try
+		  
+		  If ArkFolder.Exists = False Then
+		    Self.ShowAlert("Ark path not found", "The selected path does not exist. Use the choose button to select the folder containing the ShooterGame folder.")
+		    Return
+		  End If
+		  
+		  Var Executable As FolderItem = Ark.DedicatedServer.ShooterGameServer(ArkFolder)
+		  If Executable Is Nil Then
+		    Self.ShowAlert("Ark server not found", "Beacon could not find the Ark server executable in the selected path. Use the choose button to select the folder containing the ShooterGame folder.")
+		    Return
+		  End If
+		  
+		  Var ModsString As String = Self.IntroModsField.Text.Trim
+		  If ModsString.IsEmpty Then
+		    Self.ShowAlert("Don't forget to include some mods", "This process doesn't make much sense without mod ids does it?")
+		    Return
+		  End If
+		  
+		  Var Matcher As New Regex
+		  Matcher.SearchPattern = "^\d+$"
+		  Var ModIDs() As String = ModsString.Split(",")
+		  For Each ModID As String In ModIDs
+		    If Matcher.Search(ModID) Is Nil Then
+		      Self.ShowAlert("Mods field should contain only numbers and commas", "Format the mods field exactly like you would the ActiveMods setting in GameUserSettings.ini.")
+		      Return
+		    End If
+		  Next ModID
+		  
+		  If ModIDs.IndexOf("2171967557") = -1 Then
+		    ModIDs.Add("2171967557")
+		  End If
+		  Preferences.ArkSteamPath = ArkFolder.NativePath
+		  Self.mMods = ModIDs
+		  Self.mArkRoot = ArkFolder
+		  
+		  Self.Pages.SelectedPanelIndex = Self.PageWorking
+		  Self.RunThread.Start
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IntroCancelButton
+	#tag Event
+		Sub Action()
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IntroArkPathButton
+	#tag Event
+		Sub Action()
+		  Var InitialFolder As FolderItem
+		  Try
+		    InitialFolder = New FolderItem(Self.IntroArkPathField.Text, FolderItem.PathModes.Native)
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Var Dialog As New SelectFolderDialog
+		  Dialog.InitialFolder = InitialFolder
+		  
+		  Var SelectedFolder As FolderItem = Dialog.ShowModal(Self)
+		  If SelectedFolder Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.IntroArkPathField.Text = SelectedFolder.NativePath
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FinishedActionButton
+	#tag Event
+		Sub Action()
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RunThread
+	#tag Event
+		Sub Run()
+		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.FlagCreateIfNeeded Or Ark.DataSource.FlagUseWeakRef)
+		  
+		  Var Port As Integer = System.Random.InRange(2000, 65000)
+		  Var QueryPort As Integer = Port + 1
+		  Var RCONPort As Integer = Port + 2
+		  Var Password As String = EncodeHex(Crypto.GenerateRandomBytes(4)).Lowercase
+		  
+		  Var ConfigLines() As String
+		  ConfigLines.Add("[" + Ark.HeaderServerSettings + "]")
+		  ConfigLines.Add("ActiveMods=" + Self.mMods.Join(","))
+		  ConfigLines.Add("ServerPassword=" + Password)
+		  ConfigLines.Add("ServerAdminPassword=" + Password)
+		  ConfigLines.Add("RCONEnabled=True")
+		  ConfigLines.Add("RCONPort=" + RCONPort.ToString(Locale.Raw, "0"))
+		  ConfigLines.Add("RCONPassword=" + Password)
+		  
+		  Var CustomConfig As New Ark.Configs.CustomContent
+		  CustomConfig.GameUserSettingsIniContent = ConfigLines.Join(EndOfLine)
+		  
+		  Var Profile As New Ark.LocalServerProfile
+		  Var Project As New Ark.Project
+		  Project.AddConfigGroup(CustomConfig)
+		  Project.AddServerProfile(Profile)
+		  
+		  Var HostDir As FolderItem = App.ApplicationSupport.Child("Servers")
+		  
+		  If Ark.DedicatedServer.Configure(Project, Profile, HostDir) = False Then
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "finished" : true, "message" : "Could not build server directory."))
+		    Return
+		  End If
+		  
+		  Var ServerFolder As FolderItem = HostDir.Child(Profile.ProfileID)
+		  
+		  #if false // code probably isn't needed
+		    Var ModsFolder As FolderItem = ServerFolder.Child("ShooterGame").Child("Content").Child("Mods")
+		    
+		    // Remove the linked mods folder
+		    If ModsFolder.Exists Then
+		      ModsFolder.Remove
+		      ModsFolder.CreateFolder
+		      
+		      Var SourceModsFolder As FolderItem = Self.mArkRoot.Child("ShooterGame").Child("Content").Child("Mods")
+		      For Each Child As FolderItem In SourceModsFolder
+		        
+		      Next Child
+		    End If
+		  #endif
+		  
+		  Var Executable As FolderItem = Ark.DedicatedServer.ShooterGameServer(ServerFolder)
+		  
+		  Var CommandLine As String = """TheIsland?listen?SessionName=Beacon?MaxPlayers=10?Port=" + Port.ToString(Locale.Raw, "0") + "?QueryPort=" + QueryPort.ToString(Locale.Raw, "0") + """ -server -automanagedmods -servergamelog"
+		  
+		  #if TargetWindows
+		    Self.RunShell.Execute(Executable.ShellPath + " " + CommandLine)
+		  #endif
+		  
+		  App.Log("Launching server with " + CommandLine)
+		  App.Log("Server port is " + Port.ToString(Locale.Raw, "0"))
+		  
+		  Self.mRCONPort = RCONPort
+		  Self.mRCONPassword = Password
+		  Self.RunTimer.RunMode = Timer.RunModes.Multiple
+		  
+		  Me.Pause
+		  
+		  #if Not DebugBuild
+		    If ServerFolder.DeepDelete(False) = False Then
+		      App.Log("Server folder " + ServerFolder.NativePath + " was not deleted")
+		    End If
+		  #endif
+		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("error" : false, "finished" : true, "message" : "Success."))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.Lookup("error", False).BooleanValue Then
+		      Self.ShowAlert("There was an error creating the server", Dict.Lookup("message", "No further details available").StringValue)
+		    End If
+		    
+		    If Dict.Lookup("finished", False).BooleanValue Then
+		      Self.Pages.SelectedPanelIndex = Self.PageFinished
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RunShell
+	#tag Event
+		Sub DataAvailable()
+		  System.DebugLog(Me.ReadAll)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Completed()
+		  System.DebugLog("Completed")
+		  Self.RunSocket.Close
+		  Self.RunTimer.RunMode = Timer.RunModes.Off
+		  Self.RunThread.Resume
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RunTimer
+	#tag Event
+		Sub Action()
+		  If Self.RunSocket.IsConnected = False THen
+		    Self.RunSocket.Close
+		    Self.RunSocket.Address = "127.0.0.1"
+		    Self.RunSocket.Port = Self.mRCONPort
+		    Self.RunSocket.Connect
+		    Return
+		  End If
+		  
+		  If Self.mRCONAuthenticated = False Then
+		    Return
+		  End If
+		  
+		  Var Mem As MemoryBlock = Self.BuildCommand(2, "GetGameLog")
+		  Self.RunSocket.Write(Mem)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RunSocket
+	#tag Event
+		Sub Connected()
+		  System.DebugLog("RCON connected")
+		  
+		  Var PassLen As Int32 = Self.mRCONPassword.Bytes
+		  Var Auth As New MemoryBlock(PassLen + 14)
+		  Auth.LittleEndian = True
+		  Auth.Int32Value(0) = PassLen + 10// Size
+		  Auth.Int32Value(4) = System.Random.InRange(1, 9999) // ID
+		  Auth.Int32Value(8) = 3 // Type
+		  Auth.StringValue(12, PassLen) = Self.mRCONPassword
+		  
+		  Var AuthResponse As New MemoryBlock(14)
+		  AuthResponse.LittleEndian = True
+		  AuthResponse.Int32Value(0) = 10
+		  AuthResponse.Int32Value(4) = Auth.Int32Value(4)
+		  AuthResponse.Int32Value(8) = 2
+		  Self.mRCONAuthResponse = AuthResponse
+		  
+		  Me.Write(Auth)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(err As RuntimeException)
+		  System.DebugLog("Socket error: " + Err.Message)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DataAvailable()
+		  Var Message As String = Me.ReadAll
+		  
+		  System.DebugLog(EncodeHex(Message))
+		  
+		  If Self.mRCONAuthenticated = False Then
+		    Self.mRCONAuthenticated = Message = Self.mRCONAuthResponse
+		    Return
+		  End If
+		  
+		  If Message.IndexOf("End Dino Drop Inventory Data From Spawns") > -1 Then
+		    // Finished
+		    
+		    Self.RunTimer.RunMode = Timer.RunModes.Off
+		    
+		    Var Mem As MemoryBlock = Self.BuildCommand(2, "DoExit")
+		    Me.Write(Mem)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximumWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Type"
+		Visible=true
+		Group="Frame"
+		InitialValue="0"
+		Type="Types"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Document"
+			"1 - Movable Modal"
+			"2 - Modal Dialog"
+			"3 - Floating Window"
+			"4 - Plain Box"
+			"5 - Shadowed Box"
+			"6 - Rounded Window"
+			"7 - Global Floating Window"
+			"8 - Sheet Window"
+			"9 - Metal Window"
+			"11 - Modeless Dialog"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasCloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasFullScreenButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DefaultLocation"
+		Visible=true
+		Group="Behavior"
+		InitialValue="0"
+		Type="Locations"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType="Color"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Resizeable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Visible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBar"
+		Visible=true
+		Group="Menus"
+		InitialValue=""
+		Type="MenuBar"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBarVisible"
+		Visible=true
+		Group="Deprecated"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+#tag EndViewBehavior
