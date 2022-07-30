@@ -651,7 +651,7 @@ End
 #tag Events RunThread
 	#tag Event
 		Sub Run()
-		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.FlagCreateIfNeeded Or Ark.DataSource.FlagUseWeakRef)
+		  Me.AddUserInterfaceUpdate(New Dictionary("status" : "Building server…"))
 		  
 		  Var Port As Integer = System.Random.InRange(2000, 65000)
 		  Var QueryPort As Integer = Port + 1
@@ -682,26 +682,12 @@ End
 		    Return
 		  End If
 		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("status" : "Launching server…"))
+		  
 		  Var ServerFolder As FolderItem = HostDir.Child(Profile.ProfileID)
-		  
-		  #if false // code probably isn't needed
-		    Var ModsFolder As FolderItem = ServerFolder.Child("ShooterGame").Child("Content").Child("Mods")
-		    
-		    // Remove the linked mods folder
-		    If ModsFolder.Exists Then
-		      ModsFolder.Remove
-		      ModsFolder.CreateFolder
-		      
-		      Var SourceModsFolder As FolderItem = Self.mArkRoot.Child("ShooterGame").Child("Content").Child("Mods")
-		      For Each Child As FolderItem In SourceModsFolder
-		        
-		      Next Child
-		    End If
-		  #endif
-		  
 		  Var Executable As FolderItem = Ark.DedicatedServer.ShooterGameServer(ServerFolder)
 		  
-		  Var CommandLine As String = """TheIsland?listen?SessionName=Beacon?MaxPlayers=10?Port=" + Port.ToString(Locale.Raw, "0") + "?QueryPort=" + QueryPort.ToString(Locale.Raw, "0") + """ -server -automanagedmods -servergamelog"
+		  Var CommandLine As String = """TheIsland?listen?SessionName=Beacon?MaxPlayers=10?Port=" + Port.ToString(Locale.Raw, "0") + "?QueryPort=" + QueryPort.ToString(Locale.Raw, "0") + """ -server -automanagedmods -servergamelog -nobattleye"
 		  
 		  #if TargetWindows
 		    Self.RunShell.Execute(Executable.ShellPath + " " + CommandLine)
@@ -715,6 +701,24 @@ End
 		  Self.RunTimer.RunMode = Timer.RunModes.Multiple
 		  
 		  Me.Pause
+		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("status" : "Reading log file…"))
+		  
+		  Var LogFile As FolderItem
+		  Try
+		    LogFile = ServerFolder.Child("ShooterGame").Child("Saved").Child("Logs").Child("ShooterGame.log")
+		  Catch Err As RuntimeException
+		  End Try
+		  If LogFile Is Nil Or LogFile.Exists = False Then
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "finished" : true, "message" : "Could not find ShooterGame.log file."))
+		    Return
+		  End If
+		  
+		  Var Stream As TextInputStream = TextInputStream.Open(LogFile)
+		  Var LogContents As String = Stream.ReadAll(Encodings.UTF8)
+		  Stream.Close
+		  
+		  Break
 		  
 		  #if Not DebugBuild
 		    If ServerFolder.DeepDelete(False) = False Then
