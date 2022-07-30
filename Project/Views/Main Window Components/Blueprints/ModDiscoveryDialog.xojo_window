@@ -509,6 +509,119 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Import(Contents As String)
+		  Self.RunThread.AddUserInterfaceUpdate(New Dictionary("status" : "Discovering blueprints…"))
+		  
+		  Var Importer As Ark.BlueprintImporter = Ark.BlueprintImporter.ImportAsDataDumper(Contents)
+		  If Importer Is Nil Or Importer.BlueprintCount = 0 Then
+		    Return
+		  End If
+		  
+		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.FlagCreateIfNeeded Or Ark.DataSource.FlagUseWeakRef)
+		  
+		  Var TitleFinder As New Regex
+		  TitleFinder.SearchPattern = "<div class=""workshopItemTitle"">(.+)</div>"
+		  TitleFinder.Options.Greedy = False
+		  
+		  Var Packs As New Dictionary
+		  Var ForbiddenWorkshopIDs As New Dictionary
+		  ForbiddenWorkshopIDs.Value("2171967557") = True
+		  For Each WorkshopID As String In Self.mMods
+		    If WorkshopID = "2171967557" Then
+		      Continue
+		    End If
+		    
+		    Var Pack As Ark.ContentPack = Database.GetContentPackWithWorkshopID(WorkshopID)
+		    
+		    If Pack Is Nil Then
+		      Var PackName As String = Self.mTagsByMod.Lookup(WorkshopID, WorkshopID).StringValue
+		      
+		      Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		      Socket.RequestHeader("User-Agent") = App.UserAgent
+		      Socket.Send("GET", "https://steamcommunity.com/sharedfiles/filedetails/?id=" + WorkshopID)
+		      If Socket.LastHTTPStatus = 200 Then
+		        Var TitleMatch As RegexMatch = TitleFinder.Search(Socket.LastContent)
+		        If (TitleMatch Is Nil) = False Then
+		          PackName = DecodingFromHTMLMBS(TitleMatch.SubExpressionString(1))
+		        End If
+		      End If
+		      
+		      Pack = Database.CreateLocalContentPack(PackName, WorkshopID)
+		      Self.mNumAddedMods = Self.mNumAddedMods + 1
+		    ElseIf Pack.IsLocal = False Then
+		      ForbiddenWorkshopIDs.Value(WorkshopID) = True
+		    End If
+		    
+		    Packs.Value(WorkshopID) = Pack
+		  Next
+		  
+		  Var CurrentBlueprints() As Ark.Blueprint = Database.GetBlueprints("", Self.mMods, "")
+		  Var CurrentBlueprintMap As New Dictionary
+		  For Each Blueprint As Ark.Blueprint In CurrentBlueprints
+		    CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
+		  Next
+		  
+		  Var BlueprintsToSave() As Ark.Blueprint
+		  Var Blueprints() As Ark.Blueprint = Importer.Blueprints
+		  Var NewBlueprintIDs As New Dictionary
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Try
+		      Var Path As String = Blueprint.Path
+		      If CurrentBlueprintMap.HasKey(Path) Then
+		        CurrentBlueprintMap.Remove(Path)
+		      End If
+		      
+		      Var PathComponents() As String = Path.Split("/")
+		      Var Tag As String = PathComponents(3)
+		      Var WorkshopID As String = Self.mModsByTag.Value(Tag)
+		      If ForbiddenWorkshopIDs.HasKey(WorkshopID) Then
+		        Continue
+		      End If
+		      
+		      Var Pack As Ark.ContentPack = Packs.Value(WorkshopID)
+		      Var ExistingBlueprints() As Ark.Blueprint = Database.GetBlueprints(Path, New Beacon.StringList(Pack.UUID))
+		      If ExistingBlueprints.Count > 0 Then
+		        Continue
+		      End If
+		      
+		      Var Mutable As Ark.MutableBlueprint = Blueprint.MutableVersion
+		      Mutable.ContentPackName = Pack.Name
+		      Mutable.ContentPackUUID = Pack.UUID
+		      BlueprintsToSave.Add(Mutable)
+		      NewBlueprintIDs.Value(Blueprint.ObjectID) = True
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Pairing blueprint to mod")
+		    End Try
+		  Next
+		  
+		  Var BlueprintsToDelete() As Ark.Blueprint
+		  Var DeleteBlueprintIDs As New Dictionary
+		  For Each Entry As DictionaryEntry In CurrentBlueprintMap
+		    BlueprintsToDelete.Add(Ark.Blueprint(Entry.Value))
+		    DeleteBlueprintIDs.Value(Ark.Blueprint(Entry.Value).ObjectID) = True
+		  Next
+		  
+		  Var Errors As New Dictionary
+		  Call Database.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
+		  
+		  Self.mNumErrorBlueprints = Errors.KeyCount
+		  Self.mNumAddedBlueprints = BlueprintsToSave.Count
+		  Self.mNumRemovedBlueprints = BlueprintsToDelete.Count
+		  
+		  For Each Entry As DictionaryEntry In Errors
+		    App.Log(RuntimeException(Entry.Value), CurrentMethodName, "Automatic mod discovery")
+		    
+		    Var BlueprintID As String = Entry.Key
+		    If NewBlueprintIDs.HasKey(BlueprintID) Then
+		      Self.mNumAddedBlueprints = Self.mNumAddedBlueprints - 1
+		    ElseIf DeleteBlueprintIDs.HasKey(BlueprintID) Then
+		      Self.mNumRemovedBlueprints = Self.mNumRemovedBlueprints - 1
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window)
 		  Var Win As New ModDiscoveryDialog
@@ -521,6 +634,17 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ReadUnrealString(Stream As BinaryStream) As String
+		  Var Len As UInt32 = Stream.ReadUInt32
+		  If Len <> 0 Then
+		    Var St As String = Stream.Read(Len - 1).DefineEncoding(Encodings.UTF8)
+		    Call Stream.Read(1) // To advance past the trailing null
+		    Return St
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mArkRoot As FolderItem
@@ -528,6 +652,26 @@ End
 
 	#tag Property, Flags = &h21
 		Private mMods As Beacon.StringList
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModsByTag As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNumAddedBlueprints As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNumAddedMods As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNumErrorBlueprints As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNumRemovedBlueprints As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -548,6 +692,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mRunShell As Shell
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTagsByMod As Dictionary
 	#tag EndProperty
 
 
@@ -702,6 +850,32 @@ End
 		  
 		  Me.Pause
 		  
+		  Self.mModsByTag = New Dictionary
+		  Self.mTagsByMod = New Dictionary
+		  Var ModsFolder As FolderItem
+		  Try
+		    ModsFolder = ServerFolder.Child("ShooterGame").Child("Content").Child("Mods")
+		  Catch Err As RuntimeException
+		  End Try
+		  If (ModsFolder Is Nil) = False Then
+		    Me.AddUserInterfaceUpdate(New Dictionary("status" : "Collecting mod info…"))
+		    
+		    For Each WorkshopID As String In Self.mMods
+		      Try
+		        Var ModInfoFile As FolderItem = ModsFolder.Child(WorkshopID).Child("mod.info")
+		        Var Stream As BinaryStream = BinaryStream.Open(ModInfoFile, False)
+		        Stream.LittleEndian = True
+		        Var ModTag As String = ReadUnrealString(Stream)
+		        Stream.Close
+		        
+		        Self.mTagsByMod.Value(WorkshopID) = ModTag
+		        Self.mModsByTag.Value(ModTag) = WorkshopID
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Reading mod info file")
+		      End Try
+		    Next
+		  End If
+		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("status" : "Reading log file…"))
 		  
 		  Var LogFile As FolderItem
@@ -718,7 +892,7 @@ End
 		  Var LogContents As String = Stream.ReadAll(Encodings.UTF8)
 		  Stream.Close
 		  
-		  Break
+		  Self.Import(LogContents)
 		  
 		  #if Not DebugBuild
 		    If ServerFolder.DeepDelete(False) = False Then
@@ -726,7 +900,11 @@ End
 		    End If
 		  #endif
 		  
-		  Me.AddUserInterfaceUpdate(New Dictionary("error" : false, "finished" : true, "message" : "Success."))
+		  Var Message As String = "Finished. Added " + Language.NounWithQuantity(Self.mNumAddedMods, "new mod", "new mods") + ", " + Language.NounWithQuantity(Self.mNumAddedBlueprints, "new blueprint", "new blueprints") + ", and removed " + Language.NounWithQuantity(Self.mNumRemovedBlueprints, "blueprint", "blueprints") + "."
+		  If Self.mNumErrorBlueprints > 0 Then
+		    Message = Message + " " + Language.NounWithQuantity(Self.mNumErrorBlueprints, "blueprint", "blueprints") + " had errors and could not be imported."
+		  End If
+		  Me.AddUserInterfaceUpdate(New Dictionary("error" : false, "finished" : true, "message" : Message))
 		End Sub
 	#tag EndEvent
 	#tag Event

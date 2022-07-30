@@ -929,7 +929,7 @@ Inherits Beacon.DataSource
 		  If (WorkshopID Is Nil) = False Then
 		    WorkshopIDVar = WorkshopID.StringValue
 		  End If
-		  Var Details As New Ark.ContentPack(PackUUID, PackName, True, False, True, Nil)
+		  Var Details As New Ark.ContentPack(PackUUID, PackName, True, False, True, WorkshopID)
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, workshop_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, WorkshopIDVar, PackName, Details.ConsoleSafe, Details.DefaultEnabled, Details.IsLocal)
 		  Self.CommitTransaction()
@@ -1006,9 +1006,14 @@ Inherits Beacon.DataSource
 		    Var NextPlaceholder As Integer = 1
 		    Var Clauses() As String
 		    Var Values As New Dictionary
-		    If SearchText <> "" Then
-		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\') OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
-		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
+		    If SearchText.IsEmpty = False Then
+		      If SearchText.BeginsWith("/") Then
+		        Clauses.Add("path = ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		        Values.Value(NextPlaceholder) = SearchText
+		      Else
+		        Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\') OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
+		        Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
+		      End If
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
