@@ -574,6 +574,7 @@ MultiImage=LoginSidebarBackground;Icons/LoginSidebarBackground.xojo_image;&h0000
 MultiImage=LoginSidebarLogo;Icons/LoginSidebarLogo.xojo_image;&h0000000045CAF7FF;&h0000000007F977FF;false
 Window=ModDiscoveryDialog;Views/Main Window Components/Blueprints/ModDiscoveryDialog.xojo_window;&h0000000027CB97FF;&h00000000472E07FF;false
 Class=BlueprintImporter;Modules/Game Support/Ark/BlueprintImporter.xojo_code;&h000000000052B7FF;&h0000000016B997FF;false
+MultiImage=IconToolbarDiscover;Icons/IconToolbarDiscover.xojo_image;&h000000005BB0B7FF;&h0000000007F977FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=6

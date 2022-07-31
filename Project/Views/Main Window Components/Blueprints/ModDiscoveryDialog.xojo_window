@@ -10,28 +10,28 @@ Begin BeaconDialog ModDiscoveryDialog
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   400
+   Height          =   234
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
+   MinimumHeight   =   234
+   MinimumWidth    =   600
    Resizeable      =   False
    Title           =   "Mod Discovery"
-   Type            =   8
+   Type            =   0
    Visible         =   True
    Width           =   600
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   400
+      Height          =   234
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   True
       LockLeft        =   True
       LockRight       =   True
@@ -45,7 +45,7 @@ Begin BeaconDialog ModDiscoveryDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -74,7 +74,7 @@ Begin BeaconDialog ModDiscoveryDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   360
+         Top             =   194
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -106,7 +106,7 @@ Begin BeaconDialog ModDiscoveryDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   360
+         Top             =   194
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -433,11 +433,211 @@ Begin BeaconDialog ModDiscoveryDialog
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   360
+         Top             =   194
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
+      End
+      Begin Label WorkingStatus
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Starting Up…"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin ProgressBar WorkingIndicator
+         AllowAutoDeactivate=   True
+         Enabled         =   True
+         Height          =   20
+         Indeterminate   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumValue    =   100
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   False
+         Tooltip         =   ""
+         Top             =   52
+         Transparent     =   False
+         Value           =   0.0
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label FinishedMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Automatic Mod Discovery Finished"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label FinishedExplanationLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   130
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Untitled"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   52
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label WorkingInstructionsLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   130
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "The Ark server may appear stuck for minutes at a time. This is normal. Beacon will stop the server once it has collected the needed data. The Ark server will open three ports, which may trigger malware or firewall alerts. This is ok and should be allowed."
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   84
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label IntroDisclaimerLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   True
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   10
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "This technique is not perfect and sometimes misses things!"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   194
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   376
       End
    End
    Begin Thread RunThread
@@ -509,9 +709,27 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag DelegateDeclaration, Flags = &h21
+		Private Delegate Function CheckModDelegate(WorkshopID As String) As Boolean
+	#tag EndDelegateDeclaration
+
+	#tag DelegateDeclaration, Flags = &h21
+		Private Delegate Sub CompletedDelegate(DiscoveredMods() As Ark.ContentPack)
+	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Sub Constructor(CheckCallback As ModDiscoveryDialog.CheckModDelegate, CompleteCallback As ModDiscoveryDialog.CompletedDelegate)
+		  // Calling the overridden superclass constructor.
+		  Self.mCheckCallback = CheckCallback
+		  Self.mCompletedCallback = CompleteCallback
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Import(Contents As String)
-		  Self.RunThread.AddUserInterfaceUpdate(New Dictionary("status" : "Discovering blueprints…"))
+		  Self.RunThread.AddUserInterfaceUpdate(New Dictionary("message" : "Discovering blueprints…"))
 		  
 		  Var Importer As Ark.BlueprintImporter = Ark.BlueprintImporter.ImportAsDataDumper(Contents)
 		  If Importer Is Nil Or Importer.BlueprintCount = 0 Then
@@ -575,7 +793,7 @@ End
 		      Var PathComponents() As String = Path.Split("/")
 		      Var Tag As String = PathComponents(3)
 		      Var WorkshopID As String = Self.mModsByTag.Value(Tag)
-		      If ForbiddenWorkshopIDs.HasKey(WorkshopID) Then
+		      If Packs.HasKey(WorkshopID) = False Or ForbiddenWorkshopIDs.HasKey(WorkshopID) Then
 		        Continue
 		      End If
 		      
@@ -619,18 +837,17 @@ End
 		      Self.mNumRemovedBlueprints = Self.mNumRemovedBlueprints - 1
 		    End If
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window)
-		  Var Win As New ModDiscoveryDialog
-		  If Parent Is Nil Then
-		    Win.ShowModal()
-		  Else
-		    Win.ShowModalWithin(Parent.TrueWindow)
-		  End If
-		  Win.Close
+		  
+		  For Each Entry As DictionaryEntry In Packs
+		    Var WorkshopID As String = Entry.Key
+		    Var Pack As Ark.ContentPack = Entry.Value
+		    
+		    If ForbiddenWorkshopIDs.HasKey(WorkshopID) Then
+		      Continue
+		    End If
+		    
+		    Self.mDiscoveredMods.Add(Pack)
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -648,6 +865,18 @@ End
 
 	#tag Property, Flags = &h21
 		Private mArkRoot As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCheckCallback As ModDiscoveryDialog.CheckModDelegate
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCompletedCallback As ModDiscoveryDialog.CompletedDelegate
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDiscoveredMods() As Ark.ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -747,7 +976,11 @@ End
 		      Self.ShowAlert("Mods field should contain only numbers and commas", "Format the mods field exactly like you would the ActiveMods setting in GameUserSettings.ini.")
 		      Return
 		    End If
-		  Next ModID
+		    If (Beacon.SafeToInvoke(Self.mCheckCallback) And Self.mCheckCallback.Invoke(ModID)) = False Then
+		      Self.ShowAlert("Close your mod editors to continue", "There is an editor open for mod " + ModID + " that needs to be closed first.")
+		      Return
+		    End If
+		  Next
 		  
 		  If ModIDs.IndexOf("2171967557") = -1 Then
 		    ModIDs.Add("2171967557")
@@ -764,7 +997,7 @@ End
 #tag Events IntroCancelButton
 	#tag Event
 		Sub Action()
-		  Self.Hide
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -792,14 +1025,14 @@ End
 #tag Events FinishedActionButton
 	#tag Event
 		Sub Action()
-		  Self.Hide
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RunThread
 	#tag Event
 		Sub Run()
-		  Me.AddUserInterfaceUpdate(New Dictionary("status" : "Building server…"))
+		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Building server…"))
 		  
 		  Var Port As Integer = System.Random.InRange(2000, 65000)
 		  Var QueryPort As Integer = Port + 1
@@ -826,11 +1059,11 @@ End
 		  Var HostDir As FolderItem = App.ApplicationSupport.Child("Servers")
 		  
 		  If Ark.DedicatedServer.Configure(Project, Profile, HostDir) = False Then
-		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "finished" : true, "message" : "Could not build server directory."))
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not build server directory."))
 		    Return
 		  End If
 		  
-		  Me.AddUserInterfaceUpdate(New Dictionary("status" : "Launching server…"))
+		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Launching server…"))
 		  
 		  Var ServerFolder As FolderItem = HostDir.Child(Profile.ProfileID)
 		  Var Executable As FolderItem = Ark.DedicatedServer.ShooterGameServer(ServerFolder)
@@ -839,6 +1072,8 @@ End
 		  
 		  #if TargetWindows
 		    Self.RunShell.Execute(Executable.ShellPath + " " + CommandLine)
+		  #else
+		    #Pragma Unused Executable
 		  #endif
 		  
 		  App.Log("Launching server with " + CommandLine)
@@ -858,7 +1093,7 @@ End
 		  Catch Err As RuntimeException
 		  End Try
 		  If (ModsFolder Is Nil) = False Then
-		    Me.AddUserInterfaceUpdate(New Dictionary("status" : "Collecting mod info…"))
+		    Me.AddUserInterfaceUpdate(New Dictionary("message" : "Collecting mod info…"))
 		    
 		    For Each WorkshopID As String In Self.mMods
 		      Try
@@ -876,7 +1111,7 @@ End
 		    Next
 		  End If
 		  
-		  Me.AddUserInterfaceUpdate(New Dictionary("status" : "Reading log file…"))
+		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Reading log file…"))
 		  
 		  Var LogFile As FolderItem
 		  Try
@@ -884,7 +1119,7 @@ End
 		  Catch Err As RuntimeException
 		  End Try
 		  If LogFile Is Nil Or LogFile.Exists = False Then
-		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "finished" : true, "message" : "Could not find ShooterGame.log file."))
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not find ShooterGame.log file."))
 		    Return
 		  End If
 		  
@@ -910,12 +1145,24 @@ End
 	#tag Event
 		Sub UserInterfaceUpdate(data() as Dictionary)
 		  For Each Dict As Dictionary In Data
+		    If Dict.HasKey("message") Then
+		      App.Log(Dict.Value("message"))
+		    End If
+		    
 		    If Dict.Lookup("error", False).BooleanValue Then
 		      Self.ShowAlert("There was an error creating the server", Dict.Lookup("message", "No further details available").StringValue)
+		      Self.Close
+		      Return
 		    End If
 		    
 		    If Dict.Lookup("finished", False).BooleanValue Then
 		      Self.Pages.SelectedPanelIndex = Self.PageFinished
+		      Self.FinishedExplanationLabel.Text = Dict.Value("message")
+		      If Beacon.SafeToInvoke(Self.mCompletedCallback) Then
+		        Self.mCompletedCallback.Invoke(Self.mDiscoveredMods)
+		      End If
+		    ElseIf Dict.HasKey("message") Then
+		      Self.WorkingStatus.Text = Dict.Value("message")
 		    End If
 		  Next
 		End Sub
@@ -960,6 +1207,7 @@ End
 	#tag Event
 		Sub Connected()
 		  System.DebugLog("RCON connected")
+		  Self.RunThread.AddUserInterfaceUpdate(New Dictionary("message" : "RCON Connected. Waiting for mod data…"))
 		  
 		  Var PassLen As Int32 = Self.mRCONPassword.Bytes
 		  Var Auth As New MemoryBlock(PassLen + 14)
