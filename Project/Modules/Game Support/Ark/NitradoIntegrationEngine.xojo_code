@@ -49,11 +49,18 @@ Inherits Ark.IntegrationEngine
 		        NewValues.Value(NitradoPath) = Lines
 		      Case Ark.ConfigKey.NitradoFormats.Value
 		        If Values.Count >= 1 Then
+		          Var Value As String = Values(Values.LastIndex).Value
+		          
 		          If ConfigKey.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean Then
-		            NewValues.Value(NitradoPath) = Values(Values.LastIndex).Value.Lowercase
-		          Else
-		            NewValues.Value(NitradoPath) = Values(Values.LastIndex).Value
+		            Value = Value.Lowercase
+		            
+		            Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigKey.Constraint("nitrado.boolean.reversed"))
+		            If (Reversed Is Nil) = False And Reversed.BooleanValue Then
+		              Value = If(Value = "true", "false", "true")
+		            End If
 		          End If
+		          
+		          NewValues.Value(NitradoPath) = Value
 		        Else
 		          // This doesn't make sense
 		          Break
@@ -386,6 +393,10 @@ Inherits Ark.IntegrationEngine
 		          Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
 		          If ConfigKey.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean Then
 		            Var IsTrue As Boolean = (Value = "True") Or (Value = "1")
+		            Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigKey.Constraint("nitrado.boolean.reversed"))
+		            If (Reversed Is Nil) = False And Reversed.BooleanValue Then
+		              IsTrue = Not IsTrue
+		            End If
 		            Value = If(IsTrue, "True", "False")
 		          End If
 		          Select Case ConfigKey.NitradoFormat
