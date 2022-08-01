@@ -641,20 +641,27 @@ Begin BeaconDialog ModDiscoveryDialog
       End
    End
    Begin Thread RunThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
    Begin Shell RunShell
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
       ExecuteMode     =   2
+      ExitCode        =   0
       Index           =   -2147483648
+      IsRunning       =   False
       LockedInPosition=   False
+      PID             =   0
+      Result          =   ""
       Scope           =   2
       TabPanelIndex   =   0
       TimeOut         =   0
@@ -714,7 +721,7 @@ End
 	#tag EndDelegateDeclaration
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Sub CompletedDelegate(DiscoveredMods() As Ark.ContentPack)
+		Private Delegate Sub CompletedDelegate(DiscoveredMods() As Ark . ContentPack)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
@@ -1140,6 +1147,10 @@ End
 		    Message = Message + " " + Language.NounWithQuantity(Self.mNumErrorBlueprints, "blueprint", "blueprints") + " had errors and could not be imported."
 		  End If
 		  Me.AddUserInterfaceUpdate(New Dictionary("error" : false, "finished" : true, "message" : Message))
+		  
+		  Exception TopLevelException As RuntimeException
+		    App.Log(TopLevelException, CurrentMethodName, "Running the discovery thread")
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Unhandled exception in discover thread."))
 		End Sub
 	#tag EndEvent
 	#tag Event
