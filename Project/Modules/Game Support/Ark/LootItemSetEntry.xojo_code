@@ -673,9 +673,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Var Keys As New Dictionary
 		  If ForDefaults = False Then
 		    Keys.Value("UUID") = Self.mUUID
-		    Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
 		    Keys.Value("Items") = Children
 		  End If
+		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
 		  Keys.Value("MinQuality") = Self.MinQuality.Key
 		  Keys.Value("MaxQuality") = Self.MaxQuality.Key
 		  Keys.Value("MinQuantity") = Self.MinQuantity
