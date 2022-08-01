@@ -699,6 +699,8 @@ End
 		  Self.IntroModsField.Left = Self.IntroArkPathField.Left
 		  Self.IntroArkPathField.Width = Self.IntroArkPathButton.Left - (12 + Self.IntroArkPathField.Left)
 		  Self.IntroModsField.Width = Self.Width - (20 + Self.IntroModsField.Left)
+		  
+		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 
