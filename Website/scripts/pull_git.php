@@ -48,9 +48,11 @@ $commands = [
 	'cd ' . escapeshellarg($root),
 	'git clean -fd',
 	'git pull',
-	'git reset --hard ' . escapeshellarg($desired_hash),
-	'sudo systemctl reload nginx'
+	'git reset --hard ' . escapeshellarg($desired_hash)
 ];
+if (is_dir('/etc/nginx')) {
+	$commands[] = 'sudo systemctl reload nginx';
+}
 
 $command = implode(' && ', $commands) . ' 2>&1';
 $return_code = 0;
