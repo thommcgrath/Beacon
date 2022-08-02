@@ -302,6 +302,12 @@ abstract class BeaconCloudStorage {
 			}
 			
 			$bucket_path = $results->Field('bucket');
+			if (is_null($bucket_path)) {
+				$database->Query('DELETE FROM usercloud_queue WHERE remote_path = $1 AND request_method = $2 AND hostname = $3;', $results->Field('remote_path'), $results->Field('request_method'), $hostname);
+				$database->Commit();
+				continue;
+			}
+			
 			$bucket_name = substr($bucket_path, strpos($bucket_path, '/'));
 			$remote_path = $results->Field('remote_path');
 			$local_path = static::LocalPath($remote_path);
@@ -322,6 +328,7 @@ abstract class BeaconCloudStorage {
 				]
 			);
 			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $request_method);
 			switch ($request_method) {
 			case 'PUT':
 				if (file_exists($local_path) === false) {
@@ -330,7 +337,6 @@ abstract class BeaconCloudStorage {
 					usleep(10000);
 					break;
 				}
-				curl_setopt($curl, CURLOPT_PUT, true);
 				$reader = fopen($local_path, 'r');
 				curl_setopt($curl, CURLOPT_INFILE, $reader);
 				curl_setopt($curl, CURLOPT_INFILESIZE, filesize($local_path));
@@ -338,8 +344,8 @@ abstract class BeaconCloudStorage {
 				fclose($reader);
 				break;
 			case 'DELETE':
-				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
 				$response = curl_exec($curl);
+				$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 				break;
 			}
 			
