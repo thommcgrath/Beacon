@@ -1957,7 +1957,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kReplacementClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Replacements"": [") > -1 And Board.Text.IndexOf("""Creature"": ""/Game/") > -1)
+		  Return Board.RawDataAvailable(Self.kReplacementClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Replacements"": {") > -1 And Board.Text.IndexOf("""Creature"": """) > -1)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -2040,7 +2040,7 @@ End
 		  
 		  Var JSON As String = Beacon.GenerateJSON(Items, True)
 		  Board.Text = JSON.Trim
-		  Board.RawData(JSON) = Self.kReplacementClipboardType
+		  Board.RawData(Self.kReplacementClipboardType) = JSON
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2063,31 +2063,33 @@ End
 		  Var Set As Ark.MutableSpawnPointSet = Self.SpawnSet
 		  Var SelectCreatures() As Ark.Creature
 		  For Each Item As Dictionary In Items
-		    If Item.HasKey("Creature") = False Or Item.HasKey("Replacements") = False Then
-		      Continue
-		    End If
-		    
-		    Var FromUUID As String = Item.Value("Creature")
-		    Var FromCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(FromUUID)
-		    If FromCreature Is Nil Then
-		      Continue
-		    End If
-		    
-		    Var Maps() As Variant = Item.Value("Replacements")
-		    For Each Map As Dictionary In Maps
-		      For Each MapEntry As DictionaryEntry In Map
-		        Var ToUUID As String = MapEntry.Key
+		    Try
+		      If Item.HasKey("Creature") = False Or Item.HasKey("Replacements") = False Then
+		        Continue
+		      End If
+		      
+		      Var FromUUID As String = Item.Value("Creature")
+		      Var FromCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(FromUUID)
+		      If FromCreature Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var Map As Dictionary = Item.Value("Replacements")
+		      For Each Entry As DictionaryEntry In Map
+		        Var ToUUID As String = Entry.Key
 		        Var ToCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(ToUUID)
 		        If ToCreature Is Nil Then
 		          Continue
 		        End If
-		        Var Weight As Double = MapEntry.Value
+		        Var Weight As Double = Entry.Value
 		        Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
-		      Next
-		    Next
-		    
-		    SelectCreatures.Add(FromCreature)
-		  Next
+		      Next Entry
+		      
+		      SelectCreatures.Add(FromCreature)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Pasting spawn set replacement")
+		    End Try
+		  Next Item
 		  
 		  Self.UpdateReplacementsList(Set, SelectCreatures)
 		  RaiseEvent Changed
