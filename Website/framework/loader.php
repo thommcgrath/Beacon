@@ -144,7 +144,6 @@ BeaconErrors::StartWatching();
 	$policy = implode(' ', $groups);
 	
 	header('Content-Security-Policy: ' . $policy);
-	header('Cache-Control: no-cache');
 })();
 
 BeaconTemplate::Start();
