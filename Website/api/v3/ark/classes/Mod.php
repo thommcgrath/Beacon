@@ -3,7 +3,7 @@
 namespace Ark;
 
 class Mod extends \BeaconAPI\Ark\Mod {
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['resource_url'] = \BeaconAPI::URL('ark/mod/' . $this->workshop_id);
 		$json['confirm_url'] = \BeaconAPI::URL('ark/mod/' . $this->workshop_id . '?action=confirm');

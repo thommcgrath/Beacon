@@ -84,7 +84,7 @@ class Map implements \JsonSerializable {
 		return $this->sort;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'map_id' => $this->map_id,
 			'mod_id' => $this->mod_id,

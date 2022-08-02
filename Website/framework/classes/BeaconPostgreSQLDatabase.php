@@ -1,69 +1,72 @@
 <?php
 
 class BeaconPostgreSQLDatabase extends BeaconDatabase {
-	protected $transactions = array();
+	protected $transactions = [];
 	
 	public function Connect() {
 		if ($this->IsConnected()) {
 			return;
 		}
-		$this->connection = null;
+		$this->SetConnection(null);
+		$settings = $this->Settings();
 		
-		$pieces = array();
-		$is_ip = ip2long($this->host);
+		$pieces = [];
+		$is_ip = ip2long($settings->Host());
 		if ($is_ip) {
-			$pieces['hostaddr'] = $this->host;
+			$pieces['hostaddr'] = $settings->Host();
 		} else {
-			$pieces['host'] = $this->host;
+			$pieces['host'] = $settings->Host();
 		}
-		$pieces['port'] = $this->port;
-		$pieces['dbname'] = $this->databasename;
-		$pieces['user'] = $this->username;
-		$pieces['password'] = $this->password;
-		if (($this->host != '127.0.0.1') && ($this->host != 'localhost') && ($this->host != '')) {
+		$pieces['port'] = $settings->Port();
+		$pieces['dbname'] = $settings->DatabaseName();
+		$pieces['user'] = $settings->Username();
+		$pieces['password'] = $settings->Password();
+		if (($settings->Host() != '127.0.0.1') && ($settings->Host() != 'localhost') && ($settings->Host() != '')) {
 			$pieces['sslmode'] = 'require';
 		}
 		$pieces['options'] = '--client_encoding=UTF8 --application_name=Website';
 		
-		$options = array();
+		$options = [];
 		foreach ($pieces as $key => $value) {
-			$options[] = $key . "='" . str_replace(array("'", "\\"), array("\\'", "\\\\"), $value) . "'";
+			$options[] = $key . "='" . str_replace(["'", "\\"], ["\\'", "\\\\"], $value) . "'";
 		}
 		
 		$connection = pg_connect(implode(' ', $options));
 		if ($connection === false) {
 			throw new Exception('Unable to connect to database');
 		} else {
-			$this->connection = $connection;
+			$this->SetConnection($connection);
 		}	
 	}
 	
 	public function Reconnect () {
-		$success = @pg_connection_reset($this->connection);
+		$success = @pg_connection_reset($this->Connection());
 		if ($success === false) {
 			throw new Exception('Unable to reconnect to database');
 		}
 	}
 	
 	public function IsConnected() {
-		if ($this->connection == null) {
+		if (is_null($this->Connection())) {
 			return false;
 		} else {
-			return pg_connection_status($this->connection) == PGSQL_CONNECTION_OK;
+			return pg_connection_status($this->Connection()) == PGSQL_CONNECTION_OK;
 		}
 	}
 	
 	public function Close() {
-		if ($this->connection != null) {
+		if (is_null($this->Connection()) === false) {
 			if ($this->IsConnected()) {
-				pg_close($this->connection);
+				pg_close($this->Connection());
 			}
-			$this->connection = null;
-			$this->transactions = array();
+			$this->SetConnection(null);
+			$this->transactions = [];
 		}
 	}
 	
 	public function BeginTransaction() {
+		$this->SetConnectionMode(static::CONNECTION_WRITABLE);
+		
 		$this->Connect();
 		if (count($this->transactions) == 0) {
 			$this->Query('BEGIN TRANSACTION');
@@ -105,17 +108,17 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 	}
 	
 	private function ResetTransactions() {
-		$this->transactions = array();
-		$state = pg_transaction_status($this->connection);
+		$this->transactions = [];
+		$state = pg_transaction_status($this->Connection());
 		if ($state === PGSQL_TRANSACTION_ACTIVE) {
-			pg_query($this->connection, 'ROLLBACK TRANSACTION');
+			pg_query($this->Connection(), 'ROLLBACK TRANSACTION');
 		}
 	}
 	
 	public function Query(string $sql, ...$params) {
 		$this->Connect(); // Will only actually connect if necessary
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		
 		// for backwards compatibility, if $params contains a single array element,
@@ -131,15 +134,15 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 		}
 		
 		if (count($params) > 0) {
-			$success = pg_send_query_params($this->connection, $sql, $params);
+			$success = pg_send_query_params($this->Connection(), $sql, $params);
 		} else {
-			$success = pg_send_query($this->connection, $sql);
+			$success = pg_send_query($this->Connection(), $sql);
 		}
 		if ($success === true) {
-			while (pg_connection_busy($this->connection)) {
+			while (pg_connection_busy($this->Connection())) {
 				usleep(250);
 			}
-			$result = pg_get_result($this->connection);
+			$result = pg_get_result($this->Connection());
 			$state = pg_result_error($result);
 			if (is_string($state)) {
 				if ($state === '') {
@@ -157,7 +160,7 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 	
 	public function ExamineQuery(string $sql, ...$params) {
 		if (!is_array($params)) {
-			$params = array();
+			$params = [];
 		}
 		
 		if ((count($params) == 1) && (is_array($params[0]))) {
@@ -177,9 +180,9 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 	
 	public function Insert(string $table, array $data) {
 		$i = 1;
-		$columns = array();
+		$columns = [];
 		$values = array_values($data);
-		$placeholders = array();
+		$placeholders = [];
 		foreach ($data as $column => $value) {
 			$columns[] = $this->EscapeIdentifier($column);
 			$placeholders[] = '$' . $i;
@@ -193,8 +196,8 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 	
 	public function Update(string $table, array $data, array $conditions) {
 		$i = 1;
-		$set_columns = array();
-		$select_columns = array();
+		$set_columns = [];
+		$select_columns = [];
 		$values = array_merge(array_values($data), array_values($conditions));
 		foreach ($data as $column => $value) {
 			$set_columns[] = $this->EscapeIdentifier($column) . ' = $' . $i;
@@ -256,9 +259,9 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 	
 	public function Host() {
 		if ($this->IsConnected()) {
-			return pg_host($this->connection);
+			return pg_host($this->Connection());
 		} else {
-			return $this->host;
+			return $this->Settings()->Host();
 		}
 	}
 	
@@ -266,19 +269,19 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 		$this->Connect();
 		$pieces = explode('.', $identifier);
 		for ($idx = 0; $idx < count($pieces); $idx++) {
-			$pieces[$idx] = pg_escape_identifier($this->connection, $pieces[$idx]);
+			$pieces[$idx] = pg_escape_identifier($this->Connection(), $pieces[$idx]);
 		}
 		return implode('.', $pieces);
 	}
 	
 	public function EscapeLiteral(string $literal) {
 		$this->Connect();
-		return pg_escape_literal($this->connection, $literal);
+		return pg_escape_literal($this->Connection(), $literal);
 	}
 	
 	public function EscapeBinary(string $binary) {
 		$this->Connect();
-		return pg_escape_bytea($this->connection, $binary);
+		return pg_escape_bytea($this->Connection(), $binary);
 	}
 	
 	public function UnescapeBinary(string $string) {

@@ -7,7 +7,7 @@ class BeaconStripeAPI {
 		$this->api_secret = $api_secret;
 	}
 	
-	protected function GetURL(string $url, string $stripe_version) {
+	protected function GetURL(string $url, string $stripe_version): ?array {
 		$json = BeaconCache::Get($url);
 		if (is_null($json) === false) {
 			return $json;
@@ -36,7 +36,7 @@ class BeaconStripeAPI {
 		return $json;
 	}
 	
-	protected function PostURL(string $url, array $formdata, string $stripe_version) {
+	protected function PostURL(string $url, array $formdata, string $stripe_version): ?array {
 		$curl = curl_init($url);
 		$headers = [
 			'Authorization: Bearer ' . $this->api_secret,
@@ -57,7 +57,7 @@ class BeaconStripeAPI {
 		}
 	}
 	
-	protected function DeleteURL(string $url, string $stripe_version) {
+	protected function DeleteURL(string $url, string $stripe_version): ?array {
 		$curl = curl_init($url);
 		$headers = [
 			'Authorization: Bearer ' . $this->api_secret,
@@ -77,23 +77,23 @@ class BeaconStripeAPI {
 		}
 	}
 	
-	public function GetPaymentIntent(string $intent_id) {
+	public function GetPaymentIntent(string $intent_id): ?array {
 		return $this->GetURL('https://api.stripe.com/v1/payment_intents/' . $intent_id, '2020-08-27');
 	}
 	
-	public function GetLineItems(string $session_id) {
+	public function GetLineItems(string $session_id): ?array {
 		return $this->GetURL('https://api.stripe.com/v1/checkout/sessions/' . $session_id . '/line_items?expand%5B%5D=data.discounts&expand%5B%5D=data.taxes', '2020-08-27');
 	}
 	
-	public function GetCustomer(string $customer_id) {
+	public function GetCustomer(string $customer_id): ?array {
 		return $this->GetURL('https://api.stripe.com/v1/customers/' . $customer_id, '2020-08-27');
 	}
 	
-	public function GetCustomersByEmail(string $customer_email) {
+	public function GetCustomersByEmail(string $customer_email): ?array {
 		return $this->GetURL('https://api.stripe.com/v1/customers?email=' . urlencode($customer_email), '2020-08-27');
 	}
 	
-	public function GetBillingLocality(string $intent_id) {
+	public function GetBillingLocality(string $intent_id): ?string {
 		$intent = $this->GetPaymentIntent($intent_id);
 		if (is_null($intent)) {
 			return null;
@@ -128,12 +128,12 @@ class BeaconStripeAPI {
 	}
 			
 	
-	public function UpdateCustomer(string $customer_id, array $fields) {
+	public function UpdateCustomer(string $customer_id, array $fields): bool {
 		$customer = $this->PostURL('https://api.stripe.com/v1/customers/' . $customer_id, $fields, '2020-08-27');
 		return (is_null($customer) === false);
 	}
 	
-	public function EmailForPaymentIntent(string $intent_id) {
+	public function EmailForPaymentIntent(string $intent_id): ?string {
 		$cache_key = 'email_' . $intent_id;
 		$email = BeaconCache::Get($cache_key);
 		if (!is_null($email)) {
@@ -159,7 +159,7 @@ class BeaconStripeAPI {
 		return $email;
 	}
 	
-	public function ChangeEmailForPaymentIntent(string $intent_id, string $new_email) {
+	public function ChangeEmailForPaymentIntent(string $intent_id, string $new_email): bool {
 		$cache_key = 'email_' . $intent_id;
 		
 		$pi_json = $this->GetPaymentIntent($intent_id);
@@ -181,7 +181,7 @@ class BeaconStripeAPI {
 			return true;
 		}
 		
-		if (!$this->UpdateCustomer($customer_id, array('email' => $new_email))) {
+		if (!$this->UpdateCustomer($customer_id, ['email' => $new_email])) {
 			return false;
 		}
 		
@@ -189,15 +189,15 @@ class BeaconStripeAPI {
 		return true;
 	}
 	
-	public function CreateCheckoutSession(array $details) {
+	public function CreateCheckoutSession(array $details): ?array {
 		return $this->PostURL('https://api.stripe.com/v1/checkout/sessions', $details, '2020-08-27');
 	}
 	
-	public function GetCountrySpec(string $country_code) {
+	public function GetCountrySpec(string $country_code): ?array {
 		return $this->GetURL('https://api.stripe.com/v1/country_specs/' . $country_code, '2020-08-27');
 	}
 	
-	public function UpdatedProductPrice(string $price_id, int $amount) {
+	public function UpdatedProductPrice(string $price_id, int $amount): string|bool {
 		$response = $this->GetURL('https://api.stripe.com/v1/prices/' . $price_id, '2020-08-27');
 		if (is_null($response)) {
 			return false;

@@ -9,7 +9,7 @@ class BeaconUser extends BeaconAPI\User {
 		return $this->username;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$arr = parent::jsonSerialize();
 		$arr['login_key'] = $this->username;
 		return $arr;

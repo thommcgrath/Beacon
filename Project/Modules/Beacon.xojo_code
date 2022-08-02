@@ -1352,7 +1352,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As String = "/") As String
 		  #if DebugBuild And App.ForceLiveData = False
-		    Var Domain As String = "https://lab.usebeacon.app"
+		    Var Domain As String = "https://local.usebeacon.app"
 		  #else
 		    Var Domain As String = "https://usebeacon.app"
 		  #endif

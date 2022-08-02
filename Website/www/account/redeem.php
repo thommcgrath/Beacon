@@ -16,18 +16,7 @@ header('Cache-Control: no-cache');
 
 $database = BeaconCommon::Database();
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-#redeem_form {
-	width: 600px;
-	max-width: 100%;
-	margin-left: auto;
-	margin-right: auto;
-}	
-
-</style><?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 	
 $process_step = 'start';
 if (isset($_REQUEST['process'])) {

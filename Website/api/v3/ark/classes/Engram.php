@@ -38,7 +38,7 @@ class Engram extends \BeaconAPI\Ark\Engram {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['resource_url'] = \BeaconAPI::URL('ark/engram/' . urlencode($this->ObjectID()));
 		return $json;

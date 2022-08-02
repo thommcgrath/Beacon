@@ -10,7 +10,7 @@ class TemplateSelector implements \JsonSerializable {
 	protected $language;
 	protected $code;
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'id' => $this->object_id,
 			'game' => $this->game_id,

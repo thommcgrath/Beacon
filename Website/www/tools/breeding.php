@@ -22,62 +22,7 @@ if ($results->RecordCount() != 1) {
 $official_cuddle_period = $results->Field('value');
 $computed_cuddle_period = $official_cuddle_period * $ipm;
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-#breeding-stats {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-around;
-	align-items: center;
-	align-content: center;
-}
-
-.breeding-stats-column {
-	flex: 1 1 auto;
-	display: flex;
-}
-
-.breeding-stats-label,
-.breeding-stats-value {
-	flex: 1 1 auto;
-	padding: 3px;
-}
-
-.breeding-stats-label {
-	text-align: right;
-	font-weight: 600;
-}
-
-.breeding-stats-value {
-	text-align: left;
-}
-
-#creature-chart {
-	margin-top: 20px;
-	width: 100%;
-}
-
-.wide-only {
-	display: none;
-}
-
-.narrow-only {
-	display: inline;
-}
-
-@media (min-width: 450px) {
-	.wide-only {
-		display: table-cell;
-	}
-	
-	.narrow-only {
-		display: none;
-	}
-}
-
-</style><?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 
 ?><div id="breeding-stats">
 	<div id="breeding-stats-msm" class="breeding-stats-column">

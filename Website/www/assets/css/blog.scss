@@ -1,0 +1,20 @@
+.next_article, .previous_article {
+	text-align: center;
+}
+
+.navigation_footer {
+	line-height: 1.0em;
+	border-top-width: 1px;
+	border-top-style: solid;
+	margin-top: 30px;
+}
+
+@media (min-width: 840px) {
+	.next_article {
+		text-align: right;
+	}
+	
+	.previous_article {
+		text-align: left;
+	}
+}

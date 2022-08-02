@@ -3,7 +3,7 @@
 namespace Ark;
 
 class Project extends \BeaconAPI\Ark\Project {
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'document_id' => $this->project_id,
 			'user_id' => $this->user_id,

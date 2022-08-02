@@ -25,6 +25,7 @@ $description = BeaconTemplate::PageDescription();
 		<meta name="application-name" content="Beacon">
 		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
 		<meta name="theme-color" content="#9c0fb0">
+		<meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
 		<link href="<?php echo BeaconCommon::AssetURI('default.scss'); ?>" rel="stylesheet" type="text/css">
 		<link href="<?php echo BeaconCommon::AssetURI('colors.scss'); ?>" rel="stylesheet" type="text/css">
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>

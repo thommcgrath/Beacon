@@ -1,54 +1,13 @@
-@function gcd($a, $b) {
-	// From: http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
-	@if ($b != 0) {
-		@return gcd($b, $a % $b);
-	} @else {
-		@return abs($a);
-	}
-}
-
-@function pow($base, $exponent, $prec: 12) {
-	// Handles decimal exponents by trying to convert them into a fraction and then use a nthRoot-algorithm for parts of the calculation
-	@if (floor($exponent) != $exponent) {
-		$prec2 : pow(10, $prec);
-		$exponent: round($exponent * $prec2);
-		$denominator: gcd($exponent, $prec2);
-		@return nthRoot(pow($base, $exponent / $denominator), $prec2 / $denominator, $prec);
-	}
-
-	$value: $base;
-	@if $exponent > 1 {
-		@for $i from 2 through $exponent {
-			$value: $value * $base;
-		}
-	} @else if $exponent < 1 {
-		@for $i from 0 through -$exponent {
-			$value: $value / $base;
-		}
-	}
-
-	@return $value;
-}
-
-@function nthRoot($num, $n: 2, $prec: 12) {
-	// From: http://rosettacode.org/wiki/Nth_root#JavaScript
-	$x: 1;
-
-	@for $i from 0 through $prec {
-		$x: 1 / $n * (($n - 1) * $x + ($num / pow($x, $n - 1)));
-	}
-
-	@return $x;
-}
+@use "sass:math";
 
 @function luminance($color) {
-	$red: red($color) / 255;
-	$green: green($color) / 255;
-	$blue: blue($color) / 255;
+	$red: calc(red($color) / 255);
+	$green: calc(green($color) / 255);
+	$blue: calc(blue($color) / 255);
 	
-	$red: if($red <= 0.03928, $red / 12.92, pow((($red + 0.055) / 1.055), 2.4));
-	$green: if($green <= 0.03928, $green / 12.92, pow((($green + 0.055) / 1.055), 2.4));
-	$blue: if($blue <= 0.03928, $blue / 12.92, pow((($blue + 0.055) / 1.055), 2.4));
+	$red: if($red <= 0.03928, calc($red / 12.92), math.pow(calc(($red + 0.055) / 1.055), 2.4));
+	$green: if($green <= 0.03928, calc($green / 12.92), math.pow(calc(($green + 0.055) / 1.055), 2.4));
+	$blue: if($blue <= 0.03928, calc($blue / 12.92), math.pow(calc(($blue + 0.055) / 1.055), 2.4));
 	
 	@return (0.2126 * $red) + (0.7152 * $green) + (0.0722 * $blue);
 }
@@ -57,9 +16,9 @@
 	$backlum: luminance($backcolor);
 	$forelum: luminance($forecolor);
 	@if $backlum > $forelum {
-		@return ($backlum + 0.05) / ($forelum + 0.05);
+		@return calc(($backlum + 0.05) / ($forelum + 0.05));
 	} @else {
-		@return ($forelum + 0.05) / ($backlum + 0.05);
+		@return calc(($forelum + 0.05) / ($backlum + 0.05));
 	}
 }
 

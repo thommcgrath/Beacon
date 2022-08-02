@@ -1,6 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('reportaproblem.css'));
 
 header('Cache-Control: no-cache');
 
@@ -42,29 +43,6 @@ case 'GET':
 		
 		$force_view = isset($_GET['action']) && strtolower($_GET['action']) == 'view';
 		if (is_null($results->Field('solution_build')) && $force_view == false) {
-			BeaconTemplate::StartStyles();
-			?><style type="text/css">
-			
-			#reporter_container {
-				max-width: 460px;
-				margin-top: 40px;
-				margin-left: auto;
-				margin-right: auto;
-				margin-bottom: 40px;
-				text-align: center;
-			}
-			
-			#reporter_disclaimer {
-				font-size: smaller;
-				color: rgba(0, 0, 0, 0.5);
-				text-align: right;
-				width: 300px;
-				margin-left: auto;
-			}
-			
-			</style><?php
-			BeaconTemplate::FinishStyles();
-			
 			// check the version
 			$show_update_notice = false;
 			if (is_null($client_build) == false) {
@@ -131,25 +109,6 @@ case 'GET':
 			
 			</script><?php
 			BeaconTemplate::FinishScript();
-			
-			BeaconTemplate::StartStyles();
-			?><style>
-				
-			#technical_details {
-				border: 1px solid rgba(0, 0, 0, 0.1);
-				background-color: rgba(255, 255, 255, 0.1);
-				padding: 20px;
-				font-size: smaller;
-				display: none;
-				overflow-x: auto;
-			}
-			
-			#show_technical_details {
-				font-size: smaller;
-			}
-			
-			</style><?php
-			BeaconTemplate::FinishStyles();
 			
 			echo '<p><a href="" id="show_technical_details">Show Technical Details</a></p>';
 			echo '<div id="technical_details">';

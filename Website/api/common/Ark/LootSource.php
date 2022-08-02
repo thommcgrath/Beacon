@@ -88,7 +88,7 @@ class LootSource extends \Ark\Blueprint {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['multipliers'] = array(
 			'min' => $this->multiplier_min,

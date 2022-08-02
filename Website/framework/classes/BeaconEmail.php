@@ -1,7 +1,7 @@
 <?php
 
 abstract class BeaconEmail {
-	public static function SendMail(string $recipient, string $subject, string $body_plain, string $body_html = null) {
+	public static function SendMail(string $recipient, string $subject, string $body_plain, string $body_html = null): bool {
 		if (is_null($body_html)) {
 			$body_html = nl2br(htmlentities($body_plain));
 			while (preg_match('/&lt;(http[^>]+)&gt;/', $body_html, $matches) === 1) {
@@ -22,7 +22,7 @@ abstract class BeaconEmail {
 		];
 		
 		$body = [
-			'From' => '"Beacon" <help@' . BeaconCommon::Domain() . '>',
+			'From' => '"Beacon" <help@usebeacon.app>',
 			'To' => $recipient,
 			'Subject' => $subject,
 			'HtmlBody' => $body_html,
@@ -48,12 +48,12 @@ abstract class BeaconEmail {
 	}
 	
 	// Checks if the address is syntactically valid.
-	public static function IsEmailValid(string $email) {
+	public static function IsEmailValid(string $email): bool {
 		return filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
 	
 	// Checks with CleanTalk if the address is valid
-	public static function QuickVerify(string $email) {
+	public static function QuickVerify(string $email): bool {
 		$user = \BeaconUser::GetByEmail($email);
 		if (is_null($user) === false) {
 			return true;

@@ -70,7 +70,9 @@ class User implements \JsonSerializable {
 	public function SetEmailAddress(string $email) {
 		if (self::ValidateEmail($email)) {
 			$database = \BeaconCommon::Database();
+			$database->BeginTransaction();
 			$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+			$database->Commit();
 			$this->email_id = $results->Field('email_id');
 			return true;
 		}
@@ -410,6 +412,7 @@ class User implements \JsonSerializable {
 		}
 		
 		try {
+			$database->BeginTransaction();
 			if (\BeaconCommon::IsUUID($email)) {
 				$email_id = $email;
 			} else {
@@ -431,6 +434,7 @@ class User implements \JsonSerializable {
 			$this->SetDecryptedPrivateKey($password, $private_key);
 			$this->SetDecryptedUsercloudKey(static::GenerateUsercloudKey());
 			$this->SetRequiresPasswordChange(false);
+			$database->Commit();
 			
 			$this->username = $username;
 			$this->email_id = $email_id;
@@ -463,11 +467,28 @@ class User implements \JsonSerializable {
 		// treated as a subquery. Or omit the second parameter, which is a STABLE function and performs fine.
 		// The second parameter should only be used when updating the email row is desired.
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id IS NOT NULL AND email_id = (SELECT uuid_for_email($1, FALSE));', $email);
-		$users = static::GetFromResults($results);
-		if (count($users) == 1) {
-			return $users[0];
+		$results = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
+		if ($results->RecordCount() !== 1 || is_null($results->Field('email_id'))) {
+			return null;
 		}
+		$email_id = $results->Field('email_id');
+		
+		$results = $database->Query('SELECT email_needs_update($1::UUID) AS update_needed;', $email_id);
+		if ($results->RecordCount() !== 1 || is_null($results->Field('update_needed'))) {
+			return null;
+		}
+		if ($results->Field('update_needed')) {
+			$database->BeginTransaction();
+			$database->Query('SELECT uuid_for_email($1, TRUE);', $email);
+			$database->Commit();
+		}
+		
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = $1;', $email_id);
+		$users = static::GetFromResults($results);
+		if (count($users) !== 1) {
+			return null;
+		}
+		return $users[0];
 	}
 	
 	public static function GetByEmailID(string $email_id) {
@@ -523,7 +544,7 @@ class User implements \JsonSerializable {
 	public static function ValidatePassword(string $password) {
 		$passlen = strlen($password);
 		
-		if ($passlen < 8) {
+		if ($passlen < 8 || $passlen > 256) {
 			return false;
 		}
 		
@@ -643,7 +664,7 @@ class User implements \JsonSerializable {
 		];
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$arr = [
 			'user_id' => $this->user_id,
 			'username' => $this->username,
