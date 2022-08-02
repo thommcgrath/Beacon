@@ -282,11 +282,6 @@ abstract class BeaconCloudStorage {
 		$hostname = gethostname();
 		$database = BeaconCommon::Database();
 		
-		$curl = curl_init();
-		if ($curl === false) {
-			throw new Exception('Unable to get curl handle');
-		}
-		
 		$results = $database->Query('SELECT COUNT(attempts) AS objects_delayed FROM usercloud_queue WHERE attempts = 3;');
 		$objects_delayed = intval($results->Field('objects_delayed'));
 		
@@ -319,6 +314,12 @@ abstract class BeaconCloudStorage {
 			$signature = base64_encode(hash_hmac('sha1', $str_to_sign, BeaconCommon::GetGlobal('Storage_Password'), true));
 			$response = false;
 			
+			$curl = curl_init();
+			if ($curl === false) {
+				$database->Rollback();
+				throw new Exception('Unable to get curl handle');
+			}
+			
 			curl_setopt($curl, CURLOPT_URL, 'https://' . $bucket_path . $resource_path);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($curl, CURLOPT_HTTPHEADER, [
@@ -328,7 +329,6 @@ abstract class BeaconCloudStorage {
 				]
 			);
 			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $request_method);
 			switch ($request_method) {
 			case 'PUT':
 				if (file_exists($local_path) === false) {
@@ -337,6 +337,7 @@ abstract class BeaconCloudStorage {
 					usleep(10000);
 					break;
 				}
+				curl_setopt($curl, CURLOPT_PUT, true);
 				$reader = fopen($local_path, 'r');
 				curl_setopt($curl, CURLOPT_INFILE, $reader);
 				curl_setopt($curl, CURLOPT_INFILESIZE, filesize($local_path));
@@ -344,8 +345,8 @@ abstract class BeaconCloudStorage {
 				fclose($reader);
 				break;
 			case 'DELETE':
+				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
 				$response = curl_exec($curl);
-				$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 				break;
 			}
 			
@@ -363,10 +364,10 @@ abstract class BeaconCloudStorage {
 			}
 			
 			$database->Commit();
+			curl_close($curl);
 			
 			usleep(10000);
 		}
-		curl_close($curl);
 		
 		$results = $database->Query('SELECT COUNT(attempts) AS objects_delayed FROM usercloud_queue WHERE attempts = 3;');
 		$new_objects_delayed = intval($results->Field('objects_delayed')) - $objects_delayed;
