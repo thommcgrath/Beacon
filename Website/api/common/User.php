@@ -412,11 +412,11 @@ class User implements \JsonSerializable {
 		}
 		
 		try {
+			$database = \BeaconCommon::Database();
 			$database->BeginTransaction();
 			if (\BeaconCommon::IsUUID($email)) {
 				$email_id = $email;
 			} else {
-				$database = \BeaconCommon::Database();
 				$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
 				$email_id = $results->Field('email_id');
 			}
