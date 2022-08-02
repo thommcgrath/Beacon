@@ -118,7 +118,8 @@ abstract class BeaconCloudStorage {
 	
 	private static function BuildSignedURL(string $bucket_path, string $remote_path, string $method): string {
 		$resource_path = static::CleanupRemotePath($remote_path);
-		$signing_path = $resource_path;
+		$bucket_name = substr($bucket_path, strpos($bucket_path, '/'));
+		$signing_path = "$bucket_name$resource_path";
 		$pos = strpos($signing_path, '?');
 		if ($pos !== false) {
 			$signing_path = substr($resource_path, 0, $pos);
@@ -212,6 +213,7 @@ abstract class BeaconCloudStorage {
 					return static::FAILED_TO_WARM_CACHE;
 				}
 			} else {
+				$url = static::BuildSignedURL($bucket_path, $remote_path, 'GET');
 				$remote_handle = @fopen(static::BuildSignedURL($bucket_path, $remote_path, 'GET'), 'rb');
 				if (strpos($http_response_header[0], ' 200 ') === false || empty($remote_handle)) {
 					$database->Rollback();
