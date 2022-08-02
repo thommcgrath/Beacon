@@ -55,7 +55,7 @@
 					If DebugBuild = False Then
 					Call DoShellCommand("/usr/bin/plutil -insert SUFeedURL -string 'https://api.usebeacon.app/sparkle.php' " + App + ".plist")
 					Else
-					Call DoShellCommand("/usr/bin/plutil -insert SUFeedURL -string 'https://lab-api.usebeacon.app/sparkle.php' " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert SUFeedURL -string 'https://local-api.usebeacon.app/sparkle.php' " + App + ".plist")
 					End If
 					Call DoShellCommand("/usr/bin/plutil -insert SUPublicEDKey -string 'E8nLS+ZV7vehv1LV7BOrGFpvVk6SKFdG7JxMvluk4FU=' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert SUEnableInstallerLauncherService -bool YES " + App + ".plist")
