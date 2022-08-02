@@ -555,8 +555,16 @@ abstract class BeaconCloudStorage {
 		$database->Commit();
 	}
 	
-	public static function VersionsForFile(string $bucket_path, string $remote_path): array|bool {
+	public static function VersionsForFile(string $remote_path): array|bool {
 		$remote_path = static::CleanupRemotePath($remote_path);
+			
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT bucket FROM usercloud WHERE remote_path = $1;', $remote_path);
+		if ($rows->RecordCount() !== 1) {
+			throw new Exception('File not found');
+		}
+		$bucket_path = $rows->Field('bucket');
+		
 		$path = '/?versions&prefix=' . urlencode(substr($remote_path, 1));
 		$url = static::BuildSignedURL($bucket_path, $path, 'GET');
 		
