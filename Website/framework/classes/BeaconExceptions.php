@@ -57,7 +57,7 @@ abstract class BeaconExceptions {
 	}	
 	
 	// Records the exception and returns the uuid or null on error.
-	public static function RecordException(string $trace, string $type, string $reason, string $client_hash, int $client_build, ?string $user_id): string {
+	public static function RecordException(string $trace, string $type, string $reason, string $client_hash, int $client_build, ?string $user_id): ?string {
 		$exception_id = static::FindException($trace, $type, $client_hash);
 		if (is_null($exception_id) === false && static::UpdateException($exception_id, $trace, $client_hash, $client_build, $user_id)) {
 			return $exception_id;
