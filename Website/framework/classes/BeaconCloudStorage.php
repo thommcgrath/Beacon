@@ -189,14 +189,7 @@ abstract class BeaconCloudStorage {
 			static::CleanupLocalCache($correct_filesize);
 			
 			$parent = dirname($local_path);
-			if (file_exists($parent) == false) {
-				mkdir($parent, 0750, true);
-				chgrp($parent, 'cacheshare');
-			} elseif (is_dir($parent) == false) {
-				unlink($parent);
-				mkdir($parent, 0750, true);
-				chgrp($parent, 'cacheshare');
-			}
+			static::SetupDir($parent);
 			
 			$session = null;
 			$remote_handle = null;
@@ -505,14 +498,7 @@ abstract class BeaconCloudStorage {
 		$local_path = static::LocalPath($remote_path);
 		$content_type = static::MimeForPath($local_path);
 		$parent = dirname($local_path);
-		if (file_exists($parent) == false) {
-			mkdir($parent, 0750, true);
-			chgrp($parent, 'cacheshare');
-		} elseif (is_dir($parent) == false) {
-			unlink($parent);
-			mkdir($parent, 0750, true);
-			chgrp($parent, 'cacheshare');
-		}
+		static::SetupDir($parent);
 		if ($legacy_mode) {
 			file_put_contents($local_path, $file_contents);
 			$header_bytes = BeaconEncryption::HeaderBytes($file_contents, false);
@@ -625,6 +611,20 @@ abstract class BeaconCloudStorage {
 		}
 		
 		return $versions;
+	}
+	
+	private static function SetupDir(string $path): void {
+		if (file_exists($path)) {
+			if (is_dir($path)) {
+				return;
+			} else {
+				unlink($path);
+			}
+		}
+		
+		static::SetupDir(dirname($path));
+		mkdir($path, 0750, false);
+		chgrp($path, 'cacheshare');
 	}
 }
 
