@@ -122,8 +122,8 @@ abstract class BeaconCloudStorage {
 		$signing_path = "$bucket_name$resource_path";
 		$pos = strpos($signing_path, '?');
 		if ($pos !== false) {
-			$signing_path = substr($resource_path, 0, $pos);
-			$query = substr($resource_path, $pos + 1);
+			$query = substr($signing_path, $pos + 1);
+			$signing_path = substr($signing_path, 0, $pos);
 			$params = [];
 			parse_str($query, $params);
 			$subresource = [];
@@ -212,26 +212,27 @@ abstract class BeaconCloudStorage {
 					$database->Rollback();
 					return static::FAILED_TO_WARM_CACHE;
 				}
+				
+				$local_handle = fopen($local_path, 'wb');
+				while (!feof($remote_handle)) {
+					$chunk = fread($remote_handle, 1048576);
+					fwrite($local_handle, $chunk);
+				}
+				fclose($local_handle);
+				unset($session);
 			} else {
 				$url = static::BuildSignedURL($bucket_path, $remote_path, 'GET');
-				$remote_handle = @fopen(static::BuildSignedURL($bucket_path, $remote_path, 'GET'), 'rb');
-				if (strpos($http_response_header[0], ' 200 ') === false || empty($remote_handle)) {
+				$local_handle = fopen($local_path, 'wb');
+				$curl = curl_init($url);
+				curl_setopt($curl, CURLOPT_FILE, $local_handle);
+				curl_exec($curl);
+				$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+				curl_close($curl);
+				fclose($local_handle);
+				if ($http_status !== 200) {
 					$database->Rollback();
 					return static::FAILED_TO_WARM_CACHE;
 				}
-			}
-			
-			$local_handle = fopen($local_path, 'wb');
-			while (!feof($remote_handle)) {
-				$chunk = fread($remote_handle, 1024);
-				fwrite($local_handle, $chunk);
-			}
-			fclose($local_handle);
-			if (empty($remote_handle) === false) {
-				fclose($remote_handle);
-			}
-			if (empty($session) === false) {
-				unset($session);
 			}
 			
 			chmod($local_path, 0640);
