@@ -2052,7 +2052,7 @@ End
 		  Var Items() As Variant
 		  Try
 		    If Board.RawDataAvailable(Self.kReplacementClipboardType) Then
-		      Items = Beacon.ParseJSON(Board.RawData(Self.kEntryClipboardType))
+		      Items = Beacon.ParseJSON(Board.RawData(Self.kReplacementClipboardType))
 		    Else
 		      Items = Beacon.ParseJSON(Board.Text)
 		    End If
