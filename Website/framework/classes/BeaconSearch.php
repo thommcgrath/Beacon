@@ -145,7 +145,7 @@ class BeaconSearch {
 		return $this->raw_response;
 	}
 	
-	public function Sync(): void {
+	public function Sync(): bool {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$rows = $database->Query('SELECT object_id FROM search_sync WHERE action = $1;', 'Delete');
