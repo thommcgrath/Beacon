@@ -16,12 +16,6 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
 	exit;
 }
 
-if (isset($_SESSION['store_currency']) === false) {
-	http_response_code(400);
-	echo json_encode(['error' => true, 'message' => 'Start from https://usebeacon.app/omni'], JSON_PRETTY_PRINT);
-	exit;
-}
-
 if (empty($_POST['email'])) {
 	http_response_code(400);
 	echo json_encode(['error' => true, 'message' => 'Missing email parameter.'], JSON_PRETTY_PRINT);
