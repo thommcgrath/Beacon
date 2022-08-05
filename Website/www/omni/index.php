@@ -12,66 +12,10 @@ BeaconCommon::StartSession();
 
 $database = BeaconCommon::Database();
 $stable_version = BeaconCommon::NewestVersionForStage(3);
-if (isset($_SESSION['store_currency_options']) === false) {
-	$api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'));
-	$spec = $api->GetCountrySpec(BeaconCommon::RemoteCountry());
-	$currency_options = [];
-	$method_options = [];
-	if (is_null($spec)) {
-		$currency_options = ['USD'];
-		$method_options = ['card'];
-		$default_currency = 'USD';
-	} else {
-		foreach ($spec['supported_payment_currencies'] as $currency_code) {
-			$currency_code = strtoupper($currency_code);
-			switch ($currency_code) {
-			case 'USD':
-			case 'EUR':
-				$currency_options[] = $currency_code;
-				break;
-			}
-		}
-		foreach ($spec['supported_payment_methods'] as $method_code) {
-			$method_code = strtolower($method_code);
-			switch ($method_code) {
-			case 'card':
-				$method_options[] = $method_code;
-				break;
-			}
-		}
-		$default_currency = strtoupper($spec['default_currency']);
-		if (in_array($default_currency, $currency_options) === false) {
-			$default_currency = 'USD';
-		}
-	}
-	$_SESSION['store_currency_options'] = $currency_options;
-	$_SESSION['store_currency'] = $default_currency;
-	$_SESSION['store_default_currency'] = $default_currency;
-	$_SESSION['store_allowed_methods'] = $method_options;
-	unset($currency_options, $default_currency, $api, $method_options);
-}
-if (isset($_SESSION['store_currency'])) {
-	$currency = $_SESSION['store_currency'];
-} else {
-	$currency = 'USD';
-}
-
-switch ($currency) {
-case 'USD':
-	$decimal_character = '.';
-	$thousands_character = ',';
-	$currency_symbol = '$';
-	break;
-case 'EUR':
-	$decimal_character = ',';
-	$thousands_character = '.';
-	$currency_symbol = '€';
-	break;
-case 'GBP':
-	$decimal_character = '.';
-	$thousands_character = ',';
-	$currency_symbol = '£';
-}
+$currency = 'USD';
+$decimal_character = '.';
+$thousands_character = ',';
+$currency_symbol = '$';
 
 $results = $database->Query('SELECT products.product_id, product_prices.currency, product_prices.price FROM products INNER JOIN product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currency);
 $product_details = [];
@@ -594,15 +538,9 @@ BeaconTemplate::FinishScript();
 				<div id="checkout_button_cell"><button class="default" id="stripe_checkout_button">Checkout</button></div>
 				<div id="checkout_methods_cell" class="<?php echo strtolower($currency); ?>"><?php
 				
-				$payment_methods = [
-					'universal' => ['mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
-					'usd' => [],
-					'eur' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
-					'gbp' => []
-				];
 				$payment_labels = [
-					'apple' => 'Apple Pay',
-					'google' => 'Google Pay',
+					//'apple' => 'Apple Pay',
+					//'google' => 'Google Pay',
 					'mastercard' => 'Mastercard',
 					'visa' => 'Visa',
 					'amex' => 'American Express',
@@ -615,23 +553,12 @@ BeaconTemplate::FinishScript();
 					'ideal' => 'iDEAL',
 					'p24' => 'Przelewy24'
 				];
-				foreach ($payment_methods as $class => $method_codes) {
-					foreach ($method_codes as $method_code) {
-						echo '<img src="' . BeaconCommon::AssetURI('paymethod_' . $method_code . '.svg') . '" class="' . $class . '" title="' . htmlentities($payment_labels[$method_code]) . '" alt="' . htmlentities($payment_labels[$method_code]) . '">';
-					}
+				foreach ($payment_labels as $method_code => $label) {
+					echo '<img src="' . BeaconCommon::AssetURI('paymethod_' . $method_code . '.svg') . '" class="universal" title="' . htmlentities($label) . '" alt="' . htmlentities($label) . '">';
 				}
 				
 				?></div>
-				<?php
-					if (count($_SESSION['store_currency_options']) > 1) {
-						echo '<div id="checkout_currency_cell">';
-						echo 'Currency: ';
-						foreach ($_SESSION['store_currency_options'] as $currency_code) {
-							echo '<a href="/omni/#' . urlencode($currency_code) . '" class="currency-button' . ($currency_code === $currency ? ' chosen' : '') . '" rel="nofollow" currency="' . htmlentities($currency_code) . '">' . htmlentities($currency_code) . '</a>';
-						}
-						echo '</div>';
-					}
-				?>
+				<p class="smaller">If necessary the price will be converted into CAD, EUR, or GBP at checkout.</p>
 			</td>
 		</tr>
 	</table>

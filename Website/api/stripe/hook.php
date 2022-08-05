@@ -42,7 +42,7 @@ if (is_null($json)) {
 $database = BeaconCommon::Database();
 $data = $json['data'];
 $type = $json['type'];
-$api = new BeaconStripeAPI($api_secret);
+$api = new BeaconStripeAPI($api_secret, '2022-08-01');
 switch ($type) {
 case 'checkout.session.completed':
 	$obj = $data['object'];
@@ -66,7 +66,7 @@ case 'checkout.session.completed':
 		$quantity = $item['quantity'];
 		$line_total = $item['amount_total'];
 		$subtotal = $item['amount_subtotal'];
-		$product_price = $item['price']['unit_amount'];
+		$product_price = $line_total / $quantity;
 		$currency = strtoupper($item['currency']);
 		$tax_total = 0;
 		foreach ($item['taxes'] as $tax) {

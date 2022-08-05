@@ -28,7 +28,7 @@ if (empty($_POST['email'])) {
 	exit;
 }
 $email = strtolower(trim($_POST['email']));
-$currency = strtoupper($_SESSION['store_currency']);
+$currency = 'USD';
 
 $ark_qty = (isset($_POST['ark']) && boolval($_POST['ark']) === true) ? 1 : 0;
 $ark_gift_qty = isset($_POST['ark_gift']) ? min(intval($_POST['ark_gift']), 10) : 0;
@@ -56,7 +56,14 @@ if (isset($_COOKIE['beacon_affiliate'])) {
 $payment = [
 	'client_reference_id' => $client_reference_id,
 	'customer_email' => $email,
-	'payment_method_types' => ['card'],
+	'payment_method_types' => [
+		'card',
+		'ideal',
+		'giropay',
+		'bancontact',
+		'p24',
+		'eps'
+	],
 	'mode' => 'payment',
 	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/'),
 	'cancel_url' => BeaconCommon::AbsoluteURL('/omni/#checkout'),
@@ -64,13 +71,6 @@ $payment = [
 	'automatic_tax' => ['enabled' => 'true'],
 	'line_items' => [],
 ];
-if ($currency === 'EUR') {
-	$payment['payment_method_types'][] = 'ideal';
-	$payment['payment_method_types'][] = 'giropay';
-	$payment['payment_method_types'][] = 'bancontact';
-	$payment['payment_method_types'][] = 'p24';
-	$payment['payment_method_types'][] = 'eps';
-}
 
 $user = null;
 try {

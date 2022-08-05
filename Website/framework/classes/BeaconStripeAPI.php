@@ -2,22 +2,24 @@
 
 class BeaconStripeAPI {
 	private $api_secret = '';
+	private $stripe_version = '';
 	
-	public function __construct(string $api_secret) {
+	public function __construct(string $api_secret, string $stripe_version = '2020-08-27') {
 		$this->api_secret = $api_secret;
+		$this->stripe_version = $stripe_version;
 	}
 	
-	protected function GetURL(string $url, string $stripe_version): ?array {
+	protected function GetURL(string $url): ?array {
 		$json = BeaconCache::Get($url);
 		if (is_null($json) === false) {
 			return $json;
 		}
 		
 		$curl = curl_init($url);
-		$headers = ['Authorization: Bearer ' . $this->api_secret];
-		if (empty($stripe_version) === false) {
-			$headers[] = 'Stripe-Version: ' . $stripe_version;
-		}
+		$headers = [
+			'Authorization: Bearer ' . $this->api_secret,
+			'Stripe-Version: ' . $this->stripe_version
+		];
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$body = curl_exec($curl);
@@ -36,11 +38,11 @@ class BeaconStripeAPI {
 		return $json;
 	}
 	
-	protected function PostURL(string $url, array $formdata, string $stripe_version): ?array {
+	protected function PostURL(string $url, array $formdata): ?array {
 		$curl = curl_init($url);
 		$headers = [
 			'Authorization: Bearer ' . $this->api_secret,
-			'Stripe-Version: ' . $stripe_version
+			'Stripe-Version: ' . $this->stripe_version
 		];
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -57,11 +59,11 @@ class BeaconStripeAPI {
 		}
 	}
 	
-	protected function DeleteURL(string $url, string $stripe_version): ?array {
+	protected function DeleteURL(string $url): ?array {
 		$curl = curl_init($url);
 		$headers = [
 			'Authorization: Bearer ' . $this->api_secret,
-			'Stripe-Version: ' . $stripe_version
+			'Stripe-Version: ' . $this->stripe_version
 		];
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -78,19 +80,19 @@ class BeaconStripeAPI {
 	}
 	
 	public function GetPaymentIntent(string $intent_id): ?array {
-		return $this->GetURL('https://api.stripe.com/v1/payment_intents/' . $intent_id, '2020-08-27');
+		return $this->GetURL('https://api.stripe.com/v1/payment_intents/' . $intent_id);
 	}
 	
 	public function GetLineItems(string $session_id): ?array {
-		return $this->GetURL('https://api.stripe.com/v1/checkout/sessions/' . $session_id . '/line_items?expand%5B%5D=data.discounts&expand%5B%5D=data.taxes', '2020-08-27');
+		return $this->GetURL('https://api.stripe.com/v1/checkout/sessions/' . $session_id . '/line_items?expand%5B%5D=data.discounts&expand%5B%5D=data.taxes');
 	}
 	
 	public function GetCustomer(string $customer_id): ?array {
-		return $this->GetURL('https://api.stripe.com/v1/customers/' . $customer_id, '2020-08-27');
+		return $this->GetURL('https://api.stripe.com/v1/customers/' . $customer_id);
 	}
 	
 	public function GetCustomersByEmail(string $customer_email): ?array {
-		return $this->GetURL('https://api.stripe.com/v1/customers?email=' . urlencode($customer_email), '2020-08-27');
+		return $this->GetURL('https://api.stripe.com/v1/customers?email=' . urlencode($customer_email));
 	}
 	
 	public function GetBillingLocality(string $intent_id): ?string {
@@ -129,7 +131,7 @@ class BeaconStripeAPI {
 			
 	
 	public function UpdateCustomer(string $customer_id, array $fields): bool {
-		$customer = $this->PostURL('https://api.stripe.com/v1/customers/' . $customer_id, $fields, '2020-08-27');
+		$customer = $this->PostURL('https://api.stripe.com/v1/customers/' . $customer_id, $fields);
 		return (is_null($customer) === false);
 	}
 	
@@ -190,15 +192,15 @@ class BeaconStripeAPI {
 	}
 	
 	public function CreateCheckoutSession(array $details): ?array {
-		return $this->PostURL('https://api.stripe.com/v1/checkout/sessions', $details, '2020-08-27');
+		return $this->PostURL('https://api.stripe.com/v1/checkout/sessions', $details);
 	}
 	
 	public function GetCountrySpec(string $country_code): ?array {
-		return $this->GetURL('https://api.stripe.com/v1/country_specs/' . $country_code, '2020-08-27');
+		return $this->GetURL('https://api.stripe.com/v1/country_specs/' . $country_code);
 	}
 	
 	public function UpdatedProductPrice(string $price_id, int $amount): string|bool {
-		$response = $this->GetURL('https://api.stripe.com/v1/prices/' . $price_id, '2020-08-27');
+		$response = $this->GetURL('https://api.stripe.com/v1/prices/' . $price_id);
 		if (is_null($response)) {
 			return false;
 		}
@@ -212,7 +214,7 @@ class BeaconStripeAPI {
 		}
 		
 		// See if there is already an archived price
-		$response = $this->GetURL('https://api.stripe.com/v1/prices/search?query=' . urlencode("product:'$product_id' AND currency:'$currency'"), '2020-08-27');
+		$response = $this->GetURL('https://api.stripe.com/v1/prices/search?query=' . urlencode("product:'$product_id' AND currency:'$currency'"));
 		if (is_null($response)) {
 			return false;
 		}
@@ -225,7 +227,7 @@ class BeaconStripeAPI {
 			$new_price_id = $price['id'];
 			if ($price['active'] == false) {
 				// Need to reactivate the price
-				$response = $this->PostURL('https://api.stripe.com/v1/prices/' . $new_price_id, ['active' => 'true'], '2020-08-27');
+				$response = $this->PostURL('https://api.stripe.com/v1/prices/' . $new_price_id, ['active' => 'true']);
 				if (is_null($response)) {
 					return false;
 				}
@@ -240,7 +242,7 @@ class BeaconStripeAPI {
 				'currency' => $currency,
 				'product' => $product_id,
 				'tax_behavior' => 'exclusive'
-			], '2020-08-27');
+			]);
 			
 			if (is_null($response)) {
 				return false;
@@ -250,7 +252,7 @@ class BeaconStripeAPI {
 		}
 		
 		// Deactivate the old price
-		$response = $this->PostURL('https://api.stripe.com/v1/prices/' . $price_id, ['active' => 'false'], '2020-08-27');
+		$response = $this->PostURL('https://api.stripe.com/v1/prices/' . $price_id, ['active' => 'false']);
 		
 		return $new_price_id;
 	}
