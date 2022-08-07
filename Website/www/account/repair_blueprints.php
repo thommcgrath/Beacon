@@ -1,6 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
+header('Cache-Control: no-cache');
 
 $session = BeaconSession::GetFromCookie();
 if (is_null($session)) {

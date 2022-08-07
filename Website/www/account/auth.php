@@ -1,6 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
+header('Cache-Control: no-cache');
 
 $return_uri = isset($_GET['return']) ? $_GET['return'] : '/';
 if (stripos($return_uri, '://') === false) {

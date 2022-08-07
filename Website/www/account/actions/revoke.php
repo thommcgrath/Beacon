@@ -6,6 +6,7 @@ if (is_null($output_type)) {
 	$output_type = 'text/html';
 }
 header('Content-Type: ' . $output_type);
+header('Cache-Control: no-cache');
 
 if (strtoupper($_SERVER['REQUEST_METHOD']) != 'POST') {
 	ExitWithError(405, 'Must use POST request');

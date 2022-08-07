@@ -1,6 +1,7 @@
 <?php
 	
 require(dirname(__FILE__, 3) . '/framework/loader.php');
+header('Cache-Control: no-cache');
 
 $session = BeaconSession::GetFromCookie();
 if (is_null($session)) {
@@ -8,8 +9,6 @@ if (is_null($session)) {
 	exit;
 }
 $session->Renew();
-
-header('Cache-Control: no-cache');
 
 $user = BeaconUser::GetByUserID($session->UserID());
 BeaconTemplate::SetTitle('Account: ' . $user->Username());
