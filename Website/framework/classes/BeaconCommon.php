@@ -1,31 +1,48 @@
 <?php
 
 abstract class BeaconCommon {
-	protected static $database = null;
-	protected static $globals = array();
-	protected static $min_version = -1;
-	protected static $versions = [];
+	const DBKEY_READONLY = 'reader';
+	const DBKEY_WRITABLE = 'writer';
 	
-	public static function GenerateUUID() {
+	protected static ?BeaconDatabase $database = null;
+	protected static array $globals = [];
+	protected static int $min_version = -1;
+	protected static array $versions = [];
+	
+	public static function GenerateUUID(): string {
 		$data = random_bytes(16);
 		$data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
 		$data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 	
-	public static function StartSession() {
+	public static function StartSession(): bool {
 		switch (session_status()) {
 		case PHP_SESSION_NONE:
-			session_name('beacon');
+			$session_name = 'beacon';
+			session_name($session_name);
 			session_set_cookie_params([
-				'lifetime' => 3600,
-				'path' => '/',
-				'domain' => '',
+				'path' => '/account',
+				'domain' => '.usebeacon.app',
 				'secure' => true,
 				'httponly' => true,
 				'samesite' => 'Lax'
 			]);
-			return session_start();
+			if (session_start()) {
+				$paths = ['/oauth', '/omni'];
+				$session_id = session_id();
+				foreach ($paths as $path) {
+					setcookie($session_name, $session_id, [
+						'path' => $path,
+						'domain' => '.usebeacon.app',
+						'secure' => true,
+						'httponly' => true,
+						'samesite' => 'Lax'
+					]);	
+				}
+			} else {
+				return false;
+			}
 		case PHP_SESSION_ACTIVE:
 			return true;
 		default:
@@ -33,27 +50,27 @@ abstract class BeaconCommon {
 		}
 	}
 	
-	public static function EnvironmentName() {
-		return basename(dirname(__FILE__, 4));
+	public static function EnvironmentName(): string {
+		return self::GetGlobal('Environment_Name', 'bork');
 	}
 	
-	public static function InProduction() {
-		return static::EnvironmentName() === 'live';
+	public static function InProduction(): bool {
+		return self::GetGlobal('Production', false);
 	}
 	
-	public static function InDevelopment() {
-		return static::EnvironmentName() !== 'live';
+	public static function InDevelopment(): bool {
+		return !self::InProduction();
 	}
 	
-	public static function FrameworkPath() {
+	public static function FrameworkPath(): string {
 		return dirname(__FILE__, 2);
 	}
 	
-	public static function WebRoot() {
+	public static function WebRoot(): string {
 		return dirname(__FILE__, 3) . '/www';
 	}
 	
-	public static function MinVersion() {
+	public static function MinVersion(): int {
 		if (static::$min_version == -1) {
 			if (static::InDevelopment()) {
 				static::$min_version = 99999999;
@@ -64,7 +81,7 @@ abstract class BeaconCommon {
 		return static::$min_version;
 	}
 	
-	public static function NewestVersionForStage(int $stage) {
+	public static function NewestVersionForStage(int $stage): int {
 		if (array_key_exists($stage, static::$versions) === false) {
 			$database = static::Database();
 			$builds = $database->Query('SELECT build_number FROM updates WHERE stage >= $1 ORDER BY build_number DESC LIMIT 1;', $stage);
@@ -75,13 +92,13 @@ abstract class BeaconCommon {
 		return static::$versions[$stage];
 	}
 	
-	public static function NewestUpdateTimestamp(int $build = 99999999) {
+	public static function NewestUpdateTimestamp(int $build = 99999999): DateTime {
 		$database = static::Database();
 		$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM ark.objects INNER JOIN ark.mods ON (objects.mod_id = mods.mod_id) WHERE GREATEST(objects.min_version, mods.min_version) <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM ark.deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM ark.game_variables) UNION (SELECT MAX(last_update) AS stamp FROM ark.mods WHERE min_version <= $1 AND confirmed = TRUE AND include_in_deltas = TRUE) UNION (SELECT MAX(maps.last_update) AS stamp FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(last_update) AS stamp FROM ark.events) UNION (SELECT MAX(last_update) AS stamp FROM ark.colors) UNION (SELECT MAX(last_update) AS stamp FROM ark.color_sets)) AS merged;', $build);
 		return new DateTime($results->Field('stamp'));
 	}
 	
-	public static function AssetURI(string $asset_filename) {
+	public static function AssetURI(string $asset_filename): string {
 		$filename = pathinfo($asset_filename, PATHINFO_FILENAME);
 		$extension = pathinfo($asset_filename, PATHINFO_EXTENSION);
 		$public_extension = $extension;
@@ -110,18 +127,15 @@ abstract class BeaconCommon {
 		return $uri_path . '?mtime=' . filemtime($asset_path);
 	}
 	
-	public static function Database() {
-		if (self::$database === null) {
-			trigger_error('Database has not been setup', E_USER_ERROR);
-		}
+	public static function Database(): ?BeaconDatabase {
 		return self::$database;
 	}
 	
-	public static function SetupDatabase(string $databasename, string $username, string $password) {
-		self::$database = new BeaconPostgreSQLDatabase('127.0.0.1', 5432, $databasename, $username, $password);
+	public static function SetupDatabase(BeaconDatabaseSettings $write_settings, BeaconDatabaseSettings $read_settings): void {
+		self::$database = new BeaconPostgreSQLDatabase(BeaconDatabase::CONNECTION_READONLY, $write_settings, $read_settings);
 	}
 	
-	public static function GenerateRandomKey(int $length = 12, string $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+	public static function GenerateRandomKey(int $length = 12, string $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'): string {
 		$charactersLength = strlen($characters);
 		$randomString = '';
 		for ($i = 0; $i < $length; $i++) {
@@ -130,7 +144,7 @@ abstract class BeaconCommon {
 		return $randomString;
 	}
 	
-	public static function IsUUID(&$input) {
+	public static function IsUUID(&$input): bool {
 		if (!is_string($input)) {
 			return false;
 		}
@@ -148,12 +162,12 @@ abstract class BeaconCommon {
 		}
 	}
 	
-	public static function IsAssoc(array $arr) {
+	public static function IsAssoc(array $arr): bool {
 	    if (array() === $arr) return false;
 	    return array_keys($arr) !== range(0, count($arr) - 1);
 	}
 	
-	public static function Redirect(string $destination, bool $temp = false) {
+	public static function Redirect(string $destination, bool $temp = true): void {
 		header('Location: ' . $destination);
 		if ($temp === true) {
 			http_response_code(302);
@@ -165,37 +179,19 @@ abstract class BeaconCommon {
 		exit;
 	}
 	
-	public static function Domain() {
-		if (isset($_SERVER['HTTP_HOST']) && (strtolower(substr($_SERVER['HTTP_HOST'], -12)) === 'beaconapp.cc')) {
-			return 'beaconapp.cc';
-		} else {
-			return 'usebeacon.app';
-		}
+	public static function Domain(): string {
+		return self::GetGlobal('Web_Domain', '');
 	}
 	
-	public static function APIDomain() {
-		$domain = self::Domain();
-		$environment = self::EnvironmentName();
-		if ($environment === 'live') {
-			return 'api.' . $domain;
-		} elseif ($domain === 'beaconapp.cc') {
-			return 'api.' . $environment . '.' . $domain;
-		} else {
-			return $environment . '-api.' . $domain;
-		}
+	public static function APIDomain(): string {
+		return self::GetGlobal('API_Domain', '');
 	}
 	
-	public static function AbsoluteURL(string $path) {
-		// Because the host can be spoofed, only trust it in development.
-		if (self::InProduction()) {
-			$url = 'https://' . self::Domain() . $path;
-		} else {
-			$url = 'https://' . self::EnvironmentName() . '.' . self::Domain() . $path;
-		}
-		return $url;
+	public static function AbsoluteURL(string $path): string {
+		return 'https://' . self::Domain() . $path;
 	}
 	
-	public static function HasAllKeys(array $arr, ...$keys) {
+	public static function HasAllKeys(array $arr, ...$keys): bool {
 		foreach ($keys as $key) {
 			if (!array_key_exists($key, $arr)) {
 				return false;
@@ -204,7 +200,7 @@ abstract class BeaconCommon {
 		return true;
 	}
 	
-	public static function HasAnyKeys(array $arr, ...$keys) {
+	public static function HasAnyKeys(array $arr, ...$keys): bool {
 		foreach ($keys as $key) {
 			if (array_key_exists($key, $arr)) {
 				return true;
@@ -213,11 +209,11 @@ abstract class BeaconCommon {
 		return false;
 	}
 	
-	public static function SetGlobal(string $key, $value) {
+	public static function SetGlobal(string $key, mixed $value): void {
 		self::$globals[$key] = $value;
 	}
 	
-	public static function GetGlobal(string $key, $default = null) {
+	public static function GetGlobal(string $key, mixed $default = null): mixed {
 		if (array_key_exists($key, self::$globals)) {
 			return self::$globals[$key];
 		} else {
@@ -225,13 +221,13 @@ abstract class BeaconCommon {
 		}
 	}
 	
-	public static function PostSlackMessage($message) {
-		self::PostSlackRaw(json_encode(array('text' => $message)));
+	public static function PostSlackMessage(string $message): void {
+		self::PostSlackRaw(json_encode(['text' => $message]));
 	}
 	
-	public static function PostSlackRaw(string $raw) {
+	public static function PostSlackRaw(string $raw): void {
 		$url = self::GetGlobal('Slack_WebHook_URL');
-		if ($url === null) {
+		if (is_null($url)) {
 			trigger_error('Config file did not specify Slack_WebHook_URL', E_USER_ERROR);
 		}
 	
@@ -239,20 +235,20 @@ abstract class BeaconCommon {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $raw);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 		curl_exec($ch);
 		curl_close($ch);
 	}
 	
-	public static function IsMacOS() {
+	public static function IsMacOS(): bool {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'Macintosh') !== false;
 	}
 	
-	public static function IsWindows() {
+	public static function IsWindows(): bool {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'Windows NT') !== false;
 	}
 	
-	public static function IsWindows64() {
+	public static function IsWindows64(): bool {
 		$agent = $_SERVER['HTTP_USER_AGENT'];
 		$possibles = array('x86_64', 'x86-64', 'Win64', 'x64;', 'amd64', 'AMD64', 'WOW64', 'x64_64');
 		foreach ($possibles as $possible) {
@@ -263,23 +259,23 @@ abstract class BeaconCommon {
 		return false;
 	}
 	
-	public static function IsLinux() {
+	public static function IsLinux(): bool {
 		return (stristr($_SERVER['HTTP_USER_AGENT'], 'Linux') !== false) && (stristr($_SERVER['HTTP_USER_AGENT'], 'Android') === false);
 	}
 	
-	public static function IsiOS() {
+	public static function IsiOS(): bool {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false;
 	}
 	
-	public static function IsAndroid() {
+	public static function IsAndroid(): bool {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'Android') !== false;
 	}
 	
-	public static function IsWindowsPhone() {
+	public static function IsWindowsPhone(): bool {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'Windows Phone OS') !== false;
 	}
 	
-	public static function ArrayToEnglish(array $items, string $conjunction = 'and') {
+	public static function ArrayToEnglish(array $items, string $conjunction = 'and'): string {
 		if (count($items) == 0) {
 			return '';
 		} elseif (count($items) == 1) {
@@ -292,7 +288,7 @@ abstract class BeaconCommon {
 		}
 	}
 	
-	public static function ResolveObjectIdentifier(string $object_id, int $workshop_id = 0) {
+	public static function ResolveObjectIdentifier(string $object_id, int $workshop_id = 0): ?object {
 		// $object_id could be a UUID or a class string. Only blueprints have class strings,
 		// but if supplied with a UUID of a blueprint, we want the blueprint object back.
 		// In fact, we always want the most specific class possible for the given input.
@@ -374,7 +370,7 @@ abstract class BeaconCommon {
 		}
 	}
 	
-	public static function CurrentContentType() {
+	public static function CurrentContentType(): string {
 		$headers = headers_list();
 		foreach ($headers as $header) {
 			if (stripos($header, 'Content-Type') !== false) {
@@ -385,11 +381,11 @@ abstract class BeaconCommon {
 		return 'text/html';
 	}
 	
-	public static function CurrentOmniVersion() {
+	public static function CurrentOmniVersion(): int {
 		return 1;
 	}
 	
-	public static function BestResponseContentType($supported_types = null) {
+	public static function BestResponseContentType(mixed $supported_types = null): ?string {
 		if (!isset($_SERVER['HTTP_ACCEPT'])) {
 			if (is_array($supported_types) && count($supported_types) > 0) {
 				return $supported_types[0];
@@ -426,7 +422,7 @@ abstract class BeaconCommon {
 		return null;
 	}
 	
-	public static function BuildNumberToVersion(int $build_number) {
+	public static function BuildNumberToVersion(int $build_number): string {
 		if ($build_number < 10000000) {
 			$database = static::Database();
 			$results = $database->Query('SELECT build_display FROM updates WHERE build_number = $1;', $build_number);
@@ -472,7 +468,7 @@ abstract class BeaconCommon {
 		return $major_version . '.' . $minor_version . '.' . $bug_version . $prerelease;
 	}
 	
-	public static function VersionToBuildNumber(string $version) {
+	public static function VersionToBuildNumber(string $version): int {
 		if (preg_match('/^(\d+)\.(\d+)(\.(\d+))?(([ab\.]+)(\d+))?$/', $version, $matches) == 1) {
 			$major_version = intval($matches[1]);
 			$minor_version = intval($matches[2]);
@@ -505,7 +501,7 @@ abstract class BeaconCommon {
 		return 0;
 	}
 	
-	public static function BooleanValue($value) {
+	public static function BooleanValue(mixed $value): bool {
 		if (is_bool($value) === true) {
 			return $value;
 		}
@@ -514,7 +510,7 @@ abstract class BeaconCommon {
 		return ($boolval === null ? false : $boolval);
 	}
 	
-	public static function SecondsToEnglish(int $seconds, bool $short = false, int $largest_unit = 86400) {
+	public static function SecondsToEnglish(int $seconds, bool $short = false, int $largest_unit = 86400): string {
 		$parts = array();
 		if ($seconds > 86400 && $largest_unit >= 86400) {
 			$days = floor($seconds / 86400);
@@ -583,11 +579,11 @@ abstract class BeaconCommon {
 		}
 	}
 	
-	public static function CreateGiftCode() {
+	public static function CreateGiftCode(): string {
 		return BeaconCommon::GenerateRandomKey(9, '23456789ABCDEFGHJKMNPQRSTUVWXYZ');
 	}
 	
-	public static function SignDownloadURL(string $url, int $expires = 21600) {
+	public static function SignDownloadURL(string $url, int $expires = 21600): string {
 		if (strtolower(substr($url, 0, 29)) === 'https://releases.beaconapp.cc') {
 			$path = substr($url, 29);
 		} elseif (strtolower(substr($url, 0, 30)) === 'https://releases.usebeacon.app') {
@@ -606,7 +602,7 @@ abstract class BeaconCommon {
 		return 'https://releases.' . self::Domain() . $path . "?token=$token&expires=$expires&bcdn_filename=" . basename($url);
 	}
 	
-	public static function IsCompressed(string $content, bool $path_mode = false) {
+	public static function IsCompressed(string $content, bool $path_mode = false): bool {
 		if ($path_mode) {
 			$path = $content;
 			$handle = fopen($path, 'rb');
@@ -619,7 +615,7 @@ abstract class BeaconCommon {
 		return count($arr) == 2 && $arr[1] == 0x1f && $arr[2] == 0x8b;
 	}
 	
-	public static function FormatFloat(float $num, int $min_decimals = 1, int $max_decimals = 4) {
+	public static function FormatFloat(float $num, int $min_decimals = 1, int $max_decimals = 4): string {
 		for ($i = $min_decimals; $i < $max_decimals; $i++) {
 			$pow = pow(10, $i);
 			$test = $num * $pow;
@@ -630,7 +626,7 @@ abstract class BeaconCommon {
 		return number_format($num, $i);
 	}
 	
-	public static function IsHex($content) {
+	public static function IsHex($content): bool {
 		if (!is_string($content)) {
 			return false;
 		}
@@ -638,24 +634,53 @@ abstract class BeaconCommon {
 		return (preg_match('/^[a-fA-F0-9]+$/', $content) === 1);
 	}
 	
-	public static function CompressedResponseAllowed() {
+	public static function CompressedResponseAllowed(): bool {
 		return (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && stripos(strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'gzip') !== false);
 	}
 	
-	public static function RemoteAddr() {
+	public static function AnonymizeIP(string $addr): string {
+		$unknown_addr = str_contains($addr, ':') ? '::' : '0.0.0.0';
+		
+		$converted = @inet_pton($addr);
+		if ($converted === false) {
+			return $unknown_addr;
+		}
+		
+		if (strlen($converted) === 4) {
+			$converted = substr($converted, 0, 3) . "\0";
+		} elseif (strlen($converted) === 16) {
+			$converted = substr($converted, 0, 6) . "\0\0\0\0\0\0\0\0\0\0";
+		} else {
+			return $unknown_addr;
+		}
+		
+		$anon = @inet_ntop($converted);
+		if ($anon === false) {
+			return $unknown_addr;
+		}
+		return $anon;
+	}
+	
+	public static function RemoteAddr(bool $anonymous = true): string {
+		$addr = '';
 		if (empty($_SERVER['HTTP_CF_CONNECTING_IP']) === false) {
-			return $_SERVER['HTTP_CF_CONNECTING_IP'];
+			$addr = $_SERVER['HTTP_CF_CONNECTING_IP'];
 		} elseif (empty($_SERVER['HTTP_TRUE_CLIENT_IP']) === false) {
-			return $_SERVER['HTTP_TRUE_CLIENT_IP'];
+			$addr = $_SERVER['HTTP_TRUE_CLIENT_IP'];
 		} elseif (empty($_SERVER['HTTP_X_FORWARDED_FOR']) === false) {
 			$arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-			return $arr[0];
+			$addr = $arr[0];
 		} else {
-			return $_SERVER['REMOTE_ADDR'];
+			$addr = $_SERVER['REMOTE_ADDR'];
+		}
+		if ($anonymous) {
+			return self::AnonymizeIP($addr);
+		} else {
+			return $addr;
 		}
 	}
 	
-	public static function RemoteCountry() {
+	public static function RemoteCountry(): string {
 		if (empty($_SERVER['HTTP_CF_IPCOUNTRY']) === false) {
 			return $_SERVER['HTTP_CF_IPCOUNTRY'];
 		} else {
@@ -663,7 +688,7 @@ abstract class BeaconCommon {
 		}
 	}
 	
-	public static function TeamsEnabled() {
+	public static function TeamsEnabled(): bool {
 		return false;
 		$enabled = self::GetGlobal('Teams Enabled', false);
 		if ($enabled === false) {
@@ -673,7 +698,7 @@ abstract class BeaconCommon {
 		return isset($_SERVER['HTTP_HOST']) && substr($_SERVER['HTTP_HOST'], -13) === 'usebeacon.app';
 	}
 	
-	public static function BeaconVersion() {
+	public static function BeaconVersion(): int {
 		$build_number = 0;
 		
 		if (static::IsBeacon()) {
@@ -693,11 +718,11 @@ abstract class BeaconCommon {
 		return $build_number;
 	}
 	
-	public static function IsBeacon() {
+	public static function IsBeacon(): bool {
 		return (isset($_SERVER['HTTP_USER_AGENT']) && substr($_SERVER['HTTP_USER_AGENT'], 0, 7) === 'Beacon/');
 	}
 	
-	public static function BuildDateForVersion($version) {
+	public static function BuildDateForVersion(mixed $version): int {
 		if (is_string($version)) {
 			$version = self::VersionToBuildNumber($version);
 		}

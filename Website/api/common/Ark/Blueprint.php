@@ -78,7 +78,7 @@ class Blueprint extends \Ark\GenericObject {
 		return parent::ListValueToParameter($value, $possible_columns);
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['availability'] = intval($this->availability);
 		$json['path'] = $this->path;

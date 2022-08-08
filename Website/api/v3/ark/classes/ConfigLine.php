@@ -20,7 +20,7 @@ class ConfigLine extends \BeaconAPI\Ark\ConfigLine {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['resource_url'] = \BeaconAPI::URL('ark/ini_option/' . urlencode($this->ObjectID()));
 		$json['uwp_changes'] = $this->uwp_changes;

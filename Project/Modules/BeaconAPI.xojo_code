@@ -14,7 +14,7 @@ Protected Module BeaconAPI
 	#tag Method, Flags = &h1
 		Protected Function URL(Path As String = "/", Versioned As Boolean = True) As String
 		  #if DebugBuild And App.ForceLiveData = False
-		    Var Domain As String = "https://lab-api.usebeacon.app"
+		    Var Domain As String = "https://local-api.usebeacon.app"
 		  #else
 		    Var Domain As String = "https://api.usebeacon.app"
 		  #endif

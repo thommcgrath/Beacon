@@ -93,7 +93,7 @@ class Engram extends \Ark\Blueprint {
 		return $this->recipe;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['can_blueprint'] = $this->CanBlueprint();
 		$json['entry_string'] = $this->EntryString();

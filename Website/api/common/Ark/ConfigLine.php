@@ -84,7 +84,7 @@ class ConfigLine extends \Ark\GenericObject {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['native_editor_version'] = $this->native_editor_version;
 		$json['file'] = $this->file;

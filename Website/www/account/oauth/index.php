@@ -60,6 +60,6 @@ default:
 	exit;
 }
 
-BeaconCommon::Redirect($url, true);
+BeaconCommon::Redirect($url);
 
 ?>

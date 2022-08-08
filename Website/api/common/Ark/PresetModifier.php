@@ -24,7 +24,7 @@ class PresetModifier extends \Ark\GenericObject {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['pattern'] = $this->pattern;
 		return $json;

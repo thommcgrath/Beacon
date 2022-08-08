@@ -3,6 +3,7 @@
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
 BeaconTemplate::SetTitle('Thanks for purchasing!');
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 BeaconTemplate::StartScript(); ?>
 <script>
 	
@@ -68,68 +69,6 @@ function check_purchase_status(client_reference_id) {
 </script>
 <?php
 BeaconTemplate::FinishScript();
-
-BeaconTemplate::StartStyles(); ?>
-<style type="text/css">
-
-#checking_container {
-	background-color: rgba(0, 0, 0, 0.02);
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	padding: 12px;
-	border-radius: 6px;
-	text-align: center;
-}
-
-#checking_spinner {
-	vertical-align: middle;
-	margin-right: 12px;
-}
-
-#checking_text {
-	line-height: 1.5em;
-	font-weight: bold;
-}
-
-#checking_subtext {
-	font-size: smaller;
-	color: rgba(0, 0, 0, 0.8);
-}
-
-#purchase_confirmed {
-	display: none;
-}
-
-#purchase_unknown {
-	display: none;
-}
-
-#purchase_delayed {
-	margin-top: 30px;
-	display: none;
-}
-
-#signin_instructions {
-	display: none;
-	margin-top: 30px;
-}
-
-.welcome_content {
-	width: 100%;
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 500px;
-	box-sizing: border-box;
-}
-
-.push {
-	clear: both;
-	overflow: hidden;
-	height: 0px;
-}
-
-</style>
-<?php
-BeaconTemplate::FinishStyles();
 
 ?><h1 class="text-center">Thanks for purchasing Beacon Omni!</h1>
 <div id="checking_container" class="welcome_content">

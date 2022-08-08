@@ -58,7 +58,7 @@ abstract class Project implements \JsonSerializable {
 		];
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		throw new \Exception('Subclasses need to override.');
 	}
 		

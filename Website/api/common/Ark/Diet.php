@@ -25,7 +25,7 @@ class Diet extends \Ark\GenericObject implements \ArrayAccess {
 		return 'diets';
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['engram_ids'] = $this->engram_ids;
 		return $json;

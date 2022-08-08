@@ -5,7 +5,7 @@ class BeaconLogin {
 	public $with_remember_me = true;
 	public $session_consumer_uri = '';
 	
-	public function Show() {
+	public function Show(): void {
 		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('login.scss'));
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
 		
@@ -52,13 +52,13 @@ class BeaconLogin {
 		<?php
 	}
 	
-	public static function GenerateUsername() {
+	public static function GenerateUsername(): string {
 		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT generate_username() AS username;');
 		return $results->Field('username');
 	}
 	
-	public static function GenerateVerificationCode(string $email, $key = null) {
+	public static function GenerateVerificationCode(string $email, ?string $key = null): ?string {
 		if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			return null;
 		}
@@ -78,7 +78,7 @@ class BeaconLogin {
 		return $code;
 	}
 	
-	public static function GenerateVerificationLink(string $email, $password = null) {
+	public static function GenerateVerificationLink(string $email, ?string $password = null): ?string {
 		$code = static::GenerateVerificationCode($email);
 		if (is_null($code)) {
 			return null;
@@ -96,7 +96,7 @@ class BeaconLogin {
 		return BeaconCommon::AbsoluteURL($path);
 	}
 	
-	public static function SendVerification(string $email, $key = null, string $subject = 'Enter code $code in Beacon to verify your email address') {
+	public static function SendVerification(string $email, ?string $key = null, string $subject = 'Enter code $code in Beacon to verify your email address'): bool {
 		$code = static::GenerateVerificationCode($email, $key);
 		if (is_null($code)) {
 			return false;
@@ -105,13 +105,13 @@ class BeaconLogin {
 		$subject = str_replace('$code', $code, $subject);
 		$code_spaced = implode(' ', str_split($code));
 		$url = BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code) . (is_null($key) ? '' : '&key=' . urlencode($key)));
-		$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, simply reply to this email." . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device at the following ip address: ' . BeaconCommon::RemoteAddr() : '');
-		$html = '<center>You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.<br /><br /><span style="font-weight:bold;font-size: x-large">' . $code_spaced . '</span><br /><br />Alternatively, you may use the following link to continue the process automatically:<br /><br /><a href="' . $url . '">' . $url . '</a><br /><br />If you need help, simply reply to this email.' . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device at the following ip address: <span style="font-weight:bold">' . htmlentities(BeaconCommon::RemoteAddr()) . '</span>' : '') . '</center>';
+		$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, simply reply to this email." . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to ' . BeaconCommon::RemoteAddr() : '');
+		$html = '<center>You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.<br /><br /><span style="font-weight:bold;font-size: x-large">' . $code_spaced . '</span><br /><br />Alternatively, you may use the following link to continue the process automatically:<br /><br /><a href="' . $url . '">' . $url . '</a><br /><br />If you need help, simply reply to this email.' . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to <span style="font-weight:bold">' . htmlentities(BeaconCommon::RemoteAddr()) . '</span>' : '') . '</center>';
 		
 		return BeaconEmail::SendMail($email, $subject, $plain, $html);
 	}
 	
-	public static function SendTeamWelcome(string $email, string $password, string $parent, string $subject = 'Welcome to your Beacon Team') {
+	public static function SendTeamWelcome(string $email, string $password, string $parent, string $subject = 'Welcome to your Beacon Team'): bool {
 		$link = static::GenerateVerificationLink($email, $password);
 		if (is_null($link)) {
 			return false;
@@ -123,7 +123,7 @@ class BeaconLogin {
 		return BeaconEmail::SendMail($email, $subject, $plain, $html);
 	}
 	
-	public static function SendForcedPasswordChangeEmail(string $email, string $password, string $subject = 'Please change your Beacon account password') {
+	public static function SendForcedPasswordChangeEmail(string $email, string $password, string $subject = 'Please change your Beacon account password'): bool {
 		$link = static::GenerateVerificationLink($email, $password);
 		if (is_null($link)) {
 			return false;

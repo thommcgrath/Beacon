@@ -9,7 +9,7 @@ class Engram extends \BeaconAPI\Ark\Engram {
 		return $columns;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		
 		// legacy support

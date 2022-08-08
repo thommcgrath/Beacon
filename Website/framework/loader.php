@@ -144,7 +144,7 @@ BeaconErrors::StartWatching();
 	$policy = implode(' ', $groups);
 	
 	header('Content-Security-Policy: ' . $policy);
-	header('Cache-Control: no-cache');
+	header('Cache-Control: public, max-age=3600, must-revalidate');
 })();
 
 BeaconTemplate::Start();

@@ -7,7 +7,7 @@ class BeaconWorkshopItem {
 	protected $name;
 	protected $body;
 	
-	public static function URLForModID(int $mod_id) {
+	public static function URLForModID(int $mod_id): string {
 		if ($mod_id < 0) {
 			return 'http://store.steampowered.com/app/' . abs($mod_id);
 		} else {
@@ -15,7 +15,7 @@ class BeaconWorkshopItem {
 		}
 	}
 	
-	public static function Load(int $mod_id) {
+	public static function Load(int $mod_id): ?static {
 		$http = curl_init();
 		curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($http, CURLOPT_URL, self::URLForModID($mod_id));
@@ -55,26 +55,26 @@ class BeaconWorkshopItem {
 		
 		$description_html = $description->ownerDocument->saveHTML($description);
 		
-		$item = new self();
+		$item = new static();
 		$item->mod_id = $mod_id;
 		$item->name = $name;
 		$item->body = $description_html;
 		return $item;
 	}
 	
-	public function ModID() {
+	public function ModID(): string {
 		return $this->mod_id;
 	}
 	
-	public function Name() {
+	public function Name(): string {
 		return $this->name;
 	}
 	
-	public function Body() {
+	public function Body(): string {
 		return $this->body;
 	}
 	
-	public function ContainsString(string $needle) {
+	public function ContainsString(string $needle): bool {
 		return strpos($this->body, $needle) !== false;
 	}
 }

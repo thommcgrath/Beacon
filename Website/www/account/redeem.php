@@ -16,18 +16,7 @@ header('Cache-Control: no-cache');
 
 $database = BeaconCommon::Database();
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-#redeem_form {
-	width: 600px;
-	max-width: 100%;
-	margin-left: auto;
-	margin-right: auto;
-}	
-
-</style><?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 	
 $process_step = 'start';
 if (isset($_REQUEST['process'])) {
@@ -52,7 +41,7 @@ case 'redeem-confirm':
 	$user = BeaconUser::GetByUserID($session->UserID());
 	if ($user->IsBanned()) {
 		BeaconCommon::PostSlackMessage('Banned account ' . $user->UserID() . ' tried to redeem gift code ' . $code . '.');
-		BeaconCommon::Redirect('https://www.youtube.com/watch?v=sKbP-M8vVtw');
+		BeaconCommon::Redirect('https://www.youtube.com/watch?v=sKbP-M8vVtw', false);
 	}
 	
 	$user = BeaconUser::GetByUserID($session->UserID());
@@ -60,7 +49,7 @@ case 'redeem-confirm':
 		// Actually redeem it
 		if ($user->IsBanned()) {
 			BeaconCommon::PostSlackMessage('Banned account ' . $user->UserID() . ' tried to redeem gift code ' . $code . '.');
-			BeaconCommon::Redirect('https://www.youtube.com/watch?v=sKbP-M8vVtw');
+			BeaconCommon::Redirect('https://www.youtube.com/watch?v=sKbP-M8vVtw', false);
 		}
 		
 		$email_id = $user->EmailID();

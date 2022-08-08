@@ -33,7 +33,7 @@ class LootSourceIcon extends \Ark\GenericObject {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['icon_data'] = base64_encode($this->icon_data);
 		return $json;

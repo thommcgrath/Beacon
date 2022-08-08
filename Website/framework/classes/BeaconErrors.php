@@ -1,37 +1,37 @@
 <?php
 
 abstract class BeaconErrors {
-	private static $handlers = array();
+	private static $handlers = [];
 	private static $secure_mode = true;
 	
-	public static function SecureMode() {
+	public static function SecureMode(): bool {
 		return static::$secure_mode;
 	}
 	
-	public static function SetSecureMode(bool $secure_mode) {
+	public static function SetSecureMode(bool $secure_mode): void {
 		static::$secure_mode = $secure_mode;
 	}
 	
-	public static function AddHandler(callable $handler) {
+	public static function AddHandler(callable $handler): void {
 		array_unshift(static::$handlers, $handler);
 	}
 	
-	public static function RemoveLastHandler() {
+	public static function RemoveLastHandler(): void {
 		array_shift(static::$handlers);
 	}
 	
-	public static function StartWatching() {
+	public static function StartWatching(): void {
 		ini_set('display_errors', '1');
 		error_reporting(E_ALL);
-		set_exception_handler(array('BeaconErrors', 'HandleException'));
-		set_error_handler(array('BeaconErrors', 'HandleError'), E_ALL);
+		set_exception_handler(['BeaconErrors', 'HandleException']);
+		set_error_handler(['BeaconErrors', 'HandleError'], E_ALL);
 	}
 	
-	public static function HandleException(Throwable $err) {
+	public static function HandleException(Throwable $err): void {
 		static::LogTrace(get_class($err), html_entity_decode($err->getMessage(), ENT_COMPAT, 'UTF-8'), $err->getFile(), $err->getLine());
 	}
 	
-	public static function HandleError(int $errno, string $errstr, string $errfile, int $errline) {
+	public static function HandleError(int $errno, string $errstr, string $errfile, int $errline): bool {
 		if ((error_reporting() & $errno) !== $errno) {
 			return true;
 		}
@@ -54,21 +54,21 @@ abstract class BeaconErrors {
 		return true;
 	}
 	
-	protected static function LogTrace(string $type, string $message, string $file, int $line) {
+	protected static function LogTrace(string $type, string $message, string $file, int $line): void {
 		// explain it
 		$description = 'Unhandled ' . $type . ' in ' . $file . ' at line ' . $line . ': ' . $message;
 		
 		// collect the stack and remove the noise
-		$ignore_methods = array('HandleException', 'HandleError', 'LogTrace', 'trigger_error');
+		$ignore_methods = ['HandleException', 'HandleError', 'LogTrace', 'trigger_error'];
 		$stack = debug_backtrace();
 		while ((count($stack) > 0) && (in_array($stack[0]['function'], $ignore_methods))) {
 			array_shift($stack);
 		}
 		
 		// assemble the trace
-		$trace = array();
+		$trace = [];
 		foreach ($stack as $frame) {
-			$values = array();
+			$values = [];
 			if (array_key_exists('args', $frame)) {
 				foreach ($frame['args'] as $arg) {
 					$values[] = var_export($arg, true);
@@ -85,44 +85,44 @@ abstract class BeaconErrors {
 		
 		// notify
 		if (static::$secure_mode) {
-			$attachments = array(
-				array(
+			$attachments = [
+				[
 					'title' => 'Stack Details',
-					'fields' => array(
-						array(
+					'fields' => [
+						[
 							'title' => 'Trace',
 							'value' => implode("\n", $trace)
-						),
-						array(
+						],
+						[
 							'title' => 'Request Method',
 							'value' => $_SERVER['REQUEST_METHOD'],
 							'short' => true
-						),
-						array(
+						],
+						[
 							'title' => 'Request URI',
 							'value' => $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-						),
-						array(
+						],
+						[
 							'title' => 'GET',
 							'value' => isset($_GET) ? var_export($_GET, true) : 'null'
-						),
-						array(
+						],
+						[
 							'title' => 'POST',
 							'value' => isset($_POST) ? var_export($_POST, true) : 'null'
-						),
-						array(
+						],
+						[
 							'title' => 'SESSION',
 							'value' => isset($_SESSION) ? var_export($_SESSION, true) : 'null'
-						),
-						array(
+						],
+						[
 							'title' => 'COOKIE',
 							'value' => isset($_COOKIE) ? var_export($_COOKIE, true) : 'null'
-						)
-					),
+						]
+					],
 					'ts' => time()
-				)
-			);
-			BeaconCommon::PostSlackRaw(json_encode(array('text' => $description, 'attachments' => $attachments)));
+				]
+			];
+			BeaconCommon::PostSlackRaw(json_encode(['text' => $description, 'attachments' => $attachments]));
 		}
 		
 		// pass to handlers
@@ -155,7 +155,7 @@ abstract class BeaconErrors {
 					}
 					break;
 				case 'application/json':
-					echo json_encode(array('description' => $description, 'trace' => $trace), JSON_PRETTY_PRINT);
+					echo json_encode(['description' => $description, 'trace' => $trace], JSON_PRETTY_PRINT);
 					break;
 				default:
 					echo $description . "\n\n" . implode("\n", $trace);

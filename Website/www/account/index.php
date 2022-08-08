@@ -1,6 +1,7 @@
 <?php
 	
 require(dirname(__FILE__, 3) . '/framework/loader.php');
+header('Cache-Control: no-cache');
 
 $session = BeaconSession::GetFromCookie();
 if (is_null($session)) {
@@ -9,55 +10,9 @@ if (is_null($session)) {
 }
 $session->Renew();
 
-header('Cache-Control: no-cache');
-
 $user = BeaconUser::GetByUserID($session->UserID());
 BeaconTemplate::SetTitle('Account: ' . $user->Username());
-
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-#account_toolbar_menu {
-	list-style: none;
-	padding: 0px;
-	display: flex;
-	flex-direction: row;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 20px;
-	justify-content: center;
-	border-color: inherit;
-	flex-wrap: wrap;
-	
-	div {
-		flex: 0 0 0px;
-		text-align: center;
-		border-color: inherit;
-		white-space: nowrap;
-		margin: 0px;
-		border-radius: 4pt;
-		padding: 6pt 8pt;
-		font-size: 14pt;
-		line-height: 1.0em;
-		
-		&.active {
-			font-weight: 500;
-		}
-		
-		a {
-			text-decoration: none;
-			padding: 0px;
-			margin: 0px;
-		}
-	}
-}
-
-#account_views {
-	max-width: 100%;
-}
-
-</style><?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 BeaconTemplate::StartScript(); ?>
 <script>

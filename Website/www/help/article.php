@@ -8,33 +8,7 @@ if (isset($_GET['slug']) == false) {
 	exit;
 }
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-img.inline {
-	max-width: 100%;
-	vertical-align: text-bottom;
-	background-color: #ffffff;
-	border-radius: 2px;
-	padding: 2px;
-}
-
-img.standalone {
-	max-width: 100%;
-}
-
-pre {
-	code {
-		font-size: 1.0em;
-	}
-	
-	border-radius: 0px;
-	margin: 0px;
-}
-
-</style>
-<?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('help.css'));
 
 $slug = $_GET['slug'];
 $database = BeaconCommon::Database();

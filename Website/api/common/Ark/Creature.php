@@ -200,7 +200,7 @@ class Creature extends \Ark\Blueprint {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize(); 
 		$json['tamable'] = $this->tamable;
 		$json['taming_diet_id'] = $this->taming_diet_id;

@@ -127,7 +127,7 @@ class Session implements \JsonSerializable {
 		return static::GetForUserID($user->UserID());
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'session_id' => $this->session_id,
 			'user_id' => $this->user_id,

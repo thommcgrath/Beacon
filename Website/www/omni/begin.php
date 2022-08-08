@@ -16,19 +16,13 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
 	exit;
 }
 
-if (isset($_SESSION['store_currency']) === false) {
-	http_response_code(400);
-	echo json_encode(['error' => true, 'message' => 'Start from https://usebeacon.app/omni'], JSON_PRETTY_PRINT);
-	exit;
-}
-
 if (empty($_POST['email'])) {
 	http_response_code(400);
 	echo json_encode(['error' => true, 'message' => 'Missing email parameter.'], JSON_PRETTY_PRINT);
 	exit;
 }
 $email = strtolower(trim($_POST['email']));
-$currency = strtoupper($_SESSION['store_currency']);
+$currency = 'USD';
 
 $ark_qty = (isset($_POST['ark']) && boolval($_POST['ark']) === true) ? 1 : 0;
 $ark_gift_qty = isset($_POST['ark_gift']) ? min(intval($_POST['ark_gift']), 10) : 0;
@@ -41,11 +35,29 @@ if ($ark_qty + $ark_gift_qty + $ark2_qty + $ark2_gift_qty + $stw_qty === 0) {
 	exit;
 }
 
-$client_reference_id = BeaconCommon::GenerateUUID();
+if (isset($_COOKIE['beacon_affiliate'])) {
+	$client_reference_id = $_COOKIE['beacon_affiliate'];
+	
+	$database = BeaconCommon::Database();
+	$rows = $database->Query('SELECT purchase_id, code FROM affiliate_tracking WHERE client_reference_id = $1;', $client_reference_id);
+	if ($rows->RecordCount() === 1 && is_null($rows->Field('purchase_id')) === false) {
+		// need a new id
+		$client_reference_id = BeaconShop::TrackAffiliateClick($rows->Field('code'));
+	}
+} else {
+	$client_reference_id = BeaconCommon::GenerateUUID();
+}
 $payment = [
 	'client_reference_id' => $client_reference_id,
 	'customer_email' => $email,
-	'payment_method_types' => ['card'],
+	'payment_method_types' => [
+		'card',
+		'ideal',
+		'giropay',
+		'bancontact',
+		'p24',
+		'eps'
+	],
 	'mode' => 'payment',
 	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/'),
 	'cancel_url' => BeaconCommon::AbsoluteURL('/omni/#checkout'),
@@ -53,13 +65,6 @@ $payment = [
 	'automatic_tax' => ['enabled' => 'true'],
 	'line_items' => [],
 ];
-if ($currency === 'EUR') {
-	$payment['payment_method_types'][] = 'ideal';
-	$payment['payment_method_types'][] = 'giropay';
-	$payment['payment_method_types'][] = 'bancontact';
-	$payment['payment_method_types'][] = 'p24';
-	$payment['payment_method_types'][] = 'eps';
-}
 
 $user = null;
 try {

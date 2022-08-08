@@ -3,7 +3,7 @@
 namespace Ark;
 
 class ConfigLine extends \BeaconAPI\Ark\ConfigLine {
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['resource_url'] = \BeaconAPI::URL('ini_option/' . urlencode($this->ObjectID()));
 		return $json;

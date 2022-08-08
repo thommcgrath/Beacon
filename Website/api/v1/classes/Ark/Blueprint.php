@@ -52,7 +52,7 @@ class Blueprint extends \BeaconAPI\Ark\Blueprint {
 		}
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$environments = array();
 		if ($this->AvailableToIsland()) {
 			$environments[] = 'Island';

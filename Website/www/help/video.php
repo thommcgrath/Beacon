@@ -19,6 +19,7 @@ if ($results->RecordCount() == 0) {
 }
 
 echo '<h1>' . htmlentities($results->Field('video_title')) . '</h1>';
+BeaconTemplate::SetTitle($results->Field('video_title'));
 
 switch ($results->Field('host')) {
 case 'YouTube':

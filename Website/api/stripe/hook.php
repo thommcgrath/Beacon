@@ -42,7 +42,7 @@ if (is_null($json)) {
 $database = BeaconCommon::Database();
 $data = $json['data'];
 $type = $json['type'];
-$api = new BeaconStripeAPI($api_secret);
+$api = new BeaconStripeAPI($api_secret, '2022-08-01');
 switch ($type) {
 case 'checkout.session.completed':
 	$obj = $data['object'];
@@ -66,7 +66,7 @@ case 'checkout.session.completed':
 		$quantity = $item['quantity'];
 		$line_total = $item['amount_total'];
 		$subtotal = $item['amount_subtotal'];
-		$product_price = $item['price']['unit_amount'];
+		$product_price = $line_total / $quantity;
 		$currency = strtoupper($item['currency']);
 		$tax_total = 0;
 		foreach ($item['taxes'] as $tax) {
@@ -145,6 +145,7 @@ case 'checkout.session.completed':
 		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', $purchase_id, $product_id, $currency, $quantity, $unit_price, $subtotal, $discount, $tax, $line_total);
 	}
 	BeaconShop::IssuePurchases($purchase_id);
+	$database->Query('UPDATE affiliate_tracking SET purchase_id = $2 WHERE client_reference_id = $1 AND purchase_id IS NULL;', $client_reference_id, $purchase_id);
 	$database->Commit();
 		
 	// Look up gift codes and email them

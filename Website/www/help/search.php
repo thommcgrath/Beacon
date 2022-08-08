@@ -42,30 +42,7 @@ $results = $search->Search($query, $version, 20, 'Help');
 if (count($results) == 0) {
 	$html = '<h1>No Results</h1><p>Could not find anything for &quot;' . htmlentities($query) . '&quot;</p>';
 } else {
-	BeaconTemplate::StartStyles(); ?>
-	<style>
-	
-	div.support_result {
-		padding: 15px;
-		
-		&:first-child {
-			margin-top: 15px;
-		}
-		
-		&:last-child {
-			margin-bottom: 15px;
-		}
-		
-		&+div.support_result {
-			border-top-width: 1px;
-			border-top-style: solid;
-			margin-top: 0px;
-		}
-	}
-	
-	</style>
-	<?php
-	BeaconTemplate::FinishStyles();
+	BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('help.css'));
 	
 	$html = '<h1>Search Results for &quot;' . htmlentities($query) . '&quot;</h1>';
 	foreach ($results as $result) {

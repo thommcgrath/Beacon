@@ -60,7 +60,7 @@ class ColorSet implements \JsonSerializable {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'color_set_id' => $this->color_set_id,
 			'label' => $this->label,

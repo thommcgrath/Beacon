@@ -74,7 +74,7 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 		return $obj;
 	}
 	
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['min_item_sets'] = $this->min_item_sets;
 		$json['max_item_sets'] = $this->max_item_sets;

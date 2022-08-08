@@ -1,6 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
+header('Cache-Control: no-cache');
 BeaconCommon::StartSession();
 BeaconTemplate::SetTitle('Beacon Login');
 BeaconTemplate::SetBodyClass('purple');
@@ -142,17 +143,7 @@ if (is_null($session) == false) {
 	}
 }
 
-BeaconTemplate::StartStyles();
-?><style>
-
-#login_container {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 600px;
-}
-
-</style><?php
-BeaconTemplate::FinishStyles();
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 ?>
 <div id="login_container">
