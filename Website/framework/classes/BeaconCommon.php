@@ -167,7 +167,7 @@ abstract class BeaconCommon {
 	    return array_keys($arr) !== range(0, count($arr) - 1);
 	}
 	
-	public static function Redirect(string $destination, bool $temp = false): void {
+	public static function Redirect(string $destination, bool $temp = true): void {
 		header('Location: ' . $destination);
 		if ($temp === true) {
 			http_response_code(302);

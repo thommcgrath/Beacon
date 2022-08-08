@@ -36,6 +36,6 @@ default:
 	exit;
 }
 
-BeaconCommon::Redirect($url, false);
+BeaconCommon::Redirect($url);
 
 ?>

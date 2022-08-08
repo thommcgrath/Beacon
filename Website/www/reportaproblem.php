@@ -132,7 +132,7 @@ case 'GET':
 			echo '</div>';
 		}
 	} else {
-		BeaconCommon::Redirect(BeaconCommon::AbsoluteURL('/help/contact'), true);
+		BeaconCommon::Redirect(BeaconCommon::AbsoluteURL('/help/contact'));
 	}
 	break;
 case 'POST':

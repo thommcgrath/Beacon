@@ -8,6 +8,6 @@ if (isset($_GET['code'])) {
 }
 
 BeaconShop::TrackAffiliateClick($code);
-BeaconCommon::Redirect('/omni', true);
+BeaconCommon::Redirect('/omni');
 
 ?>
