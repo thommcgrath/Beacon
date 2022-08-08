@@ -57,7 +57,7 @@ abstract class BeaconTemplate {
 		if (self::$title !== '') {
 			$title .= ': ' . self::$title;
 		} else {
-			$title .= ' for Ark: Survival Evolved';
+			$title .= ' for Ark';
 		}
 		return $title;
 	}
