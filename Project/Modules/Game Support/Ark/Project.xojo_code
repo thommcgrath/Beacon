@@ -267,6 +267,46 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CombinedConfig(GroupName As String, States() As Beacon.ConfigSetState) As Ark.ConfigGroup
+		  Var SetNames() As String
+		  If States Is Nil Then
+		    SetNames.Add(Self.BaseConfigSetName)
+		  Else
+		    For Each State As Beacon.ConfigSetState In States
+		      If State.Enabled Then
+		        SetNames.Add(State.Name)
+		      End If
+		    Next
+		  End If
+		  Return Self.CombinedConfig(GroupName, SetNames)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CombinedConfig(GroupName As String, SetNames() As String) As Ark.ConfigGroup
+		  If SetNames Is Nil Then
+		    SetNames = Array(Self.BaseConfigSetName)
+		  ElseIf SetNames.Count = 0 Then
+		    SetNames.Add(Self.BaseConfigSetName)
+		  End If
+		  
+		  Var Siblings() As Ark.ConfigGroup
+		  For Idx As Integer = 0 To SetNames.LastIndex
+		    Var SetName As String = SetNames(Idx)
+		    Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		    If SetDict Is Nil Or SetDict.HasKey(SetName) = False Then
+		      Continue
+		    End If
+		    
+		    Var Group As Ark.ConfigGroup = SetDict.Value(GroupName)
+		    Siblings.Add(Group)
+		  Next
+		  
+		  Return Ark.Configs.Merge(Siblings, False)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Ark.ConfigGroup()
 		  Var Names() As String
 		  If States Is Nil Then

@@ -370,6 +370,16 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  Var Simulator As ArkSpawnSimulatorWindow = Self.SimulatorWindow(False)
+		  If (Simulator Is Nil) = False Then
+		    Simulator.Close
+		    Self.mSimulatorWindow = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.MinimumWidth = Self.ListMinWidth + Self.MainSeparator.Width + ArkSpawnPointEditor.MinEditorWidth
 		  Self.MinimumHeight = 350
@@ -426,6 +436,10 @@ End
 		      Self.Changed = SourceConfig.Modified
 		      Self.SetupUI
 		    End If
+		  Case Self.ToolSpawnSimulator
+		    Var Win As ArkSpawnSimulatorWindow = Self.SimulatorWindow(True)
+		    Win.RunSimulator()
+		    Win.Show
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -515,6 +529,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function SimulatorWindow(Create As Boolean) As ArkSpawnSimulatorWindow
+		  Var Win As ArkSpawnSimulatorWindow
+		  If Self.mSimulatorWindow Is Nil Or Self.mSimulatorWindow.Value Is Nil Or (Self.mSimulatorWindow.Value IsA ArkSpawnSimulatorWindow) = False Then
+		    If Create Then
+		      Win = New ArkSpawnSimulatorWindow(Self.Project)
+		      Self.mSimulatorWindow = New WeakRef(Win)
+		    Else
+		      Return Nil
+		    End If
+		  Else
+		    Win = ArkSpawnSimulatorWindow(Self.mSimulatorWindow.Value)
+		  End If
+		  Return Win
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  Var Bound As Integer = Self.List.RowCount - 1
@@ -583,6 +614,10 @@ End
 		Private mConfigRef As WeakRef
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSimulatorWindow As WeakRef
+	#tag EndProperty
+
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.point", Scope = Private
 	#tag EndConstant
@@ -592,6 +627,9 @@ End
 
 	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"217"
+	#tag EndConstant
+
+	#tag Constant, Name = ToolSpawnSimulator, Type = String, Dynamic = False, Default = \"fb860a80-e301-43da-b283-cdfcd7369def", Scope = Public
 	#tag EndConstant
 
 
@@ -789,6 +827,11 @@ End
 		  Next
 		  
 		  Self.Changed = Self.Config(False).Modified
+		  
+		  Var Simulator As ArkSpawnSimulatorWindow = Self.SimulatorWindow(False)
+		  If (Simulator Is Nil) = False Then
+		    Simulator.RunSimulator()
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

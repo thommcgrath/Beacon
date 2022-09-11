@@ -50,6 +50,7 @@ Protected Module Configs
 		    Tools.Add(New Ark.ProjectTool("Setup Transferrable Element", "3db64fe3-9134-4a19-a255-7712c8c70a83", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Convert Creature Replacements to Spawn Point Additions", "614cfc80-b7aa-437d-b17e-01534f2ab778", NameSpawnPoints, NameDinoAdjustments))
 		    Tools.Add(New Ark.ProjectTool("Quick Edit Creature Spawns", "8913bca3-fbae-43bd-a94b-7c3ac06b6ca1", NameSpawnPoints))
+		    Tools.Add(New Ark.ProjectTool("Show Creature Spawn Simulator", ArkCreatureSpawnsEditor.ToolSpawnSimulator, NameSpawnPoints))
 		    Tools.Add(New Ark.ProjectTool("Setup Guided Editors", "d29dc6f8-e834-4969-9cfe-b38e1c052156", NameCustomContent))
 		    Tools.Add(New Ark.ProjectTool("Convert Global Harvest Rate to Individual Rates", "5265adcd-5c7e-437c-bce2-d10721afde43", NameHarvestRates))
 		    Tools.Add(New Ark.ProjectTool("Rebuild Item Sets from Templates", "08efc49c-f39f-4147-820d-201637c206b5", NameLootDrops))
