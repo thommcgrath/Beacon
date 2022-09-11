@@ -145,6 +145,7 @@ BeaconErrors::StartWatching();
 	
 	header('Content-Security-Policy: ' . $policy);
 	header('Cache-Control: public, max-age=3600, must-revalidate');
+	header('X-Endpoint-Server: ' . gethostname());
 })();
 
 BeaconTemplate::Start();
