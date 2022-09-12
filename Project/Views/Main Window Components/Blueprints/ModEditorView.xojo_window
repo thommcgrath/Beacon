@@ -573,12 +573,7 @@ End
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		  
-		  Const QuotationCharacters = "'‘’""“”"
-		  
-		  Var Regex As New Regex
-		  Regex.Options.CaseSensitive = False
-		  Regex.SearchPattern = "(giveitem|spawndino)\s+(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
-		  
+		  Var Regex As Regex = Ark.BlueprintPathRegex
 		  Var Match As RegexMatch = Regex.Search(Contents)
 		  Var Paths As New Dictionary
 		  Do
@@ -590,18 +585,8 @@ End
 		    End If
 		    
 		    Var Command As String = Match.SubExpressionString(1)
-		    Var Path As String
-		    If Match.SubExpressionCount >= 4 And Match.SubExpressionString(4) <> "" Then
-		      Path = Match.SubExpressionString(4)
-		    ElseIf Match.SubExpressionCount >= 6 And Match.SubExpressionString(6) <> "" Then
-		      Path = Match.SubExpressionString(6)
-		    ElseIf Match.SubExpressionCount >= 8 And Match.SubExpressionString(8) <> "" Then
-		      Path = Match.SubExpressionString(8)
-		    End If
+		    Var Path As String = Match.BlueprintPath
 		    If Path.IsEmpty = False And Command.IsEmpty = False Then
-		      If Path.EndsWith("_C") Then
-		        Path = Path.Left(Path.Length - 2)
-		      End If
 		      Paths.Value(Path) = Command
 		    End If
 		    

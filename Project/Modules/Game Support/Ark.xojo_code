@@ -34,6 +34,37 @@ Protected Module Ark
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function BlueprintPath(Extends Matches As RegExMatch) As String
+		  Var Path As String
+		  If Matches.SubExpressionCount >= 4 And Matches.SubExpressionString(4).IsEmpty = False Then
+		    Path = Matches.SubExpressionString(4)
+		  ElseIf Matches.SubExpressionCount >= 6 And Matches.SubExpressionString(6).IsEmpty = False Then
+		    Path = Matches.SubExpressionString(6)
+		  ElseIf Matches.SubExpressionCount >= 8 And Matches.SubExpressionString(8).IsEmpty = False Then
+		    Path = Matches.SubExpressionString(8)
+		  End If
+		  If Path.IsEmpty = False And Path.EndsWith("_C") Then
+		    Path = Path.Left(Path.Length - 2)
+		  End If
+		  Return Path
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BlueprintPathRegex() As RegEx
+		  Static Regex As RegEx
+		  If Regex Is Nil Then
+		    Const QuotationCharacters = "'‘’""“”"
+		    
+		    Regex = New Regex
+		    Regex.Options.CaseSensitive = False
+		    Regex.SearchPattern = "(giveitem|spawndino)?\s*(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
+		  End If
+		  Return Regex
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Categories() As String()
 		  Return Array(Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers)
@@ -112,6 +143,13 @@ Protected Module Ark
 		  Next Entry
 		  
 		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ExtractPath(Source As String) As String
+		  Var Matches As RegExMatch = BlueprintPathRegex.Search(Source)
+		  Return Matches.BlueprintPath
 		End Function
 	#tag EndMethod
 
