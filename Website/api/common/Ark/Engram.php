@@ -9,6 +9,7 @@ class Engram extends \Ark\Blueprint {
 	protected $stack_size = null;
 	protected $item_id = null;
 	protected $recipe = null;
+	protected $gfi = null;
 	
 	protected static function TableName() {
 		return 'engrams';
@@ -21,6 +22,7 @@ class Engram extends \Ark\Blueprint {
 		$columns[] = 'required_level';
 		$columns[] = 'stack_size';
 		$columns[] = 'item_id';
+		$columns[] = 'gfi';
 		return $columns;
 	}
 	
@@ -38,6 +40,8 @@ class Engram extends \Ark\Blueprint {
 			return $this->item_id;
 		case 'recipe':
 			return $this->recipe;
+		case 'gfi':
+			return $this->gfi;
 		default:
 			return parent::GetColumnValue($column);
 		}
@@ -54,6 +58,7 @@ class Engram extends \Ark\Blueprint {
 		$obj->stack_size = $row->Field('stack_size');
 		$obj->item_id = $row->Field('item_id');
 		$obj->recipe = is_null($row->Field('recipe')) ? null : json_decode($row->Field('recipe'), true);
+		$obj->gfi = $row->Field('gfi');
 		return $obj;
 	}
 	
@@ -91,6 +96,23 @@ class Engram extends \Ark\Blueprint {
 	
 	public function Recipe() {
 		return $this->recipe;
+	}
+	
+	public function GFICode(): ?string {
+		return $this->gfi;
+	}
+	
+	public function GenerateSpawnCodes(int $quantity, bool $blueprint): array {
+		$codes = [];
+		$suffix = ' ' . $quantity . ' 0 ' . ($blueprint ? '1' : '0');
+		if (is_null($this->item_id) === false) {
+			$codes['index'] = 'cheat giveitemnum ' . $this->item_id . $suffix;
+		}
+		if (is_null($this->gfi) === false) {
+			$codes['gfi'] = 'cheat gfi ' . $this->gfi . $suffix;
+		}
+		$codes['full'] = 'cheat giveitem "Blueprint\'' . $this->Path() . '\'"' . $suffix;
+		return $codes;
 	}
 	
 	public function jsonSerialize(): mixed {
