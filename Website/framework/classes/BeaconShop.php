@@ -102,6 +102,7 @@ abstract class BeaconShop {
 	public static function FormatPrice(float $price, string $currency, bool $with_suffix = true): string {
 		switch ($currency) {
 		case 'USD':
+		case 'CAD':
 			$decimal_character = '.';
 			$thousands_character = ',';
 			$currency_symbol = '$';
@@ -111,6 +112,10 @@ abstract class BeaconShop {
 			$thousands_character = '.';
 			$currency_symbol = '€';
 			break;
+		case 'GBP':
+			$decimal_character = '.';
+			$thousands_character = ',';
+			$currency_symbol = '£';
 		}
 		
 		return $currency_symbol . number_format($price, 2, $decimal_character, $thousands_character) . ($with_suffix ?  ' ' . $currency : '');
