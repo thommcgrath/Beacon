@@ -32,26 +32,22 @@ case 'redeem-confirm':
 		$return = BeaconCommon::AbsoluteURL('/account/redeem.php?code=' . urlencode($code) . '&process=redeem-confirm');
 		BeaconCommon::Redirect('/account/login/?return=' . urlencode($return));
 	}
+	$user = BeaconUser::GetByUserID($session->UserID());
 	
 	$results = $database->Query('SELECT redemption_date, product_id FROM gift_codes WHERE code = $1;', $code);
 	if ($results->RecordCount() === 0 || is_null($results->Field('redemption_date')) === false) {
+		LogRedeemAttempt($code, $user->UserID(), false);
 		OutputRedeemForm('The gift code does not exist or was already redeemed.');
 	}
 	
-	$user = BeaconUser::GetByUserID($session->UserID());
 	if ($user->IsBanned()) {
+		LogRedeemAttempt($code, $user->UserID(), false);
 		BeaconCommon::PostSlackMessage('Banned account ' . $user->UserID() . ' tried to redeem gift code ' . $code . '.');
 		BeaconCommon::Redirect('https://www.youtube.com/watch?v=sKbP-M8vVtw', false);
 	}
 	
 	$user = BeaconUser::GetByUserID($session->UserID());
 	if ($process_step === 'redeem-final') {
-		// Actually redeem it
-		if ($user->IsBanned()) {
-			BeaconCommon::PostSlackMessage('Banned account ' . $user->UserID() . ' tried to redeem gift code ' . $code . '.');
-			BeaconCommon::Redirect('https://www.youtube.com/watch?v=sKbP-M8vVtw', false);
-		}
-		
 		$email_id = $user->EmailID();
 		$product_id = $results->Field('product_id');
 		$results = $database->Query('SELECT updates_length FROM products WHERE product_id = $1;', $product_id);
@@ -59,6 +55,7 @@ case 'redeem-confirm':
 		if ($is_perpetual) {
 			$results = $database->Query('SELECT expiration, product_name FROM purchased_products WHERE purchaser_email = $1 AND product_id = $2;', $email_id, $product_id);
 			if ($results->RecordCount() === 1 && is_null($results->Field('expiration')) === true) {
+				LogRedeemAttempt($code, $user->UserID(), false);
 				OutputRedeemForm('You already own a perpetual license for ' . $results->Field('product_name') . ', there is no need to redeem another!');
 			}
 		}
@@ -66,6 +63,7 @@ case 'redeem-confirm':
 		$database->BeginTransaction();
 		$redemption_purchase_id = BeaconShop::CreateGiftPurchase($email_id, $product_id, 1, 'Redeemed gift code: ' . $code, true);
 		$database->Query('UPDATE gift_codes SET redemption_purchase_id = $2, redemption_date = CURRENT_TIMESTAMP WHERE code = $1;', $code, $redemption_purchase_id);
+		LogRedeemAttempt($code, $user->UserID(), true);
 		$database->Commit();
 		
 		echo '<div id="redeem_form"><p class="text-center"><span class="text-blue">Gift code redeemed!</span><br><a href="/account/#omni">Activation instructions</a> are available if you need them.</p></div>';
@@ -111,6 +109,13 @@ function OutputRedeemForm(string $error = '') {
 </div>
 <?php
 	exit;
+}
+
+function LogRedeemAttempt(string $code, string $user_id, bool $success): void {
+	$database = BeaconCommon::Database();
+	$database->BeginTransaction();
+	$database->Query('INSERT INTO gift_code_log (code, user_id, source_ip, success) VALUES ($1, $2, $3, $4);', $code, $user_id, BeaconCommon::RemoteAddr(true), $success);
+	$database->Commit();
 }
 
 ?>
