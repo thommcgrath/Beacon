@@ -57,6 +57,7 @@ Protected Module Configs
 		    If Now.Month = 4 And Now.Day = 1 Then
 		      Tools.Add(New Ark.ProjectTool("AI Config Generator", "c5c14eb8-41c9-4fd3-8f92-582e843ac9a0", NameOtherSettings))
 		    End If
+		    Tools.Add(New Ark.ProjectTool("Compute GFI Codes", "6bcf5785-b8e2-4889-91c8-545c34f30d8a", NameMetadataPsuedo))
 		    
 		    Var Names() As String
 		    Names.ResizeTo(Tools.LastIndex)

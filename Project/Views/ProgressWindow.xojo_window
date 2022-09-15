@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconDialog ProgressWindow
+Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -172,6 +172,14 @@ End
 
 
 	#tag Method, Flags = &h0
+		Function CancelPressed() As Boolean
+		  // Part of the Beacon.ProgressDisplayer interface.
+		  
+		  Return Self.mCancelPressed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Close()
 		  If Self.mShowLaterKey.IsEmpty = False Then
 		    CallLater.Cancel(Self.mShowLaterKey)
@@ -197,6 +205,78 @@ End
 		  
 		  Super.Constructor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Detail() As String
+		  // Part of the Beacon.ProgressDisplayer interface.
+		  
+		  Return Self.mDetail
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Detail(Assigns Value As String)
+		  // Part of the Beacon.ProgressDisplayer interface.
+		  
+		  If Self.mDetail.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Current) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mDetail = Value
+		  
+		  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
+		    Self.UpdateTimer.RunMode = Timer.RunModes.Single
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Message() As String
+		  // Part of the Beacon.ProgressDisplayer interface.
+		  
+		  Return Self.mMessage
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Message(Assigns Value As String)
+		  // Part of the Beacon.ProgressDisplayer interface.
+		  
+		  If Self.mMessage.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Current) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mMessage = Value
+		  
+		  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
+		    Self.UpdateTimer.RunMode = Timer.RunModes.Single
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Progress() As NullableDouble
+		  // Part of the Beacon.ProgressDisplayer interface.
+		  
+		  Return Self.mProgress
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Progress(Assigns Value As NullableDouble)
+		  // Part of the Beacon.ProgressDisplayer interface.
+		  
+		  If Self.mProgress = Value Then
+		    Return
+		  End If
+		  
+		  Self.mProgress = Value
+		  
+		  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
+		    Self.UpdateTimer.RunMode = Timer.RunModes.Single
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -267,37 +347,6 @@ End
 	#tag EndMethod
 
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mCancelPressed
-			End Get
-		#tag EndGetter
-		CancelPressed As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mDetail
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mDetail.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Current) = 0 Then
-			    Return
-			  End If
-			  
-			  Self.mDetail = Value
-			  
-			  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
-			    Self.UpdateTimer.RunMode = Timer.RunModes.Single
-			  End If
-			End Set
-		#tag EndSetter
-		Detail As String
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mCancelPressed As Boolean
 	#tag EndProperty
@@ -305,28 +354,6 @@ End
 	#tag Property, Flags = &h21
 		Private mDetail As String
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mMessage
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mMessage.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Current) = 0 Then
-			    Return
-			  End If
-			  
-			  Self.mMessage = Value
-			  
-			  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
-			    Self.UpdateTimer.RunMode = Timer.RunModes.Single
-			  End If
-			End Set
-		#tag EndSetter
-		Message As String
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mMessage As String
@@ -347,28 +374,6 @@ End
 	#tag Property, Flags = &h21
 		Private mStartTime As Double
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mProgress
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mProgress = Value Then
-			    Return
-			  End If
-			  
-			  Self.mProgress = Value
-			  
-			  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
-			    Self.UpdateTimer.RunMode = Timer.RunModes.Single
-			  End If
-			End Set
-		#tag EndSetter
-		Progress As NullableDouble
-	#tag EndComputedProperty
 
 
 #tag EndWindowCode
@@ -629,29 +634,5 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CancelPressed"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Detail"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Message"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior
