@@ -877,6 +877,78 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ComputeGFICodes(ContentPacks As Beacon.StringList) As String()
+		  // This code expects to be run inside a thread
+		  
+		  #if Not DebugBuild
+		    #Pragma Error "This routine is untested"
+		  #endif
+		  
+		  Var Planner As New SQLiteDatabase
+		  Planner.Connect
+		  Planner.ExecuteSQL("CREATE TABLE plan (code TEXT NOT NULL, class_string TEXT NOT NULL);")
+		  Planner.ExecuteSQL("CREATE INDEX plan_code_idx ON plan(code);")
+		  Planner.ExecuteSQL("CREATE INDEX plan_class_string_idx ON plan(class_string);")
+		  Planner.ExecuteSQL("CREATE UNIQUE INDEX plan_code_class_string_idx ON plan(code, class_string);")
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT DISTINCT class_string, label FROM engrams WHERE mod_id IN ('" + ContentPacks.Join("','") + "') GROUP BY class_string ORDER BY LENGTH(class_string), required_level NULLS FIRST, class_string;")
+		  
+		  // Plan all candidates for every class. For official content, this results in about 1.2 million rows.
+		  For Each Row As DatabaseRow In Rows
+		    Var ClassString As String = Row.Column("class_string").StringValue
+		    If ClassString.EndsWith("_C") Then
+		      ClassString = ClassString.Left(ClassString.Length - 2)
+		    End If
+		    
+		    Planner.BeginTransaction()
+		    Var ClassStringLower As String = ClassString.Lowercase
+		    Var Len As Integer = ClassString.Length
+		    For ChunkSize As Integer = 1 To Len
+		      For Offset As Integer = 0 To Len - ChunkSize
+		        Var Chunk As String = ClassStringLower.Middle(Offset, ChunkSize)
+		        If Chunk.BeginsWith("_") Then
+		          Continue
+		        End If
+		        
+		        Planner.ExecuteSQL("INSERT OR IGNORE INTO plan (code, class_string) VALUES (?1, ?2);", Chunk, ClassString)
+		      Next
+		    Next
+		    Planner.CommitTransaction()
+		  Next
+		  
+		  // Loop over again and start resolving class-by-class.
+		  Var Lines() As String
+		  Lines.Add("""Item Name"",""GFI Code"",""Cheat Code""")
+		  For Each Row As DatabaseRow In Rows
+		    Var ClassString As String = Row.Column("class_string").StringValue
+		    Var Label As String = Row.Column("label").StringValue
+		    Var TruncatedClassString As String = ClassString
+		    If TruncatedClassString.EndsWith("_C") Then
+		      TruncatedClassString = TruncatedClassString.Left(ClassString.Length - 2)
+		    End If
+		    
+		    Var Code As String
+		    Var Results As RowSet = Planner.SelectSQL("SELECT code FROM plan WHERE class_string = ?1 ORDER BY LENGTH(code), code LIMIT 1;", TruncatedClassString)
+		    If Results.RowCount = 1 Then
+		      Code = Results.Column("code").StringValue
+		    End If
+		    If Code.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    Var CodeEscaped As String = Code.ReplaceAll("""", """""")
+		    Lines.Add("""" + Label.ReplaceAll("""", """""") + """,""" + CodeEscaped + """,""cheat gfi " + CodeEscaped + " 1 0 0""")
+		    
+		    Planner.BeginTransaction()
+		    Planner.ExecuteSQL("DELETE FROM plan WHERE code IN (SELECT code FROM plan WHERE class_string = ?1);", TruncatedClassString)
+		    Planner.CommitTransaction()
+		  Next
+		  
+		  Return Lines
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.ResetCaches()
 		  
