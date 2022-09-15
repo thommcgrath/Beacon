@@ -2492,8 +2492,13 @@ End
 		        Return False
 		      End If
 		    Else
-		      Self.ShowAlert("The blueprint path is required", "Beacon requires the full blueprint path to the object in order to function correctly.")
-		      Return False
+		      Var Matches As RegExMatch = Ark.BlueprintPathRegex.Search(Path)
+		      If (Matches Is Nil) = False Then
+		        Path = Matches.BlueprintPath
+		      Else
+		        Self.ShowAlert("The blueprint path is required", "Beacon requires the full blueprint path to the object in order to function correctly.")
+		        Return False
+		      End If
 		    End If
 		  End If
 		  

@@ -83,6 +83,11 @@ if (is_null($cached) || is_null($title)) {
 		$title = 'Spawn codes for ' . $title;
 	}
 	?><h1><?php echo htmlentities($title); ?><br><span class="subtitle">Up to date as of <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?></span></h1>
+	<div class="notice-block notice-info">
+		<p class="bold">These GFI codes are pretty nuts, do they really work?</p>
+		<p>Yes! We've computed the absolute shortest codes to spawn the desired item. They may look weird, but they really do work.</p>
+		<p class="italic smaller">Disclaimer: These GFI codes are based on the official Ark content. Mods could conflict with these GFI codes.</p>
+	</div>
 	<p><input type="search" id="beacon-filter-field" placeholder="Filter Engrams" autocomplete="off"></p>
 	<table id="spawntable" class="generic">
 		<thead>
@@ -102,7 +107,16 @@ if (is_null($cached) || is_null($title)) {
 			$id = $blueprint->ObjectID();
 			$class = $blueprint->ClassString();
 			$label = $blueprint->Label();
-			$spawn = $blueprint->SpawnCode();
+			if ($blueprint instanceof \Ark\Engram) {
+				$spawn_codes = $blueprint->GenerateSpawnCodes(1, false);
+				if (isset($spawn_codes['gfi'])) {
+					$spawn = $spawn_codes['gfi'];
+				} else {
+					$spawn = $spawn_codes['full'];
+				}
+			} else {
+				$spawn = $blueprint->SpawnCode();
+			}
 			$mod = $blueprint->ModName();
 			
 			echo '<tr id="spawn_' . htmlentities($id) . '" class="beacon-engram" beacon-label="' . htmlentities(strtolower($label)) . '" beacon-spawn-code="' . htmlentities($spawn) . '" beacon-uuid="' . $id . '">';

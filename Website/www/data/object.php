@@ -112,7 +112,18 @@ echo '</table>';
 
 function PrepareBlueprintTable(\Ark\Blueprint $blueprint, array &$properties) {
 	$properties['Class'] = $blueprint->ClassString();
-	$properties['Spawn Code'] = '`' . $blueprint->SpawnCode() . '`';
+	if ($blueprint instanceof \Ark\Engram) {
+		$spawn_codes = $blueprint->GenerateSpawnCodes(1, false);
+		if (isset($spawn_codes['gfi'])) {
+			$properties['GFI Spawn Code'] = '`' . $spawn_codes['gfi'] . '`';
+		}
+		if (isset($spawn_codes['index'])) {
+			$properties['Numeric Spawn Code'] = '`' . $spawn_codes['index'] . '`';
+		}
+		$properties['Spawn Code'] = '`' . $spawn_codes['full'] . '`';
+	} else {
+		$properties['Spawn Code'] = '`' . $blueprint->SpawnCode() . '`';
+	}
 	$properties['Map Availability'] = implode(', ', \Ark\Maps::Names($blueprint->Availability()));
 	
 	$related_ids = $blueprint->RelatedObjectIDs();
@@ -153,7 +164,6 @@ function PrepareCreatureTable(\Ark\Creature $creature, array &$properties) {
 function PrepareEngramTable(\Ark\Engram $engram, array &$properties) {
 	if (is_null($engram->ItemID()) == false) {
 		$properties['Item ID'] = $engram->ItemID();
-		$properties['Short Spawn Code'] = '`cheat giveitemnum ' . $engram->ItemID() . ' 1 1 0`';
 	}
 	
 	if (is_null($engram->StackSize()) == false) {
