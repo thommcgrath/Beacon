@@ -86,7 +86,7 @@ if (is_null($cached) || is_null($title)) {
 	<div class="notice-block notice-info">
 		<p class="bold">These GFI codes are pretty nuts, do they really work?</p>
 		<p>Yes! We've computed the absolute shortest codes to spawn the desired item. They may look weird, but they really do work.</p>
-		<p class="italic smaller">Disclaimer: These codes are based on the mods known to Beacon. Other mods could conflict with these codes.</p>
+		<p class="italic smaller">Disclaimer: These GFI codes are based on the official Ark content. Mods could conflict with these GFI codes.</p>
 	</div>
 	<p><input type="search" id="beacon-filter-field" placeholder="Filter Engrams" autocomplete="off"></p>
 	<table id="spawntable" class="generic">
