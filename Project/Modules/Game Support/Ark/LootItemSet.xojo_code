@@ -16,7 +16,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.LootItemSet)
 		  Self.Constructor()
-		  
+		  Self.CopyFrom(Source)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub CopyFrom(Source As Ark.LootItemSet)
 		  Self.mHash = Source.mHash
 		  Self.mItemsRandomWithoutReplacement = Source.mItemsRandomWithoutReplacement
 		  Self.mLabel = Source.mLabel
