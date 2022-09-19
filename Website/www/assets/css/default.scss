@@ -350,6 +350,38 @@ table.generic {
 	width: 80%;
 }
 
+@for $i from 1 through 5 {
+	.m-#{$i} {
+		margin: $i * 1em;
+	}
+	
+	.mt-#{$i} {
+		margin-top: $i * 1em;
+	}
+	
+	.mb-#{$i} {
+		margin-bottom: $i * 1em;
+	}
+	
+	.ml-#{$i} {
+		margin-left: $i * 1em;
+	}
+	
+	.mr-#{$i} {
+		margin-right: $i * 1em;
+	}
+	
+	.mh-#{$i} {
+		margin-left: $i * 1em;
+		margin-right: $i * 1em;
+	}
+	
+	.mv-#{$i} {
+		margin-top: $i * 1em;
+		margin-bottom: $i * 1em;
+	}
+}
+
 /* ! Header */
 
 #header_wrapper {
