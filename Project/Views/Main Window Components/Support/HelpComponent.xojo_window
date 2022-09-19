@@ -106,36 +106,6 @@ Begin BeaconSubview HelpComponent
       Visible         =   True
       Width           =   518
    End
-   Begin DelayedSearchField FilterField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowRecentItems=   True
-      ClearMenuItemValue=   "Clear"
-      DelayPeriod     =   250
-      Enabled         =   True
-      Height          =   22
-      Hint            =   "Search Help"
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   528
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MaximumRecentItems=   10
-      RecentItemsValue=   "Recent Searches"
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      Tooltip         =   ""
-      Top             =   10
-      Transparent     =   False
-      Visible         =   True
-      Width           =   200
-   End
    Begin Label BrowserTitleLabel
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -183,20 +153,10 @@ End
 		    Return
 		  End If
 		  
-		  Self.LoadURL(Self.HelpURL)
+		  Self.LoadURL(Beacon.HelpURL)
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Shared Function HelpURL(ChildPath As String = "") As String
-		  If ChildPath.IsEmpty = False And ChildPath.BeginsWith("/") = False Then
-		    ChildPath = "/" + ChildPath
-		  End If
-		  
-		  Return Beacon.WebURL("/help/" + App.BuildVersion + ChildPath)
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub LoadURL(URL As String)
@@ -268,7 +228,7 @@ End
 		  
 		  Var HomeButton As OmniBarItem = Self.BrowserButtonToolbar.Item("HomeButton")
 		  If (HomeButton Is Nil) = False Then
-		    HomeButton.Enabled = URL <> Self.HelpURL
+		    HomeButton.Enabled = URL <> Beacon.HelpURL
 		  End If
 		  
 		  Me.ExecuteJavaScript("beacon.pageLoaded('" + App.BuildNumber.ToString(Locale.Raw, "0") + "');")
@@ -346,17 +306,8 @@ End
 		  Case "ForwardButton"
 		    Self.HelpViewer.GoForward
 		  Case "HomeButton"
-		    Self.LoadURL(Self.HelpURL)
+		    Self.LoadURL(Beacon.HelpURL)
 		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FilterField
-	#tag Event
-		Sub TextChanged()
-		  Var SearchText As String = Me.Text.Trim.Lowercase
-		  Var URL As String = If(SearchText.IsEmpty, Self.HelpURL, Self.HelpURL("/search/" + EncodeURLComponent(Me.Text)))
-		  Self.LoadURL(URL)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

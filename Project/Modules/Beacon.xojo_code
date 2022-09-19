@@ -647,6 +647,36 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function HelpURL(Path As String = "/") As String
+		  Const NewHelpSystem = False
+		  
+		  #if NewHelpSystem And Not DebugBuild
+		    #Pragma Error "Are you sure about this?"
+		  #endif
+		  
+		  If Path.IsEmpty Or Path.BeginsWith("/") = False Then
+		    Path = "/" + Path
+		  End If
+		  
+		  #if Not NewHelpSystem
+		    Return Beacon.WebURL("/help/" + App.BuildVersion + Path)
+		  #endif
+		  
+		  If Path = "/config_sets" Then
+		    Path = "/core/configsets/"
+		  End If
+		  
+		  #if DebugBuild And App.ForceLiveData = False
+		    Var Domain As String = "http://127.0.0.1:4000"
+		  #else
+		    Var Domain As String = "https://help.usebeacon.app"
+		  #endif
+		  
+		  Return Domain + Path
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function IsBeaconURL(ByRef Value As String) As Boolean
 		  Var PossiblePrefixes() As String
