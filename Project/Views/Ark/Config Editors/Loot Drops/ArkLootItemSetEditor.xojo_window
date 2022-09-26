@@ -295,7 +295,11 @@ End
 
 	#tag Method, Flags = &h0
 		Sub LootItemSet(Assigns ItemSet As Ark.MutableLootItemSet)
-		  If ItemSet = Self.LootItemSet Then
+		  Var CurrentItemSet As Ark.MutableLootItemSet = Self.LootItemSet
+		  Var OldHash As String = If(CurrentItemSet Is Nil, "", CurrentItemSet.Hash)
+		  Var NewHash As String = If(ItemSet Is Nil, "", ItemSet.Hash)
+		  
+		  If OldHash = NewHash Then
 		    Return
 		  End If
 		  
