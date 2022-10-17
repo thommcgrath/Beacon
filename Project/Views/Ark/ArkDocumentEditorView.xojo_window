@@ -641,7 +641,7 @@ End
 		          Self.ActiveConfigSet = Self.ActiveConfigSet
 		        End If
 		      Case "help"
-		        Var HelpURL As String = HelpComponent.HelpURL("config_sets")
+		        Var HelpURL As String = Beacon.HelpURL("config_sets")
 		        If App.MainWindow Is Nil Then
 		          // No logical way for this to happen.
 		          System.GotoURL(HelpURL)

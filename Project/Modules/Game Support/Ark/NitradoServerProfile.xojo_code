@@ -41,7 +41,7 @@ Inherits Ark.ServerProfile
 
 	#tag Method, Flags = &h0
 		Function SecondaryName() As String
-		  Return Self.Address
+		  Return Self.Address + " (" + Self.ServiceID.ToString(Locale.Raw, "0") + ")"
 		End Function
 	#tag EndMethod
 

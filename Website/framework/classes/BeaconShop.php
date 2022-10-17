@@ -100,25 +100,30 @@ abstract class BeaconShop {
 	}
 	
 	public static function FormatPrice(float $price, string $currency, bool $with_suffix = true): string {
+		$decimal_character = '.';
+		$decimal_places = 2;
+		$thousands_character = ',';
+		$currency_symbol = '$';
+		$symbol_first = true;
+		
 		switch ($currency) {
-		case 'USD':
-		case 'CAD':
-			$decimal_character = '.';
-			$thousands_character = ',';
-			$currency_symbol = '$';
-			break;
 		case 'EUR':
 			$decimal_character = ',';
 			$thousands_character = '.';
 			$currency_symbol = '€';
 			break;
 		case 'GBP':
-			$decimal_character = '.';
-			$thousands_character = ',';
 			$currency_symbol = '£';
+			break;
+		case 'JPY':
+			$decimal_character = '';
+			$decimal_places = 0;
+			$thousands_character = '';
+			$currency_symbol = '¥';
+			break;
 		}
 		
-		return $currency_symbol . number_format($price, 2, $decimal_character, $thousands_character) . ($with_suffix ?  ' ' . $currency : '');
+		return ($symbol_first === true ? $currency_symbol : '') . number_format($price, $decimal_places, $decimal_character, $thousands_character) . ($symbol_first === false ? $currency_symbol : '') . ($with_suffix ?  ' ' . $currency : '');
 	}
 	
 	public static function CreateGiftPurchase(string $email, string $product_id, int $quantity, string $notes, bool $process = false): string {

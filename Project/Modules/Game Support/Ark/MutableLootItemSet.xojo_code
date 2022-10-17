@@ -82,18 +82,7 @@ Inherits Ark.LootItemSet
 
 	#tag Method, Flags = &h0
 		Sub CopyFrom(Source As Ark.LootItemSet)
-		  Self.mItemsRandomWithoutReplacement = Source.mItemsRandomWithoutReplacement
-		  Self.mMaxNumItems = Source.mMaxNumItems
-		  Self.mMinNumItems = Source.mMinNumItems
-		  Self.mNumItemsPower = Source.mNumItemsPower
-		  Self.mSetWeight = Source.mSetWeight
-		  Self.mLabel = Source.mLabel
-		  Self.mTemplateUUID = Source.mTemplateUUID
-		  
-		  Self.mEntries.ResizeTo(Source.mEntries.LastIndex)
-		  For I As Integer = 0 To Source.mEntries.LastIndex
-		    Self.mEntries(I) = New Ark.LootItemSetEntry(Source.mEntries(I))
-		  Next
+		  Super.CopyFrom(Source)
 		End Sub
 	#tag EndMethod
 

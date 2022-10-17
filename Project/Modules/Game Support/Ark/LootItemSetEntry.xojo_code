@@ -240,7 +240,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Var Locale As Locale = Locale.Raw
 		    Var Format As String = "0.000"
 		    
-		    Var Parts(8) As String
+		    Var Parts(9) As String
 		    Parts(0) = Beacon.MD5(Items.Join(",")).Lowercase
 		    Parts(1) = Self.ChanceToBeBlueprint.ToString(Locale, Format)
 		    Parts(2) = Self.MaxQuality.Key.Lowercase
@@ -250,8 +250,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Parts(6) = Self.RawWeight.ToString(Locale, Format)
 		    Parts(7) = If(Self.PreventGrinding, "True", "False")
 		    Parts(8) = Self.StatClampMultiplier.ToString(Locale, Format)
+		    Parts(9) = If(Self.SingleItemQuantity, "True", "False")
 		    
-		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
+		    Self.mHash = Beacon.MD5(Parts.Join(":")).Lowercase
 		    Self.mLastHashTime = System.Microseconds
 		  End If
 		  Return Self.mHash
@@ -260,7 +261,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function HashIsStale() As Boolean
-		  If Self.mLastHashTime < Self.mLastModifiedTime Then
+		  If Self.mHash.IsEmpty Or Self.mLastHashTime = 0 Or Self.mLastHashTime < Self.mLastModifiedTime Then
 		    Return True
 		  End If
 		End Function

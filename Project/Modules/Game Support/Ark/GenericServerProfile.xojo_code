@@ -12,20 +12,9 @@ Inherits Ark.ServerProfile
 		Sub Constructor(ProfileName As String, Mask As UInt64)
 		  // Do not call the parent constructor
 		  Self.Name = ProfileName
-		  Self.mMask = Mask
+		  Self.Mask = Mask
 		End Sub
 	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Mask() As UInt64
-		  Return Self.mMask
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mMask As UInt64
-	#tag EndProperty
 
 
 	#tag ViewBehavior

@@ -29,7 +29,7 @@ Begin BeaconSubview HelpComponent
    Begin HTMLViewer HelpViewer
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   394
+      Height          =   353
       Index           =   -2147483648
       Left            =   0
       LockBottom      =   True
@@ -43,9 +43,103 @@ Begin BeaconSubview HelpComponent
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   41
       Visible         =   True
       Width           =   738
+   End
+   Begin OmniBar BrowserButtonToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   0
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   220
+   End
+   Begin OmniBarSeparator BrowserSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   220
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   518
+   End
+   Begin Label BrowserTitleLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   220
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Help"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   10
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   298
    End
 End
 #tag EndWindow
@@ -59,20 +153,10 @@ End
 		    Return
 		  End If
 		  
-		  Self.LoadURL(Self.HelpURL)
+		  Self.LoadURL(Beacon.HelpURL)
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Shared Function HelpURL(ChildPath As String = "") As String
-		  If ChildPath.IsEmpty = False And ChildPath.BeginsWith("/") = False Then
-		    ChildPath = "/" + ChildPath
-		  End If
-		  
-		  Return Beacon.WebURL("/help/" + App.BuildVersion + ChildPath)
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub LoadURL(URL As String)
@@ -131,6 +215,23 @@ End
 		    Self.LinkedOmniBarItem.HasProgressIndicator = False
 		  End If
 		  Self.mHelpLoaded = True
+		  
+		  Var BackButton As OmniBarItem = Self.BrowserButtonToolbar.Item("BackButton")
+		  If (BackButton Is Nil) = False Then
+		    BackButton.Enabled = Me.CanGoBack
+		  End If
+		  
+		  Var ForwardButton As OmniBarItem = Self.BrowserButtonToolbar.Item("ForwardButton")
+		  If (ForwardButton Is Nil) = False Then
+		    ForwardButton.Enabled = Me.CanGoForward
+		  End If
+		  
+		  Var HomeButton As OmniBarItem = Self.BrowserButtonToolbar.Item("HomeButton")
+		  If (HomeButton Is Nil) = False Then
+		    HomeButton.Enabled = URL <> Beacon.HelpURL
+		  End If
+		  
+		  Me.ExecuteJavaScript("beacon.pageLoaded('" + App.BuildNumber.ToString(Locale.Raw, "0") + "');")
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -162,6 +263,51 @@ End
 	#tag Event
 		Sub Open()
 		  Me.UserAgent = App.UserAgent
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function NewWindow(url as String) As HTMLViewer
+		  System.GotoURL(URL)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub TitleChanged(newTitle as String)
+		  Self.BrowserTitleLabel.Text = NewTitle
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function JavaScriptRequest(method As String, parameters() as Variant) As String
+		  Select Case Method
+		  Case "openInBrowser"
+		    Try
+		      System.GotoURL(Parameters(0).StringValue)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to handle openInBrowser")
+		    End Try
+		  End Select
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events BrowserButtonToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateButton("BackButton", "Back", IconToolbarBack, "", False))
+		  Me.Append(OmniBarItem.CreateButton("ForwardButton", "Forward", IconToolbarForward, "", False))
+		  Me.Append(OmniBarItem.CreateButton("HomeButton", "Home", IconToolbarHome, "", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "BackButton"
+		    Self.HelpViewer.GoBack
+		  Case "ForwardButton"
+		    Self.HelpViewer.GoForward
+		  Case "HomeButton"
+		    Self.LoadURL(Beacon.HelpURL)
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

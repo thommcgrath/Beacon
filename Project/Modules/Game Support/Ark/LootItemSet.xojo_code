@@ -16,7 +16,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.LootItemSet)
 		  Self.Constructor()
-		  
+		  Self.CopyFrom(Source)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub CopyFrom(Source As Ark.LootItemSet)
 		  Self.mHash = Source.mHash
 		  Self.mItemsRandomWithoutReplacement = Source.mItemsRandomWithoutReplacement
 		  Self.mLabel = Source.mLabel
@@ -199,6 +204,10 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    
 		    Var Entry As New Ark.MutableLootItemSetEntry
 		    Entry.RawWeight = TemplateEntry.RawWeight
+		    Entry.SingleItemQuantity = TemplateEntry.SingleItemQuantity
+		    Entry.PreventGrinding = TemplateEntry.PreventGrinding
+		    Entry.StatClampMultiplier = TemplateEntry.StatClampMultiplier
+		    
 		    For Idx As Integer = 0 To TemplateEntry.LastIndex
 		      Entry.Add(TemplateEntry(Idx))
 		    Next Idx
@@ -282,14 +291,14 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Parts(1) = Self.MaxNumItems.ToString(Locale, Format)
 		    Parts(2) = Self.MinNumItems.ToString(Locale, Format)
 		    If ForPreset Then
-		      Return Beacon.MD5(Parts.Join(",")).Lowercase
+		      Return Beacon.MD5(Parts.Join(":")).Lowercase
 		    End If
 		    Parts(3) = Self.NumItemsPower.ToString(Locale, Format)
 		    Parts(4) = Self.RawWeight.ToString(Locale, Format)
 		    Parts(5) = Self.Label.Lowercase  
-		    Parts(6) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
+		    Parts(6) = If(Self.ItemsRandomWithoutReplacement, "True", "False")
 		    
-		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
+		    Self.mHash = Beacon.MD5(Parts.Join(":")).Lowercase
 		    Self.mLastHashTime = System.Microseconds
 		  End If
 		  Return Self.mHash
@@ -298,7 +307,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function HashIsStale() As Boolean
-		  If Self.mLastHashTime < Self.mLastModifiedTime Then
+		  If Self.mHash.IsEmpty Or Self.mLastHashTime = 0 Or Self.mLastHashTime < Self.mLastModifiedTime Then
 		    Return True
 		  End If
 		  
