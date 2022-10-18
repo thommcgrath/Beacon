@@ -1,6 +1,7 @@
 <?php
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
+//header('Accept-CH: UA-Mobile, UA-Arch, UA-Platform, UA-Bitness');
 ?><p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
 <div id="stable-table" class="downloads-table"></div>
 <div id="prerelease-table" class="downloads-table"></div>
@@ -64,13 +65,48 @@ let updateScreenNotice = function() {
 	}
 };
 
-let buildDownloadsTable = function() {
-	let agent = navigator.userAgent;
-	let isWindows = navigator.platform === 'Win32';
-	let isMac = navigator.platform === 'MacIntel';
-	let isWindows64 = isWindows && (agent.includes('x86_64') || agent.includes('x86-64') || agent.includes('Win64') || agent.includes('x64') || agent.includes('amd64') || agent.includes('AMD64') || agent.includes('WOW64') || agent.includes('x64_64'));
+const buildDownloadsTable = async () => {
+	const downloadMac = 'macOS';
+	const downloadWinUniversal = 'windows-universal';
+	const downloadWinIntel64 = 'windows-x64';
+	const downloadWinIntel = 'windows-x86';
+	const downloadWinARM64 = 'windows-arm64';
 	
-	let addChildRow = function(table, label, url, buttonCaption = 'Download') {
+	let priorities = [downloadWinIntel64, downloadMac, downloadWinIntel, downloadWinARM64];
+	let hasRecommendation = false;
+	
+	switch (navigator.platform) {
+	case 'Win32':
+		// Try to use client hints to determine the best version, but this isn't supported in Firefox
+		if ('userAgentData' in navigator) {
+			await navigator.userAgentData.getHighEntropyValues(['architecture', 'bitness']).then((ua) => {
+				if (ua.bitness == 32) {
+					priorities = [downloadWinIntel, downloadWinIntel64, downloadWinARM64, downloadMac];
+					hasRecommendation = true;
+				} else if (ua.bitness == 64) {
+					if (ua.architecture == 'arm') {
+						priorities = [downloadWinARM64, downloadWinIntel, downloadWinIntel64, downloadMac];
+						hasRecommendation = true;
+					} else if (ua.architecture == 'x86') {
+						priorities = [downloadWinIntel64, downloadWinIntel, downloadWinARM64, downloadMac];
+						hasRecommendation = true;
+					}
+				}
+			}).catch(() => {});
+		}
+		if (hasRecommendation === false) {
+			priorities = [downloadWinUniversal, downloadWinIntel64, downloadWinIntel, downloadWinARM64, downloadMac];
+			hasRecommendation = true;	
+		}
+		break;
+	case 'MacIntel':
+		// Mac is simple, there's only one version
+		priorities = [downloadMac, downloadWinIntel64, downloadWinIntel, downloadWinARM64];
+		hasRecommendation = true;
+		break;
+	}
+	
+	const addChildRow = (table, label, url, buttonCaption = 'Download') => {
 		let childRow = document.createElement('div');
 		childRow.classList.add('row');
 		let childLabel = document.createElement('div');
@@ -89,20 +125,8 @@ let buildDownloadsTable = function() {
 		table.appendChild(childRow);
 	};
 	
-	let addChildRows = function(table, data, recommend) {
-		if (isWindows64) {
-			addChildRow(table, 'Windows 64-bit' + (recommend ? '<span class="tag blue mini left-space">Recommended</span>' : '') + '<br><span class="mini text-lighter">For 64-bit versions of ' + data.win_display_versions + '</span>', data.win_64_url);
-			addChildRow(table, 'Windows 32-bit<br><span class="mini text-lighter">For 32-bit versions of ' + data.win_display_versions + '</span>', data.win_32_url);
-			addChildRow(table, 'Mac<br><span class="mini text-lighter">For macOS ' + data.mac_display_versions + '</span>', data.mac_url);
-		} else if (isWindows) {
-			addChildRow(table, 'Windows 32-bit' + (recommend ? '<span class="tag blue mini left-space">Recommended</span>' : '') + '<br><span class="mini text-lighter">For 32-bit versions of ' + data.win_display_versions + '</span>', data.win_32_url);
-			addChildRow(table, 'Windows 64-bit<br><span class="mini text-lighter">For 64-bit versions of ' + data.win_display_versions + '</span>', data.win_64_url);
-			addChildRow(table, 'Mac<br><span class="mini text-lighter">For macOS ' + data.mac_display_versions + '</span>', data.mac_url);
-		} else if (isMac) {
-			addChildRow(table, 'Mac' + (recommend ? '<span class="tag blue mini left-space">Recommended</span>' : '') + '<br><span class="mini text-lighter">For macOS ' + data.mac_display_versions + '</span>', data.mac_url);
-			addChildRow(table, 'Windows 64-bit<br><span class="mini text-lighter">For 64-bit versions of ' + data.win_display_versions + '</span>', data.win_64_url);
-			addChildRow(table, 'Windows 32-bit<br><span class="mini text-lighter">For 32-bit versions of ' + data.win_display_versions + '</span>', data.win_32_url);
-		} else {
+	const addChildRows = (table, data, recommend) => {
+		if (hasRecommendation === false) {
 			let warningRow = document.createElement('div');
 			warningRow.classList.add('row');
 			let warningLabel = document.createElement('div');
@@ -111,16 +135,51 @@ let buildDownloadsTable = function() {
 			warningLabel.innerText = 'Sorry, this version of Beacon is not compatible with your device. But just in case a mistake was made, here are the download links.';
 			warningRow.appendChild(warningLabel)
 			table.appendChild(warningRow);
-			
-			addChildRow(table, 'Mac<br><span class="mini text-lighter">For macOS ' + data.mac_display_versions + '</span>', data.mac_url);
-			addChildRow(table, 'Windows 64-bit<br><span class="mini text-lighter">For 64-bit versions of ' + data.win_display_versions + '</span>', data.win_64_url);
-			addChildRow(table, 'Windows 32-bit<br><span class="mini text-lighter">For 32-bit versions of ' + data.win_display_versions + '</span>', data.win_32_url);
 		}
+		
+		let first = true; // Set first only after a row is added, in case one gets skipped
+		for (const downloadKey of priorities) {
+			let recommendedTag = (recommend === true && hasRecommendation === true && first === true) ? '<span class="tag blue mini left-space">Recommended</span>' : '';
+			
+			switch (downloadKey) {
+			case downloadMac:
+				if (data.hasOwnProperty('mac_url')) {
+					addChildRow(table, `Mac${recommendedTag}<br><span class="mini text-lighter">For macOS ${data.mac_display_versions}</span>`, data.mac_url);
+					first = false;
+				}
+				break;
+			case downloadWinIntel:
+				if (data.hasOwnProperty('win_32_url')) {
+					addChildRow(table, `Windows x86 32-bit${recommendedTag}<br><span class="mini text-lighter">For 32-bit versions of ${data.win_display_versions}</span>`, data.win_32_url);
+					first = false;
+				}
+				break;
+			case downloadWinIntel64:
+				if (data.hasOwnProperty('win_64_url')) {
+					addChildRow(table, `Windows x86 64-bit${recommendedTag}<br><span class="mini text-lighter">For 64-bit versions of ${data.win_display_versions}</span>`, data.win_64_url);
+					first = false;
+				}
+				break;
+			case downloadWinARM64:
+				if (data.hasOwnProperty('win_arm64_url')) {
+					addChildRow(table, `Windows ARM 64-bit${recommendedTag}<br><span class="mini text-lighter">For 64-bit versions of ${data.win_arm_display_versions}</span>`, data.win_arm64_url);
+					first = false;
+				}
+				break;
+			case downloadWinUniversal:
+				if (data.hasOwnProperty('win_combo_url')) {
+					addChildRow(table, `Windows Universal${recommendedTag}<br><span class="mini text-lighter">For all versions of ${data.win_display_versions}</span>`, data.win_combo_url);
+					first = false;
+				}
+				break;
+			}
+		}
+		
 		addChildRow(table, 'Engrams Database, updated <time datetime="' + data.engrams_date + '">' + data.engrams_date_display + '</time>', data.engrams_url);
 		addChildRow(table, 'Release Notes', data.history_url, 'View');
 	};
 	
-	let download_data = <?php echo json_encode($download_links, JSON_PRETTY_PRINT); ?>;
+	const download_data = <?php echo json_encode($download_links, JSON_PRETTY_PRINT); ?>;
 	let stable_table = document.getElementById('stable-table');
 	let prerelease_table = document.getElementById('prerelease-table');
 	let legacy_table = document.getElementById('legacy-table');
@@ -183,39 +242,38 @@ function BuildLinks(array $update): array {
 	$delta_version = $update['delta_version'];
 	$stage = $update['stage'];
 	
-	$mac_url = array_key_first($update['files'][BeaconUpdates::PLATFORM_MACOS]);
-	$win_combo_url = '';
-	$win_64_url = '';
-	$win_32_url = '';
+	$data = [
+		'build_display' => $update['build_display'],
+		'build_number' => $build,
+		'stage' => $stage,
+		'mac_url' => BeaconCommon::SignDownloadURL(array_key_first($update['files'][BeaconUpdates::PLATFORM_MACOS]), 300)
+	];
 		
 	foreach ($update['files'][BeaconUpdates::PLATFORM_WINDOWS] as $url => $architectures) {
 		switch ($architectures) {
 		case BeaconUpdates::ARCH_INTEL32:
-			$win_32_url = $url;
+			$data['win_32_url'] = BeaconCommon::SignDownloadURL($url, 300);
 			break;
 		case BeaconUpdates::ARCH_INTEL64:
-			$win_64_url = $url;
+			$data['win_64_url'] = BeaconCommon::SignDownloadURL($url, 300);
 			break;
 		case BeaconUpdates::ARCH_INTEL:
-			$win_combo_url = $url;
+		case BeaconUpdates::ARCH_INTEL | BeaconUpdates::ARCH_ARM64:
+			$data['win_combo_url'] = BeaconCommon::SignDownloadURL($url, 300);
+			break;
+		case BeaconUpdates::ARCH_ARM64:
+			$data['win_arm64_url'] = BeaconCommon::SignDownloadURL($url, 300);
 			break;
 		}
 	}
-	
-	$data = [
-		'mac_url' => BeaconCommon::SignDownloadURL($mac_url),
-		'win_combo_url' => BeaconCommon::SignDownloadURL($win_combo_url),
-		'win_64_url' => BeaconCommon::SignDownloadURL($win_64_url),
-		'win_32_url' => BeaconCommon::SignDownloadURL($win_32_url),
-		'build_display' => $update['build_display'],
-		'build_number' => $build,
-		'stage' => $stage
-	];
 	
 	$min_mac_version = $update['min_mac_version'];
 	list($mac_major, $mac_minor, $mac_bug) = explode('.', $min_mac_version, 3);
 	$min_mac_version = ($mac_major * 10000) + ($mac_minor * 100) + $mac_bug;
 	$mac_versions = [];
+	/*if ($min_mac_version <= 101800) {
+		$mac_versions[] = '13 Ventura';
+	}*/
 	if ($min_mac_version <= 101700) {
 		$mac_versions[] = '12 Monterey';
 	}
@@ -243,11 +301,18 @@ function BuildLinks(array $update): array {
 	list($win_major, $win_minor, $win_build) = explode('.', $min_win_version, 3);
 	$min_win_version = ($win_major * 100000000) + ($win_minor * 1000000) + $win_build;
 	$win_versions = [];
+	$win_arm_versions = [];
 	if ($min_win_version <= 1000022000) {
 		$win_versions[] = 'Windows 11';
+		if (array_key_exists('win_arm64_url', $data)) {
+			$win_arm_versions[] = 'Windows 11';
+		}
 	}
 	if ($min_win_version <= 1000010240) {
 		$win_versions[] = 'Windows 10';
+		if (array_key_exists('win_arm64_url', $data)) {
+			$win_arm_versions[] = 'Windows 10';
+		}
 	}
 	if ($min_win_version <= 603009600) {
 		$win_versions[] = 'Windows 8.1';
@@ -259,6 +324,9 @@ function BuildLinks(array $update): array {
 		$win_versions[] = 'Windows 7 with Service Pack 1';
 	}
 	$data['win_display_versions'] = BeaconCommon::ArrayToEnglish($win_versions, 'or');
+	if (array_key_exists('win_arm64_url', $data)) {
+		$data['win_arm_display_versions'] = BeaconCommon::ArrayToEnglish($win_arm_versions, 'or');
+	}
 	
 	if ($delta_version >= 5) {
 		$database = BeaconCommon::Database();
