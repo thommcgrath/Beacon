@@ -558,7 +558,8 @@ BeaconTemplate::FinishScript();
 				}
 				
 				?></div>
-				<p class="smaller">If necessary the price will be converted into CAD, EUR, or GBP at checkout.</p>
+				<p class="smaller">If necessary the price will be converted into AUD, CAD, EUR, GBP, JPY, MXN, or SGD at checkout.</p>
+				<p class="smaller"><a href="/help/refund_policy">Beacon Refund Policy</a></p>
 			</td>
 		</tr>
 	</table>
