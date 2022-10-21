@@ -206,6 +206,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  #if TargetMacOS
 		    EditPrefsSeparator.Visible = False
+		    If SystemInformationMBS.IsVentura(True) Then
+		      EditPreferences.Text = "Settings"
+		    End If
 		  #endif
 		  
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckBetaExpiration)
