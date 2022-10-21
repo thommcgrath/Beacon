@@ -62,12 +62,6 @@ Protected Class BlueprintImporter
 		    Return Nil
 		  End If
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Add loot container import"
-		  #else
-		    #Pragma Error "Add loot container import"
-		  #endif
-		  
 		  Contents = Contents.ReplaceLineEndings(EndOfLine)
 		  
 		  // Cleanup an inconsistency
@@ -75,7 +69,7 @@ Protected Class BlueprintImporter
 		  
 		  Var OffsetMax As Integer = Contents.Length
 		  Var Importer As New Ark.BlueprintImporter
-		  Var ItemDicts(), CreatureDicts(), SpawnDicts() As Dictionary
+		  Var ItemDicts(), CreatureDicts(), SpawnDicts(), LootDicts(), DropDicts() As Dictionary
 		  Var EngramsByClass As New Dictionary
 		  
 		  If (Progress Is Nil) = False Then
@@ -131,6 +125,10 @@ Protected Class BlueprintImporter
 		      CreatureDicts.Add(Values)
 		    Case "MapSpawner"
 		      SpawnDicts.Add(Values)
+		    Case "SupplyCrate"
+		      LootDicts.Add(Values)
+		    Case "Inventory"
+		      DropDicts.Add(Values)
 		    End Select
 		  Wend
 		  
@@ -138,69 +136,120 @@ Protected Class BlueprintImporter
 		    Progress.Progress = Nil
 		    Progress.Detail = "Assembling engrams…"
 		  End If
-		  
 		  For Each ItemDict As Dictionary In ItemDicts
-		    Var ItemClass As String = ItemDict.Value("CLASS")
-		    Var EngramDict As Dictionary = EngramsByClass.Lookup(ItemClass, Nil)
-		    Var Path As String = ItemDict.Value("PATH")
-		    If Path.EndsWith("_C") Then
-		      Path = Path.Left(Path.Length - 2)
-		    End If
-		    
-		    Var Engram As New Ark.MutableEngram(Path, New v4UUID)
-		    Engram.Label = ItemDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
-		    Engram.AddTag("blueprintable")
-		    Select Case ItemDict.Value("ITEM_TYPE").StringValue
-		    Case "Resource"
-		      Engram.AddTag("resource")
-		    End Select
-		    
-		    If (EngramDict Is Nil) = False Then
-		      Var UnlockString As String = EngramDict.Value("CLASS")
-		      Engram.EntryString = UnlockString
-		      Var IsTek As Boolean = EngramDict.Value("FORCE_IS_TEK_ENGRAM").BooleanValue Or EngramDict.Value("ENGRAM_GROUP").StringValue = "ARK_TEK"
-		      If IsTek Then
-		        Engram.AddTag("tek")
+		    Try
+		      Var ItemClass As String = ItemDict.Value("CLASS")
+		      Var EngramDict As Dictionary = EngramsByClass.Lookup(ItemClass, Nil)
+		      Var Path As String = ItemDict.Value("PATH")
+		      If Path.EndsWith("_C") Then
+		        Path = Path.Left(Path.Length - 2)
 		      End If
-		      Var ManualUnlock As Boolean = EngramDict.Value("CAN_BE_MANUAL").BooleanValue
-		      If ManualUnlock Then
-		        Var RequiredLevel As Integer = EngramDict.Value("REQ_LEVEL")
-		        Var RequiredPoints As Integer = EngramDict.Value("REQ_POINTS")
-		        Engram.RequiredPlayerLevel = RequiredLevel
-		        Engram.RequiredUnlockPoints = RequiredPoints
+		      
+		      Var Engram As New Ark.MutableEngram(Path, New v4UUID)
+		      Engram.Label = ItemDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
+		      Engram.AddTag("blueprintable")
+		      Select Case ItemDict.Value("ITEM_TYPE").StringValue
+		      Case "Resource"
+		        Engram.AddTag("resource")
+		      End Select
+		      
+		      If (EngramDict Is Nil) = False Then
+		        Var UnlockString As String = EngramDict.Value("CLASS")
+		        Engram.EntryString = UnlockString
+		        Var IsTek As Boolean = EngramDict.Value("FORCE_IS_TEK_ENGRAM").BooleanValue Or EngramDict.Value("ENGRAM_GROUP").StringValue = "ARK_TEK"
+		        If IsTek Then
+		          Engram.AddTag("tek")
+		        End If
+		        Var ManualUnlock As Boolean = EngramDict.Value("CAN_BE_MANUAL").BooleanValue
+		        If ManualUnlock Then
+		          Var RequiredLevel As Integer = EngramDict.Value("REQ_LEVEL")
+		          Var RequiredPoints As Integer = EngramDict.Value("REQ_POINTS")
+		          Engram.RequiredPlayerLevel = RequiredLevel
+		          Engram.RequiredUnlockPoints = RequiredPoints
+		        End If
 		      End If
-		    End If
-		    
-		    Importer.mBlueprints.Add(Engram.ImmutableVersion)
+		      
+		      Importer.mBlueprints.Add(Engram.ImmutableVersion)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing engram data")
+		    End Try
 		  Next ItemDict
 		  
 		  If (Progress Is Nil) = False Then
 		    Progress.Detail = "Assembling creatures…"
 		  End If
 		  For Each CreatureDict As Dictionary In CreatureDicts
-		    Var Path As String = CreatureDict.Value("PATH")
-		    If Path.EndsWith("_C") Then
-		      Path = Path.Left(Path.Length - 2)
-		    End If
-		    
-		    Var Creature As New Ark.MutableCreature(Path, New v4UUID)
-		    Creature.Label = CreatureDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
-		    Importer.mBlueprints.Add(Creature.ImmutableVersion)
+		    Try
+		      Var Path As String = CreatureDict.Value("PATH")
+		      If Path.EndsWith("_C") Then
+		        Path = Path.Left(Path.Length - 2)
+		      End If
+		      
+		      Var Creature As New Ark.MutableCreature(Path, New v4UUID)
+		      Creature.Label = CreatureDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
+		      Importer.mBlueprints.Add(Creature.ImmutableVersion)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing creature data")
+		    End Try
 		  Next CreatureDict
 		  
 		  If (Progress Is Nil) = False Then
 		    Progress.Detail = "Assembling spawn points…"
 		  End If
-		  
 		  For Each SpawnDict As Dictionary In SpawnDicts
-		    Var Path As String = SpawnDict.Value("PATH")
-		    If Path.EndsWith("_C") Then
-		      Path = Path.Left(Path.Length - 2)
-		    End If
-		    
-		    Var Point As New Ark.MutableSpawnPoint(Path, New v4UUID)
-		    Point.Label = SpawnDict.Value("CLASS")
-		    Importer.mBlueprints.Add(Point.ImmutableVersion)
+		    Try
+		      Var Path As String = SpawnDict.Value("PATH")
+		      If Path.EndsWith("_C") Then
+		        Path = Path.Left(Path.Length - 2)
+		      End If
+		      
+		      Var Point As New Ark.MutableSpawnPoint(Path, New v4UUID)
+		      Point.Label = SpawnDict.Value("CLASS")
+		      Importer.mBlueprints.Add(Point.ImmutableVersion)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing spawn point data")
+		    End Try
+		  Next
+		  
+		  If (Progress Is Nil) = False Then
+		    Progress.Detail = "Assembling loot sources…"
+		  End If
+		  For Each LootDict As Dictionary In LootDicts
+		    Try
+		      Var Path As String = LootDict.Value("PATH")
+		      If Path.EndsWith("_C") Then
+		        Path = Path.Left(Path.Length - 2)
+		      End If
+		      
+		      Var Container As New Ark.MutableLootContainer(Path, New v4UUID)
+		      Container.Label = LootDict.Value("CLASS")
+		      Container.IconID = "84d76c41-4386-467d-83e7-841dcaa4007d"
+		      Importer.mBlueprints.Add(Container.ImmutableVersion)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing supply crate data")
+		    End Try
+		  Next
+		  
+		  // This does not work because DataDumper does not have a path for inventories.
+		  // But it'll remain in case that changes.
+		  If (Progress Is Nil) = False Then
+		    Progress.Detail = "Assembling dino inventories…"
+		  End If
+		  For Each DropDict As Dictionary In DropDicts
+		    Try
+		      Var Path As String = DropDict.Value("PATH")
+		      If Path.EndsWith("_C") Then
+		        Path = Path.Left(Path.Length - 2)
+		      End If
+		      
+		      Var Container As New Ark.MutableLootContainer(Path, New v4UUID)
+		      Container.Label = DropDict.Value("CLASS")
+		      Container.IconID = "41dde824-5675-4515-b222-e860a44619d9"
+		      Container.Experimental = True
+		      Importer.mBlueprints.Add(Container.ImmutableVersion)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing dino inventory data")
+		    End Try
 		  Next
 		  
 		  Return Importer
@@ -588,14 +637,6 @@ Protected Class BlueprintImporter
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mModNames()"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

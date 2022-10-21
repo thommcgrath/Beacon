@@ -880,10 +880,6 @@ Inherits Beacon.DataSource
 		Function ComputeGFICodes(ContentPacks As Beacon.StringList, Progress As Beacon.ProgressDisplayer = Nil) As String()
 		  // This code expects to be run inside a thread
 		  
-		  #if Not DebugBuild
-		    #Pragma Error "This routine is untested"
-		  #endif
-		  
 		  If Progress Is Nil Then
 		    Progress = New Beacon.DummyProgressDisplayer
 		  End If
