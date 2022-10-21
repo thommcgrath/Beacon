@@ -150,7 +150,7 @@ begin
     pInstallX64   := True
   #elif defined(x86)
     pInstallX86   := True
-  #elif define(arm64)
+  #elif defined(arm64)
     pInstallARM64 := True
   #endif
 
