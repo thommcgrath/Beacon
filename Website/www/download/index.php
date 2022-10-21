@@ -271,9 +271,9 @@ function BuildLinks(array $update): array {
 	list($mac_major, $mac_minor, $mac_bug) = explode('.', $min_mac_version, 3);
 	$min_mac_version = ($mac_major * 10000) + ($mac_minor * 100) + $mac_bug;
 	$mac_versions = [];
-	/*if ($min_mac_version <= 101800) {
+	if ($min_mac_version <= 101800 && $build >= 10602000) {
 		$mac_versions[] = '13 Ventura';
-	}*/
+	}
 	if ($min_mac_version <= 101700) {
 		$mac_versions[] = '12 Monterey';
 	}
@@ -314,10 +314,10 @@ function BuildLinks(array $update): array {
 			$win_arm_versions[] = 'Windows 10';
 		}
 	}
-	if ($min_win_version <= 603009600) {
+	if ($min_win_version <= 603009200) {
 		$win_versions[] = 'Windows 8.1';
 	}
-	if ($min_win_version <= 603009200) {
+	if ($min_win_version <= 602009200) {
 		$win_versions[] = 'Windows 8';
 	}
 	if ($min_win_version <= 601007601) {
