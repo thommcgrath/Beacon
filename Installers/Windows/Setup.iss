@@ -31,7 +31,7 @@ AllowNoIcons=yes
 OutputBaseFilename=Install_{#MyAppName}
 Compression=lzma2
 SolidCompression=no
-MinVersion=6.1sp1
+MinVersion=6.3.9200
 ChangesAssociations=yes
 #ifndef x86
   ArchitecturesInstallIn64BitMode=x64 arm64
@@ -97,9 +97,6 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
-Root: HKA; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.3
-Root: HKA; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.3
-
 Root: HKA; Subkey: "Software\Classes\.beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconDocument"; ValueData: "{#MyAppName} Document"; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconDocument\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconDocument.ico,0"; ValueType: string; ValueName: ""
@@ -134,52 +131,15 @@ Root: HKA; Subkey: "Software\Classes\beacon\shell\open\command"; ValueType: "str
 Filename: "{app}\{#MyAppExeName}"; Parameters: "/NOSETUPCHECK"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Check: not CmdLineParamExists('/NOLAUNCH'); Flags: nowait postinstall
 #if defined(x64)
 Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: IsAdminInstallMode And (defined(installX64) Or (Is64BitInstallMode And IsX64)); Flags: waituntilterminated
-Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x64.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: IsAdminInstallMode And (defined(installX64) Or (Is64BitInstallMode And IsX64)) And IsKBNeeded('KB3140245')
 #endif
 #if defined(arm64)
 Filename: "{tmp}\VC_redist.arm64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: IsAdminInstallMode And (defined(installARM64) Or (Is64BitInstallMode And IsARM64)); Flags: waituntilterminated
 #endif
 #if defined(x86)
 Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Check: IsAdminInstallMode And (defined(installX86) Or (Not Is64BitInstallMode)); Flags: waituntilterminated
-Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x86.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: IsAdminInstallMode And (defined(installX86) Or (Not Is64BitInstallMode)) And IsKBNeeded('KB3140245')
 #endif
 
 [Code]
-var
-  RestartRequired: Boolean;
-
-function IsKBNeeded(KB: string): Boolean;
-var
-  WbemLocator: Variant;
-  WbemServices: Variant;
-  WQLQuery: string;
-  WbemObjectSet: Variant;
-begin
-  WbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
-  WbemServices := WbemLocator.ConnectServer('', 'root\CIMV2');
-
-  WQLQuery := 'select * from Win32_QuickFixEngineering where HotFixID = ''' + KB + '''';
-
-  WbemObjectSet := WbemServices.ExecQuery(WQLQuery);
-  Result := (VarIsNull(WbemObjectSet)) or (WbemObjectSet.Count = 0);
-end;
-
-function InitializeSetup(): Boolean;
-begin
-  RestartRequired := (GetWindowsVersion < $06020000) And IsKBNeeded('KB3140245');
-  Result := True;
-  if RestartRequired then begin
-	  if MsgBox('A restart will be required when finished. Continue?', mbConfirmation, MB_YESNO) = IDNO then begin
-	    Result := False;
-	  end;
-  end;
-end;
-
-function NeedRestart(): Boolean;
-begin
-  Result := RestartRequired;
-end;
-
 function CmdLineParamExists(const Value: string): Boolean;
 var
   I: Integer;  
