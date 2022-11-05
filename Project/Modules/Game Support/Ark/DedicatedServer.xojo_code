@@ -1,18 +1,7 @@
 #tag Module
 Protected Module DedicatedServer
 	#tag Method, Flags = &h1
-		Protected Function Configure(Project As Ark.Project, Profile As Ark.ServerProfile, HostDir As FolderItem) As Boolean
-		  Var ArkRoot As FolderItem
-		  Try
-		    ArkRoot = New FolderItem(Preferences.ArkSteamPath, FolderItem.PathModes.Native)
-		    If ArkRoot.Exists = False Then
-		      Return False
-		    End If
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Getting Ark root folder")
-		    Return False
-		  End Try
-		  
+		Protected Function Configure(Project As Ark.Project, Profile As Ark.ServerProfile, ArkRoot As FolderItem, HostDir As FolderItem) As Boolean
 		  Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(App.IdentityManager.CurrentIdentity, Profile)
 		  If Organizer Is Nil Then
 		    App.Log("Project did not create a config organizer")
@@ -103,8 +92,13 @@ Protected Module DedicatedServer
 		    Return False
 		  End If
 		  
-		  HardLinkContents(ArkRoot, ServerFolder)
-		  HardLinkContents(ShooterGameFolder, ServerFolder.Child("ShooterGame"))
+		  Try
+		    HardLinkContents(ArkRoot, ServerFolder)
+		    HardLinkContents(ShooterGameFolder, ServerFolder.Child("ShooterGame"))
+		  Catch Err As RuntimeException
+		    App.Log(Err, "Creating hard links", CurrentMethodName)
+		    Return False
+		  End Try
 		  
 		  Return True
 		End Function
@@ -121,6 +115,14 @@ Protected Module DedicatedServer
 		      Sh.Execute("mklink /J """ + DestinationFile.NativePath + """ """ + SourceFile.NativePath + """")
 		    Else
 		      Sh.Execute("mklink /H """ + DestinationFile.NativePath + """ """ + SourceFile.NativePath + """")
+		    End If
+		    
+		    Var ExitCode As Integer = Sh.ExitCode
+		    If ExitCode <> 0 Then
+		      Var Err As New UnsupportedOperationException
+		      Err.ErrorNumber = ExitCode
+		      Err.Message = Sh.Result.Trim
+		      Raise Err
 		    End If
 		  #elseif TargetLinux Or TargetMacOS
 		    If SourceFile.IsFolder Then

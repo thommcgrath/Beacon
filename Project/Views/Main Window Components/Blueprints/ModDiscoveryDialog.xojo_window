@@ -642,6 +642,7 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin Thread RunThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -655,6 +656,7 @@ Begin BeaconDialog ModDiscoveryDialog
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
+      Enabled         =   True
       ExecuteMode     =   2
       ExitCode        =   0
       Index           =   -2147483648
@@ -677,6 +679,7 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin TCPSocket RunSocket
       Address         =   "127.0.0.1"
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -1065,9 +1068,32 @@ End
 		  Project.AddConfigGroup(CustomConfig)
 		  Project.AddServerProfile(Profile)
 		  
-		  Var HostDir As FolderItem = App.ApplicationSupport.Child("Servers")
+		  Var ArkRoot As FolderItem
+		  Try
+		    ArkRoot = New FolderItem(Preferences.ArkSteamPath, FolderItem.PathModes.Native)
+		    If ArkRoot.Exists = False Then
+		      Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Ark game files do not exist at " + Preferences.ArkSteamPath + "."))
+		      Return
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Getting Ark root folder")
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not get path to Ark game files."))
+		    Return
+		  End Try
 		  
-		  If Ark.DedicatedServer.Configure(Project, Profile, HostDir) = False Then
+		  Var HostDir As FolderItem = App.ApplicationSupport.Child("Servers")
+		  #if TargetWindows
+		    Var HostDrive As FolderItem = HostDir.ParentVolumeMBS
+		    Var ArkDrive As FolderItem = ArkRoot.ParentVolumeMBS
+		    If HostDrive.NativePath <> ArkDrive.NativePath Then
+		      HostDir = ArkDrive.Child("Beacon Dedicated Servers")
+		      If HostDir.CheckIsFolder(True) Then
+		        HostDir.Visible = False
+		      End If
+		    End If
+		  #endif
+		  
+		  If Ark.DedicatedServer.Configure(Project, Profile, ArkRoot, HostDir) = False Then
 		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not build server directory."))
 		    Return
 		  End If
