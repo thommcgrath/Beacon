@@ -369,7 +369,7 @@ Inherits Ark.IntegrationEngine
 		        Profile.Platform = Beacon.ServerProfile.PlatformXbox
 		      Case "arkps"
 		        Profile.Platform = Beacon.ServerProfile.PlatformPlayStation
-		      Case "arksw" // Complete guess
+		      Case "arkswitch"
 		        Profile.Platform = Beacon.ServerProfile.PlatformSwitch
 		      Else
 		        Profile.Platform = Beacon.ServerProfile.PlatformUnknown
