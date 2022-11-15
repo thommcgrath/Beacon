@@ -66,7 +66,7 @@ case 'checkout.session.completed':
 		$quantity = $item['quantity'];
 		$line_total = $item['amount_total'];
 		$subtotal = $item['amount_subtotal'];
-		$product_price = $line_total / $quantity;
+		$product_price = $subtotal / $quantity;
 		$currency = strtoupper($item['currency']);
 		$tax_total = 0;
 		foreach ($item['taxes'] as $tax) {
