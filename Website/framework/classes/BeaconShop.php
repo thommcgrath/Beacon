@@ -84,7 +84,7 @@ abstract class BeaconShop {
 			$database->Query('DELETE FROM licenses WHERE purchase_id = $1;', $purchase_id);
 			
 			// Also revoke gift redemptions
-			$results = $database->Query('SELECT redemption_purchase_id FROM gift_codes WHERE source_purchase_id = $1;', $purchase_id);
+			$results = $database->Query('SELECT redemption_purchase_id FROM gift_codes WHERE source_purchase_id = $1 AND redemption_purchase_id IS NOT NULL;', $purchase_id);
 			while ($results->EOF() === false) {
 				self::RevokePurchases($results->Field('redemption_purchase_id'));
 				$results->MoveNext();
