@@ -517,17 +517,12 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub StartServer(Verbose As Boolean = True)
 		  Var EventFired As Boolean
-		  Var Confirmed As Boolean = Self.State = Self.StateRunning
 		  Var Initial As Boolean = True
 		  While True
 		    Self.RefreshServerStatus()
 		    
 		    Select Case Self.mServerState
 		    Case Self.StateRunning
-		      If Not Confirmed Then
-		        Initial = False
-		        Continue
-		      End If
 		      If Verbose And EventFired Then
 		        Self.Log("Server started.")
 		      End If
@@ -540,24 +535,20 @@ Protected Class IntegrationEngine
 		        RaiseEvent StartServer()
 		        EventFired = True
 		      End If
-		      Initial = False
 		    Case Self.StateStarting
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish starting…")
 		      End If
-		      Confirmed = True
-		      Initial = False
-		      Continue
 		    Case Self.StateStopping
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish stopping so it can be started…")
 		      End If
-		      Initial = False
-		      Continue
 		    Else
 		      Self.SetError("Error: Server neither started nor stopped.")
 		      Return
 		    End Select
+		    
+		    Initial = False
 		  Wend
 		End Sub
 	#tag EndMethod
@@ -618,7 +609,6 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub StopServer(Verbose As Boolean = True)
 		  Var EventFired As Boolean
-		  Var Confirmed As Boolean = Self.State = Self.StateStopped
 		  Var Initial As Boolean = True
 		  While True
 		    Self.RefreshServerStatus()
@@ -632,12 +622,7 @@ Protected Class IntegrationEngine
 		        RaiseEvent StopServer()
 		        EventFired = True
 		      End If
-		      Initial = False
 		    Case Self.StateStopped
-		      If Not Confirmed Then
-		        Initial = False
-		        Continue
-		      End If
 		      If Verbose And EventFired Then
 		        Self.Log("Server stopped.")
 		      End If
@@ -646,19 +631,16 @@ Protected Class IntegrationEngine
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish starting so it can be stopped…")
 		      End If
-		      Initial = False
-		      Continue
 		    Case Self.StateStopping
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish stopping…")
 		      End If
-		      Confirmed = True
-		      Initial = False
-		      Continue
 		    Else
 		      Self.SetError("Error: Server neither started nor stopped")
 		      Return
 		    End Select
+		    
+		    Initial = False
 		  Wend
 		End Sub
 	#tag EndMethod
