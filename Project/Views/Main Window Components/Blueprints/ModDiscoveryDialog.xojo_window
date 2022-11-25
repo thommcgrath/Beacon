@@ -642,7 +642,6 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin Thread RunThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -656,7 +655,6 @@ Begin BeaconDialog ModDiscoveryDialog
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
-      Enabled         =   True
       ExecuteMode     =   2
       ExitCode        =   0
       Index           =   -2147483648
@@ -679,7 +677,6 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin TCPSocket RunSocket
       Address         =   "127.0.0.1"
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -1081,16 +1078,14 @@ End
 		    Return
 		  End Try
 		  
-		  Var HostDir As FolderItem = App.ApplicationSupport.Child("Servers")
+		  Var HostDir As FolderItem
 		  #if TargetWindows
-		    Var HostDrive As FolderItem = HostDir.ParentVolumeMBS
-		    Var ArkDrive As FolderItem = ArkRoot.ParentVolumeMBS
-		    If HostDrive.NativePath <> ArkDrive.NativePath Then
-		      HostDir = ArkDrive.Child("Beacon Dedicated Servers")
-		      If HostDir.CheckIsFolder(True) Then
-		        HostDir.Visible = False
-		      End If
+		    HostDir = ArkRoot.ParentVolumeMBS.Child("Beacon Dedicated Servers")
+		    If HostDir.CheckIsFolder(True) Then
+		      HostDir.Visible = False
 		    End If
+		  #else
+		    HostDir = App.ApplicationSupport.Child("Servers")
 		  #endif
 		  
 		  If Ark.DedicatedServer.Configure(Project, Profile, ArkRoot, HostDir) = False Then
@@ -1098,12 +1093,65 @@ End
 		    Return
 		  End If
 		  
-		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Launching server…"))
-		  
 		  Var ServerFolder As FolderItem = HostDir.Child(Profile.ProfileID)
-		  Var Executable As FolderItem = Ark.DedicatedServer.ShooterGameServer(ServerFolder)
 		  
-		  Var CommandLine As String = """TheIsland?listen?SessionName=Beacon?MaxPlayers=10?Port=" + Port.ToString(Locale.Raw, "0") + "?QueryPort=" + QueryPort.ToString(Locale.Raw, "0") + """ -server -automanagedmods -servergamelog -nobattleye"
+		  Var ModsFolder As FolderItem
+		  Try
+		    ModsFolder = ServerFolder.Child("ShooterGame").Child("Content").Child("Mods")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Getting Ark mods folder")
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not find ShooterGame/Content/Mods folder."))
+		    Return
+		  End Try
+		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Installing mods…"))
+		  Var SteamCMD As FolderItem 
+		  Try
+		    SteamCMD = Ark.DedicatedServer.SteamCMD(ServerFolder)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Getting steamcmd path")
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not find path to SteamCMD."))
+		    Return
+		  End Try
+		  Var SteamCMDPath As String = SteamCMD.ShellPath
+		  Var DownloadCommands() As String
+		  For Each WorkshopID As String In Self.mMods
+		    DownloadCommands.Add("+workshop_download_item 346110 " + WorkshopID)
+		  Next
+		  
+		  Var SteamShell As New Shell
+		  SteamShell.TimeOut = -1
+		  SteamShell.ExecuteMode = Shell.ExecuteModes.Asynchronous
+		  SteamShell.Execute(SteamCMDPath + " +login anonymous " + String.FromArray(DownloadCommands, " ") + " +quit")
+		  
+		  While SteamShell.IsRunning
+		    Me.Sleep(10)
+		  Wend
+		  
+		  Var SteamResult As String = SteamShell.Result
+		  
+		  Var WorkshopFolder As FolderItem
+		  Try
+		    WorkshopFolder = SteamCMD.Parent.Child("steamapps").Child("workshop").Child("content").Child("346110")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Getting workshop data path")
+		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not find path to SteamCMD downloaded content."))
+		    Return
+		  End Try
+		  
+		  For Each WorkshopID As String In Self.mMods
+		    Try
+		      Ark.DedicatedServer.InstallMod(WorkshopID, WorkshopFolder, ModsFolder)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Attempting to install mod " + WorkshopID)
+		      Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Mod " + WorkshopID + " did not install."))
+		      Return
+		    End Try
+		  Next
+		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Launching server…"))
+		  Var Executable As FolderItem = Ark.DedicatedServer.ShooterGameServer(ServerFolder)
+		  Var CommandLine As String = """TheIsland?listen?SessionName=Beacon?MaxPlayers=10?Port=" + Port.ToString(Locale.Raw, "0") + "?QueryPort=" + QueryPort.ToString(Locale.Raw, "0") + """ -server -servergamelog -nobattleye"
 		  
 		  #if TargetWindows
 		    Self.RunShell.Execute(Executable.ShellPath + " " + CommandLine)
@@ -1122,11 +1170,6 @@ End
 		  
 		  Self.mModsByTag = New Dictionary
 		  Self.mTagsByMod = New Dictionary
-		  Var ModsFolder As FolderItem
-		  Try
-		    ModsFolder = ServerFolder.Child("ShooterGame").Child("Content").Child("Mods")
-		  Catch Err As RuntimeException
-		  End Try
 		  If (ModsFolder Is Nil) = False Then
 		    Me.AddUserInterfaceUpdate(New Dictionary("message" : "Collecting mod info…"))
 		    
