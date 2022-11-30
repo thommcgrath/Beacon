@@ -34,7 +34,7 @@ if (isset($_SESSION['OAUTH_USE_SENTINEL']) && $_SESSION['OAUTH_USE_SENTINEL'] ==
 	// Modern Sentinel logic
 	try {
 		\BeaconAPI::Authorize(false);
-		$oauth = \BeaconAPI\Sentinel\OAuth::Complete(\BeaconAPI::UserID(), $provider, $code);
+		$oauth = Sentinel\OAuth::Complete(\BeaconAPI::UserID(), $provider, $code);
 		\BeaconCommon::Redirect($_SESSION['OAUTH_RETURN_URI'], true);
 		exit;
 	} catch (\Exception $err) {

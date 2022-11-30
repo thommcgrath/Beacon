@@ -29,11 +29,11 @@ if (isset($_GET['return_uri'])) {
 	try {
 		\BeaconAPI::Authorize(false);
 		$return_uri = $_GET['return_uri'];
-		$oauth = \BeaconAPI\Sentinel\OAuth::Lookup(\BeaconAPI::UserID(), $provider);
+		$oauth = Sentinel\OAuth::Lookup(\BeaconAPI::UserID(), $provider);
 		if ($oauth && $oauth->Test(true)) {
 			\BeaconCommon::Redirect($return_uri, true);
 		}
-		$redirect_uri = \BeaconAPI\Sentinel\OAuth::Begin($provider, $auth_state);
+		$redirect_uri = Sentinel\OAuth::Begin($provider, $auth_state);
 		$_SESSION['OAUTH_RETURN_URI'] = $return_uri;
 		$_SESSION['OAUTH_USE_SENTINEL'] = true;
 		\BeaconCommon::Redirect($redirect_uri, true);

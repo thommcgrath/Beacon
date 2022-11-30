@@ -10,7 +10,7 @@ if (!isset($_GET['provider'])) {
 $user_id = \BeaconAPI::UserID();
 $provider = $_GET['provider'];
 	
-$oauth = \BeaconAPI\Sentinel\OAuth::Lookup($user_id, $provider);
+$oauth = Sentinel\OAuth::Lookup($user_id, $provider);
 if ($oauth && $oauth->Test(true)) {
 	\BeaconAPI::ReplySuccess($oauth);
 } else {
