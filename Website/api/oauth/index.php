@@ -16,6 +16,22 @@ if (!BeaconCommon::HasAllKeys($_GET, 'provider')) {
 	exit;
 }
 
+$provider = $_GET['provider'];
+if (isset($_GET['return_uri'])) {
+	// New Sentinel logic
+	try {
+		\BeaconAPI::Authorize(false);
+		$redirect_uri = \BeaconAPI\Sentinel\OAuth::Begin(\BeaconAPI::UserID(), $provider, $_GET['return_uri']);
+		\BeaconCommon::Redirect($redirect_uri, true);
+	} catch (\Exception $err) {
+		echo $err->getMessage();
+		exit;
+	}
+}
+
+echo 'You should not have reached here.';
+exit;
+
 BeaconCommon::StartSession();
 
 $provider = strtolower($_GET['provider']);

@@ -13,14 +13,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 if (!BeaconCommon::HasAllKeys($_GET, 'code', 'state')) {
 	http_response_code(400);
-	echo 'This method requires code `provider` and `state` keys.';
+	echo 'This method requires the `code` and `state` keys.';
 	exit;
 }
 
-BeaconCommon::StartSession();
-
 $code = $_GET['code'];
 $sent_state = $_GET['state'];
+
+// New Sentinel logic
+try {
+	$return_uri = \BeaconAPI\Sentinel\OAuth::Complete($sent_state, $code);
+	// Success
+	\BeaconCommon::Redirect($return_uri, true);
+	exit;
+} catch (\Exception $err) {
+	// Most likely a legacy request
+}
+
+BeaconCommon::StartSession();
 
 if ($sent_state !== $_SESSION['OAUTH_AUTH_STATE']) {
 	http_response_code(400);
