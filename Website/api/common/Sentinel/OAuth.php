@@ -4,6 +4,7 @@ namespace BeaconAPI\Sentinel;
 
 class OAuth implements \JsonSerializable {
 	const ProviderNitrado = 'Nitrado';
+	const ExpirationBuffer = 86400;
 	
 	protected $user_id = null;
 	protected $provider = null;
@@ -16,7 +17,16 @@ class OAuth implements \JsonSerializable {
 		return 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/callback.php';
 	}
 	
-	protected static function ClientID(string $provider): string {
+	public static function ProviderEndpoint(string $provider): string {
+		switch ($provider) {
+		case self::ProviderNitrado:
+			return 'https://oauth.nitrado.net/oauth/v2/token';
+		default:
+			throw new \Exception("Unknown provider $provider.");
+		}
+	}
+	
+	public static function ClientID(string $provider): string {
 		switch ($provider) {
 		case self::ProviderNitrado:
 			return \BeaconCommon::GetGlobal('Nitrado_Client_ID');
@@ -34,7 +44,7 @@ class OAuth implements \JsonSerializable {
 		}
 	}
 	
-	protected function __construct(string $user_id, string $provider, string $access_token, string $refresh_token, string $valid_until) {
+	protected function __construct(string $user_id, string $provider, string $access_token, string $refresh_token, int $valid_until) {
 		$this->user_id = $user_id;
 		$this->provider = $provider;
 		$this->access_token = $access_token;
@@ -44,7 +54,7 @@ class OAuth implements \JsonSerializable {
 	
 	public static function Lookup(string $user_id, string $provider): ?OAuth {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT access_token, valid_until AT TIME ZONE \'UTC\' AS valid_until, refresh_token FROM sentinel.oauth_tokens WHERE user_id = $1 AND provider = $2;', $user_id, $provider);
+		$results = $database->Query('SELECT access_token, EXTRACT(EPOCH FROM valid_until) AS valid_until, refresh_token FROM sentinel.oauth_tokens WHERE user_id = $1 AND provider = $2;', $user_id, $provider);
 		if ($results->RecordCount() !== 1) {
 			return null;
 		}
@@ -57,7 +67,7 @@ class OAuth implements \JsonSerializable {
 			$key = \BeaconCommon::GetGlobal('Sentinel OAuth Key');
 			$access_token = \BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('access_token')));
 			$refresh_token = \BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('refresh_token')));
-			$valid_until = $results->Field('valid_until');
+			$valid_until = intval($results->Field('valid_until'));
 		} catch (\Exception $err) {
 			return null;
 		}
@@ -65,7 +75,7 @@ class OAuth implements \JsonSerializable {
 		return new static($user_id, $provider, $access_token, $refresh_token, $valid_until);
 	}
 	
-	public static function Begin(string $user_id, string $provider, string $return_uri): string {
+	public static function Begin(string $provider, string $state): string {
 		switch ($provider) {
 		case self::ProviderNitrado:
 			break;
@@ -73,48 +83,28 @@ class OAuth implements \JsonSerializable {
 			throw new \Exception("Unknown provider $provider.");
 		}
 		
-		$state = \BeaconCommon::GenerateUUID();
-		$redirect_uri = 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/callback.php';
-		
-		$database = \BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM sentinel.oauth_requests WHERE user_id = $1 OR started < CURRENT_TIMESTAMP - \'6 hours\'::INTERVAL;', $user_id);
-		$database->Query('INSERT INTO sentinel.oauth_requests (state, user_id, provider, return_uri) VALUES ($1, $2, $3, $4);', $state, $user_id, $provider, $return_uri);
-		$database->Commit();
-		
 		switch ($provider) {
 		case self::ProviderNitrado:
 			return 'https://oauth.nitrado.net/oauth/v2/auth?redirect_uri=' . urlencode(static::RedirectURI()) . '&client_id=' . urlencode(\BeaconCommon::GetGlobal('Nitrado_Client_ID')) . '&response_type=code&scope=service&state=' . urlencode($state);
 		}
 	}
 	
-	public static function Complete(string $state, string $code): string {
-		$database = \BeaconCommon::Database();
-		$requests = $database->Query('SELECT user_id, provider, return_uri FROM sentinel.oauth_requests WHERE state = $1;', $state);
-		if ($requests->RecordCount() !== 1) {
-			throw new \Exception('Could not find request.');
-		}
-		
-		$user_id = $requests->Field('user_id');
-		$provider = $requests->Field('provider');
-		$return_uri = $requests->Field('return_uri');
-		
+	public static function Complete(string $user_id, string $provider, string $code): OAuth {
 		$fields = [
 			'grant_type=authorization_code',
 			'client_id=' . urlencode(static::ClientID($provider)),
 			'client_secret=' . urlencode(static::ClientSecret($provider)),
-			'code=' . urlencode($code),
-			'redirect_url=' . urlencode(static::RedirectURI())
+			'code=' . urlencode($code)
 		];
 		
-		static::Redeem($user_id, $provider, $fields, $state);
+		static::Redeem($user_id, $provider, $fields);
 		
-		return $return_uri;
+		return static::Lookup($user_id, $provider);
 	}
 	
 	public static function RefreshExpiring(): void {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT user_id, provider, access_token, valid_until AT TIME ZONE \'UTC\' AS valid_until, refresh_token FROM sentinel.oauth_tokens WHERE valid_until < CURRENT_TIMESTAMP + \'24 hours\'::INTERVAL;');
+		$results = $database->Query('SELECT user_id, provider, access_token, EXTRACT(EPOCH FROM valid_until) AS valid_until, refresh_token FROM sentinel.oauth_tokens WHERE valid_until < CURRENT_TIMESTAMP + $1::INTERVAL;', "${self::ExpirationBuffer} seconds");
 		
 		while (!$results->EOF()) {
 			try {
@@ -123,7 +113,7 @@ class OAuth implements \JsonSerializable {
 				$provider = $results->Field('provider');
 				$access_token = \BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('access_token')));
 				$refresh_token = \BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('refresh_token')));
-				$valid_until = $results->Field('valid_until');
+				$valid_until = intval($results->Field('valid_until'));
 				
 				$oauth = new static($user_id, $provider, $access_token, $refresh_token, $valid_until);
 				$oauth->Refresh(true);
@@ -133,28 +123,32 @@ class OAuth implements \JsonSerializable {
 		}
 	}
 	
-	protected function UserID(): string {
+	public function UserID(): string {
 		return $this->user_id;
 	}
 	
-	protected function Provider(): string {
+	public function Provider(): string {
 		return $this->provider;
 	}
 	
-	protected function AccessToken(): string {
+	public function AccessToken(): string {
 		return $this->access_token;
 	}
 	
-	protected function RefreshToken(): string {
+	public function RefreshToken(): string {
 		return $this->refresh_token;
 	}
 	
-	protected function ValidUntil(): string {
+	public function ValidUntil(): int {
 		return $this->valid_until;
 	}
 	
-	protected function IsExpired(): bool {
-		return strtotime($this->valid_until) < time();
+	public function IsExpiring(): bool {
+		return $this->valid_until < time() + self::ExpirationBuffer;
+	}
+	
+	public function IsExpired(): bool {
+		return $this->valid_until < time();
 	}
 	
 	public function jsonSerialize(): mixed {
@@ -168,8 +162,41 @@ class OAuth implements \JsonSerializable {
 		];
 	}
 	
+	public function Test(bool $autorefresh = true): bool {
+		if ($autorefresh) {
+			try {
+				if ($this->IsExpiring()) {
+					$this->Refresh(true);
+					return true; // No need to make another request, we know the redeem worked.
+				}
+			} catch (\Exception $err) {
+				return false;
+			}
+		}
+		
+		$endpoint = '';
+		switch ($this->provider) {
+		case self::ProviderNitrado:
+			$endpoint = 'https://oauth.nitrado.net/token';
+			break;
+		default:
+			throw new \Exception("Unknown provider ${this->provider}");
+		}
+		
+		$curl = curl_init($endpoint);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, [
+			'Authorization: Bearer ' . $this->access_token
+		]);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		
+		return $status === 200;
+	}
+	
 	public function Refresh(bool $force = false): void {
-		if ($this->IsExpired() === false && $force === false) {
+		if ($force === false && $this->IsExpiring() === false) {
 			return;
 		}
 		
@@ -184,22 +211,26 @@ class OAuth implements \JsonSerializable {
 	}
 	
 	public function Delete(): void {
-		$database = \BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM sentinel.oauth_tokens WHERE user_id = $1 AND provider = $2;', $this->user_id, $this->provider);
-		$database->Commit();
+		$curl = curl_init(static::ProviderEndpoint($this->provider));
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+		curl_setopt($curl, CURLOPT_HTTPHEADER, [
+			'Authorization: Bearer ' . $this->access_token
+		]);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		
+		if ($status === 204) {
+			$database = \BeaconCommon::Database();
+			$database->BeginTransaction();
+			$database->Query('DELETE FROM sentinel.oauth_tokens WHERE user_id = $1 AND provider = $2;', $this->user_id, $this->provider);
+			$database->Commit();
+		}
 	}
 	
-	protected static function Redeem(string $user_id, string $provider, array $fields, ?string $state = null) {
-		$curl = null;
-		switch ($provider) {
-		case self::ProviderNitrado:
-			$curl = curl_init('https://oauth.nitrado.net/oauth/v2/token');
-			break;
-		default:
-			throw new \Exception("Unknown provider $provider.");
-		}
-		
+	protected static function Redeem(string $user_id, string $provider, array $fields) {
+		$curl = curl_init(static::ProviderEndpoint($provider));
 		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, implode('&', $fields));
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -219,10 +250,7 @@ class OAuth implements \JsonSerializable {
 		
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
-		if ($state) {
-			$database->Query('DELETE FROM sentinel.oauth_requests WHERE state = $1;', $state);
-		}
-		$database->Query('INSERT INTO sentinel.oauth_tokens (user_id, provider, access_token, valid_until, refresh_token) VALUES ($1, $2, $3, CURRENT_TIMESTAMP + $4::INTERVAL, $5) ON CONFLICT (user_id, provider) DO UPDATE SET access_token = EXCLUDED.access_token, valid_until = EXCLUDED.valid_until, refresh_token = EXCLUDED.refresh_token;', $user_id, $provider, $access_token, "$expires_in seconds", $refresh_token);
+		$database->Query('INSERT INTO sentinel.oauth_tokens (user_id, provider, access_token, valid_until, refresh_token) VALUES ($1, $2, $3, CURRENT_TIMESTAMP(0) + $4::INTERVAL, $5) ON CONFLICT (user_id, provider) DO UPDATE SET access_token = EXCLUDED.access_token, valid_until = EXCLUDED.valid_until, refresh_token = EXCLUDED.refresh_token;', $user_id, $provider, $access_token, "$expires_in seconds", $refresh_token);
 		$database->Commit();
 	}
 }

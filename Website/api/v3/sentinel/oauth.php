@@ -11,8 +11,7 @@ $user_id = \BeaconAPI::UserID();
 $provider = $_GET['provider'];
 	
 $oauth = \BeaconAPI\Sentinel\OAuth::Lookup($user_id, $provider);
-if ($oauth) {
-	$oauth->Refresh(false); // Refresh if expired
+if ($oauth && $oauth->Test(true)) {
 	\BeaconAPI::ReplySuccess($oauth);
 } else {
 	\BeaconAPI::ReplyError('Token not found.', null, 404);

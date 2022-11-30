@@ -16,12 +16,26 @@ if (!BeaconCommon::HasAllKeys($_GET, 'provider')) {
 	exit;
 }
 
+BeaconCommon::StartSession();
+
 $provider = $_GET['provider'];
+$_SESSION['OAUTH_PROVIDER'] = $provider;
+$auth_state = BeaconCommon::GenerateUUID();
+$_SESSION['OAUTH_AUTH_STATE'] = $auth_state;
+$_SESSION['OAUTH_USE_SENTINEL'] = false;
+
 if (isset($_GET['return_uri'])) {
-	// New Sentinel logic
+	// Modern Sentinel logic
 	try {
 		\BeaconAPI::Authorize(false);
-		$redirect_uri = \BeaconAPI\Sentinel\OAuth::Begin(\BeaconAPI::UserID(), $provider, $_GET['return_uri']);
+		$return_uri = $_GET['return_uri'];
+		$oauth = \BeaconAPI\Sentinel\OAuth::Lookup(\BeaconAPI::UserID(), $provider);
+		if ($oauth && $oauth->Test(true)) {
+			\BeaconCommon::Redirect($return_uri, true);
+		}
+		$redirect_uri = \BeaconAPI\Sentinel\OAuth::Begin($provider, $auth_state);
+		$_SESSION['OAUTH_RETURN_URI'] = $return_uri;
+		$_SESSION['OAUTH_USE_SENTINEL'] = true;
 		\BeaconCommon::Redirect($redirect_uri, true);
 	} catch (\Exception $err) {
 		echo $err->getMessage();
@@ -29,15 +43,8 @@ if (isset($_GET['return_uri'])) {
 	}
 }
 
-echo 'You should not have reached here.';
-exit;
-
-BeaconCommon::StartSession();
-
-$provider = strtolower($_GET['provider']);
-$auth_state = BeaconCommon::GenerateUUID();
+$provider = strtolower($provider);
 $_SESSION['OAUTH_PROVIDER'] = $provider;
-$_SESSION['OAUTH_AUTH_STATE'] = $auth_state;
 $_SESSION['OAUTH_REQUESTID'] = isset($_GET['requestid']) ? $_GET['requestid'] : '';
 
 $redirect_uri = 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/callback.php';

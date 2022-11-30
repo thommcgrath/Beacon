@@ -20,22 +20,26 @@ if (!BeaconCommon::HasAllKeys($_GET, 'code', 'state')) {
 $code = $_GET['code'];
 $sent_state = $_GET['state'];
 
-// New Sentinel logic
-try {
-	$return_uri = \BeaconAPI\Sentinel\OAuth::Complete($sent_state, $code);
-	// Success
-	\BeaconCommon::Redirect($return_uri, true);
-	exit;
-} catch (\Exception $err) {
-	// Most likely a legacy request
-}
-
 BeaconCommon::StartSession();
-
-if ($sent_state !== $_SESSION['OAUTH_AUTH_STATE']) {
+	
+if (isset($_SESSION['OAUTH_AUTH_STATE']) === false || $sent_state !== $_SESSION['OAUTH_AUTH_STATE']) {
 	http_response_code(400);
 	echo 'Invalid auth state';
 	exit;
+}
+
+$provider = $_SESSION['OAUTH_PROVIDER'];
+	
+if (isset($_SESSION['OAUTH_USE_SENTINEL']) && $_SESSION['OAUTH_USE_SENTINEL'] === true) {
+	// Modern Sentinel logic
+	try {
+		\BeaconAPI::Authorize(false);
+		$oauth = \BeaconAPI\Sentinel\OAuth::Complete(\BeaconAPI::UserID(), $provider, $code);
+		\BeaconCommon::Redirect($_SESSION['OAUTH_RETURN_URI'], true);
+		exit;
+	} catch (\Exception $err) {
+		\BeaconAPI::ReplyError($err->getMessage(), null, 500);
+	}
 }
 
 $fields = array(
