@@ -128,6 +128,12 @@ class Mod implements \JsonSerializable {
 		return self::GetFromResults($results);
 	}
 	
+	public static function GetOfficial() {
+		$database = \BeaconCommon::Database();
+		$results = $database->Query(self::BuildSQL('is_official = TRUE'));
+		return self::GetFromResults($results);
+	}
+	
 	public static function GetLive($since = null) {
 		$sql =  'mods.confirmed = TRUE AND mods.include_in_deltas = TRUE';
 		

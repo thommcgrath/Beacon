@@ -49,9 +49,16 @@ $title = BeaconCache::Get($cache_key . '_title');
 if (is_null($cached) || is_null($title)) {
 	ob_start();
 	if ($mod_id === null) {
-		$title = 'All Spawn Codes';
-		$engrams = \Ark\Engram::GetAll();
-		$creatures = \Ark\Creature::GetAll();
+		$official_mods = Ark\Mod::GetOfficial();
+		$mods = [];
+		foreach ($official_mods as $mod) {
+			$mods[] = $mod->ModID();
+		}
+		$mods_string = implode(',', $mods);
+		
+		$title = 'Ark Spawn Codes';
+		$engrams = \Ark\Engram::Get($mods_string);
+		$creatures = \Ark\Creature::Get($mods_string);
 	} else {
 		$engrams = \Ark\Engram::Get($mod_id);
 		$creatures = \Ark\Creature::Get($mod_id);
