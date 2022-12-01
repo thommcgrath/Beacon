@@ -26,7 +26,7 @@ default:
 $force = array_key_exists('force', $options);
 
 // More memory is needed
-ini_set('memory_limit','512M');
+ini_set('memory_limit','1024M');
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
