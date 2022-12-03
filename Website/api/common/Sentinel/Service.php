@@ -397,6 +397,10 @@ class Service implements \JsonSerializable {
 		$permissions = $this->GetPermissions($user_id);
 		return ($permissions & $desired_permissions) === $desired_permissions;
 	}
+	
+	public function Log(): void {
+		
+	}
 }
 
 ?>
