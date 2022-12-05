@@ -50,7 +50,7 @@ class LogMessage implements \JsonSerializable {
 		self::SQLTableName . '.level',
 		self::SQLTableName . '.analyzer_status',
 		self::SQLTableName . '.metadata'
-	]; 
+	];
 	
 	protected $message_id = null;
 	protected $service_id = null;
@@ -101,196 +101,28 @@ class LogMessage implements \JsonSerializable {
 		return $log;
 	}
 	
+	protected static function HookConsumeLogLines(string $service_id, array $lines): array {
+		return [];
+	}
+	
 	public static function ConsumeLogFile(string $service_id, mixed $file_handle): array {
-		$expressions = [
-			'timestamp' => '/^\d{4}\.\d{2}\.\d{2}_\d{2}\.\d{2}\.\d{2}: /',
-			'player_joined' => '/^(.+) joined this ARK!$/',
-			'player_left' => '/^(.+) left this ARK!$/',
-			'login_request' => '/^Login request: .+?=(.+)$/',
-			'chat' => '/^(?P<gt>[\w\d\s\-\_]+)\s\((?P<ign>.+)\)\:\s(?P<message>.*)/',
-			'kill' => '/^(?P<name1>[\w\d\s\-\_]+)\s\-\sLvl\s(?P<lvl1>[\d]+)\s\(?(?P<dino1>[\w\d\s\-\_]*)\)?\s?\((?P<tribe1>[\w\d\s\-\_]*)\)\s?was\skilled\sby\s?(?P<pve>a?n?)\s(?P<name2>[\w\d\s\-\_]+)\s\-\sLvl\s(?P<lvl2>[\d]+)\s\(?(?P<dino2>[\w\d\s\-\_]*)\)?\s?\((?P<tribe2>[\w\d\s\-\_]*)\)/',
-			'dupe_removal' => '/^Removed duped item due to (.+), (.+)(_\d+), from (.+)(_\d+), owned by Tribe (.+) \((\d+)\)$/',
-			'colored_message' => '/<RichColor Color="([0-9\.]+), ([0-9\.]+), ([0-9\.]+), ([0-9\.]+)">(.+?(?=<\/>))<\/>/',
-			'ingame_timestamp' => '/Day (\d+), (\d{2}):(\d{2}):(\d{2})/',
-			'tribe_message' => '/Tribe (.+), ID (\d+): Day (\d+), (\d{2}):(\d{2}):(\d{2}): (.+)\)$/',
-			'auto_decay' => '/^Your \'(.+)\' was auto-decay destroyed!$/',
-			'tribe_lost_structure' => '/^(.+) - Lvl \d+( \((.+)\))? destroyed your \'(.+)\'!$/',
-			'tribe_destroyed_structure' => '/^(.+) - Lvl \d+ destroyed their \'(.+)\s+\((.+)\)\'\)!$/',
-			'player_death' => '/^(.+) - Lvl \d+ \((.*)\) was killed!$/',
-			'tribemember_death' => '//',
-			'tribemember_kill' => '//',
-			'cryopod_freeze' => '/^(.+) froze (.+) - Lvl (\d+) \((.+)\)$/',
-			'tamed' => '/(.+) Tamed a (.+) - Lvl (\d+) \(.+\)!$/',
-			'claimed' => '//',
-			'chat' => '/^(.+) \((.+?)\): (.+)$/',
-			'dino_uploaded' => '//',
-			'dino_downloaded' => '//',
-			'player_joined_tribe' => '//',
-			'player_left_tribe' => '//'
-		];
-		
 		$file_content = stream_get_contents($file_handle);
 		
 		// normalize line endings
 		$file_content = str_replace("\r\n", "\n", $file_content);
 		$file_content = str_replace("\r", "\n", $file_content);
 		
-		$messages = [];
-		$last_timestamp = 0;
+		// split
 		$lines = explode("\n", $file_content);
-		for ($idx = 0; $idx < min(count($lines), 1000); $idx++) {
-			$line = $lines[$idx];
-			if (strlen($line) < 60) {
-				continue;
-			}
-			
-			$timestamp = static::ParseTimestamp(substr($line, 1, 23));
-			if ($timestamp === 0 || $timestamp <= $last_timestamp) {
-				continue;
-			}
-			
-			// remove the timestamp
-			$line = substr($line, 30);
-			
-			// if the line starts with a second time stamp, we don't care
-			if (preg_match($expressions['timestamp'], $line) === 1) {
-				$line = substr($line, 21);
-			}
-			
-			// remove line coloring
-			$line = preg_replace($expressions['colored_message'], '\5', $line);
-			
-			$metadata = [];
-			$level = self::LogLevelInfo;
-			$should_analyze = false;
-				
-			// player join messages
-			(function (&$line, &$level, &$metadata, &$should_analyze, $expressions) {
-				if (preg_match($expressions['player_joined'], $line, $matches) === 1) {
-					$metadata['player']['name'] = $matches[1];
-					$metadata['event'] = 'Player Join';
-					return;
-				}
-				
-				if (preg_match($expressions['player_left'], $line, $matches) === 1) {
-					$metadata['player']['name'] = $matches[1];
-					$metadata['event'] = 'Player Left';
-					return;
-				}
-				
-				if (preg_match($expressions['login_request'], $line, $matches) === 1) {
-					$level = self::LogLevelDebug;
-					$metadata['player']['name'] = trim($matches[1]);
-					$metadata['event'] = 'Login Request';
-					return;
-				}
-				
-				if (preg_match($expressions['dupe_removal'], $line, $matches) === 1) {
-					$level = self::LogLevelNotice;
-					$metadata['event'] = 'Duplicate Item Removed';
-					$metadata['tribe']['name'] = $matches[6];
-					$metadata['tribe']['id'] = intval($matches[7]);
-					$metadata['reason'] = $matches[1];
-					$metadata['item_class'] = $matches[2];
-					$metadata['structure_class'] = $matches[4];
-					return;
-				}
-				
-				if (preg_match($expressions['tribe_message'], $line, $matches) === 1) {
-					$metadata['tribe']['name'] = $matches[1];
-					$metadata['tribe']['id'] = intval($matches[2]);
-					$metadata['clock']['day'] = intval($matches[3]);
-					$metadata['clock']['time'] = intval($matches[4] . $matches[5] . $matches[6]);
-					$line = $matches[7];
-					// don't return
-				}
-				
-				if (preg_match($expressions['tribe_lost_structure'], $line, $matches) === 1) {
-					$metadata['event'] = 'Lost Structure';
-					if (!empty($matches[3])) {
-						$metadata['attacker']['tribe']['name'] = $matches[3];
-						$metadata['attacker']['player']['name'] = $matches[1];
-					} else {
-						$metadata['attacker']['dino']['name'] = $matches[1];
-					}
-					$metadata['victim']['tribe'] = $metadata['tribe']['name'];
-					$metadata['lost_structure'] = trim($matches[4]);
-					return;
-				}
-				
-				if (preg_match($expressions['tribe_destroyed_structure'], $line, $matches) === 1) {
-					$metadata['event'] = 'Destroyed Structure';
-					$metadata['attacker']['player'] = $matches[1];
-					$metadata['attacker']['tribe'] = $metadata['tribe']['name'];
-					$metadata['victim']['tribe'] = $matches[3];
-					$metadata['lost_structure'] = trim($matches[2]);
-					// remove the extra closing parenthesis, thanks Wildcard.
-					if (str_ends_with($line, ')\')!')) {
-						$line = substr($line, 0, -2) . '!';
-					}
-					return;	
-				}
-				
-				if (preg_match($expressions['auto_decay'], $line, $matches) === 1) {
-					$metadata['event'] = 'Auto Destroy';
-					return;	
-				}
-				
-				if (preg_match($expressions['tamed'], $line, $matches) === 1) {
-					$metadata['event'] = 'Wild Tame';
-					$metadata['dino']['species'] = $matches[2];
-					$metadata['dino']['level'] = intval($matches[3]);
-					$metadata['player']['name'] = $matches[1];
-					return;
-				}
-				
-				if (preg_match($expressions['cryopod_freeze'], $line, $matches) === 1) {
-					$metadata['event'] = 'Cryopod Freeze';
-					$metadata['player']['name'] = $matches[1];
-					$metadata['dino']['name'] = $matches[2];
-					$metadata['dino']['level'] = intval($matches[3]);
-					$metadata['dino']['species'] = $matches[4];
-					return;
-				}
-				
-				// detect chat last
-				if (preg_match($expressions['chat'], $line, $matches) === 1) {
-					$metadata['event'] = 'Chat';
-					$metadata['player']['name'] = $matches[1];
-					$metadata['tribe']['name'] = $matches[2];
-					$line = $matches[3];
-					$should_analyze = strlen($line) > 2;
-					return;
-				}
-				
-				// this message was not identified
-				$metadata['event'] = 'Unidentified';
-			})($line, $level, $metadata, $should_analyze, $expressions);
-			
-			$message = static::Create($line, $service_id);
-			$message->time = $timestamp;
-			$message->type = self::LogTypeGameplay;
-			$message->metadata = $metadata;
-			$message->level = $level;
-			if ($should_analyze) {
-				$message->analyzer_status = self::AnalyzerStatusPending;
-			}
-			
-			$messages[] = $message;
-		}
 		
+		// let the game-specific class do the heavy lifting
+		$messages = static::HookConsumeLogLines($service_id, $lines);
+		
+		// save
 		static::SaveLogs($messages);
-			
-		return $messages;
-	}
-	
-	protected static function ParseTimestamp(string $timestamp): float {
-		$time_expression = '/^(\d{4})\.(\d{2})\.(\d{2})-(\d{2})\.(\d{2})\.(\d{2}):(\d{3})$/';
-		if (preg_match($time_expression, $timestamp, $matches) !== 1) {
-			return 0;
-		}
 		
-		return gmmktime($matches[4], $matches[5], $matches[6], $matches[2], $matches[3], $matches[1]) + ($matches[7] / 1000);
+		// and return
+		return $messages;
 	}
 	
 	public static function SaveLogs(array $messages): void {
@@ -328,7 +160,7 @@ class LogMessage implements \JsonSerializable {
 	public static function GetMessagesForService(string $service_id, int $offset = 0, int $limit = 500): array {
 		// Searches for a service or group
 		$database = \BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', self::SQLColumns) . ' FROM ' . self::SQLLongTableName . ' WHERE service_id = $1 OR service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY log_time DESC;', $service_id);
+		$rows = $database->Query('SELECT ' . implode(', ', self::SQLColumns) . ' FROM ' . self::SQLLongTableName . ' WHERE service_id = $1 OR service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY log_time DESC OFFSET $2 LIMIT $3;', $service_id, $offset, $limit);
 		$messages = [];
 		while (!$rows->EOF()) {
 			$messages[] = new static($rows);
@@ -385,6 +217,29 @@ class LogMessage implements \JsonSerializable {
 	
 	public function MetaData(): array {
 		return $this->metadata;
+	}
+	
+	protected static function ResolveChatImage(string $image_path): string {
+		switch ($image_path) {
+		case '/Game/PrimalEarth/Emo/Emo_Blank.Emo_Blank':
+			return '😐';
+		case '/Game/PrimalEarth/Emo/Emo_Evil.Emo_Evil':
+			return '😈';
+		case '/Game/PrimalEarth/Emo/Emo_Eyes.Emo_Eyes':
+			return '😳';
+		case '/Game/PrimalEarth/Emo/Emo_Laugh.Emo_Laugh':
+			return '😃';
+		case '/Game/PrimalEarth/Emo/Emo_Sad.Emo_Sad':
+			return '😢';
+		case '/Game/PrimalEarth/Emo/Emo_Smile.Emo_Smile':
+			return '😊';
+		case '/Game/PrimalEarth/Emo/Emo_Tongue.Emo_Tongue':
+			return '😝';
+		case '/Game/PrimalEarth/Emo/Emo_Wink.Emo_Wink':
+			return '😉';
+		default:
+			return "Image:$image_path:";
+		}
 	}
 }
 

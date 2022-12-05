@@ -69,9 +69,11 @@ abstract class BeaconErrors {
 		$trace = [];
 		foreach ($stack as $frame) {
 			$values = [];
-			if (array_key_exists('args', $frame)) {
-				foreach ($frame['args'] as $arg) {
-					$values[] = var_export($arg, true);
+			if (ini_get('zend.exception_ignore_args') === '0') {
+				if (array_key_exists('args', $frame)) {
+					foreach ($frame['args'] as $arg) {
+						$values[] = var_export($arg, true);
+					}
 				}
 			}
 			
