@@ -4,6 +4,34 @@ require(dirname(__FILE__) . '/loader.php');
 
 BeaconAPI::RegisterRoutes(
 	[
+		'/ark/color_set' => [
+			'GET' => 'ark/color_set/list'
+		],
+		'/ark/color_set/{color_set_id}' => [
+			'GET' => 'ark/color_set/get'
+		],
+		'/ark/color' => [
+			'GET' => 'ark/color/list'
+		],
+		'/ark/color/{color_id}' => [
+			'GET' => 'ark/color/get'
+		],
+		'/ark/event' => [
+			'GET' => 'ark/event/list'
+		],
+		'/ark/event/{event_id}' => [
+			'GET' => 'ark/event/get'
+		],
+		'/ark/generate/{project_id}' => [
+			'GET' => 'ark/generate',
+			'POST' => 'ark/generate'
+		],
+		'/ark/map' => [
+			'GET' => 'ark/map/list'
+		],
+		'/ark/map/{map_id}' => [
+			'GET' => 'ark/map/get'
+		],
 		'/challenge/{user_id}' => [
 			'GET' => 'challenge'
 		],

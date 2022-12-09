@@ -11,7 +11,7 @@ if (is_null($document_id) || BeaconCommon::IsUUID($document_id) === false) {
 	BeaconAPI::ReplyError('Request a specific document', null, 400);
 }
 
-$documents = Ark\Document::GetByDocumentID($document_id);
+$documents = Ark\Project::GetByDocumentID($document_id);
 if (count($documents) != 1) {
 	BeaconAPI::ReplyError('Document not found', null, 404);
 }

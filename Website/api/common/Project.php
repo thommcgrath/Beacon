@@ -120,7 +120,7 @@ abstract class Project implements \JsonSerializable {
 	}
 	
 	public function IsPublic() {
-		return $this->published == PUBLISH_STATUS_APPROVED;
+		return $this->published == self::PUBLISH_STATUS_APPROVED;
 	}
 	
 	public function PublishStatus() {
