@@ -1,18 +1,6 @@
 <?php
 
-require(dirname(__FILE__) . '/loader.php');
-
-$method = BeaconAPI::Method();
-$database = BeaconCommon::Database();
-$user_id = BeaconAPI::ObjectID();
-
-switch ($method) {
-case 'PUT':
-case 'POST':
-	if ($user_id !== null) {
-		BeaconAPI::ReplyError('Do not specify a user when creating users.');
-	}
-	
+function handle_request(array $context): void {
 	if (BeaconAPI::ContentType() !== 'application/json') {
 		BeaconAPI::ReplyError('Send a JSON payload');
 	}
@@ -20,7 +8,7 @@ case 'POST':
 	$payload = BeaconAPI::JSONPayload();
 	if (BeaconCommon::IsAssoc($payload)) {
 		// single
-		$items = array($payload);
+		$items = [$payload];
 	} else {
 		// multiple
 		$items = $payload;
@@ -28,7 +16,8 @@ case 'POST':
 	
 	BeaconAPI::Authorize(true);
 	
-	$users = array();
+	$users = [];
+	$database = \BeaconCommon::Database();
 	$database->BeginTransaction();
 	foreach ($items as $item) {
 		$reason = '';
@@ -42,72 +31,6 @@ case 'POST':
 	$database->Commit();
 	
 	BeaconAPI::ReplySuccess($users);
-	
-	break;
-case 'GET':
-	if (is_null(BeaconAPI::ObjectID())) {
-		BeaconAPI::Authorize();
-		
-		$user = BeaconUser::GetByUserID(BeaconAPI::UserID());
-		if (isset($_GET['hardware_id'])) {
-			$user->PrepareSignatures(trim($_GET['hardware_id']));
-		}
-		if (is_null($user->UsercloudKey()) && $user->SetDecryptedUsercloudKey(BeaconUser::GenerateUsercloudKey())) {
-			$user->Commit();
-		}
-		BeaconAPI::ReplySuccess($user);
-	} else {
-		// lookup support
-		$identifiers = BeaconAPI::ObjectID();
-		$identifiers = str_replace(',,', '78d6b5c4-7069-42c2-9f81-c6408baefc05', $identifiers);
-		$identifiers = explode(',', $identifiers);
-		for ($i = 0; $i < count($identifiers); $i++) {
-			$identifiers[$i] = str_replace('78d6b5c4-7069-42c2-9f81-c6408baefc05', ',', $identifiers[$i]);
-		}
-		$users = array();
-		foreach ($identifiers as $identifier) {
-			if (BeaconCommon::IsUUID($identifier)) {
-				$user = BeaconUser::GetByUserID($identifier);
-			} elseif (BeaconUser::ValidateEmail($identifier)) {
-				$user = BeaconUser::GetByEmail($identifier);
-			} elseif (BeaconUser::IsExtendedUsername($identifier)) {
-				$user = BeaconUser::GetByExtendedUsername($identifier);
-			} else {
-				$user = null;
-			}
-			if (!is_null($user)) {
-				// don't use the regular method that includes lots of values
-				$users[] = array(
-					'user_id' => $user->UserID(),
-					'username_full' => $user->Username() . '#' . $user->Suffix(),
-					'public_key' => $user->PublicKey()
-				);
-			}
-		}
-		if (count($users) == 1) {
-			BeaconAPI::ReplySuccess($users[0]);
-		} elseif (count($users) > 1) {
-			BeaconAPI::ReplySuccess($users);
-		} else {
-			BeaconAPI::ReplyError('Users not found', $users, 404);
-		}
-	}
-	
-	break;
-case 'DELETE':
-	BeaconAPI::Authorize();
-	if (strtolower($user_id) !== strtolower(BeaconAPI::UserID())) {
-		BeaconAPI::ReplyError('Cannot delete another user.');
-	}
-	
-	$user = BeaconUser::GetByUserID(BeaconAPI::UserID());
-	if ($user->SetIsEnabled(false) && $user->Commit()) {
-		BeaconAPI::ReplySuccess();
-	} else {
-		BeaconAPI::ReplyError('Could not disable user', BeaconAPI::UserID(), 400);
-	}
-	
-	break;
 }
 
 function SaveUser(array $values, string &$message) {
@@ -121,7 +44,7 @@ function SaveUser(array $values, string &$message) {
 	
 	$authenticated_user = null;
 	if (BeaconAPI::Authenticated()) {
-		$authenticated_user = BeaconUser::GetByUserID(BeaconAPI::UserID());
+		$authenticated_user = BeaconUser::User();
 	}
 	
 	if (isset($values['action']) && strtolower($values['action']) === 'merge') {
