@@ -67,11 +67,10 @@ class ArkLogMessage extends LogMessage {
 		return gmmktime($matches[4], $matches[5], $matches[6], $matches[2], $matches[3], $matches[1]) + ($matches[7] / 1000);
 	}
 	
-	protected static function HookConsumeLogLines(string $service_id, array $lines): array {
+	protected static function HookConsumeLogLines(string $service_id, float $last_timestamp, array $lines): array {
 		$messages = [];
 		$consecutive_messages = [];
 		$consecutive_timestamp = 0;
-		$last_timestamp = 0;
 		$partial_expressions = self::Patterns['Partial'];
 		$line_count = min(count($lines), 2000);
 		
@@ -99,7 +98,7 @@ class ArkLogMessage extends LogMessage {
 			
 			// fix emoji
 			$line = preg_replace_callback($partial_expressions['Chat Image'], function($matches) {
-				return LogMessage::ResolveChatImage($matches[1]);
+				return static::ResolveChatImage($matches[1]);
 			}, $line);
 			
 			if (count($consecutive_messages) === 0) {
@@ -461,7 +460,7 @@ class ArkLogMessage extends LogMessage {
 			}
 		}
 		
-		/*if (isset($results['Unidentified'])) {
+		if (isset($results['Unidentified'])) {
 			$siblings = $results['Unidentified'];
 			foreach ($siblings as $matches) {
 				$message = static::Create($matches[0], $service_id);
@@ -472,7 +471,7 @@ class ArkLogMessage extends LogMessage {
 				];
 				$messages[] = $message;
 			}
-		}*/
+		}
 		
 		/*foreach ($lines as $line) {
 			if (array_key_exists($line, $results)) {
@@ -515,6 +514,31 @@ class ArkLogMessage extends LogMessage {
 			'day' => intval($matches['clock_day']),
 			'time' => intval($matches['clock_hour'] . $matches['clock_minute'] . $matches['clock_second'])
 		];
+	}
+	
+	
+	
+	protected static function ResolveChatImage(string $image_path): string {
+		switch ($image_path) {
+		case '/Game/PrimalEarth/Emo/Emo_Blank.Emo_Blank':
+			return '😐';
+		case '/Game/PrimalEarth/Emo/Emo_Evil.Emo_Evil':
+			return '😈';
+		case '/Game/PrimalEarth/Emo/Emo_Eyes.Emo_Eyes':
+			return '😳';
+		case '/Game/PrimalEarth/Emo/Emo_Laugh.Emo_Laugh':
+			return '😃';
+		case '/Game/PrimalEarth/Emo/Emo_Sad.Emo_Sad':
+			return '😢';
+		case '/Game/PrimalEarth/Emo/Emo_Smile.Emo_Smile':
+			return '😊';
+		case '/Game/PrimalEarth/Emo/Emo_Tongue.Emo_Tongue':
+			return '😝';
+		case '/Game/PrimalEarth/Emo/Emo_Wink.Emo_Wink':
+			return '😉';
+		default:
+			return "Image:$image_path:";
+		}
 	}
 }
 

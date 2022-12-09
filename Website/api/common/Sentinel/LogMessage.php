@@ -21,6 +21,12 @@ class LogMessage implements \JsonSerializable {
 		self::LogLevelAlert,
 		self::LogLevelEmergency
 	];
+	const ErrorLogLevels = [
+		self::LogLevelError,
+		self::LogLevelCritical,
+		self::LogLevelAlert,
+		self::LogLevelEmergency
+	];
 	
 	const LogTypeService = 'Service';
 	const LogTypeGameplay = 'Gameplay';
@@ -81,7 +87,7 @@ class LogMessage implements \JsonSerializable {
 		}
 	}
 	
-	public static function Create(string $message, string $service_id, string $level = null, string $type = null): LogMessage {
+	public static function Create(string $message, string $service_id, ?string $level = null, ?string $type = null): LogMessage {
 		if (is_null($level) === false && in_array($level, self::LogLevels) === false) {
 			throw new \Error('Invalid log level');
 		}
@@ -101,12 +107,14 @@ class LogMessage implements \JsonSerializable {
 		return $log;
 	}
 	
-	protected static function HookConsumeLogLines(string $service_id, array $lines): array {
+	protected static function HookConsumeLogLines(string $service_id, float $last_timestamp, array $lines): array {
 		return [];
 	}
 	
-	public static function ConsumeLogFile(string $service_id, mixed $file_handle): array {
-		$file_content = stream_get_contents($file_handle);
+	public static function ConsumeLogFile(string $service_id, string $file_content): array {
+		$database = \BeaconCommon::Database();
+		$rows = $database->Query('SELECT COALESCE(EXTRACT(EPOCH FROM MAX(log_time)), 0) AS last_timestamp FROM sentinel.service_logs WHERE service_id = $1;', $service_id);
+		$last_timestamp = floatval($rows->Field('last_timestamp'));
 		
 		// normalize line endings
 		$file_content = str_replace("\r\n", "\n", $file_content);
@@ -116,7 +124,7 @@ class LogMessage implements \JsonSerializable {
 		$lines = explode("\n", $file_content);
 		
 		// let the game-specific class do the heavy lifting
-		$messages = static::HookConsumeLogLines($service_id, $lines);
+		$messages = static::HookConsumeLogLines($service_id, $last_timestamp, $lines);
 		
 		// save
 		static::SaveLogs($messages);
@@ -219,27 +227,8 @@ class LogMessage implements \JsonSerializable {
 		return $this->metadata;
 	}
 	
-	protected static function ResolveChatImage(string $image_path): string {
-		switch ($image_path) {
-		case '/Game/PrimalEarth/Emo/Emo_Blank.Emo_Blank':
-			return '😐';
-		case '/Game/PrimalEarth/Emo/Emo_Evil.Emo_Evil':
-			return '😈';
-		case '/Game/PrimalEarth/Emo/Emo_Eyes.Emo_Eyes':
-			return '😳';
-		case '/Game/PrimalEarth/Emo/Emo_Laugh.Emo_Laugh':
-			return '😃';
-		case '/Game/PrimalEarth/Emo/Emo_Sad.Emo_Sad':
-			return '😢';
-		case '/Game/PrimalEarth/Emo/Emo_Smile.Emo_Smile':
-			return '😊';
-		case '/Game/PrimalEarth/Emo/Emo_Tongue.Emo_Tongue':
-			return '😝';
-		case '/Game/PrimalEarth/Emo/Emo_Wink.Emo_Wink':
-			return '😉';
-		default:
-			return "Image:$image_path:";
-		}
+	public function IsError(): bool {
+		return 	in_array($this->level, self::ErrorLogLevels);
 	}
 }
 

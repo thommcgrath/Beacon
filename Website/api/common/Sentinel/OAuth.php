@@ -14,7 +14,7 @@ class OAuth implements \JsonSerializable {
 	protected $return_url = null;
 	
 	public static function RedirectURI(): string {
-		return 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/callback.php';
+		return 'https://' . \BeaconCommon::APIDomain() . '/oauth/callback.php';
 	}
 	
 	public static function ProviderEndpoint(string $provider): string {

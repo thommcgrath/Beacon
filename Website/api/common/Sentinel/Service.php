@@ -7,6 +7,11 @@ class Service implements \JsonSerializable {
 	const PermissionEdit = 2;
 	const PermissionDelete = 4;
 	
+	const GameArk = 'Ark';
+	const Games = [
+		self::GameArk
+	];
+	
 	const ColorNone = 'None';
 	const ColorBlue = 'Blue';
 	const ColorBrown = 'Brown';
@@ -56,10 +61,13 @@ class Service implements \JsonSerializable {
 	protected $name = null;
 	protected $nickname = null;
 	protected $ip_address = null;
+	protected $game_port = null;
 	protected $slot_count = null;
 	protected $expiration = null;
 	protected $color = null;
 	protected $platform = null;
+	protected $rcon_port = null;
+	protected $game_specific = null;
 	
 	protected $changed_properties = [];
 	
@@ -75,10 +83,13 @@ class Service implements \JsonSerializable {
 		$this->name = $row->Field('name');
 		$this->nickname = $row->Field('nickname');
 		$this->ip_address = $row->Field('ip_address');
+		$this->game_port = intval($row->Field('game_port'));
 		$this->slot_count = intval($row->Field('slot_count'));
 		$this->expiration = intval($row->Field('expiration'));
 		$this->color = $row->Field('color');
 		$this->platform = $row->Field('platform');
+		$this->rcon_port = is_null($row->Field('rcon_port')) ? null : intval($row->Field('rcon_port'));
+		$this->game_specific = json_decode($row->Field('game_specific'), true);
 	}
 	
 	public static function SQLSchemaName(): string {
@@ -101,15 +112,18 @@ class Service implements \JsonSerializable {
 			'game_id',
 			'EXTRACT(EPOCH FROM last_success) AS last_success',
 			'EXTRACT(EPOCH FROM last_error) AS last_error',
-			'in_error_state',
+			'(COALESCE(last_error, \'2000-01-01\') > COALESCE(last_success, \'2000-01-01\'))::BOOLEAN AS in_error_state',
 			'update_schedule',
 			'name',
 			'nickname',
 			'ip_address',
+			'game_port',
 			'slot_count',
 			'EXTRACT(EPOCH FROM expiration) AS expiration',
 			'color',
-			'platform'
+			'platform',
+			'rcon_port',
+			'game_specific'
 		];
 	}
 	
@@ -203,6 +217,12 @@ class Service implements \JsonSerializable {
 		return $services;
 	}
 	
+	public static function GetForGroupID(string $group_id): array {
+		$database = \BeaconCommon::Database();
+		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1;', $group_id);
+		return static::FromRows($rows);
+	}
+	
 	public function jsonSerialize(): mixed {
 		return [
 			'service_id' => $this->service_id,
@@ -216,10 +236,13 @@ class Service implements \JsonSerializable {
 			'name' => $this->name,
 			'nickname' => $this->nickname,
 			'ip_address' => $this->ip_address,
+			'game_port' => $this->game_port,
 			'slot_count' => $this->slot_count,
 			'expiration' => $this->expiration,
 			'color' => $this->color,
-			'platform' => $this->platform
+			'platform' => $this->platform,
+			'rcon_port' => $this->rcon_port,
+			'game_specific' => $this->game_specific
 		];
 	}
 	
@@ -261,7 +284,14 @@ class Service implements \JsonSerializable {
 				$assignments[] = $property . ' = $' . $placeholder++;
 				break;
 			}
-			$values[] = $this->$property;
+			switch ($property) {
+			case 'game_specific':
+				$values[] = json_encode($this->$property);
+				break;
+			default:
+				$values[] = $this->$property;
+				break;
+			}
 		}
 		$values[] = $this->service_id;
 		
@@ -300,7 +330,6 @@ class Service implements \JsonSerializable {
 	
 	public function SetLastSuccess(int $last_success): void {
 		$this->SetProperty('last_sucess', $last_success);
-		$this->SetProperty('in_error_state', $this->last_error > $this->last_success);
 	}
 	
 	public function LastError(): int {
@@ -309,7 +338,6 @@ class Service implements \JsonSerializable {
 	
 	public function SetLastError(int $last_error): void {
 		$this->SetProperty('last_error', $last_error);
-		$this->SetProperty('in_error_state', $this->last_error > $this->last_success);
 	}
 	
 	public function InErrorState(): bool {
@@ -344,6 +372,14 @@ class Service implements \JsonSerializable {
 		$this->SetProperty('ip_address', $ip_address);
 	}
 	
+	public function GamePort(): int {
+		return $this->game_port;
+	}
+	
+	public function SetGamePort(int $port): void {
+		$this->SetProperty('game_port', $port);
+	}
+	
 	public function SlotCount(): int {
 		return $this->slot_count;
 	}
@@ -376,6 +412,22 @@ class Service implements \JsonSerializable {
 		$this->SetProperty('platform', $platform);
 	}
 	
+	public function RCONPort(): ?int {
+		return $this->rcon_port;
+	}
+	
+	public function SetRCONPort(?int $port): void {
+		$this->SetProperty('rcon_port', $port);
+	}
+	
+	public function GameSpecific(): array {
+		return $this->game_specific;
+	}
+	
+	public function SetGameSpecific(array $game_specific): void {
+		$this->SetProperty('game_specific', $game_specific);
+	}
+	
 	public function Delete(): void {
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -398,8 +450,247 @@ class Service implements \JsonSerializable {
 		return ($permissions & $desired_permissions) === $desired_permissions;
 	}
 	
-	public function Log(): void {
+	public function Log(string $message, ?string $level = null, ?string $type = null): void {
+		$log_message = LogMessage::Create($message, $this->service_id, $level, $type);
+		$log_message->Save();
+	}
+	
+	protected function LogException(\Exception $err): void {
+		echo $err->getMessage();
+	}
+	
+	protected function TrackErrorState(bool $errored): void {
+		$database = \BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('UPDATE sentinel.services SET ' . ($errored ? 'last_error' : 'last_success') . ' = CURRENT_TIMESTAMP WHERE service_id = $1;', $this->service_id);
+		$database->Commit();
+		$this->in_error_state = $errored;
+	}
+	
+	protected function GetOAuthToken(): OAuth {
+		$token = OAuth::Lookup($this->user_id, OAuth::ProviderNitrado);
+		if (is_null($token)) {
+			$err = new \Exception('Service owner does not have an OAuth token.');
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
+		try {
+			$token->Refresh(false);
+		} catch (\Exception $err) {
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
 		
+		return $token;
+	}
+	
+	public function RefreshDetails(): void {
+		$token = $this->GetOAuthToken();
+		
+		$curl = curl_init('https://api.nitrado.net/services/' . $this->nitrado_service_id . '/gameservers');
+		curl_setopt($curl, CURLOPT_HTTPHEADER, [
+			'Authorization: Bearer ' . $token->AccessToken()
+		]);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		if ($status === 200) {
+			$this->TrackErrorState(false);
+		} else {
+			$err = new \Exception('Could not get gameserver details: ' . $response);
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
+		
+		try {
+			$response_json = json_decode($response, true);
+			$details = $response_json['data'];
+			$gameserver = $details['gameserver'];
+		} catch (\Exception $err) {
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
+		
+		// Get service details for the expiration
+		$curl = curl_init('https://api.nitrado.net/services/' . $this->nitrado_service_id);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, [
+			'Authorization: Bearer ' . $token->AccessToken()
+		]);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		if ($status === 200) {
+			$this->TrackErrorState(false);
+		} else {
+			$err = new \Exception('Could not get service details: ' . $response);
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
+		 
+		try {
+			$response_json = json_decode($response, true);
+			$details = $response_json['data'];
+			$service = $details['service'];
+		} catch (\Exception $err) {
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
+		
+		try {
+			// Update service record
+			$this->SetIPAddress($gameserver['ip']);
+			$this->SetGamePort($gameserver['port']);
+			$this->SetSlotCount($gameserver['slots']);
+			
+			$suspend_date = new \DateTime($service['suspend_date']);
+			$this->SetExpiration($suspend_date->getTimestamp());
+			
+			if (is_null($this->nickname) && isset($service['comment']) && empty($service['comment']) === false) {
+				$this->SetNickname($service['comment']);
+			}
+			
+			$game = $gameserver['game'];
+			$game_specific = [];
+			switch ($game) {
+			case 'arkse':
+				$game_id = self::GameArk;
+				$platform = self::PlatformPC;
+				break;
+			case 'arkxb':
+				$game_id = self::GameArk;
+				$platform = self::PlatformXbox;
+				break;
+			case 'arkps':
+				$game_id = self::GameArk;
+				$platform = self::PlatformPlaystation;
+				break;
+			case 'arkswitch':
+				$game_id = self::GameArk;
+				$platform = self::PlatformSwitch;
+				break;
+			default:
+				throw new \Exception('Unsupported game ' . $game);
+			}
+			
+			switch ($game_id) {
+			case self::GameArk:
+				$game_specific['path'] = $gameserver['game_specific']['path'];
+				if ($gameserver['game_specific']['features']['has_rcon'] === true) {
+					$this->SetRCONPort($gameserver['rcon_port']);
+				} else {
+					$this->SetRCONPort(null);
+				}
+				$game_specific['map'] = $gameserver['query']['map'];
+				$game_specific['cluster'] = $gameserver['settings']['general']['clusterid'];
+				$game_specific['admin-password'] = $gameserver['settings']['config']['admin-password'];
+				$this->SetName($gameserver['settings']['config']['server-name']);
+				break;
+			}
+			
+			$this->SetGameID($game_id);
+			$this->SetPlatform($platform);
+			$this->SetGameSpecific($game_specific);
+			
+			$this->Save();
+		} catch (\Exception $err) {
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
+	}
+	
+	public function DownloadFile(string $path): string {
+		$token = $this->GetOAuthToken();
+		
+		$curl = curl_init('https://api.nitrado.net/services/' . $this->nitrado_service_id . '/gameservers/file_server/download?file=' . urlencode($path));
+		curl_setopt($curl, CURLOPT_HTTPHEADER, [
+			'Authorization: Bearer ' . $token->AccessToken()
+		]);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		
+		if ($status === 200) {
+			$this->TrackErrorState(false);
+		} else {
+			$err = new \Exception('Could not get file download token for ' . $path . ', HTTP ' . $status . ': ' . $response);
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
+		
+		try {
+			$response_json = json_decode($response, true);
+			$download_token = $response_json['data']['token']['token'];
+			$download_url = $response_json['data']['token']['url'];
+		} catch (\Exception $err) {
+			throw $err;
+		}
+		
+		$curl = curl_init($download_url);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, [
+			'Authorization: Bearer ' . $token->AccessToken()
+		]);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		
+		if ($status === 200) {
+			$this->TrackErrorState(false);
+		} else {
+			$err = new \Exception('Could not download file at path ' . $path . ', HTTP ' . $status . ': ' . $response);
+			$this->LogException($err);
+			$this->TrackErrorState(true);
+			throw $err;
+		}
+		
+		return $response;
+	}
+	
+	public function DownloadLatestLog(): void {
+		switch ($this->game_id) {
+		case self::GameArk:
+			$root = $this->game_specific['path'];
+			
+			$path = $root . 'ShooterGame/Saved/Logs/ShooterGame_Last.log';
+			$contents = $this->DownloadFile($path);
+			ArkLogMessage::ConsumeLogFile($this->service_id, $contents);
+				
+			$path = $root . 'ShooterGame/Saved/Logs/ShooterGame.log';
+			$contents = $this->DownloadFile($path);
+			ArkLogMessage::ConsumeLogFile($this->service_id, $contents);
+				
+			/*$rcon_port = $this->RCONPort();
+			if (is_null($rcon_port) === false) {
+				$rcon_password = $this->game_specific['admin-password'];
+				try {
+					$client = new RCONClient($this->ip_address, $rcon_port, $rcon_password);
+					$client->Connect();
+					if ($client->IsAuthorized()) {
+						$recent_logs = $client->SendCommand('GetGameLog');
+						$client->Disconnect();
+						if (is_null($recent_logs) === false) {
+							echo "Logs: $recent_logs\n";
+							ArkLogMessage::ConsumeLogFile($this->service_id, $recent_logs);
+						}
+					}
+				} catch (\Exception $err) {
+					$this->LogException($err);
+				}
+			}*/
+			
+			break;
+		}
 	}
 }
 
