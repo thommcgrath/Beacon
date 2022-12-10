@@ -322,9 +322,15 @@ abstract class Core {
 			if (isset($handlers[$request_method]) === false) {
 				static::ReplyError('Method not allowed', null, 405);
 			}
-			$handler_file = $root . '/' . $handlers[$request_method] . '.php';
-			if (file_exists($handler_file) === false) {
-				static::ReplyError('Endpoint not found: File ' . $handler_file . ' not found.', null, 404);
+			
+			$handler = $handlers[$request_method];
+			if (is_callable($handler) === false) {
+				$handler_file = $root . '/' . $handler . '.php';
+				if (file_exists($handler_file) === false) {
+					static::ReplyError('Endpoint not found: File ' . $handler_file . ' not found.', null, 404);
+				}
+				$handler = 'handle_request';
+				require($handler_file);
 			}
 			
 			$route_key = $request_method . ' ' . $route;
@@ -333,13 +339,11 @@ abstract class Core {
 				$path_parameters[$variable_name] = $matches[$variable_name];
 			}
 			
-			require($handler_file);
-			
 			$context = [
 				'path_parameters' => $path_parameters,
 				'route_key' => $route_key
 			];
-			handle_request($context);
+			$handler($context);
 			return;
 		}
 		static::ReplyError('Endpoint not found: Route not registered.', null, 404);

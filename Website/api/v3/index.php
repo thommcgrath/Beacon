@@ -122,6 +122,12 @@ BeaconAPI::RegisterRoutes(
 	]
 );
 
+BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'loot_source');
+BeaconObjectManager::RegisterRoutes('Ark\Creature', 'ark', 'creature');
+BeaconObjectManager::RegisterRoutes('Ark\Engram', 'ark', 'engram');
+BeaconObjectManager::RegisterRoutes('Ark\ConfigLine', 'ark', 'ini_option');
+BeaconObjectManager::RegisterRoutes('Ark\SpawnPoint', 'ark', 'spawn_point');
+
 BeaconAPI::HandleRequest(dirname(__FILE__) . '/requests');
 
 ?>
