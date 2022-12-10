@@ -4,6 +4,10 @@ require(dirname(__FILE__) . '/loader.php');
 
 BeaconAPI::RegisterRoutes(
 	[
+		'/ark/blueprint' => [
+			'GET' => 'ark/blueprint/list',
+			'POST' => 'ark/blueprint/edit'
+		],
 		'/ark/color_set' => [
 			'GET' => 'ark/color_set/list'
 		],
