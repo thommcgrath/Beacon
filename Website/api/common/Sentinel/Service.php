@@ -219,7 +219,7 @@ class Service implements \JsonSerializable {
 	
 	public static function GetForGroupID(string $group_id): array {
 		$database = \BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1;', $group_id);
+		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY COALESCE(nickname, name);', $group_id);
 		return static::FromRows($rows);
 	}
 	

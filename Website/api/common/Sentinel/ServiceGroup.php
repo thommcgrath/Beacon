@@ -205,28 +205,63 @@ class ServiceGroup implements \JsonSerializable {
 		$this->SetProperty('color', $color);
 	}
 	
-	public function AddService(string $service_id): void {
+	public function AddService(string $service_id, string $user_id): bool {
+		if (\BeaconCommon::IsUUID($service_id) === false) {
+			return false;
+		}
+		
+		$service = Service::GetByServiceID($service_id);
+		if (is_null($service) || $service->HasPermission($user_id, Service::PermissionEdit) === false) {
+			return false;
+		}
+		
 		$database = \BeaconCommon::Database();
 		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1 AND service_id = $2;', $this->group_id, $service_id);
-		if ($rows->RecordCount() === 0) {
-			$database->BeginTransaction();
-			$database->Query('INSERT INTO sentinel.service_group_members (group_id, service_id) VALUES ($1, $2);', $this->group_id, $service_id);
-			$database->Commit();
+		if ($rows->RecordCount() !== 0) {
+			return false;
 		}
+		
+		$database->BeginTransaction();
+		$database->Query('INSERT INTO sentinel.service_group_members (group_id, service_id) VALUES ($1, $2);', $this->group_id, $service_id);
+		$database->Commit();
+		return true;
 	}
 	
-	public function RemoveService(string $service_id): void {
+	public function RemoveService(string $service_id, string $user_id): bool {
+		if (\BeaconCommon::IsUUID($service_id) === false) {
+			return false;
+		}
+		
+		$service = Service::GetByServiceID($service_id);
+		if (is_null($service) || $service->HasPermission($user_id, Service::PermissionEdit) === false) {
+			return false;
+		}
+		
 		$database = \BeaconCommon::Database();
 		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1 AND service_id = $2;', $this->group_id, $service_id);
-		if ($rows->RecordCount() === 1) {
-			$database->BeginTransaction();
-			$database->Query('DELETE FROM sentinel.service_group_members WHERE group_id = $1 AND service_id = $2;', $this->group_id, $service_id);
-			$database->Commit();
+		if ($rows->RecordCount() !== 1) {
+			return false;
 		}
+		
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM sentinel.service_group_members WHERE group_id = $1 AND service_id = $2;', $this->group_id, $service_id);
+		$database->Commit();
+		return true;
 	}
 	
-	public function LoadServices(): array {
-		return Sentinel::GetForGroupID($this->group_id);
+	public function LoadServices(bool $full_objects = true): array {
+		if ($full_objects) {
+			return Service::GetForGroupID($this->group_id);
+		}
+		
+		$database = \BeaconCommon::Database();
+		$rows = $database->Query('SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1;', $this->group_id);
+		$ids = [];
+		while (!$rows->EOF()) {
+			$ids[] = $rows->Field('service_id');
+			$rows->MoveNext();
+		}
+		return $ids;
 	}
 	
 	public function Delete(): void {
