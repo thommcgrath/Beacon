@@ -1,47 +1,10 @@
 <?php
 
-// All mod operations require authentication
-
-require(dirname(__FILE__, 2) . '/loader.php');
-
 BeaconAPI::Authorize();
-$user_id = BeaconAPI::UserID();
-
-$workshop_id = BeaconAPI::ObjectID();
-$method = BeaconAPI::Method();
-$database = BeaconCommon::Database();
-
-switch ($method) {
-case 'GET':
-	if (is_null($workshop_id)) {
-		$mods = Ark\Mod::GetAll($user_id);
-		BeaconAPI::ReplySuccess($mods);
-	} else {
-		$mods = Ark\Mod::GetByWorkshopID($user_id, $workshop_id);
-		if (count($mods) == 0) {
-			BeaconAPI::ReplyError('Mod not found', null, 404);
-		}
-		
-		if (isset($_GET['action']) && strtolower($_GET['action']) === 'confirm') {
-			foreach ($mods as $mod) {
-				$mod->AttemptConfirmation();
-			}
-		}
-		
-		if (BeaconAPI::ObjectCount() == 1) {
-			BeaconAPI::ReplySuccess($mods[0]);
-		} else {
-			BeaconAPI::ReplySuccess($mods);
-		}
-	}
 	
-	break;
-case 'PUT':
-case 'POST':
-	if ($workshop_id !== null) {
-		BeaconAPI::ReplyError('Do not specify a class when registering mods.');
-	}
-	
+function handle_request(array $context): void {
+	$user_id = BeaconAPI::UserID();
+		
 	if (BeaconAPI::ContentType() !== 'application/json') {
 		BeaconAPI::ReplyError('Send a JSON payload');
 	}
@@ -55,7 +18,8 @@ case 'POST':
 		$items = $payload;
 	}
 	
-	$mods = array();
+	$mods = [];
+	$database = \BeaconCommon::Database();
 	$database->BeginTransaction();
 	foreach ($items as $item) {
 		if (BeaconCommon::HasAllKeys($item, 'mod_id') === false) {
@@ -82,7 +46,7 @@ case 'POST':
 		}
 	
 		$results = $database->Query('SELECT mod_id, user_id, confirmed FROM ark.mods WHERE ABS(workshop_id) = $1;', $workshop_id);
-		if ($results->RecordCount() == 1) {
+		if ($results->RecordCount() === 1) {
 			$mod_user_id = $results->Field('user_id');
 			$mod_uuid = $results->Field('mod_id');
 			$mod_confirmed = $results->Field('confirmed');
@@ -98,7 +62,7 @@ case 'POST':
 			}
 		} else {
 			$workshop_item = BeaconWorkshopItem::Load($workshop_id);
-			if ($workshop_item === null) {
+			if (is_null($workshop_item)) {
 				$database->Rollback();
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not found on Ark Workshop.');
 			}
@@ -116,33 +80,6 @@ case 'POST':
 	$database->Commit();
 		
 	BeaconAPI::ReplySuccess($mods);
-	
-	break;
-case 'DELETE':
-	if (($workshop_id === null) && (BeaconAPI::ContentType() === 'text/plain')) {
-		$workshop_id = BeaconAPI::Body();
-	}
-	if (($workshop_id === null) || ($workshop_id === '')) {
-		BeaconAPI::ReplyError('No mod specified');
-	}
-	
-	$mods = Ark\Mod::GetByWorkshopID($user_id, $workshop_id);
-	if (count($mods) == 0) {
-		BeaconAPI::ReplyError('No mods found.', null, 404);
-	}
-	
-	$database->BeginTransaction();
-	foreach ($mods as $mod) {
-		$mod->Delete();
-	}
-	$database->Commit();
-	
-	BeaconAPI::ReplySuccess();
-	
-	break;
-default:
-	BeaconAPI::ReplyError('Method not allowed.', $method, 405);
-	break;
 }
 
 ?>

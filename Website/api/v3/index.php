@@ -32,6 +32,14 @@ BeaconAPI::RegisterRoutes(
 		'/ark/map/{map_id}' => [
 			'GET' => 'ark/map/get'
 		],
+		'/ark/mod' => [
+			'GET' => 'ark/mod/list',
+			'POST' => 'ark/mod/edit'
+		],
+		'/ark/mod/{workshop_id}' => [
+			'GET' => 'ark/mod/get',
+			'DELETE' => 'ark/mod/delete'
+		],
 		'/challenge/{user_id}' => [
 			'GET' => 'challenge'
 		],
