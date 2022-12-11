@@ -17,8 +17,12 @@ class Player extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 		return 'sentinel';
 	}
 	
-	public static function SQLTableName(): string{
+	public static function SQLTableName(): string {
 		return 'players';
+	}
+	
+	public static function SQLPrimaryKey(): string {
+		return 'player_id';
 	}
 	
 	public static function SQLColumns(): array {
@@ -71,6 +75,14 @@ class Player extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 		$sql .= ' ORDER BY players.name LIMIT 20;';
 		$rows = $database->Query($sql, $values);
 		return static::FromRows($rows);
+	}
+	
+	public function PlayerID(): string {
+		return $this->player_id;
+	}
+	
+	public function Name(): string {
+		return $this->name;
 	}
 }
 

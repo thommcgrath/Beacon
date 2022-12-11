@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Sentinel;
 
-class Service implements \JsonSerializable {
+class Service extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 	const PermissionView = 1;
 	const PermissionEdit = 2;
 	const PermissionDelete = 4;
@@ -69,8 +69,6 @@ class Service implements \JsonSerializable {
 	protected $rcon_port = null;
 	protected $game_specific = null;
 	
-	protected $changed_properties = [];
-	
 	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
 		$this->service_id = $row->Field('service_id');
 		$this->user_id = $row->Field('user_id');
@@ -98,6 +96,10 @@ class Service implements \JsonSerializable {
 	
 	public static function SQLTableName(): string {
 		return 'services';
+	}
+	
+	public static function SQLPrimaryKey(): string {
+		return 'service_id';
 	}
 	
 	public static function SQLLongTableName(): string {
@@ -246,62 +248,25 @@ class Service implements \JsonSerializable {
 		];
 	}
 	
-	protected function SetProperty(string $property, mixed $value): void {
-		if ($this->$property !== $value) {
-			static::ValidateProperty($property, $value);
-			$this->$property = $value;
-			$this->changed_properties[] = $property;
-		}
+	protected static function HookGetEditableProperties(): array {
+		return ['name', 'nickname', 'color'];
 	}
 	
-	public function Edit(array $properties): void {
-		$whitelist = ['name', 'nickname', 'color'];
-		foreach ($whitelist as $property_name) {
-			if (array_key_exists($property_name, $properties)) {
-				$this->SetProperty($property_name, $properties[$property_name]);
-			}
+	protected function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
+		switch ($property) {
+		case 'last_error':
+		case 'last_success':
+		case 'expiration':
+			$assignments[] = $property . ' = to_timestamp($' . $placeholder++ . ')';
+			$values[] = $this->$property;
+			break;
+		case 'game_specific':
+			$assignments[] = $property . ' = $' . $placeholder++;
+			$values[] = json_encode($this->$property);
+			break;
+		default:
+			parent::HookPrepareColumnWrite($property, $placeholder, $assignments, $values);
 		}
-		
-		$this->Save();
-	}
-	
-	public function Save(): void {
-		if (count($this->changed_properties) === 0) {
-			return;
-		}
-		
-		$placeholder = 1;
-		$assignments = [];
-		$values = [];
-		foreach ($this->changed_properties as $property) {
-			switch ($property) {
-			case 'last_error':
-			case 'last_success':
-			case 'expiration':
-				$assignments[] = $property . ' = to_timestamp($' . $placeholder++ . ')';
-				break;
-			default:
-				$assignments[] = $property . ' = $' . $placeholder++;
-				break;
-			}
-			switch ($property) {
-			case 'game_specific':
-				$values[] = json_encode($this->$property);
-				break;
-			default:
-				$values[] = $this->$property;
-				break;
-			}
-		}
-		$values[] = $this->service_id;
-		
-		$database = \BeaconCommon::Database();
-		$database->BeginTransaction();
-		$rows = $database->Query('UPDATE ' . static::SQLLongTableName() . ' SET ' . implode(', ', $assignments) . ' WHERE service_id = $' . $placeholder++ . ' RETURNING ' . implode(', ', static::SQLColumns()) . ';', $values);
-		$database->Commit();
-		
-		$this->__construct($rows);
-		$this->changed_properties = [];
 	}
 	
 	public function ServiceID(): string {

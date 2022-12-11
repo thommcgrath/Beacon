@@ -8,6 +8,7 @@ abstract class DatabaseObject {
 	abstract protected function __construct(\BeaconPostgreSQLRecordSet $row);
 	abstract public static function SQLSchemaName(): string;
 	abstract public static function SQLTableName(): string;
+	abstract public static function SQLPrimaryKey(): string;
 	abstract public static function SQLColumns(): array;
 		
 	public static function SQLLongTableName(): string {
@@ -54,13 +55,13 @@ abstract class DatabaseObject {
 		$assignments = [];
 		$values = [];
 		foreach ($this->changed_properties as $property) {
-			static::HookPrepareColumnWrite($property, $placeholder, $assignments, $values);
+			$this->HookPrepareColumnWrite($property, $placeholder, $assignments, $values);
 		}
-		$values[] = $this->group_id;
+		$values[] = $this->UUID();
 		
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
-		$rows = $database->Query('UPDATE ' . static::SQLLongTableName() . ' SET ' . implode(', ', $assignments) . ' WHERE group_id = $' . $placeholder++ . ' RETURNING ' . implode(', ', static::SQLColumns()) . ';', $values);
+		$rows = $database->Query('UPDATE ' . static::SQLLongTableName() . ' SET ' . implode(', ', $assignments) . ' WHERE ' . static::SQLPrimaryKey() . ' = $' . $placeholder++ . ' RETURNING ' . implode(', ', static::SQLColumns()) . ';', $values);
 		$database->Commit();
 		
 		$this->__construct($rows);
@@ -71,9 +72,14 @@ abstract class DatabaseObject {
 		return [];
 	}
 	
-	protected static function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
+	protected function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
 		$assignments[] = '"' . $property . '" = $' . $placeholder++;
 		$values[] = $this->$property;
+	}
+	
+	public function UUID(): string {
+		$primary_key = static::SQLPrimaryKey();
+		return $this->$primary_key;
 	}
 }
 

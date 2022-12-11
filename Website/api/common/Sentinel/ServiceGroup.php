@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Sentinel;
 
-class ServiceGroup implements \JsonSerializable {
+class ServiceGroup extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 	const PermissionView = 1;
 	const PermissionEdit = 2;
 	const PermissionDelete = 4;
@@ -11,8 +11,6 @@ class ServiceGroup implements \JsonSerializable {
 	protected $user_id = null;
 	protected $name = null;
 	protected $color = null;
-	
-	protected $changed_properties = [];
 	
 	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
 		$this->group_id = $row->Field('group_id');
@@ -29,8 +27,8 @@ class ServiceGroup implements \JsonSerializable {
 		return 'service_groups';
 	}
 	
-	public static function SQLLongTableName(): string {
-		return static::SQLSchemaName() . '.' . static::SQLTableName();
+	public static function SQLPrimaryKey(): string {
+		return 'group_id';
 	}
 	
 	public static function SQLColumns(): array {
@@ -42,15 +40,6 @@ class ServiceGroup implements \JsonSerializable {
 		];
 	}
 	
-	protected static function FromRows(\BeaconPostgreSQLRecordSet $rows): array {
-		$services = [];
-		while (!$rows->EOF()) {
-			$services[] = new static($rows);
-			$rows->MoveNext();
-		}
-		return $services;
-	}
-	
 	protected static function ValidateProperty(string $property, mixed $value): void {
 		switch ($property) {
 		case 'color':
@@ -58,14 +47,8 @@ class ServiceGroup implements \JsonSerializable {
 				throw new \Exception('Invalid color.');
 			}
 			break;
-		}
-	}
-	
-	protected function SetProperty(string $property, mixed $value): void {
-		if ($this->$property !== $value) {
-			static::ValidateProperty($property, $value);
-			$this->$property = $value;
-			$this->changed_properties[] = $property;
+		default:
+			parent::ValidateProperty($property, $value);
 		}
 	}
 	
@@ -147,38 +130,8 @@ class ServiceGroup implements \JsonSerializable {
 		];
 	}
 	
-	public function Edit(array $properties): void {
-		$whitelist = ['name', 'color'];
-		foreach ($whitelist as $property_name) {
-			if (array_key_exists($property_name, $properties)) {
-				$this->SetProperty($property_name, $properties[$property_name]);
-			}
-		}
-		
-		$this->Save();
-	}
-	
-	public function Save(): void {
-		if (count($this->changed_properties) === 0) {
-			return;
-		}
-		
-		$placeholder = 1;
-		$assignments = [];
-		$values = [];
-		foreach ($this->changed_properties as $property) {
-			$assignments[] = $property . ' = $' . $placeholder++;
-			$values[] = $this->$property;
-		}
-		$values[] = $this->group_id;
-		
-		$database = \BeaconCommon::Database();
-		$database->BeginTransaction();
-		$rows = $database->Query('UPDATE ' . static::SQLLongTableName() . ' SET ' . implode(', ', $assignments) . ' WHERE group_id = $' . $placeholder++ . ' RETURNING ' . implode(', ', static::SQLColumns()) . ';', $values);
-		$database->Commit();
-		
-		$this->__construct($rows);
-		$this->changed_properties = [];
+	protected static function HookGetEditableProperties(): array {
+		return ['name', 'color'];
 	}
 	
 	public function GroupID(): string {

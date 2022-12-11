@@ -25,6 +25,10 @@ class PlayerNote extends \BeaconAPI\DatabaseObject implements \JsonSerializable 
 		return 'player_notes';
 	}
 	
+	public static function SQLPrimaryKey(): string {
+		return 'note_id';
+	}
+	
 	public static function SQLColumns(): array {
 		return [
 			'note_id',
@@ -144,7 +148,7 @@ class PlayerNote extends \BeaconAPI\DatabaseObject implements \JsonSerializable 
 		];
 	}
 	
-	protected static function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
+	protected function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
 		switch ($property) {
 		case 'post_time':
 			$assignments[] = $property . ' = to_timestamp($' . $placeholder++ . ')';
