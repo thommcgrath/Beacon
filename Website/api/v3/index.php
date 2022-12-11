@@ -86,6 +86,10 @@ BeaconAPI::RegisterRoutes(
 		'/sentinel/oauth/{provider}' => [
 			'GET' => 'sentinel/oauth'
 		],
+		'/sentinel/player_note' => [
+			'GET' => 'sentinel/player_note/list',
+			'POST' => 'sentinel/player_note/create'
+		],
 		'/sentinel/service' => [
 			'POST' => 'sentinel/service/create',
 			'GET' => 'sentinel/service/list'
