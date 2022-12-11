@@ -3,23 +3,22 @@
 BeaconAPI::Authorize();
 
 function handle_request(array $context): void {
-	if ($context['route_key'] === 'GET /sentinel/player/{player_id}') {
-		$player_id = $context['path_parameters']['player_id'];
-		if (\BeaconCommon::IsUUID($player_id)) {
-			$player = Sentinel\Player::GetByPlayerID($player_id);
-			BeaconAPI::ReplySuccess($player);
-			return;
+	if (isset($_GET['player_id'])) {
+		$player_id = trim($_GET['player_id']);
+		$player = Sentinel\Player::GetByPlayerID($player_id);
+		BeaconAPI::ReplySuccess($player);
+	} elseif (isset($_GET['player_name'])) {
+		$player_name = trim($_GET['player_name']);
+		if (isset($_GET['provider'])) {
+			$provider = trim($_GET['provider']);
+		} else {
+			$provider = null;
 		}
-		
-		$player_name = $player_id;
-		$provider = null;
+		$players = Sentinel\Player::GetByName($player_name, $provider);
+		BeaconAPI::ReplySuccess($players);
 	} else {
-		$player_name = $context['path_parameters']['player_name'];
-		$provider = $context['path_parameters']['provider'];
+		BeaconAPI::ReplyError('Bad request', null, 400);
 	}
-	
-	$players = Sentinel\Player::GetByName($player_name, $provider);
-	BeaconAPI::ReplySuccess($players);
 }
 
 ?>

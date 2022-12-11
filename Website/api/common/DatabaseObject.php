@@ -71,7 +71,7 @@ abstract class DatabaseObject {
 		return [];
 	}
 	
-	protected static function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values) {
+	protected static function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
 		$assignments[] = '"' . $property . '" = $' . $placeholder++;
 		$values[] = $this->$property;
 	}

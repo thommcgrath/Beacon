@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Sentinel;
 
-class PlayerNote implements \JsonSerializable {
+class PlayerNote extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 	protected $note_id = null;
 	protected $player_id = null;
 	protected $user_id = null;
@@ -25,10 +25,6 @@ class PlayerNote implements \JsonSerializable {
 		return 'player_notes';
 	}
 	
-	public static function SQLLongTableName(): string {
-		return static::SQLSchemaName() . '.' . static::SQLTableName();
-	}
-	
 	public static function SQLColumns(): array {
 		return [
 			'note_id',
@@ -37,18 +33,6 @@ class PlayerNote implements \JsonSerializable {
 			'EXTRACT(EPOCH FROM post_time) AS post_time',
 			'content'
 		];
-	}
-	
-	protected static function FromRows(\BeaconPostgreSQLRecordSet $rows): array {
-		$notes = [];
-		while (!$rows->EOF()) {
-			$notes[] = new static($rows);
-			$rows->MoveNext();
-		}
-		return $notes;
-	}
-	
-	protected static function ValidateProperty(string $property, mixed $value): void {
 	}
 	
 	public static function Create(string $user_id, array $properties): PlayerNote {
@@ -160,42 +144,15 @@ class PlayerNote implements \JsonSerializable {
 		];
 	}
 	
-	protected function SetProperty(string $property, mixed $value): void {
-		if ($this->$property !== $value) {
-			static::ValidateProperty($property, $value);
-			$this->$property = $value;
-			$this->changed_properties[] = $property;
-		}
-	}
-	
-	public function Save(): void {
-		if (count($this->changed_properties) === 0) {
-			return;
-		}
-		
-		$placeholder = 1;
-		$assignments = [];
-		$values = [];
-		foreach ($this->changed_properties as $property) {
-			switch ($property) {
-			case 'post_time':
-				$assignments[] = $property . ' = to_timestamp($' . $placeholder++ . ')';
-				break;
-			default:
-				$assignments[] = $property . ' = $' . $placeholder++;
-				break;
-			}
+	protected static function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
+		switch ($property) {
+		case 'post_time':
+			$assignments[] = $property . ' = to_timestamp($' . $placeholder++ . ')';
 			$values[] = $this->$property;
+			break;
+		default:
+			parent::HookPrepareColumnWrite($property, $placeholder, $assignments, $values);
 		}
-		$values[] = $this->note_id;
-		
-		$database = \BeaconCommon::Database();
-		$database->BeginTransaction();
-		$rows = $database->Query('UPDATE ' . static::SQLLongTableName() . ' SET ' . implode(', ', $assignments) . ' WHERE service_id = $' . $placeholder++ . ' RETURNING ' . implode(', ', static::SQLColumns()) . ';', $values);
-		$database->Commit();
-		
-		$this->__construct($rows);
-		$this->changed_properties = [];
 	}
 	
 	public function NoteID(): string {
