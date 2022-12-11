@@ -9,10 +9,6 @@ class PlayerNote implements \JsonSerializable {
 	protected $post_time = null;
 	protected $content = null;
 	
-	protected static function AlgoliaIndexName(): string {
-		return \BeaconCommon::GetGlobal('Algolia Player Notes Index Name') ?? 'player_notes-lab';
-	}
-	
 	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
 		$this->note_id = $row->Field('note_id');
 		$this->player_id = $row->Field('player_id');
@@ -88,44 +84,7 @@ class PlayerNote implements \JsonSerializable {
 			throw $err;
 		}
 		
-		$note = static::GetByNoteID($note_id);
-		
-		$requests = [
-			[
-				'action' => 'updateObject',
-				'body' => [
-					'objectID' => $note->NoteID(),
-					'content' => $note->Content(),
-					'player_id' => $note->PlayerID(),
-					'user_id' => $note->UserID(),
-					'post_time' => $note->PostTime()
-				]
-			]
-		];
-		
-		$app_id = \BeaconCommon::GetGlobal('Algolia Application ID');
-		$index = static::AlgoliaIndexName();
-		$api_key = \BeaconCommon::GetGlobal('Algolia API Key');
-		
-		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '/batch';
-		$curl = curl_init($url);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'Content-Type: application/json',
-			'X-Algolia-Application-Id: ' . $app_id,
-			'X-Algolia-API-Key: ' . $api_key
-		]);
-		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(['requests' => $requests]));
-		$response = curl_exec($curl);
-		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-		
-		if ($status !== 200) {
-			throw new \Exception('Could not sync note with search index.');
-		}
-		
-		return $note;
+		return static::GetByNoteID($note_id);
 	}
 	
 	public static function GetByNoteID(string $note_id): ?PlayerNote {
@@ -156,14 +115,6 @@ class PlayerNote implements \JsonSerializable {
 	}
 	
 	public static function Search(array $filters): array {
-		if (isset($filters['content'])) {
-			return static::SearchWithAlgolia($filters);
-		} else {
-			return static::SearchLocally($filters);
-		}
-	}
-	
-	protected static function SearchLocally(array $filters): array {
 		$placeholder = 1;
 		$clauses = [];
 		$values = [];
@@ -197,64 +148,6 @@ class PlayerNote implements \JsonSerializable {
 		$database = \BeaconCommon::Database();
 		$rows = $database->Query($sql, $values);
 		return static::FromRows($rows);
-	}
-	
-	protected static function SearchWithAlgolia(array $filters): array {
-		$app_id = \BeaconCommon::GetGlobal('Algolia Application ID');
-		$index = static::AlgoliaIndexName();
-		$api_key = \BeaconCommon::GetGlobal('Algolia API Key');
-		
-		$offset = 0;
-		$limit = 100;
-		$query = $filters['content'];
-		$facets = [];
-		
-		if (isset($filters['user_id']) && \BeaconCommon::IsUUID($filters['user_id'])) {
-			$facets[] = 'user_id:' . $filters['user_id'];
-		}
-		
-		if (isset($filters['player_id']) && \BeaconCommon::IsUUID($filters['player_id'])) {
-			$facets[] = 'player_id:' . $filters['player_id'];
-		}
-		
-		if (isset($filters['offset']) && is_numeric($filters['offset'])) {
-			$offset = intval($filters['offset']);
-		}
-		
-		if (isset($filters['limit']) && is_numeric($filters['limit'])) {
-			$limit = intval($filters['limit']);
-		}
-		
-		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode(mb_strtolower($query)) . '&hitsPerPage=' . $limit;
-		if (count($facets) > 0) {
-			$url .= '&facets=' . urlencode(implode(' AND ', $facets));
-		}
-		
-		$curl = curl_init($url);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'X-Algolia-Application-Id: ' . $app_id,
-			'X-Algolia-API-Key: ' . $api_key
-		]);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($curl);
-		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-		if ($status !== 200) {
-			return [];
-		}
-		
-		$results = json_decode($response, true);
-		$notes = [];
-		foreach ($results['hits'] as $hit) {
-			$notes[] = [
-				'note_id' => $hit['objectID'],
-				'player_id' => $hit['player_id'],
-				'user_id' => $hit['user_id'],
-				'post_time' => $hit['post_time'],
-				'content' => $hit['content']
-			];
-		}
-		return $notes;
 	}
 	
 	public function jsonSerialize(): mixed {
