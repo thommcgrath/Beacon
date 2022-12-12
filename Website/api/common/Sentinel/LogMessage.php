@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Sentinel;
 
-class LogMessage implements \JsonSerializable {
+class LogMessage extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 	const LogLevelDebug = 'Debug';
 	const LogLevelInfo = 'Informational';
 	const LogLevelNotice = 'Notice';
@@ -67,33 +67,40 @@ class LogMessage implements \JsonSerializable {
 	protected $analyzer_status = null;
 	protected $metadata = null;
 	
-	protected function __construct(\BeaconPostgreSQLRecordSet $row = null) {
-		if (is_null($row) === false) {
-			$this->message_id = $row->Field('message_id');
-			$this->service_id = $row->Field('service_id');
-			$this->type = $row->Field('type');
-			$this->time = floatval($row->Field('log_time'));
-			$this->message = $row->Field('message');
-			$this->level = $row->Field('level');
-			$this->analyzer_status = $row->Field('analyzer_status');
-			$this->metadata = json_decode($row->Field('metadata'), true);
-		} else {
-			$this->message_id = \BeaconCommon::GenerateUUID();
-			$this->time = time();
-			$this->level = self::LogLevelInfo;
-			$this->type = self::LogTypeService;
-			$this->analyzer_status = self::AnalyzerStatusSkipped;
-			$this->metadata = [];
-		}
+	public static function SQLSchemaName(): string {
+		return 'sentinel';
 	}
 	
-	protected static function FromRows(\BeaconPostgreSQLRecordSet $rows): array {
-		$logs = [];
-		while (!$rows->EOF()) {
-			$logs[] = new static($rows);
-			$rows->MoveNext();
-		}
-		return $logs;
+	public static function SQLTableName(): string {
+		return 'service_logs';
+	}
+	
+	public static function SQLPrimaryKey(): string {
+		return 'message_id';
+	}
+	
+	public static function SQLColumns(): array {
+		return [
+			'message_id',
+			'service_id',
+			'type',
+			'EXTRACT(EPOCH FROM log_time) AS log_time',
+			'message',
+			'level',
+			'analyzer_status',
+			'metadata'
+		];
+	}
+	
+	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
+		$this->message_id = $row->Field('message_id');
+		$this->service_id = $row->Field('service_id');
+		$this->type = $row->Field('type');
+		$this->time = floatval($row->Field('log_time'));
+		$this->message = $row->Field('message');
+		$this->level = $row->Field('level');
+		$this->analyzer_status = $row->Field('analyzer_status');
+		$this->metadata = json_decode($row->Field('metadata'), true);
 	}
 	
 	public static function Create(string $message, string $service_id, ?string $level = null, ?string $type = null): LogMessage {
