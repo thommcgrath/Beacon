@@ -102,6 +102,9 @@ BeaconAPI::RegisterRoutes(
 			'GET' => 'sentinel/service/get',
 			'DELETE' => 'sentinel/service/delete'
 		],
+		'/sentinel/service/{service_id}/log' => [
+			'GET' => 'sentinel/service/logs'
+		],
 		'/sentinel/service_group' => [
 			'POST' => 'sentinel/service_group/create',
 			'GET' => 'sentinel/service_group/list'

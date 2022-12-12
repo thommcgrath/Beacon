@@ -87,6 +87,15 @@ class LogMessage implements \JsonSerializable {
 		}
 	}
 	
+	protected static function FromRows(\BeaconPostgreSQLRecordSet $rows): array {
+		$logs = [];
+		while (!$rows->EOF()) {
+			$logs[] = new static($rows);
+			$rows->MoveNext();
+		}
+		return $logs;
+	}
+	
 	public static function Create(string $message, string $service_id, ?string $level = null, ?string $type = null): LogMessage {
 		if (is_null($level) === false && in_array($level, self::LogLevels) === false) {
 			throw new \Error('Invalid log level');
@@ -229,6 +238,48 @@ class LogMessage implements \JsonSerializable {
 	
 	public function IsError(): bool {
 		return 	in_array($this->level, self::ErrorLogLevels);
+	}
+	
+	public static function Search(string $service_id, string $query = '', bool $newest_first = true, int $page_num = 1, int $page_size = 250): array {
+		$page_num = max($page_num, 1);
+		$offset = $page_size * ($page_num - 1);
+		$main_sql = 'SELECT ' . implode(', ', self::SQLColumns) . ' FROM ' . self::SQLLongTableName . ' WHERE service_id = $1';
+		$total_sql = 'SELECT COUNT(message_id) AS num_results FROM ' . self::SQLLongTableName . ' WHERE service_id = $1';
+		$values = [$service_id];
+		if (empty($query) === false) {
+			$clause = ' AND message_vector @@ phraseto_tsquery(\'english\', $2)';
+			$main_sql .= $clause;
+			$total_sql .= $clause;
+			$values[] = $query;
+		}
+		$main_sql .= ' ORDER BY log_time';
+		if ($newest_first) {
+			$main_sql .= ' DESC';
+		}
+		$main_sql .= ' OFFSET ' . $offset . ' LIMIT ' . $page_size . ';';
+		$total_sql .= ';';
+		
+		$database = \BeaconCommon::Database();
+		$rows = $database->Query($main_sql, $values);
+		$totals = $database->Query($total_sql, $values);
+		$total = intval($totals->Field('num_results'));
+		
+		$results = [
+			'total' => $total,
+			'page' => $page_num,
+			'range' => [
+				'start' => $offset + 1,
+				'end' => min($total, $offset + $page_size)
+			],
+			'params' => [
+				'query' => $query,
+				'newest_first' => $newest_first,
+				'page_num' => $page_num,
+				'page_size' => $page_size
+			],
+			'messages' => static::FromRows($rows)
+		];
+		return $results;
 	}
 }
 
