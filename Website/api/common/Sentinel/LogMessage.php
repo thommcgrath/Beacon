@@ -240,19 +240,53 @@ class LogMessage implements \JsonSerializable {
 		return 	in_array($this->level, self::ErrorLogLevels);
 	}
 	
-	public static function Search(string $service_id, string $query = '', bool $newest_first = true, int $page_num = 1, int $page_size = 250): array {
+	public static function Search(string $service_id, array $filters = [], bool $newest_first = true, int $page_num = 1, int $page_size = 250): array {
 		$page_num = max($page_num, 1);
 		$offset = $page_size * ($page_num - 1);
-		$main_sql = 'SELECT ' . implode(', ', self::SQLColumns) . ' FROM ' . self::SQLLongTableName . ' WHERE service_id = $1';
-		$total_sql = 'SELECT COUNT(message_id) AS num_results FROM ' . self::SQLLongTableName . ' WHERE service_id = $1';
+		$clauses = ['service_id = $1'];
 		$values = [$service_id];
-		if (empty($query) === false) {
-			$clause = ' AND message_vector @@ phraseto_tsquery(\'english\', $2)';
-			$main_sql .= $clause;
-			$total_sql .= $clause;
-			$values[] = $query;
+		$placeholder = 2;
+		if (isset($filters['query']) && empty($filters['query']) === false) {
+			$clauses[] = 'message_vector @@ phraseto_tsquery(\'english\', $' . $placeholder++ . ')';
+			$values[] = $filters['query'];
 		}
-		$main_sql .= ' ORDER BY log_time';
+		if (isset($filters['message_type']) && empty($filters['message_type']) === false) {
+			$clauses[] = 'type = $' . $placeholder++;
+			$values[] = $filters['message_type'];
+		}
+		if (isset($filters['event_type']) && empty($filters['event_type']) === false) {
+			$clauses[] = 'metadata @> $' . $placeholder++;
+			$values[] = json_encode(['event' => $filters['event_type']]);
+		}
+		if (isset($filters['min_level']) && isset($filters['max_level']) && empty($filters['min_level']) === false && empty($filters['max_level']) === false) {
+			if ($filters['min_level'] === $filters['max_level']) {
+				$clauses[] = 'level = $' . $placeholder++;
+				$values[] = $filters['min_level'];
+			} else {
+				$clauses[] = 'sentinel.log_level_position(level) BETWEEN sentinel.log_level_position($' . $placeholder++ . ') AND sentinel.log_level_position($' . $placeholder++ . ')';
+				$values[] = $filters['min_level'];
+				$values[] = $filters['max_level'];
+			}
+		} else if (isset($filters['min_level']) && empty($filters['min_level']) === false) {
+			$clauses[] = 'sentinel.log_level_position(level) >= sentinel.log_level_position($' . $placeholder++ . ')';
+			$values[] = $filters['min_level'];
+		} else if (isset($filters['max_level']) && empty($filters['max_level']) === false) {
+			$clauses[] = 'sentinel.log_level_position(level) <= sentinel.log_level_position($' . $placeholder++ . ')';
+			$values[] = $filters['max_level'];
+		}
+		if (isset($filters['newer_than']) && isset($filters['older_than']) && is_numeric($filters['newer_than']) && is_numeric($filters['older_than'])) {
+			$clauses[] = 'log_time BETWEEN to_timestamp($' . $placeholder++ . ') AND to_timestamp($' . $placeholder++ . ')';
+			$values[] = floatval($filters['newer_than']);
+			$values[] = floatval($filters['older_than']);
+		} else if (isset($filters['newer_than']) && is_numeric($filters['newer_than'])) {
+			$clauses[] = 'log_time >= to_timestamp($' . $placeholder++ . ')';
+			$values[] = floatval($filters['newer_than']);
+		} else if (isset($filters['older_than']) && is_numeric($filters['older_than'])) {
+			$clauses[] = 'log_time <= to_timestamp($' . $placeholder++ . ')';
+			$values[] = floatval($filters['older_than']);
+		}
+		$main_sql = 'SELECT ' . implode(', ', self::SQLColumns) . ' FROM ' . self::SQLLongTableName . ' WHERE ' . implode(' AND ', $clauses) . ' ORDER BY log_time';
+		$total_sql = 'SELECT COUNT(message_id) AS num_results FROM ' . self::SQLLongTableName . ' WHERE ' . implode(' AND ', $clauses);
 		if ($newest_first) {
 			$main_sql .= ' DESC';
 		}
@@ -272,7 +306,7 @@ class LogMessage implements \JsonSerializable {
 				'end' => min($total, $offset + $page_size)
 			],
 			'params' => [
-				'query' => $query,
+				'filters' => $filters,
 				'newest_first' => $newest_first,
 				'page_num' => $page_num,
 				'page_size' => $page_size
