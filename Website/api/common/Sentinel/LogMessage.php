@@ -44,20 +44,6 @@ class LogMessage extends \BeaconAPI\DatabaseObject implements \JsonSerializable 
 		self::AnalyzerStatusAnalyzed
 	];
 	
-	const SQLSchemaName = 'sentinel';
-	const SQLTableName = 'service_logs';
-	const SQLLongTableName = self::SQLSchemaName . '.' . self::SQLTableName;
-	const SQLColumns = [
-		self::SQLTableName . '.message_id',
-		self::SQLTableName . '.service_id',
-		self::SQLTableName . '.type',
-		'EXTRACT(EPOCH FROM ' . self::SQLTableName . '.log_time) AS log_time',
-		self::SQLTableName . '.message',
-		self::SQLTableName . '.level',
-		self::SQLTableName . '.analyzer_status',
-		self::SQLTableName . '.metadata'
-	];
-	
 	protected $message_id = null;
 	protected $service_id = null;
 	protected $type = null;
@@ -159,7 +145,7 @@ class LogMessage extends \BeaconAPI\DatabaseObject implements \JsonSerializable 
 		try {
 			foreach ($messages as $message) {
 				$metadata = count($message->metadata) > 0 ? json_encode($message->metadata) : '{}';
-				$database->Query('INSERT INTO ' . self::SQLLongTableName . ' (message_id, service_id, type, log_time, message, level, analyzer_status, metadata) VALUES ($1, $2, $3, to_timestamp($4), $5, $6, $7, $8);', $message->message_id, $message->service_id, $message->type, $message->time, $message->message, $message->level, $message->analyzer_status, $metadata);
+				$database->Query('INSERT INTO ' . static::SQLLongTableName() . ' (message_id, service_id, type, log_time, message, level, analyzer_status, metadata) VALUES ($1, $2, $3, to_timestamp($4), $5, $6, $7, $8);', $message->message_id, $message->service_id, $message->type, $message->time, $message->message, $message->level, $message->analyzer_status, $metadata);
 			}
 		} catch (\Exception $err) {
 			$database->Rollback();
@@ -174,7 +160,7 @@ class LogMessage extends \BeaconAPI\DatabaseObject implements \JsonSerializable 
 	
 	public static function GetMessageByID(string $message_id): ?LogMessage {
 		$database = \BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', self::SQLColumns) . ' FROM ' . self::SQLLongTableName . ' WHERE message_id = $1;', $message_id);
+		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE message_id = $1;', $message_id);
 		if ($rows->RecordCount() !== 0) {
 			return null;
 		}
@@ -184,7 +170,7 @@ class LogMessage extends \BeaconAPI\DatabaseObject implements \JsonSerializable 
 	public static function GetMessagesForService(string $service_id, int $offset = 0, int $limit = 500): array {
 		// Searches for a service or group
 		$database = \BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . implode(', ', self::SQLColumns) . ' FROM ' . self::SQLLongTableName . ' WHERE service_id = $1 OR service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY log_time DESC OFFSET $2 LIMIT $3;', $service_id, $offset, $limit);
+		$rows = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE service_id = $1 OR service_id IN (SELECT service_id FROM sentinel.service_group_members WHERE group_id = $1) ORDER BY log_time DESC OFFSET $2 LIMIT $3;', $service_id, $offset, $limit);
 		$messages = [];
 		while (!$rows->EOF()) {
 			$messages[] = new static($rows);
@@ -292,8 +278,8 @@ class LogMessage extends \BeaconAPI\DatabaseObject implements \JsonSerializable 
 			$clauses[] = 'log_time <= to_timestamp($' . $placeholder++ . ')';
 			$values[] = floatval($filters['older_than']);
 		}
-		$main_sql = 'SELECT ' . implode(', ', self::SQLColumns) . ' FROM ' . self::SQLLongTableName . ' WHERE ' . implode(' AND ', $clauses) . ' ORDER BY log_time';
-		$total_sql = 'SELECT COUNT(message_id) AS num_results FROM ' . self::SQLLongTableName . ' WHERE ' . implode(' AND ', $clauses);
+		$main_sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE ' . implode(' AND ', $clauses) . ' ORDER BY log_time';
+		$total_sql = 'SELECT COUNT(message_id) AS num_results FROM ' . static::SQLLongTableName() . ' WHERE ' . implode(' AND ', $clauses);
 		if ($newest_first) {
 			$main_sql .= ' DESC';
 		}
