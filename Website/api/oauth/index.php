@@ -2,6 +2,8 @@
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+BeaconAPI::HandleCORS();
+
 header('Content-Type: text/plain');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -23,6 +25,7 @@ $_SESSION['OAUTH_PROVIDER'] = $provider;
 $auth_state = BeaconCommon::GenerateUUID();
 $_SESSION['OAUTH_AUTH_STATE'] = $auth_state;
 $_SESSION['OAUTH_USE_SENTINEL'] = false;
+$no_redirect = isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] === 'application/json';
 
 if (isset($_GET['return_uri'])) {
 	// Modern Sentinel logic
@@ -31,12 +34,12 @@ if (isset($_GET['return_uri'])) {
 		$return_uri = $_GET['return_uri'];
 		$oauth = Sentinel\OAuth::Lookup(\BeaconAPI::UserID(), $provider);
 		if ($oauth && $oauth->Test(true)) {
-			\BeaconCommon::Redirect($return_uri, true);
+			Finish($return_uri);
 		}
 		$redirect_uri = Sentinel\OAuth::Begin($provider, $auth_state);
 		$_SESSION['OAUTH_RETURN_URI'] = $return_uri;
 		$_SESSION['OAUTH_USE_SENTINEL'] = true;
-		\BeaconCommon::Redirect($redirect_uri, true);
+		Finish($redirect_uri);
 	} catch (\Exception $err) {
 		echo $err->getMessage();
 		exit;
@@ -59,6 +62,16 @@ default:
 	exit;
 }
 
-BeaconCommon::Redirect($url);
+Finish($url);
+
+function Finish(string $uri): void {
+	if (isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] === 'application/json') {
+		BeaconAPI::ReplySuccess([
+			'location' => $uri
+		]);
+	} else {
+		BeaconCommon::Redirect($uri, true);
+	}
+}
 
 ?>

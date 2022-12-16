@@ -115,6 +115,11 @@ BeaconErrors::StartWatching();
 			'allow-scripts',
 			'allow-downloads'
 		],
+		'connect-src' => [
+			"'self'",
+			"https://*.usebeacon.app",
+			"https://api.nitrado.net"
+		],
 		'upgrade-insecure-requests' => []
 	];
 	

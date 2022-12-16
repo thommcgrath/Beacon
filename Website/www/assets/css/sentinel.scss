@@ -603,6 +603,8 @@ body, html {
 		border-color: $accent-color;
 		
 		a {
+			color: $text-color;
+			
 			&:hover {
 				background-color: $accent-color;
 				color: $accent-text-color;

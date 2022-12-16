@@ -13,6 +13,20 @@ abstract class Core {
 	const AUTH_STYLE_EMAIL_WITH_PASSWORD = 'email+password';
 	const AUTH_STYLE_SESSION = 'session';
 	
+	public static function HandleCORS(): void {
+		header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS');
+		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');
+		header('Access-Control-Expose-Headers: Content-Length,Content-Range');
+		header('Vary: Origin');
+		
+		if (static::Method() === 'OPTIONS') {
+			header('Access-Control-Max-Age: 1728000');
+			http_response_code(204);
+			exit;
+		}
+	}
+	
 	public static function APIVersion() {
 		return 'v0';
 	}

@@ -99,31 +99,44 @@ abstract class BeaconCommon {
 	}
 	
 	public static function AssetURI(string $asset_filename): string {
-		$filename = pathinfo($asset_filename, PATHINFO_FILENAME);
-		$extension = pathinfo($asset_filename, PATHINFO_EXTENSION);
-		$public_extension = $extension;
-		$folder = $extension;
-		switch ($extension) {
-		case 'scss':
-			$public_extension = 'css';
-			$folder = 'css';
-			break;
-		case 'js':
-			$folder = 'scripts';
-			break;
-		case 'svg':
-		case 'png':
-		case 'gif':
-			$folder = 'images';
-			break;
-		case 'ttf':
-		case 'otf':
-		case 'woff2':
-			$folder = 'fonts';
-			break;
+		if (str_starts_with($asset_filename, '/')) {
+			$asset_path = static::WebRoot() . $asset_filename;
+			$filename = basename($asset_filename);
+			$extension = pathinfo($filename, PATHINFO_EXTENSION);
+			$public_extension = $extension;
+			switch ($extension) {
+			case 'scss':
+				$public_extension = 'css';
+				break;
+			}
+			$uri_path = str_replace('.' . $extension, '.' . $public_extension, $asset_filename);
+		} else {
+			$filename = pathinfo($asset_filename, PATHINFO_FILENAME);
+			$extension = pathinfo($asset_filename, PATHINFO_EXTENSION);
+			$public_extension = $extension;
+			$folder = $extension;
+			switch ($extension) {
+			case 'scss':
+				$public_extension = 'css';
+				$folder = 'css';
+				break;
+			case 'js':
+				$folder = 'scripts';
+				break;
+			case 'svg':
+			case 'png':
+			case 'gif':
+				$folder = 'images';
+				break;
+			case 'ttf':
+			case 'otf':
+			case 'woff2':
+				$folder = 'fonts';
+				break;
+			}
+			$asset_path = static::WebRoot() . '/assets/' . $folder . '/' . $asset_filename;
+			$uri_path = '/assets/' . $folder . '/' . $filename . '.' . $public_extension;
 		}
-		$asset_path = static::WebRoot() . '/assets/' . $folder . '/' . $asset_filename;
-		$uri_path = '/assets/' . $folder . '/' . $filename . '.' . $public_extension;
 		return $uri_path . '?mtime=' . filemtime($asset_path);
 	}
 	

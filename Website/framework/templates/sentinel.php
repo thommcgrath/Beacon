@@ -7,11 +7,10 @@ if (!BeaconTemplate::IsHTML()) {
 
 $session = BeaconSession::GetFromCookie();
 if (is_null($session)) {
-	BeaconCommon::Redirect('/account/login/');
+	echo 'Unauthorized';
 	exit;
 }
 $session->Renew();
-
 $user = BeaconUser::GetByUserID($session->UserID());
 
 $description = BeaconTemplate::PageDescription();
@@ -21,7 +20,6 @@ $sidebar_items = [
 	[
 		'url' => '/account/sentinel/',
 		'caption' => 'Dashboard',
-		'active' => true,
 		'icon' => 'meter2'
 	],
 	[
@@ -35,8 +33,6 @@ $sidebar_items = [
 		'icon' => 'users'
 	]
 ];
-
-
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -58,8 +54,16 @@ $sidebar_items = [
 		<meta name="theme-color" content="#9c0fb0">
 		<meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
 		<link href="<?php echo BeaconCommon::AssetURI('sentinel.scss'); ?>" rel="stylesheet" type="text/css">
+		<script nonce="<?php echo htmlentities($_SERVER['CSP_NONCE']); ?>">
+		window.browserSupported = false;
+		</script>
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
-		<script src="<?php echo BeaconCommon::AssetURI('sentinel.js'); ?>"></script>
+		<script src="<?php echo BeaconCommon::AssetURI('/account/sentinel/assets/core.js'); ?>"></script>
+		<script nonce="<?php echo htmlentities($_SERVER['CSP_NONCE']); ?>">
+		document.addEventListener('DOMContentLoaded', () => {
+			SentinelCommon.init(<?php echo json_encode($session->SessionID()); ?>, <?php echo json_encode(BeaconCommon::APIDomain()); ?>);
+		});
+		</script>
 		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>
 		<?php
 		$header_lines = BeaconTemplate::ExtraHeaderLines();
@@ -74,6 +78,11 @@ $sidebar_items = [
 		}
 		unset($header_lines);
 		?>
+		<script nonce="<?php echo htmlentities($_SERVER['CSP_NONCE']); ?>">
+		if (window.browserSupported === false) {
+			//window.location = <?php echo json_encode(BeaconCommon::AbsoluteURL('/sentinel/browser-test')); ?>;
+		}
+		</script>
 	</head>
 	<body>
 		<div id="header">
@@ -101,7 +110,7 @@ $sidebar_items = [
 					
 					foreach ($sidebar_items as $item) {
 						echo '<li';
-						if (isset($item['active']) && $item['active'] === true) {
+						if (BeaconTemplate::GetVar('Sentinel Sidebar Highlight') === $item['caption']) {
 							echo ' class="active"';
 						}
 						echo '><a href="' . htmlentities($item['url']) . '"><svg viewBox="0 0 24 24"><use xlink:href="' . htmlentities($sprites . '#icon-' . $item['icon']) . '"></use></svg>' . htmlentities($item['caption']) . '</a></li>';
