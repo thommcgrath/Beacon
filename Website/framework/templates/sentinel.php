@@ -5,6 +5,15 @@ if (!BeaconTemplate::IsHTML()) {
 	exit;
 }
 
+$session = BeaconSession::GetFromCookie();
+if (is_null($session)) {
+	BeaconCommon::Redirect('/account/login/');
+	exit;
+}
+$session->Renew();
+
+$user = BeaconUser::GetByUserID($session->UserID());
+
 $description = BeaconTemplate::PageDescription();
 $sprites = BeaconCommon::AssetURI('sentinel-icons.svg');
 
@@ -27,11 +36,13 @@ $sidebar_items = [
 	]
 ];
 
+
+
 ?><!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<?php if (!empty($description)) { ?><meta name="description" content="<?php echo htmlentities($description); ?>">
 		<?php } ?><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
@@ -72,7 +83,16 @@ $sidebar_items = [
 					<img id="header-logo" src="<?php echo BeaconCommon::AssetURI('beacon-logomark.svg'); ?>">
 				</picture></a></div>
 			<div id="header-accessory-cell">Accessory</div>
-			<div id="header-user-cell">Disregarded Spamburlger</div>
+			<div id="header-user-cell">
+				<div id="header-user-button">
+					<div class="usericon">
+						<svg viewBox="0 0 24 24"><use xlink:href="<?php echo htmlentities($sprites . '#icon-users'); ?>"></use></svg>
+					</div>
+					<div class="username">
+						<?php echo htmlentities($user->Username()); ?><span class="user-suffix"><?php echo htmlentities('#' . $user->Suffix()); ?></span>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div id="main-wrapper">
 			<div id="main-sidebar">
@@ -84,7 +104,7 @@ $sidebar_items = [
 						if (isset($item['active']) && $item['active'] === true) {
 							echo ' class="active"';
 						}
-						echo '><a href="' . htmlentities($item['url']) . '"><svg viewBox="0 0 24 24"><use xlink:href="' . htmlentities($sprites) . '#icon-' . htmlentities($item['icon']) . '"></use></svg>' . htmlentities($item['caption']) . '</a></li>';
+						echo '><a href="' . htmlentities($item['url']) . '"><svg viewBox="0 0 24 24"><use xlink:href="' . htmlentities($sprites . '#icon-' . $item['icon']) . '"></use></svg>' . htmlentities($item['caption']) . '</a></li>';
 					}
 					
 					?>
@@ -93,6 +113,23 @@ $sidebar_items = [
 			<div id="main-content">
 				<?php echo $buffer; ?>
 			</div>
+		</div>
+		<div id="blur">&nbsp;</div>
+		<div id="user-menu">
+			<div id="user-card">
+				<div class="usericon">
+					<svg viewBox="0 0 24 24"><use xlink:href="<?php echo htmlentities($sprites . '#icon-users'); ?>"></use></svg>
+				</div>
+				<div class="username">
+					<?php echo htmlentities($user->Username()); ?><span class="user-suffix"><?php echo htmlentities('#' . $user->Suffix()); ?></span>
+				</div>
+			</div>
+			<ul>
+				<li><a href="#" id="user-menu-copy-id" userid="<?php echo htmlentities($user->UserID()); ?>">Copy User ID</a></li>
+				<li><hr></li>
+				<li><a href="/account/" id="user-menu-account">My Account</a></li>
+				<li><a href="/account/auth?return=%2F" id="user-menu-logout">Log Out</a></li>
+			</ul>
 		</div>
 	</body>
 </html>
