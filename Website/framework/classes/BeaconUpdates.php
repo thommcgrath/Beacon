@@ -22,7 +22,7 @@ abstract class BeaconUpdates {
 	const PLATFORM_WINDOWS = 'Windows';
 	const PLATFORM_LINUX = 'Linux';
 	
-	public static function FindUpdates(int $current_build, int $device_mask, int $channel, string|null $device_os = null): array {
+	public static function FindUpdates(int $current_build, int $device_mask, int $channel, string|null $device_os = null): ?array {
 		$database = BeaconCommon::Database();
 		$updates = [];
 		$values = [$channel, $current_build];
@@ -109,16 +109,40 @@ abstract class BeaconUpdates {
 		return $updates;
 	}
 	
-	public static function FindLatestInChannel(int $channel): array {
+	public static function FindLatestInChannel(int $channel): ?array {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version FROM updates WHERE stage >= $1 ORDER BY build_number DESC LIMIT 1;', $channel);
 		$updates = null;
 		if ($rows->RecordCount() === 0) {
 			return $updates;
 		}
-		
+		return static::BuildArray($rows);
+	}
+	
+	public static function GetUpdateByUUID(string $uuid): ?array {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version FROM updates WHERE update_id = $1;', $uuid);
+		$updates = null;
+		if ($rows->RecordCount() === 0) {
+			return $updates;
+		}
+		return static::BuildArray($rows);
+	}
+	
+	public static function GetUpdateByBuildNumber(int $build_number): ?array {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version FROM updates WHERE build_number = $1;', $build_number);
+		$updates = null;
+		if ($rows->RecordCount() === 0) {
+			return $updates;
+		}
+		return static::BuildArray($rows);
+	}
+	
+	protected static function BuildArray(BeaconRecordSet $rows): array {
 		$update_id = $rows->Field('update_id');
 		$files = [];
+		$database = BeaconCommon::Database();
 		$downloads = $database->Query('SELECT DISTINCT url, platform, architectures FROM download_urls WHERE update_id = $1;', $update_id);
 		while ($downloads->EOF() === false) {
 			$platform = $downloads->Field('platform');
@@ -135,7 +159,7 @@ abstract class BeaconUpdates {
 			$downloads->MoveNext();
 		}
 		
-		$update = [
+		return [
 			'update_id' => $update_id,
 			'build_number' => $rows->Field('build_number'),
 			'build_display' => $rows->Field('build_display'),
@@ -148,8 +172,6 @@ abstract class BeaconUpdates {
 			'delta_version' => $rows->Field('delta_version'),
 			'files' => $files
 		];
-		
-		return $update;
 	}
 	
 	protected static function ArchitecturesInMask(int $mask): array {

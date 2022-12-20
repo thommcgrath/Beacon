@@ -26,6 +26,7 @@ header('Cache-Control: no-cache');
 
 $stable = BeaconUpdates::FindLatestInChannel(BeaconUpdates::CHANNEL_STABLE);
 $prerelease = BeaconUpdates::FindLatestInChannel(BeaconUpdates::CHANNEL_ALPHA);
+$legacy = BeaconUpdates::GetUpdateByBuildNumber(10601303);
 
 $database = BeaconCommon::Database();
 $download_links = [
@@ -33,6 +34,9 @@ $download_links = [
 ];
 if ($prerelease && $prerelease['build_number'] > $stable['build_number']) {
 	$download_links['preview'] = BuildLinks($prerelease);
+}
+if ($legacy) {
+	$download_links['legacy'] = BuildLinks($legacy);
 }
 
 BeaconTemplate::StartScript();
