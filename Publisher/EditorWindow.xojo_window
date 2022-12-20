@@ -58,7 +58,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   166
+      Top             =   192
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -91,7 +91,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   234
+      Top             =   260
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -131,7 +131,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   234
+      Top             =   260
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -159,7 +159,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   308
+      Top             =   334
       Transparent     =   False
       Visible         =   True
       Width           =   720
@@ -190,7 +190,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   268
+      Top             =   294
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -212,7 +212,7 @@ Begin DesktopWindow EditorWindow
       HasBorder       =   False
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   269
+      Height          =   243
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -235,7 +235,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   309
+      Top             =   335
       Transparent     =   True
       Underline       =   False
       UnicodeMode     =   0
@@ -270,7 +270,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   166
+      Top             =   192
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -310,7 +310,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   166
+      Top             =   192
       Transparent     =   True
       Underline       =   False
       ValidationMask  =   ""
@@ -344,7 +344,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   200
+      Top             =   226
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -384,7 +384,7 @@ Begin DesktopWindow EditorWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   200
+      Top             =   226
       Transparent     =   True
       Underline       =   False
       ValidationMask  =   ""
@@ -414,7 +414,7 @@ Begin DesktopWindow EditorWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   134
+      Height          =   160
       Index           =   -2147483648
       InitialValue    =   "File	Platform	ARM64	x86	x86_64"
       Italic          =   False
@@ -464,7 +464,7 @@ Begin DesktopWindow EditorWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   166
+      Top             =   192
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -544,6 +544,8 @@ End
 		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel64))
 		    Case "x86"
 		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel32))
+		    Case "arm64"
+		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchARM64))
 		    End Select
 		  Next File
 		End Sub
@@ -709,7 +711,7 @@ End
 		  InsertData.Value("stage") = Self.mStageCode.ToString(Locale.Raw, "0")
 		  InsertData.Value("preview") = "'" + Self.mBannerText.ReplaceAll("'", "''") + "'"
 		  InsertData.Value("min_mac_version") = "'10.12.0'"
-		  InsertData.Value("min_win_version") = "'6.1.7601'"
+		  InsertData.Value("min_win_version") = "'6.3.9200'"
 		  InsertData.Value("delta_version") = DeltaVersion
 		  InsertData.Value("published") = "'" + DateTime.Now.SQLDateTime + "'"
 		  Statements.Add(Self.DictionaryToInsertSQL("updates", InsertData))

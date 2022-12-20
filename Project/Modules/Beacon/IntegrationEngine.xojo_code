@@ -80,6 +80,17 @@ Protected Class IntegrationEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub EnterResourceIntenseMode()
+		  If Self.mResourceIntenseLock Is Nil Then
+		    Self.mResourceIntenseLock = New CriticalSection
+		  End If
+		  
+		  Self.mResourceIntenseLock.Enter
+		  Self.mInResourceIntenseMode = True
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Errored() As Boolean
 		  Return Self.mErrored
@@ -101,6 +112,17 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub ErrorMessage(Assigns Value As String)
 		  Self.mErrorMessage = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ExitResourceIntenseMode()
+		  If Self.mResourceIntenseLock Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mInResourceIntenseMode = False
+		  Self.mResourceIntenseLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -188,6 +210,12 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IsInResourceIntenseMode() As Boolean
+		  Return Self.mInResourceIntenseMode
 		End Function
 	#tag EndMethod
 
@@ -489,17 +517,12 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub StartServer(Verbose As Boolean = True)
 		  Var EventFired As Boolean
-		  Var Confirmed As Boolean = Self.State = Self.StateRunning
 		  Var Initial As Boolean = True
 		  While True
 		    Self.RefreshServerStatus()
 		    
 		    Select Case Self.mServerState
 		    Case Self.StateRunning
-		      If Not Confirmed Then
-		        Initial = False
-		        Continue
-		      End If
 		      If Verbose And EventFired Then
 		        Self.Log("Server started.")
 		      End If
@@ -512,24 +535,20 @@ Protected Class IntegrationEngine
 		        RaiseEvent StartServer()
 		        EventFired = True
 		      End If
-		      Initial = False
 		    Case Self.StateStarting
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish starting…")
 		      End If
-		      Confirmed = True
-		      Initial = False
-		      Continue
 		    Case Self.StateStopping
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish stopping so it can be started…")
 		      End If
-		      Initial = False
-		      Continue
 		    Else
 		      Self.SetError("Error: Server neither started nor stopped.")
 		      Return
 		    End Select
+		    
+		    Initial = False
 		  Wend
 		End Sub
 	#tag EndMethod
@@ -590,7 +609,6 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub StopServer(Verbose As Boolean = True)
 		  Var EventFired As Boolean
-		  Var Confirmed As Boolean = Self.State = Self.StateStopped
 		  Var Initial As Boolean = True
 		  While True
 		    Self.RefreshServerStatus()
@@ -604,12 +622,7 @@ Protected Class IntegrationEngine
 		        RaiseEvent StopServer()
 		        EventFired = True
 		      End If
-		      Initial = False
 		    Case Self.StateStopped
-		      If Not Confirmed Then
-		        Initial = False
-		        Continue
-		      End If
 		      If Verbose And EventFired Then
 		        Self.Log("Server stopped.")
 		      End If
@@ -618,19 +631,16 @@ Protected Class IntegrationEngine
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish starting so it can be stopped…")
 		      End If
-		      Initial = False
-		      Continue
 		    Case Self.StateStopping
 		      If Verbose And Initial Then
 		        Self.Log("Waiting for server to finish stopping…")
 		      End If
-		      Confirmed = True
-		      Initial = False
-		      Continue
 		    Else
 		      Self.SetError("Error: Server neither started nor stopped")
 		      Return
 		    End Select
+		    
+		    Initial = False
 		  Wend
 		End Sub
 	#tag EndMethod
@@ -842,6 +852,10 @@ Protected Class IntegrationEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mInResourceIntenseMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLabel As String
 	#tag EndProperty
 
@@ -871,6 +885,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mProject As Beacon.Project
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mResourceIntenseLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

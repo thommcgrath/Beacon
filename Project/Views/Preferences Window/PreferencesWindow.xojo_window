@@ -17,8 +17,8 @@ Begin BeaconWindow PreferencesWindow
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
+   MinimumHeight   =   478
+   MinimumWidth    =   320
    Resizeable      =   False
    Title           =   "#WindowTitle"
    Type            =   0

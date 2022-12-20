@@ -50,12 +50,16 @@ Protected Module Configs
 		    Tools.Add(New Ark.ProjectTool("Setup Transferrable Element", "3db64fe3-9134-4a19-a255-7712c8c70a83", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Convert Creature Replacements to Spawn Point Additions", "614cfc80-b7aa-437d-b17e-01534f2ab778", NameSpawnPoints, NameDinoAdjustments))
 		    Tools.Add(New Ark.ProjectTool("Quick Edit Creature Spawns", "8913bca3-fbae-43bd-a94b-7c3ac06b6ca1", NameSpawnPoints))
+		    #if False
+		      Tools.Add(New Ark.ProjectTool("Show Creature Spawn Simulator", ArkCreatureSpawnsEditor.ToolSpawnSimulator, NameSpawnPoints))
+		    #endif
 		    Tools.Add(New Ark.ProjectTool("Setup Guided Editors", "d29dc6f8-e834-4969-9cfe-b38e1c052156", NameCustomContent))
 		    Tools.Add(New Ark.ProjectTool("Convert Global Harvest Rate to Individual Rates", "5265adcd-5c7e-437c-bce2-d10721afde43", NameHarvestRates))
 		    Tools.Add(New Ark.ProjectTool("Rebuild Item Sets from Templates", "08efc49c-f39f-4147-820d-201637c206b5", NameLootDrops))
 		    If Now.Month = 4 And Now.Day = 1 Then
 		      Tools.Add(New Ark.ProjectTool("AI Config Generator", "c5c14eb8-41c9-4fd3-8f92-582e843ac9a0", NameOtherSettings))
 		    End If
+		    Tools.Add(New Ark.ProjectTool("Compute GFI Codes", "6bcf5785-b8e2-4889-91c8-545c34f30d8a", NameMetadataPsuedo))
 		    
 		    Var Names() As String
 		    Names.ResizeTo(Tools.LastIndex)

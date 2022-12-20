@@ -152,7 +152,7 @@ End
 		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
-		  If Self.ModsList = Nil Then
+		  If Self.ModsList Is Nil Then
 		    // This view already closed
 		    Return
 		  End If
@@ -224,6 +224,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function DiscoveryCheckMod(WorkshopID As String) As Boolean
+		  Return RaiseEvent CloseModView(WorkshopID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DiscoveryCompleted(DiscoveredMods() As Ark.ContentPack)
+		  #Pragma Unused DiscoveredMods
+		  Self.RefreshMods()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub FinishJob()
 		  Self.mJobCount = Self.mJobCount - 1
 		  If Self.mJobCount > 0 Then
@@ -251,6 +264,17 @@ End
 		  Var Request As New BeaconAPI.Request("ark/mod", "GET", AddressOf APICallback_ListMods)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RunModDiscovery()
+		  If Self.mDiscoveryDialog Is Nil Or Self.mDiscoveryDialog.Value Is Nil Then
+		    Var Dialog As New ModDiscoveryDialog(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted)
+		    Self.mDiscoveryDialog = New WeakRef(Dialog)
+		  End If
+		  
+		  ModDiscoveryDialog(Self.mDiscoveryDialog.Value).Show()
 		End Sub
 	#tag EndMethod
 
@@ -283,6 +307,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDidFirstRefresh As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDiscoveryDialog As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -385,6 +413,12 @@ End
 		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Register Mod", IconToolbarAdd, "Register your mod with Beacon."))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EditModBlueprints", "Edit Blueprints", IconToolbarEdit, "Edit the blueprints provided by the selected mod.", Self.ModsList.SelectedRowCount = 1))
+		  #if TargetWindows
+		    Me.Append(OmniBarItem.CreateSpace)
+		    Me.Append(OmniBarItem.CreateSeparator)
+		    Me.Append(OmniBarItem.CreateSpace)
+		    Me.Append(OmniBarItem.CreateButton("DiscoverMods", "Discover Mods", IconToolbarDiscover, "Launch a dedicated server to discover mod data."))
+		  #endif
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -400,6 +434,8 @@ End
 		    End If
 		  Case "EditModBlueprints"
 		    Self.ModsList.DoEdit()
+		  Case "DiscoverMods"
+		    Self.RunModDiscovery()
 		  End Select
 		End Sub
 	#tag EndEvent

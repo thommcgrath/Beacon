@@ -31,7 +31,7 @@ AllowNoIcons=yes
 OutputBaseFilename=Install_{#MyAppName}
 Compression=lzma2
 SolidCompression=no
-MinVersion=6.1sp1
+MinVersion=6.3.9200
 ChangesAssociations=yes
 #ifndef x86
   ArchitecturesInstallIn64BitMode=x64 arm64
@@ -39,13 +39,10 @@ ChangesAssociations=yes
 #if defined(arm64)
   ArchitecturesAllowed=arm64
   OutputDir=Output\{#MyAppVersion}\arm64
-  #define installARM64 1
 #elif defined(x64)
   OutputDir=Output\{#MyAppVersion}\x64
-  #define installX64 1
 #elif defined(x86)
   OutputDir=Output\{#MyAppVersion}\x86
-  #define installX86 1
 #else
   OutputDir=Output\{#MyAppVersion}\arm64_x64_x86
   #define x64 1
@@ -67,24 +64,22 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 #if defined(x64)
-Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: defined(installX64) Or (Is64BitInstallMode And IsX64); Flags: ignoreversion recursesubdirs createallsubdirs signonce
-Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: defined(installX64) Or (Is64BitInstallMode And IsX64); Flags: ignoreversion recursesubdirs createallsubdirs signonce
-Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: defined(installX64) Or (Is64BitInstallMode And IsX64); Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And (defined(installX64) Or (Is64BitInstallMode And IsX64));
-Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"; Check: IsAdminInstallMode And (defined(installX64) Or (Is64BitInstallMode And IsX64));
-#endif
-#if defined(arm64)
-Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: defined(installARM64) Or (Is64BitInstallMode And IsARM64); Flags: ignoreversion recursesubdirs createallsubdirs signonce
-Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: defined(installARM64) Or (Is64BitInstallMode And IsARM64); Flags: ignoreversion recursesubdirs createallsubdirs signonce
-Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: defined(installARM64) Or (Is64BitInstallMode And IsARM64); Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Files\VC_redist.arm64.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And (defined(installARM64) Or (Is64BitInstallMode And IsARM64));
+Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: InstallX64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: InstallX64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: InstallX64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallX64;
 #endif
 #if defined(x86)
-Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.exe"; DestDir: "{app}"; Check: defined(installX86) Or (Not Is64BitInstallMode); Flags: ignoreversion recursesubdirs createallsubdirs signonce
-Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.dll"; DestDir: "{app}"; Check: defined(installX86) Or (Not Is64BitInstallMode); Flags: ignoreversion recursesubdirs createallsubdirs signonce
-Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: defined(installX86) Or (Not Is64BitInstallMode); Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And (defined(installX86) Or (Not Is64BitInstallMode));
-Source: "Files\windows6.1-kb3140245-x86.msu"; DestDir: "{tmp}"; Check: IsAdminInstallMode And (defined(installX86) Or (Not Is64BitInstallMode));
+Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.exe"; DestDir: "{app}"; Check: InstallX86; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.dll"; DestDir: "{app}"; Check: InstallX86; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: InstallX86; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallX86;
+#endif
+#if defined(arm64)
+Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: InstallARM64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: InstallARM64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: InstallARM64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Files\VC_redist.arm64.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallARM64;
 #endif
 Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
@@ -97,9 +92,6 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
-Root: HKA; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.3
-Root: HKA; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.3
-
 Root: HKA; Subkey: "Software\Classes\.beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconDocument"; ValueData: "{#MyAppName} Document"; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconDocument\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconDocument.ico,0"; ValueType: string; ValueName: ""
@@ -133,51 +125,51 @@ Root: HKA; Subkey: "Software\Classes\beacon\shell\open\command"; ValueType: "str
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Parameters: "/NOSETUPCHECK"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Check: not CmdLineParamExists('/NOLAUNCH'); Flags: nowait postinstall
 #if defined(x64)
-Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: IsAdminInstallMode And (defined(installX64) Or (Is64BitInstallMode And IsX64)); Flags: waituntilterminated
-Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x64.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: IsAdminInstallMode And (defined(installX64) Or (Is64BitInstallMode And IsX64)) And IsKBNeeded('KB3140245')
-#endif
-#if defined(arm64)
-Filename: "{tmp}\VC_redist.arm64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: IsAdminInstallMode And (defined(installARM64) Or (Is64BitInstallMode And IsARM64)); Flags: waituntilterminated
+Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: IsAdminInstallMode And InstallX64; Flags: waituntilterminated
 #endif
 #if defined(x86)
-Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Check: IsAdminInstallMode And (defined(installX86) Or (Not Is64BitInstallMode)); Flags: waituntilterminated
-Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x86.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: IsAdminInstallMode And (defined(installX86) Or (Not Is64BitInstallMode)) And IsKBNeeded('KB3140245')
+Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Check: IsAdminInstallMode And InstallX86; Flags: waituntilterminated
+#endif
+#if defined(arm64)
+Filename: "{tmp}\VC_redist.arm64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: IsAdminInstallMode And InstallARM64; Flags: waituntilterminated
 #endif
 
 [Code]
 var
-  RestartRequired: Boolean;
-
-function IsKBNeeded(KB: string): Boolean;
-var
-  WbemLocator: Variant;
-  WbemServices: Variant;
-  WQLQuery: string;
-  WbemObjectSet: Variant;
-begin
-  WbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
-  WbemServices := WbemLocator.ConnectServer('', 'root\CIMV2');
-
-  WQLQuery := 'select * from Win32_QuickFixEngineering where HotFixID = ''' + KB + '''';
-
-  WbemObjectSet := WbemServices.ExecQuery(WQLQuery);
-  Result := (VarIsNull(WbemObjectSet)) or (WbemObjectSet.Count = 0);
-end;
+  pInstallX64: Boolean;
+  pInstallX86: Boolean;
+  pInstallARM64: Boolean;
 
 function InitializeSetup(): Boolean;
 begin
-  RestartRequired := (GetWindowsVersion < $06020000) And IsKBNeeded('KB3140245');
-  Result := True;
-  if RestartRequired then begin
-	  if MsgBox('A restart will be required when finished. Continue?', mbConfirmation, MB_YESNO) = IDNO then begin
-	    Result := False;
-	  end;
-  end;
+  pInstallX64   := Is64BitInstallMode And IsX64
+  pInstallX86   := Not Is64BitInstallMode
+  pInstallARM64 := Is64BitInstallMode And IsARM64
+
+  #if defined(x64)
+    pInstallX64   := True
+  #elif defined(x86)
+    pInstallX86   := True
+  #elif defined(arm64)
+    pInstallARM64 := True
+  #endif
+
+  Result := True
 end;
 
-function NeedRestart(): Boolean;
+function InstallX64(): Boolean;
 begin
-  Result := RestartRequired;
+  Result := pInstallX64;
+end;
+
+function InstallX86(): Boolean;
+begin
+  Result := pInstallX86;
+end;
+
+function InstallARM64(): Boolean;
+begin
+  Result := pInstallARM64;
 end;
 
 function CmdLineParamExists(const Value: string): Boolean;

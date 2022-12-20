@@ -877,6 +877,113 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ComputeGFICodes(ContentPacks As Beacon.StringList, Progress As Beacon.ProgressDisplayer = Nil) As String()
+		  // This code expects to be run inside a thread
+		  
+		  If Progress Is Nil Then
+		    Progress = New Beacon.DummyProgressDisplayer
+		  End If
+		  
+		  Var Planner As New SQLiteDatabase
+		  Planner.Connect
+		  Planner.ExecuteSQL("CREATE TABLE plan (code TEXT NOT NULL, class_string TEXT NOT NULL);")
+		  Planner.ExecuteSQL("CREATE INDEX plan_code_idx ON plan(code);")
+		  Planner.ExecuteSQL("CREATE INDEX plan_class_string_idx ON plan(class_string);")
+		  Planner.ExecuteSQL("CREATE UNIQUE INDEX plan_code_class_string_idx ON plan(code, class_string);")
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT DISTINCT class_string, label FROM engrams WHERE content_pack_id IN ('" + ContentPacks.Join("','") + "') GROUP BY class_string ORDER BY LENGTH(class_string), required_level NULLS FIRST, class_string;")
+		  Var Numerator As Integer = 0
+		  Var Denominator As Integer = Rows.RowCount * 2
+		  
+		  Progress.Message = "Planning possible matches…"
+		  Progress.Detail = ""
+		  Progress.Progress = Numerator / Denominator
+		  
+		  // Plan all candidates for every class. For official content, this results in about 1.2 million rows.
+		  For Each Row As DatabaseRow In Rows
+		    If Progress.CancelPressed Then
+		      Var EmptyArray() As String
+		      Return EmptyArray
+		    End If
+		    
+		    Var ClassString As String = Row.Column("class_string").StringValue
+		    Progress.Detail = "Planning " + ClassString + "…"
+		    
+		    If ClassString.EndsWith("_C") Then
+		      ClassString = ClassString.Left(ClassString.Length - 2)
+		    End If
+		    
+		    Planner.BeginTransaction()
+		    Var ClassStringLower As String = ClassString.Lowercase
+		    Var Len As Integer = ClassString.Length
+		    For ChunkSize As Integer = 1 To Len
+		      For Offset As Integer = 0 To Len - ChunkSize
+		        Var Chunk As String = ClassStringLower.Middle(Offset, ChunkSize)
+		        If Chunk.BeginsWith("_") Then
+		          Continue
+		        End If
+		        
+		        Planner.ExecuteSQL("INSERT OR IGNORE INTO plan (code, class_string) VALUES (?1, ?2);", Chunk, ClassString)
+		      Next
+		    Next
+		    Planner.CommitTransaction()
+		    
+		    Numerator = Numerator + 1
+		    Progress.Progress = Numerator / Denominator
+		  Next
+		  
+		  Progress.Message = "Finding best matches…"
+		  Progress.Detail = ""
+		  
+		  // Loop over again and start resolving class-by-class.
+		  Var Lines() As String
+		  For Each Row As DatabaseRow In Rows
+		    If Progress.CancelPressed Then
+		      Var EmptyArray() As String
+		      Return EmptyArray
+		    End If
+		    
+		    Var ClassString As String = Row.Column("class_string").StringValue
+		    Var Label As String = Row.Column("label").StringValue
+		    Var TruncatedClassString As String = ClassString
+		    If TruncatedClassString.EndsWith("_C") Then
+		      TruncatedClassString = TruncatedClassString.Left(ClassString.Length - 2)
+		    End If
+		    
+		    Progress.Detail = "Finding code for " + ClassString + "…"
+		    
+		    Var Code As String
+		    Var Results As RowSet = Planner.SelectSQL("SELECT code FROM plan WHERE class_string = ?1 ORDER BY LENGTH(code), code LIMIT 1;", TruncatedClassString)
+		    If Results.RowCount = 1 Then
+		      Code = Results.Column("code").StringValue
+		    End If
+		    If Code.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    Var CodeEscaped As String = Code.ReplaceAll("""", """""")
+		    Lines.Add("""" + Label.ReplaceAll("""", """""") + """,""" + CodeEscaped + """,""cheat gfi " + CodeEscaped + " 1 0 0""")
+		    
+		    Planner.BeginTransaction()
+		    Planner.ExecuteSQL("DELETE FROM plan WHERE code IN (SELECT code FROM plan WHERE class_string = ?1);", TruncatedClassString)
+		    Planner.CommitTransaction()
+		    
+		    Numerator = Numerator + 1
+		    Progress.Progress = Numerator / Denominator
+		  Next
+		  
+		  Lines.Sort
+		  Lines.AddAt(0, """Item Name"",""GFI Code"",""Cheat Code""")
+		  
+		  Progress.Progress = 1
+		  Progress.Message = "Finished"
+		  Progress.Detail = ""
+		  
+		  Return Lines
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.ResetCaches()
 		  
@@ -929,7 +1036,7 @@ Inherits Beacon.DataSource
 		  If (WorkshopID Is Nil) = False Then
 		    WorkshopIDVar = WorkshopID.StringValue
 		  End If
-		  Var Details As New Ark.ContentPack(PackUUID, PackName, True, False, True, Nil)
+		  Var Details As New Ark.ContentPack(PackUUID, PackName, True, False, True, WorkshopID)
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, workshop_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, WorkshopIDVar, PackName, Details.ConsoleSafe, Details.DefaultEnabled, Details.IsLocal)
 		  Self.CommitTransaction()
@@ -1006,9 +1113,14 @@ Inherits Beacon.DataSource
 		    Var NextPlaceholder As Integer = 1
 		    Var Clauses() As String
 		    Var Values As New Dictionary
-		    If SearchText <> "" Then
-		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\') OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
-		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
+		    If SearchText.IsEmpty = False Then
+		      If SearchText.BeginsWith("/") Then
+		        Clauses.Add("path = ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		        Values.Value(NextPlaceholder) = SearchText
+		      Else
+		        Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\') OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
+		        Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
+		      End If
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
