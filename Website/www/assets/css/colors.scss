@@ -528,6 +528,10 @@
 		color: rgba($foreground-color, 0.7);
 	}
 	
+	div.subsection {
+		border-color: rgba($foreground-color, 0.1);
+	}
+	
 	/* !Account Navigation */
 	#account_toolbar_menu {
 		div {

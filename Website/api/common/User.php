@@ -23,6 +23,7 @@ class User implements \JsonSerializable {
 	protected $signatures = [];
 	protected $user_id = '';
 	protected $usercloud_key = null;
+	protected $usercloud_delete_files = false;
 	protected $username = null;
 	
 	private $child_accounts = null;
@@ -305,8 +306,9 @@ class User implements \JsonSerializable {
 		return $this->usercloud_key;
 	}
 	
-	public function SetUsercloudKey(string $key) {
+	public function SetUsercloudKey(string $key, bool $delete_files = true): bool {
 		$this->usercloud_key = $key;
+		$this->usercloud_delete_files = $delete_files;
 		
 		$children = $this->ChildAccounts();
 		foreach ($children as $child) {
@@ -324,9 +326,10 @@ class User implements \JsonSerializable {
 		}
 	}
 	
-	public function SetDecryptedUsercloudKey(string $key) {
+	public function SetDecryptedUsercloudKey(string $key, bool $delete_files = true): bool {
 		try {
 			$this->usercloud_key = bin2hex(\BeaconEncryption::RSAEncrypt($this->public_key, $key));
+			$this->usercloud_delete_files = $delete_files;
 			
 			$children = $this->ChildAccounts();
 			foreach ($children as $child) {
@@ -445,11 +448,25 @@ class User implements \JsonSerializable {
 		}
 	}
 	
-	public function ChangePassword(string $old_password, string $new_password) {
+	public function ChangePassword(string $old_password, string $new_password, bool $regenerate_private_key = false): bool {
 		try {
 			$private_key = $this->DecryptedPrivateKey($old_password);
 			if (is_null($private_key)) {
 				return false;
+			}
+			
+			if ($regenerate_private_key) {
+				$usercloud_key = $this->DecryptedUsercloudKey($private_key);
+				if (is_null($usercloud_key)) {
+					return false;
+				}
+				
+				$public_key = null;
+				$private_key = null;
+				\BeaconEncryption::GenerateKeyPair($public_key, $private_key);
+					
+				$this->SetPublicKey($public_key);
+				$this->SetDecryptedUsercloudKey($usercloud_key, false);
 			}
 			$this->SetDecryptedPrivateKey($new_password, $private_key);
 			$this->SetRequiresPasswordChange(false);
@@ -607,7 +624,7 @@ class User implements \JsonSerializable {
 				return false;
 			}
 		} else {
-			$keys = array('username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled', 'require_password_change', 'parent_account_id');
+			$keys = ['username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled', 'require_password_change', 'parent_account_id'];
 			foreach ($keys as $key) {
 				if ($this->$key !== $original_user->$key) {
 					$changes[$key] = $this->$key;
@@ -618,13 +635,13 @@ class User implements \JsonSerializable {
 			}
 			try {
 				$database->BeginTransaction();
-				$database->Update('users', $changes, array('user_id' => $this->user_id));
+				$database->Update('users', $changes, ['user_id' => $this->user_id]);
 				if (array_key_exists('private_key', $changes)) {
 					$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $this->email_id);
 					$database->Query('DELETE FROM sessions WHERE user_id = $1;', $this->user_id);
 				}
 				
-				if ($this->IsChildAccount() === false && array_key_exists('usercloud_key', $changes)) {
+				if ($this->IsChildAccount() === false && array_key_exists('usercloud_key', $changes) && $this->usercloud_delete_files === true) {
 					// The cloud key has been changed, so we need to cleanup the cloud files
 					$cloud_files = \BeaconCloudStorage::ListFiles('/' . $this->UserID() . '/');
 					foreach ($cloud_files as $file) {
@@ -639,6 +656,7 @@ class User implements \JsonSerializable {
 				return false;
 			}
 		}
+		$this->usercloud_delete_files = false;
 		
 		return true;
 	}

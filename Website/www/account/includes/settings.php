@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		var password = document.getElementById('password_initial_field').value;
 		var password_confirm = document.getElementById('password_confirm_field').value;
 		var allow_vulnerable = password === known_vulnerable_password;
+		var regenerate_key = document.getElementById('password_regenerate_check').checked;
+		var terminate_sessions = regenerate_key;
 		
 		if (password.length < 8) {
 			dialog.show('Password too short', 'Your password must be at least 8 characters long.');
@@ -20,9 +22,34 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			return false;
 		}
 		
-		request.post('/account/actions/password', {'current_password': current_password, 'password': password, 'allow_vulnerable': allow_vulnerable}, function(obj) {
+		var body = {
+			'current_password': current_password,
+			'password': password,
+			'allow_vulnerable': allow_vulnerable
+		};
+		if (terminate_sessions) {
+			body.terminate_sessions = true;
+		}
+		if (regenerate_key) {
+			body.regenerate_key = true;
+		}
+		
+		request.post('/account/actions/password', body, function(obj) {
 			document.getElementById('change_password_form').reset();
-			dialog.show('Your password has been changed.', 'Changing your password does not sign you out of other devices.');
+			
+			var message, explanation;
+			if (terminate_sessions) {
+				explanation = 'All sessions have been revoked and your devices will need to sign in again.';
+			} else {
+				explanation = 'Changing your password does not sign you out of other devices.';
+			}
+			if (regenerate_key) {
+				message = 'Your password and private key have been changed.';
+			} else {
+				message = 'Your password has been changed.';
+			}
+			
+			dialog.show(message, explanation);
 		}, function(http_status, content) {
 			switch (http_status) {
 			case 436:
@@ -129,11 +156,21 @@ $suggested_username = $results->Field('username');
 </div>
 <div class="small_section">
 	<h3>Change Password</h3>
-	<p class="notice-block notice-warning"><strong>Important</strong>: Do not give any user access to your Beacon account for any reason. It is technologically impossible to revoke access to your account from other devices due to Beacon's use of public key cryptography. To safely share access to one or more of your Beacon documents, please follow <a href="/help/sharing_beacon_documents">these instructions</a>.</p>
+	<p class="notice-block notice-warning"><strong>Important</strong>: Do not give any user access to your Beacon account for any reason. The only way to forcefully remove somebody from your account is to replace your private key. See below for why you don't want to do this. To safely share access to one or more of your Beacon documents, please follow <a href="/help/sharing_beacon_documents">these instructions</a>.</p>
 	<form id="change_password_form" action="" method="post">
 		<p><input type="password" id="password_current_field" placeholder="Current Password"></p>
 		<p><input type="password" id="password_initial_field" placeholder="New Password" minlength="8"></p>
 		<p><input type="password" id="password_confirm_field" placeholder="Confirm New Password" minlength="8"></p>
+		<div class="subsection">
+			<p><label class="checkbox"><input type="checkbox" id="password_regenerate_check" value="true"><span></span>Replace private key</label></p>
+			<p class="text-red bold uppercase text-center">Read this carefully!</p>
+			<p class="smaller">If there is somebody with access to your account that you need to force out, you will need a new private key. With this option turned on, the following will happen:</p>
+			<ol class="smaller">
+				<li><strong class="text-red">Any encrypted data inside your projects will be lost</strong>, which includes everything inside the <em>Servers</em> section.</li>
+				<li>Shared cloud projects will need to be re-shared</li>
+				<li>All other devices will be signed out.</li>
+			</ol>
+		</div>
 		<p class="text-right"><input type="submit" id="password_action_button" value="Save Password" disabled></p>
 	</form>
 </div>
