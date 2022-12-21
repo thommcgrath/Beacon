@@ -29,7 +29,7 @@ case 'POST':
 		BeaconAPI::ReplyError('Invalid user', null, 400);
 	}
 	
-	$session = BeaconSession::Create($user_id);
+	$session = BeaconSession::Create($user);
 	BeaconAPI::ReplySuccess($session);
 	
 	break;

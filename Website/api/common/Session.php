@@ -13,31 +13,31 @@ class Session implements \JsonSerializable {
 	protected $remote_country = null;
 	protected $remote_agent = null;
 	
-	public function SessionID() {
+	public function SessionID(): string {
 		return $this->session_id;
 	}
 	
-	public function SessionHash() {
+	public function SessionHash(): string {
 		return $this->session_hash;
 	}
 	
-	public function UserID() {
+	public function UserID(): string {
 		return $this->user_id;
 	}
 	
-	public function User() {
+	public function User(): \BeaconUser {
 		return \BeaconUser::GetByUserID($this->user_id);
 	}
 	
-	public function Expiration() {
+	public function Expiration(): \DateTime {
 		return new \DateTime($this->valid_until);
 	}
 	
-	public function ShouldRenew() {
+	public function ShouldRenew(): bool {
 		return (($this->Expiration()->getTimestamp() - time()) <= 864000) || ($this->remote_ip !== \BeaconCommon::RemoteAddr()) || ($this->remote_country !== \BeaconCommon::RemoteCountry() || ($this->remote_agent !== $_SERVER['HTTP_USER_AGENT']));
 	}
 	
-	public function Renew(bool $force = false) {
+	public function Renew(bool $force = false): void {
 		if ($force === true || $this->ShouldRenew()) {
 			$database = \BeaconCommon::Database();
 			$database->BeginTransaction();
@@ -52,26 +52,30 @@ class Session implements \JsonSerializable {
 	}
 			
 	
-	public function RemoteAddr() {
+	public function RemoteAddr(): ?string {
 		return $this->remote_ip;
 	}
 	
-	public function RemoteCountry() {
+	public function RemoteCountry(): ?string {
 		return $this->remote_country;
 	}
 	
-	public function RemoteAgent() {
+	public function RemoteAgent(): ?string {
 		return $this->remote_agent;
 	}
 	
-	public function Delete() {
+	public function Delete(): void {
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query("DELETE FROM sessions WHERE session_id = $1;", $this->session_hash);
 		$database->Commit();
 	}
 	
-	public static function Create(string $user_id) {
+	public static function Create(User $user, ?string $verification_code): ?Session {
+		if ($user->Is2FAProtected() && (is_null($verification_code) || $user->Verify2FACode($verification_code) === false)) {
+			return null;
+		}
+		
 		$session_id = \BeaconCommon::GenerateUUID();
 		$remote_ip = \BeaconCommon::RemoteAddr();
 		$remote_country = \BeaconCommon::RemoteCountry();
@@ -80,7 +84,7 @@ class Session implements \JsonSerializable {
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
 		try {
-			$database->Query("INSERT INTO sessions (session_id, user_id, valid_until, remote_ip, remote_country, remote_agent) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP + '30d', $3, $4, $5);", $session_id, $user_id, $remote_ip, $remote_country, $remote_agent);
+			$database->Query("INSERT INTO sessions (session_id, user_id, valid_until, remote_ip, remote_country, remote_agent) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP + '30d', $3, $4, $5);", $session_id, $user->UserID(), $remote_ip, $remote_country, $remote_agent);
 			$database->Commit();
 		} catch (\Exception $err) {
 			return null;
@@ -89,7 +93,7 @@ class Session implements \JsonSerializable {
 		return static::GetBySessionID($session_id);
 	}
 	
-	public static function GetBySessionID(string $session_id) {
+	public static function GetBySessionID(string $session_id): ?Session {
 		$database = \BeaconCommon::Database();
 		$results = $database->Query("SELECT $1::text AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE sessions.session_id = encode(digest($1, 'sha512'), 'hex') AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_id);
 		if ($results->RecordCount() === 1) {
@@ -99,7 +103,7 @@ class Session implements \JsonSerializable {
 		}
 	}
 	
-	public static function GetBySessionHash(string $session_hash) {
+	public static function GetBySessionHash(string $session_hash): ?Session {
 		$database = \BeaconCommon::Database();
 		$results = $database->Query("SELECT '' AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE sessions.session_id = $1 AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_hash);
 		if ($results->RecordCount() === 1) {
@@ -109,7 +113,7 @@ class Session implements \JsonSerializable {
 		}
 	}
 	
-	public static function GetForUserID(string $user_id) {
+	public static function GetForUserID(string $user_id): array {
 		try {
 			$database = \BeaconCommon::Database();
 			$results = $database->Query('SELECT \'\' AS session_id, ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLTable() . ' WHERE sessions.user_id = $1 AND sessions.valid_until >= CURRENT_TIMESTAMP ORDER BY valid_until DESC;', $user_id);
@@ -119,7 +123,7 @@ class Session implements \JsonSerializable {
 		}
 	}
 	
-	public static function GetForUser(\BeaconUser $user) {
+	public static function GetForUser(\BeaconUser $user): array {
 		if (is_null($user)) {
 			return [];
 		}
@@ -135,7 +139,7 @@ class Session implements \JsonSerializable {
 		];
 	}
 	
-	public function SendCookie(bool $temporary = false) {
+	public function SendCookie(bool $temporary = false): void {
 		setcookie(self::COOKIE_NAME, $this->session_id, [
 			'expires' => ($temporary ? 0 : $this->Expiration()->getTimestamp()),
 			'path' => '/account',
@@ -146,7 +150,7 @@ class Session implements \JsonSerializable {
 		]);
 	}
 	
-	public static function RemoveCookie() {
+	public static function RemoveCookie(): void {
 		setcookie(self::COOKIE_NAME, '', [
 			'expires' => 0,
 			'path' => '/account',
@@ -157,13 +161,13 @@ class Session implements \JsonSerializable {
 		]);
 	}
 	
-	public static function GetFromCookie() {
+	public static function GetFromCookie(): ?Session {
 		if (isset($_COOKIE[self::COOKIE_NAME])) {
 			return self::GetBySessionID($_COOKIE[self::COOKIE_NAME]);
 		}
 	}
 	
-	protected static function SQLColumns() {
+	protected static function SQLColumns(): array {
 		return [
 			'sessions.session_id AS session_hash',
 			'sessions.user_id',
@@ -174,11 +178,11 @@ class Session implements \JsonSerializable {
 		];	
 	}
 	
-	protected static function SQLTable() {
+	protected static function SQLTable(): string {
 		return 'sessions';
 	}
 	
-	protected static function GetFromResult(\BeaconRecordSet $results) {
+	protected static function GetFromResult(\BeaconRecordSet $results): Session {
 		$session = new static();
 		$session->session_hash = $results->Field('session_hash');
 		$session->session_id = $results->Field('session_id');
@@ -190,7 +194,7 @@ class Session implements \JsonSerializable {
 		return $session;
 	}
 	
-	protected static function GetFromResults(\BeaconRecordSet $results) {
+	protected static function GetFromResults(\BeaconRecordSet $results): array {
 		if ($results === null || $results->RecordCount() === 0) {
 			return array();
 		}
@@ -206,7 +210,7 @@ class Session implements \JsonSerializable {
 		return $sessions;
 	}
 	
-	public static function Cleanup() {
+	public static function Cleanup(): void {
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM sessions WHERE valid_until < CURRENT_TIMESTAMP;');

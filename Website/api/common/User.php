@@ -363,7 +363,7 @@ class User implements \JsonSerializable {
 			return null;
 		}
 		
-		$alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '2', '3', '4', '5', '6', '7'];
+		$alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7'];
 		$bytes = str_split(base64_decode($this->two_factor_key));
 		$byte_count = count($bytes);
 		$binary = '';
@@ -377,22 +377,6 @@ class User implements \JsonSerializable {
 		for ($i = 0; $i < $chunk_count; $i++) {
 			$base32 .= $alphabet[base_convert(str_pad($chunks[$i], 5, '0'), 2, 10)];
 		}
-		
-		/*$remainder = strlen($binary) % 40;
-		switch ($remainder) {
-		case 8:
-			$base32 .= str_repeat('=', 6);
-			break;
-		case 16:
-			$base32 .= str_repeat('=', 4);
-			break;
-		case 24:
-			$base32 .= str_repeat('=', 3);
-			break;
-		case 32:
-			$base32 .= '=';
-			break;
-		}*/
 		
 		$uri = 'otpauth://totp/' . urlencode('Beacon:' . $this->UserId());
 		$uri .= '?secret=' . urlencode($base32);
@@ -824,7 +808,11 @@ class User implements \JsonSerializable {
 			'signatures' => $this->signatures,
 			'licenses' => $this->licenses,
 			'omni_version' => $this->license_mask,
-			'usercloud_key' => $this->usercloud_key
+			'usercloud_key' => $this->usercloud_key,
+			'totp' => [
+				'secret' => $this->two_factor_key,
+				'provisioning_uri' => $this->Get2FASetupString()
+			]
 		];
 		if (empty($this->expiration) === false) {
 			$arr['expiration'] = $this->expiration;
