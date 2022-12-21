@@ -25,6 +25,8 @@ class User implements \JsonSerializable {
 	protected $usercloud_key = null;
 	protected $usercloud_delete_files = false;
 	protected $username = null;
+	protected $two_factor_key = null;
+	protected $backup_codes = null;
 	
 	private $child_accounts = null;
 	private $has_child_accounts = null;
@@ -43,6 +45,7 @@ class User implements \JsonSerializable {
 			$this->enabled = $source->Field('enabled');
 			$this->require_password_change = $source->Field('require_password_change');
 			$this->parent_account_id = $source->Field('parent_account_id');
+			$this->two_factor_key = $source->Field('two_factor_key');
 		} elseif (is_string($source) && \BeaconCommon::IsUUID($source)) {
 			$this->user_id = $source;
 		} elseif (is_null($source)) {
@@ -284,12 +287,125 @@ class User implements \JsonSerializable {
 		return true;
 	}
 	
-	public function Is2FAProtected() {
+	public function Is2FAProtected(): bool {
+		return is_null($this->two_factor_key) === false;
+	}
+	
+	public function Enable2FA(): void {
+		if ($this->Is2FAProtected()) {
+			return;
+		}
+		
+		$this->two_factor_key = base64_encode(random_bytes(32));
+		$this->backup_codes = [];
+		for ($i = 1; $i <= 10; $i++) {
+			$this->backup_codes[] = \BeaconCommon::GenerateRandomKey(6);	
+		}
+	}
+	
+	public function Disable2FA(): void {
+		if ($this->Is2FAProtected() === false) {
+			return;
+		}
+		
+		$this->two_factor_key = null;
+		$this->backup_codes = null;
+	}
+	
+	public function Verify2FACode(string $code): bool {
+		if ($this->Is2FAProtected() === false) {
+			return false;
+		}
+		
+		$now = time();
+		$future = $now + 30;
+		$past = $now - 30;
+		if ($code === $this->Generate2FACode($now) || $code === $this->Generate2FACode($past) || $code === $this->Generate2FACode($future)) {
+			return true;
+		}
+		
+		$database = \BeaconCommon::Database();
+		$rows = $database->Query('SELECT * FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->user_id, $code);
+		if ($rows->RecordCount() === 1) {
+			$database->BeginTransaction();
+			$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->user_id, $code);
+			$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->user_id, \BeaconCommon::GenerateRandomKey(6));
+			$database->Commit();
+			if (is_null($this->backup_codes) === false) {
+				$this->backup_codes = null;
+				$this->Get2FABackupCodes(); // refreshes the cache
+			}
+			return true;
+		}
+		
 		return false;
 	}
 	
-	public function Set2FAKey($key) {
-		return false;
+	public function Get2FABackupCodes(): array {
+		if ($this->Is2FAProtected() === false) {
+			return [];
+		}
+		
+		if (is_null($this->backup_codes)) {
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT code FROM public.user_backup_codes WHERE user_id = $1;', $this->user_id);
+			$this->backup_codes = [];
+			while (!$rows->EOF()) {
+				$this->backup_codes[] = $rows->Field('code');
+				$rows->MoveNext();
+			}
+		}
+		return $this->backup_codes;
+	}
+	
+	public function Get2FASetupString(): ?string {
+		if ($this->Is2FAProtected() === false) {
+			return null;
+		}
+		
+		$alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '2', '3', '4', '5', '6', '7'];
+		$bytes = str_split(base64_decode($this->two_factor_key));
+		$byte_count = count($bytes);
+		$binary = '';
+		for ($i = 0; $i < $byte_count; $i++) {
+			$binary .= str_pad(base_convert(ord($bytes[$i]), 10, 2), 8, '0', STR_PAD_LEFT);
+		}
+		
+		$chunks = str_split($binary, 5);
+		$base32 = '';
+		$chunk_count = count($chunks);
+		for ($i = 0; $i < $chunk_count; $i++) {
+			$base32 .= $alphabet[base_convert(str_pad($chunks[$i], 5, '0'), 2, 10)];
+		}
+		
+		/*$remainder = strlen($binary) % 40;
+		switch ($remainder) {
+		case 8:
+			$base32 .= str_repeat('=', 6);
+			break;
+		case 16:
+			$base32 .= str_repeat('=', 4);
+			break;
+		case 24:
+			$base32 .= str_repeat('=', 3);
+			break;
+		case 32:
+			$base32 .= '=';
+			break;
+		}*/
+		
+		$uri = 'otpauth://totp/' . urlencode('Beacon:' . $this->UserId());
+		$uri .= '?secret=' . urlencode($base32);
+		$uri .= '&issuer=Beacon';
+		return $uri;
+	}
+	
+	public function Generate2FACode(int $timestamp): string {
+		$timestamp = floor($timestamp / 30);
+		$binary = pack('N*', 0) . pack('N*', $timestamp);
+		$hash = hash_hmac('sha1', $binary, base64_decode($this->two_factor_key), true);
+		$offset = ord($hash[19]) & 0xf;
+		return (((ord($hash[$offset]) & 0x7f) << 24) | ((ord($hash[$offset + 1]) & 0xff) << 16) | ((ord($hash[$offset + 2]) & 0xff) << 8) | (ord($hash[$offset + 3]) & 0xff)) % pow(10, 6);
 	}
 	
 	/* !Cloud Files */
@@ -618,13 +734,19 @@ class User implements \JsonSerializable {
 			$changes['enabled'] = $this->enabled;
 			$changes['require_password_change'] = $this->require_password_change;
 			$changes['parent_account_id'] = $this->parent_account_id;
+			$changes['two_factor_key'] = $this->two_factor_key;
 			try {
 				$database->Insert('users', $changes);
+				if (is_null($this->backup_codes) === false) {
+					foreach ($this->backup_codes as $code) {
+						$database->Insert('public.user_backup_codes', ['user_id' => $this->user_id, 'code' => $code]);
+					}
+				}
 			} catch (\Exception $e) {
 				return false;
 			}
 		} else {
-			$keys = ['username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled', 'require_password_change', 'parent_account_id'];
+			$keys = ['username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled', 'require_password_change', 'parent_account_id', 'two_factor_key'];
 			foreach ($keys as $key) {
 				if ($this->$key !== $original_user->$key) {
 					$changes[$key] = $this->$key;
@@ -648,6 +770,13 @@ class User implements \JsonSerializable {
 						if ($file['deleted'] === false && is_null($file['header']) === false) {
 							\BeaconCloudStorage::DeleteFile($file['path']);
 						}
+					}
+				}
+				
+				if (is_null($this->backup_codes) === false) {
+					$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code NOT IN ($2);', $this->user_id, '{' . implode(',', $this->backup_codes) . '}');
+					foreach ($this->backup_codes as $code) {
+						$rows = $database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2) ON CONFLICT (user_id, code) DO NOTHING;', $this->user_id, $code);
 					}
 				}
 				
@@ -678,7 +807,8 @@ class User implements \JsonSerializable {
 			'users.banned',
 			'users.enabled',
 			'users.require_password_change',
-			'users.parent_account_id'
+			'users.parent_account_id',
+			'users.two_factor_key'
 		];
 	}
 	
