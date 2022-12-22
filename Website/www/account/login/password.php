@@ -113,7 +113,7 @@ if ($user->Commit() == false) {
 	echo json_encode(array('message' => 'There was an error saving the user.'), JSON_PRETTY_PRINT);
 	exit;
 }
-$session = BeaconSession::Create($user->UserID());
+$session = BeaconSession::Create($user);
 $token = $session->SessionID();
 
 $database->BeginTransaction();
