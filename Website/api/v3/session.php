@@ -5,7 +5,8 @@
 require(dirname(__FILE__) . '/loader.php');
 
 BeaconAPI::Authorize();
-$user_id = BeaconAPI::UserID();
+$user = BeaconAPI::User();
+$user_id = $user->UserID();
 
 $method = BeaconAPI::Method();
 $database = BeaconCommon::Database();
@@ -15,18 +16,23 @@ case 'GET':
 	// retrieve session object
 	$session_id = BeaconAPI::ObjectID();
 	$session = BeaconSession::GetBySessionID($session_id);
-	if (($session === null) || ($session->UserID() !== $user_id) || $session->User()->CanSignIn() === false) {
-		BeaconAPI::ReplyError('Session not found', null, 404);
+	if (($session === null) || ($session->UserID() !== $user_id) || $user->CanSignIn() === false) {
+		BeaconAPI::ReplyError('Session not found', [
+			'code' => 'NOT_FOUND'
+		], 404);
 	}
 	
-	BeaconAPI::ReplySuccess($session);
+	$obj = $session->jsonSerialize();
+	$obj['totp_secret'] = $user->Get2FASecret();
+	BeaconAPI::ReplySuccess($obj);
 	
 	break;
 case 'POST':
 	// create a session, returns a session object
-	$user = BeaconUser::GetByUserID($user_id);
 	if (is_null($user) || $user->CanSignIn() === false) {
-		BeaconAPI::ReplyError('Invalid user', null, 400);
+		BeaconAPI::ReplyError('Invalid user', [
+			'code' => 'USER_DISABLED'
+		], 400);
 	}
 	
 	$obj = BeaconAPI::JSONPayload();
@@ -37,9 +43,13 @@ case 'POST':
 	
 	$session = BeaconSession::Create($user, $verification_code);
 	if (is_null($session)) {
-		BeaconAPI::ReplyError('Verification needed', null, 403);
+		BeaconAPI::ReplyError('Verification needed', [
+			'code' => '2FA_ENABLED'
+		], 403);
 	}
-	BeaconAPI::ReplySuccess($session);
+	$obj = $session->jsonSerialize();
+	$obj['totp_secret'] = $user->Get2FASecret();
+	BeaconAPI::ReplySuccess($obj);
 	
 	break;
 case 'DELETE':
@@ -48,7 +58,9 @@ case 'DELETE':
 	$session_id = BeaconAPI::ObjectID();
 	$session = BeaconSession::GetBySessionID($session_id);
 	if (($session === null) || ($session->UserID() !== $user_id) || $session->User()->CanSignIn() === false) {
-		BeaconAPI::ReplyError('Session not found', null, 404);
+		BeaconAPI::ReplyError('Session not found', [
+			'code' => 'NOT_FOUND'
+		], 404);
 	}
 	
 	$session->Delete();

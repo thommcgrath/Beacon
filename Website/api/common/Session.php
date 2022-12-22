@@ -165,6 +165,7 @@ class Session implements \JsonSerializable {
 		if (isset($_COOKIE[self::COOKIE_NAME])) {
 			return self::GetBySessionID($_COOKIE[self::COOKIE_NAME]);
 		}
+		return null;
 	}
 	
 	protected static function SQLColumns(): array {

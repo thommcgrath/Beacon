@@ -26,6 +26,7 @@ class User implements \JsonSerializable {
 	protected $usercloud_delete_files = false;
 	protected $username = null;
 	protected $two_factor_key = null;
+	protected $two_factor_key_decoded = null;
 	protected $backup_codes = null;
 	
 	private $child_accounts = null;
@@ -296,7 +297,7 @@ class User implements \JsonSerializable {
 			return;
 		}
 		
-		$this->two_factor_key = base64_encode(random_bytes(32));
+		$this->two_factor_key = \BeaconCommon::Base32Encode(random_bytes(20));
 		$this->backup_codes = [];
 		for ($i = 1; $i <= 10; $i++) {
 			$this->backup_codes[] = \BeaconCommon::GenerateRandomKey(6);	
@@ -358,38 +359,32 @@ class User implements \JsonSerializable {
 		return $this->backup_codes;
 	}
 	
+	public function Get2FASecret(): ?string {
+		return $this->two_factor_key;
+	}
+	
 	public function Get2FASetupString(): ?string {
 		if ($this->Is2FAProtected() === false) {
 			return null;
 		}
 		
-		$alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7'];
-		$bytes = str_split(base64_decode($this->two_factor_key));
-		$byte_count = count($bytes);
-		$binary = '';
-		for ($i = 0; $i < $byte_count; $i++) {
-			$binary .= str_pad(base_convert(ord($bytes[$i]), 10, 2), 8, '0', STR_PAD_LEFT);
-		}
-		
-		$chunks = str_split($binary, 5);
-		$base32 = '';
-		$chunk_count = count($chunks);
-		for ($i = 0; $i < $chunk_count; $i++) {
-			$base32 .= $alphabet[base_convert(str_pad($chunks[$i], 5, '0'), 2, 10)];
-		}
-		
 		$uri = 'otpauth://totp/' . urlencode('Beacon:' . $this->UserId());
-		$uri .= '?secret=' . urlencode($base32);
+		$uri .= '?secret=' . urlencode($this->two_factor_key);
 		$uri .= '&issuer=Beacon';
 		return $uri;
 	}
 	
-	public function Generate2FACode(int $timestamp): string {
+	protected function Generate2FACode(int $timestamp): string {
+		if (is_null($this->two_factor_key_decoded)) {
+			$this->two_factor_key_decoded = \BeaconCommon::Base32Decode($this->two_factor_key);
+		}
+		
 		$timestamp = floor($timestamp / 30);
 		$binary = pack('N*', 0) . pack('N*', $timestamp);
-		$hash = hash_hmac('sha1', $binary, base64_decode($this->two_factor_key), true);
+		$hash = hash_hmac('sha1', $binary, $this->two_factor_key_decoded, true);
 		$offset = ord($hash[19]) & 0xf;
-		return (((ord($hash[$offset]) & 0x7f) << 24) | ((ord($hash[$offset + 1]) & 0xff) << 16) | ((ord($hash[$offset + 2]) & 0xff) << 8) | (ord($hash[$offset + 3]) & 0xff)) % pow(10, 6);
+		$code = (((ord($hash[$offset]) & 0x7f) << 24) | ((ord($hash[$offset + 1]) & 0xff) << 16) | ((ord($hash[$offset + 2]) & 0xff) << 8) | (ord($hash[$offset + 3]) & 0xff)) % pow(10, 6);
+		return str_pad($code, 6, '0', STR_PAD_LEFT);
 	}
 	
 	/* !Cloud Files */
@@ -808,11 +803,7 @@ class User implements \JsonSerializable {
 			'signatures' => $this->signatures,
 			'licenses' => $this->licenses,
 			'omni_version' => $this->license_mask,
-			'usercloud_key' => $this->usercloud_key,
-			'totp' => [
-				'secret' => $this->two_factor_key,
-				'provisioning_uri' => $this->Get2FASetupString()
-			]
+			'usercloud_key' => $this->usercloud_key
 		];
 		if (empty($this->expiration) === false) {
 			$arr['expiration'] = $this->expiration;

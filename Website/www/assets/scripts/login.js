@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 	var current_page;
-	var pages = ['login', 'recover', 'verify', 'password', 'loading'];
+	var pages = ['login', 'totp', 'recover', 'verify', 'password', 'loading'];
 	pages.forEach(function(page) {
 		var element = document.getElementById('page_' + page);
 		if (!element) {
@@ -68,6 +68,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	var loginExplicitCodeField = document.getElementById('login_explicit_code');
 	var loginExplicitPasswordField = document.getElementById('login_explicit_password');
 	
+	var totpPage = document.getElementById('page_totp');
+	var totpForm = document.getElementById('login_form_totp');
+	var totpCodeField = document.getElementById('totp_code_field');
+	var totpActionButton = document.getElementById('totp_action_button');
+	var totpCancelButton = document.getElementById('totp_cancel_button');
+	
 	var recoverForm = document.getElementById('login_recover_form');
 	var recoverEmailField = document.getElementById('recover_email_field');
 	var recoverActionButton = document.getElementById('recover_action_button');
@@ -124,12 +130,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (loginRememberCheck) {
 		loginRememberCheck.checked = storedRemember;
 	}
-	if (loginForm) {
-		loginForm.addEventListener('submit', function(event) {
+	if (loginForm || totpForm) {
+		var loginFunction = function(event) {
 			event.preventDefault();
 			
 			var loginEmail = '';
 			var loginPassword = '';
+			var loginVerificationCode = '';
 			
 			if (loginEmailField && loginPasswordField) {
 				loginEmail = loginEmailField.value.trim();
@@ -169,7 +176,19 @@ document.addEventListener('DOMContentLoaded', function() {
 				}
 			}
 			
-			request.post('https://' + apiHost + '/v2/session', {}, function(obj) {
+			var totp_code = totpCodeField.value.trim();
+			if (Boolean(totp_code) === false && Boolean(localStorage) === true) {
+				var totp_secret = localStorage.getItem('totpSecret');
+				if (totp_secret) {
+					var totp = new jsOTP.totp();
+					totp_code = totp.getOtp(totp_secret);
+				}
+			}
+			var session_body = {
+				verification_code: totp_code
+			};
+			
+			request.start('POST', 'https://' + apiHost + '/v3/session', 'application/json', JSON.stringify(session_body), function(obj) {
 				if (localStorage && loginRemember) {
 					localStorage.setItem('email', loginEmail);
 				}
@@ -183,23 +202,45 @@ document.addEventListener('DOMContentLoaded', function() {
 				url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
 				url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
 				
+				if (localStorage) {
+					if (loginRemember && obj.totp_secret) {
+						localStorage.setItem('totpSecret', obj.totp_secret);
+					} else {
+						localStorage.removeItem('totpSecret');
+					}
+				}
+				
 				window.location = url;
 			}, function(http_status, error_body) {
-				show_page('login');
-				
 				switch (http_status) {
 				case 401:
 				case 403:
+					try {
+						var obj = JSON.parse(error_body);
+						var code = obj.details.code;
+						if (code === '2FA_ENABLED') {
+							show_page('totp');
+							focus_first([totpCodeField]);
+							break;
+						}
+					} catch (e) {
+					}
+					
+					show_page('login');
 					dialog.show('Incorrect Login', 'Email or password is not correct.');
 					break;
 				default:
+					show_page('login');
 					dialog.show('Unable to complete login', 'Sorry, there was a ' + http_status + ' error.');
 					break;
 				}
 			}, {'Authorization': 'Basic ' + btoa(loginEmail + ':' + loginPassword)});
 			
 			return false;
-		});
+		};	
+	}
+	if (loginForm) {
+		loginForm.addEventListener('submit', loginFunction);
 	}
 	if (loginRecoverButton) {
 		loginRecoverButton.addEventListener('click', function(event) {
@@ -221,6 +262,18 @@ document.addEventListener('DOMContentLoaded', function() {
 			window.location = 'beacon://dismiss_me';
 			return false;
 		});
+	}
+	if (totpCancelButton) {
+		totpCancelButton.addEventListener('click', function(ev) {
+			ev.preventDefault();
+			show_page('login');
+			focus_first([loginPasswordField]);
+		});
+	}
+	
+	// !TOTP Page
+	if (totpForm) {
+		totpForm.addEventListener('submit', loginFunction);
 	}
 	
 	// !Recovery Page
