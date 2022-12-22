@@ -87,6 +87,12 @@ Protected Class Socket
 		  
 		  If HTTPStatus = 403 And Self.ActiveRequest.HasBeenRetried = False And Self.ActiveRequest.AuthType = BeaconAPI.Request.AuthTypes.Token And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
 		    // Going to try to get a valid session token
+		    #if DebugBuild
+		      #Pragma Warning "Add 2FA Support"
+		    #else
+		      #Pragma Error "Add 2FA Support"
+		    #endif
+		    
 		    Var NextRequest As New BeaconAPI.Request(BeaconAPI.URL("session"), "POST", AddressOf APICallback_RequestToken)
 		    NextRequest.Sign(App.IdentityManager.CurrentIdentity)
 		    

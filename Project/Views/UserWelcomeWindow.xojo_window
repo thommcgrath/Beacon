@@ -2067,6 +2067,12 @@ End
 		Sub Action()
 		  Self.SetLoginStatus("Logging in…")
 		  
+		  #if DebugBuild
+		    #Pragma Warning "Add 2FA Support"
+		  #else
+		    #Pragma Error "Add 2FA Support"
+		  #endif
+		  
 		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Text.Trim + ":" + Self.LoginPasswordField.Text, 0)
 		  Self.LoginSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session"))
@@ -2495,6 +2501,21 @@ End
 		  Self.SetLoginStatus("")
 		  
 		  If HTTPStatus = 403 Then
+		    Try
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var ReasonCode As String = Dictionary(Dict.Value("details").ObjectValue).Value("code").StringValue
+		      If ReasonCode = "2FA_ENABLED" Then
+		        #if DebugBuild
+		          #Pragma Warning "Add 2FA Prompt"
+		          Self.ShowAlert("Placeholder for 2FA", "This account has 2FA enabled.")
+		        #else
+		          #Pragma Error "Add 2FA Prompt"
+		        #endif
+		      End If
+		      Return
+		    Catch Err As RuntimeException
+		    End Try
+		    
 		    Self.ShowAlert("Your email and password was not accepted.", "If you need to reset your password, use the ""Create or Recover Account"" link below.")
 		  Else
 		    Self.ShowError("Unable to login", HTTPStatus)

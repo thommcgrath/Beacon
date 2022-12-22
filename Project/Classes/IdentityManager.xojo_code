@@ -280,6 +280,12 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
+		  #if DebugBuild
+		    #Pragma Warning "Add 2FA Support"
+		  #else
+		    #Pragma Error "Add 2FA Support"
+		  #endif
+		  
 		  Var Request As New BeaconAPI.Request("session", "POST", AddressOf APICallback_GetSessionToken)
 		  Request.Sign(Identity)
 		  BeaconAPI.Send(Request)
