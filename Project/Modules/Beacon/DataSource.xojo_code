@@ -101,6 +101,8 @@ Implements NotificationKit.Receiver
 		Sub Constructor()
 		  Const YieldInterval = 100
 		  
+		  Self.mLock = New CriticalSection
+		  
 		  Var SchemaVersion As Integer = RaiseEvent GetSchemaVersion
 		  Var DatafileName As String = Self.Identifier + ".sqlite"
 		  Var DatabaseFile As FolderItem = App.LibrariesFolder.Child(DatafileName)
@@ -516,7 +518,7 @@ Implements NotificationKit.Receiver
 		Private Sub ObtainLock()
 		  // This method exists to provide easy insertion points for debug data
 		  
-		  RaiseEvent ObtainLock
+		  Self.mLock.Enter()
 		End Sub
 	#tag EndMethod
 
@@ -537,7 +539,7 @@ Implements NotificationKit.Receiver
 		Private Sub ReleaseLock()
 		  // This method exists to provide easy insertion points for debug data
 		  
-		  RaiseEvent ReleaseLock
+		  Self.mLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -714,15 +716,7 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ObtainLock()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event Open()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ReleaseLock()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -752,6 +746,10 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mIndexes() As Beacon.DataIndex
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

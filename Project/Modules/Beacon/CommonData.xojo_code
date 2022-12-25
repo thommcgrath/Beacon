@@ -307,20 +307,8 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Sub ObtainLock()
-		  mLock.Enter
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  Self.UpdateNews()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub ReleaseLock()
-		  mLock.Leave
 		End Sub
 	#tag EndEvent
 
@@ -329,11 +317,6 @@ Inherits Beacon.DataSource
 		Sub Constructor()
 		  Self.mTemplateCache = New Dictionary
 		  Self.mSelectorCache = New Dictionary
-		  
-		  If mLock Is Nil Then
-		    mLock = New CriticalSection
-		  End If
-		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -907,10 +890,6 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private Shared mInstances As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
