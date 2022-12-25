@@ -71,7 +71,7 @@ class Session implements \JsonSerializable {
 		$database->Commit();
 	}
 	
-	public static function Create(User $user, ?string $verification_code): ?Session {
+	public static function Create(User $user, ?string $verification_code = null): ?Session {
 		if ($user->Is2FAProtected() && (is_null($verification_code) || $user->Verify2FACode($verification_code) === false)) {
 			return null;
 		}

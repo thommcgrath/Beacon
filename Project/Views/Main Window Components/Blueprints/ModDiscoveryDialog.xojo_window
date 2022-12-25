@@ -1072,6 +1072,7 @@ End
 		      Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Ark game files do not exist at " + Preferences.ArkSteamPath + "."))
 		      Return
 		    End If
+		    App.Log("Ark Root: " + ArkRoot.NativePath)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Getting Ark root folder")
 		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not get path to Ark game files."))
@@ -1094,10 +1095,12 @@ End
 		  End If
 		  
 		  Var ServerFolder As FolderItem = HostDir.Child(Profile.ProfileID)
+		  App.Log("Server Root: " + ServerFolder.NativePath)
 		  
 		  Var ModsFolder As FolderItem
 		  Try
 		    ModsFolder = ServerFolder.Child("ShooterGame").Child("Content").Child("Mods")
+		    App.Log("Mods Root: " + ModsFolder.NativePath)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Getting Ark mods folder")
 		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not find ShooterGame/Content/Mods folder."))
@@ -1122,13 +1125,17 @@ End
 		  Var SteamShell As New Shell
 		  SteamShell.TimeOut = -1
 		  SteamShell.ExecuteMode = Shell.ExecuteModes.Asynchronous
-		  SteamShell.Execute(SteamCMDPath + " +login anonymous " + String.FromArray(DownloadCommands, " ") + " +quit")
+		  
+		  Var DownloadCommand As String = SteamCMDPath + " +login anonymous " + String.FromArray(DownloadCommands, " ") + " +quit"
+		  App.Log("Download Command: " + DownloadCommand)
+		  SteamShell.Execute(DownloadCommand)
 		  
 		  While SteamShell.IsRunning
 		    Me.Sleep(10)
 		  Wend
 		  
 		  Var SteamResult As String = SteamShell.Result
+		  App.Log(SteamResult)
 		  
 		  Var WorkshopFolder As FolderItem
 		  Try
