@@ -735,11 +735,23 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub ObtainLock()
+		  mLock.Enter
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackUUID)
 		  If Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Then
 		    Self.ReplaceUserBlueprints()
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ReleaseLock()
+		  mLock.Leave
 		End Sub
 	#tag EndEvent
 
@@ -974,6 +986,11 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.ResetCaches()
+		  
+		  If mLock Is Nil Then
+		    mLock = New CriticalSection
+		  End If
+		  
 		  Super.Constructor()
 		End Sub
 	#tag EndMethod
@@ -3013,6 +3030,10 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private Shared mInstances As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
