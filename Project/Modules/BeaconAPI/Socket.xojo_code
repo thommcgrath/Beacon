@@ -53,6 +53,14 @@ Protected Class Socket
 		    
 		    Preferences.OnlineToken = SessionToken
 		    
+		    Try
+		      If Dict.HasKey("two_factor_key") Then
+		        Preferences.OTPKey = Dict.Value("two_factor_key").StringValue
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading second factor key")
+		    End Try
+		    
 		    For Idx As Integer = 0 To Self.Queue.LastIndex
 		      If Self.Queue(Idx).AuthType = BeaconAPI.Request.AuthTypes.Token Then
 		        Self.Queue(Idx).Authenticate(SessionToken)
@@ -85,15 +93,15 @@ Protected Class Socket
 		Private Sub Socket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
+		  #if DebugBuild
+		    #Pragma Warning "Add 2FA Support"
+		  #else
+		    #Pragma Error "Add 2FA Support"
+		  #endif
+		  
 		  If HTTPStatus = 403 And Self.ActiveRequest.HasBeenRetried = False And Self.ActiveRequest.AuthType = BeaconAPI.Request.AuthTypes.Token And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
 		    // Going to try to get a valid session token
-		    #if DebugBuild
-		      #Pragma Warning "Add 2FA Support"
-		    #else
-		      #Pragma Error "Add 2FA Support"
-		    #endif
-		    
-		    Var NextRequest As New BeaconAPI.Request(BeaconAPI.URL("session"), "POST", AddressOf APICallback_RequestToken)
+		    Var NextRequest As BeaconAPI.Request = BeaconAPI.Request.CreateSessionRequest(AddressOf APICallback_RequestToken)
 		    NextRequest.Sign(App.IdentityManager.CurrentIdentity)
 		    
 		    Var FollowingRequest As BeaconAPI.Request = Self.ActiveRequest

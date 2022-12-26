@@ -48,7 +48,7 @@ Begin Window UserWelcomeWindow
       TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   424
       Begin Label PrivacyMessageLabel
@@ -2072,6 +2072,12 @@ End
 		  #else
 		    #Pragma Error "Add 2FA Support"
 		  #endif
+		  
+		  Var OTP As String = Beacon.GenerateOTP()
+		  If OTP.IsEmpty = False Then
+		    Var Body As String = Beacon.GenerateJSON(New Dictionary("verification_code" : OTP), False)
+		    Self.LoginSocket.SetRequestContent(Body, "application/json")
+		  End If
 		  
 		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Text.Trim + ":" + Self.LoginPasswordField.Text, 0)
 		  Self.LoginSocket.RequestHeader("User-Agent") = App.UserAgent

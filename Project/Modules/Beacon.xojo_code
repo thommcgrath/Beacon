@@ -506,6 +506,24 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function GenerateOTP() As String
+		  Return Beacon.GenerateOTP(CurrentUnixTimeMBS)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GenerateOTP(Time As UInt64) As String
+		  Var Key As String = Preferences.OTPKey
+		  If Key.IsEmpty Then
+		    Return ""
+		  End If
+		  
+		  Var OTP As UInt32 = CalculateTOTPMBS(Key, Time, 0, 30, 6, True)
+		  Return OTP.ToString(Locale.Raw, "000000")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.LastIndex DownTo 0

@@ -42,11 +42,27 @@ Protected Class IdentityManager
 		  
 		  Var ClearLogin As Boolean = True
 		  
+		  #if DebugBuild
+		    #Pragma Warning "Add 2FA Support"
+		  #else
+		    #Pragma Error "Add 2FA Support"
+		  #endif
+		  
 		  If Response.Success Then
 		    Try
 		      Var Dict As Dictionary = Response.JSON
 		      Var Token As String = Dict.Value("session_id")
 		      Preferences.OnlineToken = Token
+		      
+		      Try
+		        If Dict.HasKey("two_factor_key") Then
+		          Preferences.OTPKey = Dict.Value("two_factor_key").StringValue
+		        Else
+		          Preferences.OTPKey = ""
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Reading second factor key")
+		      End Try
 		      
 		      Self.RefreshUserDetails()
 		      ClearLogin = False
@@ -280,13 +296,7 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Add 2FA Support"
-		  #else
-		    #Pragma Error "Add 2FA Support"
-		  #endif
-		  
-		  Var Request As New BeaconAPI.Request("session", "POST", AddressOf APICallback_GetSessionToken)
+		  Var Request As BeaconAPI.Request = BeaconAPI.Request.CreateSessionRequest(AddressOf APICallback_GetSessionToken)
 		  Request.Sign(Identity)
 		  BeaconAPI.Send(Request)
 		End Sub
