@@ -443,27 +443,26 @@ Protected Module DedicatedServer
 		    Return Nil
 		  End If
 		  
-		  Var PathComponents() As String
+		  Var PossiblePaths() As String
 		  
 		  #if TargetWindows
-		    PathComponents.Add("Engine")
-		    PathComponents.Add("Binaries")
-		    PathComponents.Add("ThirdParty")
-		    PathComponents.Add("SteamCMD")
-		    PathComponents.Add("Win64")
-		    PathComponents.Add("steamcmd.exe")
+		    PossiblePaths.Add(ArkRoot.NativePath + "Engine\Binaries\ThirdParty\SteamCMD\Win64\steamcmd.exe")
+		    PossiblePaths.Add(ArkRoot.NativePath + "Engine\Binaries\ThirdParty\SteamCMD\Win32\steamcmd.exe")
 		  #elseif TargetLinux Or TargetMacOS
 		    Return Nil
 		  #endif
 		  
-		  Var Dir As FolderItem = ArkRoot
-		  For Each Component As String In PathComponents
-		    Dir = Dir.Child(Component)
-		    If Dir Is Nil Or Dir.Exists = False Then
-		      Return Nil
-		    End If
+		  For Each Path As String In PossiblePaths
+		    Try
+		      Var Dir As New FolderItem(Path, FolderItem.PathModes.Native)
+		      If Dir.Exists = True Then
+		        Return Dir
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
 		  Next
-		  Return Dir
+		  
+		  Return Nil
 		End Function
 	#tag EndMethod
 
