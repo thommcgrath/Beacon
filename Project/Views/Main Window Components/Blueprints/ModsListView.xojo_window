@@ -120,6 +120,14 @@ Begin BeaconSubview ModsListView
       Visible         =   True
       Width           =   494
    End
+   Begin Thread ModDeleterThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -318,6 +326,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModUUIDsToDelete() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOpenModWhenRefreshed As String
 	#tag EndProperty
 
@@ -358,31 +370,23 @@ End
 		  End If
 		  
 		  // Make sure they do not have unsaved changes
-		  Var LocalUUIDs(), WorkshopIDs() As String
+		  Var WorkshopIDs() As String
 		  For Idx As Integer = Mods.LastIndex DownTo 0
 		    If Not CloseModView(Mods(Idx).ModID) Then
 		      Mods.RemoveAt(Idx)
 		    Else
 		      If Mods(Idx).IsLocalMod Then
-		        LocalUUIDs.Add(Mods(Idx).ModID)
+		        Self.mModUUIDsToDelete.Add(Mods(Idx).ModID)
 		      ElseIf (Mods(Idx).WorkshopID Is Nil) = False Then
 		        WorkshopIDs.Add(Mods(Idx).WorkshopID)
 		      End If
 		    End If
 		  Next Idx
 		  
-		  If LocalUUIDs.Count > 0 Then
-		    For Each LocalUUID As String In LocalUUIDs
-		      If Ark.DataSource.SharedInstance.DeleteContentPack(LocalUUID) Then
-		        For Row As Integer = Me.LastRowIndex DownTo 0
-		          If BeaconAPI.WorkshopMod(Me.RowTagAt(Row)).ModID = LocalUUID Then
-		            Me.RemoveRowAt(Row)
-		            Exit For Row
-		          End If
-		        Next
-		      End If
-		    Next
+		  If Self.mModUUIDsToDelete.Count > 0 And Self.ModDeleterThread.ThreadState = Thread.ThreadStates.NotRunning Then
+		    Self.ModDeleterThread.Start
 		  End If
+		  
 		  If WorkshopIDs.Count > 0 Then
 		    Self.StartJob()
 		    
@@ -437,6 +441,36 @@ End
 		  Case "DiscoverMods"
 		    Self.RunModDiscovery()
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ModDeleterThread
+	#tag Event
+		Sub Run()
+		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
+		  For Each ModUUID As String In Self.mModUUIDsToDelete
+		    If Database.DeleteContentPack(ModUUID) Then
+		      Me.AddUserInterfaceUpdate(New Dictionary("Action": "Mod Deleted", "Mod UUID": ModUUID))
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    Var Action As String = Dict.Lookup("Action", "").StringValue
+		    
+		    Select Case Action
+		    Case "Mod Deleted"
+		      Var ModUUID As String = Dict.Value("Mod UUID")
+		      For Row As Integer = Self.ModsList.LastRowIndex DownTo 0
+		        If BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Row)).ModID = ModUUID Then
+		          Self.ModsList.RemoveRowAt(Row)
+		          Exit For Row
+		        End If
+		      Next
+		    End Select
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

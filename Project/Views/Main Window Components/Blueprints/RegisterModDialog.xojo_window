@@ -1015,6 +1015,14 @@ Begin BeaconDialog RegisterModDialog
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin Thread RegisterModThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -1122,7 +1130,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModUUID As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWorkshopID As NullableString
 	#tag EndProperty
 
 
@@ -1286,14 +1302,13 @@ End
 		    WorkshopID = Nil
 		  End If
 		  
-		  Var ContentPack As Ark.ContentPack = Ark.DataSource.SharedInstance.CreateLocalContentPack(ModName, WorkshopID)
-		  Self.mModUUID = ContentPack.UUID
+		  Self.mModName = ModName
+		  Self.mWorkshopID = WorkshopID
 		  
-		  If Self.NameShowInstructionsCheck.Value Then
-		    System.GotoURL(Beacon.WebURL("/help/adding_blueprints_to_beacon"))
-		  End If
+		  Self.RegisterModThread.Start
 		  
-		  Self.Hide
+		  Self.NameActionButton.Enabled = False
+		  Self.NameCancelButton.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1331,6 +1346,31 @@ End
 		Sub WorkStarted()
 		  Self.ConfirmSpinner.Visible = True
 		  Self.ConfirmActionButton.Enabled = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RegisterModThread
+	#tag Event
+		Sub Run()
+		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
+		  Var ContentPack As Ark.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mWorkshopID)
+		  Self.mModUUID = ContentPack.UUID
+		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("finished": true))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.Lookup("finished", False) Then
+		      If Self.NameShowInstructionsCheck.Value Then
+		        System.GotoURL(Beacon.WebURL("/help/adding_blueprints_to_beacon"))
+		      End If
+		      
+		      Self.Hide
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
