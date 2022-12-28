@@ -46,6 +46,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #endif
 		  
 		  Self.Log("Beacon finished gracefully")
+		  Self.mLogManager.Flush()
 		End Sub
 	#tag EndEvent
 
@@ -254,175 +255,175 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function EditPreferences() As Boolean Handles EditPreferences.Action
-			PreferencesWindow.Present
-			Return True
-			
+		  PreferencesWindow.Present
+		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
-			Var Dialog As New OpenFileDialog
-			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
-			Dialog.AllowMultipleSelections = True
-			
-			Var File As FolderItem = Dialog.ShowModal
-			If File Is Nil Then
-			Return True
-			End If
-			
-			For Each File In Dialog.SelectedFiles
-			Self.OpenFile(File, True)
-			Next File
-			
-			Return True
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
+		  Dialog.AllowMultipleSelections = True
+		  
+		  Var File As FolderItem = Dialog.ShowModal
+		  If File Is Nil Then
+		    Return True
+		  End If
+		  
+		  For Each File In Dialog.SelectedFiles
+		    Self.OpenFile(File, True)
+		  Next File
+		  
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
-			If (Self.mMainWindow Is Nil) = False Then
-			Self.mMainWindow.Documents.NewDocument
-			End If
-			Return True
+		  If (Self.mMainWindow Is Nil) = False Then
+		    Self.mMainWindow.Documents.NewDocument
+		  End If
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
-			If (Self.mMainWindow Is Nil) = False Then
-			Self.mMainWindow.Templates.NewTemplate
-			End If
-			Return True
+		  If (Self.mMainWindow Is Nil) = False Then
+		    Self.mMainWindow.Templates.NewTemplate
+		  End If
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileOpen() As Boolean Handles FileOpen.Action
-			Self.ShowOpenDocument()
-			Return True
+		  Self.ShowOpenDocument()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpAboutBeacon() As Boolean Handles HelpAboutBeacon.Action
-			If (Self.mMainWindow Is Nil) = False Then
-			Self.mMainWindow.ShowHome()
-			End If
-			Return True
+		  If (Self.mMainWindow Is Nil) = False Then
+		    Self.mMainWindow.ShowHome()
+		  End If
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpAdminSpawnCodes() As Boolean Handles HelpAdminSpawnCodes.Action
-			Self.ShowSpawnCodes()
-			Return True
+		  Self.ShowSpawnCodes()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpAPIBuilder() As Boolean Handles HelpAPIBuilder.Action
-			Call Self.HandleURL("beacon://action/showapibuilder")
-			Return True
-			
+		  Call Self.HandleURL("beacon://action/showapibuilder")
+		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpAPIGuide() As Boolean Handles HelpAPIGuide.Action
-			Call Self.HandleURL("beacon://action/showguide")
-			Return True
-			
+		  Call Self.HandleURL("beacon://action/showguide")
+		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpArkConfigFileReference() As Boolean Handles HelpArkConfigFileReference.Action
-			System.GotoURL(Beacon.WebURL("/help/ark_config_file_reference"))
-			Return True
+		  System.GotoURL(Beacon.WebURL("/help/ark_config_file_reference"))
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpCheckforUpdates() As Boolean Handles HelpCheckforUpdates.Action
-			Self.CheckForUpdates()
-			Return True
+		  Self.CheckForUpdates()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpCreateOfflineAuthorizationRequest() As Boolean Handles HelpCreateOfflineAuthorizationRequest.Action
-			Var Dialog As New SaveFileDialog
-			Dialog.SuggestedFileName = "Authorization Request" + Beacon.FileExtensionAuth
-			
-			Var File As FolderItem = Dialog.ShowModal()
-			If File = Nil Then
-			Return True
-			End If
-			
-			Var Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
-			
-			Var HardwareID As String = Beacon.HardwareID
-			Var Signed As MemoryBlock = Identity.Sign(HardwareID)
-			
-			Var Dict As New Dictionary
-			Dict.Value("UserID") = Identity.UserID
-			Dict.Value("Signed") = EncodeHex(Signed)
-			Dict.Value("Device") = HardwareID
-			
-			Var JSON As String = Beacon.GenerateJSON(Dict, False)
-			If Not File.Write(JSON) Then
-			BeaconUI.ShowAlert("Could not create offline authorization request.", "There was a problem writing the file to disk.")
-			End If
-			
-			Return True
+		  Var Dialog As New SaveFileDialog
+		  Dialog.SuggestedFileName = "Authorization Request" + Beacon.FileExtensionAuth
+		  
+		  Var File As FolderItem = Dialog.ShowModal()
+		  If File = Nil Then
+		    Return True
+		  End If
+		  
+		  Var Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
+		  
+		  Var HardwareID As String = Beacon.HardwareID
+		  Var Signed As MemoryBlock = Identity.Sign(HardwareID)
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value("UserID") = Identity.UserID
+		  Dict.Value("Signed") = EncodeHex(Signed)
+		  Dict.Value("Device") = HardwareID
+		  
+		  Var JSON As String = Beacon.GenerateJSON(Dict, False)
+		  If Not File.Write(JSON) Then
+		    BeaconUI.ShowAlert("Could not create offline authorization request.", "There was a problem writing the file to disk.")
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
-			Self.StartTicket()
-			Return True
+		  Self.StartTicket()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpOpenDataFolder() As Boolean Handles HelpOpenDataFolder.Action
-			Self.ApplicationSupport.Open
-			Return True
+		  Self.ApplicationSupport.Open
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpReleaseNotes() As Boolean Handles HelpReleaseNotes.Action
-			Self.ShowReleaseNotes()
-			Return True
-			
+		  Self.ShowReleaseNotes()
+		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpShowWhatsNewWindow() As Boolean Handles HelpShowWhatsNewWindow.Action
-			WhatsNewWindow.Present(99999999)
-			Return True
+		  WhatsNewWindow.Present(99999999)
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpSyncCloudFiles() As Boolean Handles HelpSyncCloudFiles.Action
-			UserCloud.Sync(True)
-			Return True
+		  UserCloud.Sync(True)
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpUpdateEngrams() As Boolean Handles HelpUpdateEngrams.Action
-			If Keyboard.OptionKey Then
-			Self.SyncGamedata(False, True)
-			Else
-			Self.SyncGamedata(False, False)
-			End If
-			Return True
+		  If Keyboard.OptionKey Then
+		    Self.SyncGamedata(False, True)
+		  Else
+		    Self.SyncGamedata(False, False)
+		  End If
+		  Return True
 		End Function
 	#tag EndMenuHandler
 

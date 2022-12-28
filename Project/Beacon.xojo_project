@@ -50,7 +50,6 @@ Module=UITweaks;Modules/UITweaks.xojo_code;&h00000000316ECFFF;&h000000001444B7FF
 Class=ResizedPushButton;Modules/UITweaks/ResizedPushButton.xojo_code;&h0000000055F3C7FF;&h00000000316ECFFF;false
 Class=ResizedTextField;Modules/UITweaks/ResizedTextField.xojo_code;&h000000001F16BFFF;&h00000000316ECFFF;false
 Class=ResizedPopupMenu;Modules/UITweaks/ResizedPopupMenu.xojo_code;&h000000007B93CFFF;&h00000000316ECFFF;false
-Class=LocalData;Data Model/LocalData.xojo_code;&h00000000338F4FFF;&h000000007CAFFFFF;false
 Class=ResizedLabel;Modules/UITweaks/ResizedLabel.xojo_code;&h000000003F399FFF;&h00000000316ECFFF;false
 Class=PreferencesManager;Classes/PreferencesManager.xojo_code;&h0000000070EB4FFF;&h00000000056D5FFF;false
 Module=AnimationKit;Modules/AnimationKit.xojo_code;&h00000000116B320C;&h000000001444B7FF;false

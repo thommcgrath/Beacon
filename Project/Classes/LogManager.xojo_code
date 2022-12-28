@@ -67,7 +67,9 @@ Protected Class LogManager
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mLock = New CriticalSection
+		  Self.mFlushTimer = New Timer
+		  AddHandler mFlushTimer.Action, WeakAddressOf mFlushTimer_Action
+		  
 		  Self.mPendingMessages = New Dictionary
 		End Sub
 	#tag EndMethod
@@ -95,6 +97,8 @@ Protected Class LogManager
 
 	#tag Method, Flags = &h0
 		Sub Flush()
+		  #Pragma BackgroundTasks False
+		  
 		  #if SimpleDebugMode = False Or DebugBuild = False
 		    If Self.mFolder Is Nil Then
 		      Return
@@ -156,7 +160,6 @@ Protected Class LogManager
 		    Now = New DateTime(Now.SecondsFrom1970, New TimeZone(0))
 		    Var Filename As String = Now.SQLDate + ".log"
 		    
-		    Self.mLock.Enter
 		    Try
 		      Var Messages() As String
 		      If Self.mPendingMessages.HasKey(Filename) Then
@@ -165,23 +168,29 @@ Protected Class LogManager
 		      Messages.Add(DetailedMessage)
 		      Self.mPendingMessages.Value(Filename) = Messages
 		      
-		      Self.Flush()
+		      Self.mFlushTimer.RunMode = Timer.RunModes.Single
+		      Self.mFlushTimer.Period = 500
 		    Catch Err As RuntimeException
 		    End Try
-		    Self.mLock.Leave
 		  #else
 		    System.DebugLog(Message)
 		  #endif
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub mFlushTimer_Action(Sender As Timer)
+		  Self.Flush()
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
-		Private mFolder As FolderItem
+		Private mFlushTimer As Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLock As CriticalSection
+		Private mFolder As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
