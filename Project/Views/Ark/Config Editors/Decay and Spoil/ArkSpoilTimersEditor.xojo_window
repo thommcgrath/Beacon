@@ -1769,26 +1769,32 @@ End
 	#tag Event
 		Sub Open()
 		  Self.mScorchedSpoilMultiplier = Ark.DataSource.SharedInstance.GetDoubleVariable("Scorched Spoil Multiplier", 0.9)
+		  Self.mDecayPeriods = New Dictionary
+		  Self.mSpoilMultipliers = New Dictionary
+		  Self.mSpoilTimes = New Dictionary
 		  
 		  Try
 		    Var JSON As String = Ark.DataSource.SharedInstance.GetStringVariable("Decay Periods")
-		    Self.mDecayPeriods = Beacon.ParseJSON(JSON)
+		    If JSON.IsEmpty = False Then
+		      Self.mDecayPeriods = Beacon.ParseJSON(JSON)
+		    End If
 		  Catch Err As RuntimeException
-		    Self.mDecayPeriods = New Dictionary
 		  End Try
 		  
 		  Try
 		    Var JSON As String = Ark.DataSource.SharedInstance.GetStringVariable("Spoil Multipliers")
-		    Self.mSpoilMultipliers = Beacon.ParseJSON(JSON)
+		    If JSON.IsEmpty = False Then
+		      Self.mSpoilMultipliers = Beacon.ParseJSON(JSON)
+		    End If
 		  Catch Err As RuntimeException
-		    Self.mSpoilMultipliers = New Dictionary
 		  End Try
 		  
 		  Try
 		    Var JSON As String = Ark.DataSource.SharedInstance.GetStringVariable("Spoil Times")
-		    Self.mSpoilTimes = Beacon.ParseJSON(JSON)
+		    If JSON.IsEmpty = False Then
+		      Self.mSpoilTimes = Beacon.ParseJSON(JSON)
+		    End If
 		  Catch Err As RuntimeException
-		    Self.mSpoilTimes = New Dictionary
 		  End Try
 		  
 		  Self.SpoilTimesList.ColumnCount = Self.mSpoilMultipliers.KeyCount + 1

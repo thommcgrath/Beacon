@@ -611,7 +611,8 @@ End
 		  Next
 		  
 		  Var OfficialLevels As Ark.PlayerLevelData = Ark.DataSource.SharedInstance.OfficialPlayerLevelData
-		  Self.PointsList.RowCount = Max(Config.LevelsDefined, OfficialLevels.MaxLevel)
+		  Var OfficialMaxLevel As Integer = If(OfficialLevels Is Nil, 0, OfficialLevels.MaxLevel)
+		  Self.PointsList.RowCount = Max(Config.LevelsDefined, OfficialMaxLevel)
 		  For Idx As Integer = 0 To Self.PointsList.LastRowIndex
 		    Var Level As Integer = Idx + 1
 		    Var PointsForLevel As NullableDouble = Config.PointsForLevel(Level)
