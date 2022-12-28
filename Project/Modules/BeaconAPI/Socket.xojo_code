@@ -54,8 +54,10 @@ Protected Class Socket
 		    Preferences.OnlineToken = SessionToken
 		    
 		    Try
-		      If Dict.HasKey("two_factor_key") Then
-		        Preferences.OTPKey = Dict.Value("two_factor_key").StringValue
+		      If Dict.HasKey("totp_secret") And Dict.Value("totp_secret").IsNull = False And Preferences.OTPKey.IsEmpty = False Then
+		        Preferences.OTPKey = Dict.Value("totp_secret").StringValue
+		      Else
+		        Preferences.OTPKey = ""
 		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Reading second factor key")
@@ -93,26 +95,37 @@ Protected Class Socket
 		Private Sub Socket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Add 2FA Support"
-		  #else
-		    #Pragma Error "Add 2FA Support"
-		  #endif
-		  
-		  If HTTPStatus = 403 And Self.ActiveRequest.HasBeenRetried = False And Self.ActiveRequest.AuthType = BeaconAPI.Request.AuthTypes.Token And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
-		    // Going to try to get a valid session token
-		    Var NextRequest As BeaconAPI.Request = BeaconAPI.Request.CreateSessionRequest(AddressOf APICallback_RequestToken)
-		    NextRequest.Sign(App.IdentityManager.CurrentIdentity)
+		  If HTTPStatus = 403 Then
+		    Var ShouldRetry As Boolean = Self.ActiveRequest.HasBeenRetried = False And (App.IdentityManager.CurrentIdentity Is Nil) = False
 		    
-		    Var FollowingRequest As BeaconAPI.Request = Self.ActiveRequest
-		    FollowingRequest.HasBeenRetried = True
+		    If ShouldRetry Then
+		      Try
+		        Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		        Var ReasonCode As String = Dictionary(Dict.Value("details").ObjectValue).Value("code").StringValue
+		        If ReasonCode = "2FA_ENABLED" And Preferences.OTPKey.IsEmpty Then
+		          ShouldRetry = False
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Looking for reason code in 403 response")
+		      End Try
+		    End If
 		    
-		    Self.Queue.AddAt(0, NextRequest)
-		    Self.Queue.AddAt(1, FollowingRequest)
-		    
-		    Self.ActiveRequest = Nil
-		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
-		    Return
+		    If ShouldRetry Then
+		      // Going to try to get a valid session token
+		      Var NextRequest As BeaconAPI.Request = BeaconAPI.Request.CreateSessionRequest(AddressOf APICallback_RequestToken)
+		      NextRequest.Sign(App.IdentityManager.CurrentIdentity)
+		      NextRequest.HasBeenRetried = True // Lie to prevent it from being tried again
+		      
+		      Var FollowingRequest As BeaconAPI.Request = Self.ActiveRequest
+		      FollowingRequest.HasBeenRetried = True
+		      
+		      Self.Queue.AddAt(0, NextRequest)
+		      Self.Queue.AddAt(1, FollowingRequest)
+		      
+		      Self.ActiveRequest = Nil
+		      Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
+		      Return
+		    End If
 		  End If
 		  
 		  Var Headers As New Dictionary

@@ -1815,6 +1815,8 @@ Begin Window UserWelcomeWindow
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   20
          Index           =   -2147483648
@@ -1826,6 +1828,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   7
@@ -2844,6 +2847,8 @@ End
 		      
 		      If Self.OTPRememberCheck.Value Then
 		        Preferences.OTPKey = Dict.Value("totp_secret")
+		      Else
+		        Preferences.OTPKey = ""
 		      End If
 		      
 		      App.IdentityManager.RefreshUserDetails(Self.LoginPasswordField.Text)
@@ -2872,6 +2877,7 @@ End
 		      End If
 		      Return
 		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Looking for reason code in 403 response")
 		    End Try
 		    
 		    Self.ShowAlert("Your email and password was not accepted.", "If you need to reset your password, use the ""Create or Recover Account"" link below.")

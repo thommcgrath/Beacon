@@ -42,12 +42,6 @@ Protected Class IdentityManager
 		  
 		  Var ClearLogin As Boolean = True
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Add 2FA Support"
-		  #else
-		    #Pragma Error "Add 2FA Support"
-		  #endif
-		  
 		  If Response.Success Then
 		    Try
 		      Var Dict As Dictionary = Response.JSON
@@ -55,10 +49,8 @@ Protected Class IdentityManager
 		      Preferences.OnlineToken = Token
 		      
 		      Try
-		        If Dict.HasKey("two_factor_key") Then
+		        If Preferences.OTPKey.IsEmpty = False And Dict.HasKey("two_factor_key") And Dict.Value("two_factor_key").IsNull = False Then
 		          Preferences.OTPKey = Dict.Value("two_factor_key").StringValue
-		        Else
-		          Preferences.OTPKey = ""
 		        End If
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Reading second factor key")
@@ -76,6 +68,7 @@ Protected Class IdentityManager
 		  If ClearLogin Then
 		    Self.CurrentIdentity(False) = Nil
 		    Preferences.OnlineToken = ""
+		    Preferences.OTPKey = ""
 		    RaiseEvent NeedsLogin
 		  End If
 		End Sub
