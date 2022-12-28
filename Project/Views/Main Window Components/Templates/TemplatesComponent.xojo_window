@@ -299,6 +299,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub OpenModifiedTemplateAfterSave(Sender As Beacon.SaveTemplateThread)
+		  Var Templates() As Beacon.Template = Sender.Templates
+		  For Each Template As Beacon.Template In Templates
+		    Self.OpenTemplate(Template, True)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub OpenTemplate(Template As Beacon.Template, DefaultModified As Boolean = False)
 		  If Template Is Nil Then
 		    Return
@@ -332,8 +341,13 @@ End
 		  End If
 		  
 		  If Import Then
-		    Beacon.CommonData.SharedInstance.SaveTemplate(Template)
-		    Self.OpenTemplate(Template, DefaultModified)
+		    Var SaveThread As New Beacon.SaveTemplateThread(Template)
+		    If DefaultModified Then
+		      AddHandler SaveThread.SaveComplete, AddressOf OpenModifiedTemplateAfterSave
+		    Else
+		      AddHandler SaveThread.SaveComplete, AddressOf OpenTemplateAfterSave
+		    End If
+		    SaveThread.Start
 		    Return
 		  End If
 		  
@@ -354,6 +368,15 @@ End
 		  If DefaultModified Then
 		    View.Changed = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub OpenTemplateAfterSave(Sender As Beacon.SaveTemplateThread)
+		  Var Templates() As Beacon.Template = Sender.Templates
+		  For Each Template As Beacon.Template In Templates
+		    Self.OpenTemplate(Template, False)
+		  Next
 		End Sub
 	#tag EndMethod
 

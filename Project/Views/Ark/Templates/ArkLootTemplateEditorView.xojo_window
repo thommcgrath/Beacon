@@ -668,6 +668,8 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          AllowMultipleSelection=   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   22
          Index           =   -2147483648
@@ -680,6 +682,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   3
@@ -769,59 +772,57 @@ End
 	#tag Event
 		Sub ShouldSave(CloseWhenFinished As Boolean)
 		  Self.mCloseAfterSave = CloseWhenFinished
-		  If Self.Save() And Self.mCloseAfterSave Then
-		    Self.RequestClose()
-		  End If
+		  Self.Save()
 		End Sub
 	#tag EndEvent
 
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Var Dialog As New SaveFileDialog
-			Dialog.Filter = BeaconFileTypes.BeaconPreset
-			Dialog.SuggestedFileName = Self.mTemplate.Label + Beacon.FileExtensionTemplate
-			
-			Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-			If (File Is Nil) = False Then
-			Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, File)
-			Writer.Start
-			End If
-			Return True
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Var Dialog As New SaveFileDialog
+		  Dialog.Filter = BeaconFileTypes.BeaconPreset
+		  Dialog.SuggestedFileName = Self.mTemplate.Label + Beacon.FileExtensionTemplate
+		  
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+		  If (File Is Nil) = False Then
+		    Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, File)
+		    Writer.Start
+		  End If
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Call Self.Save()
-			Return True
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Call Self.Save()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Var Dialog As New SaveFileDialog
-			Dialog.Filter = BeaconFileTypes.BeaconPreset
-			Dialog.SuggestedFileName = Self.mTemplate.Label + Beacon.FileExtensionTemplate
-			
-			Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-			If (File Is Nil) = False Then
-			Self.mSaveFile = File
-			Call Self.Save()
-			End If
-			Return True
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Var Dialog As New SaveFileDialog
+		  Dialog.Filter = BeaconFileTypes.BeaconPreset
+		  Dialog.SuggestedFileName = Self.mTemplate.Label + Beacon.FileExtensionTemplate
+		  
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+		  If (File Is Nil) = False Then
+		    Self.mSaveFile = File
+		    Call Self.Save()
+		  End If
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
@@ -997,31 +998,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Save() As Boolean
-		  Const SaveComplete = True
-		  Const SavePending = False
-		  
+		Private Sub Save()
 		  If (Self.LinkedOmniBarItem Is Nil) = False Then
 		    Self.LinkedOmniBarItem.Caption = Self.mTemplate.Label
 		  End If
 		  
-		  If Self.mSaveFile Is Nil Then
-		    Beacon.CommonData.SharedInstance.SaveTemplate(Self.mTemplate)
-		    Self.ViewID = Self.mTemplate.UUID
-		    
-		    Self.Changed = False
-		    NotificationKit.Post("Template Saved", Self.mTemplate)
-		    
-		    Return SaveComplete
-		  End If
-		  
 		  Self.Progress = BeaconSubview.ProgressIndeterminate
-		  Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, Self.mSaveFile)
-		  AddHandler Writer.Finished, AddressOf Writer_Finished
-		  Writer.Start
 		  
-		  Return SavePending
-		End Function
+		  If Self.mSaveFile Is Nil Then
+		    Var SaveThread As New Beacon.SaveTemplateThread(Self.mTemplate)
+		    AddHandler SaveThread.SaveComplete, AddressOf SaveThread_SaveComplete
+		    SaveThread.Start
+		  Else
+		    Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, Self.mSaveFile)
+		    AddHandler Writer.Finished, AddressOf Writer_Finished
+		    Writer.Start
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveThread_SaveComplete(Sender As Thread)
+		  Self.ViewID = Self.mTemplate.UUID
+		  
+		  Self.Changed = False
+		  NotificationKit.Post("Template Saved", Self.mTemplate)
+		  
+		  Self.Progress = BeaconSubview.ProgressNone
+		  
+		  If Self.mCloseAfterSave Then
+		    Self.RequestClose()
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

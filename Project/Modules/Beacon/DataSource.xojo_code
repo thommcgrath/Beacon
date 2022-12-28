@@ -417,18 +417,20 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Var Th As New Thread
+		  Var Th As New Beacon.Thread
+		  Th.Retain
 		  AddHandler Th.Run, AddressOf ImportCloudFiles_Threaded
 		  Th.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ImportCloudFiles_Threaded(Sender As Thread)
+		Private Sub ImportCloudFiles_Threaded(Sender As Beacon.Thread)
 		  Var Database As Beacon.DataSource = Self.WritableInstance()
 		  If (Database Is Nil) = False Then
 		    Database.ImportCloudFiles()
 		  End If
+		  Sender.Release
 		End Sub
 	#tag EndMethod
 
