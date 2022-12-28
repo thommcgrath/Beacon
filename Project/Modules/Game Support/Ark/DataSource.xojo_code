@@ -735,11 +735,23 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub ObtainLock()
+		  mLock.Enter
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackUUID)
 		  If Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Then
 		    Self.ReplaceUserBlueprints()
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ReleaseLock()
+		  mLock.Leave
 		End Sub
 	#tag EndEvent
 
@@ -972,9 +984,14 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Sub Constructor(AllowWriting As Boolean)
 		  Self.ResetCaches()
-		  Super.Constructor()
+		  
+		  If mLock Is Nil Then
+		    mLock = New CriticalSection
+		  End If
+		  
+		  Super.Constructor(AllowWriting)
 		End Sub
 	#tag EndMethod
 
@@ -1003,12 +1020,6 @@ Inherits Beacon.DataSource
 		  
 		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
 		  Return Results.ColumnAt(0).IntegerValue
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateInstance() As Ark.DataSource
-		  Return SharedInstance(Ark.DataSource.FlagCreateIfNeeded Or Ark.DataSource.FlagUseWeakRef)
 		End Function
 	#tag EndMethod
 
@@ -2940,6 +2951,13 @@ Inherits Beacon.DataSource
 		  Var CurrentThread As Thread = Thread.Current
 		  Var ThreadID As String = If(CurrentThread Is Nil, MainThreadID, CurrentThread.ThreadID.ToHex)
 		  
+		  // Never allow writing on the main thread
+		  If ThreadID = MainThreadID And ((Flags And FlagAllowWriting) = FlagAllowWriting) Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Cannot use writable database on main thread."
+		    Raise Err
+		  End If
+		  
 		  If mInstances Is Nil Then
 		    mInstances = New Dictionary
 		  End If
@@ -2966,7 +2984,7 @@ Inherits Beacon.DataSource
 		  
 		  If Instance Is Nil Then
 		    If (Flags And FlagCreateIfNeeded) = FlagCreateIfNeeded Then
-		      Instance = New Ark.DataSource
+		      Instance = New Ark.DataSource((Flags And FlagAllowWriting) = FlagAllowWriting)
 		      If ThreadID = MainThreadID Then
 		        NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
 		      End If
@@ -2983,6 +3001,12 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Return Instance
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function WritableInstance() As Beacon.DataSource
+		  Return Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
 		End Function
 	#tag EndMethod
 
@@ -3013,6 +3037,10 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private Shared mInstances As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

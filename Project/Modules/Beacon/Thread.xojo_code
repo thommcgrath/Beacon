@@ -21,6 +21,24 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Release()
+		  If (Self.mInstances Is Nil) = False And Self.mInstances.HasKey(Self) Then
+		    Self.mInstances.Remove(Self)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Retain()
+		  If Self.mInstances Is Nil Then
+		    Self.mInstances = New Dictionary
+		  End If
+		  
+		  Self.mInstances.Value(Self) = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Stop()
 		  Self.mShouldStop = True
 		End Sub
@@ -41,6 +59,10 @@ Inherits Global.Thread
 		Event Run()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private Shared mInstances As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mShouldStop As Boolean

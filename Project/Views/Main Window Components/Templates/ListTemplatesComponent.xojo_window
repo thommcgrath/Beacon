@@ -142,13 +142,12 @@ End
 		    
 		    Var Template As Beacon.Template = Beacon.Template.FromSaveData(File)
 		    If (Template Is Nil) = False Then
-		      Beacon.CommonData.SharedInstance.SaveTemplate(Template)
 		      AddedTemplates.Add(Template)
 		    End If
 		  Loop Until Obj.NextItem = False
 		  
 		  If AddedTemplates.Count > 0 Then
-		    Self.UpdateList(AddedTemplates)
+		    Self.SaveTemplates(AddedTemplates)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -208,15 +207,7 @@ End
 		    Return
 		  End If
 		  
-		  For Each Clone As Beacon.Template In Clones
-		    Beacon.CommonData.SharedInstance.SaveTemplate(Clone)
-		  Next
-		  
-		  Self.UpdateList(Clones)
-		  
-		  If Clones.Count = 1 Then
-		    Self.OpenTemplate(Clones(0))
-		  End If
+		  Self.SaveTemplates(Clones)
 		End Sub
 	#tag EndMethod
 
@@ -243,14 +234,31 @@ End
 		    Return
 		  End If
 		  
+		  Var TemplatesToDelete() As Beacon.Template
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(Idx) Then
 		      Var Template As Beacon.Template = Self.List.RowTagAt(Idx)
 		      If Self.CloseTemplate(Template) Then
-		        Beacon.CommonData.SharedInstance.DeleteTemplate(Template)
+		        TemplatesToDelete.Add(Template)
 		      End If
 		    End If
 		  Next    
+		  Self.DeleteTemplates(TemplatesToDelete)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DeleteTemplates(Templates() As Beacon.Template)
+		  Var Th As New Beacon.DeleteTemplateThread(Templates)
+		  AddHandler Th.DeleteComplete, AddressOf DeleteThread_Completed
+		  Th.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DeleteThread_Completed(Sender As Beacon.DeleteTemplateThread)
+		  #Pragma Unused Sender
+		  
 		  Self.UpdateList()
 		End Sub
 	#tag EndMethod
@@ -307,6 +315,26 @@ End
 		  If Notification.Name = "Template Saved" Then
 		    Var Template As Beacon.Template = Notification.UserData
 		    Self.UpdateList(Template)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveTemplates(Templates() As Beacon.Template)
+		  Var Th As New Beacon.SaveTemplateThread(Templates)
+		  AddHandler Th.SaveComplete, AddressOf SaveThread_Completed
+		  Th.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveThread_Completed(Sender As Beacon.SaveTemplateThread)
+		  Var Clones() As Beacon.Template = Sender.Templates
+		  
+		  Self.UpdateList(Clones)
+		  
+		  If Clones.Count = 1 Then
+		    Self.OpenTemplate(Clones(0))
 		  End If
 		End Sub
 	#tag EndMethod

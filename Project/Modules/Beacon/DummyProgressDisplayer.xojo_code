@@ -21,7 +21,7 @@ Implements Beacon.ProgressDisplayer
 		Sub Detail(Assigns Value As String)
 		  // Part of the Beacon.ProgressDisplayer interface.
 		  
-		  
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 
@@ -37,7 +37,7 @@ Implements Beacon.ProgressDisplayer
 		Sub Message(Assigns Value As String)
 		  // Part of the Beacon.ProgressDisplayer interface.
 		  
-		  
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 
@@ -53,7 +53,7 @@ Implements Beacon.ProgressDisplayer
 		Sub Progress(Assigns Value As NullableDouble)
 		  // Part of the Beacon.ProgressDisplayer interface.
 		  
-		  
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 

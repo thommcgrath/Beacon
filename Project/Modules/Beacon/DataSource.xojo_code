@@ -9,15 +9,21 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h1
 		Protected Sub BeginTransaction()
+		  If Not Self.mAllowWriting Then
+		    Var Err As New DatabaseException
+		    Err.Message = "Cannot begin transaction in read-only database."
+		    Raise Err
+		  End If
+		  
 		  Self.ObtainLock()
 		  
 		  If Self.mTransactions.LastIndex = -1 Then
 		    Self.mTransactions.AddAt(0, "")
-		    Self.SQLExecute("BEGIN TRANSACTION;")
+		    Self.mDatabase.ExecuteSQL("BEGIN TRANSACTION;")
 		  Else
 		    Var Savepoint As String = "Savepoint_" + EncodeHex(Crypto.GenerateRandomBytes(4))
 		    Self.mTransactions.AddAt(0, Savepoint)
-		    Self.SQLExecute("SAVEPOINT " + Savepoint + ";")
+		    Self.mDatabase.ExecuteSQL("SAVEPOINT " + Savepoint + ";")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -59,6 +65,12 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h1
 		Protected Sub CommitTransaction()
+		  If Not Self.mAllowWriting Then
+		    Var Err As New DatabaseException
+		    Err.Message = "Cannot commit transaction in read-only database."
+		    Raise Err
+		  End If
+		  
 		  If Self.mTransactions.LastIndex = -1 Then
 		    Return
 		  End If
@@ -67,9 +79,9 @@ Implements NotificationKit.Receiver
 		  Self.mTransactions.RemoveAt(0)
 		  
 		  If Savepoint = "" Then
-		    Self.SQLExecute("COMMIT TRANSACTION;")
+		    Self.mDatabase.ExecuteSQL("COMMIT TRANSACTION;")
 		  Else
-		    Self.SQLExecute("RELEASE SAVEPOINT " + Savepoint + ";")
+		    Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
 		  End If
 		  
 		  Self.ReleaseLock()
@@ -98,10 +110,10 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Sub Constructor(AllowWriting As Boolean)
 		  Const YieldInterval = 100
 		  
-		  Self.mLock = New CriticalSection
+		  Self.mAllowWriting = AllowWriting
 		  
 		  Var SchemaVersion As Integer = RaiseEvent GetSchemaVersion
 		  Var DatafileName As String = Self.Identifier + ".sqlite"
@@ -151,7 +163,10 @@ Implements NotificationKit.Receiver
 		  End Try
 		  
 		  If BuildSchema Then
-		    Self.SQLExecute("PRAGMA journal_mode = WAL;")
+		    Var WasWritable As Boolean = Self.mAllowWriting
+		    Self.mAllowWriting = True
+		    
+		    Self.mDatabase.ExecuteSQL("PRAGMA journal_mode = WAL;")
 		    
 		    Self.BeginTransaction()
 		    Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
@@ -159,10 +174,12 @@ Implements NotificationKit.Receiver
 		    Self.mDatabase.UserVersion = SchemaVersion
 		    Self.BuildIndexes
 		    Self.CommitTransaction()
+		    
+		    Self.mAllowWriting = WasWritable
 		  End If
 		  
-		  Self.SQLExecute("PRAGMA cache_size = -100000;")
-		  Self.SQLExecute("PRAGMA analysis_limit = 0;")
+		  Self.mDatabase.ExecuteSQL("PRAGMA cache_size = -100000;")
+		  Self.mDatabase.ExecuteSQL("PRAGMA analysis_limit = 0;")
 		  Self.ForeignKeys = True
 		  
 		  RaiseEvent Open()
@@ -300,8 +317,12 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function HasContent() As Boolean
-		  Var Rows As RowSet = Self.SQLSelect("SELECT EXISTS(SELECT 1 FROM variables) AS populated;")
-		  Return Rows.Column("populated").BooleanValue
+		  Try
+		    Var Rows As RowSet = Self.SQLSelect("SELECT EXISTS(SELECT 1 FROM variables) AS populated;")
+		    Return Rows.Column("populated").BooleanValue
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -391,7 +412,25 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ImportCloudFiles()
-		  RaiseEvent ImportCloudFiles()
+		  If Self.mAllowWriting Then
+		    RaiseEvent ImportCloudFiles()
+		    Return
+		  End If
+		  
+		  Var Th As New Beacon.Thread
+		  Th.Retain
+		  AddHandler Th.Run, AddressOf ImportCloudFiles_Threaded
+		  Th.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportCloudFiles_Threaded(Sender As Beacon.Thread)
+		  Var Database As Beacon.DataSource = Self.WritableInstance()
+		  If (Database Is Nil) = False Then
+		    Database.ImportCloudFiles()
+		  End If
+		  Sender.Release
 		End Sub
 	#tag EndMethod
 
@@ -518,14 +557,18 @@ Implements NotificationKit.Receiver
 		Private Sub ObtainLock()
 		  // This method exists to provide easy insertion points for debug data
 		  
-		  Self.mLock.Enter()
+		  If Self.mAllowWriting Then
+		    RaiseEvent ObtainLock()
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Optimize()
-		  Self.SQLExecute("ANALYZE;")
-		  Self.SQLExecute("VACUUM;")
+		  If Self.mAllowWriting Then
+		    Self.SQLExecute("ANALYZE;")
+		    Self.SQLExecute("VACUUM;")
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -539,12 +582,20 @@ Implements NotificationKit.Receiver
 		Private Sub ReleaseLock()
 		  // This method exists to provide easy insertion points for debug data
 		  
-		  Self.mLock.Leave
+		  If Self.mAllowWriting Then
+		    RaiseEvent ReleaseLock()
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub RollbackTransaction()
+		  If Not Self.mAllowWriting Then
+		    Var Err As New DatabaseException
+		    Err.Message = "Cannot rollback transaction in read-only database."
+		    Raise Err
+		  End If
+		  
 		  If Self.mTransactions.LastIndex = -1 Then
 		    Return
 		  End If
@@ -553,10 +604,10 @@ Implements NotificationKit.Receiver
 		  Self.mTransactions.RemoveAt(0)
 		  
 		  If Savepoint = "" Then
-		    Self.SQLExecute("ROLLBACK TRANSACTION;")
+		    Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION;")
 		  Else
-		    Self.SQLExecute("ROLLBACK TRANSACTION TO SAVEPOINT " + Savepoint + ";")
-		    Self.SQLExecute("RELEASE SAVEPOINT " + Savepoint + ";")
+		    Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION TO SAVEPOINT " + Savepoint + ";")
+		    Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
 		  End If
 		  
 		  Self.ReleaseLock()
@@ -577,12 +628,11 @@ Implements NotificationKit.Receiver
 		  Try
 		    Self.mDatabase.ExecuteSQL(SQL, PreparedValues)
 		    Self.ReleaseLock()
-		  Catch Err As DatabaseException
+		  Catch Err As RuntimeException
 		    Self.ReleaseLock()
-		    Var Cloned As New DatabaseException
-		    Cloned.ErrorNumber = Err.ErrorNumber
-		    Cloned.Message = "#" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Err.Message + EndOfLine + SQL
-		    Raise Cloned
+		    
+		    Err.Message = Err.Message + EndOfLine + SQL
+		    Raise Err
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -596,12 +646,11 @@ Implements NotificationKit.Receiver
 		    Var Results As RowSet = Self.mDatabase.SelectSQL(SQL, PreparedValues)
 		    Self.ReleaseLock()
 		    Return Results
-		  Catch Err As DatabaseException
+		  Catch Err As RuntimeException
 		    Self.ReleaseLock()
-		    Var Cloned As New DatabaseException
-		    Cloned.ErrorNumber = Err.ErrorNumber
-		    Cloned.Message = "#" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Err.Message + EndOfLine + SQL
-		    Raise Cloned
+		    
+		    Err.Message = Err.Message + EndOfLine + SQL
+		    Raise Err
 		  End Try
 		End Function
 	#tag EndMethod
@@ -614,7 +663,7 @@ Implements NotificationKit.Receiver
 		  If InitialDuration <= ThresholdMicroseconds Then
 		    Return PerformanceResults.NoRepairsNecessary
 		  End If
-		  If AttemptRepair = False Then
+		  If AttemptRepair = False Or Self.mAllowWriting = False Then
 		    Return PerformanceResults.RepairsNecessary
 		  End If
 		  
@@ -670,6 +719,12 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WritableInstance() As Beacon.DataSource
+		  
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event BuildSchema()
@@ -716,7 +771,15 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ObtainLock()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ReleaseLock()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -726,6 +789,10 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h0
 		DebugIdentifier As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAllowWriting As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -749,13 +816,15 @@ Implements NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLock As CriticalSection
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mTransactions() As String
 	#tag EndProperty
 
+
+	#tag Constant, Name = CommonFlagsWritable, Type = Double, Dynamic = False, Default = \"14", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagAllowWriting, Type = Double, Dynamic = False, Default = \"8", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = FlagCreateIfNeeded, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant

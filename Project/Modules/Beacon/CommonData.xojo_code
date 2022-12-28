@@ -307,24 +307,29 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  Self.UpdateNews()
+		Sub ObtainLock()
+		  mLock.Enter
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ReleaseLock()
+		  mLock.Leave
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Sub Constructor(AllowWriting As Boolean)
 		  Self.mTemplateCache = New Dictionary
 		  Self.mSelectorCache = New Dictionary
-		  Super.Constructor
+		  
+		  If mLock Is Nil Then
+		    mLock = New CriticalSection
+		  End If
+		  
+		  Super.Constructor(AllowWriting)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateInstance() As Beacon.CommonData
-		  Return SharedInstance(Beacon.DataSource.FlagCreateIfNeeded Or Beacon.DataSource.FlagUseWeakRef)
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -731,6 +736,13 @@ Inherits Beacon.DataSource
 		  Var CurrentThread As Global.Thread = Thread.Current
 		  Var ThreadID As String = If(CurrentThread Is Nil, MainThreadID, CurrentThread.ThreadID.ToHex)
 		  
+		  // Never allow writing on the main thread
+		  If ThreadID = MainThreadID And ((Flags And FlagAllowWriting) = FlagAllowWriting) Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Cannot use writable database on main thread."
+		    Raise Err
+		  End If
+		  
 		  If mInstances Is Nil Then
 		    mInstances = New Dictionary
 		  End If
@@ -757,7 +769,7 @@ Inherits Beacon.DataSource
 		  
 		  If Instance Is Nil Then
 		    If (Flags And FlagCreateIfNeeded) = FlagCreateIfNeeded Then
-		      Instance = New Beacon.CommonData
+		      Instance = New Beacon.CommonData((Flags And FlagAllowWriting) = FlagAllowWriting)
 		      If ThreadID = MainThreadID Then
 		        NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
 		      End If
@@ -834,10 +846,11 @@ Inherits Beacon.DataSource
 		    Return
 		  End Try
 		  
-		  Self.BeginTransaction()
+		  Var Instance As Beacon.CommonData = Beacon.CommonData.SharedInstance(CommonFlagsWritable)
+		  Instance.BeginTransaction()
 		  
 		  Var Changed As Boolean
-		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid FROM news")
+		  Var Rows As RowSet = Instance.SQLSelect("SELECT uuid FROM news")
 		  Var ItemsToRemove() As String
 		  While Rows.AfterLastRow = False
 		    ItemsToRemove.Add(Rows.Column("uuid").StringValue)
@@ -864,7 +877,7 @@ Inherits Beacon.DataSource
 		      If Idx > -1 Then
 		        ItemsToRemove.RemoveAt(Idx)
 		      Else
-		        Self.SQLExecute("INSERT INTO news (uuid, title, detail, url, min_version, max_version, moment, min_os_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", UUID, Title, Detail, ItemURL, MinVersion, MaxVersion, Moment, MinOSVersion)
+		        Instance.SQLExecute("INSERT INTO news (uuid, title, detail, url, min_version, max_version, moment, min_os_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", UUID, Title, Detail, ItemURL, MinVersion, MaxVersion, Moment, MinOSVersion)
 		        Changed = True
 		      End If
 		    Catch Err As RuntimeException
@@ -874,10 +887,10 @@ Inherits Beacon.DataSource
 		  Changed = Changed Or ItemsToRemove.Count > 0
 		  
 		  If ItemsToRemove.Count > 0 Then
-		    Self.SQLExecute("DELETE FROM news WHERE uuid IN ('" + ItemsToRemove.Join("','") + "');")
+		    Instance.SQLExecute("DELETE FROM news WHERE uuid IN ('" + ItemsToRemove.Join("','") + "');")
 		  End If
 		  
-		  Self.CommitTransaction()
+		  Instance.CommitTransaction()
 		  
 		  If Changed Then
 		    NotificationKit.Post(Self.Notification_NewsUpdated, Nil)
@@ -887,9 +900,19 @@ Inherits Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WritableInstance() As Beacon.DataSource
+		  Return Beacon.CommonData.SharedInstance(Beacon.CommonData.CommonFlagsWritable)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private Shared mInstances As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

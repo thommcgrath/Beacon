@@ -642,6 +642,7 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin Thread RunThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -655,6 +656,7 @@ Begin BeaconDialog ModDiscoveryDialog
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
+      Enabled         =   True
       ExecuteMode     =   2
       ExitCode        =   0
       Index           =   -2147483648
@@ -677,6 +679,7 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin TCPSocket RunSocket
       Address         =   "127.0.0.1"
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -745,7 +748,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.FlagCreateIfNeeded Or Ark.DataSource.FlagUseWeakRef)
+		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
 		  
 		  Var TitleFinder As New Regex
 		  TitleFinder.SearchPattern = "<div class=""workshopItemTitle"">(.+)</div>"
@@ -1100,6 +1103,11 @@ End
 		  Var ModsFolder As FolderItem
 		  Try
 		    ModsFolder = ServerFolder.Child("ShooterGame").Child("Content").Child("Mods")
+		    If ModsFolder.CheckIsFolder(True) = False Then
+		      App.Log("Mods folder could not be created.")
+		      Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Mods folder could not be created."))
+		      Return
+		    End If
 		    App.Log("Mods Root: " + ModsFolder.NativePath)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Getting Ark mods folder")
@@ -1107,20 +1115,27 @@ End
 		    Return
 		  End Try
 		  
-		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Installing mods…"))
 		  Var SteamCMD As FolderItem 
 		  Try
 		    SteamCMD = Ark.DedicatedServer.SteamCMD(ServerFolder)
+		    If SteamCMD.Exists = False Then
+		      App.Log("SteamCMD is not installed.")
+		      Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "SteamCMD is not installed."))
+		      Return
+		    End If
+		    App.Log("SteamCMD: " + SteamCMD.NativePath)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Getting steamcmd path")
 		    Me.AddUserInterfaceUpdate(New Dictionary("error" : true, "message" : "Could not find path to SteamCMD."))
 		    Return
 		  End Try
-		  Var SteamCMDPath As String = SteamCMD.ShellPath
+		  Var SteamCMDPath As String = """" + SteamCMD.NativePath + """"
 		  Var DownloadCommands() As String
 		  For Each WorkshopID As String In Self.mMods
 		    DownloadCommands.Add("+workshop_download_item 346110 " + WorkshopID)
 		  Next
+		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Installing mods…"))
 		  
 		  Var SteamShell As New Shell
 		  SteamShell.TimeOut = -1
@@ -1135,6 +1150,8 @@ End
 		  Wend
 		  
 		  Var SteamResult As String = SteamShell.Result
+		  Var SteamExitCode As Integer = SteamShell.ExitCode
+		  App.Log("Steam Exit Code: " + SteamExitCode.ToString(Locale.Raw, "0"))
 		  App.Log(SteamResult)
 		  
 		  Var WorkshopFolder As FolderItem
@@ -1161,7 +1178,7 @@ End
 		  Var CommandLine As String = """TheIsland?listen?SessionName=Beacon?MaxPlayers=10?Port=" + Port.ToString(Locale.Raw, "0") + "?QueryPort=" + QueryPort.ToString(Locale.Raw, "0") + """ -server -servergamelog -nobattleye"
 		  
 		  #if TargetWindows
-		    Self.RunShell.Execute(Executable.ShellPath + " " + CommandLine)
+		    Self.RunShell.Execute("""" + Executable.NativePath + """ " + CommandLine)
 		  #else
 		    #Pragma Unused Executable
 		  #endif

@@ -26,6 +26,7 @@ Protected Module Tests
 	#tag Method, Flags = &h1
 		Protected Sub RunTests()
 		  #if DebugBuild
+		    App.Log("Running tests")
 		    TestJSON
 		    TestQualities()
 		    TestMemoryBlockExtensions()
@@ -42,6 +43,7 @@ Protected Module Tests
 		    TestFilenames()
 		    TestIntervalParsing()
 		    TestIniValidation()
+		    App.Log("Tests complete")
 		  #endif
 		End Sub
 	#tag EndMethod
