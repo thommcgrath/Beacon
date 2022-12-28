@@ -158,8 +158,23 @@ End
 		    Clones.Add(New Beacon.TemplateSelector(New v4UUID, Label, Source.GameID, Source.Language, Source.Code))
 		  Next
 		  
-		  Beacon.CommonData.SharedInstance.SaveTemplateSelector(Clones)
-		  Self.UpdateList(Clones)
+		  Self.SaveSelectors(Clones)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DeleteSelectors(Selectors() As Beacon.TemplateSelector)
+		  Var Th As New Beacon.DeleteTemplateSelectorThread(Selectors)
+		  AddHandler Th.DeleteComplete, AddressOf DeleteThread_Completed
+		  Th.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DeleteThread_Completed(Sender As Beacon.DeleteTemplateSelectorThread)
+		  #Pragma Unused Sender
+		  
+		  Self.UpdateList()
 		End Sub
 	#tag EndMethod
 
@@ -170,8 +185,22 @@ End
 		    Return
 		  End If
 		  
-		  Beacon.CommonData.SharedInstance.SaveTemplateSelector(CreatedSelector)
-		  Self.UpdateList(CreatedSelector)
+		  Var Selectors() As Beacon.TemplateSelector = Array(CreatedSelector)
+		  Self.SaveSelectors(Selectors)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveSelectors(Selectors() As Beacon.TemplateSelector)
+		  Var Th As New Beacon.SaveTemplateSelectorThread(Selectors)
+		  AddHandler Th.SaveComplete, AddressOf SaveThread_Completed
+		  Th.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveThread_Completed(Sender As Beacon.SaveTemplateSelectorThread)
+		  Self.UpdateList(Sender.Selectors)
 		End Sub
 	#tag EndMethod
 
@@ -289,8 +318,7 @@ End
 		    Return
 		  End If
 		  
-		  Beacon.CommonData.SharedInstance.DeleteTemplateSelector(Modifiers)
-		  Self.UpdateList()
+		  Self.DeleteSelectors(Modifiers)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -347,8 +375,7 @@ End
 		    End Try
 		  Next
 		  
-		  Beacon.CommonData.SharedInstance.SaveTemplateSelector(Added)
-		  Self.UpdateList(Added)
+		  Self.SaveSelectors(Added)
 		End Sub
 	#tag EndEvent
 	#tag Event
