@@ -1019,6 +1019,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SaveThread_SaveComplete(Sender As Thread)
+		  #Pragma Unused Sender
+		  
 		  Self.ViewID = Self.mTemplate.UUID
 		  
 		  Self.Changed = False

@@ -192,6 +192,9 @@ Protected Module DedicatedServer
 		  Var SizePacked As Int64 = InStream.ReadInt64
 		  Var SizeUnpacked As Int64 = InStream.ReadInt64
 		  
+		  #Pragma Unused SizeUnpackedChunk
+		  #Pragma Unused SizePacked
+		  
 		  If SigVersion <> 2653586369 Then
 		    Raise New UnsupportedOperationException("Signature version mismatch.")
 		  End If
@@ -280,6 +283,8 @@ Protected Module DedicatedServer
 		    PlatformFolder = ModSourceRoot.Child("WindowsNoEditor")
 		  #elseif TargetLinux
 		    PlatformFolder = ModSourceRoot.Child("LinuxNoEditor")
+		  #else
+		    #Pragma Unused ModSourceRoot
 		  #endif
 		  
 		  If PlatformFolder Is Nil Or PlatformFolder.Exists = False Then

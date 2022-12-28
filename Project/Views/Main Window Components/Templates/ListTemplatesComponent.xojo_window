@@ -257,6 +257,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub DeleteThread_Completed(Sender As Beacon.DeleteTemplateThread)
+		  #Pragma Unused Sender
+		  
 		  Self.UpdateList()
 		End Sub
 	#tag EndMethod
