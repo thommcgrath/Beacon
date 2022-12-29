@@ -12,6 +12,9 @@ abstract class Core {
 	const AUTH_STYLE_EMAIL_WITH_PASSWORD = 'email+password';
 	const AUTH_STYLE_SESSION = 'session';
 	
+	const AUTH_OPTIONAL = 1;
+	const AUTH_PERMISSIVE = 2;
+	
 	public static function APIVersion() {
 		return 'v0';
 	}
@@ -152,7 +155,16 @@ abstract class Core {
 		return false;
 	}
 	
-	public static function Authorize(bool $optional = false) {
+	public static function Authorize(bool|int $flags = 0) {
+		if ($flags === true) {
+			$flags = self::AUTH_OPTIONAL;
+		} else if ($flags === false) {
+			$flags = 0;
+		}	
+		
+		$optional = ($flags & self::AUTH_OPTIONAL) === self::AUTH_OPTIONAL;
+		$permissive = ($flags & self::AUTH_PERMISSIVE) === self::AUTH_PERMISSIVE;
+		
 		$authorized = false;
 		$content = '';
 		self::$user_id = \BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
@@ -171,41 +183,45 @@ abstract class Core {
 				$authorized = self::AuthorizeWithSessionID($auth_value);
 				break;
 			case 'basic':
-				$decoded = base64_decode($auth_value);
-				list($username, $password) = explode(':', $decoded, 2);
-				
-				if (\BeaconCommon::IsUUID($username)) {
-					// public key authorization
-					$user = \BeaconUser::GetByUserID($username);
+				if ($permissive) {
+					$decoded = base64_decode($auth_value);
+					list($username, $password) = explode(':', $decoded, 2);
 					
-					if (is_null($user) === false) {
-						$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-						$content = self::Method() . chr(10) . $url;
-						if (self::Method() !== 'GET') {
-							$content .= chr(10) . self::Body();
-						}
+					if (\BeaconCommon::IsUUID($username)) {
+						// public key authorization
+						$user = \BeaconUser::GetByUserID($username);
 						
-						$authorized = self::AuthorizeWithSignature($user, $content, $password);
+						if (is_null($user) === false) {
+							$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+							$content = self::Method() . chr(10) . $url;
+							if (self::Method() !== 'GET') {
+								$content .= chr(10) . self::Body();
+							}
+							
+							$authorized = self::AuthorizeWithSignature($user, $content, $password);
+						}
+					} elseif (\BeaconUser::ValidateEmail($username)) {
+						// password authorization
+						$authorized = self::AuthorizeWithPassword($username, $password);
 					}
-				} elseif (\BeaconUser::ValidateEmail($username)) {
-					// password authorization
-					$authorized = self::AuthorizeWithPassword($username, $password);
 				}
 				
 				break;
 			}
 		} elseif (self::Method() === 'POST' && self::ContentType() === 'application/json') {
-			$payload = self::JSONPayload();
-			if ($payload !== false && (empty($payload['username']) === false && empty($payload['password']) === false)) {
-				$authorized = self::AuthorizeWithPassword($payload['username'], $payload['password']);
-			} elseif ($payload !== false && (empty($payload['user_id']) === false && empty($payload['signature']) === false)) {
-				$database = \BeaconCommon::Database();
-				$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $payload['user_id']);
-				if ($results->RecordCount() == 1) {
-					$challenge = $results->Field('challenge');
-					$user = \BeaconUser::GetByUserID($payload['user_id']);
-					if (is_null($user) === false) {
-						$authorized = self::AuthorizeWithSignature($user, $challenge, $payload['signature']);
+			if ($permissive) {
+				$payload = self::JSONPayload();
+				if ($payload !== false && (empty($payload['username']) === false && empty($payload['password']) === false)) {
+					$authorized = self::AuthorizeWithPassword($payload['username'], $payload['password']);
+				} elseif ($payload !== false && (empty($payload['user_id']) === false && empty($payload['signature']) === false)) {
+					$database = \BeaconCommon::Database();
+					$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $payload['user_id']);
+					if ($results->RecordCount() == 1) {
+						$challenge = $results->Field('challenge');
+						$user = \BeaconUser::GetByUserID($payload['user_id']);
+						if (is_null($user) === false) {
+							$authorized = self::AuthorizeWithSignature($user, $challenge, $payload['signature']);
+						}
 					}
 				}
 			}

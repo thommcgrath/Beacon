@@ -4,7 +4,7 @@
 
 require(dirname(__FILE__) . '/loader.php');
 
-BeaconAPI::Authorize();
+BeaconAPI::Authorize(BeaconAPI::AUTH_PERMISSIVE);
 $user = BeaconAPI::User();
 $user_id = $user->UserID();
 

@@ -348,7 +348,7 @@ class User implements \JsonSerializable {
 		}
 		
 		if (is_null($this->backup_codes)) {
-			$database = BeaconCommon::Database();
+			$database = \BeaconCommon::Database();
 			$rows = $database->Query('SELECT code FROM public.user_backup_codes WHERE user_id = $1;', $this->user_id);
 			$this->backup_codes = [];
 			while (!$rows->EOF()) {
