@@ -191,7 +191,8 @@ abstract class Core {
 						// public key authorization
 						$user = \BeaconUser::GetByUserID($username);
 						
-						if (is_null($user) === false) {
+						// with 2FA enabled, only session tokens and challenges are accepted
+						if (is_null($user) === false && $user->Is2FAProtected() === false) {
 							$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 							$content = self::Method() . chr(10) . $url;
 							if (self::Method() !== 'GET') {
@@ -205,7 +206,26 @@ abstract class Core {
 						$authorized = self::AuthorizeWithPassword($username, $password);
 					}
 				}
-				
+				break;
+			case 'challenge':
+				if ($permissive) {
+					$decoded = base64_decode($auth_value);
+					list($user_id, $signature) = explode(':', $decoded, 2);
+					
+					if (\BeaconCommon::IsUUID($user_id)) {
+						$user = \BeaconUser::GetByUserID($user_id);
+						$database = \BeaconCommon::Database();
+						$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $user_id);
+						while (!$results->EOF()) {
+							$challenge = $results->Field('challenge');
+							if (static::AuthorizeWithSignature($user, $challenge, $signature)) {
+								$authorized = true;
+								break;
+							}
+							$results->MoveNext();
+						}
+					}
+				}
 				break;
 			}
 		} elseif (self::Method() === 'POST' && self::ContentType() === 'application/json') {
