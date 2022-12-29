@@ -12,12 +12,7 @@ Protected Class Socket
 		  
 		  Self.ActiveRequest = Request
 		  
-		  #if TargetWindows
-		    // The socket does not reset itself correctly on Windows, so create a new one
-		    Self.Constructor()
-		  #else
-		    Self.Socket.ClearRequestHeaders()
-		  #endif
+		  Self.Constructor()
 		  
 		  Var URL As String = Request.URL
 		  Var Headers() As String = Request.RequestHeaders
@@ -32,10 +27,33 @@ Protected Class Socket
 		    If Query <> "" Then
 		      URL = URL + "?" + Query
 		    End If
+		    #if DebugBuild
+		      App.Log("GET " + URL)
+		    #endif
 		    Self.Socket.Send("GET", URL)
 		  Else
 		    Self.Socket.SetRequestContent(Request.Payload, Request.ContentType)
+		    #if DebugBuild
+		      App.Log(Request.Method + " " + URL)
+		    #endif
 		    Self.Socket.Send(Request.Method, URL)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_RequestChallenge(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Response.HTTPStatus = 200 And (Response.JSON Is Nil) = False And Response.JSON IsA Dictionary Then
+		    Var Dict As Dictionary = Response.JSON
+		    Var Challenge As String = Dict.Lookup("challenge", "")
+		    
+		    Var TokenRequest As BeaconAPI.Request = BeaconAPI.Request.CreateSessionRequest(AddressOf APICallback_RequestToken)
+		    TokenRequest.Sign(App.IdentityManager.CurrentIdentity, Challenge)
+		    TokenRequest.HasBeenRetried = True // Lie to prevent it from being tried again
+		    
+		    Self.Queue.AddAt(0, TokenRequest)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -99,6 +117,7 @@ Protected Class Socket
 		    Var ShouldRetry As Boolean = Self.ActiveRequest.HasBeenRetried = False And (App.IdentityManager.CurrentIdentity Is Nil) = False
 		    
 		    If ShouldRetry Then
+		      #Pragma BreakOnExceptions False
 		      Try
 		        Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
 		        Var ReasonCode As String = Dictionary(Dict.Value("details").ObjectValue).Value("code").StringValue
@@ -108,19 +127,19 @@ Protected Class Socket
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Looking for reason code in 403 response")
 		      End Try
+		      #Pragma BreakOnExceptions Default
 		    End If
 		    
 		    If ShouldRetry Then
 		      // Going to try to get a valid session token
-		      Var NextRequest As BeaconAPI.Request = BeaconAPI.Request.CreateSessionRequest(AddressOf APICallback_RequestToken)
-		      NextRequest.Sign(App.IdentityManager.CurrentIdentity)
-		      NextRequest.HasBeenRetried = True // Lie to prevent it from being tried again
+		      Var ChallengeRequest As New BeaconAPI.Request(BeaconAPI.URL("challenge/" + App.IdentityManager.CurrentIdentity.UserId), "GET", AddressOf APICallback_RequestChallenge)
+		      ChallengeRequest.HasBeenRetried = True // Lie to prevent it from being tried again
 		      
-		      Var FollowingRequest As BeaconAPI.Request = Self.ActiveRequest
-		      FollowingRequest.HasBeenRetried = True
+		      Var OriginalRequest As BeaconAPI.Request = Self.ActiveRequest
+		      OriginalRequest.HasBeenRetried = True
 		      
-		      Self.Queue.AddAt(0, NextRequest)
-		      Self.Queue.AddAt(1, FollowingRequest)
+		      Self.Queue.AddAt(0, ChallengeRequest)
+		      Self.Queue.AddAt(1, OriginalRequest)
 		      
 		      Self.ActiveRequest = Nil
 		      Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)

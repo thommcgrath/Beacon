@@ -176,22 +176,10 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Sign(Identity As Beacon.Identity)
-		  Var Content As String = Self.mMethod + Encodings.UTF8.Chr(10) + Self.mURL
-		  If Self.mMethod = "GET" Then
-		    If Self.mPayload <> Nil And Self.mPayload.Size > 0 Then
-		      Content = Content + "?"
-		    End If
-		  Else
-		    Content = Content + Encodings.UTF8.Chr(10)
-		  End If
-		  
-		  Var Payload As MemoryBlock = Content
-		  If Self.mPayload <> Nil Then
-		    Payload = Payload + Self.mPayload
-		  End If
-		  
-		  Self.Authenticate(Identity.UserID, Identity.Sign(Payload))
+		Sub Sign(Identity As Beacon.Identity, Challenge As String)
+		  Var Signature As String = Identity.Sign(Challenge)
+		  Self.RequestHeader("Authorization") = "Challenge " + EncodeBase64(Identity.UserID + ":" + Signature, 0)
+		  Self.RequestHeader("X-Beacon-Token") = ""
 		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Signature
 		End Sub
 	#tag EndMethod
