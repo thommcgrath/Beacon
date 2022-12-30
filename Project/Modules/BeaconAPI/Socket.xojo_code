@@ -71,16 +71,6 @@ Protected Class Socket
 		    
 		    Preferences.OnlineToken = SessionToken
 		    
-		    Try
-		      If Dict.HasKey("totp_secret") And Dict.Value("totp_secret").IsNull = False And Preferences.OTPKey.IsEmpty = False Then
-		        Preferences.OTPKey = Dict.Value("totp_secret").StringValue
-		      Else
-		        Preferences.OTPKey = ""
-		      End If
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reading second factor key")
-		    End Try
-		    
 		    For Idx As Integer = 0 To Self.Queue.LastIndex
 		      If Self.Queue(Idx).AuthType = BeaconAPI.Request.AuthTypes.Token Then
 		        Self.Queue(Idx).Authenticate(SessionToken)
@@ -121,7 +111,7 @@ Protected Class Socket
 		      Try
 		        Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
 		        Var ReasonCode As String = Dictionary(Dict.Value("details").ObjectValue).Value("code").StringValue
-		        If ReasonCode = "2FA_ENABLED" And Preferences.OTPKey.IsEmpty Then
+		        If ReasonCode = "2FA_ENABLED" Then
 		          ShouldRetry = False
 		        End If
 		      Catch Err As RuntimeException

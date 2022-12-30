@@ -2099,12 +2099,25 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Login(OTP As String)
-		  If OTP.IsEmpty = False Then
-		    Var Body As String = Beacon.GenerateJSON(New Dictionary("verification_code" : OTP), False)
-		    Self.LoginSocket.SetRequestContent(Body, "application/json")
+		Private Sub Login()
+		  Self.Login("", Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Login(OTP As String, Trust As NullableBoolean)
+		  Var Body As New Dictionary
+		  Body.Value("device_id") = Beacon.HardwareID
+		  
+		  If (Trust Is Nil) = False Then
+		    Body.Value("trust") = Trust.BooleanValue
 		  End If
 		  
+		  If OTP.IsEmpty = False Then
+		    Body.Value("verification_code") = OTP
+		  End If
+		  
+		  Self.LoginSocket.SetRequestContent(Beacon.GenerateJSON(Body, False), "application/json")
 		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Text.Trim + ":" + Self.LoginPasswordField.Text, 0)
 		  Self.LoginSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session"))
@@ -2413,7 +2426,7 @@ End
 	#tag Event
 		Sub Action()
 		  Self.SetLoginStatus("Logging in…")
-		  Self.Login(Beacon.GenerateOTP())
+		  Self.Login()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2616,7 +2629,7 @@ End
 	#tag Event
 		Sub Action()
 		  Self.SetOTPStatus("Logging in…")
-		  Self.Login(Self.OTPCodeField.Text.Trim)
+		  Self.Login(Self.OTPCodeField.Text.Trim, Self.OTPRememberCheck.Value)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2844,12 +2857,6 @@ End
 		      
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True
-		      
-		      If Self.OTPRememberCheck.Value Then
-		        Preferences.OTPKey = Dict.Value("totp_secret")
-		      Else
-		        Preferences.OTPKey = ""
-		      End If
 		      
 		      App.IdentityManager.RefreshUserDetails(Self.LoginPasswordField.Text)
 		      Self.SetLoginStatus("Downloading keys…")

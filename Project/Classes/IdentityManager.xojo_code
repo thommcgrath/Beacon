@@ -70,14 +70,6 @@ Protected Class IdentityManager
 		      Var Token As String = Dict.Value("session_id")
 		      Preferences.OnlineToken = Token
 		      
-		      Try
-		        If Preferences.OTPKey.IsEmpty = False And Dict.HasKey("two_factor_key") And Dict.Value("two_factor_key").IsNull = False Then
-		          Preferences.OTPKey = Dict.Value("two_factor_key").StringValue
-		        End If
-		      Catch Err As RuntimeException
-		        App.Log(Err, CurrentMethodName, "Reading second factor key")
-		      End Try
-		      
 		      Self.RefreshUserDetails()
 		      ClearLogin = False
 		    Catch Err As RuntimeException
@@ -90,7 +82,6 @@ Protected Class IdentityManager
 		  If ClearLogin Then
 		    Self.CurrentIdentity(False) = Nil
 		    Preferences.OnlineToken = ""
-		    Preferences.OTPKey = ""
 		    RaiseEvent NeedsLogin
 		  End If
 		End Sub
