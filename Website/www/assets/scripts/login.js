@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var totpPage = document.getElementById('page_totp');
 	var totpForm = document.getElementById('login_form_totp');
 	var totpCodeField = document.getElementById('totp_code_field');
+	var totpRememberCheck = document.getElementById('totp_remember_check');
 	var totpActionButton = document.getElementById('totp_action_button');
 	var totpCancelButton = document.getElementById('totp_cancel_button');
 	
@@ -176,17 +177,14 @@ document.addEventListener('DOMContentLoaded', function() {
 				}
 			}
 			
-			var totp_code = totpCodeField.value.trim();
-			if (Boolean(totp_code) === false && Boolean(localStorage) === true) {
-				var totp_secret = localStorage.getItem('totpSecret');
-				if (totp_secret) {
-					var totp = new jsOTP.totp();
-					totp_code = totp.getOtp(totp_secret);
-				}
-			}
 			var session_body = {
-				verification_code: totp_code
+				device_id: device_id
 			};
+			var totp_code = totpCodeField.value.trim();
+			if (Boolean(totp_code) === true) {
+				session_body.verification_code = totp_code;
+				session_body.trust = totpRememberCheck.value;
+			}
 			
 			request.start('POST', 'https://' + apiHost + '/v3/session', 'application/json', JSON.stringify(session_body), function(obj) {
 				if (localStorage && loginRemember) {
@@ -201,14 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
 				url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
 				url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
 				url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
-				
-				if (localStorage) {
-					if (loginRemember && obj.totp_secret) {
-						localStorage.setItem('totpSecret', obj.totp_secret);
-					} else {
-						localStorage.removeItem('totpSecret');
-					}
-				}
 				
 				window.location = url;
 			}, function(http_status, error_body) {

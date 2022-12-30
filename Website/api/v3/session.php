@@ -37,8 +37,21 @@ case 'POST':
 	
 	$obj = BeaconAPI::JSONPayload();
 	$verification_code = null;
-	if (is_null($obj) === false && isset($obj['verification_code'])) {
-		$verification_code = (string) $obj['verification_code'];
+	$device_id = null;
+	$trust = null;
+	if (is_null($obj) === false) {
+		if (isset($obj['verification_code'])) {
+			$verification_code = (string) $obj['verification_code'];
+		}
+		if (isset($obj['trust'])) {
+			$trust = filter_var($obj['trust'], FILTER_VALIDATE_BOOLEAN);
+		}
+		if (isset($obj['device_id'])) {
+			$device_id = (string) $obj['device_id'];
+		}
+	}
+	if (is_null($verification_code) && is_null($device_id) === false) {
+		$verification_code = $device_id;
 	}
 	
 	$session = BeaconSession::Create($user, $verification_code);
@@ -47,9 +60,16 @@ case 'POST':
 			'code' => '2FA_ENABLED'
 		], 403);
 	}
-	$obj = $session->jsonSerialize();
-	$obj['totp_secret'] = $user->Get2FASecret();
-	BeaconAPI::ReplySuccess($obj);
+	
+	if (is_null($device_id) === false) {
+		if ($trust === true) {
+			$user->TrustDevice($device_id);
+		} else if ($trust === false) {
+			$user->UntrustDevice($device_id);
+		}
+	}
+	
+	BeaconAPI::ReplySuccess($session);
 	
 	break;
 case 'DELETE':

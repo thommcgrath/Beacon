@@ -38,7 +38,7 @@ abstract class BeaconCommon {
 						'secure' => true,
 						'httponly' => true,
 						'samesite' => 'Lax'
-					]);	
+					]);
 				}
 			} else {
 				return false;
@@ -850,6 +850,25 @@ abstract class BeaconCommon {
 		}
 		
 		return rtrim($binary, "\0");
+	}
+	
+	public static function DeviceID(): string {
+		if (isset($_COOKIE['beacon_device_id'])) {
+			return $_COOKIE['beacon_device_id'];
+		}
+		
+		$device_id = static::GenerateUUID();
+		
+		setcookie('beacon_device_id', $device_id, [
+			'path' => '/account',
+			'expires' => 2147483647,
+			'secure' => true,
+			'httponly' => true,
+			'samesite' => 'Strict'
+		]);
+		$_COOKIE['beacon_device_id'] = $device_id;
+		
+		return $device_id;
 	}
 }
 

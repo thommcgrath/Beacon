@@ -69,14 +69,18 @@ if ($user->Commit() === false) {
 	exit;
 }
 
-if ($regenerate_key && $terminate_sessions) {
-	$sessions = BeaconSession::GetForUser($user);
-	foreach ($sessions as $session) {
-		if ($session->SessionID() === $active_session->SessionID()) {
-			continue;
+if ($regenerate_key) {
+	$user->UntrustAllDevices();
+	
+	if ($terminate_sessions) {
+		$sessions = BeaconSession::GetForUser($user);
+		foreach ($sessions as $session) {
+			if ($session->SessionID() === $active_session->SessionID()) {
+				continue;
+			}
+			
+			$session->Delete();
 		}
-		
-		$session->Delete();
 	}
 }
 

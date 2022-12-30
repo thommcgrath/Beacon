@@ -313,6 +313,7 @@ class User implements \JsonSerializable {
 		$this->backup_codes = null;
 	}
 	
+	// $code may be a TOTP, backup code, or trusted device id
 	public function Verify2FACode(string $code): bool {
 		if ($this->Is2FAProtected() === false) {
 			return false;
@@ -339,7 +340,7 @@ class User implements \JsonSerializable {
 			return true;
 		}
 		
-		return false;
+		return $this->IsDeviceTrusted($code);
 	}
 	
 	public function Get2FABackupCodes(): array {
@@ -926,6 +927,42 @@ class User implements \JsonSerializable {
 			$database->Rollback();
 			return false;
 		}
+	}
+	
+	/* ! Trusted Devices */
+	
+	public function TrustDevice(string $device_id): void {
+		$database = \BeaconCommon::Database();
+		$device_hash = $this->PrepareDeviceHash($device_id);
+		$database->BeginTransaction();
+		$database->Query('INSERT INTO public.trusted_devices (device_id_hash, user_id) VALUES ($1, $2) ON CONFLICT (device_id_hash) DO NOTHING;', $device_hash, $this->UserID());
+		$database->Commit();
+	}
+	
+	public function UntrustDevice(string $device_id): void {
+		$database = \BeaconCommon::Database();
+		$device_hash = $this->PrepareDeviceHash($device_id);
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM public.trusted_devices WHERE device_id_hash = $1 AND user_id = $2;', $device_hash, $this->UserID());
+		$database->Commit();
+	}
+	
+	public function UntrustAllDevices(): void {
+		$database = \BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM public.trusted_devices WHERE user_id = $1;', $this->UserID());
+		$database->Commit();
+	}
+	
+	public function IsDeviceTrusted(string $device_id): bool {
+		$database = \BeaconCommon::Database();
+		$device_hash = $this->PrepareDeviceHash($device_id);
+		$rows = $database->Query('SELECT device_id_hash FROM public.trusted_devices WHERE device_id_hash = $1 AND user_id = $2;', $device_hash, $this->UserID());
+		return $rows->RecordCount() === 1;
+	}
+	
+	protected function PrepareDeviceHash(string $device_id): string {
+		return base64_encode(hash('sha3-512', strtolower($device_id) . strtolower($this->user_id), true));
 	}
 }
 

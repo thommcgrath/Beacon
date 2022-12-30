@@ -16,6 +16,8 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 BeaconTemplate::StartScript(); ?>
 <script>
+var device_id = <?php echo json_encode(BeaconCommon::DeviceID()); ?>;	
+
 var switchViewFromFragment = function() {
 	var fragment = window.location.hash.substr(1);
 	if (fragment !== '') {
