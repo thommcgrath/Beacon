@@ -7,6 +7,7 @@ abstract class Core {
 	protected static $payload = null;
 	protected static $body_raw = null;
 	protected static $auth_style = null;
+	protected static $routes = [];
 	
 	const AUTH_STYLE_PUBLIC_KEY = 'public key';
 	const AUTH_STYLE_EMAIL_WITH_PASSWORD = 'email+password';
@@ -14,6 +15,20 @@ abstract class Core {
 	
 	const AUTH_OPTIONAL = 1;
 	const AUTH_PERMISSIVE = 2;
+	
+	public static function HandleCORS(): void {
+		header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS');
+		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');
+		header('Access-Control-Expose-Headers: Content-Length,Content-Range');
+		header('Vary: Origin');
+		
+		if (static::Method() === 'OPTIONS') {
+			header('Access-Control-Max-Age: 1728000');
+			http_response_code(204);
+			exit;
+		}
+	}
 	
 	public static function APIVersion() {
 		return 'v0';
@@ -307,6 +322,81 @@ abstract class Core {
 		}
 		$domain = \BeaconCommon::APIDomain();
 		return 'https://' . $domain . '/' . static::APIVersion() . $path;
+	}
+	
+	public static function RegisterRoutes(array $routes): void {
+		foreach ($routes as $route => $handlers) {
+			preg_match_all('/\{((\.\.\.)?[a-zA-Z0-9\-_]+?)\}/', $route, $placeholders);
+			
+			$route_expression = str_replace('/', '\\/', $route);
+			$match_count = count($placeholders[0]);
+			$variables = [];
+			for ($idx = 0; $idx < $match_count; $idx++) {
+				$original = $placeholders[0][$idx];
+				$key = $placeholders[1][$idx];
+				if (str_starts_with($key, '...')) {
+					$exclude = '\?';
+					$key = substr($key, 3);
+				} else {
+					$exclude = '\/\?';
+				}
+				$variables[] = $key;
+				$pattern = '(?P<' . $key . '>[^' . $exclude . ']+?)';
+				$route_expression = str_replace($original, $pattern, $route_expression);
+			}
+			$route_expression = '/^' . $route_expression . '$/';
+			
+			self::$routes[$route] = [
+				'expression' => $route_expression,
+				'handlers' => $handlers,
+				'variables' => $variables
+			];
+		}
+	}
+	
+	public static function HandleRequest(string $root): void {
+		$request_route = '/' . $_GET['route'];
+		foreach (self::$routes as $route => $route_info) {
+			$route_expression = $route_info['expression'];
+			$handlers = $route_info['handlers'];
+			$variables = $route_info['variables'];
+			
+			if (preg_match($route_expression, $request_route, $matches) !== 1) {
+				continue;
+			}
+			
+			$request_method = strtoupper($_SERVER['REQUEST_METHOD']);
+			if ($request_method === 'PUT') {
+				$request_method = 'POST';
+			}
+			if (isset($handlers[$request_method]) === false) {
+				static::ReplyError('Method not allowed', null, 405);
+			}
+			
+			$handler = $handlers[$request_method];
+			if (is_callable($handler) === false) {
+				$handler_file = $root . '/' . $handler . '.php';
+				if (file_exists($handler_file) === false) {
+					static::ReplyError('Endpoint not found: File ' . $handler_file . ' not found.', null, 404);
+				}
+				$handler = 'handle_request';
+				require($handler_file);
+			}
+			
+			$route_key = $request_method . ' ' . $route;
+			$path_parameters = [];
+			foreach ($variables as $variable_name) {
+				$path_parameters[$variable_name] = $matches[$variable_name];
+			}
+			
+			$context = [
+				'path_parameters' => $path_parameters,
+				'route_key' => $route_key
+			];
+			$handler($context);
+			return;
+		}
+		static::ReplyError('Endpoint not found: Route not registered.', null, 404);
 	}
 }
 
