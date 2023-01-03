@@ -94,6 +94,7 @@ Inherits BeaconSubview
 		  Data.GameIniContent = GameIniContent
 		  
 		  Var Parser As New Ark.ImportThread(Data, Self.mProject)
+		  Parser.Priority = Thread.LowestPriority
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
 		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  

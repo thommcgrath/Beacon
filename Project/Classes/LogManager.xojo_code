@@ -180,6 +180,8 @@ Protected Class LogManager
 
 	#tag Method, Flags = &h21
 		Private Sub mFlushTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
 		  Self.Flush()
 		End Sub
 	#tag EndMethod
