@@ -108,7 +108,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 100
+		  Return 101
 		End Function
 	#tag EndEvent
 
