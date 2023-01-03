@@ -1507,6 +1507,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    #else
 		      Components.Add("Architecture=64-bit " + If(TargetARM, "ARM", "Intel"))
 		    #endif
+		    Components.Add("Plugins=MBS/" + MBS.VersionString + "." + MBS.BuildNumber.ToString(Locale.Raw, "0"))
 		    
 		    Self.mUserAgent = "Beacon/" + Self.BuildVersion + " (" + Components.Join("; ") + ")"
 		  End If
