@@ -111,7 +111,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Constructor(AllowWriting As Boolean)
-		  Const YieldInterval = 50
+		  Const YieldInterval = 75
 		  
 		  Self.mAllowWriting = AllowWriting
 		  
