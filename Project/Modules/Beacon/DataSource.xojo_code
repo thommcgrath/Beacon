@@ -111,13 +111,14 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Constructor(AllowWriting As Boolean)
-		  Const YieldInterval = 100
+		  Const YieldInterval = 75
 		  
 		  Self.mAllowWriting = AllowWriting
 		  
 		  Var SchemaVersion As Integer = RaiseEvent GetSchemaVersion
 		  Var DatafileName As String = Self.Identifier + ".sqlite"
-		  Var DatabaseFile As FolderItem = App.LibrariesFolder.Child(DatafileName)
+		  Var LibrariesFolder As FolderItem = App.LibrariesFolder
+		  Var DatabaseFile As FolderItem = LibrariesFolder.Child(DatafileName)
 		  Self.mDatabase = New SQLiteDatabase
 		  Self.mDatabase.ThreadYieldInterval = YieldInterval
 		  Self.mDatabase.DatabaseFile = DatabaseFile
@@ -143,11 +144,25 @@ Implements NotificationKit.Receiver
 		  Try
 		    If Connected Then
 		      If Self.mDatabase.UserVersion <> SchemaVersion Then
-		        Self.mDatabase.ExecuteSQL("PRAGMA writable_schema = 1;")
-		        Self.mDatabase.ExecuteSQL("DELETE FROM sqlite_master;")
-		        Self.mDatabase.ExecuteSQL("PRAGMA writable_schema = 0;")
-		        Self.mDatabase.ExecuteSQL("VACUUM;")
+		        Self.mDatabase.Close
+		        Self.mDatabase = Nil
 		        
+		        Var WALFile As FolderItem = LibrariesFolder.Child(DatafileName + "-wal")
+		        Var SHMFile As FolderItem = LibrariesFolder.Child(DatafileName + "-shm")
+		        
+		        DatabaseFile.Remove
+		        If WALFile.Exists Then
+		          WALFile.Remove
+		        End If
+		        If SHMFile.Exists Then
+		          SHMFile.Remove
+		        End If
+		        
+		        Self.mDatabase = New SQLiteDatabase
+		        Self.mDatabase.ThreadYieldInterval = YieldInterval
+		        Self.mDatabase.DatabaseFile = DatabaseFile
+		        
+		        Self.mDatabase.CreateDatabase
 		        BuildSchema = True
 		      End If
 		    Else
@@ -259,7 +274,7 @@ Implements NotificationKit.Receiver
 		Private Function ForeignKeys() As Boolean
 		  Try
 		    Var Tmp As RowSet = Self.SQLSelect("PRAGMA foreign_keys;")
-		    Return Tmp.ColumnAt(0).IntegerValue = 1
+		    Return (Tmp Is Nil) = False And Tmp.ColumnAt(0).IntegerValue = 1
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Checking foreign key status")
 		    Return False

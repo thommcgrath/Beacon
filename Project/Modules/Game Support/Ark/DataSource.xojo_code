@@ -183,7 +183,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 103
+		  Return 104
 		End Function
 	#tag EndEvent
 
@@ -743,7 +743,7 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub Open()
 		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackUUID)
-		  If Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Then
+		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Then
 		    Self.ReplaceUserBlueprints()
 		  End If
 		End Sub

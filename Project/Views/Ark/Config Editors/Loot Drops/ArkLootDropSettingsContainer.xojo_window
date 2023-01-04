@@ -459,7 +459,20 @@ End
 		    Self.NoDuplicatesCheck.VisualState = CommonNoDuplicates
 		    Self.AppendModeCheck.VisualState = CommonAppendMode
 		  End If
+		  Self.SetFieldsEnabled()
 		  Self.mSettingUp = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetFieldsEnabled()
+		  Var Enabled As Boolean = (Self.AppendModeCheck.VisualState = CheckBox.VisualStates.Unchecked)
+		  Self.MaxItemSetsField.Enabled = Enabled
+		  Self.MaxItemSetsLabel.Enabled = Enabled
+		  Self.MaxItemSetsStepper.Enabled = Enabled
+		  Self.MinItemSetsField.Enabled = Enabled
+		  Self.MinItemSetsLabel.Enabled = Enabled
+		  Self.MinItemSetsStepper.Enabled = Enabled
 		End Sub
 	#tag EndMethod
 
@@ -661,13 +674,7 @@ End
 		    Containers(Idx).AppendMode = Me.Value
 		  Next
 		  
-		  Var Enabled As Boolean = Not Me.Value
-		  Self.MaxItemSetsField.Enabled = Enabled
-		  Self.MaxItemSetsLabel.Enabled = Enabled
-		  Self.MaxItemSetsStepper.Enabled = Enabled
-		  Self.MinItemSetsField.Enabled = Enabled
-		  Self.MinItemSetsLabel.Enabled = Enabled
-		  Self.MinItemSetsStepper.Enabled = Enabled
+		  Self.SetFieldsEnabled()
 		  
 		  RaiseEvent SettingsChanged
 		End Sub

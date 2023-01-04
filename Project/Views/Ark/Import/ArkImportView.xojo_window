@@ -928,6 +928,7 @@ End
 		    End If
 		    
 		    Var Importer As New Ark.ImportThread(Ark.DiscoveredData(Data(I)), Self.mDestinationProject)
+		    Importer.Priority = Thread.LowestPriority
 		    Importer.Start
 		    Self.mImporters(I) = Importer
 		    
