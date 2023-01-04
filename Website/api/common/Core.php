@@ -374,13 +374,17 @@ abstract class Core {
 			}
 			
 			$handler = $handlers[$request_method];
-			if (is_callable($handler) === false) {
+			if (is_string($handler)) {
 				$handler_file = $root . '/' . $handler . '.php';
 				if (file_exists($handler_file) === false) {
-					static::ReplyError('Endpoint not found: File ' . $handler_file . ' not found.', null, 404);
+					static::ReplyError('Endpoint not found', null, 404);
 				}
 				$handler = 'handle_request';
 				require($handler_file);
+			} else if (is_callable($handler) === true) {
+				// nothing to do
+			} else {
+				static::ReplyError('Endpoint not found', null, 404);
 			}
 			
 			$route_key = $request_method . ' ' . $route;
