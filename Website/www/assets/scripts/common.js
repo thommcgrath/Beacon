@@ -224,11 +224,11 @@ class BeaconWebRequest {
 class BeaconDialog {
 	static activeModal = null;
 	
-	static show(message, explanation, actionCaption = 'Ok') {
+	static show(message, explanation = undefined, actionCaption = 'Ok') {
 		return BeaconDialog.confirm(message, explanation, actionCaption, null);
 	}
 	
-	static confirm(message, explanation, actionCaption = 'Ok', cancelCaption = 'Cancel') {
+	static confirm(message, explanation = undefined, actionCaption = 'Ok', cancelCaption = 'Cancel') {
 		return new Promise((resolve, reject) => {
 			const overlay = document.getElementById('overlay');
 			const dialogFrame = document.getElementById('dialog');
@@ -249,7 +249,11 @@ class BeaconDialog {
 				dialogFrame.className = 'exist visible';
 			}, 10);
 			dialogMessage.innerText = message;
-			dialogExplanation.innerText = explanation;
+			if (explanation) {
+				dialogExplanation.innerText = explanation;
+			} else {
+				dialogExplanation.innerText = '';	
+			}
 			
 			if (dialogActionButton.clickHandler) {
 				dialogActionButton.removeEventListener('click', dialogActionButton.clickHandler);

@@ -6,62 +6,80 @@ BeaconTemplate::SetTitle('Thanks for purchasing!');
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 BeaconTemplate::StartScript(); ?>
 <script>
-	
-var number_of_checks = 0;
+"use strict";
 
-document.addEventListener('DOMContentLoaded', function() {
-	let client_reference_id = null;
+let numberOfChecks = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+	let clientReferenceId = null;
 	if (sessionStorage) {
-		client_reference_id = sessionStorage.getItem('client_reference_id');
+		clientReferenceId = sessionStorage.getItem('client_reference_id');
 	}
-	setTimeout(function() {
-		check_purchase_status(client_reference_id);
+	setTimeout(() => {
+		checkPurchaseStatus(clientReferenceId);
 	}, 1000);
 });
 
-function check_purchase_status(client_reference_id) {
-	if (client_reference_id == null) {
-		document.getElementById('checking_container').style.display = 'none';
-		document.getElementById('purchase_unknown').style.display = 'block';
-		document.getElementById('signin_instructions').style.display = 'block';
+const checkPurchaseStatus = (clientReferenceId) => {
+	const checkingContainer = document.getElementById('checking_container');
+	const purchaseUnknown = document.getElementById('purchase_unknown');
+	const purchaseDelayed = document.getElementById('purchase_delayed');
+	const purchaseConfirmed = document.getElementById('purchase_confirmed');
+	const signinInstructions = document.getElementById('signin_instructions');
+	const confirmedText = document.getElementById('confirmed_text');
+	const checkingSubtext = document.getElementById('checking_subtext');
+	const activateButton = document.getElementById('activate_button');
+	
+	if (clientReferenceId === null) {
+		checkingContainer.style.display = 'none';
+		purchaseUnknown.style.display = 'block';
+		signinInstructions.style.display = 'block';
 		return;
 	}
 	
-	number_of_checks++;
-	request.get('status', {'client_reference_id': client_reference_id}, function(obj) {
-		document.getElementById('checking_container').style.display = 'none';
-		document.getElementById('checking_container').style.display = 'none';
-		document.getElementById('purchase_confirmed').style.display = 'block';
+	numberOfChecks++;
+	BeaconWebRequest.get(`status?client_reference_id=${encodeURIComponent(clientReferenceId)}`).then((response) => {
+		console.log('Found');
 		
-		var user_id = obj.user_id;
-		var email = obj.email;
-		var account_url = <?php echo json_encode(BeaconCommon::AbsoluteURL('/account/login/?return=' . urlencode(BeaconCommon::AbsoluteURL('/account/#omni')))); ?>;
-		if (email !== null) {
-			account_url += '&email=' + encodeURIComponent(email);
+		try {
+			checkingContainer.style.display = 'none';
+			purchaseConfirmed.style.display = 'block';
+			
+			const obj = JSON.parse(response.body);
+			const userId = obj.user_id;
+			const email = obj.email
+			let accountUrl = <?php echo json_encode(BeaconCommon::AbsoluteURL('/account/login/?return=' . urlencode(BeaconCommon::AbsoluteURL('/account/#omni')))); ?>;
+			if (email !== null) {
+				accountUrl += `&email=${encodeURIComponent(email)}`;
+			}
+			if (userId === null) {
+				accountUrl += '#create';
+				if (email === null) {
+					confirmedText.innerText = 'You will need to create an account with the email address used to purchase to activate Omni in Beacon.';
+					activateButton.innerText = 'Create Account';
+				} else {
+					confirmedText.innertText = `An email was sent to ${email} to confirm your email address. Follow the included link to finish setting up your account. Be sure to check junk folders. Despite our best efforts, one of the major email providers likes to tag Beacon emails as spam.`;
+					activateButton.className = 'hidden';
+				}
+			}
+			activateButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				window.location = accountUrl;
+			});
+		} catch (e) {
+			console.log(e);
+			BeaconDialog.show('There was an error checking your purchase status.');
 		}
-		if (user_id == null) {
-			account_url += '#create';
-			if (email == null) {
-				document.getElementById('confirmed_text').innerText = 'You will need to create an account with the email address used to purchase to activate Omni in Beacon.';
-				document.getElementById('activate_button').innerText = 'Create Account';
+	}).catch((error) => {
+		console.log('Not Yet');
+		setTimeout(() => {
+			if (numberOfChecks === 1) {
+				checkingSubtext.innerText = "\nWaiting for purchase details from Stripe…";
 			} else {
-				document.getElementById('confirmed_text').innerText = 'An email was sent to ' + email + ' to confirm your email address. Follow the included link to finish setting up your account. Be sure to check junk folders. Despite our best efforts, one of the major email providers likes to tag Beacon emails as spam.';
-				document.getElementById('activate_button').className = 'hidden';
+				purchaseDelayed.style.display = 'block';
+				signinInstructions.style.display = 'block';
 			}
-		} else {
-			document.getElementById('confirmed_text').innerText = 'Your account is ready to use Omni. Simply relaunch Beacon to have Beacon refresh your account status, or visit your account control panel for more instructions.';
-			document.getElementById('activate_button').innerText = 'Account Control Panel';
-		}
-		document.getElementById('activate_button').href = account_url;
-	}, function(http_status, raw_body) {
-		setTimeout(function() {
-			if (number_of_checks == 1) {
-				document.getElementById('checking_subtext').innerText = "\nWaiting for purchase details from Stripe…";
-			} else if (number_of_checks == 10) {
-				document.getElementById('purchase_delayed').style.display = 'block';
-				document.getElementById('signin_instructions').style.display = 'block';
-			}
-			check_purchase_status(client_reference_id);
+			checkPurchaseStatus(clientReferenceId);
 		}, 3000);
 	});
 }
