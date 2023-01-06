@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	
 	/* ! Projects */
 	
-	const deleteProjectButtons = document.querySelectorAll('#account_view_documents [beacon-action="delete"]');
+	const deleteProjectButtons = document.querySelectorAll('#panel-account div[page="projects"] [beacon-action="delete"]');
 	for (const button of deleteProjectButtons) {
 		button.addEventListener('click', (event) => {
 			event.preventDefault();
@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			const resource_url = event.target.getAttribute('beacon-resource-url');
 			const resource_name = event.target.getAttribute('beacon-resource-name');
 			
-			BeaconDialog.confirm('Are you sure you want to delete the project "' + resource_name + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete').then(() => {
-				BeaconDialog.delete(resource_url, { Authorization: `Session ${sessionId}` }).then((response) => {
+			BeaconDialog.confirm('Are you sure you want to delete the project "' + resource_name + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete').then((reason) => {
+				BeaconWebRequest.delete(resource_url, { Authorization: `Session ${sessionId}` }).then((response) => {
 					BeaconDialog.show('Project deleted', '"' + resource_name + '" has been deleted.').then(() => {
 						window.location.reload(true);
 					});
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 						break;
 					}
 				});
-			}).catch(() => {
+			}).catch((reason) => {
 				// Do nothing
 			});
 			
@@ -526,7 +526,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		return false;
 	};
 	
-	const revokeLinks = document.querySelectorAll('#account_view_sessions a.revokeLink');
+	const revokeLinks = document.querySelectorAll('#panel-account div[page="sessions"] a.revokeLink');
 	for (const link of revokeLinks) {
 		link.addEventListener('click', revokeAction);
 	}
