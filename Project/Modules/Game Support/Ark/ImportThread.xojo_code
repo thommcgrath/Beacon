@@ -146,6 +146,8 @@ Inherits Beacon.Thread
 		    
 		    Var Progress As Integer = Round(Self.Progress * 100)
 		    Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
+		    
+		    Self.Sleep(10)
 		  Next
 		  
 		  Self.mCharactersProcessed = Self.mCharactersTotal
