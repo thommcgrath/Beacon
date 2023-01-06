@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointSet
-Implements Beacon.Countable, Ark.Weighted
+Implements Beacon.Countable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Function Clone() As Ark.SpawnPointSet
 		  Var Clone As New Ark.SpawnPointSet(Self)
@@ -107,8 +107,8 @@ Implements Beacon.Countable, Ark.Weighted
 
 	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String) As NullableDouble
-		  Var FromCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(FromCreatureID)
-		  Var ToCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(ToCreatureID)
+		  Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromCreatureID)
+		  Var ToCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ToCreatureID)
 		  Return Self.CreatureReplacementWeight(FromCreature, ToCreature)
 		End Function
 	#tag EndMethod

@@ -1768,13 +1768,13 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.mScorchedSpoilMultiplier = Ark.DataSource.SharedInstance.GetDoubleVariable("Scorched Spoil Multiplier", 0.9)
+		  Self.mScorchedSpoilMultiplier = Ark.DataSource.Pool.Get(False).GetDoubleVariable("Scorched Spoil Multiplier", 0.9)
 		  Self.mDecayPeriods = New Dictionary
 		  Self.mSpoilMultipliers = New Dictionary
 		  Self.mSpoilTimes = New Dictionary
 		  
 		  Try
-		    Var JSON As String = Ark.DataSource.SharedInstance.GetStringVariable("Decay Periods")
+		    Var JSON As String = Ark.DataSource.Pool.Get(False).GetStringVariable("Decay Periods")
 		    If JSON.IsEmpty = False Then
 		      Self.mDecayPeriods = Beacon.ParseJSON(JSON)
 		    End If
@@ -1782,7 +1782,7 @@ End
 		  End Try
 		  
 		  Try
-		    Var JSON As String = Ark.DataSource.SharedInstance.GetStringVariable("Spoil Multipliers")
+		    Var JSON As String = Ark.DataSource.Pool.Get(False).GetStringVariable("Spoil Multipliers")
 		    If JSON.IsEmpty = False Then
 		      Self.mSpoilMultipliers = Beacon.ParseJSON(JSON)
 		    End If
@@ -1790,7 +1790,7 @@ End
 		  End Try
 		  
 		  Try
-		    Var JSON As String = Ark.DataSource.SharedInstance.GetStringVariable("Spoil Times")
+		    Var JSON As String = Ark.DataSource.Pool.Get(False).GetStringVariable("Spoil Times")
 		    If JSON.IsEmpty = False Then
 		      Self.mSpoilTimes = Beacon.ParseJSON(JSON)
 		    End If
@@ -2402,7 +2402,7 @@ End
 		  End If
 		  
 		  If Self.Focus <> Self.CorpseDecomposePreviewField Then
-		    Var Duration As Double = Ark.DataSource.SharedInstance.GetDoubleVariable("Corpse Decompose Time", 900) * Value
+		    Var Duration As Double = Ark.DataSource.Pool.Get(False).GetDoubleVariable("Corpse Decompose Time", 900) * Value
 		    Self.CorpseDecomposePreviewField.Text = Beacon.SecondsToString(Duration)
 		  End If
 		  
@@ -2428,7 +2428,7 @@ End
 		  End If
 		  
 		  If Self.Focus <> Self.ItemDecomposePreviewField Then
-		    Var Duration As Double = Ark.DataSource.SharedInstance.GetDoubleVariable("Item Decompose Time", 120) * Value
+		    Var Duration As Double = Ark.DataSource.Pool.Get(False).GetDoubleVariable("Item Decompose Time", 120) * Value
 		    Self.ItemDecomposePreviewField.Text = Beacon.SecondsToString(Duration)
 		  End If
 		  
@@ -2458,7 +2458,7 @@ End
 		  End If
 		  
 		  Var Seconds As Integer = Interval.TotalSeconds
-		  Var DefaultTime As Double = Ark.DataSource.SharedInstance.GetDoubleVariable("Corpse Decompose Time", 900)
+		  Var DefaultTime As Double = Ark.DataSource.Pool.Get(False).GetDoubleVariable("Corpse Decompose Time", 900)
 		  Var Multiplier As Double = Seconds / DefaultTime
 		  
 		  Self.CorpseDecomposeMultiplierField.Text = Multiplier.ToString(Locale.Current, "0.0#####")
@@ -2478,7 +2478,7 @@ End
 		  End If
 		  
 		  Var Seconds As Integer = Interval.TotalSeconds
-		  Var DefaultTime As Double = Ark.DataSource.SharedInstance.GetDoubleVariable("Item Decompose Time", 120)
+		  Var DefaultTime As Double = Ark.DataSource.Pool.Get(False).GetDoubleVariable("Item Decompose Time", 120)
 		  Var Multiplier As Double = Seconds / DefaultTime
 		  
 		  Self.ItemDecomposeMultiplierField.Text = Multiplier.ToString(Locale.Current, "0.0#####")

@@ -555,6 +555,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
    End
    Begin Thread ProcessingThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   2
@@ -820,7 +821,7 @@ End
 		  
 		  Var Creatures() As Ark.Creature
 		  If AllCreaturesRadio.Value Then
-		    Creatures = Ark.DataSource.SharedInstance.GetCreatures("", Self.mMods)
+		    Creatures = Ark.DataSource.Pool.Get(False).GetCreatures("", Self.mMods)
 		  Else
 		    For RowIdx As Integer = 0 To Self.CreatureList.LastRowIndex
 		      Creatures.Add(Self.CreatureList.RowTagAt(RowIdx))
@@ -886,7 +887,7 @@ End
 		  Me.AddRow("No Color Override")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = ""
 		  
-		  Var Colors() As Ark.CreatureColorSet = Ark.DataSource.SharedInstance.GetCreatureColorSets()
+		  Var Colors() As Ark.CreatureColorSet = Ark.DataSource.Pool.Get(False).GetCreatureColorSets()
 		  For Each ColorSet As Ark.CreatureColorSet In Colors
 		    Me.AddRow(ColorSet.Label)
 		    Me.RowTagAt(Me.LastAddedRowIndex) = ColorSet.ClassString
@@ -903,7 +904,7 @@ End
 		  Var CreaturesProcessed As Integer = 0
 		  Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for 0 of " + TotalCreaturesText + "…"))
 		  For Each Creature As Ark.Creature In Self.mCreatures
-		    Var Points() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsForCreature(Creature, Self.mMods, "")
+		    Var Points() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, "")
 		    For Each Definition As Ark.SpawnPoint In Points
 		      If Definition.ValidForMask(Self.mMask) = False Then
 		        Continue
@@ -916,7 +917,7 @@ End
 		      
 		      Var Mutable As Ark.MutableSpawnPoint = Definition.MutableClone
 		      Mutable.Mode = Ark.SpawnPoint.ModeOverride
-		      Ark.DataSource.SharedInstance.LoadDefaults(Mutable)
+		      Ark.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		      
 		      Var Remove As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Ark.SpawnPoint.ModeRemove)
 		      If (Remove Is Nil) = False Then

@@ -288,7 +288,7 @@ End
 		  Self.SwapButtons()
 		  
 		  If Self.mLevels.LastIndex = -1 Then
-		    Var Level As Integer = Max(Self.mConfig.LevelsDefined, Ark.DataSource.SharedInstance.OfficialPlayerLevelData.MaxLevel) + 1
+		    Var Level As Integer = Max(Self.mConfig.LevelsDefined, Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData.MaxLevel) + 1
 		    Self.LevelField.Text = Level.ToString
 		    Self.PointsField.SetFocus()
 		  ElseIf Self.mLevels.LastIndex = 0 Then
@@ -301,7 +301,7 @@ End
 		    If IsNull(Points) = False Then
 		      Self.PointsField.Text = Points.IntegerValue.ToString
 		    Else
-		      Self.PointsField.Text = Ark.DataSource.SharedInstance.OfficialPlayerLevelData.PointsForLevel(Level).ToString
+		      Self.PointsField.Text = Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData.PointsForLevel(Level).ToString
 		    End If
 		    Self.PointsField.SetFocus()
 		  Else

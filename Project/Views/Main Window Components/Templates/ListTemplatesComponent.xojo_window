@@ -347,7 +347,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectTemplates() As Beacon.Template)
-		  Var CommonData As Beacon.CommonData = Beacon.CommonData.SharedInstance
+		  Var CommonData As Beacon.CommonData = Beacon.CommonData.Pool.Get(False)
 		  Var Templates() As Beacon.Template = CommonData.GetTemplates()
 		  Var TemplateCount As Integer = Templates.Count
 		  
@@ -423,7 +423,7 @@ End
 		    End If
 		    
 		    Var Template As Beacon.Template = Me.RowTagAt(Idx)
-		    If Beacon.CommonData.SharedInstance.IsTemplateCustom(Template) Then
+		    If Beacon.CommonData.Pool.Get(False).IsTemplateCustom(Template) Then
 		      Return True
 		    End If
 		  Next
@@ -433,7 +433,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var CommonData As Beacon.CommonData = Beacon.CommonData.SharedInstance
+		  Var CommonData As Beacon.CommonData = Beacon.CommonData.Pool.Get(False)
 		  Var DeleteCount, RevertCount, DisallowCount As Integer
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Not Me.Selected(I) Then

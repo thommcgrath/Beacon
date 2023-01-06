@@ -481,12 +481,16 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
       End
    End
    Begin Thread SimulationThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndWindow
@@ -548,7 +552,7 @@ End
 		  Var PopFigures As Ark.PopulationFigures
 		  
 		  If (Self.mSelectedPoint Is Nil) = False Then
-		    Var Figures() As Ark.PopulationFigures = Ark.DataSource.SharedInstance.GetPopulationFigures(Self.mSelectedPoint)
+		    Var Figures() As Ark.PopulationFigures = Ark.DataSource.Pool.Get(False).GetPopulationFigures(Self.mSelectedPoint)
 		    For Idx As Integer = Figures.FirstIndex To Figures.LastIndex
 		      If Figures(Idx).MapName = Self.MapMenu.SelectedRow Then
 		        PopFigures = Figures(Idx)
@@ -607,14 +611,14 @@ End
 			    
 			    Select Case Value
 			    Case Self.ModeSpawnPoints
-			      Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPoints("", Self.mProject.ContentPacks, "")
+			      Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPoints("", Self.mProject.ContentPacks, "")
 			      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
 			        If SpawnPoint.ValidForMap(Self.MapMenu.SelectedRowTag) Then
 			          Self.FilterMenu.AddRow(SpawnPoint.Label, SpawnPoint)
 			        End If
 			      Next
 			    Case Self.ModeCreatures
-			      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures("", Self.mProject.ContentPacks, "")
+			      Var Creatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures("", Self.mProject.ContentPacks, "")
 			      For Each Creature As Ark.Creature In Creatures
 			        Self.FilterMenu.AddRow(Creature.Label, Creature)
 			      Next

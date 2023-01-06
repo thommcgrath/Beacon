@@ -118,7 +118,7 @@ End
 		Sub Open()
 		  NotificationKit.Watch(Self, Beacon.CommonData.Notification_NewsUpdated)
 		  Self.RefreshNews()
-		  Beacon.CommonData.SharedInstance.UpdateNews()
+		  Beacon.CommonData.Pool.Get(False).UpdateNews()
 		End Sub
 	#tag EndEvent
 
@@ -210,7 +210,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshNews()
-		  Self.mNews = Beacon.CommonData.SharedInstance.GetNews
+		  Self.mNews = Beacon.CommonData.Pool.Get(False).GetNews
 		  Self.mNewsRects.ResizeTo(Self.mNews.LastIndex)
 		  Self.DrawCanvas.Invalidate
 		End Sub
@@ -341,7 +341,7 @@ End
 #tag Events RefreshTimer
 	#tag Event
 		Sub Action()
-		  Beacon.CommonData.SharedInstance.UpdateNews()
+		  Beacon.CommonData.Pool.Get(False).UpdateNews()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

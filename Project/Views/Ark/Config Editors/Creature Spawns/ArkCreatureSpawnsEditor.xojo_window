@@ -453,20 +453,20 @@ End
 
 	#tag MenuHandler
 		Function ConvertCreatureReplacementsToSpawnPointAdditions() As Boolean Handles ConvertCreatureReplacementsToSpawnPointAdditions.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Var Changes As Integer = Self.Project.ConvertDinoReplacementsToSpawnOverrides()
-			Self.SetupUI()
-			If Changes = 0 Then
-			Self.ShowAlert("No changes made", "Beacon was unable to find any replaced creatures in Creature Adjustments that it could convert into spawn point additions.")
-			ElseIf Changes = 1 Then
-			Self.ShowAlert("Converted 1 creature replacement", "Beacon found 1 creature in Creature Adjustments that it was able to convert into spawn point additions. The replaced creature has been disabled in Creature Adjustments.")
-			Else
-			Self.ShowAlert("Converted " + Changes.ToString + " creature replacements", "Beacon found " + Changes.ToString + " creatures in Creature Adjustments that it was able to convert into spawn point additions. The replaced creatures have been disabled in Creature Adjustments.")
-			End If
-			Return True
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Var Changes As Integer = Self.Project.ConvertDinoReplacementsToSpawnOverrides()
+		  Self.SetupUI()
+		  If Changes = 0 Then
+		    Self.ShowAlert("No changes made", "Beacon was unable to find any replaced creatures in Creature Adjustments that it could convert into spawn point additions.")
+		  ElseIf Changes = 1 Then
+		    Self.ShowAlert("Converted 1 creature replacement", "Beacon found 1 creature in Creature Adjustments that it was able to convert into spawn point additions. The replaced creature has been disabled in Creature Adjustments.")
+		  Else
+		    Self.ShowAlert("Converted " + Changes.ToString + " creature replacements", "Beacon found " + Changes.ToString + " creatures in Creature Adjustments that it was able to convert into spawn point additions. The replaced creatures have been disabled in Creature Adjustments.")
+		  End If
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
@@ -567,7 +567,7 @@ End
 		    Selected.Value(SpawnPoint.UniqueKey) = True
 		  Next
 		  
-		  Var Labels As Dictionary = Ark.DataSource.SharedInstance.GetSpawnPointLabels(Self.Project.MapMask)
+		  Var Labels As Dictionary = Ark.DataSource.Pool.Get(False).GetSpawnPointLabels(Self.Project.MapMask)
 		  
 		  Self.List.SelectionChangeBlocked = True
 		  Self.List.RowCount = SpawnPoints.Count

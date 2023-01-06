@@ -412,6 +412,8 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       AllowMultipleSelection=   False
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -424,6 +426,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   12
@@ -506,16 +509,16 @@ End
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  
 		  If SearchText = "" Then
-		    SpawnPoints = Ark.DataSource.SharedInstance.GetSpawnPoints("", Self.mMods)
+		    SpawnPoints = Ark.DataSource.Pool.Get(False).GetSpawnPoints("", Self.mMods)
 		  Else
 		    Select Case Self.FilterMode
 		    Case Self.FilterModeSpawnPoint
-		      SpawnPoints = Ark.DataSource.SharedInstance.GetSpawnPoints(SearchText, Self.mMods)
+		      SpawnPoints = Ark.DataSource.Pool.Get(False).GetSpawnPoints(SearchText, Self.mMods)
 		    Case Self.FilterModeCreature
-		      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures(SearchText, Self.mMods)
+		      Var Creatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures(SearchText, Self.mMods)
 		      Var UniqueSpawnPoints As New Dictionary
 		      For Each Creature As Ark.Creature In Creatures
-		        Var CreatureSpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsForCreature(Creature, Self.mMods, "")
+		        Var CreatureSpawnPoints() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, "")
 		        For Each SpawnPoint As Ark.SpawnPoint In CreatureSpawnPoints
 		          UniqueSpawnPoints.Value(SpawnPoint.ObjectID) = SpawnPoint
 		        Next
@@ -527,7 +530,7 @@ End
 		    End Select
 		  End If
 		  
-		  Var Labels As Dictionary = Ark.DataSource.SharedInstance.GetSpawnPointLabels(Self.mAvailability)
+		  Var Labels As Dictionary = Ark.DataSource.Pool.Get(False).GetSpawnPointLabels(Self.mAvailability)
 		  
 		  Self.List.RemoveAllRows()
 		  For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
@@ -644,7 +647,7 @@ End
 		    Var MutableSpawnPoint As Ark.MutableSpawnPoint = SpawnPoint.MutableVersion
 		    
 		    If LoadDefaults Then
-		      Ark.DataSource.SharedInstance.LoadDefaults(MutableSpawnPoint)
+		      Ark.DataSource.Pool.Get(False).LoadDefaults(MutableSpawnPoint)
 		    End If
 		    
 		    MutableSpawnPoint.Mode = Mode

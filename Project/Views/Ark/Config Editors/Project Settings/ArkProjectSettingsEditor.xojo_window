@@ -489,12 +489,16 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Width           =   40
    End
    Begin Thread GFIComputeThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndWindow
@@ -642,7 +646,7 @@ End
 		  Self.Project.ConsoleSafe = Me.Value
 		  
 		  If Me.Value Then
-		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks
+		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		    For Each Pack As Ark.ContentPack In ContentPacks
 		      If Pack.ConsoleSafe = False Then
 		        Self.Project.ContentPackEnabled(Pack.UUID) = False
@@ -688,7 +692,7 @@ End
 		Sub Run()
 		  Var Result As New Dictionary("Finished": True)
 		  
-		  Var DataSource As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.FlagCreateIfNeeded)
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  Var Lines() As String = DataSource.ComputeGFICodes(Self.Project.ContentPacks, Self.mGFIProgress)
 		  If Lines.Count > 0 Then
 		    Var Stream As TextOutputStream = TextOutputStream.Create(Self.mGFIOutputFile)

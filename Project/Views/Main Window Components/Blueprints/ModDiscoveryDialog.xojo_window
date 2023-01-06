@@ -748,7 +748,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
+		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  
 		  Var TitleFinder As New Regex
 		  TitleFinder.SearchPattern = "<div class=""workshopItemTitle"">(.+)</div>"

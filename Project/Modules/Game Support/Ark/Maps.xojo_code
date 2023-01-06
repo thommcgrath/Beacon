@@ -2,13 +2,13 @@
 Protected Module Maps
 	#tag Method, Flags = &h1
 		Protected Function Aberration() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("Aberration_P")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("Aberration_P")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function All() As Ark.Map()
-		  Return Ark.DataSource.SharedInstance.GetMaps()
+		  Return Ark.DataSource.Pool.Get(False).GetMaps()
 		End Function
 	#tag EndMethod
 
@@ -20,25 +20,25 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function CrystalIsles() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("CrystalIsles")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("CrystalIsles")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Extinction() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("Extinction")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("Extinction")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ForMask(Mask As UInt64) As Ark.Map()
-		  Return Ark.DataSource.SharedInstance.GetMaps(Mask)
+		  Return Ark.DataSource.Pool.Get(False).GetMaps(Mask)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Genesis() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("Genesis")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("Genesis")
 		End Function
 	#tag EndMethod
 
@@ -54,7 +54,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function MaskForIdentifier(Identifier As String) As UInt64
-		  Var Map As Ark.Map = Ark.DataSource.SharedInstance.GetMap(Identifier)
+		  Var Map As Ark.Map = Ark.DataSource.Pool.Get(False).GetMap(Identifier)
 		  If (Map Is Nil) Then
 		    Return Ark.Maps.UniversalMask
 		  End If
@@ -65,25 +65,25 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function Ragnarok() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("Ragnarok")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("Ragnarok")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ScorchedEarth() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("ScorchedEarth_P")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("ScorchedEarth_P")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function TheCenter() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("TheCenter")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("TheCenter")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function TheIsland() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("TheIsland")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("TheIsland")
 		End Function
 	#tag EndMethod
 
@@ -98,7 +98,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function Valguero() As Ark.Map
-		  Return Ark.DataSource.SharedInstance.GetMap("Valguero_P")
+		  Return Ark.DataSource.Pool.Get(False).GetMap("Valguero_P")
 		End Function
 	#tag EndMethod
 

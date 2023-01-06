@@ -12,26 +12,6 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
-		  If (mInstances Is Nil) = False Then
-		    For Each Entry As DictionaryEntry In mInstances
-		      If Entry.Value IsA Beacon.CommonData Then
-		        If Beacon.CommonData(Entry.Value) = Self Then
-		          mInstances.Remove(Entry.Key)
-		          Exit For Entry
-		        End If
-		      ElseIf Entry.Value IsA WeakRef And WeakRef(Entry.Value).Value IsA Beacon.CommonData Then
-		        If Beacon.CommonData(WeakRef(Entry.Value).Value) = Self Then
-		          mInstances.Remove(Entry.Key)
-		          Exit For Entry
-		        End If
-		      End If
-		    Next Entry
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub CloudSyncFinished(Actions() As Dictionary)
 		  For Each Dict As Dictionary In Actions
 		    Var Action As String = Dict.Value("Action")
@@ -646,6 +626,15 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function Pool() As Beacon.CommonDataPool
+		  If mPool Is Nil Then
+		    mPool = New Beacon.CommonDataPool
+		  End If
+		  Return mPool
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SaveTemplate(Template As Beacon.Template)
 		  Self.SaveTemplate(Template, False)
 		End Sub
@@ -730,66 +719,6 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function SharedInstance(Flags As Integer = 3) As Beacon.CommonData
-		  Const MainThreadID = "Main"
-		  
-		  Var CurrentThread As Global.Thread = Thread.Current
-		  Var ThreadID As String = If(CurrentThread Is Nil, MainThreadID, CurrentThread.ThreadID.ToHex)
-		  
-		  // Never allow writing on the main thread
-		  If ThreadID = MainThreadID And ((Flags And FlagAllowWriting) = FlagAllowWriting) Then
-		    Var Err As New UnsupportedOperationException
-		    Err.Message = "Cannot use writable database on main thread."
-		    Raise Err
-		  End If
-		  
-		  If mInstances Is Nil Then
-		    mInstances = New Dictionary
-		  End If
-		  
-		  Var Value As Variant
-		  If mInstances.HasKey(ThreadID) Then
-		    Value = mInstances.Value(ThreadID)
-		  ElseIf (Flags And FlagFallbackToMainThread) = FlagFallbackToMainThread And ThreadID <> MainThreadID Then
-		    ThreadID = MainThreadID
-		    If mInstances.HasKey(MainThreadID) Then
-		      Value = mInstances.Value(MainThreadID)
-		    End If
-		  End If
-		  
-		  Var Instance As Beacon.CommonData
-		  If Value IsA Beacon.CommonData Then
-		    Instance = Value
-		  ElseIf Value IsA WeakRef Then
-		    Var Ref As WeakRef = WeakRef(Value)
-		    If (Ref.Value Is Nil) = False And Ref.Value IsA Beacon.CommonData Then
-		      Instance = Beacon.CommonData(Ref.Value)
-		    End If
-		  End If
-		  
-		  If Instance Is Nil Then
-		    If (Flags And FlagCreateIfNeeded) = FlagCreateIfNeeded Then
-		      Instance = New Beacon.CommonData((Flags And FlagAllowWriting) = FlagAllowWriting)
-		      If ThreadID = MainThreadID Then
-		        NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
-		      End If
-		      
-		      // Main thread instance is always a hard reference
-		      If (Flags And FlagUseWeakRef) = FlagUseWeakRef And ThreadID <> MainThreadID Then
-		        mInstances.Value(ThreadID) = New WeakRef(Instance)
-		      Else
-		        mInstances.Value(ThreadID) = Instance
-		      End If
-		    Else
-		      Return Nil
-		    End If
-		  End If
-		  
-		  Return Instance
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SyncURL(ForceRefresh As Boolean) As String
 		  #Pragma Unused ForceRefresh
 		  
@@ -846,7 +775,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End Try
 		  
-		  Var Instance As Beacon.CommonData = Beacon.CommonData.SharedInstance(CommonFlagsWritable)
+		  Var Instance As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
 		  Instance.BeginTransaction()
 		  
 		  Var Changed As Boolean
@@ -901,18 +830,18 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function WritableInstance() As Beacon.DataSource
-		  Return Beacon.CommonData.SharedInstance(Beacon.CommonData.CommonFlagsWritable)
+		Function WriteableInstance() As Beacon.CommonData
+		  Return Self.Pool.Get(True)
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private Shared mInstances As Dictionary
+		Private Shared mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared mLock As CriticalSection
+		Private Shared mPool As Beacon.CommonDataPool
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

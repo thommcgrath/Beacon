@@ -180,7 +180,7 @@ Protected Class ProjectController
 		  #Pragma Unused Sender
 		  
 		  If Not Self.CanWrite Then
-		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Project is not writable")
+		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Project is not writeable")
 		    Return
 		  End If
 		  

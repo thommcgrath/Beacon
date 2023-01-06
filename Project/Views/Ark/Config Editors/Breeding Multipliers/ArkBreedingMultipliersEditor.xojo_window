@@ -1833,31 +1833,31 @@ End
 		  Var BabyCuddleIntervalMultiplier As Double = 1.0
 		  
 		  If Self.mComputeSinglePlayer Then
-		    MatingIntervalMultiplier = MatingIntervalMultiplier * Ark.DataSource.SharedInstance.GetDoubleVariable("SPMatingIntervalMultiplier", 0.125)
-		    EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * Ark.DataSource.SharedInstance.GetDoubleVariable("SPEggHatchSpeedMultiplier", 10.0)
-		    BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * Ark.DataSource.SharedInstance.GetDoubleVariable("SPBabyMatureSpeedMultiplier", 36.799)
-		    BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * Ark.DataSource.SharedInstance.GetDoubleVariable("SPBabyCuddleIntervalMultiplier", 0.167)
+		    MatingIntervalMultiplier = MatingIntervalMultiplier * Ark.DataSource.Pool.Get(False).GetDoubleVariable("SPMatingIntervalMultiplier", 0.125)
+		    EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * Ark.DataSource.Pool.Get(False).GetDoubleVariable("SPEggHatchSpeedMultiplier", 10.0)
+		    BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * Ark.DataSource.Pool.Get(False).GetDoubleVariable("SPBabyMatureSpeedMultiplier", 36.799)
+		    BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * Ark.DataSource.Pool.Get(False).GetDoubleVariable("SPBabyCuddleIntervalMultiplier", 0.167)
 		  End If
 		  
 		  If Self.mActiveEvent.IsEmpty = False Then
-		    Var ActiveEvent As Ark.GameEvent = Ark.DataSource.SharedInstance.GetGameEventByArkCode(Self.mActiveEvent)
+		    Var ActiveEvent As Ark.GameEvent = Ark.DataSource.Pool.Get(False).GetGameEventByArkCode(Self.mActiveEvent)
 		    If (ActiveEvent Is Nil) = False Then
-		      Var MatingIntervalMultiplierKey As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingIntervalMultiplier")
+		      Var MatingIntervalMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingIntervalMultiplier")
 		      If (MatingIntervalMultiplierKey Is Nil) = False Then
 		        MatingIntervalMultiplier = MatingIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(MatingIntervalMultiplierKey.UUID)
 		      End If
 		      
-		      Var EggHatchSpeedMultiplierKey As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EggHatchSpeedMultiplier")
+		      Var EggHatchSpeedMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EggHatchSpeedMultiplier")
 		      If (EggHatchSpeedMultiplierKey Is Nil) = False Then
 		        EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(EggHatchSpeedMultiplierKey.UUID)
 		      End If
 		      
-		      Var BabyMatureSpeedMultiplierKey As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyMatureSpeedMultiplier")
+		      Var BabyMatureSpeedMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyMatureSpeedMultiplier")
 		      If (BabyMatureSpeedMultiplierKey Is Nil) = False Then
 		        BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(BabyMatureSpeedMultiplierKey.UUID)
 		      End If
 		      
-		      Var BabyCuddleIntervalMultiplierKey As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleIntervalMultiplier")
+		      Var BabyCuddleIntervalMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleIntervalMultiplier")
 		      If (BabyCuddleIntervalMultiplierKey Is Nil) = False Then
 		        BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(BabyCuddleIntervalMultiplierKey.UUID)
 		      End If
@@ -1881,8 +1881,8 @@ End
 		  Var ImprintPeriodMultiplier As Double = Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier").DoubleValue * Self.Config(False).BabyCuddleIntervalMultiplier
 		  Var ImprintAmountMultiplier As Double = Self.mBaselineRates.Value("BabyImprintAmountMultiplier").DoubleValue * Self.Config(False).BabyImprintAmountMultiplier
 		  
-		  Var CuddlePeriod As Integer = Ark.DataSource.SharedInstance.GetIntegerVariable("Cuddle Period") * ImprintPeriodMultiplier
-		  Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures("", Self.Project.ContentPacks)
+		  Var CuddlePeriod As Integer = Ark.DataSource.Pool.Get(False).GetIntegerVariable("Cuddle Period") * ImprintPeriodMultiplier
+		  Var Creatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures("", Self.Project.ContentPacks)
 		  Var SelectedClass As String
 		  If CreaturesList.SelectedRowIndex > -1 Then
 		    SelectedClass = CreaturesList.RowTagAt(CreaturesList.SelectedRowIndex)
@@ -2176,7 +2176,7 @@ End
 		    Return
 		  End If
 		  
-		  Var CuddlePeriod As Integer = Round(Ark.DataSource.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier").DoubleValue)
+		  Var CuddlePeriod As Integer = Round(Ark.DataSource.Pool.Get(False).GetIntegerVariable("Cuddle Period") * Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier").DoubleValue)
 		  Var Multiplier As Double = Interval.TotalSeconds / CuddlePeriod
 		  
 		  Self.SettingUp = True
@@ -2266,7 +2266,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
-		    Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures("", Self.Project.ContentPacks)
+		    Var Creatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures("", Self.Project.ContentPacks)
 		    Var Interval As Double = ArkBreedingTunerDialog.Present(Self, Self.mBaselineRates, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
 		    If Interval > 0 Then
 		      Self.ImprintPeriodField.Text = Interval.PrettyText
@@ -2295,7 +2295,7 @@ End
 		    NoEventItem.HasCheckMark = Self.mActiveEvent.IsEmpty
 		    Base.AddMenu(NoEventItem)
 		    
-		    Var Events() As Ark.GameEvent = Ark.DataSource.SharedInstance.GetGameEvents()
+		    Var Events() As Ark.GameEvent = Ark.DataSource.Pool.Get(False).GetGameEvents()
 		    For Each GameEvent As Ark.GameEvent In Events
 		      Var EventItem As New MenuItem(GameEvent.Label, GameEvent.ArkCode)
 		      EventItem.HasCheckMark = (GameEvent.ArkCode = Self.mActiveEvent)

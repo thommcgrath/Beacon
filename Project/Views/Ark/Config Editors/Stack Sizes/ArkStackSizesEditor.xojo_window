@@ -265,6 +265,8 @@ Begin ArkConfigEditor ArkStackSizesEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -276,6 +278,7 @@ Begin ArkConfigEditor ArkStackSizesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   9
@@ -588,7 +591,7 @@ End
 		    Var SelectEngrams() As String
 		    For Each Entry As DictionaryEntry In Items
 		      Var UUID As String = Entry.Key
-		      Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID(UUID)
+		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(UUID)
 		      
 		      Var Size As UInt64 = Entry.Value
 		      SelectEngrams.Add(UUID)

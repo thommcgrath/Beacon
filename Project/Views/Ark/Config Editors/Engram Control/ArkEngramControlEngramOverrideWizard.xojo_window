@@ -775,7 +775,7 @@ End
 		  Self.mAllowManualUnlock = True
 		  
 		  For Idx As Integer = 0 To Engrams.LastIndex
-		    If Ark.DataSource.SharedInstance.BlueprintIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
+		    If Ark.DataSource.Pool.Get(False).BlueprintIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
 		      Self.mAllowManualUnlock = False
 		      Exit For Idx
 		    End If
@@ -901,7 +901,7 @@ End
 		      Return
 		    End If
 		    
-		    Var ExistingEngrams() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramsByEntryString(Self.EntryStringField.Text, Nil)
+		    Var ExistingEngrams() As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramsByEntryString(Self.EntryStringField.Text, Nil)
 		    If ExistingEngrams.Count = 0 Then
 		      ExistingEngrams.Add(Ark.Engram.CreateFromEntryString(Self.EntryStringField.Text))
 		    End If
@@ -969,7 +969,7 @@ End
 		        Continue
 		      End If
 		      
-		      If Ark.DataSource.SharedInstance.BlueprintIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
+		      If Ark.DataSource.Pool.Get(False).BlueprintIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
 		        ManualUnlockAllowed = False
 		        Exit For Idx
 		      End If
@@ -1013,7 +1013,7 @@ End
 		      Self.mConfig.AutoUnlockEngram(Engram) = AutoUnlock
 		    End If
 		    
-		    If Ark.DataSource.SharedInstance.BlueprintIsCustom(Engram) = True Or Engram.ManualUnlock = True Or Self.mConfig.EffectivelyAutoUnlocked(Engram) = True Then
+		    If Ark.DataSource.Pool.Get(False).BlueprintIsCustom(Engram) = True Or Engram.ManualUnlock = True Or Self.mConfig.EffectivelyAutoUnlocked(Engram) = True Then
 		      If EditLevel Then
 		        Self.mConfig.RequiredPlayerLevel(Engram) = RequiredLevel
 		      End If

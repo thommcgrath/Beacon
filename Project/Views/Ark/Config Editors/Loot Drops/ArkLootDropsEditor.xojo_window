@@ -515,7 +515,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildQuickDropMenu(Menu As MenuItem)
-		  Var Data As Ark.DataSource = Ark.DataSource.SharedInstance
+		  Var Data As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  Var Containers() As Ark.LootContainer = Data.GetLootContainers("", Self.Project.ContentPacks, "", Preferences.ShowExperimentalLootSources)
 		  Var HasExperimentalContainers As Boolean = Data.HasExperimentalLootContainers(Self.Project.ContentPacks)
 		  Var Config As Ark.Configs.LootDrops = Self.Config(False)
@@ -807,9 +807,9 @@ End
 		    Var Container As Ark.LootContainer = Me.RowTagAt(Row)
 		    Var Icon As Picture
 		    If Me.Selected(Row) And IsHighlighted Then
-		      Icon = Ark.DataSource.SharedInstance.GetLootContainerIcon(Container, TextColor, BackgroundColor)
+		      Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, TextColor, BackgroundColor)
 		    Else
-		      Icon = Ark.DataSource.SharedInstance.GetLootContainerIcon(Container, BackgroundColor)
+		      Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, BackgroundColor)
 		    End If
 		    
 		    G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))

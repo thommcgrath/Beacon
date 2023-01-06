@@ -195,6 +195,8 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       AllowMultipleSelection=   False
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -207,6 +209,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
@@ -265,10 +268,10 @@ End
 		  Next
 		  
 		  If Self.mOffset = 0 Then
-		    Self.mResultCount = Ark.DataSource.SharedInstance.CountContentPacks(Self.FilterField.Text.Trim, RequiredType)
+		    Self.mResultCount = Ark.DataSource.Pool.Get(False).CountContentPacks(Self.FilterField.Text.Trim, RequiredType)
 		  End If
 		  
-		  Var Packs() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
+		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
 		  Var Measure As New Picture(20, 20)
 		  Var MeasuredWidth As Double
 		  Self.CheckboxesBound = Packs.LastIndex

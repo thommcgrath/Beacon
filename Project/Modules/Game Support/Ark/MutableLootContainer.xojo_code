@@ -236,7 +236,7 @@ Implements Ark.MutableBlueprint
 		      Continue
 		    End If
 		    
-		    Var Template As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Self.mItemSets(Idx).TemplateUUID)
+		    Var Template As Ark.LootTemplate = Ark.DataSource.Pool.Get(False).GetLootTemplateByUUID(Self.mItemSets(Idx).TemplateUUID)
 		    If Template Is Nil Then
 		      Continue
 		    End If

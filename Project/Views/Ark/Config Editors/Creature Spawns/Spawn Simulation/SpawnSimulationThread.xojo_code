@@ -7,7 +7,7 @@ Inherits Thread
 		    Return
 		  End If
 		  
-		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.FlagCreateIfNeeded Or Ark.DataSource.FlagUseWeakRef)
+		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  Var DinoCountMultiplier As Double = 1.0
 		  Var DinoCountMultiplierKey As Ark.ConfigKey = Database.GetConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DinoCountMultiplier")

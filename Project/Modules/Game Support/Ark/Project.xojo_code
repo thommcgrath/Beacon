@@ -32,7 +32,7 @@ Inherits Beacon.Project
 		    Self.ConsoleSafe = True
 		    
 		    For Each Entry As DictionaryEntry In Self.mContentPacks
-		      Var Pack As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPackWithUUID(Entry.Key.StringValue)
+		      Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithUUID(Entry.Key.StringValue)
 		      If (Pack Is Nil Or Pack.ConsoleSafe = False) And Self.mContentPacks.Value(Entry.Key).BooleanValue = True Then
 		        Self.mContentPacks.Value(Entry.Key) = False
 		      End If
@@ -94,7 +94,7 @@ Inherits Beacon.Project
 		      End If
 		      
 		      Var Multiplier As Double = ConvertLootScale.Value("Multiplier")
-		      OtherSettings.Value(Ark.DataSource.SharedInstance.GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
+		      OtherSettings.Value(Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
 		      
 		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) = False Then
 		        SetDict.Value(Ark.Configs.NameOtherSettings) = OtherSettings
@@ -150,7 +150,7 @@ Inherits Beacon.Project
 		  
 		  If PlainData.HasKey("ModSelections") Then
 		    // Newest mod, keys are uuids and values are boolean
-		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks()
+		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		    Var Selections As Dictionary = PlainData.Value("ModSelections")
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
 		    For Each Pack As Ark.ContentPack In AllPacks
@@ -163,7 +163,7 @@ Inherits Beacon.Project
 		  ElseIf PlainData.HasKey("Mods") Then
 		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
 		    
-		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks()
+		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
 		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
@@ -177,7 +177,7 @@ Inherits Beacon.Project
 		    Var ConsolePacksOnly As Boolean = PlainData.Value("ConsoleModsOnly")
 		    If ConsolePacksOnly Then
 		      Var Selections As New Dictionary
-		      Var AllPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks()
+		      Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		      For Each Pack As Ark.ContentPack In AllPacks
 		        Selections.Value(Pack.UUID) = Pack.DefaultEnabled And Pack.ConsoleSafe
 		      Next
@@ -414,7 +414,7 @@ Inherits Beacon.Project
 		  Self.mMapMask = 1 // Play it safe, do not bother calling Ark.Maps here in case database access is fubar
 		  
 		  Self.mContentPacks = New Dictionary
-		  Var DataSource As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.FlagFallbackToMainThread)
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  If (DataSource Is Nil) = False Then
 		    Var Packs() As Ark.ContentPack = DataSource.GetContentPacks
 		    For Idx As Integer = 0 To Packs.LastIndex
@@ -495,14 +495,14 @@ Inherits Beacon.Project
 		    End If
 		    
 		    Var ConfigUpdated As Boolean
-		    Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsForCreature(ReplacedCreature, Self.ContentPacks, "")
+		    Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(ReplacedCreature, Self.ContentPacks, "")
 		    For Each SourceSpawnPoint As Ark.SpawnPoint In SpawnPoints
 		      If SourceSpawnPoint.ValidForMask(Self.MapMask) = False Then
 		        Continue
 		      End If
 		      
 		      Var SpawnPoint As Ark.MutableSpawnPoint = SourceSpawnPoint.MutableClone
-		      Ark.DataSource.SharedInstance.LoadDefaults(SpawnPoint)
+		      Ark.DataSource.Pool.Get(False).LoadDefaults(SpawnPoint)
 		      
 		      Var Limit As Double = SpawnPoint.Limit(ReplacedCreature)
 		      Var NewSets() As Ark.SpawnPointSet
@@ -686,8 +686,8 @@ Inherits Beacon.Project
 		  Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoHarvestingDamageMultiplier=0.0000001"))
 		  
 		  Var Packs As Beacon.StringList = Self.ContentPacks
-		  Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainers("", Packs, "", True)
-		  Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
+		  Var Containers() As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainers("", Packs, "", True)
+		  Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
 		  Var Mask As UInt64 = Self.MapMask
 		  For Each Container As Ark.LootContainer In Containers
 		    If Container.ValidForMask(Mask) = False Then
@@ -719,7 +719,7 @@ Inherits Beacon.Project
 		    Ark.Configs.LootDrops.BuildOverrides(Mutable, Values, 5.0)
 		  Next Container
 		  
-		  Var Craftable() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
+		  Var Craftable() As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
 		  Var CoinFlip As Integer = Rand.InRange(0, 1)
 		  If CoinFlip = 0 Then
 		    // Turdcraft
@@ -730,7 +730,7 @@ Inherits Beacon.Project
 		    Next CraftableEngram
 		  Else
 		    // Randomcraft
-		    Var Choices() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
+		    Var Choices() As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
 		    For Each CraftableEngram As Ark.Engram In Craftable
 		      Var Idx As Integer = Rand.InRange(Choices.FirstIndex, Choices.LastIndex)
 		      

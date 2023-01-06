@@ -270,6 +270,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread FibercraftBuilderThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -281,6 +282,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -331,6 +333,8 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -342,6 +346,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   8
@@ -879,7 +884,7 @@ End
 #tag Events FibercraftBuilderThread
 	#tag Event
 		Sub Run()
-		  Var Fiber As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID("244bc843-2540-486e-af4a-8824500c0e56")
+		  Var Fiber As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("244bc843-2540-486e-af4a-8824500c0e56")
 		  
 		  Var Config As Ark.Configs.CraftingCosts = Self.Config(False)
 		  Var Engrams() As Ark.Engram = Config.Engrams
@@ -898,7 +903,7 @@ End
 		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
-		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "{""required"":[""blueprintable""],""excluded"":[""generic"",""no_fibercraft"",""forged""]}")
+		  Engrams = Ark.DataSource.Pool.Get(False).GetEngrams("", Self.Project.ContentPacks, "{""required"":[""blueprintable""],""excluded"":[""generic"",""no_fibercraft"",""forged""]}")
 		  For Each Engram As Ark.Engram In Engrams
 		    If Self.mProgressWindow.CancelPressed Then
 		      Self.mProgressWindow.Close
@@ -970,13 +975,13 @@ End
 		    Filter.Value(Engram.ObjectID) = True
 		  Next
 		  
-		  Var ObjectIDs() As String = Ark.DataSource.SharedInstance.GetEngramUUIDsThatHaveCraftingCosts(Self.Project.ContentPacks, Self.Project.MapMask)
+		  Var ObjectIDs() As String = Ark.DataSource.Pool.Get(False).GetEngramUUIDsThatHaveCraftingCosts(Self.Project.ContentPacks, Self.Project.MapMask)
 		  For Each ObjectID As String In ObjectIDs
 		    If Filter.HasKey(ObjectID) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID(ObjectID)
+		    Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(ObjectID)
 		    If (Engram Is Nil) = False Then
 		      Engrams.Add(Engram)
 		    End If

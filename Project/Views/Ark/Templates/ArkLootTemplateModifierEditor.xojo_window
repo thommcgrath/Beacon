@@ -531,7 +531,7 @@ End
 #tag Events GroupMenu
 	#tag Event
 		Sub Open()
-		  Var Selectors() As Beacon.TemplateSelector = Beacon.CommonData.SharedInstance.GetTemplateSelectors("", Ark.Identifier)
+		  Var Selectors() As Beacon.TemplateSelector = Beacon.CommonData.Pool.Get(False).GetTemplateSelectors("", Ark.Identifier)
 		  Var Actives() As String = Self.mTemplate.ActiveSelectorIDs()
 		  For Each LootSelector As Beacon.TemplateSelector In Selectors
 		    Var Editing As Boolean = (LootSelector.UUID = Self.mEditID)

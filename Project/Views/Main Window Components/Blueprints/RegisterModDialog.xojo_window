@@ -1004,24 +1004,30 @@ Begin BeaconDialog RegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Thread RegisterModThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndWindow
@@ -1352,7 +1358,7 @@ End
 #tag Events RegisterModThread
 	#tag Event
 		Sub Run()
-		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
+		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  Var ContentPack As Ark.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mWorkshopID)
 		  Self.mModUUID = ContentPack.UUID
 		  

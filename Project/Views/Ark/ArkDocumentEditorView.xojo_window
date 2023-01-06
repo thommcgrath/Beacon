@@ -376,36 +376,36 @@ End
 
 	#tag MenuHandler
 		Function FileDeploy() As Boolean Handles FileDeploy.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Self.BeginDeploy()
-			Return True
-			
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Self.BeginDeploy()
+		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Self.BeginExport()
-			Return True
-			
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Self.BeginExport()
+		  Return True
+		  
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewSwitchToBaseConfigSet() As Boolean Handles ViewSwitchToBaseConfigSet.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Self.ActiveConfigSet = Beacon.Project.BaseConfigSetName
-			Return True
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Self.ActiveConfigSet = Beacon.Project.BaseConfigSetName
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
@@ -733,7 +733,7 @@ End
 		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
 		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
-		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks
+		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		    For Each Pack As Ark.ContentPack In ContentPacks
 		      Self.Project.ContentPackEnabled(Pack.UUID) = Editor.ModEnabled(Pack.UUID)
 		    Next

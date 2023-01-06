@@ -1318,7 +1318,7 @@ End
 	#tag Method, Flags = &h21
 		Private Function CreateEntry() As Ark.MutableSpawnPointSetEntry
 		  // For the purposes of this method, we don't need a creature, but the class does. So give it one that will always exist. A dodo.
-		  Var Entry As New Ark.MutableSpawnPointSetEntry(Ark.DataSource.SharedInstance.GetCreatureByUUID("08d6f1c5-6b8a-48b0-9232-e2705864c87c"))
+		  Var Entry As New Ark.MutableSpawnPointSetEntry(Ark.DataSource.Pool.Get(False).GetCreatureByUUID("08d6f1c5-6b8a-48b0-9232-e2705864c87c"))
 		  
 		  If Self.LevelOverrideMinField.Text <> "" And Self.LevelOverrideMaxField.Text <> "" Then
 		    Entry.Append(Ark.SpawnPointLevel.FromUserLevel(Self.LevelOverrideMinField.DoubleValue, Self.LevelOverrideMaxField.DoubleValue, Self.mDifficulty))

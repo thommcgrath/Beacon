@@ -195,13 +195,13 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function AscensionLevels() As Integer
-		  Return Ark.DataSource.SharedInstance.GetIntegerVariable("Ascension Levels")
+		  Return Ark.DataSource.Pool.Get(False).GetIntegerVariable("Ascension Levels")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Var List As String = Ark.DataSource.SharedInstance.GetStringVariable("Player Levels")
+		  Var List As String = Ark.DataSource.Pool.Get(False).GetStringVariable("Player Levels")
 		  If List <> "" Then
 		    Var Values() As String = List.Split(",")
 		    For Each Value As String In Values
@@ -209,7 +209,7 @@ Inherits Ark.ConfigGroup
 		    Next
 		  End If
 		  
-		  List = Ark.DataSource.SharedInstance.GetStringVariable("Dino Levels")
+		  List = Ark.DataSource.Pool.Get(False).GetStringVariable("Dino Levels")
 		  If List <> "" Then
 		    Var Values() As String = List.Split(",")
 		    For Each Value As String In Values

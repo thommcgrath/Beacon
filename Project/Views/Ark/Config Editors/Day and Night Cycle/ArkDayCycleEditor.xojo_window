@@ -1337,7 +1337,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub SetupUI()
-		  Var Instance As Ark.DataSource = Ark.DataSource.SharedInstance
+		  Var Instance As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  Self.mOfficialDaySeconds = Instance.GetDoubleVariable("Day Length Seconds", 2483)
 		  Self.mOfficialNightSeconds = Instance.GetDoubleVariable("Night Length Seconds", 1117)

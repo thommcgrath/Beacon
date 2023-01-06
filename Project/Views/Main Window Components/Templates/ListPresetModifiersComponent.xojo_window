@@ -224,7 +224,7 @@ End
 		    SelectIDs.Add(Modifier.UUID)
 		  Next
 		  
-		  Var Modifiers() As Beacon.TemplateSelector = Beacon.CommonData.SharedInstance.GetTemplateSelectors(Beacon.CommonData.FlagIncludeUserItems)
+		  Var Modifiers() As Beacon.TemplateSelector = Beacon.CommonData.Pool.Get(False).GetTemplateSelectors(Beacon.CommonData.FlagIncludeUserItems)
 		  
 		  Self.List.RowCount = Modifiers.Count
 		  For Idx As Integer = 0 To Self.List.LastRowIndex

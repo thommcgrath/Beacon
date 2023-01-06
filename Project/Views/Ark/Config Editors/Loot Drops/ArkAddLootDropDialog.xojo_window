@@ -767,7 +767,7 @@ End
 		    Self.LoadDefaultsCheckbox.Visible = False
 		  End If
 		  
-		  Var HasExperimentalSources As Boolean = Ark.DataSource.SharedInstance.HasExperimentalLootContainers(Self.mContentPacks)
+		  Var HasExperimentalSources As Boolean = Ark.DataSource.Pool.Get(False).HasExperimentalLootContainers(Self.mContentPacks)
 		  If HasExperimentalSources Then
 		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
 		  Else
@@ -795,7 +795,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildSourceList()
-		  Var Data As Ark.DataSource = Ark.DataSource.SharedInstance
+		  Var Data As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  
 		  Var CurrentContainers() As Ark.LootContainer = Self.mConfig.Containers
@@ -879,7 +879,7 @@ End
 		  
 		  If Self.LoadDefaultsCheckbox.Visible And Self.LoadDefaultsCheckbox.Value Then
 		    // Skip the customize step, load defaults, and finish
-		    Var Instance As Ark.DataSource = Ark.DataSource.SharedInstance
+		    Var Instance As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    For Each Destination As Ark.LootContainer In Self.mDestinations
 		      Var Mutable As New Ark.MutableLootContainer(Destination)
 		      Instance.LoadDefaults(Mutable)
@@ -964,7 +964,7 @@ End
 		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.PreventDuplicates
 		  Self.CustomizeAppendItemSetsCheck.Value = BasedOn.AppendMode
 		  
-		  Var Templates() As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplates()
+		  Var Templates() As Ark.LootTemplate = Ark.DataSource.Pool.Get(False).GetLootTemplates()
 		  
 		  Self.CustomizeTemplatesList.RemoveAllRows()
 		  For Each Template As Ark.LootTemplate In Templates
@@ -1088,7 +1088,7 @@ End
 		  Var SourceSets() As Ark.LootItemSet
 		  If (Self.mSource Is Nil) = False Then
 		    For Each Set As Ark.LootItemSet In Self.mSource
-		      If Set.TemplateUUID.IsEmpty Or AllowedTemplates.IndexOf(Set.TemplateUUID) > -1 Or Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Set.TemplateUUID) Is Nil Then
+		      If Set.TemplateUUID.IsEmpty Or AllowedTemplates.IndexOf(Set.TemplateUUID) > -1 Or Ark.DataSource.Pool.Get(False).GetLootTemplateByUUID(Set.TemplateUUID) Is Nil Then
 		        SourceSets.Add(Set)
 		      End If
 		      
@@ -1113,7 +1113,7 @@ End
 		    
 		    // Add newly selected templates
 		    For Each TemplateID As String In AdditionalTemplates
-		      Var Template As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(TemplateID)
+		      Var Template As Ark.LootTemplate = Ark.DataSource.Pool.Get(False).GetLootTemplateByUUID(TemplateID)
 		      If Template Is Nil Then
 		        Continue
 		      End If
@@ -1185,9 +1185,9 @@ End
 		  Var Container As Ark.LootContainer = Me.RowTagAt(Row)
 		  Var Icon As Picture
 		  If Me.Selected(Row) And IsHighlighted Then
-		    Icon = Ark.DataSource.SharedInstance.GetLootContainerIcon(Container, TextColor, BackgroundColor)
+		    Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, TextColor, BackgroundColor)
 		  Else
-		    Icon = Ark.DataSource.SharedInstance.GetLootContainerIcon(Container, BackgroundColor)
+		    Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, BackgroundColor)
 		  End If
 		  
 		  G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))

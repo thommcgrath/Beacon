@@ -666,7 +666,7 @@ End
 		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
 		      Var UUID As String = CombinedLimits.Key(RowIndex)
 		      Var Limit As Double = CombinedLimits.Value(UUID)
-		      Var Creature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(UUID)
+		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(UUID)
 		      If (Creature Is Nil) Then
 		        Self.LimitsList.CellValueAt(RowIndex, 0) = "Unknown Creature"
 		      Else
@@ -971,7 +971,7 @@ End
 		  Var SelectedCreatures() As Ark.Creature
 		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		    If Self.LimitsList.Selected(I) Then
-		      SelectedCreatures.Add(Ark.DataSource.SharedInstance.GetCreatureByUUID(Self.LimitsList.RowTagAt(I).StringValue))
+		      SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Self.LimitsList.RowTagAt(I).StringValue))
 		    End If
 		  Next
 		  Self.PresentLimitsDialog(SelectedCreatures)
@@ -990,7 +990,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Creature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(Me.RowTagAt(I).StringValue)
+		    Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Me.RowTagAt(I).StringValue)
 		    If Creature Is Nil Then
 		      Continue
 		    End If
@@ -1031,7 +1031,7 @@ End
 		    End If
 		    
 		    Var UUID As String = Me.RowTagAt(I)
-		    Var Creature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(UUID)
+		    Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(UUID)
 		    If Creature Is Nil Then
 		      Continue
 		    End If
@@ -1090,9 +1090,9 @@ End
 		    Var UUID As String = Entry.Key
 		    Var Creature As Ark.Creature
 		    Try
-		      Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(UUID)
+		      Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(UUID)
 		    Catch Err As UnsupportedFormatException
-		      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreaturesByPath(UUID, Self.Project.ContentPacks)
+		      Var Creatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreaturesByPath(UUID, Self.Project.ContentPacks)
 		      If Creatures.Count > 0 Then
 		        Creature = Creatures(0)
 		      End If
@@ -1125,7 +1125,7 @@ End
 		    Var SelectedCreatures() As Ark.Creature
 		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		      If Self.LimitsList.Selected(I) Then
-		        SelectedCreatures.Add(Ark.DataSource.SharedInstance.GetCreatureByUUID(Self.LimitsList.RowTagAt(I).StringValue))
+		        SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Self.LimitsList.RowTagAt(I).StringValue))
 		      End If
 		    Next
 		    Self.PresentLimitsDialog(SelectedCreatures)

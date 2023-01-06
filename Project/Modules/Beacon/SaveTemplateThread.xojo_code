@@ -5,7 +5,7 @@ Inherits Thread
 		Sub Run()
 		  Self.Retain
 		  
-		  Var Database As Beacon.CommonData = Beacon.CommonData.SharedInstance(Beacon.CommonData.CommonFlagsWritable)
+		  Var Database As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
 		  For Each Template As Beacon.Template In Self.mTemplates
 		    Database.SaveTemplate(Template)
 		  Next
