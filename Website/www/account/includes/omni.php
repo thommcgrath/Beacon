@@ -16,7 +16,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 BeaconTemplate::StartScript(); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function(event) {
-	document.getElementById('omni_show_instructions_internet').addEventListener('click', function(ev) {
+	document.getElementById('omni_show_instructions_internet').addEventListener('click', (ev) => {
 		ev.preventDefault();
 		
 		var instructions = document.getElementById('omni_instructions_internet');
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		}
 	});
 	
-	document.getElementById('omni_show_instructions_no_internet').addEventListener('click', function(ev) {
+	document.getElementById('omni_show_instructions_no_internet').addEventListener('click', (ev) => {
 		ev.preventDefault();
 		
 		var instructions = document.getElementById('omni_instructions_no_internet');
@@ -38,33 +38,36 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		}
 	});
 	
-	let drag_and_drop_supported = self.fetch && window.FileReader && ('classList' in document.createElement('a'));
+	const drag_and_drop_supported = self.fetch && window.FileReader && ('classList' in document.createElement('a'));
 	if (drag_and_drop_supported) {
-		var upload_file = function(file) {
-			let formData = new FormData();
+		const upload_file = (file) => {
+			const formData = new FormData();
 			formData.append('file', file);
 			
 			fetch(document.getElementById('upload_activation_form').getAttribute('action'), { method: 'POST', body: formData, credentials: 'same-origin', headers: {'Accept': 'application/json'} }).then(function(response) {
 				if (!response.ok) {
-					let obj = response.json().then(function(obj) {
-						let message = 'Sorry, there was an error creating the authorization file.';
+					const obj = response.json().then((obj) => {
+						const alert = {
+							message: 'Unable to create authorization file',
+							explanation: 'Sorry, there was an error creating the authorization file.'
+						};
 						if (obj.message) {
-							message += ' ' + obj.message.trim();
+							alert.explanation += ' ' + obj.message.trim();
 						}
-						if (!message.endsWith('.')) {
-							message += '.';
+						if (!alert.explanation.endsWith('.')) {
+							alert.explanation += '.';
 						}
-						dialog.show('Unable to create authorization file', message);
+						BeaconDialog.show(alert.message, alert.explanation);
 					});
 					return;
 				}
 				
-				let disposition = response.headers.get('content-disposition');
-				let matches = /"([^"]*)"/.exec(disposition);
-				let filename = (matches != null && matches[1] ? matches[1] : 'Default.beaconidentity');
+				const disposition = response.headers.get('content-disposition');
+				const matches = /"([^"]*)"/.exec(disposition);
+				const filename = (matches != null && matches[1] ? matches[1] : 'Default.beaconidentity');
 				
-				response.blob().then(function(blob) {
-					let link = document.createElement('a');
+				response.blob().then((blob) => {
+					const link = document.createElement('a');
 					link.href = window.URL.createObjectURL(blob);
 					link.download = filename;
 					
@@ -72,50 +75,50 @@ document.addEventListener('DOMContentLoaded', function(event) {
 					link.click();
 					document.body.removeChild(link);
 				});
-			}).catch(function(error) {
-				dialog.show('Unable to create authorization file', 'There was a network error: ' + error);
+			}).catch((error) => {
+				BeaconDialog.show('Unable to create authorization file', 'There was a network error: ' + error);
 			});
 		};
 		
-		var upload_container = document.getElementById('upload_container');
+		const upload_container = document.getElementById('upload_container');
 		upload_container.classList.add('live-supported');
 		
-		var drop_area = document.getElementById('drop_area');
+		const drop_area = document.getElementById('drop_area');
 		
 		['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-			drop_area.addEventListener(eventName, function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+			drop_area.addEventListener(eventName, (ev) => {
+				ev.preventDefault();
+				ev.stopPropagation();
 			}, false);
 		});
 		
 		['dragenter', 'dragover'].forEach(eventName => {
-			drop_area.addEventListener(eventName, function(e) {
-				this.classList.add('highlight');
+			drop_area.addEventListener(eventName, (ev) => {
+				ev.target.classList.add('highlight');
 			}, false);
 		});
 		
 		['dragleave', 'drop'].forEach(eventName => {
-			drop_area.addEventListener(eventName, function(e) {
-				this.classList.remove('highlight');
+			drop_area.addEventListener(eventName, (ev) => {
+				ev.target.classList.remove('highlight');
 			}, false);
 		});
 		
-		document.getElementById('choose_file_button').addEventListener('click', function(ev) {
+		document.getElementById('choose_file_button').addEventListener('click', (ev) => {
 			ev.preventDefault();
 			
-			let chooser = document.getElementById('file_chooser');
+			const chooser = document.getElementById('file_chooser');
 			if (chooser) {
-				chooser.addEventListener('change', function(ev) {
-					upload_file(this.files[0]);
+				chooser.addEventListener('change', (ev) => {
+					upload_file(ev.target.files[0]);
 				});
 				
 				chooser.click();
 			}
 		});
 		
-		drop_area.addEventListener('drop', function(e) {
-			upload_file(e.dataTransfer.files[0]);
+		drop_area.addEventListener('drop', (ev) => {
+			upload_file(ev.dataTransfer.files[0]);
 		}, false);
 	}
 });
@@ -123,8 +126,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
 BeaconTemplate::FinishScript();
 
 ?><p>Thanks for purchasing Beacon Omni! Your support means a lot.</p>
-<div id="section-activation" class="omni-section">
-	<h2>Activating Beacon Omni</h2>
+<div id="section-activation" class="visual-group">
+	<h3>Activating Beacon Omni</h3>
 	<h3><a href="#with-internet" id="omni_show_instructions_internet">Option 1: Sign into your account in Beacon</a></h3>
 	<div id="omni_instructions_internet" class="hidden"><?php include(BeaconCommon::WebRoot() . '/omni/welcome/instructions.php'); ?></div>
 	<h3><a href="#without-internet" id="omni_show_instructions_no_internet">Option 2: Use an activation file for a computer without internet</a></h3>
@@ -170,8 +173,8 @@ function ShowGiftCodes() {
 		return;
 	}
 	
-	echo '<div id="section-gifts" class="omni-section">';
-	echo '<h2>Gift Codes</h2>';
+	echo '<div id="section-gifts" class="visual-group">';
+	echo '<h3>Gift Codes</h3>';
 	echo '<p>Codes can be redeemed at <a href="/redeem">' . BeaconCommon::AbsoluteURL('/redeem') . '</a> or using the link next to each code.</p>';
 	echo '<table class="generic"><thead><tr><th class="w-40">Code</th><th class="low-priority w-20">Status</th><th class="low-priority w-40">Redeem Link</th></thead>';
 	while (!$results->EOF()) {
@@ -193,8 +196,8 @@ function ShowLicenses() {
 		return;
 	}
 	
-	echo '<div id="section-licenses" class="omni-section">';
-	echo '<h2>Beacon Licenses</h2>';
+	echo '<div id="section-licenses" class="visual-group">';
+	echo '<h3>Licenses</h3>';
 	echo '<table class="generic"><thead><tr><th class="w-50">Product</th><th class="low-priority w-25">Updates Until</th><th class="low-priority w-25">Actions</th></thead>';
 	while ($licenses->EOF() === false) {
 		$purchase_id = $licenses->Field('purchase_id');
@@ -234,8 +237,8 @@ function ShowPurchases() {
 		return;
 	}
 	
-	echo '<div id="section-licenses" class="omni-section">';
-	echo '<h2>All Purchases</h2>';
+	echo '<div id="section-licenses" class="visual-group">';
+	echo '<h3>All Purchases</h3>';
 	echo '<table class="generic"><thead><tr><th class="w-60">Purchase Date</th><th class="w-20">Total</th><th class="low-priority w-20">Actions</th></thead>';
 	while ($purchases->EOF() === false) {
 		$purchase_id = $purchases->Field('purchase_id');

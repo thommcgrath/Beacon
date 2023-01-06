@@ -1,40 +1,6 @@
 <?php
-BeaconTemplate::StartScript(); ?>
-<script>
-document.addEventListener('DOMContentLoaded', function(event) {
-	var delete_buttons = document.querySelectorAll('[beacon-action="delete"]');
-	for (var i = 0; i < delete_buttons.length; i++) {
-		var button = delete_buttons[i];
-		button.addEventListener('click', function(event) {
-			event.preventDefault();
-			
-			var resource_url = this.getAttribute('beacon-resource-url');
-			var resource_name = this.getAttribute('beacon-resource-name');
-			
-			dialog.confirm('Are you sure you want to delete the project "' + resource_name + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete', 'Cancel', function() {
-				request.start('DELETE', resource_url, '', '', function(obj) {
-					dialog.show('Project deleted', '"' + resource_name + '" has been deleted.', function() {
-						window.location.reload(true);
-					});
-				}, function(http_status) {
-					switch (http_status) {
-					case 401:
-						dialog.show('Project not deleted', 'There was an authentication error');
-						break;
-					default:
-						dialog.show('Project not deleted', 'Sorry, there was a ' + http_status + ' error.');
-						break;
-					}
-				}, {'Authorization': <?php echo json_encode('Session ' . $session->SessionID()); ?>});
-			});
-			
-			return false;
-		});
-	}
-});
-</script>
-<?php
-BeaconTemplate::FinishScript();
+
+echo '<h1>Projects</h1><div class="visual-group"><h3>Your Projects</h3>';
 
 $keys = array(
 	'user_id' => $user->UserID()
@@ -76,7 +42,9 @@ if (count($projects) > 0) {
 	}
 	echo '</table>';
 } else {
-	echo '<div class="small_section"><p>You have not created any projects yet!<span class="text-lighter smaller"><br>(Or at least haven\'t saved any to Beacon\'s Cloud.)</span></p></div>';
+	echo '<p>You have not created any projects yet!<span class="text-lighter smaller"><br>(Or at least haven\'t saved any to Beacon\'s Cloud.)</span></p>';
 }
+
+echo '</div>';
 
 ?>

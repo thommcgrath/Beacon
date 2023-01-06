@@ -85,3 +85,37 @@ h1 span.tag {
 	margin-right: auto;
 	max-width: 600px;
 }
+
+#backup-codes {
+	gap: 20px;
+	max-width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+	
+	div.flex-grid-item {
+		flex: 1 1 45%;
+		text-align: center;
+	}
+}
+
+#add-authenticator-content {
+	display: flex;
+	gap: 20px;
+}
+
+#add-authenticator-qrcode {
+	width: 100%;
+	height: auto;
+	display: block;
+	background-color: #ffffff;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+#add-authenticator-content-left {
+	flex: 1 1 33%;
+}
+
+#add-authenticator-content-right {
+	flex: 2 2 66%;
+}

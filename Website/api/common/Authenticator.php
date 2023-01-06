@@ -18,7 +18,7 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 		$this->type = $row->Field('type');
 		$this->nickname = $row->Field('nickname');
 		$this->date_added = intval($row->Field('date_added'));
-		$this->metadata = json_decode($row->Field('metadata'));
+		$this->metadata = json_decode($row->Field('metadata'), true);
 	}
 	
 	public static function SQLSchemaName(): string {
@@ -54,7 +54,7 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public static function GetForUser(\BeaconUser $user, ?string $type = null): array {
-		return static::GetForUser($user->UserID(), $type);
+		return static::GetForUserID($user->UserID(), $type);
 	}
 	
 	public static function GetForUserID(string $user_id, ?string $type = null): array {
@@ -152,7 +152,7 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 	protected static function GenerateTOTP(int $timestamp, string $decoded_secret): string {
 		$timestamp = floor($timestamp / 30);
 		$binary = pack('N*', 0) . pack('N*', $timestamp);
-		$hash = hash_hmac('sha1', $binary, $this->two_factor_key_decoded, true);
+		$hash = hash_hmac('sha1', $binary, $decoded_secret, true);
 		$offset = ord($hash[19]) & 0xf;
 		$code = (((ord($hash[$offset]) & 0x7f) << 24) | ((ord($hash[$offset + 1]) & 0xff) << 16) | ((ord($hash[$offset + 2]) & 0xff) << 8) | (ord($hash[$offset + 3]) & 0xff)) % pow(10, 6);
 		return str_pad($code, 6, '0', STR_PAD_LEFT);

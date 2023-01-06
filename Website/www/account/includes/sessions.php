@@ -4,7 +4,7 @@ $sessions = BeaconSession::GetForUser($user);
 
 BeaconTemplate::AddStyleSheet('/assets/css/flags.css');
 
-BeaconTemplate::StartScript(); ?>
+/*BeaconTemplate::StartScript(); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function(event) {
 	let revokeAction = function(event) {
@@ -35,8 +35,11 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	}
 });
 </script><?php
-BeaconTemplate::FinishScript();
+BeaconTemplate::FinishScript();*/
 
+echo '<h1>Sessions</h1>';
+echo '<div class="visual-group">';
+echo '<h3>Active Sessions</h3>';
 echo '<table class="generic" id="session_table">';
 echo '<thead><tr><th>Device</th><th class="address_column low-priority">Address</th><th class="country_column low-priority">Country</th><th class="revoke_column low-priority">Actions</th></tr></thead>';
 
@@ -92,5 +95,6 @@ foreach ($sessions as $session) {
 }
 
 echo '</table>';
+echo '</div>';
 
 ?>

@@ -16,43 +16,15 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 BeaconTemplate::StartScript(); ?>
 <script>
-var device_id = <?php echo json_encode(BeaconCommon::DeviceID()); ?>;	
-
-var switchViewFromFragment = function() {
-	var fragment = window.location.hash.substr(1);
-	if (fragment !== '') {
-		switchView(fragment);
-	} else {
-		switchView('documents');
-	}
-}
-
-var currentView = 'documents';
-var switchView = function(newView) {
-	if (newView == currentView) {
-		return;
-	}
-	
-	document.getElementById('account_toolbar_menu_' + currentView).className = '';
-	document.getElementById('account_toolbar_menu_' + newView).className = 'active';
-	document.getElementById('account_view_' + currentView).className = 'hidden';
-	document.getElementById('account_view_' + newView).className = '';
-	currentView = newView;
-};
-
-document.addEventListener('DOMContentLoaded', function(event) {
-	switchViewFromFragment();
-});
-
-window.addEventListener('popstate', function(ev) {
-	switchViewFromFragment();
-});
+const deviceId = <?php echo json_encode(BeaconCommon::DeviceID()); ?>;
+const sessionId = <?php echo json_encode($session->SessionID()); ?>;
+const apiDomain = <?php echo json_encode(BeaconCommon::APIDomain()); ?>;
 </script><?php
 BeaconTemplate::FinishScript();
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
 
-?><h1><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
+?><h1 id="account-user-header" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>"><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
 <div id="account_toolbar_menu" class="separator-color">
 	<div id="account_toolbar_menu_documents" class="active"><a href="#documents" id="toolbar_documents_button">Projects</a></div>
 	<div id="account_toolbar_menu_omni"><a href="#omni" id="toolbar_omni_button">Omni</a></div>
