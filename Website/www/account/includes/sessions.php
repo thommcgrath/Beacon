@@ -4,40 +4,6 @@ $sessions = BeaconSession::GetForUser($user);
 
 BeaconTemplate::AddStyleSheet('/assets/css/flags.css');
 
-/*BeaconTemplate::StartScript(); ?>
-<script>
-document.addEventListener('DOMContentLoaded', function(event) {
-	let revokeAction = function(event) {
-		event.preventDefault();
-		
-		request.post('/account/actions/revoke', {'sessionHash': this.getAttribute('sessionHash')}, function(obj) {
-			dialog.show('Session revoked', 'Be aware that any enabled user with a copy of your account\'s private key can start a new session.', function() {
-				window.location.reload(true);
-			});
-		}, function(http_status) {
-			switch (http_status) {
-			case 401:
-				dialog.show('Session not revoked', 'There was an authentication error');
-				break;
-			default:
-				dialog.show('Session not revoked', 'Sorry, there was a ' + http_status + ' error.');
-				break;
-			}
-		}, {'Authorization': <?php echo json_encode('Session ' . $session->SessionID()); ?>});
-		
-		return false;
-	};
-	
-	let revokeLinks = document.querySelectorAll('a.revokeLink');
-	for (var i = 0; i < revokeLinks.length; i++) {
-		var link = revokeLinks[i];
-		link.addEventListener('click', revokeAction);
-	}
-});
-</script><?php
-BeaconTemplate::FinishScript();*/
-
-echo '<h1>Sessions</h1>';
 echo '<div class="visual-group">';
 echo '<h3>Active Sessions</h3>';
 echo '<table class="generic" id="session_table">';

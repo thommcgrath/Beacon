@@ -202,6 +202,9 @@ class PagePanel {
 		if (oldPageName === newPageName) {
 			return;
 		}
+		if (!this.pageMap[newPageName]) {
+			return;
+		}
 		
 		this.pageMap[oldPageName].classList.remove('page-panel-visible');
 		this.pageMap[oldPageName].link.parentElement.classList.remove('page-panel-active');

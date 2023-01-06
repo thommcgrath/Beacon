@@ -1,6 +1,6 @@
 <?php
 
-echo '<h1>Projects</h1><div class="visual-group"><h3>Your Projects</h3>';
+echo '<div class="visual-group"><h3>Your Projects</h3>';
 
 $keys = array(
 	'user_id' => $user->UserID()

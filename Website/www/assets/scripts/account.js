@@ -1,55 +1,5 @@
 "use strict";
 
-class ViewSwitcher {
-	static currentPage = 'documents';
-	
-	static init() {
-		ViewSwitcher.switchFromFragment();
-	}
-	
-	static switchTo(newPage) {
-		const currentPage = ViewSwitcher.currentPage;
-		if (newPage == ViewSwitcher.currentPage) {
-			return;
-		}
-		
-		document.getElementById('account_toolbar_menu_' + currentPage).className = '';
-		document.getElementById('account_toolbar_menu_' + newPage).className = 'active';
-		document.getElementById('account_view_' + currentPage).className = 'hidden';
-		document.getElementById('account_view_' + newPage).className = '';
-		ViewSwitcher.currentPage = newPage;
-	}
-	
-	static switchFromFragment() {
-		const fragment = window.location.hash.substr(1);
-		if (fragment !== '') {
-			const index = fragment.indexOf('.');
-			if (index > -1) {
-				const majorPage = fragment.substr(0, index);
-				const minorPage = fragment.substr(index + 1);
-				
-				switch (majorPage) {
-				case 'settings':
-					PagePanel.pagePanels['panel-settings'].switchPage(minorPage);
-					break;
-				}
-				
-				ViewSwitcher.switchTo(majorPage);
-			} else {
-				switch (fragment) {
-				case 'settings':
-					window.location.hash = `${fragment}.${PagePanel.pagePanels['panel-settings'].currentPageName}`;
-					break;
-				}
-				
-				ViewSwitcher.switchTo(fragment);
-			}
-		} else {
-			ViewSwitcher.switchTo('documents');
-		}
-	}
-}
-
 document.addEventListener('DOMContentLoaded', (event) => {
 	let known_vulnerable_password = '';
 	
@@ -59,7 +9,255 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const userSuffix = userHeader.getAttribute('beacon-user-suffix');
 	const userFullName = `${userName}#${userSuffix}`;
 	
-	ViewSwitcher.init();
+	const getFragment = () => {
+		let fragment = window.location.hash;
+		if (fragment) {
+			if (fragment.startsWith('#')) {
+				fragment = fragment.substr(1);
+			}
+			return fragment;
+		} else {
+			return '';
+		}
+	};
+	
+	const pagePanel = PagePanel.pagePanels['panel-account'];
+	if (pagePanel) {
+		pagePanel.switchPage(getFragment());
+		
+		window.addEventListener('popstate', (ev) => {
+			pagePanel.switchPage(getFragment());
+		});
+	}
+	
+	const settingsPagePanel = document.getElementById('panel-account');
+	if (settingsPagePanel) {
+		settingsPagePanel.addEventListener('panelSwitched', (ev) => {
+			window.location.hash = ev.panel.currentPageName;
+		});
+	}
+	
+	/* ! Projects */
+	
+	const deleteProjectButtons = document.querySelectorAll('#account_view_documents [beacon-action="delete"]');
+	for (const button of deleteProjectButtons) {
+		button.addEventListener('click', (event) => {
+			event.preventDefault();
+			
+			const resource_url = event.target.getAttribute('beacon-resource-url');
+			const resource_name = event.target.getAttribute('beacon-resource-name');
+			
+			BeaconDialog.confirm('Are you sure you want to delete the project "' + resource_name + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete').then(() => {
+				BeaconDialog.delete(resource_url, { Authorization: `Session ${sessionId}` }).then((response) => {
+					BeaconDialog.show('Project deleted', '"' + resource_name + '" has been deleted.').then(() => {
+						window.location.reload(true);
+					});
+				}).catch((error) => {
+					switch (error.status) {
+					case 401:
+						BeaconDialog.show('Project not deleted', 'There was an authentication error');
+						break;
+					default:
+						BeaconDialog.show('Project not deleted', 'Sorry, there was a ' + error.status + ' error.');
+						break;
+					}
+				});
+			}).catch(() => {
+				// Do nothing
+			});
+			
+			return false;
+		});
+	}
+	
+	/*! Omni */
+	
+	const showOmniInternetInstructionsButton = document.getElementById('omni_show_instructions_internet');
+	if (showOmniInternetInstructionsButton) {
+		showOmniInternetInstructionsButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			const instructions = document.getElementById('omni_instructions_internet');
+			if (instructions) {
+				if (instructions.classList.contains('hidden')) {
+					instructions.classList.remove('hidden');
+				} else {
+					instructions.classList.add('hidden');
+				}
+			}
+		});
+	}
+	
+	const showOmniOfflineInstructionsButton = document.getElementById('omni_show_instructions_no_internet');
+	if (showOmniOfflineInstructionsButton) {
+		showOmniOfflineInstructionsButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			const instructions = document.getElementById('omni_instructions_no_internet');
+			if (instructions) {
+				if (instructions.classList.contains('hidden')) {
+					instructions.classList.remove('hidden');
+				} else {
+					instructions.classList.add('hidden');
+				}
+			}
+		});
+	}
+	
+	const dragAndDropSupported = self.fetch && window.FileReader && ('classList' in document.createElement('a'));
+	if (dragAndDropSupported) {
+		const upload_file = (file) => {
+			const formData = new FormData();
+			formData.append('file', file);
+			
+			fetch(document.getElementById('upload_activation_form').getAttribute('action'), { method: 'POST', body: formData, credentials: 'same-origin', headers: {'Accept': 'application/json'} }).then(function(response) {
+				if (!response.ok) {
+					const obj = response.json().then((obj) => {
+						const alert = {
+							message: 'Unable to create authorization file',
+							explanation: 'Sorry, there was an error creating the authorization file.'
+						};
+						if (obj.message) {
+							alert.explanation += ' ' + obj.message.trim();
+						}
+						if (!alert.explanation.endsWith('.')) {
+							alert.explanation += '.';
+						}
+						BeaconDialog.show(alert.message, alert.explanation);
+					});
+					return;
+				}
+				
+				const disposition = response.headers.get('content-disposition');
+				const matches = /"([^"]*)"/.exec(disposition);
+				const filename = (matches != null && matches[1] ? matches[1] : 'Default.beaconidentity');
+				
+				response.blob().then((blob) => {
+					const link = document.createElement('a');
+					link.href = window.URL.createObjectURL(blob);
+					link.download = filename;
+					
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+				});
+			}).catch((error) => {
+				BeaconDialog.show('Unable to create authorization file', 'There was a network error: ' + error);
+			});
+		};
+		
+		const uploadContainer = document.getElementById('upload_container');
+		uploadContainer.classList.add('live-supported');
+		
+		const dropArea = document.getElementById('drop_area');
+		
+		['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+			dropArea.addEventListener(eventName, (ev) => {
+				ev.preventDefault();
+				ev.stopPropagation();
+			}, false);
+		});
+		
+		['dragenter', 'dragover'].forEach(eventName => {
+			dropArea.addEventListener(eventName, (ev) => {
+				ev.target.classList.add('highlight');
+			}, false);
+		});
+		
+		['dragleave', 'drop'].forEach(eventName => {
+			dropArea.addEventListener(eventName, (ev) => {
+				ev.target.classList.remove('highlight');
+			}, false);
+		});
+		
+		document.getElementById('choose_file_button').addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			const chooser = document.getElementById('file_chooser');
+			if (chooser) {
+				chooser.addEventListener('change', (ev) => {
+					upload_file(ev.target.files[0]);
+				});
+				
+				chooser.click();
+			}
+		});
+		
+		dropArea.addEventListener('drop', (ev) => {
+			upload_file(ev.dataTransfer.files[0]);
+		}, false);
+	}
+	
+	/* ! Profile */
+	
+	document.getElementById('username_action_button').addEventListener('click', (ev) => {
+		ev.preventDefault();
+		
+		const username = document.getElementById('username_field').value.trim();
+		if (username === '') {
+			dialog.show('Username can not be empty', 'How did you press the button anyway?');
+			return false;
+		}
+		
+		const params = new URLSearchParams();
+		params.add('username', username);
+		
+		BeaconWebRequest.post('/account/actions/username', params).then((response) => {
+			const message = {
+				message: 'Username changed',
+				explanation: 'Your username has been changed.'
+			};
+			
+			try {
+				const obj = JSON.parse(response.body);
+				message.explanation = `Your username has been changed to "${obj.username}."`;
+			} catch (e) {
+			}
+			BeaconDialog.show(message.message, message.explanation).then(() => {
+				window.location.reload(true);
+			});
+		}).catch((error) => {
+			switch (error.status) {
+			case 401:
+				BeaconDialog.show('Username not changed', 'There was an authentication error.');
+				break;
+			default:
+				BeaconDialog.show('Username not changed', `Sorry, there was a ${error.status} error.`);
+				break;
+			}
+		});
+	});
+	
+	document.getElementById('suggested-username-link').addEventListener('click', (ev) => {
+		ev.preventDefault();
+		
+		const field = document.getElementById('username_field');
+		field.value = ev.target.getAttribute('beacon-username');
+		document.getElementById('username_action_button').disabled = field.value.trim() == '';
+		
+		return false;
+	});
+	
+	document.getElementById('new-suggestion-link').addEventListener('click', (ev) => {
+		BeaconWebRequest.get('/account/login/suggest').then((response) => {
+			try {
+				const obj = JSON.parse(response.body);
+				const usernameLink = document.getElementById('suggested-username-link');
+				usernameLink.innerText = obj.username;
+				usernameLink.setAttribute('beacon-username', obj.username);
+			} catch (e) {
+			}
+		}).catch(() => {});
+		
+		ev.preventDefault();
+		return false;
+	});
+	
+	document.getElementById('username_field').addEventListener('input', (ev) => {
+		document.getElementById('username_action_button').disabled = ev.target.value.trim() == '';
+	});
+	
+	/* ! Security */
 	
 	document.getElementById('password_action_button').addEventListener('click', (event) => {
 		event.preventDefault();
@@ -133,73 +331,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		});
 		
 		return false;
-	});
-	
-	document.getElementById('username_action_button').addEventListener('click', (ev) => {
-		ev.preventDefault();
-		
-		const username = document.getElementById('username_field').value.trim();
-		if (username === '') {
-			dialog.show('Username can not be empty', 'How did you press the button anyway?');
-			return false;
-		}
-		
-		const params = new URLSearchParams();
-		params.add('username', username);
-		
-		BeaconWebRequest.post('/account/actions/username', params).then((response) => {
-			const message = {
-				message: 'Username changed',
-				explanation: 'Your username has been changed.'
-			};
-			
-			try {
-				const obj = JSON.parse(response.body);
-				message.explanation = `Your username has been changed to "${obj.username}."`;
-			} catch (e) {
-			}
-			BeaconDialog.show(message.message, message.explanation).then(() => {
-				window.location.reload(true);
-			});
-		}).catch((error) => {
-			switch (error.status) {
-			case 401:
-				BeaconDialog.show('Username not changed', 'There was an authentication error.');
-				break;
-			default:
-				BeaconDialog.show('Username not changed', `Sorry, there was a ${error.status} error.`);
-				break;
-			}
-		});
-	});
-	
-	document.getElementById('suggested-username-link').addEventListener('click', (ev) => {
-		ev.preventDefault();
-		
-		const field = document.getElementById('username_field');
-		field.value = ev.target.getAttribute('beacon-username');
-		document.getElementById('username_action_button').disabled = field.value.trim() == '';
-		
-		return false;
-	});
-	
-	document.getElementById('new-suggestion-link').addEventListener('click', (ev) => {
-		BeaconWebRequest.get('/account/login/suggest').then((response) => {
-			try {
-				const obj = JSON.parse(response.body);
-				const usernameLink = document.getElementById('suggested-username-link');
-				usernameLink.innerText = obj.username;
-				usernameLink.setAttribute('beacon-username', obj.username);
-			} catch (e) {
-			}
-		}).catch(() => {});
-		
-		ev.preventDefault();
-		return false;
-	});
-	
-	document.getElementById('username_field').addEventListener('input', (ev) => {
-		document.getElementById('username_action_button').disabled = ev.target.value.trim() == '';
 	});
 	
 	const passwordConfirmCheck = (ev) => {
@@ -372,13 +503,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		}
 	}
 	
-	const settingsPagePanel = document.getElementById('panel-settings');
-	if (settingsPagePanel) {
-		settingsPagePanel.addEventListener('panelSwitched', (ev) => {
-			const pageName = ev.panel.currentPageName;
-			window.location.hash = `${ViewSwitcher.currentPage}.${pageName}`;
-		});
-	}
+	/* ! Sessions */
 	
 	const revokeAction = (event) => {
 		event.preventDefault();
@@ -405,39 +530,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	for (const link of revokeLinks) {
 		link.addEventListener('click', revokeAction);
 	}
-	
-	const deleteProjectButtons = document.querySelectorAll('#account_view_documents [beacon-action="delete"]');
-	for (const button of deleteProjectButtons) {
-		button.addEventListener('click', (event) => {
-			event.preventDefault();
-			
-			const resource_url = event.target.getAttribute('beacon-resource-url');
-			const resource_name = event.target.getAttribute('beacon-resource-name');
-			
-			BeaconDialog.confirm('Are you sure you want to delete the project "' + resource_name + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete').then(() => {
-				BeaconDialog.delete(resource_url, { Authorization: `Session ${sessionId}` }).then((response) => {
-					BeaconDialog.show('Project deleted', '"' + resource_name + '" has been deleted.').then(() => {
-						window.location.reload(true);
-					});
-				}).catch((error) => {
-					switch (error.status) {
-					case 401:
-						BeaconDialog.show('Project not deleted', 'There was an authentication error');
-						break;
-					default:
-						BeaconDialog.show('Project not deleted', 'Sorry, there was a ' + error.status + ' error.');
-						break;
-					}
-				});
-			}).catch(() => {
-				// Do nothing
-			});
-			
-			return false;
-		});
-	}
-});
-
-window.addEventListener('popstate', function(ev) {
-	ViewSwitcher.switchFromFragment();
 });
