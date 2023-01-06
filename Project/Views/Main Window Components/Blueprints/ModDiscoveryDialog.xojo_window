@@ -1044,6 +1044,9 @@ End
 #tag Events RunThread
 	#tag Event
 		Sub Run()
+		  // Get a writable database
+		  Call Ark.DataSource.Pool.Get(True)
+		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("message" : "Building server…"))
 		  
 		  Var Port As Integer = System.Random.InRange(2000, 65000)
