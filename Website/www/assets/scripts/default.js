@@ -1,65 +1,75 @@
-var explore = {
-	container: null,
-	popover: null,
-	field: null,
-	link: null,
-	init: function() {
+"use strict";
+
+class ExplorePopover {
+	static container = null;
+	static popover = null;
+	static field = null;
+	static link = null;
+	static searchMoreURL = '';
+	
+	static init() {
 		this.container = document.getElementById('explore_container');
 		this.popover = document.getElementById('explore_popover');
 		this.field = document.getElementById('explore_search_field');
 		this.link = document.getElementById('menu_explore_link');
 		
-		this.container.addEventListener('click', function(ev) {
-			explore.dismiss();
+		if (!(this.container && this.popover && this.field && this.link)) {
+			return;
+		}
+		
+		this.container.addEventListener('click', (ev) => {
+			this.dismiss();
 			ev.stopPropagation();
 			ev.stopImmediatePropagation();
 			return false;
 		});
 		
-		this.popover.addEventListener('click', function(ev) {
+		this.popover.addEventListener('click', (ev) => {
 			ev.stopPropagation();
 			ev.stopImmediatePropagation();
 			return false;
 		});
 		
-		this.link.addEventListener('click', function(ev) {
+		this.link.addEventListener('click', (ev) => {
 			ev.stopPropagation();
 			ev.preventDefault();
 			ev.stopImmediatePropagation();
-			explore.toggle();
+			this.toggle();
 			return false;
 		});
 		
-		this.field.addEventListener('input', function() {
-			if (this.searchTimeout) {
-				clearTimeout(this.searchTimeout);
-				this.searchTimeout = null;
+		this.field.addEventListener('input', (ev) => {
+			if (ev.target.searchTimeout) {
+				clearTimeout(ev.target.searchTimeout);
+				ev.target.searchTimeout = null;
 			}
-			this.searchTimeout = setTimeout(function() {
-				explore.search(explore.field.value);
+			ev.target.searchTimeout = setTimeout(() => {
+				this.search(this.field.value);
 			}, 1000);
 		});
 		
-		document.getElementById('explore_results_back').addEventListener('click', function() {
-			explore.search('');
+		document.getElementById('explore_results_back').addEventListener('click', (ev) => {
+			this.search('');
 		});
 		
-		document.getElementById('explore_results_more').addEventListener('click', function() {
-			window.location = explore.searchMoreURL;
+		document.getElementById('explore_results_more').addEventListener('click', (ev) => {
+			window.location = this.searchMoreURL;
 		});
 		
-		window.addEventListener('blur', function() {
-			explore.dismiss();
+		window.addEventListener('blur', (ev) => {
+			this.dismiss();
 		});
-	},
-	toggle: function() {
+	}
+	
+	static toggle() {
 		if (this.container.style.display == 'none' || this.container.style.display == '') {
 			this.present();
 		} else {
 			this.dismiss();
 		}
-	},
-	dismiss: function() {
+	}
+	
+	static dismiss() {
 		if (this.container.style.display == 'none') {
 			return;
 		}
@@ -68,8 +78,9 @@ var explore = {
 		this.link.className = '';
 		this.field.value = '';
 		this.displayResults();
-	},
-	present: function() {
+	}
+	
+	static present() {
 		if (this.container.style.display == 'block') {
 			return;
 		}
@@ -79,153 +90,104 @@ var explore = {
 		this.popover.style.left = Math.max(rect.left + ((rect.width - 320) / 2), 20) + 'px';
 		this.container.style.display = 'block';
 		this.link.className = 'expanded';
-	},
-	search: function(terms) {
+	}
+	
+	static search(terms) {
 		if (!terms) {
 			terms = '';
 		}
-		if (explore.field.value != terms) {
-			explore.field.value = terms;
+		if (this.field.value !== terms) {
+			this.field.value = terms;
 		}
-		if (terms == '') {
-			explore.displayResults();
+		if (terms === '') {
+			this.displayResults();
 			return;
 		}
-		request.get('/search/', { 'query': terms.trim(), 'count': 4 }, function(data) {
-			explore.displayResults(data);
-		}, function(http_status, body) {
-			explore.displayResults();
+		
+		const params = new URLSearchParams();
+		params.append('query', terms.trim());
+		params.append('count', 4);
+		
+		BeaconWebRequest.get(`/search?${params.toString()}`, { Accept: 'application/json' }).then((response) => {
+			try {
+				this.displayResults(JSON.parse(response.body));
+			} catch (e) {
+				console.log(e);
+				this.displayResults();
+			}
+		}).catch((error) => {
+			this.displayResults();
 		});
-	},
-	displayResults: function(data) {
-		var results_container = document.getElementById('explore_results');
-		var menu = document.getElementById('explore_links');
-		if (data && data.results) {
-			var list = document.getElementById('explore_results_list');
-			
-			while (list.firstChild) {
-				list.removeChild(list.firstChild);
-			}
-			
-			var results = data.results;
-			var total = data.total;
-			var terms = data.terms;
-			if (results.length > 0) {
-				menu.style.display = 'block';
-				document.getElementById('explore_results_empty').style.display = 'none';
-				
-				for (var i = 0; i < results.length; i++) {
-					var link = document.createElement('a');
-					link.href = results[i].url;
-					var tag = document.createElement('span');
-					tag.className = 'result_type';
-					tag.appendChild(document.createTextNode(results[i].type));
-					link.appendChild(tag);
-					link.appendChild(document.createTextNode(results[i].title));
-					
-					if (results[i].summary != '') {
-						var preview = document.createElement('span');
-						preview.className = 'result_preview';
-						preview.appendChild(document.createTextNode(results[i].summary));
-						link.appendChild(document.createElement("br"));
-						link.appendChild(preview);
-					}
-					
-					var node = document.createElement('li');
-					if ((i % 2) == 0) {
-						node.className = 'result even';
-					} else {
-						node.className = 'result odd';
-					}
-					node.appendChild(link);
-					
-					list.appendChild(node);
-				}
-			} else {
-				menu.style.display = 'none';
-				document.getElementById('explore_results_empty').style.display = 'block';
-			}
-			
-			if (total > results.length) {
-				document.getElementById('explore_results_right_button').style.display = 'block';
-				explore.searchMoreURL = '/search/?query=' + encodeURIComponent(terms);
-			} else {
-				document.getElementById('explore_results_right_button').style.display = 'none';
-			}
-			
-			results_container.style.display = 'block';
-			menu.style.display = 'none';
-		} else {
-			results_container.style.display = 'none';
+	}
+	
+	static displayResults(data = null) {
+		const resultsContainer = document.getElementById('explore_results');
+		const menu = document.getElementById('explore_links');
+		
+		if (!(data && data.results)) {
+			resultsContainer.style.display = 'none';
 			menu.style.display = 'block';
-		}
-	}
-};
-
-class PagePanel {
-	static pagePanels = {};
-	
-	element = null;
-	pageMap = {};
-	currentPageName = null;
-	
-	constructor(element) {
-		this.element = element;
-		
-		const pages = element.querySelectorAll('div.page-panel-page');
-		for (const page of pages) {
-			const pageName = page.getAttribute('page');
-			this.pageMap[pageName] = page;
-			if (page.classList.contains('page-panel-visible')) {
-				this.currentPageName = pageName;
-			}
+			return;
 		}
 		
-		const links = element.querySelectorAll('div.page-panel-nav a');
-		for (const link of links) {
-			const pageName = link.getAttribute('page');
-			this.pageMap[pageName].link = link;
+		const list = document.getElementById('explore_results_list');
+		while (list.firstChild) {
+			list.removeChild(list.firstChild);
+		}
+		
+		const results = data.results;
+		const total = data.total;
+		const terms = data.terms;
+		
+		if (results.length > 0) {
+			menu.style.display = 'block';
+			document.getElementById('explore_results_empty').style.display = 'none';
 			
-			link.addEventListener('click', (ev) => {
-				ev.preventDefault();
-				this.switchPage(ev.target.getAttribute('page'));
-			});
+			let i = 0;
+			for (const result of results) {
+				const link = document.createElement('a');
+				link.href = result.url;
+				const tag = document.createElement('span');
+				tag.className = 'result_type';
+				tag.appendChild(document.createTextNode(result.type));
+				link.appendChild(tag);
+				link.appendChild(document.createTextNode(result.title));
+				
+				if (result.summary !== '') {
+					const preview = document.createElement('span');
+					preview.className = 'result_preview';
+					preview.appendChild(document.createTextNode(result.summary));
+					link.appendChild(document.createElement('br'));
+					link.appendChild(preview);
+				}
+				
+				const node = document.createElement('li');
+				if ((i % 2) == 0) {
+					node.className = 'result even';
+				} else {
+					node.className = 'result odd';
+				}
+				i++;
+				node.appendChild(link);
+				list.appendChild(node);
+			}
+		} else {
+			menu.style.display = 'none';
+			document.getElementById('explore_results_empty').style.display = 'block';
 		}
 		
-		const ev = new Event('panelCreated');
-		ev.panel = this;
-		this.element.dispatchEvent(ev);
-	}
-	
-	switchPage(newPageName) {
-		const oldPageName = this.currentPageName;
-		if (oldPageName === newPageName) {
-			return;
-		}
-		if (!this.pageMap[newPageName]) {
-			return;
+		if (total > results.length) {
+			document.getElementById('explore_results_right_button').style.display = 'block';
+			this.searchMoreURL = '/search/?query=' + encodeURIComponent(terms);
+		} else {
+			document.getElementById('explore_results_right_button').style.display = 'none';
 		}
 		
-		this.pageMap[oldPageName].classList.remove('page-panel-visible');
-		this.pageMap[oldPageName].link.parentElement.classList.remove('page-panel-active');
-		this.pageMap[newPageName].classList.add('page-panel-visible');
-		this.pageMap[newPageName].link.parentElement.classList.add('page-panel-active');
-		this.currentPageName = newPageName;
-		
-		const ev = new Event('panelSwitched');
-		ev.panel = this;
-		this.element.dispatchEvent(ev);
-	}
-	
-	static init() {
-		const panels = document.querySelectorAll('div.page-panel');
-		for (const panel of panels) {
-			PagePanel.pagePanels[panel.id] = new PagePanel(panel);
-		}
+		resultsContainer.style.display = 'block';
+		menu.style.display = 'none';
 	}
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-	explore.init();
-	PagePanel.init();
+document.addEventListener('DOMContentLoaded', () => {
+	ExplorePopover.init();
 });
