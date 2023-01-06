@@ -330,7 +330,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    ClassString = Dict.Value("SupplyCrateClassString")
 		  End If
 		  
-		  Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByClass(ClassString, ContentPacks)
+		  Var Containers() As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainersByClass(ClassString, ContentPacks)
 		  Var Container As Ark.MutableLootContainer
 		  If Containers.Count > 0 Then
 		    Container = New Ark.MutableLootContainer(Containers(0))

@@ -347,6 +347,8 @@ Begin ArkConfigEditor ArkEngramControlEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -358,6 +360,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   12
@@ -493,7 +496,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetupEngramsList(SelectEngrams() As Ark.Engram = Nil)
 		  Var Config As Ark.Configs.EngramControl = Self.Config(False)
-		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.SharedInstance.GetEngramEntries("", Self.Project.ContentPacks, ""))
+		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.Pool.Get(False).GetEngramEntries("", Self.Project.ContentPacks, ""))
 		  Var LabelCounts As New Dictionary
 		  For Each Engram As Ark.Engram In Engrams
 		    LabelCounts.Value(Engram.Label) = LabelCounts.Lookup(Engram.Label, 0) + 1
@@ -571,7 +574,7 @@ End
 		          Behaviors.Add("Auto unlocks at spawn")
 		        End If
 		      Else
-		        If ((Engram.RequiredPlayerLevel Is Nil) = False Or Ark.DataSource.SharedInstance.BlueprintIsCustom(Engram)) And IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
+		        If ((Engram.RequiredPlayerLevel Is Nil) = False Or Ark.DataSource.Pool.Get(False).BlueprintIsCustom(Engram)) And IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
 		          Behaviors.Add("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
 		        Else
 		          Behaviors.Add("Auto unlocks by special event")
@@ -610,7 +613,7 @@ End
 		    End If
 		  Next
 		  
-		  Var OfficialLevels As Ark.PlayerLevelData = Ark.DataSource.SharedInstance.OfficialPlayerLevelData
+		  Var OfficialLevels As Ark.PlayerLevelData = Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData
 		  Var OfficialMaxLevel As Integer = If(OfficialLevels Is Nil, 0, OfficialLevels.MaxLevel)
 		  Self.PointsList.RowCount = Max(Config.LevelsDefined, OfficialMaxLevel)
 		  For Idx As Integer = 0 To Self.PointsList.LastRowIndex

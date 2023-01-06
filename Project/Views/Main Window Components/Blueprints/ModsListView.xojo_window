@@ -121,12 +121,16 @@ Begin BeaconSubview ModsListView
       Width           =   494
    End
    Begin Thread ModDeleterThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndWindow
@@ -188,7 +192,7 @@ End
 		    Next
 		  End If
 		  
-		  Var Packs() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks(Ark.ContentPack.Types.Custom)
+		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Ark.ContentPack.Types.Custom)
 		  For Each Pack As Ark.ContentPack In Packs
 		    Self.ModsList.AddRow(Pack.Name, "Custom")
 		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
@@ -447,7 +451,7 @@ End
 #tag Events ModDeleterThread
 	#tag Event
 		Sub Run()
-		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
+		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  For Each ModUUID As String In Self.mModUUIDsToDelete
 		    If Database.DeleteContentPack(ModUUID) Then
 		      Me.AddUserInterfaceUpdate(New Dictionary("Action": "Mod Deleted", "Mod UUID": ModUUID))

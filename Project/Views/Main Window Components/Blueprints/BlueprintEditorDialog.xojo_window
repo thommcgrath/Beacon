@@ -2362,7 +2362,7 @@ End
 		  Self.LootSortField.DoubleValue = Container.SortValue
 		  
 		  Var Mutable As Ark.MutableLootContainer = Container.MutableVersion
-		  Ark.DataSource.SharedInstance.LoadDefaults(Mutable)
+		  Ark.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		  
 		  Var Drops(0) As Ark.LootContainer
 		  Drops(0) = Mutable
@@ -2373,7 +2373,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub LoadBlueprint(Point As Ark.SpawnPoint)
 		  Var Mutable As Ark.MutableSpawnPoint = Point.MutableVersion
-		  Ark.DataSource.SharedInstance.LoadDefaults(Mutable)
+		  Ark.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		  
 		  Var Points(0) As Ark.SpawnPoint
 		  Points(0) = Mutable
@@ -3348,7 +3348,7 @@ End
 #tag Events LootIconMenu
 	#tag Event
 		Sub Open()
-		  Var Icons() As Ark.LootContainerIcon = Ark.DataSource.SharedInstance.GetLootContainerIcons
+		  Var Icons() As Ark.LootContainerIcon = Ark.DataSource.Pool.Get(False).GetLootContainerIcons
 		  If Icons.Count = 0 Then
 		    Me.AddRow("Generic", "3a1f5d12-0b50-4761-9f89-277492dc00e0")
 		    Return

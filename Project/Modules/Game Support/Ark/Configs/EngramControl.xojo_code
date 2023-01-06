@@ -30,7 +30,7 @@ Inherits Ark.ConfigGroup
 		  
 		  Var Values() As Ark.ConfigValue
 		  Var Levels As Integer = Self.LevelsDefined
-		  Var OfficialLevels As Ark.PlayerLevelData = Ark.DataSource.SharedInstance.OfficialPlayerLevelData
+		  Var OfficialLevels As Ark.PlayerLevelData = Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData
 		  For Level As Integer = 1 To Levels
 		    Var PointsForLevel As NullableDouble = Self.PointsForLevel(Level)
 		    
@@ -390,7 +390,7 @@ Inherits Ark.ConfigGroup
 		  #Pragma Unused Difficulty
 		  
 		  Var Config As New Ark.Configs.EngramControl
-		  Var DataSource As Ark.DataSource = Ark.DataSource.SharedInstance
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  Config.AutoUnlockAllEngrams = ParsedData.BooleanValue("bAutoUnlockAllEngrams", False)
 		  Config.OnlyAllowSpecifiedEngrams = ParsedData.BooleanValue("bOnlyAllowSpecifiedEngrams", False)
 		  

@@ -21,7 +21,7 @@ Protected Class ConfigValue
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = Self.mSimplifiedKey + ":" + Index.ToString("00000")
 		  
-		  Var Keys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys(File, Header, Self.mSimplifiedKey, False)
+		  Var Keys() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys(File, Header, Self.mSimplifiedKey, False)
 		  Var ConfigKey As Ark.ConfigKey
 		  If Keys.Count >= 1 Then
 		    ConfigKey = Keys(0)
@@ -38,7 +38,7 @@ Protected Class ConfigValue
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = SortKey
 		  
-		  Var Keys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys(File, Header, Self.mSimplifiedKey, False)
+		  Var Keys() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys(File, Header, Self.mSimplifiedKey, False)
 		  Var ConfigKey As Ark.ConfigKey
 		  If Keys.Count >= 1 Then
 		    ConfigKey = Keys(0)

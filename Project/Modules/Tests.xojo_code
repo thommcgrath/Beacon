@@ -63,10 +63,10 @@ Protected Module Tests
 		Private Sub TestBlueprintSerialization()
 		  // Use object ids here just in case
 		  
-		  TestBlueprintSerialization(Ark.DataSource.SharedInstance.GetEngramByUUID("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
-		  TestBlueprintSerialization(Ark.DataSource.SharedInstance.GetCreatureByUUID("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
-		  TestBlueprintSerialization(Ark.DataSource.SharedInstance.GetSpawnPointByUUID("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
-		  TestBlueprintSerialization(Ark.DataSource.SharedInstance.GetLootContainerByUUID("40f02506-f341-46c5-85c0-31e0d37509b6")) // SupplyCrate_IceCaveTier2_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetEngramByUUID("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetCreatureByUUID("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetSpawnPointByUUID("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetLootContainerByUUID("40f02506-f341-46c5-85c0-31e0d37509b6")) // SupplyCrate_IceCaveTier2_C
 		End Sub
 	#tag EndMethod
 
@@ -107,7 +107,7 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestConfigKeys()
-		  Var Source As Ark.DataSource = Ark.DataSource.SharedInstance
+		  Var Source As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  Var AllConfigKeys() As Ark.ConfigKey = Source.GetConfigKeys("", "", "", False)
 		  Call Assert(AllConfigKeys.Count > 0, "No config keys returned.")
@@ -464,7 +464,7 @@ Protected Module Tests
 		    Var StandardDifficulty As New Ark.Configs.Difficulty(5)
 		    Var HighDifficulty As New Ark.Configs.Difficulty(15)
 		    Var ExtremeDifficulty As New Ark.Configs.Difficulty(100)
-		    Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByClass("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C", New Beacon.StringList)
+		    Var Containers() As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainersByClass("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C", New Beacon.StringList)
 		    If Assert(Containers.Count = 1, "Wrong number of containers returned for SupplyCrate_Cave_QualityTier3_ScorchedEarth_C") = False Then
 		      Return
 		    End If

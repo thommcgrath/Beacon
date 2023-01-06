@@ -146,6 +146,8 @@ Inherits Beacon.Thread
 		    
 		    Var Progress As Integer = Round(Self.Progress * 100)
 		    Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
+		    
+		    Self.Sleep(10)
 		  Next
 		  
 		  Self.mCharactersProcessed = Self.mCharactersTotal
@@ -162,6 +164,9 @@ Inherits Beacon.Thread
 		  Self.Status = "Finished"
 		  
 		  Self.mFinished = True
+		  
+		  Exception TEE As ThreadEndException
+		    Self.mFinished = True
 		End Sub
 	#tag EndEvent
 
@@ -212,7 +217,7 @@ Inherits Beacon.Thread
 		    Var ActiveMods As String = ParsedData.StringValue("ActiveMods", "")
 		    Var ModIDs() As String = ActiveMods.Split(",")
 		    For Each ModID As String In ModIDs
-		      Var ContentPack As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPackWithWorkshopID(ModID)
+		      Var ContentPack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithWorkshopID(ModID)
 		      If (ContentPack Is Nil) = False Then
 		        Project.ContentPackEnabled(ContentPack) = True
 		      End If

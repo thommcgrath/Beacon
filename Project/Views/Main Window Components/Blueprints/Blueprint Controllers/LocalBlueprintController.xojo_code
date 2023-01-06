@@ -17,7 +17,7 @@ Inherits BlueprintController
 		  Var Mods As New Beacon.StringList(0)
 		  Mods(0) = Self.ModID
 		  
-		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.SharedInstance.GetBlueprints("", Mods, "")
+		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints("", Mods, "")
 		  
 		  Self.CacheBlueprints(Blueprints)
 		End Sub
@@ -26,7 +26,7 @@ Inherits BlueprintController
 
 	#tag Method, Flags = &h21
 		Private Sub mSaveThread_Run(Sender As Thread)
-		  Var Database As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
+		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  
 		  Var Errors As New Dictionary
 		  Var Success As Boolean = Database.SaveBlueprints(Self.mSave, Self.mDelete, Errors)

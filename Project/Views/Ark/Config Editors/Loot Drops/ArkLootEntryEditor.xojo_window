@@ -530,7 +530,7 @@ End
 		Sub Open()
 		  Var PreferredSize As Size = Preferences.EntryEditorSize
 		  
-		  Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags(Self.mMods, Ark.CategoryEngrams)
+		  Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(Self.mMods, Ark.CategoryEngrams)
 		  Self.Picker.Spec = Preferences.SelectedTag(Ark.CategoryEngrams, "Looting")
 		  Self.Width = Max(PreferredSize.Width, Self.MinimumWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
@@ -609,7 +609,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mModSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
-		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks
+		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
 		    Var ModList As New Beacon.StringList
 		    Var PrefsDict As New Dictionary
@@ -624,7 +624,7 @@ End
 		    Self.mMods = ModList
 		    Preferences.PresetsEnabledMods = PrefsDict
 		    Var Spec As String = Self.Picker.Spec
-		    Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags(Self.mMods, Ark.CategoryEngrams)
+		    Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(Self.mMods, Ark.CategoryEngrams)
 		    Self.Picker.Spec = Spec
 		    Self.UpdateFilter
 		  End If
@@ -640,7 +640,7 @@ End
 		    TemplatePacksDict = New Dictionary
 		  End If
 		  Var PackList As New Beacon.StringList
-		  Var ContentPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks
+		  Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		  For Each Pack As Ark.ContentPack In ContentPacks
 		    If TemplatePacksDict.Lookup(Pack.UUID, Pack.DefaultEnabled).BooleanValue = True Then
 		      PackList.Append(Pack.UUID)
@@ -727,7 +727,7 @@ End
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As String = Self.Picker.Spec
 		  
-		  Var Engrams() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngrams(SearchText, Self.mMods, Tags)
+		  Var Engrams() As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngrams(SearchText, Self.mMods, Tags)
 		  EngramList.RemoveAllRows
 		  
 		  Self.mEngramRowIndexes = New Dictionary

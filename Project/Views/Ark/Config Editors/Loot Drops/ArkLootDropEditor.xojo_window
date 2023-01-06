@@ -460,7 +460,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildPresetMenu(Parent As MenuItem)
-		  Var Presets() As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplates
+		  Var Presets() As Ark.LootTemplate = Ark.DataSource.Pool.Get(False).GetLootTemplates
 		  Var Groups As New Dictionary
 		  Var GroupNames() As String
 		  For Each Preset As Ark.LootTemplate In Presets
@@ -1149,7 +1149,7 @@ End
 		      Continue
 		    End If
 		    
-		    Preset = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Organizer.Template.TemplateUUID)
+		    Preset = Ark.DataSource.Pool.Get(False).GetLootTemplateByUUID(Organizer.Template.TemplateUUID)
 		  Next
 		  
 		  Var CreateItem As New MenuItem("Create Template…", Targets)
@@ -1243,7 +1243,7 @@ End
 		        End If
 		        
 		        If Not Templates.HasKey(Set.TemplateUUID) Then
-		          Var LoadedTemplate As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Set.TemplateUUID)
+		          Var LoadedTemplate As Ark.LootTemplate = Ark.DataSource.Pool.Get(False).GetLootTemplateByUUID(Set.TemplateUUID)
 		          If LoadedTemplate Is Nil Then
 		            Continue
 		          End If

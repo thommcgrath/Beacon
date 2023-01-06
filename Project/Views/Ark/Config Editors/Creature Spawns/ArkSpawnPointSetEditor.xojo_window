@@ -1687,7 +1687,7 @@ End
 		  If Set.ColorSetClass.IsEmpty Then
 		    FoundColorSet = True
 		  End If
-		  Var ColorSets() As Ark.CreatureColorSet = Ark.DataSource.SharedInstance.GetCreatureColorSets()
+		  Var ColorSets() As Ark.CreatureColorSet = Ark.DataSource.Pool.Get(False).GetCreatureColorSets()
 		  For Each ColorSet As Ark.CreatureColorSet In ColorSets
 		    If FoundColorSet = False And ColorSet.ClassString = Set.ColorSetClass Then
 		      FoundColorSet = True
@@ -1977,7 +1977,7 @@ End
 		    
 		    Var Creature As Ark.Creature
 		    Try
-		      Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(Me.RowTagAt(I))
+		      Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Me.RowTagAt(I))
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Creature UUID: " + Me.RowTagAt(I).StringValue)
 		    End Try
@@ -2020,7 +2020,7 @@ End
 		    End If
 		    
 		    Var FromUUID As String = Me.RowTagAt(I)
-		    Var FromCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(FromUUID)
+		    Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromUUID)
 		    If FromCreature Is Nil Then
 		      Continue
 		    End If
@@ -2069,7 +2069,7 @@ End
 		      End If
 		      
 		      Var FromUUID As String = Item.Value("Creature")
-		      Var FromCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(FromUUID)
+		      Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromUUID)
 		      If FromCreature Is Nil Then
 		        Continue
 		      End If
@@ -2077,7 +2077,7 @@ End
 		      Var Map As Dictionary = Item.Value("Replacements")
 		      For Each Entry As DictionaryEntry In Map
 		        Var ToUUID As String = Entry.Key
-		        Var ToCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(ToUUID)
+		        Var ToCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ToUUID)
 		        If ToCreature Is Nil Then
 		          Continue
 		        End If
@@ -2103,7 +2103,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  Var TargetUUID As String = Self.ReplaceList.RowTagAt(Self.ReplaceList.SelectedRowIndex)
-		  Var TargetCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(TargetUUID)
+		  Var TargetCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(TargetUUID)
 		  If TargetCreature Is Nil Then
 		    Return
 		  End If

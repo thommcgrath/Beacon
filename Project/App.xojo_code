@@ -16,9 +16,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    // Whatever
 		  End Try
 		  
-		  For Idx As Integer = Self.mDataSources.LastIndex DownTo 0
-		    Self.mDataSources(Idx).Close
-		  Next Idx
+		  Ark.DataSource.Pool.CloseAll
+		  Beacon.CommonData.Pool.CloseAll
 		  
 		  UpdatesKit.Cleanup
 		  
@@ -246,6 +245,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Event
 		Function UnhandledException(error As RuntimeException) As Boolean
+		  If Error IsA ThreadEndException Then
+		    Return False
+		  End If
+		  
 		  Self.HandleException(Error)
 		  
 		  Return True
@@ -932,8 +935,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_SetupDatabases()
 		  Try
-		    Self.mDataSources.Add(Ark.DataSource.SharedInstance)
-		    Self.mDataSources.Add(Beacon.CommonData.SharedInstance)
+		    Self.mDataSources.Add(Ark.DataSource.Pool.Get(False))
+		    Self.mDataSources.Add(Beacon.CommonData.Pool.Get(False))
 		  Catch Err As RuntimeException
 		    // Something is still wrong
 		    BeaconUI.ShowAlert("Beacon cannot start due to a problem with a local database.", "Beacon is unable to create or repair a local database. The database error was: `" + Err.Message + "`.")
@@ -1073,6 +1076,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Sub Log(Err As RuntimeException, Location As String, MoreDetail As String = "")
+		  If Err IsA ThreadEndException Then
+		    Return
+		  End If
+		  
 		  Self.mLogManager.Log(Err, Location, MoreDetail)
 		End Sub
 	#tag EndMethod

@@ -29,26 +29,6 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
-		  If (mInstances Is Nil) = False Then
-		    For Each Entry As DictionaryEntry In mInstances
-		      If Entry.Value IsA Ark.DataSource Then
-		        If Ark.DataSource(Entry.Value) = Self Then
-		          mInstances.Remove(Entry.Key)
-		          Exit For Entry
-		        End If
-		      ElseIf Entry.Value IsA WeakRef And WeakRef(Entry.Value).Value IsA Ark.DataSource Then
-		        If Ark.DataSource(WeakRef(Entry.Value).Value) = Self Then
-		          mInstances.Remove(Entry.Key)
-		          Exit For Entry
-		        End If
-		      End If
-		    Next Entry
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub CloudSyncFinished(Actions() As Dictionary)
 		  For Each Dict As Dictionary In Actions
 		    Var Action As String = Dict.Value("Action")
@@ -583,21 +563,19 @@ Inherits Beacon.DataSource
 		Sub ImportCleanup(StatusData As Dictionary)
 		  Self.ResetCaches()
 		  
-		  For Each Entry As DictionaryEntry In Self.mInstances
-		    Try
-		      Var Instance As Ark.DataSource
-		      If Entry.Value IsA Ark.DataSource Then
-		        Instance = Entry.Value
-		      ElseIf Entry.Value IsA WeakRef Then
-		        Instance = Ark.DataSource(WeakRef(Entry.Value).Value)
-		      End If
-		      If (Instance Is Nil) = False And Instance <> Self Then
+		  If (Self.mPool Is Nil) = False Then
+		    For Each Instance As Ark.DataSource In Self.mPool
+		      Try
+		        If Instance Is Nil Or Instance = Self Then
+		          Continue
+		        End If
+		        
 		        Instance.ResetCaches()
-		      End If
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Clearing sibling caches")
-		    End Try
-		  Next Entry
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Clearing sibling caches")
+		      End Try
+		    Next
+		  End If
 		  
 		  If StatusData.Lookup("Engrams Changed", False).BooleanValue Then
 		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
@@ -1952,7 +1930,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetLootTemplateByUUID(UUID As String) As Ark.LootTemplate
-		  Var Template As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplateByUUID(UUID)
+		  Var Template As Beacon.Template = Beacon.CommonData.Pool.Get(False).GetTemplateByUUID(UUID)
 		  If (Template Is Nil) = False And Template IsA Ark.LootTemplate Then
 		    Return Ark.LootTemplate(Template)
 		  End If
@@ -1961,7 +1939,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetLootTemplates(Filter As String = "") As Ark.LootTemplate()
-		  Var Templates() As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplates(Filter, Ark.Identifier)
+		  Var Templates() As Beacon.Template = Beacon.CommonData.Pool.Get(False).GetTemplates(Filter, Ark.Identifier)
 		  Var Results() As Ark.LootTemplate
 		  For Idx As Integer = 0 To Templates.LastIndex
 		    If (Templates(Idx) Is Nil) = False And Templates(Idx) IsA Ark.LootTemplate Then
@@ -2205,7 +2183,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetTemplateByUUID(UUID As String) As Ark.Template
-		  Var Template As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplateByUUID(UUID)
+		  Var Template As Beacon.Template = Beacon.CommonData.Pool.Get(False).GetTemplateByUUID(UUID)
 		  If (Template Is Nil) = False And Template IsA Ark.Template Then
 		    Return Ark.Template(Template)
 		  End If
@@ -2214,7 +2192,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetTemplates(Filter As String = "") As Ark.Template()
-		  Var Templates() As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplates(Filter, Ark.Identifier)
+		  Var Templates() As Beacon.Template = Beacon.CommonData.Pool.Get(False).GetTemplates(Filter, Ark.Identifier)
 		  Var Results() As Ark.Template
 		  For Idx As Integer = 0 To Templates.LastIndex
 		    If (Templates(Idx) Is Nil) = False And Templates(Idx) IsA Ark.Template Then
@@ -2340,6 +2318,15 @@ Inherits Beacon.DataSource
 		    Self.mOfficialPlayerLevelData = Ark.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))
 		  End If
 		  Return Self.mOfficialPlayerLevelData
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Pool() As Ark.DataSourcePool
+		  If mPool Is Nil Then
+		    mPool = New Ark.DataSourcePool
+		  End If
+		  Return mPool
 		End Function
 	#tag EndMethod
 
@@ -2945,68 +2932,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function SharedInstance(Flags As Integer = 3) As Ark.DataSource
-		  Const MainThreadID = "Main"
-		  
-		  Var CurrentThread As Thread = Thread.Current
-		  Var ThreadID As String = If(CurrentThread Is Nil, MainThreadID, CurrentThread.ThreadID.ToHex)
-		  
-		  // Never allow writing on the main thread
-		  If ThreadID = MainThreadID And ((Flags And FlagAllowWriting) = FlagAllowWriting) Then
-		    Var Err As New UnsupportedOperationException
-		    Err.Message = "Cannot use writable database on main thread."
-		    Raise Err
-		  End If
-		  
-		  If mInstances Is Nil Then
-		    mInstances = New Dictionary
-		  End If
-		  
-		  Var Value As Variant
-		  If mInstances.HasKey(ThreadID) Then
-		    Value = mInstances.Value(ThreadID)
-		  ElseIf (Flags And FlagFallbackToMainThread) = FlagFallbackToMainThread And ThreadID <> MainThreadID Then
-		    ThreadID = MainThreadID
-		    If mInstances.HasKey(MainThreadID) Then
-		      Value = mInstances.Value(MainThreadID)
-		    End If
-		  End If
-		  
-		  Var Instance As Ark.DataSource
-		  If Value IsA Ark.DataSource Then
-		    Instance = Value
-		  ElseIf Value IsA WeakRef Then
-		    Var Ref As WeakRef = WeakRef(Value)
-		    If (Ref.Value Is Nil) = False And Ref.Value IsA Ark.DataSource Then
-		      Instance = Ark.DataSource(Ref.Value)
-		    End If
-		  End If
-		  
-		  If Instance Is Nil Then
-		    If (Flags And FlagCreateIfNeeded) = FlagCreateIfNeeded Then
-		      Instance = New Ark.DataSource((Flags And FlagAllowWriting) = FlagAllowWriting)
-		      If ThreadID = MainThreadID Then
-		        NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
-		      End If
-		      
-		      // Main thread instance is always a hard reference
-		      If (Flags And FlagUseWeakRef) = FlagUseWeakRef And ThreadID <> MainThreadID Then
-		        mInstances.Value(ThreadID) = New WeakRef(Instance)
-		      Else
-		        mInstances.Value(ThreadID) = Instance
-		      End If
-		    Else
-		      Return Nil
-		    End If
-		  End If
-		  
-		  Return Instance
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function WritableInstance() As Beacon.DataSource
-		  Return Ark.DataSource.SharedInstance(Ark.DataSource.CommonFlagsWritable)
+		Function WriteableInstance() As Ark.DataSource
+		  Return Self.Pool.Get(True)
 		End Function
 	#tag EndMethod
 
@@ -3036,10 +2963,6 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared mInstances As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private Shared mLock As CriticalSection
 	#tag EndProperty
 
@@ -3049,6 +2972,10 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private mOfficialPlayerLevelData As Ark.PlayerLevelData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mPool As Ark.DataSourcePool
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

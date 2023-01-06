@@ -214,10 +214,10 @@ Implements Ark.Blueprint
 	#tag Method, Flags = &h0
 		Function ManualUnlock() As Boolean
 		  If Self.HasUnlockDetails = False Then
-		    Return Ark.DataSource.SharedInstance.BlueprintIsCustom(Self)
+		    Return Ark.DataSource.Pool.Get(False).BlueprintIsCustom(Self)
 		  End If
 		  
-		  Return ((Self.RequiredPlayerLevel Is Nil) = False And (Self.RequiredUnlockPoints Is Nil) = False) Or Ark.DataSource.SharedInstance.BlueprintIsCustom(Self) = True
+		  Return ((Self.RequiredPlayerLevel Is Nil) = False And (Self.RequiredUnlockPoints Is Nil) = False) Or Ark.DataSource.Pool.Get(False).BlueprintIsCustom(Self) = True
 		End Function
 	#tag EndMethod
 
@@ -326,7 +326,7 @@ Implements Ark.Blueprint
 		Function Recipe() As Ark.CraftingCostIngredient()
 		  // To prevent recursion, engrams only load ingredients on demand
 		  If Self.mHasLoadedIngredients = False Then
-		    Self.mIngredients = Ark.DataSource.SharedInstance.LoadIngredientsForEngram(Self)
+		    Self.mIngredients = Ark.DataSource.Pool.Get(False).LoadIngredientsForEngram(Self)
 		    Self.mHasLoadedIngredients = True
 		  End If
 		  

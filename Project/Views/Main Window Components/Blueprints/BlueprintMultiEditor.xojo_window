@@ -304,7 +304,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Picker.ClearSelections()
-		  Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags(New Beacon.StringList)
+		  Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(New Beacon.StringList)
 		  
 		  Var Masks() As UInt64
 		  Var Tags As New Dictionary

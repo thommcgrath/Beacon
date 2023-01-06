@@ -565,6 +565,8 @@ Begin ArkConfigEditor ArkHarvestRatesEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -576,6 +578,7 @@ Begin ArkConfigEditor ArkHarvestRatesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   16
@@ -659,7 +662,7 @@ End
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
-		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "{""required"":[""harvestable""],""excluded"":[]}")
+		  Engrams = Ark.DataSource.Pool.Get(False).GetEngrams("", Self.Project.ContentPacks, "{""required"":[""harvestable""],""excluded"":[]}")
 		  For Each Engram As Ark.Engram In Engrams
 		    If SkippedEngrams.HasKey(Engram.ObjectID) Then
 		      Continue
@@ -925,7 +928,7 @@ End
 		    Var SelectEngrams() As Ark.Engram
 		    For Each Entry As DictionaryEntry In Items
 		      Var UUID As String = Entry.Key
-		      Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID(UUID)
+		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(UUID)
 		      If Engram Is Nil Then
 		        Continue
 		      End If

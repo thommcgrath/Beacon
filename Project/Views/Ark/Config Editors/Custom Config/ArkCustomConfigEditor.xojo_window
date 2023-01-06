@@ -29,6 +29,7 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
    Begin CodeEditor ConfigArea
       AutoDeactivate  =   True
       Enabled         =   True
+      HasBorder       =   False
       Height          =   341
       HelpTag         =   ""
       HorizontalScrollPosition=   0
@@ -417,7 +418,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Configs() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys(CurrentFile, CurrentHeader, "", False)
+		  Var Configs() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys(CurrentFile, CurrentHeader, "", False)
 		  Self.mAutocompleteWords.ResizeTo(Configs.LastIndex)
 		  For Idx As Integer = Configs.FirstIndex To Configs.LastIndex
 		    Self.mAutocompleteWords(Idx) = Configs(Idx).Key
@@ -655,7 +656,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Key As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKey(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
+		  Var Key As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
 		  If Key Is Nil Or Key.Description.IsEmpty Then
 		    Me.CallTipCancel
 		    Return

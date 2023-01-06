@@ -393,7 +393,7 @@ End
 		    SelectableCreatures.Add(Nil)
 		  End If
 		  
-		  Var AllCreatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures("", Mods, "")
+		  Var AllCreatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures("", Mods, "")
 		  For Each Creature As Ark.Creature In AllCreatures
 		    If IsNull(Creature) Or Map.HasKey(Creature.ObjectID) Then
 		      Continue
@@ -454,7 +454,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Title, Body, HelpURL As String
-		  Call Ark.DataSource.SharedInstance.GetConfigHelp(Ark.Configs.NameSpawnPoints, Title, Body, HelpURL)
+		  Call Ark.DataSource.Pool.Get(False).GetConfigHelp(Ark.Configs.NameSpawnPoints, Title, Body, HelpURL)
 		  System.GotoURL(HelpURL)
 		End Sub
 	#tag EndEvent

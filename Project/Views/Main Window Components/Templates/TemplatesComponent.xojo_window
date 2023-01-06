@@ -246,7 +246,7 @@ End
 		Function CreateTemplate(ItemSet As Ark.LootItemSet) As Ark.LootTemplate
 		  Var Template As Ark.MutableLootTemplate
 		  If ItemSet.TemplateUUID.IsEmpty = False Then
-		    Var SourceTemplate As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplateByUUID(ItemSet.TemplateUUID)
+		    Var SourceTemplate As Beacon.Template = Beacon.CommonData.Pool.Get(False).GetTemplateByUUID(ItemSet.TemplateUUID)
 		    If (SourceTemplate Is Nil) = False And SourceTemplate IsA Ark.LootTemplate Then
 		      Template = New Ark.MutableLootTemplate(Ark.LootTemplate(SourceTemplate))
 		    End If

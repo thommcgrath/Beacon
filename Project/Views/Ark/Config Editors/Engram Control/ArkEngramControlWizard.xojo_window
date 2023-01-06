@@ -437,7 +437,7 @@ End
 		    AddWhenFinished = True
 		  End If
 		  
-		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.SharedInstance.GetEngramEntries("", Self.mProject.ContentPacks, ""))
+		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, ""))
 		  Self.mEngramCount = Engrams.Count
 		  
 		  // Do the work
@@ -519,7 +519,7 @@ End
 		    Next
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexGrantExactPoints
-		    Var PlayerLevelCap As Integer = Ark.DataSource.SharedInstance.OfficialPlayerLevelData.MaxLevel
+		    Var PlayerLevelCap As Integer = Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData.MaxLevel
 		    If Self.mProject.HasConfigGroup(Ark.Configs.NameExperienceCurves) Then
 		      Var ExperienceConfig As Ark.Configs.ExperienceCurves = Ark.Configs.ExperienceCurves(Self.mProject.ConfigGroup(Ark.Configs.NameExperienceCurves, False))
 		      If ExperienceConfig <> Nil Then

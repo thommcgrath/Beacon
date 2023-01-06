@@ -232,7 +232,7 @@ Protected Class ConfigOrganizer
 		    Var File As String = Rows.Column("file").StringValue
 		    Var Header As String = Rows.Column("header").StringValue
 		    Var SimpleKey As String = Rows.Column("simplekey").StringValue
-		    Var Key As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKey(File, Header, SimpleKey)
+		    Var Key As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(File, Header, SimpleKey)
 		    If Key Is Nil Then
 		      Key = New Ark.ConfigKey(File, Header, SimpleKey)
 		    End If

@@ -110,8 +110,8 @@ Inherits Ark.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String, Assigns Weight As NullableDouble)
-		  Var FromCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(FromCreatureID)
-		  Var ToCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(ToCreatureID)
+		  Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromCreatureID)
+		  Var ToCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ToCreatureID)
 		  Self.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
 		End Sub
 	#tag EndMethod

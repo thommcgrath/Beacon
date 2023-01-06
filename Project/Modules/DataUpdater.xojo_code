@@ -194,10 +194,9 @@ Protected Module DataUpdater
 		  
 		  NotificationKit.Post(Notification_ImportBegin, Nil)
 		  
-		  Var Flags As Integer = Beacon.DataSource.CommonFlagsWritable
 		  Var Sources(1) As Beacon.DataSource
-		  Sources(0) = Beacon.CommonData.SharedInstance(Flags)
-		  Sources(1) = Ark.DataSource.SharedInstance(Flags)
+		  Sources(0) = Beacon.CommonData.Pool.Get(True)
+		  Sources(1) = Ark.DataSource.Pool.Get(True)
 		  
 		  Var SourcesToOptimize() As Beacon.DataSource
 		  

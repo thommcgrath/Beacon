@@ -1129,7 +1129,7 @@ End
 		  Self.UpdateMinAndMaxFields
 		  
 		  Var AppliedModifiers() As String = Self.mTemplate.ActiveSelectorIDs
-		  Var Selectors() As Beacon.TemplateSelector = Beacon.CommonData.SharedInstance.GetTemplateSelectors("", Ark.Identifier)
+		  Var Selectors() As Beacon.TemplateSelector = Beacon.CommonData.Pool.Get(False).GetTemplateSelectors("", Ark.Identifier)
 		  Self.ModifiersList.RemoveAllRows()
 		  For Each TemplateSelector As Beacon.TemplateSelector In Selectors
 		    If AppliedModifiers.IndexOf(TemplateSelector.UUID) = -1 Then

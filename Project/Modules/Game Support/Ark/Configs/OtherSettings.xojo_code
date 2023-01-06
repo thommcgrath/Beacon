@@ -14,7 +14,7 @@ Inherits Ark.ConfigGroup
 		Function GenerateConfigValues(Project As Ark.Project, Profile As Ark.ServerProfile) As Ark.ConfigValue()
 		  Var ConsoleSafe As Boolean = Project.ConsoleSafe
 		  Var Configs() As Ark.ConfigValue
-		  Var DataSource As Ark.DataSource = Ark.DataSource.SharedInstance
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  For Each Entry As DictionaryEntry In Self.mSettings
 		    Try
 		      Var KeyUUID As String = Entry.Key
@@ -133,7 +133,7 @@ Inherits Ark.ConfigGroup
 	#tag Event
 		Function GetManagedKeys() As Ark.ConfigKey()
 		  Var Keys() As Ark.ConfigKey
-		  Var DataSource As Ark.DataSource = Ark.DataSource.SharedInstance
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  For Each Entry As DictionaryEntry In Self.mSettings
 		    Var KeyUUID As String = Entry.Key
 		    Var Key As Ark.ConfigKey = DataSource.GetConfigKey(KeyUUID)
@@ -183,7 +183,7 @@ Inherits Ark.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
-		  Var DataSource As Ark.DataSource = Ark.DataSource.SharedInstance
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  Var AllContentPacks() As Ark.ContentPack = DataSource.GetContentPacks
 		  Var ContentPackLookup As New Dictionary
 		  For Each Pack As Ark.ContentPack In AllContentPacks

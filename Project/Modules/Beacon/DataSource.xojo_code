@@ -177,11 +177,11 @@ Implements NotificationKit.Receiver
 		    BuildSchema = True
 		  End Try
 		  
+		  Self.mDatabase.WriteAheadLogging = True
+		  
 		  If BuildSchema Then
-		    Var WasWritable As Boolean = Self.mAllowWriting
+		    Var WasWriteable As Boolean = Self.mAllowWriting
 		    Self.mAllowWriting = True
-		    
-		    Self.mDatabase.ExecuteSQL("PRAGMA journal_mode = WAL;")
 		    
 		    Self.BeginTransaction()
 		    Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
@@ -190,7 +190,7 @@ Implements NotificationKit.Receiver
 		    Self.BuildIndexes
 		    Self.CommitTransaction()
 		    
-		    Self.mAllowWriting = WasWritable
+		    Self.mAllowWriting = WasWriteable
 		  End If
 		  
 		  Self.mDatabase.ExecuteSQL("PRAGMA cache_size = -100000;")
@@ -441,7 +441,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub ImportCloudFiles_Threaded(Sender As Beacon.Thread)
-		  Var Database As Beacon.DataSource = Self.WritableInstance()
+		  Var Database As Beacon.DataSource = Self.WriteableInstance()
 		  If (Database Is Nil) = False Then
 		    Database.ImportCloudFiles()
 		  End If
@@ -735,7 +735,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function WritableInstance() As Beacon.DataSource
+		Function WriteableInstance() As Beacon.DataSource
 		  
 		End Function
 	#tag EndMethod
@@ -835,7 +835,7 @@ Implements NotificationKit.Receiver
 	#tag EndProperty
 
 
-	#tag Constant, Name = CommonFlagsWritable, Type = Double, Dynamic = False, Default = \"14", Scope = Public
+	#tag Constant, Name = CommonFlagsWriteable, Type = Double, Dynamic = False, Default = \"14", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = FlagAllowWriting, Type = Double, Dynamic = False, Default = \"8", Scope = Public

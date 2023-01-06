@@ -181,7 +181,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Var MaxQualityModifiers() As Integer
 		  Var BlueprintMultipliers() As Double
 		  For Each LootSelectorUUID As String In ActiveModifiers
-		    Var TemplateSelector As Beacon.TemplateSelector = Beacon.CommonData.SharedInstance.GetTemplateSelectorByUUID(LootSelectorUUID)
+		    Var TemplateSelector As Beacon.TemplateSelector = Beacon.CommonData.Pool.Get(False).GetTemplateSelectorByUUID(LootSelectorUUID)
 		    If TemplateSelector Is Nil Then
 		      Continue
 		    End If
@@ -545,7 +545,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Return Nil
 		  End If
 		  
-		  Var Template As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Self.TemplateUUID)
+		  Var Template As Ark.LootTemplate = Ark.DataSource.Pool.Get(False).GetLootTemplateByUUID(Self.TemplateUUID)
 		  If Template Is Nil Then
 		    Return Nil
 		  End If

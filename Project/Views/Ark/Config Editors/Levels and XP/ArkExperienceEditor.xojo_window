@@ -181,9 +181,9 @@ End
 		  End If
 		  
 		  Var Config As Ark.Configs.ExperienceCurves = Self.Config(True)
-		  Config.DinoLevelCap = Ark.DataSource.SharedInstance.GetIntegerVariable("Dino Level Cap")
+		  Config.DinoLevelCap = Ark.DataSource.Pool.Get(False).GetIntegerVariable("Dino Level Cap")
 		  
-		  Var TextList As String = Ark.DataSource.SharedInstance.GetStringVariable("Dino Default Experience")
+		  Var TextList As String = Ark.DataSource.Pool.Get(False).GetStringVariable("Dino Default Experience")
 		  Var List() As String = TextList.Split(",")
 		  For I As Integer = 0 To List.LastIndex
 		    Config.DinoExperience(I) = UInt64.FromString(List(I))
@@ -203,7 +203,7 @@ End
 		  Var Config As Ark.Configs.ExperienceCurves = Self.Config(True)
 		  Config.PlayerLevelCap = 1
 		  
-		  Var LevelData As Ark.PlayerLevelData = Ark.DataSource.SharedInstance.OfficialPlayerLevelData
+		  Var LevelData As Ark.PlayerLevelData = Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData
 		  Config.PlayerLevelCap = LevelData.MaxLevel
 		  For Level As Integer = 2 To LevelData.MaxLevel
 		    Config.PlayerExperience(Level - 2) = LevelData.ExperienceForLevel(Level)

@@ -413,7 +413,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags(Self.mMods, Self.mCategory)
+		  Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(Self.mMods, Self.mCategory)
 		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
 		  Self.UpdateFilter()
 		  Self.SwapButtons()
@@ -632,7 +632,7 @@ End
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As String = Self.Picker.Spec
 		  
-		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.SharedInstance.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
+		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.RemoveAllRows
 		  For Each Blueprint As Ark.Blueprint In Blueprints

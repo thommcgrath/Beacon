@@ -39,7 +39,7 @@ Inherits Ark.ConfigGroup
 		  
 		  // Inject overrides for things that would go over the limit
 		  If Self.mGlobalMultiplier <> 1.0 Then
-		    Var AllEngrams() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngrams("", Project.ContentPacks)
+		    Var AllEngrams() As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngrams("", Project.ContentPacks)
 		    For Each Engram As Ark.Engram In AllEngrams
 		      If Self.mOverrides.HasBlueprint(Engram) Or (Engram.StackSize Is Nil) Or Engram.StackSize.DoubleValue = 1 Or Engram.StackSize.DoubleValue * Self.mGlobalMultiplier < Self.MaximumQuantity Then
 		        Continue

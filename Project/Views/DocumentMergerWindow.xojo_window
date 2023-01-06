@@ -490,7 +490,7 @@ End
 		    // Process mod additions
 		    For Each Entry As DictionaryEntry In UniqueContentPacks
 		      Var PackUUID As String = Entry.Key
-		      Var Pack As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPackWithUUID(PackUUID)
+		      Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithUUID(PackUUID)
 		      If (Pack Is Nil) = False And ArkProject.ContentPackEnabled(PackUUID) = False Then
 		        MergeItems.Add(New Ark.DocumentMergeContentPackItem(Pack))
 		      End If

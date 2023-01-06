@@ -189,7 +189,7 @@ End
 		  
 		  Self.mFilter = Value
 		  
-		  Var AllKeys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys("", "", "", True)
+		  Var AllKeys() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys("", "", "", True)
 		  If Self.mDependencies Is Nil Then
 		    Self.mDependencies = New Dictionary
 		    For Each Key As Ark.ConfigKey In AllKeys
@@ -480,7 +480,7 @@ End
 		    Return True
 		  End If
 		  
-		  Var RequiredKey As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKey(Dictionary(Requirements).Value("key").StringValue)
+		  Var RequiredKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Dictionary(Requirements).Value("key").StringValue)
 		  If RequiredKey Is Nil Then
 		    Return True
 		  End If
