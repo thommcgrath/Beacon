@@ -1,93 +1,103 @@
-document.addEventListener('DOMContentLoaded', function() {
-	let contactForm = document.getElementById('contactForm');
-	let contactErrorNotice = document.getElementById('contactErrorNotice');
-	let contactNameField = document.getElementById('contactNameField');
-	let contactEmailField = document.getElementById('contactEmailField');
-	let contactPlatformField = document.getElementById('contactPlatformField');
-	let contactHostField = document.getElementById('contactHostField');
-	let contactBodyField = document.getElementById('contactBodyField');
-	let contactActionButton = document.getElementById('contactActionButton');
-	let contactTimestampField = document.getElementById('contactTimestampField');
-	let contactHashField = document.getElementById('contactHashField');
+"use strict";
+
+document.addEventListener('DOMContentLoaded', () => {
+	const contactForm = document.getElementById('contactForm');
+	const contactErrorNotice = document.getElementById('contactErrorNotice');
+	const contactNameField = document.getElementById('contactNameField');
+	const contactEmailField = document.getElementById('contactEmailField');
+	const contactPlatformField = document.getElementById('contactPlatformField');
+	const contactHostField = document.getElementById('contactHostField');
+	const contactBodyField = document.getElementById('contactBodyField');
+	const contactActionButton = document.getElementById('contactActionButton');
+	const contactTimestampField = document.getElementById('contactTimestampField');
+	const contactHashField = document.getElementById('contactHashField');
 	
-	let showError = function(message) {
-		contactErrorNotice.innerHTML = message;
-		contactErrorNotice.classList.remove('hidden');
-		contactActionButton.disabled = false;
+	const showError = (message) => {
+		if (contactErrorNotice) {
+			contactErrorNotice.innerHTML = message;
+			contactErrorNotice.classList.remove('hidden');
+		}
+		if (contactActionButton) {
+			contactActionButton.disabled = false;
+		}
 	}
 	
-	contactForm.addEventListener('submit', function(event) {
-		event.preventDefault();
-		contactActionButton.disabled = true;
+	contactForm.addEventListener('submit', (ev) => {
+		ev.preventDefault();
 		
+		if (!(contactActionButton && contactErrorNotice && contactNameField && contactEmailField && contactHashField && contactBodyField && contactPlatformField && contactTimestampField && contactHashField)) {
+			console.log('Page is missing important elements');
+			return false;
+		}
+		
+		contactActionButton.disabled = true;
 		contactErrorNotice.classList.add('hidden');
 		
-		let contactName = contactNameField.value.trim();
+		const contactName = contactNameField.value.trim();
 		if (contactName === '') {
 			showError('Please enter a name');
 			return;
 		}
 		
-		let contactEmail = contactEmailField.value.trim();
+		const contactEmail = contactEmailField.value.trim();
 		if (contactEmail === '') {
 			showError('Please enter a valid email address');
 			return;
 		}
 		
-		let contactHost = contactHostField.value.trim();
+		const contactHost = contactHostField.value.trim();
 		if (contactHost === '') {
 			showError('Please fill in the host field');
 			return;
 		}
 		
-		let contactBody = contactBodyField.value.trim();
+		const contactBody = contactBodyField.value.trim();
 		if (contactBody === '') {
 			showError('Please let us know how we can help');
 			return;
 		}
 		
-		let contactPlatform = contactPlatformField.value.trim();
+		const contactPlatform = contactPlatformField.value.trim();
 		if (contactPlatform === '') {
 			showError('Please select one of the platforms from the menu');
 			return;
 		}
 		
-		let contactTimestamp = contactTimestampField.value.trim();
-		let contactHash = contactHashField.value.trim();
+		const contactTimestamp = contactTimestampField.value.trim();
+		const contactHash = contactHashField.value.trim();
 		
-		request.post('/help/ticket', {
-			'name': contactName,
-			'email': contactEmail,
-			'platform': contactPlatform,
-			'host': contactHost,
-			'body': contactBody,
-			'timestamp': contactTimestamp,
-			'hash': contactHash
-		}, function(obj) {
-			dialog.show('Your support request has been submitted.', 'You will receive an email confirmation shortly.');
+		const params = new URLSearchParams();
+		params.append('name', contactName);
+		params.append('email', contactEmail);
+		params.append('platform', contactPlatform);
+		params.append('host', contactHost);
+		params.append('body', contactBody);
+		params.append('timestamp', contactTimestamp);
+		params.append('hash', contactHash);
+		
+		BeaconWebRequest.post('/help/ticket', params).then((response) => {
 			contactBodyField.value = '';
 			contactActionButton.disabled = false;
-		}, function(status, body) {
-			let message = 'Sorry, there was an HTTP ' + status + ' error.';
+			
+			BeaconDialog.show('Your support request has been submitted.', 'You will receive an email confirmation shortly.');
+		}).catch((error) => {
+			let message = `Sorry, there was an HTTP ${error.status} error.`;
 			try {
-				let obj = JSON.parse(body);
+				const obj = JSON.parse(error.body);
 				if (obj.message) {
 					message = obj.message;
 				}
-			} catch (err) {
+			} catch (e) {
+				console.log(e);
 			}
 			showError(message);
 		});
 	});
 	
-	let storedEmail = '';
-	if (sessionStorage) {
-		storedEmail = sessionStorage.getItem('email');
-	}
-	if (storedEmail === null && localStorage) {
-		storedEmail = localStorage.getItem('email');
-	}
-	if (storedEmail !== null) {
-		contactEmailField.value = storedEmail;
+	if (contactEmailField) {
+		const storedEmail = sessionStorage?.getItem('email') ?? localStorage?.getItem('email');
+		if (storedEmail) {
+			contactEmailField.value = storedEmail;
+		}
 	}
 });
