@@ -13,7 +13,7 @@ $temporary = isset($_GET['temporary']) ? strtolower($_GET['temporary']) == 'true
 if (isset($_GET['session_id'])) {
 	$session_id = $_GET['session_id'];
 	$session = BeaconSession::GetBySessionID($session_id);
-	if ($session !== null) {
+	if (is_null($session) === false) {
 		$session->SendCookie($temporary);
 	}
 } else {

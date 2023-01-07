@@ -45,16 +45,21 @@ if (isset($_POST['key'])) {
 	}
 } else {
 	$code = preg_replace('/\s+/', '', $_POST['code']);
-	$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
-	$verified = $results->RecordCount() == 1;
+	if (BeaconCommon::InProduction()) {
+		$results = $database->Query('SELECT email_id FROM email_verification WHERE code = encode(digest($2, \'sha512\'), \'hex\') AND email_id = uuid_for_email($1);', $email, $code);
+		$verified = $results->RecordCount() == 1;
+	} else {
+		$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1);', $email);
+		$verified = true;
+	}
 }
 
-$response = array(
+$response = [
 	'email' => $email,
 	'verified' => $verified,
 	'code' => $code,
 	'username' => null
-);
+];
 
 if ($verified) {
 	$results = $database->Query('SELECT username FROM users WHERE email_id = $1;', $results->Field('email_id'));

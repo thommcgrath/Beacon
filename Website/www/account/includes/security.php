@@ -15,6 +15,7 @@ if ($has_authenticators) {
 		<p><input type="password" id="password_current_field" placeholder="Current Password"></p>
 		<p><input type="password" id="password_initial_field" placeholder="New Password" minlength="8"></p>
 		<p><input type="password" id="password_confirm_field" placeholder="Confirm New Password" minlength="8"></p>
+		<?php if ($has_authenticators) { ?><p><input type="text" id="password_totp_field" placeholder="Two Step Verification Code"></p><?php } ?>
 		<div class="subsection">
 			<p><label class="checkbox"><input type="checkbox" id="password_regenerate_check" value="true"><span></span>Replace private key</label></p>
 			<p class="text-red bold uppercase text-center">Read this carefully!</p>
@@ -23,7 +24,7 @@ if ($has_authenticators) {
 				<li><strong class="text-red">Any encrypted data inside your projects will be lost</strong>, which includes everything inside the <em>Servers</em> section.</li>
 				<li>Shared cloud projects will need to be re-shared</li>
 				<li>All other devices will be signed out.</li>
-				<?php if ($user->Is2FAProtected()) { ?><li>All devices will require two factor verification on next log in.</li><?php } ?>
+				<?php if ($user->Is2FAProtected()) { ?><li>All devices will require two step verification on next log in.</li><?php } ?>
 			</ol>
 		</div>
 		<p class="text-right"><input type="submit" id="password_action_button" value="Save Password" disabled></p>
@@ -34,14 +35,14 @@ if ($has_authenticators) {
 	<?php
 	
 	if ($has_authenticators) {
-		echo '<p>Two factor authentication is <strong>enabled</strong> for your account.</p>';
+		echo '<p>Two step authentication is <strong>enabled</strong> for your account. An authenticator code is required to sign in on an untrusted device, and to change or reset your password.</p>';
 		echo '<table class="generic" id="authenticators-table"><thead><tr><th>Nickname</th><th class="low-priority">Date Added (<span id="authenticators_time_zone_name">UTC</span>)</th><th class="min-width">Actions</th></tr></thead><tbody>';
 		foreach ($authenticators as $authenticator) {
 			echo '<tr id="authenticator-' . htmlentities($authenticator->AuthenticatorID()) . '"><td>' . htmlentities($authenticator->Nickname()) . '<div class="row-details">Date Added: <time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></div></td><td class="low-priority"><time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></td><td class="min-width"><button beacon-authenticator-id="' . htmlentities($authenticator->AuthenticatorID()) . '" beacon-authenticator-name="' . html_entity_decode($authenticator->Nickname()) . '" class="delete_authenticator_button destructive">Delete</a></td></tr>';
 		}
 		echo '</table></table>';
 	} else {
-		echo '<p>Two factor authentication is <strong>disabled</strong> for your account. Add an authenticator to get started.</p>';
+		echo '<p>Two step authentication is <strong>disabled</strong> for your account. Add an authenticator to get started.</p>';
 	}
 	
 	?>

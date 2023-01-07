@@ -21,6 +21,7 @@ if (empty($_POST['current_password']) || empty($_POST['password'])) {
 
 $current_password = $_POST['current_password'];
 $password = $_POST['password'];
+$verification_code = $_POST['verification_code'] ?? '';
 $allow_vulnerable = isset($_POST['allow_vulnerable']) ? filter_var($_POST['allow_vulnerable'], FILTER_VALIDATE_BOOLEAN) : false;
 $regenerate_key = isset($_POST['regenerate_key']) ? filter_var($_POST['regenerate_key'], FILTER_VALIDATE_BOOLEAN) : false;
 $terminate_sessions = isset($_POST['terminate_sessions']) ? filter_var($_POST['terminate_sessions'], FILTER_VALIDATE_BOOLEAN) : false;
@@ -51,10 +52,16 @@ if ($allow_vulnerable == false) {
 	}
 }
 
+$user = BeaconUser::GetByUserID($active_session->UserID());
+if ($user->Is2FAProtected() && $user->Verify2FACode($verification_code, true) === false) {
+	http_response_code(403);
+	echo json_encode(['message' => 'Verification code required.', 'details' => [ 'code' => '2FA_ENABLED' ]], JSON_PRETTY_PRINT);
+	exit;
+}
+
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
 
-$user = BeaconUser::GetByUserID($active_session->UserID());
 if ($user->ChangePassword($current_password, $password, $regenerate_key) === false) {
 	http_response_code(500);
 	echo json_encode(['message' => 'There was an error updating authentication parameters.'], JSON_PRETTY_PRINT);
@@ -84,9 +91,21 @@ if ($regenerate_key) {
 	}
 }
 
+$active_session->Delete();
+
+$active_session = BeaconSession::Create($user, $verification_code);
+if (is_null($active_session)) {
+	$database->Rollback();
+	http_response_code(403);
+	echo json_encode(['message' => 'Verification code required.', 'details' => [ 'code' => '2FA_ENABLED' ]], JSON_PRETTY_PRINT);
+	exit;
+}
+
 $database->Commit();
 
-$response = [];
+$response = [
+	'session_id' => $active_session->SessionID()
+];
 
 http_response_code(200);
 echo json_encode($response, JSON_PRETTY_PRINT);

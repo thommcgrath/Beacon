@@ -6,7 +6,7 @@ $has_purchased = $licenses->RecordCount() > 0;
 $purchases = $database->Query('SELECT purchase_id, EXTRACT(epoch FROM purchase_date) AS purchase_date, total_paid, currency, refunded FROM purchases WHERE purchaser_email = $1 ORDER BY purchase_date DESC;', $user->EmailID());
 
 if (!$has_purchased) {
-	echo '<div class="small_section"><p>You have not purchased Beacon Omni. <a href="/omni/">Learn more about Beacon Omni here.</a></p></div>';
+	echo '<p class="text-center">You have not purchased Beacon Omni.<br><a href="/omni/">Learn more about Beacon Omni here.</a></p>';
 	ShowGiftCodes();
 	return;
 }

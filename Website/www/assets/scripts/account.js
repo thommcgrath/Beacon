@@ -147,45 +147,51 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		};
 		
 		const uploadContainer = document.getElementById('upload_container');
-		uploadContainer.classList.add('live-supported');
+		if (uploadContainer) {
+			uploadContainer.classList.add('live-supported');
+		}
 		
 		const dropArea = document.getElementById('drop_area');
-		
-		['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-			dropArea.addEventListener(eventName, (ev) => {
-				ev.preventDefault();
-				ev.stopPropagation();
-			}, false);
-		});
-		
-		['dragenter', 'dragover'].forEach(eventName => {
-			dropArea.addEventListener(eventName, (ev) => {
-				ev.target.classList.add('highlight');
-			}, false);
-		});
-		
-		['dragleave', 'drop'].forEach(eventName => {
-			dropArea.addEventListener(eventName, (ev) => {
-				ev.target.classList.remove('highlight');
-			}, false);
-		});
-		
-		document.getElementById('choose_file_button').addEventListener('click', (ev) => {
-			ev.preventDefault();
+		if (dropArea) {
+			['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+				dropArea.addEventListener(eventName, (ev) => {
+					ev.preventDefault();
+					ev.stopPropagation();
+				}, false);
+			});
 			
-			const chooser = document.getElementById('file_chooser');
-			if (chooser) {
-				chooser.addEventListener('change', (ev) => {
-					upload_file(ev.target.files[0]);
-				});
-				
-				chooser.click();
-			}
-		});
+			['dragenter', 'dragover'].forEach(eventName => {
+				dropArea.addEventListener(eventName, (ev) => {
+					ev.target.classList.add('highlight');
+				}, false);
+			});
+			
+			['dragleave', 'drop'].forEach(eventName => {
+				dropArea.addEventListener(eventName, (ev) => {
+					ev.target.classList.remove('highlight');
+				}, false);
+			});
+			
+			dropArea.addEventListener('drop', (ev) => {
+				upload_file(ev.dataTransfer.files[0]);
+			}, false);
+		}
 		
-		dropArea.addEventListener('drop', (ev) => {
-			upload_file(ev.dataTransfer.files[0]);
-		}, false);
+		const chooseFileButton = document.getElementById('choose_file_button');
+		if (chooseFileButton) {
+			chooseFileButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				
+				const chooser = document.getElementById('file_chooser');
+				if (chooser) {
+					chooser.addEventListener('change', (ev) => {
+						upload_file(ev.target.files[0]);
+					});
+					
+					chooser.click();
+				}
+			});
+		}
 	}
 	
 	/* ! Profile */
@@ -262,51 +268,65 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	document.getElementById('password_action_button').addEventListener('click', (event) => {
 		event.preventDefault();
 		
-		const current_password = document.getElementById('password_current_field').value;
-		const password = document.getElementById('password_initial_field').value;
-		const password_confirm = document.getElementById('password_confirm_field').value;
-		const allow_vulnerable = password === known_vulnerable_password;
-		const regenerate_key = document.getElementById('password_regenerate_check').checked;
-		const terminate_sessions = regenerate_key;
+		const currentPassword = (currentPasswordField) ? currentPasswordField.value : '';
+		const password = (newPasswordField) ? newPasswordField.value : '';
+		const passwordConfirm = (confirmPasswordField) ? confirmPasswordField.value : '';
+		const passwordAuth = (passwordOTPField) ? passwordOTPField.value : '';
+		const allowVulnerable = password === known_vulnerable_password;
+		const regenerateKey = document.getElementById('password_regenerate_check').checked;
+		const terminateSessions = regenerateKey;
 		
 		if (password.length < 8) {
 			BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.');
 			return false;
 		}
-		if (password !== password_confirm) {
+		if (password !== passwordConfirm) {
 			BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.');
 			return false;
 		}
 		
 		const body = new URLSearchParams();
-		body.append('current_password', current_password);
+		body.append('current_password', currentPassword);
 		body.append('password', password);
-		body.append('allow_vulnerable', allow_vulnerable);
-		if (terminate_sessions) {
+		body.append('allow_vulnerable', allowVulnerable);
+		body.append('verification_code', passwordAuth);
+		if (terminateSessions) {
 			body.append('terminate_sessions', true);
 		}
-		if (regenerate_key) {
+		if (regenerateKey) {
 			body.append('regenerate_key', true);
 		}
 		
 		BeaconWebRequest.post('/account/actions/password', body).then((response) => {
 			document.getElementById('change_password_form').reset();
 			
-			const msg = {};
-			if (regenerate_key) {
-				msg.message = 'Your password and private key have been changed.';
-			} else {
-				msg.message = 'Your password has been changed.';
+			try {
+				const obj = JSON.parse(response.body);
+				const msg = {};
+				if (regenerate_key) {
+					msg.message = 'Your password and private key have been changed.';
+				} else {
+					msg.message = 'Your password has been changed.';
+				}
+				if (terminate_sessions) {
+					msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
+				} else {
+					msg.explanation = 'Changing your password does not sign you out of other devices.';
+				}
+				
+				BeaconDialog.show(msg.message, msg.explanation).then(() => {
+					const temporary = (localStorage && localStorage.getItem('email') !== null) ? 'true' : 'false';
+					window.location = `/account/auth?session_id=${obj.session_id}&return=${encodeURIComponent(window.location)}&temporary=${temporary}`;
+				});
+			} catch (e) {
+				console.log(e)
+				BeaconDialog.show('There was an error. Your password may or may not have been changed.');
 			}
-			if (terminate_sessions) {
-				msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
-			} else {
-				msg.explanation = 'Changing your password does not sign you out of other devices.';
-			}
-			
-			BeaconDialog.show(msg.message, msg.explanation);
 		}).catch((error) => {
 			switch (error.status) {
+			case 403:
+				BeaconDialog.show('Incorrect Two Step Verification Code', 'Please get a new code from your authenticator app.');
+				break;
 			case 436:
 			case 437:
 			case 439:
@@ -333,17 +353,39 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		return false;
 	});
 	
+	
+	const currentPasswordField = document.getElementById('password_current_field');
+	const newPasswordField = document.getElementById('password_initial_field');
+	const confirmPasswordField = document.getElementById('password_confirm_field');
+	const passwordActionButton = document.getElementById('password_action_button');
+	const passwordOTPField = document.getElementById('password_totp_field');
+	
 	const passwordConfirmCheck = (ev) => {
-		const currentPasswordField = document.getElementById('password_current_field');
-		const newPasswordField = document.getElementById('password_initial_field');
-		const confirmPasswordField = document.getElementById('password_confirm_field');
-		const passwordActionButton = document.getElementById('password_action_button');
-		passwordActionButton.disabled = currentPasswordField.value.trim() == '' || newPasswordField.value.trim() == '' || newPasswordField.value != confirmPasswordField.value;
+		if (!passwordActionButton) {
+			return;
+		}
+		
+		if (!(currentPasswordField && newPasswordField && confirmPasswordField)) {
+			console.log('Missing page fields');
+			passwordActionButton.disabled = true;
+			return;
+		}
+		
+		passwordActionButton.disabled = currentPasswordField.value.trim() === '' || newPasswordField.value.trim() === '' || newPasswordField.value !== confirmPasswordField.value || (passwordOTPField && passwordOTPField.value.trim() === '');
 	};
 	
-	document.getElementById('password_current_field').addEventListener('input', passwordConfirmCheck);
-	document.getElementById('password_initial_field').addEventListener('input', passwordConfirmCheck);
-	document.getElementById('password_confirm_field').addEventListener('input', passwordConfirmCheck);
+	if (currentPasswordField) {
+		currentPasswordField.addEventListener('input', passwordConfirmCheck);
+	}
+	if (newPasswordField) {
+		newPasswordField.addEventListener('input', passwordConfirmCheck);
+	}
+	if (confirmPasswordField) {
+		confirmPasswordField.addEventListener('input', passwordConfirmCheck);
+	}
+	if (passwordOTPField) {
+		passwordOTPField.addEventListener('input', passwordConfirmCheck);
+	}
 	
 	const addAuthenticatorButton = document.getElementById('add-authenticator-button');
 	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');

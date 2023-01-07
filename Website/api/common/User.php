@@ -288,7 +288,7 @@ class User implements \JsonSerializable {
 	}
 	
 	// $code may be a TOTP, backup code, or trusted device id
-	public function Verify2FACode(string $code): bool {
+	public function Verify2FACode(string $code, bool $verifyOnly = false): bool {
 		$authenticators = Authenticator::GetForUserID($this->user_id);
 		if (count($authenticators) === 0) {
 			// If there are no authenticators, the account is not 2FA protected
@@ -311,16 +311,18 @@ class User implements \JsonSerializable {
 		$database = \BeaconCommon::Database();
 		$rows = $database->Query('SELECT * FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->user_id, $code);
 		if ($rows->RecordCount() === 1) {
-			$database->BeginTransaction();
-			$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->user_id, $code);
-			$backup_codes_removed[] = $code;
-			$new_code = \BeaconCommon::GenerateRandomKey(6);
-			$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->user_id, $new_code);
-			$backup_codes_added[] = $new_code;
-			$database->Commit();
-			if (is_null($this->backup_codes) === false) {
-				$this->backup_codes = null;
-				$this->Get2FABackupCodes(); // refreshes the cache
+			if ($verifyOnly === false) {
+				$database->BeginTransaction();
+				$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->user_id, $code);
+				$backup_codes_removed[] = $code;
+				$new_code = \BeaconCommon::GenerateRandomKey(6);
+				$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->user_id, $new_code);
+				$backup_codes_added[] = $new_code;
+				$database->Commit();
+				if (is_null($this->backup_codes) === false) {
+					$this->backup_codes = null;
+					$this->Get2FABackupCodes(); // refreshes the cache
+				}
 			}
 			return true;
 		}
@@ -727,7 +729,6 @@ class User implements \JsonSerializable {
 					$database->Update('users', $changes, ['user_id' => $this->user_id]);
 					if (array_key_exists('private_key', $changes)) {
 						$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $this->email_id);
-						$database->Query('DELETE FROM sessions WHERE user_id = $1;', $this->user_id);
 					}
 					
 					if ($this->IsChildAccount() === false && array_key_exists('usercloud_key', $changes) && $this->usercloud_delete_files === true) {

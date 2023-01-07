@@ -5,7 +5,11 @@ header('Cache-Control: no-cache');
 
 $session = BeaconSession::GetFromCookie();
 if (is_null($session)) {
-	BeaconCommon::Redirect('/account/login/');
+	BeaconTemplate::StartScript();
+	?><script>
+	window.location = `/account/login/?return=${encodeURIComponent(window.location.href)}`;
+	</script><?php
+	BeaconTemplate::FinishScript();
 	exit;
 }
 $session->Renew();
