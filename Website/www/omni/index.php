@@ -65,294 +65,288 @@ BeaconTemplate::StartScript();
 <script>
 "use strict";
 
-var checking_email = false;
-var owns_ark = false;
-
-var ark_checkbox = null;
-var stw_quantity_field = null;
-var ark_gift_quantity_field = null;
-
-<?php if ($ark2_enabled) { ?>var ark2_checkbox = null;
-var owns_ark2 = false;
-var ark2_gift_quantity_field = null;<?php } ?>
-
-let update_total = function() {
-	let include_ark = owns_ark === false && ark_checkbox && ark_checkbox.checked;
-	let stw_quantity = 0;
-	if (stw_quantity_field) {
-		stw_quantity = Math.min(stw_quantity_field.value, 10);
-	}
-	let ark_gift_quantity = 0;
-	if (ark_gift_quantity_field) {
-		ark_gift_quantity = Math.min(ark_gift_quantity_field.value, 10);
-	}
-	
-	if (stw_quantity_field && stw_quantity_field.value != stw_quantity) {
-		stw_quantity_field.value = stw_quantity;
-	}
-	if (ark_gift_quantity_field && ark_gift_quantity_field.value != ark_gift_quantity) {
-		ark_gift_quantity_field.value = ark_gift_quantity;
+document.addEventListener('DOMContentLoaded', () => {
+	const pageLanding = document.getElementById('page_landing');
+	const pageCart = document.getElementById('page_cart');
+	const stwQuantityField = document.getElementById('stw_quantity_field');
+	const arkGiftQuantityField = document.getElementById('ark_gift_quantity_field');
+	const arkCheckbox = document.getElementById('ark_checkbox');
+	const arkCheckboxFrame = document.getElementById('ark_checkbox_frame');
+	const arkOwnedCaption = document.getElementById('ark_owned_caption');
+	const ark2GiftQuantityField = document.getElementById('ark2_gift_quantity_field');
+	const ark2Checkbox = document.getElementById('ark2_checkbox');
+	const ark2ActiveLicenseCaption = document.getElementById('ark2-activelicense');
+	const buyButton = document.getElementById('buy-button');
+	const cartBackButton = document.getElementById('cart_back_button');
+	const stripeCheckoutButton = document.getElementById('stripe_checkout_button');
+	const emailField = document.getElementById('checkout_email_field');
+	const totalField = document.getElementById('total_field');
+	const requiredPageElements = [pageLanding, pageCart, stwQuantityField, arkGiftQuantityField, arkCheckbox, arkCheckboxFrame, arkOwnedCaption, buyButton, cartBackButton, stripeCheckoutButton, emailField, totalField];
+	if (requiredPageElements.includes(null)) {
+		console.log('Missing page elements');
+		return false;
 	}
 	
-	let ark_price = <?php echo json_encode($product_details[KEY_ARK]['price']); ?>;
-	let ark_gift_price = <?php echo json_encode($product_details[KEY_ARK_GIFT]['price']); ?>;
-	let stw_price = <?php echo json_encode($product_details[KEY_STW]['price']); ?>;
-	let total = (stw_price * stw_quantity) + (ark_gift_price * ark_gift_quantity);
-	if (include_ark) {
-		total += ark_price;
+	const status = {
+		checkingEmail: false,
+		ownsArk: false,
+		ownsArk2: false
 	}
 	
-	<?php if ($ark2_enabled) { ?>let ark2_gift_quantity = 0;
-	let include_ark2 = ark2_checkbox && ark2_checkbox.checked;
-	if (ark2_gift_quantity_field) {
-		ark2_gift_quantity = Math.min(ark2_gift_quantity_field.value, 10);
-	}
-	if (ark2_gift_quantity_field && ark2_gift_quantity_field.value != ark2_gift_quantity) {
-		ark2_gift_quantity_field.value = ark2_gift_quantity;
-	}
-	let ark2_price = <?php echo json_encode($product_details[KEY_ARK2]['price']); ?>;
-	let ark2_gift_price = <?php echo json_encode($product_details[KEY_ARK2_GIFT]['price']); ?>;
-	total += (ark2_gift_price * ark2_gift_quantity);
-	if (include_ark2) {
-		total += ark2_price;
-	}<?php } ?>
+	const currencyCode = <?php echo json_encode($currency); ?>;
+	const currencySymbol = <?php echo json_encode($currency_symbol); ?>;
+	const decimalCharacter = <?php echo json_encode($decimal_character); ?>;
+	const thousandsCharacter = <?php echo json_encode($thousands_character); ?>;
 	
-	document.getElementById('total_field').innerHTML = <?php echo json_encode($currency_symbol); ?> + format_currency(total, <?php echo json_encode($decimal_character); ?>, <?php echo json_encode($thousands_character); ?>) + <?php echo json_encode(' ' . $currency); ?>;
-	document.getElementById('stripe_checkout_button').disabled = (total == 0) || validate_email(document.getElementById('checkout_email_field').value) == false;
-};
-
-let format_currency = function(amount, decimal_character, thousands_character) {
-	let adjusted_amount = Math.round(amount * 100).toString();
-	if (adjusted_amount.length < 3) {
-		adjusted_amount = '000'.substr(adjusted_amount.length) + adjusted_amount;
-	}
-	let decimals = adjusted_amount.substr(adjusted_amount.length - 2, 2);
-	let whole = adjusted_amount.substr(0, adjusted_amount.length - 2);
-	return whole + decimal_character + decimals;
-};
-
-let set_view_mode = function() {
-	window.scrollTo(window.scrollX, 0);
-	if (window.location.hash === '#checkout') {
-		document.getElementById('page_landing').className = 'hidden';
-		document.getElementById('page_cart').className = '';
-	} else {
-		document.getElementById('page_landing').className = '';
-		document.getElementById('page_cart').className = 'hidden';
-	}
-};
-
-let update_checkout_components = function() {
-	if (owns_ark) {
-		document.getElementById('ark_checkbox_frame').className = 'hidden';
-		document.getElementById('ark_owned_caption').className = 'text-lighter';
-	} else {
-		document.getElementById('ark_checkbox_frame').className = '';
-		document.getElementById('ark_owned_caption').className = 'hidden';
-	}<?php if ($ark2_enabled) { ?>
-	if (owns_ark2) {
-		document.getElementById('ark2-activelicense').className = '';
-	} else {
-		document.getElementById('ark2-activelicense').className = 'hidden';
-	}<?php } ?>
-	update_total();
-};
-
-let validate_email = function(email) {
-	let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	return re.test(String(email).trim().toLowerCase());
-};
-
-let lookup_email = function(email) {
-	let process_purchases = function(purchases) {
-		owns_ark = false;
-		<?php if ($ark2_enabled) { ?>owns_ark2 = false;<?php } ?>
-		for (let idx = 0; idx < purchases.length; idx++) {
-			switch (purchases[idx].product_id) {
-			case <?php echo json_encode(BeaconShop::ARK_PRODUCT_ID); ?>:
-				owns_ark = true;
-				break;
-			<?php if ($ark2_enabled) { ?>case <?php echo json_encode(BeaconShop::ARK2_PRODUCT_ID); ?>:
-				owns_ark2 = true;
-				break;<?php } ?>
-			}
-		}
-		update_checkout_components();
-	};
-	
-	checking_email = true;
-	update_checkout_components();
-	if (validate_email(email)) {
-		request.get('/omni/lookup', {'email': email}, function(obj) {
-			checking_email = false;
-			process_purchases(obj.purchases);
-		}, function(status, body) {
-			checking_email = false;
-			process_purchases([]);
-		});
-	} else {
-		checking_email = false;
-		process_purchases([]);
-	}
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-	stw_quantity_field = document.getElementById('stw_quantity_field');
-	ark_gift_quantity_field = document.getElementById('ark_gift_quantity_field');
-	ark_checkbox = document.getElementById('ark_checkbox');
-	<?php if ($ark2_enabled) { ?>ark2_checkbox = document.getElementById('ark2_checkbox');
-	ark2_gift_quantity_field = document.getElementById('ark2_gift_quantity_field');<?php } ?>
-	
-	update_checkout_components();
-	set_view_mode();
-	
-	document.getElementById('buy-button').addEventListener('click', function(ev) {
-		history.pushState({}, '', '/omni/#checkout');
-		let popStateEvent = new PopStateEvent('popstate', {});
-		dispatchEvent(popStateEvent);
-		ev.preventDefault();
-	});
-	
-	document.getElementById('cart_back_button').addEventListener('click', function(ev) {
-		history.pushState({}, '', '/omni/');
-		let popStateEvent = new PopStateEvent('popstate', {});
-		dispatchEvent(popStateEvent);
-		ev.preventDefault();
-	});
-	
-	if (stw_quantity_field) {
-		stw_quantity_field.addEventListener('input', function(ev) {
-			update_total();
-		});
-	}
-	
-	if (ark_gift_quantity_field) {
-		ark_gift_quantity_field.addEventListener('input', function(ev) {
-			update_total();
-		});
-	}
-	
-	if (ark_checkbox) {
-		ark_checkbox.addEventListener('change', function(ev) {
-			update_total();
-		});
-	}
-	
-	<?php if ($ark2_enabled) { ?>if (ark2_gift_quantity_field) {
-		ark2_gift_quantity_field.addEventListener('input', function(ev) {
-			update_total();
-		});
-	}
-	if (ark2_checkbox) {
-		ark2_checkbox.addEventListener('change', function(ev) {
-			update_total();
-		});
-	}<?php } ?>
-	
-	document.getElementById('stripe_checkout_button').addEventListener('click', function(ev) {
-		this.disabled = true;
+	const updateTotal = () => {
+		const includeArk = status.ownsArk === false && arkCheckbox.checked;
+		const stwQuantity = Math.max(Math.min(stwQuantityField.value, 10), 0);
+		const arkGiftQuantity = Math.max(Math.min(arkGiftQuantityField.value, 10), 0);
 		
-		let include_ark = owns_ark === false && ark_checkbox && ark_checkbox.checked;
-		let stw_quantity = 0;
-		if (stw_quantity_field) {
-			stw_quantity = Math.min(stw_quantity_field.value, 10);
+		if (stwQuantityField.value != stwQuantity) {
+			stwQuantityField.value = stwQuantity;
 		}
-		let ark_gift_quantity = 0;
-		if (ark_gift_quantity_field) {
-			ark_gift_quantity = Math.min(ark_gift_quantity_field.value, 10);
+		if (arkGiftQuantityField.value != arkGiftQuantity) {
+			arkGiftQuantityField.value = arkGiftQuantity;
 		}
-		<?php if ($ark2_enabled) { ?>let include_ark2 = ark2_checkbox && ark2_checkbox.checked;
-		let ark2_gift_quantity = 0;
-		if (ark2_gift_quantity_field) {
-			ark2_gift_quantity = Math.min(ark2_gift_quantity_field.value, 10);
-		}<?php } ?>
- 		
- 		let checkout_final = function() {
-			let url = '/omni/begin';
-			let formdata = {
-				'email': document.getElementById('checkout_email_field').value,
-			};
-			if (include_ark) {
-				formdata.ark = true;
-			}
-			if (ark_gift_quantity > 0) {
-				formdata.ark_gift = ark_gift_quantity;
-			}
-			<?php if ($ark2_enabled) { ?>if (include_ark2) {
-				formdata.ark2 = true;
-			}
-			if (ark2_gift_quantity > 0) {
-				formdata.ark2_gift = ark2_gift_quantity;
-			}<?php } ?>
-			if (stw_quantity > 0) {
-				formdata.stw = stw_quantity;
+		
+		const arkPrice = <?php echo json_encode($product_details[KEY_ARK]['price']); ?>;
+		const arkGiftPrice = <?php echo json_encode($product_details[KEY_ARK_GIFT]['price']); ?>;
+		const stwPrice = <?php echo json_encode($product_details[KEY_STW]['price']); ?>;
+		let total = (stwPrice * stwQuantity) + (arkGiftPrice * arkGiftQuantity);
+		if (includeArk) {
+			total += arkPrice;
+		}
+		
+		if (ark2GiftQuantityField && ark2Checkbox && ark2ActiveLicenseCaption) {
+			const includeArk2 = ark2Checkbox.checked;
+			const ark2GiftQuantity = Math.max(Math.min(ark2GiftQuantityField.value, 10), 0);
+			
+			if (ark2GiftQuantityField.value != ark2GiftQuantity) {
+				ark2GiftQuantityField.value = ark2GiftQuantity;
 			}
 			
-			request.post(url, formdata, function(obj) {
+			const ark2Price = <?php echo json_encode($product_details[KEY_ARK2]['price'] ?? 0); ?>;
+			const ark2GiftPrice = <?php echo json_encode($product_details[KEY_ARK2_GIFT]['price'] ?? 0); ?>;
+			total += (ark2GiftPrice * ark2GiftQuantity);
+			if (includeArk2) {
+				total += ark2Price;
+			}
+		}
+		
+		const formattedTotal = formatCurrency(total);
+		totalField.innerHTML = `${currencySymbol}${formattedTotal} ${currencyCode}`;
+		stripeCheckoutButton.disabled = (total == 0) || status.checkingEmail || validateEmail(emailField.value) == false;
+	};
+	
+	const formatCurrency = (amount) => {
+		let adjustedAmount = Math.round(amount * 100).toString();
+		if (adjustedAmount.length < 3) {
+			adjustedAmount = '000'.substr(adjustedAmount.length) + adjustedAmount;
+		}
+		const decimals = adjustedAmount.substr(adjustedAmount.length - 2, 2);
+		const whole = adjustedAmount.substr(0, adjustedAmount.length - 2);
+		return whole + decimalCharacter + decimals;
+	};
+	
+	const setViewMode = () => {
+		window.scrollTo(window.scrollX, 0);
+		if (window.location.hash === '#checkout') {
+			pageLanding.classList.add('hidden');
+			pageCart.classList.remove('hidden');
+		} else {
+			pageLanding.classList.remove('hidden');
+			pageCart.classList.add('hidden');
+		}
+	};
+	
+	const updateCheckoutComponents = () => {
+		if (status.ownsArk) {
+			arkCheckboxFrame.classList.add('hidden');
+			arkOwnedCaption.classList.remove('hidden');
+		} else {
+			arkCheckboxFrame.classList.remove('hidden');
+			arkOwnedCaption.classList.add('hidden');
+		}
+		if (ark2ActiveLicenseCaption) {
+			if (status.ownsArk2) {
+				ark2ActiveLicenseCaption.classList.remove('hidden');
+			} else {
+				ark2ActiveLicenseCaption.classList.add('hidden');
+			}
+		}
+		updateTotal();
+	};
+	
+	const validateEmail = (email) => {
+		const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		return re.test(String(email).trim().toLowerCase());
+	};
+	
+	const lookupEmail = (email) => {
+		const processPurchases = (purchases) => {
+			status.ownsArk = false;
+			status.ownsArk2 = false;
+			
+			for (const purchase of purchases) {
+				switch (purchase.product_id) {
+				case <?php echo json_encode(BeaconShop::ARK_PRODUCT_ID); ?>:
+					status.ownsArk = true;
+					break;
+				case <?php echo json_encode(BeaconShop::ARK2_PRODUCT_ID); ?>:
+					status.ownsArk2 = true;
+					break;
+				}
+			}
+			updateCheckoutComponents();
+		};
+		
+		status.checkingEmail = true;
+		updateCheckoutComponents();
+		if (validateEmail(email)) {
+			const params = new URLSearchParams();
+			params.append('email', email);
+			
+			BeaconWebRequest.get(`/omni/lookup?${params.toString()}`).then((response) => {
+				status.checkingEmail = false;
+				try {
+					const obj = JSON.parse(response.body);
+					processPurchases(obj.purchases);
+				} catch (e) {
+					console.log(e);
+					processPurchases([]);
+				}
+			}).catch((error) => {
+				status.checkingEmail = false;
+				processPurchases([]);
+			}); 
+		} else {
+			status.checkingEmail = false;
+			processPurchases([]);
+		}
+	};
+	
+	updateCheckoutComponents();
+	setViewMode();
+	
+	buyButton.addEventListener('click', (ev) => {
+		history.pushState({}, '', '/omni/#checkout');
+		dispatchEvent(new PopStateEvent('popstate', {}));
+		ev.preventDefault();
+	});
+	
+	cartBackButton.addEventListener('click', (ev) => {
+		history.pushState({}, '', '/omni/');
+		dispatchEvent(new PopStateEvent('popstate', {}));
+		ev.preventDefault();
+	});
+	
+	stwQuantityField.addEventListener('input', (ev) => {
+		updateTotal();
+	});
+	
+	arkGiftQuantityField.addEventListener('input', (ev) => {
+		updateTotal();
+	});
+	
+	arkCheckbox.addEventListener('change', (ev) => {
+		updateTotal();
+	});
+	
+	if (ark2GiftQuantityField) {
+		ark2GiftQuantityField.addEventListener('input', (ev) => {
+			updateTotal();
+		});
+	}
+	
+	if (ark2Checkbox) {
+		ark2Checkbox.addEventListener('change', (ev) => {
+			updateTotal();
+		});
+	}
+	
+	stripeCheckoutButton.addEventListener('click', (ev) => {
+		ev.target.disabled = true;
+		
+		const includeArk = status.ownsArk === false && arkCheckbox.checked;
+		const stwQuantity = Math.max(Math.min(stwQuantityField.value, 10), 0);
+		const arkGiftQuantity = Math.max(Math.min(arkGiftQuantityField.value, 10), 0);
+		const includeArk2 = ark2Checkbox && ark2Checkbox.checked;
+		const ark2GiftQuantity = ark2GiftQuantityField && Math.max(Math.min(ark2GiftQuantityField.value, 10), 0);
+		
+		const params = new URLSearchParams();
+		params.append('email', emailField.value);
+		params.append('ark', includeArk);
+		params.append('ark2', includeArk2);
+		params.append('ark_gift', arkGiftQuantity);
+		params.append('ark2_gift', ark2GiftQuantity);
+		params.append('stw', stwQuantity);
+		
+		BeaconWebRequest.post('/omni/begin', params).then((response) => {
+			try {
+				const obj = JSON.parse(response.body);
 				if (sessionStorage) {
 					sessionStorage.setItem('client_reference_id', obj.client_reference_id);
 				}
 				
 				window.location.href = obj.url;
-			}, function(status, body) {
-				let error = JSON.parse(body);
-				let message = body;
-				if (error.message) {
-					message = error.message;
+			} catch (e) {
+				console.log(e);
+				BeaconDialog.Show('There was an error starting the checkout process.', e.message);
+			}
+		}).catch((error) => {
+			let message = error.body;
+			try {
+				const obj = JSON.parse(message);
+				if (obj.message) {
+					message = obj.message;
 				}
-				dialog.show('There was an issue starting the checkout process.', message);
-				document.getElementById('stripe_checkout_button').disabled = false;
-			});
-		};
-		
-		checkout_final();
+			} catch (e) {
+				console.log(e);
+			}
+			BeaconDialog.show('There was an error starting the checkout process.', message);
+			ev.target.disabled = false;
+		});
 	});
 	
-	document.getElementById('checkout_email_field').addEventListener('input', function() {
-		let callback = function () {
-			lookup_email(this.value);
-			update_total();
-		};
-		callback = callback.bind(this);
-		
-		if (this.timer) {
-			clearTimeout(this.timer);
+	emailField.addEventListener('input', (ev) => {
+		if (emailField.timer) {
+			clearTimeout(emailField.timer);
 		}
-		this.timer = setTimeout(callback, 250);
+		
+		emailField.timer = setTimeout(() => {
+			lookupEmail(emailField.value);
+			updateTotal();
+		}, 250);
 	});
 	
-	let email = null;
-	if (sessionStorage) {
-		email = sessionStorage.getItem('email');
-	}
-	if (!email && localStorage) {
-		email = localStorage.getItem('email');
-	}
+	const email = sessionStorage?.getItem('email') ?? localStorage?.getItem('email') ?? null;
 	if (email) {
-		document.getElementById('checkout_email_field').value = email;
-		lookup_email(email);
+		emailField.value = email;
+		lookupEmail(email);
 	}
 	
-	let currency_links = document.getElementsByClassName('currency-button');
-	for (let i = 0; i < currency_links.length; i++) {
-		let currency_link = currency_links.item(i);
-		currency_link.addEventListener('click', function(ev) {
-			let currency_code = this.getAttribute('currency');
+	const currencyLinks = document.querySelectorAll('.currency-button');
+	for (const link of currencyLinks) {
+		link.addEventListener('click', (ev) => {
 			ev.preventDefault();
 			
-			request.get('/omni/currency', {'currency': currency_code}, function(obj)  {
+			const linkCurrency = ev.target.getAttribute('currency');
+			const params = new URLSearchParams();
+			params.append('currency', linkCurrency);
+			BeaconWebRequest.get(`/omni/currency?${params.toString()}`).then((response) => {
 				location.reload();
-			}, function(status, body) {
-				dialog.show('Sorry, there was a problem setting the currency.', body);
+			}).catch((error) => {
+				BeaconDialog.show('Sorry, there was a problem setting the currency.', error.body);
 			});
 			
 			return false;
 		});
 	}
-});
 	
-window.addEventListener('popstate', function(ev) {
-	set_view_mode();
+	window.addEventListener('popstate', (ev) => {
+		setViewMode();
+	});
 });
 </script>
 <?php
