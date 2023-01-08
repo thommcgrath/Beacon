@@ -1,5 +1,6 @@
 <?php
 
+$two_factor_enabled = BeaconCommon::GetGlobal('2FA Enabled');
 $authenticators = BeaconAPI\Authenticator::GetForUser($user);
 $has_authenticators = count($authenticators) > 0;
 
@@ -30,6 +31,7 @@ if ($has_authenticators) {
 		<p class="text-right"><input type="submit" id="password_action_button" value="Save Password" disabled></p>
 	</form>
 </div>
+<?php if ($has_authenticators || $two_factor_enabled) { ?>
 <div class="visual-group">
 	<h3>Authenticators</h3>
 	<?php
@@ -78,3 +80,4 @@ if ($has_authenticators) {
 	<div class="right"><button id="add-authenticator-cancel-button">Cancel</button> <button id="add-authenticator-action-button" class="default" disabled>Verify</button></div>
 </div>
 <?php BeaconTemplate::FinishModal(); ?>
+<?php } ?>
