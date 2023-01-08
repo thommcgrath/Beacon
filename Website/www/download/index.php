@@ -41,21 +41,21 @@ if ($legacy) {
 
 BeaconTemplate::StartScript();
 ?><script>
-let updateScreenNotice = function() {
-	let screen = window.screen;
-	let screenWidthPoints = screen.width;
-	let screenHeightPoints = screen.height;
-	let screenWidthPixels = screenWidthPoints * window.devicePixelRatio;
-	let screenHeightPixels = screenHeightPoints * window.devicePixelRatio;
+const updateScreenNotice = () => {
+	const screen = window.screen;
+	const screenWidthPoints = screen.width;
+	const screenHeightPoints = screen.height;
+	const screenWidthPixels = screenWidthPoints * window.devicePixelRatio;
+	const screenHeightPixels = screenHeightPoints * window.devicePixelRatio;
 	
-	let isMac = navigator.platform.indexOf('Mac') > -1;
-	let isWindows = navigator.platform.indexOf('Win') > -1;
+	const isMac = navigator.platform.indexOf('Mac') > -1;
+	const isWindows = navigator.platform.indexOf('Win') > -1;
 	
 	let notice = null;
 	if (screenWidthPoints < 1280 || screenHeightPoints < 720) {
 		notice = 'This screen may not be supported. A resolution of at least 1280x720 points is required.';
 		if (screenWidthPixels >= 1280 && screenHeightPixels >= 720) {
-			let maxScalingSupported = Math.round(Math.min(screenWidthPixels / 1280, screenHeightPixels / 720) * 100);
+			const maxScalingSupported = Math.round(Math.min(screenWidthPixels / 1280, screenHeightPixels / 720) * 100);
 			if (isWindows) {
 				notice = 'Your display scaling settings may prevent Beacon from fitting on your screen. If you experience trouble fitting Beacon\'s window on your screen, try changing your display scaling to ' + maxScalingSupported + '% or lower. <a href="https://www.windowscentral.com/how-set-custom-display-scaling-setting-windows-10#change_display_scaling_default_settings_windows10">Learn how to change scaling settings.</a>';
 			}
@@ -63,9 +63,11 @@ let updateScreenNotice = function() {
 	}
 	
 	if (notice) {
-		let screenNotice = document.getElementById('screenCompatibilityNotice');
-		screenNotice.innerHTML = notice;
-		screenNotice.classList.remove('hidden');
+		const screenNotice = document.getElementById('screenCompatibilityNotice');
+		if (screenNotice) {
+			screenNotice.innerHTML = notice;
+			screenNotice.classList.remove('hidden');
+		}
 	}
 };
 
@@ -183,57 +185,59 @@ const buildDownloadsTable = async () => {
 		addChildRow(table, 'Release Notes', data.history_url, 'View');
 	};
 	
-	const download_data = <?php echo json_encode($download_links, JSON_PRETTY_PRINT); ?>;
-	let stable_table = document.getElementById('stable-table');
-	let prerelease_table = document.getElementById('prerelease-table');
-	let legacy_table = document.getElementById('legacy-table');
+	const downloadData = <?php echo json_encode($download_links, JSON_PRETTY_PRINT); ?>;
+	const stableTable = document.getElementById('stable-table');
+	const prereleaseTable = document.getElementById('prerelease-table');
+	const legacyTable = document.getElementById('legacy-table');
 	
-	let current = download_data.current;
-	let headerRow = document.createElement('div');
-	headerRow.classList.add('row');
-	let headerBody = document.createElement('div');
-	headerBody.classList.add('full');
-	headerBody.innerText = 'Stable Version: Beacon ' + current.build_display;
-	headerRow.appendChild(headerBody);
-	stable_table.appendChild(headerRow);
-	
-	addChildRows(stable_table, current, true);
-	
-	let prerelease = download_data.preview;
-	if (prerelease) {
-		let headerRow = document.createElement('div');
+	const current = downloadData.current;
+	if (current) {
+		const headerRow = document.createElement('div');
 		headerRow.classList.add('row');
-		let headerBody = document.createElement('div');
+		const headerBody = document.createElement('div');
+		headerBody.classList.add('full');
+		headerBody.innerText = 'Stable Version: Beacon ' + current.build_display;
+		headerRow.appendChild(headerBody);
+		stableTable.appendChild(headerRow);
+		
+		addChildRows(stableTable, current, true);
+	}
+	
+	const prerelease = downloadData.preview;
+	if (prerelease) {
+		const headerRow = document.createElement('div');
+		headerRow.classList.add('row');
+		const headerBody = document.createElement('div');
 		headerBody.classList.add('full');
 		headerBody.innerText = 'Preview Version: Beacon ' + prerelease.build_display;
 		headerRow.appendChild(headerBody);
-		prerelease_table.appendChild(headerRow);
+		prereleaseTable.appendChild(headerRow);
 		
-		addChildRows(prerelease_table, prerelease, false);
+		addChildRows(prereleaseTable, prerelease, false);
 	} else {
-		prerelease_table.classList.add('hidden');
+		prereleaseTable.classList.add('hidden');
 	}
 	
-	let legacy = download_data.legacy;
+	const legacy = downloadData.legacy;
 	if (legacy) {
-		let headerRow = document.createElement('div');
+		const headerRow = document.createElement('div');
 		headerRow.classList.add('row');
-		let headerBody = document.createElement('div');
+		const headerBody = document.createElement('div');
 		headerBody.classList.add('full');
 		headerBody.innerText = 'Legacy Version: Beacon ' + legacy.build_display;
 		headerRow.appendChild(headerBody);
-		legacy_table.appendChild(headerRow);
+		legacyTable.appendChild(headerRow);
 		
-		addChildRows(legacy_table, legacy, false);
+		addChildRows(legacyTable, legacy, false);
 	} else {
-		legacy_table.classList.add('hidden');
+		legacyTable.classList.add('hidden');
 	}
 	
 	document.getElementById('mac_version_requirements').innerText = 'macOS ' + current.mac_display_versions;
 	document.getElementById('win_version_requirements').innerText = current.win_display_versions;
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
 	updateScreenNotice();
 	buildDownloadsTable();
 });
