@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		
 		const username = document.getElementById('username_field').value.trim();
 		if (username === '') {
-			dialog.show('Username can not be empty', 'How did you press the button anyway?');
+			BeaconDialog.show('Username can not be empty', 'How did you press the button anyway?');
 			return false;
 		}
 		
