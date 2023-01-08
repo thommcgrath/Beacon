@@ -7,7 +7,7 @@ function handle_request(array $context) {
 	$user_id = BeaconAPI::UserID();
 	
 	switch ($context['route_key']) {
-	case '/project/{project_id}':
+	case 'GET /project/{project_id}':
 		/*if (!BeaconCommon::IsUUID($project_id)) {
 			BeaconAPI::ReplyError('Must use a v4 UUID', null, 400);
 		}*/
