@@ -70,13 +70,13 @@ function ShowGiftCodes() {
 	echo '<div id="section-gifts" class="visual-group">';
 	echo '<h3>Gift Codes</h3>';
 	echo '<p>Codes can be redeemed at <a href="/redeem">' . BeaconCommon::AbsoluteURL('/redeem') . '</a> or using the link next to each code.</p>';
-	echo '<table class="generic"><thead><tr><th class="w-40">Code</th><th class="low-priority w-20">Status</th><th class="low-priority w-40">Redeem Link</th></thead>';
+	echo '<table class="generic"><thead><tr><th class="w-40">Code</th><th class="low-priority w-60">Redemption Link</th></thead>';
 	while (!$results->EOF()) {
 		$code = $results->Field('code');
 		$redeemed = is_null($results->Field('redemption_date')) === false;
 		$product_name = $results->Field('product_name');
 		
-		echo '<tr><td class="w-40"><span class="text-lighter smaller">' . htmlentities($product_name) . '</span><br>' . htmlentities($code) . '<div class="row-details"><span class="detail">' . ($redeemed ? 'Redeemed' : BeaconCommon::AbsoluteURL('/redeem/' . htmlentities($code))) . '<span></div></td><td class="low-priority w-20">' . ($redeemed ? 'Redeemed' : '&nbsp;') . '</td><td class="low-priority w-40">' . ($redeemed ? '&nbsp;' : BeaconCommon::AbsoluteURL('/redeem/' . htmlentities($code))) . '</td>';
+		echo '<tr><td class="w-40"><span class="text-lighter smaller">' . htmlentities($product_name) . '</span><br>' . htmlentities($code) . '<div class="row-details"><span class="detail">' . ($redeemed ? 'Redeemed' : BeaconCommon::AbsoluteURL('/redeem/' . htmlentities($code))) . '<span></div></td><td class="low-priority w-40">' . ($redeemed ? 'Redeemed' : BeaconCommon::AbsoluteURL('/redeem/' . htmlentities($code))) . '</td></tr>';
 		$results->MoveNext();
 	}
 	echo '</table>';
