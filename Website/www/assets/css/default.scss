@@ -1362,6 +1362,14 @@ div.page-panel {
 	flex-direction: column;
 	gap: 20px;
 	
+	// poor man's substitute for gap detection
+	// *very* old browsers will get neither the game or margins
+	@supports not (selector(:first-child)) {
+		& > * {
+			margin: 10px;
+		}
+	}
+	
 	div.page-panel-nav ul {
 		display: flex;
 		flex-direction: row;
@@ -1371,6 +1379,12 @@ div.page-panel {
 		justify-content: center;
 		align-items: stretch;
 		flex-wrap: wrap;
+		
+		@supports not (selector(:first-child)) {
+			& > * {
+				margin: 5px;
+			}
+		}
 		
 		li {
 			list-style: none;

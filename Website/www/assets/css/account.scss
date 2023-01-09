@@ -53,6 +53,12 @@ h1 span.tag {
 	margin-left: auto;
 	margin-right: auto;
 	
+	@supports not (selector(:first-child)) {
+		& > * {
+			margin: 10px;
+		}
+	}
+	
 	div.flex-grid-item {
 		flex: 1 1 45%;
 		text-align: center;
@@ -62,6 +68,12 @@ h1 span.tag {
 #add-authenticator-content {
 	display: flex;
 	gap: 20px;
+	
+	@supports not (selector(:first-child)) {
+		& > * {
+			margin: 10px;
+		}
+	}
 }
 
 #add-authenticator-qrcode {
