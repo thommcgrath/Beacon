@@ -110,7 +110,7 @@ abstract class BeaconCommon {
 			$folders = ['css'];
 			break;
 		case 'js':
-			$in_production = true;//static::InProduction();
+			$in_production = static::InProduction();
 			$folders = [($in_production ? 'scripts/build' : 'scripts/src'), 'scripts/thirdparty'];
 			break;
 		case 'svg':
