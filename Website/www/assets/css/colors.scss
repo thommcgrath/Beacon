@@ -154,11 +154,11 @@
 	
 	table.generic {
 		tbody {
-			tr:nth-child(even) {
+			& > tr:nth-child(even) {
 				background-color: mix($background-color, $accent-color, 96%);
 			}
 			
-			tr:nth-child(odd) {
+			& > tr:nth-child(odd) {
 				background-color: $background-color;
 			}
 		}

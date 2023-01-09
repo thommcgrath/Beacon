@@ -354,6 +354,10 @@ table.generic {
 		width: 1px;
 		white-space: nowrap;
 	}
+	
+	&.auto-width {
+		width: auto;
+	}
 }
 
 .w-25 {

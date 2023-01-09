@@ -62,12 +62,12 @@ if (is_null($obj)) {
 
 BeaconTemplate::SetTitle($obj->Label());
 
-$properties = array(
+$properties = [
 	'Mod' => '[' . $obj->ModName() . '](/mods/' . urlencode($obj->ModID()) . ')'
-);
+];
 $tags = $obj->Tags();
 if (count($tags) > 0) {
-	$links = array();
+	$links = [];
 	foreach ($tags as $tag) {
 		$links[] = '[' . ucwords(str_replace('_', ' ', $tag)) . '](/tags/' . urlencode($tag) . ')';
 	}
@@ -127,7 +127,7 @@ function PrepareBlueprintTable(\Ark\Blueprint $blueprint, array &$properties) {
 	$properties['Map Availability'] = implode(', ', \Ark\Maps::Names($blueprint->Availability()));
 	
 	$related_ids = $blueprint->RelatedObjectIDs();
-	$related_items = array();
+	$related_items = [];
 	foreach ($related_ids as $id) {
 		$blueprint = \Ark\Blueprint::GetByObjectID($id);
 		if (is_null($blueprint)) {
@@ -202,7 +202,7 @@ function PrepareLootSourceTable(\Ark\LootSource $loot_source, array &$properties
 
 function PrepareDietTable(\Ark\Diet $diet, array &$properties) {
 	$engram_ids = $diet->EngramIDs();
-	$engrams = array();
+	$engrams = [];
 	foreach ($engram_ids as $id) {
 		$engram = \Ark\Engram::GetByObjectID($id);
 		$engrams[] = MarkdownLinkToObject($engram);
@@ -210,7 +210,7 @@ function PrepareDietTable(\Ark\Diet $diet, array &$properties) {
 	$properties['Preferred Foods'] = implode(', ', $engrams);
 	
 	$creature_ids = $diet->CreatureIDs();
-	$creatures = array();
+	$creatures = [];
 	foreach ($creature_ids as $id) {
 		$creature = \Ark\Creature::GetByObjectID($id);
 		$creatures[] = MarkdownLinkToObject($creature);
@@ -239,7 +239,7 @@ function PrepareSpawnPointTable(\Ark\SpawnPoint $spawn_point, array &$properties
 		return;
 	}
 	
-	$unique_creatures = array();
+	$unique_creatures = [];
 	foreach ($spawns as $set) {
 		$entries = $set['entries'];
 		foreach ($entries as $entry) {
@@ -263,6 +263,22 @@ function PrepareSpawnPointTable(\Ark\SpawnPoint $spawn_point, array &$properties
 	
 	sort($creatures);
 	$properties['Spawns'] = implode(', ', $creatures);
+	
+	$populations = ['<table class="generic auto-width"><thead class="smaller"><tr><th class="min-width">Map</th><th class="text-right min-width low-priority">Num Nodes</th><th class="text-right min-width low-priority">Pop Per Node</th><th class="text-right min-width low-priority">Target Pop</th></thead>', '<tbody>'];
+	$population_data = $spawn_point->Populations();
+	foreach ($population_data as $map_id => $pop) {
+		$map = \Ark\Map::GetNamed($map_id)[0];
+		$node_count = $pop['instances'];
+		$target_pop = $pop['target_population'];
+		$avg_per_node = round($target_pop / $node_count);
+		$node_count = number_format($node_count);
+		$target_pop = number_format($target_pop);
+		$avg_per_node = number_format($avg_per_node);
+		$populations[] = "<tr><td><span class=\"nowrap\">{$map->Label()}</span><div class=\"row-details\">Nodes: {$node_count}, Pop Per Node {$avg_per_node}, Target Pop: {$target_pop}</div></td><td class=\"text-right low-priority\">{$node_count}</td><td class=\"text-right low-priority\">{$avg_per_node}</td><td class=\"text-right low-priority\">{$target_pop}</td></tr>";
+	}
+	$populations[] = '</tbody>';
+	$populations[] = '</table>';
+	$properties['Populations'] = implode("\n", $populations);
 	
 	unset($properties['Spawn Code']);
 }

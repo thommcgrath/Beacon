@@ -120,6 +120,10 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		return $obj;
 	}
 	
+	public function Populations(): array {
+		return $this->populations ?? [];
+	}
+	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		if (is_null($this->groups) || count($this->groups) == 0) {
