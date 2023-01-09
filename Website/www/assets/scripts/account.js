@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 						BeaconDialog.show('Project not deleted', 'There was an authentication error');
 						break;
 					default:
-						BeaconDialog.show('Project not deleted', 'Sorry, there was a ' + error.status + ' error.');
+						BeaconDialog.show('Project not deleted', `Sorry, there was a ${error.status} error.`);
 						break;
 					}
 				});
