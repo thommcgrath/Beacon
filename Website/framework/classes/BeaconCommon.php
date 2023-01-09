@@ -103,13 +103,15 @@ abstract class BeaconCommon {
 		$extension = pathinfo($asset_filename, PATHINFO_EXTENSION);
 		$public_extension = $extension;
 		$folders = [$extension];
+		$in_production = null;
 		switch ($extension) {
 		case 'scss':
 			$public_extension = 'css';
 			$folders = ['css'];
 			break;
 		case 'js':
-			$folders = ['scripts/build', 'scripts/thirdparty'];
+			$in_production = static::InProduction();
+			$folders = [($in_production ? 'scripts/build' : 'scripts/src'), 'scripts/thirdparty'];
 			break;
 		case 'svg':
 		case 'png':
@@ -131,10 +133,13 @@ abstract class BeaconCommon {
 			}
 		}
 		
-		if (static::InProduction() === false) {
-			return "/assets/missing/{$asset_filename}";
-		} else {
+		if (is_null($in_production)) {
+			$in_production = static::InProduction();
+		}
+		if ($in_production) {
 			return '#';
+		} else {
+			return "/assets/missing/{$asset_filename}";
 		}
 	}
 	
