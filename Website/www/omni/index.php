@@ -77,7 +77,7 @@ const ark2ProductId = <?php echo json_encode(BeaconShop::ARK2_PRODUCT_ID); ?>;
 BeaconTemplate::FinishScript();
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout-es5.js'));
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 
 ?>
 <div id="page_landing">

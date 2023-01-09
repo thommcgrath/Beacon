@@ -102,29 +102,40 @@ abstract class BeaconCommon {
 		$filename = pathinfo($asset_filename, PATHINFO_FILENAME);
 		$extension = pathinfo($asset_filename, PATHINFO_EXTENSION);
 		$public_extension = $extension;
-		$folder = $extension;
+		$folders = [$extension];
 		switch ($extension) {
 		case 'scss':
 			$public_extension = 'css';
-			$folder = 'css';
+			$folders = ['css'];
 			break;
 		case 'js':
-			$folder = 'scripts';
+			$folders = ['scripts/build', 'scripts/thirdparty'];
 			break;
 		case 'svg':
 		case 'png':
 		case 'gif':
-			$folder = 'images';
+			$folders = ['images'];
 			break;
 		case 'ttf':
 		case 'otf':
 		case 'woff2':
-			$folder = 'fonts';
+			$folder = ['fonts'];
 			break;
 		}
-		$asset_path = static::WebRoot() . '/assets/' . $folder . '/' . $asset_filename;
-		$uri_path = '/assets/' . $folder . '/' . $filename . '.' . $public_extension;
-		return $uri_path . '?mtime=' . filemtime($asset_path);
+		
+		foreach ($folders as $folder) {
+			$asset_path = static::WebRoot() . '/assets/' . $folder . '/' . $asset_filename;
+			if (file_exists($asset_path)) {
+				$uri_path = '/assets/' . $folder . '/' . $filename . '.' . $public_extension;
+				return $uri_path . '?mtime=' . filemtime($asset_path);
+			}
+		}
+		
+		if (static::InProduction() === false) {
+			return "/assets/missing/{$asset_filename}";
+		} else {
+			return '#';
+		}
 	}
 	
 	public static function Database(): ?BeaconDatabase {
