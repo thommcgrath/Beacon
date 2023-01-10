@@ -380,7 +380,6 @@ abstract class Core {
 					static::ReplyError('Endpoint not found', null, 404);
 				}
 				$handler = 'handle_request';
-				http_response_code(500); // Set the response code to a default in case there is a parse error
 				require($handler_file);
 			} else if (is_callable($handler) === true) {
 				// nothing to do
