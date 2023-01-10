@@ -163,7 +163,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 104
+		  Return 105
 		End Function
 	#tag EndEvent
 
@@ -698,7 +698,7 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub IndexesBuilt()
 		  Self.SQLExecute("DROP VIEW IF EXISTS blueprints;")
-		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategorySpawnPoints + "' AS category FROM spawn_points UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryLootContainers + "' AS category FROM loot_containers")
+		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + Ark.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + Ark.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + Ark.CategorySpawnPoints + "' AS category FROM spawn_points UNION SELECT object_id, class_string, path, label, alternate_label, tags, availability, content_pack_id, '" + Ark.CategoryLootContainers + "' AS category FROM loot_containers")
 		  Var DeleteStatements(), Unions() As String
 		  Var Categories() As String = Ark.Categories
 		  For Each Category As String In Categories
@@ -2753,6 +2753,11 @@ Inherits Beacon.DataSource
 		        Columns.Value("tags") = Blueprint.TagString
 		        Columns.Value("availability") = Blueprint.Availability
 		        Columns.Value("content_pack_id") = Blueprint.ContentPackUUID
+		        If Blueprint.AlternateLabel Is Nil Then
+		          Columns.Value("alternate_label") = Nil
+		        Else
+		          Columns.Value("alternate_label") = Blueprint.AlternateLabel.StringValue
+		        End If
 		        
 		        Select Case Blueprint
 		        Case IsA Ark.Creature
