@@ -34,7 +34,9 @@ function handle_request(array $context): void {
 		if (count($results) > 0) {
 			$ids = [];
 			foreach ($results as $result) {
-				$ids[] = $database->EscapeLiteral($result['objectID']);
+				if (array_key_exists('objectID', $result) && is_null($result['objectID']) === false) {
+					$ids[] = $database->EscapeLiteral($result['objectID']);
+				}
 			}
 			$clauses[] = 'project_id IN (' . implode(', ', $ids) . ')';
 		} else {
