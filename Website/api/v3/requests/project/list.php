@@ -3,6 +3,7 @@
 BeaconAPI::Authorize(true);
 
 function handle_request(array $context): void {
+	$database = \BeaconCommon::Database();
 	$user_id = BeaconAPI::Authenticated() ? BeaconAPI::UserID() : null;
 	$params = [];
 	$clauses = [];
@@ -34,9 +35,7 @@ function handle_request(array $context): void {
 		if (count($results) > 0) {
 			$ids = [];
 			foreach ($results as $result) {
-				if (array_key_exists('objectID', $result) && is_null($result['objectID']) === false) {
-					$ids[] = $database->EscapeLiteral($result['objectID']);
-				}
+				$ids[] = $database->EscapeLiteral($result['objectID']);
 			}
 			$clauses[] = 'project_id IN (' . implode(', ', $ids) . ')';
 		} else {
@@ -82,7 +81,6 @@ function handle_request(array $context): void {
 		$sql = str_replace('::' . $keys[$i] . '::', '$' . ($i + 1), $sql);
 	}
 	
-	$database = \BeaconCommon::Database();
 	$results = $database->Query($sql, $values);
 	$projects = \BeaconAPI\Project::GetFromResults($results);
 	BeaconAPI::ReplySuccess($projects);
