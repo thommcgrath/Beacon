@@ -1,6 +1,5 @@
 <?php
 
-http_response_code(500); // So that a memory error doesn't report 200
 BeaconAPI::Authorize();
 	
 function handle_request(array $context): void {
