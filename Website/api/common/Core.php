@@ -7,10 +7,28 @@ abstract class Core {
 	protected static $payload = null;
 	protected static $body_raw = null;
 	protected static $auth_style = null;
+	protected static $routes = [];
 	
 	const AUTH_STYLE_PUBLIC_KEY = 'public key';
 	const AUTH_STYLE_EMAIL_WITH_PASSWORD = 'email+password';
 	const AUTH_STYLE_SESSION = 'session';
+	
+	const AUTH_OPTIONAL = 1;
+	const AUTH_PERMISSIVE = 2;
+	
+	public static function HandleCORS(): void {
+		header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS');
+		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');
+		header('Access-Control-Expose-Headers: Content-Length,Content-Range');
+		header('Vary: Origin');
+		
+		if (static::Method() === 'OPTIONS') {
+			header('Access-Control-Max-Age: 1728000');
+			http_response_code(204);
+			exit;
+		}
+	}
 	
 	public static function APIVersion() {
 		return 'v0';
@@ -152,7 +170,16 @@ abstract class Core {
 		return false;
 	}
 	
-	public static function Authorize(bool $optional = false) {
+	public static function Authorize(bool|int $flags = 0) {
+		if ($flags === true) {
+			$flags = self::AUTH_OPTIONAL;
+		} else if ($flags === false) {
+			$flags = 0;
+		}	
+		
+		$optional = ($flags & self::AUTH_OPTIONAL) === self::AUTH_OPTIONAL;
+		$permissive = ($flags & self::AUTH_PERMISSIVE) === self::AUTH_PERMISSIVE;
+		
 		$authorized = false;
 		$content = '';
 		self::$user_id = \BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
@@ -171,41 +198,65 @@ abstract class Core {
 				$authorized = self::AuthorizeWithSessionID($auth_value);
 				break;
 			case 'basic':
-				$decoded = base64_decode($auth_value);
-				list($username, $password) = explode(':', $decoded, 2);
-				
-				if (\BeaconCommon::IsUUID($username)) {
-					// public key authorization
-					$user = \BeaconUser::GetByUserID($username);
+				if ($permissive) {
+					$decoded = base64_decode($auth_value);
+					list($username, $password) = explode(':', $decoded, 2);
 					
-					if (is_null($user) === false) {
-						$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-						$content = self::Method() . chr(10) . $url;
-						if (self::Method() !== 'GET') {
-							$content .= chr(10) . self::Body();
-						}
+					if (\BeaconCommon::IsUUID($username)) {
+						// public key authorization
+						$user = \BeaconUser::GetByUserID($username);
 						
-						$authorized = self::AuthorizeWithSignature($user, $content, $password);
+						// with 2FA enabled, only session tokens and challenges are accepted
+						if (is_null($user) === false && $user->Is2FAProtected() === false) {
+							$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+							$content = self::Method() . chr(10) . $url;
+							if (self::Method() !== 'GET') {
+								$content .= chr(10) . self::Body();
+							}
+							
+							$authorized = self::AuthorizeWithSignature($user, $content, $password);
+						}
+					} elseif (\BeaconUser::ValidateEmail($username)) {
+						// password authorization
+						$authorized = self::AuthorizeWithPassword($username, $password);
 					}
-				} elseif (\BeaconUser::ValidateEmail($username)) {
-					// password authorization
-					$authorized = self::AuthorizeWithPassword($username, $password);
 				}
-				
+				break;
+			case 'challenge':
+				if ($permissive) {
+					$decoded = base64_decode($auth_value);
+					list($user_id, $signature) = explode(':', $decoded, 2);
+					
+					if (\BeaconCommon::IsUUID($user_id)) {
+						$user = \BeaconUser::GetByUserID($user_id);
+						$database = \BeaconCommon::Database();
+						$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $user_id);
+						while (!$results->EOF()) {
+							$challenge = $results->Field('challenge');
+							if (static::AuthorizeWithSignature($user, $challenge, $signature)) {
+								$authorized = true;
+								break;
+							}
+							$results->MoveNext();
+						}
+					}
+				}
 				break;
 			}
 		} elseif (self::Method() === 'POST' && self::ContentType() === 'application/json') {
-			$payload = self::JSONPayload();
-			if ($payload !== false && (empty($payload['username']) === false && empty($payload['password']) === false)) {
-				$authorized = self::AuthorizeWithPassword($payload['username'], $payload['password']);
-			} elseif ($payload !== false && (empty($payload['user_id']) === false && empty($payload['signature']) === false)) {
-				$database = \BeaconCommon::Database();
-				$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $payload['user_id']);
-				if ($results->RecordCount() == 1) {
-					$challenge = $results->Field('challenge');
-					$user = \BeaconUser::GetByUserID($payload['user_id']);
-					if (is_null($user) === false) {
-						$authorized = self::AuthorizeWithSignature($user, $challenge, $payload['signature']);
+			if ($permissive) {
+				$payload = self::JSONPayload();
+				if ($payload !== false && (empty($payload['username']) === false && empty($payload['password']) === false)) {
+					$authorized = self::AuthorizeWithPassword($payload['username'], $payload['password']);
+				} elseif ($payload !== false && (empty($payload['user_id']) === false && empty($payload['signature']) === false)) {
+					$database = \BeaconCommon::Database();
+					$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $payload['user_id']);
+					if ($results->RecordCount() == 1) {
+						$challenge = $results->Field('challenge');
+						$user = \BeaconUser::GetByUserID($payload['user_id']);
+						if (is_null($user) === false) {
+							$authorized = self::AuthorizeWithSignature($user, $challenge, $payload['signature']);
+						}
 					}
 				}
 			}
@@ -271,6 +322,85 @@ abstract class Core {
 		}
 		$domain = \BeaconCommon::APIDomain();
 		return 'https://' . $domain . '/' . static::APIVersion() . $path;
+	}
+	
+	public static function RegisterRoutes(array $routes): void {
+		foreach ($routes as $route => $handlers) {
+			preg_match_all('/\{((\.\.\.)?[a-zA-Z0-9\-_]+?)\}/', $route, $placeholders);
+			
+			$route_expression = str_replace('/', '\\/', $route);
+			$match_count = count($placeholders[0]);
+			$variables = [];
+			for ($idx = 0; $idx < $match_count; $idx++) {
+				$original = $placeholders[0][$idx];
+				$key = $placeholders[1][$idx];
+				if (str_starts_with($key, '...')) {
+					$exclude = '\?';
+					$key = substr($key, 3);
+				} else {
+					$exclude = '\/\?';
+				}
+				$variables[] = $key;
+				$pattern = '(?P<' . $key . '>[^' . $exclude . ']+?)';
+				$route_expression = str_replace($original, $pattern, $route_expression);
+			}
+			$route_expression = '/^' . $route_expression . '$/';
+			
+			self::$routes[$route] = [
+				'expression' => $route_expression,
+				'handlers' => $handlers,
+				'variables' => $variables
+			];
+		}
+	}
+	
+	public static function HandleRequest(string $root): void {
+		$request_route = '/' . $_GET['route'];
+		foreach (self::$routes as $route => $route_info) {
+			$route_expression = $route_info['expression'];
+			$handlers = $route_info['handlers'];
+			$variables = $route_info['variables'];
+			
+			if (preg_match($route_expression, $request_route, $matches) !== 1) {
+				continue;
+			}
+			
+			$request_method = strtoupper($_SERVER['REQUEST_METHOD']);
+			if ($request_method === 'PUT') {
+				$request_method = 'POST';
+			}
+			if (isset($handlers[$request_method]) === false) {
+				static::ReplyError('Method not allowed', null, 405);
+			}
+			
+			$handler = $handlers[$request_method];
+			if (is_string($handler)) {
+				$handler_file = $root . '/' . $handler . '.php';
+				if (file_exists($handler_file) === false) {
+					static::ReplyError('Endpoint not found', null, 404);
+				}
+				$handler = 'handle_request';
+				require($handler_file);
+			} else if (is_callable($handler) === true) {
+				// nothing to do
+			} else {
+				static::ReplyError('Endpoint not found', null, 404);
+			}
+			
+			$route_key = $request_method . ' ' . $route;
+			$path_parameters = [];
+			foreach ($variables as $variable_name) {
+				$path_parameters[$variable_name] = $matches[$variable_name];
+			}
+			
+			$context = [
+				'path_parameters' => $path_parameters,
+				'route_key' => $route_key
+			];
+			$handler($context);
+			return;
+		}
+		static::ReplyError('Endpoint not found: Route not registered.', null, 404);
 	}
 }
 

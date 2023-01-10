@@ -81,27 +81,23 @@ BeaconErrors::StartWatching();
 	$policies = [
 		'default-src' => [
 			"'self'",
-			"https://*.beaconapp.cc",
-			"https://*.usebeacon.app",
-			"https://*.stripe.com"
+			"'nonce-" . $_SERVER['CSP_NONCE'] . "'",
+			"https://*.usebeacon.app"
 		],
 		'frame-src' => [
 			"'self'",
-			"https://www.youtube-nocookie.com",
-			"https://player.vimeo.com",
-			"https://*.stripe.com"
+			"https://player.vimeo.com"
 		],
 		'style-src' => [
 			"'self'",
-			"https://*.typekit.net/"
+			"'nonce-" . $_SERVER['CSP_NONCE'] . "'"
 		],
 		'script-src' => [
 			"'self'",
-			"https://*.stripe.com"
+			"'nonce-" . $_SERVER['CSP_NONCE'] . "'"
 		],
 		'font-src' => [
-			"'self'",
-			"https://use.typekit.net"
+			"'self'"
 		],
 		'object-src' => [
 			"'none'"
@@ -117,21 +113,6 @@ BeaconErrors::StartWatching();
 		],
 		'upgrade-insecure-requests' => []
 	];
-	
-	$browser = isset($_SERVER['HTTP_USER_AGENT']) ? get_browser($_SERVER['HTTP_USER_AGENT'], true) : null;
-	$use_nonces = !(is_array($browser) && $browser['browser'] == 'Edge');
-	if ($use_nonces) {
-		$policies['default-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
-		$policies['style-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
-		$policies['script-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
-	} else {
-		$policies['default-src'][] = "'unsafe-inline'";
-		$policies['style-src'][] = "'unsafe-inline'";
-		$policies['script-src'][] = "'unsafe-inline'";
-	}
-	if (is_array($browser) && $browser['browser'] == 'Safari' && intval($browser['majorver']) <= 8 && in_array('unsafe-inline', $policies['default-src']) == false) {
-		$policies['default-src'][] = "'unsafe-inline'";
-	}
 	
 	$groups = array();
 	foreach ($policies as $group => $attributes) {

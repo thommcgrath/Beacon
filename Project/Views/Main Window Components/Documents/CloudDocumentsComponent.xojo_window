@@ -473,6 +473,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       End
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -566,33 +567,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListDocumentsWithIdentity(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Private Sub APICallback_ListDocuments(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
 		  Self.mRefreshing = False
 		  
 		  If Response.HTTPStatus = 401 Then
 		    Self.Pages.SelectedPanelIndex = Self.PageLogin
-		    Return
-		  End If
-		  
-		  Self.UpdateList(Response)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_ListDocumentsWithToken(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  #Pragma Unused Request
-		  
-		  Self.mRefreshing = False
-		  
-		  If Response.HTTPStatus = 401 Then
-		    Var Params As New Dictionary
-		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
-		    
-		    Var NewAttempt As New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
-		    NewAttempt.Sign(App.IdentityManager.CurrentIdentity)
-		    Self.APISocket.Start(NewAttempt)
 		    Return
 		  End If
 		  
@@ -675,15 +656,8 @@ End
 		  Var Params As New Dictionary
 		  Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		  
-		  Var Request As BeaconAPI.Request
-		  Var Token As String = Preferences.OnlineToken
-		  If Token.IsEmpty Then
-		    Request = New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
-		    Request.Sign(App.IdentityManager.CurrentIdentity)
-		  Else
-		    Request = New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
-		    Request.Authenticate(Token)
-		  End If
+		  Var Request As New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocuments)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.APISocket.Start(Request)
 		  
 		  Self.Pages.SelectedPanelIndex = Self.PageLoading

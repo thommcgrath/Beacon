@@ -1,0 +1,8 @@
+{
+  "actions" : {
+    "build" : {
+      "enabled" : true,
+      "script" : "export NODE_PATH=\"\/opt\/homebrew\/lib\/node_modules\"\nbabel www\/assets\/scripts\/src -d www\/assets\/scripts\/build"
+    }
+  }
+}

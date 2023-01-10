@@ -148,13 +148,17 @@
 		background-color: $blockquote-color;
 	}
 	
+	div.visual-group {
+		background-color: mix($foreground-color, $background-color, 5%);
+	}
+	
 	table.generic {
 		tbody {
-			tr:nth-child(even) {
+			& > tr:nth-child(even) {
 				background-color: mix($background-color, $accent-color, 96%);
 			}
 			
-			tr:nth-child(odd) {
+			& > tr:nth-child(odd) {
 				background-color: $background-color;
 			}
 		}
@@ -231,11 +235,25 @@
 		&::placeholder {
 			color: rgba($foreground-color, 0.4);
 		}
+		
+		&.invalid {
+			border-color: $text-red;
+		}
 	}
 	
 	.field-pair {
 		label {
 			color: mix($foreground-color, $background-color, 70%);
+		}
+	}
+	
+	label, span, p, div {
+		&.invalid {
+			color: $text-red;
+			
+			input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], input[type="number"], textarea {
+				border-color: $text-red;
+			}
 		}
 	}
 	
@@ -585,6 +603,20 @@
 				color: $accent-text-color;
 				border-color: $accent-color;
 			}
+		}
+	}
+	
+	/* ! Page Panel */
+	
+	div.page-panel-nav li {
+		a {
+			background-color: none;
+			color: $accent-color;
+		}
+		
+		&.page-panel-active a {
+			background-color: $accent-color;
+			color: $accent-text-color;	
 		}
 	}
 }

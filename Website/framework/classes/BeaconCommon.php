@@ -38,7 +38,7 @@ abstract class BeaconCommon {
 						'secure' => true,
 						'httponly' => true,
 						'samesite' => 'Lax'
-					]);	
+					]);
 				}
 			} else {
 				return false;
@@ -102,29 +102,45 @@ abstract class BeaconCommon {
 		$filename = pathinfo($asset_filename, PATHINFO_FILENAME);
 		$extension = pathinfo($asset_filename, PATHINFO_EXTENSION);
 		$public_extension = $extension;
-		$folder = $extension;
+		$folders = [$extension];
+		$in_production = null;
 		switch ($extension) {
 		case 'scss':
 			$public_extension = 'css';
-			$folder = 'css';
+			$folders = ['css'];
 			break;
 		case 'js':
-			$folder = 'scripts';
+			$in_production = static::InProduction();
+			$folders = [($in_production ? 'scripts/build' : 'scripts/src'), 'scripts/thirdparty'];
 			break;
 		case 'svg':
 		case 'png':
 		case 'gif':
-			$folder = 'images';
+			$folders = ['images'];
 			break;
 		case 'ttf':
 		case 'otf':
 		case 'woff2':
-			$folder = 'fonts';
+			$folder = ['fonts'];
 			break;
 		}
-		$asset_path = static::WebRoot() . '/assets/' . $folder . '/' . $asset_filename;
-		$uri_path = '/assets/' . $folder . '/' . $filename . '.' . $public_extension;
-		return $uri_path . '?mtime=' . filemtime($asset_path);
+		
+		foreach ($folders as $folder) {
+			$asset_path = static::WebRoot() . '/assets/' . $folder . '/' . $asset_filename;
+			if (file_exists($asset_path)) {
+				$uri_path = '/assets/' . $folder . '/' . $filename . '.' . $public_extension;
+				return $uri_path . '?mtime=' . filemtime($asset_path);
+			}
+		}
+		
+		if (is_null($in_production)) {
+			$in_production = static::InProduction();
+		}
+		if ($in_production) {
+			return '#';
+		} else {
+			return "/assets/missing/{$asset_filename}";
+		}
 	}
 	
 	public static function Database(): ?BeaconDatabase {
@@ -768,6 +784,107 @@ abstract class BeaconCommon {
 	
 	public static function SortString(string $value): string {
 		return strtolower($value);
+	}
+	
+	public static function Base32Encode(string $value, bool $padding = false): string {
+		$alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7', '='];
+		$bytes = str_split($value);
+		$byte_count = count($bytes);
+		$binary = '';
+		for ($i = 0; $i < $byte_count; $i++) {
+			$binary .= str_pad(base_convert(ord($bytes[$i]), 10, 2), 8, '0', STR_PAD_LEFT);
+		}
+		
+		$chunks = str_split($binary, 5);
+		$base32 = '';
+		$chunk_count = count($chunks);
+		for ($i = 0; $i < $chunk_count; $i++) {
+			$base32 .= $alphabet[base_convert(str_pad($chunks[$i], 5, '0'), 2, 10)];
+		}
+		
+		$remainder = strlen($binary) % 40;
+		if ($padding && $remainder !== 0) {
+			if ($remainder === 8) {
+				$base32 .= str_repeat($alphabet[32], 6);
+			}
+			if ($remainder === 16) {
+				$base32 .= str_repeat($alphabet[32], 4);
+			}
+			if ($remainder === 24) {
+				$base32 .= str_repeat($alphabet[32], 3);
+			}
+			if ($remainder === 32) {
+				$base32 .= $alphabet[32];
+			}
+		}
+		
+		return $base32;
+	}
+	
+	public static function Base32Decode(string $value): string {
+		if (empty($value)) {
+			return '';
+		}
+		
+		$alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7', '='];
+		$flipped = array_flip($alphabet);
+		$value = strtoupper($value);
+		$padding_count = substr_count($value, $alphabet[32]);
+		$allowed_padding_counts = [6, 4, 3, 1, 0];
+		if (in_array($padding_count, $allowed_padding_counts) === false) {
+			throw new InvalidArgumentException('Invalid base32 padding');
+		}
+		
+		if ($padding_count > 0) {
+			if (substr($value, $padding_count * -1) !== str_repeat($alphabet[32], $padding_count)) {
+				throw new InvalidArgumentException('Invalid base32 data');
+			}
+			$value = str_replace($alphabet[32], '', $value);
+		}
+		
+		$chars = str_split($value);
+		$binary = '';
+		$char_count = count($chars);
+		
+		for ($i = 0; $i < $char_count; $i += 8) {
+			$chunk = '';
+			for ($j = 0; $j < 8; $j++) {
+				if (isset($chars[$i + $j]) === false) {
+					continue;
+				}
+				
+				$char = $chars[$i + $j];
+				$chunk .= str_pad(base_convert($flipped[$char], 10, 2), 5, '0', STR_PAD_LEFT);
+			}
+			
+			$eight_bits = str_split($chunk, 8);
+			$bit_count = count($eight_bits);
+			
+			for ($j = 0; $j < $bit_count; $j++) {
+				$binary .= (($b = chr((int)base_convert($eight_bits[$j], 2, 10))) || ord($b) === 48) ? $b : '';
+			}
+		}
+		
+		return rtrim($binary, "\0");
+	}
+	
+	public static function DeviceID(): string {
+		if (isset($_COOKIE['beacon_device_id'])) {
+			return $_COOKIE['beacon_device_id'];
+		}
+		
+		$device_id = static::GenerateUUID();
+		
+		setcookie('beacon_device_id', $device_id, [
+			'path' => '/account',
+			'expires' => 2147483647,
+			'secure' => true,
+			'httponly' => true,
+			'samesite' => 'Strict'
+		]);
+		$_COOKIE['beacon_device_id'] = $device_id;
+		
+		return $device_id;
 	}
 }
 

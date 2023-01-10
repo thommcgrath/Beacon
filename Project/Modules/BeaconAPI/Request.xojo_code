@@ -81,6 +81,16 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateSessionRequest(Callback As BeaconAPI.Request.ReplyCallback) As BeaconAPI.Request
+		  Var Path As String = BeaconAPI.URL("session")
+		  Var Method As String = "POST"
+		  Var Body As String = Beacon.GenerateJSON(New Dictionary("device_id" : Beacon.HardwareID), False)
+		  Var Request As New BeaconAPI.Request(Path, Method, Body, "application/json", Callback)
+		  Return Request
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub InvokeCallback(Response As BeaconAPI.Response)
 		  If Beacon.SafeToInvoke(Self.mCallback) Then
 		    Self.mCallback.Invoke(Self, Response)
@@ -158,22 +168,10 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Sign(Identity As Beacon.Identity)
-		  Var Content As String = Self.mMethod + Encodings.UTF8.Chr(10) + Self.mURL
-		  If Self.mMethod = "GET" Then
-		    If Self.mPayload <> Nil And Self.mPayload.Size > 0 Then
-		      Content = Content + "?"
-		    End If
-		  Else
-		    Content = Content + Encodings.UTF8.Chr(10)
-		  End If
-		  
-		  Var Payload As MemoryBlock = Content
-		  If Self.mPayload <> Nil Then
-		    Payload = Payload + Self.mPayload
-		  End If
-		  
-		  Self.Authenticate(Identity.UserID, Identity.Sign(Payload))
+		Sub Sign(Identity As Beacon.Identity, Challenge As String)
+		  Var Signature As String = Identity.Sign(Challenge)
+		  Self.RequestHeader("Authorization") = "Challenge " + EncodeBase64(Identity.UserID + ":" + Signature, 0)
+		  Self.RequestHeader("X-Beacon-Token") = ""
 		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Signature
 		End Sub
 	#tag EndMethod

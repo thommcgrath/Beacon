@@ -23,43 +23,62 @@ $database = BeaconCommon::Database();
 $results = $database->Query('SELECT product_id FROM products WHERE product_id = $1;', BeaconShop::ARK2_PRODUCT_ID);
 $ark2_enabled = $results->RecordCount() === 1;
 
-BeaconTemplate::AddScript('https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js');
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('jsencrypt.min.js'));
 
 BeaconTemplate::StartScript(); ?>
 <script>
+"use strict";
 
-document.addEventListener('DOMContentLoaded', function() {
-	document.getElementById('stw_form').addEventListener('submit', function(ev) {
-		var encrypt = new JSEncrypt();
+document.addEventListener('DOMContentLoaded', () => {
+	const stwForm = document.getElementById('stw_form');
+	const emailField = document.getElementById('stw_email_field');
+	const joinButton = document.getElementById('stw_join_button');
+	const arkRadio = document.getElementById('ark_radio');
+	const ark2Radio = document.getElementById('ark2_radio');
+	const stwContainer = document.getElementById('stw_container');
+	if (!(stwForm && emailField && joinButton && arkRadio && stwContainer)) {
+		console.log('Missing page elements');
+		return;
+	}
+	
+	stwForm.addEventListener('submit', (ev) => {
+		const encrypt = new JSEncrypt();
 		encrypt.setPublicKey(<?php echo json_encode($public_key); ?>);
 		
-		var encrypted = encrypt.encrypt(document.getElementById('stw_email_field').value);
-		var join_button = document.getElementById('stw_join_button');
-		join_button.disabled = true;
+		const encrypted = encrypt.encrypt(emailField.value);
+		joinButton.disabled = true;
 		
-		var product_id = document.getElementById('ark_radio').value;
-		<?php if ($ark2_enabled) { ?>if (document.getElementById('ark2_radio').checked) {
-			product_id = document.getElementById('ark2_radio').value;
-		}<?php } ?>
+		const productId = (ark2Radio && ark2Radio.checked) ? ark2Radio.value : arkRadio.value;
+		const fields = new URLSearchParams();
+		fields.append('email', encrypted);
+		fields.append('product_id', productId);
 		
-		var fields = {'email': encrypted, 'product_id': product_id};
-		request.post('submit', fields, function (obj) {
-			var container = document.getElementById('stw_container');
-			container.innerHTML = 'Ok, ' + obj.email + ' is now on the list! If selected, you will receive an email with instructions.';
-		}, function (http_status, response_body) {
-			switch (http_status) {
+		BeaconWebRequest.post('submit', fields).then((response) => {
+			try {
+				const obj = JSON.parse(response.body);
+				stwContainer.innerText = `Ok, ${obj.email} is now on the list! If selected, you will receive an email with instructions.`;
+			} catch (e) {
+				console.log(e);
+			}
+		}).catch((error) => {
+			switch (error.status) {
 			case 404:
-				dialog.show('Unable to submit the email address', 'The receiver script was not found.');
+				BeaconDialog.show('Unable to submit the email address', 'The receiver script was not found.');
 				break;
 			case 400:
-				var obj = JSON.parse(response_body);
-				dialog.show('Sorry, that didn\'t work.', obj.error);
+				try {
+					const obj = JSON.parse(error.body);
+					BeaconDialog.show('Sorry, that didn\'t work.', obj.error);
+				} catch (e) {
+					console.log(e);
+					BeaconDialog.show('Sorry, that didn\'t work.', 'There was a javascript error.');
+				}
 				break;
 			default:
-				dialog.show('Unable to submit the email address', 'Sorry, there was a ' + http_status + ' error: ' + response_body);
+				BeaconDialog.show('Unable to submit the email address', `Sorry, there was a ${error.status} error: ${error.body}`);
 				break;
 			}
-			join_button.disabled = false;
+			joinButton.disabled = false;
 		});
 		
 		ev.preventDefault();

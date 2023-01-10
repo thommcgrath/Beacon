@@ -37,6 +37,28 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub APICallback_GetChallenge(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Response.Success Then
+		    Try
+		      Var Dict As Dictionary = Response.JSON
+		      Var Challenge As String = Dict.Value("challenge")
+		      
+		      Var TokenRequest As BeaconAPI.Request = BeaconAPI.Request.CreateSessionRequest(AddressOf APICallback_GetSessionToken)
+		      TokenRequest.Sign(Self.CurrentIdentity, Challenge)
+		      BeaconAPI.Send(TokenRequest)
+		      Return
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing challenge")
+		    End Try
+		  End If
+		  
+		  Self.FinishProcess()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub APICallback_GetSessionToken(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
@@ -280,8 +302,7 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  Var Request As New BeaconAPI.Request("session", "POST", AddressOf APICallback_GetSessionToken)
-		  Request.Sign(Identity)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("challenge/" + Identity.UserID), "GET", AddressOf APICallback_GetChallenge)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod

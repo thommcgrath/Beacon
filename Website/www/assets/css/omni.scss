@@ -141,6 +141,11 @@
 	padding: 12px;
 	border-radius: 6px;
 	text-align: center;
+	
+	@media (prefers-color-scheme: dark) {
+		background-color: rgba(255, 255, 255, 0.02);
+		border-color: rgba(255, 255, 255, 0.1);
+	}
 }
 
 #checking_spinner {
@@ -156,6 +161,10 @@
 #checking_subtext {
 	font-size: smaller;
 	color: rgba(0, 0, 0, 0.8);
+	
+	@media (prefers-color-scheme: dark) {
+		color: rgba(255, 255, 255, 0.8);
+	}
 }
 
 #purchase_confirmed {
