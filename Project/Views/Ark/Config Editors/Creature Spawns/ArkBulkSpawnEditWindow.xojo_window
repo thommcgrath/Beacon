@@ -555,7 +555,6 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
    End
    Begin Thread ProcessingThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   2
@@ -663,7 +662,7 @@ End
 		    
 		    For EntryIdx As Integer = 0 To MutableSet.LastIndex
 		      Var Entry As Ark.MutableSpawnPointSetEntry = MutableSet.Entry(EntryIdx).MutableVersion
-		      If Self.mCreatures.IndexOf(Entry.Creature) = -1 Then
+		      If Self.mCreatureIds.IndexOf(Entry.Creature.ObjectID) = -1 Then
 		        Continue
 		      End If
 		      
@@ -707,6 +706,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfig As Ark.Configs.SpawnPoints
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCreatureIds() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -820,11 +823,17 @@ End
 		  End If
 		  
 		  Var Creatures() As Ark.Creature
+		  Var CreatureIds() As String
 		  If AllCreaturesRadio.Value Then
 		    Creatures = Ark.DataSource.Pool.Get(False).GetCreatures("", Self.mMods)
+		    For Each Creature As Ark.Creature In Creatures
+		      CreatureIds.Add(Creature.ObjectID)
+		    Next
 		  Else
 		    For RowIdx As Integer = 0 To Self.CreatureList.LastRowIndex
-		      Creatures.Add(Self.CreatureList.RowTagAt(RowIdx))
+		      Var Creature As Ark.Creature = Self.CreatureList.RowTagAt(RowIdx)
+		      Creatures.Add(Creature)
+		      CreatureIds.Add(Creature.ObjectID)
 		    Next RowIdx
 		  End If
 		  
@@ -834,6 +843,7 @@ End
 		  End If
 		  
 		  Self.mCreatures = Creatures
+		  Self.mCreatureIds = CreatureIds
 		  
 		  Self.mChangeColors = Self.ChangeColorsCheckbox.Value
 		  If Self.mChangeColors Then
