@@ -589,6 +589,7 @@ Class=DeleteTemplateThread;Modules/Beacon/DeleteTemplateThread.xojo_code;&h00000
 Class=DataSourcePool;Modules/Beacon/DataSourcePool.xojo_code;&h000000002E254FFF;&h0000000055ADDFFF;false
 Class=DataSourcePool;Modules/Game Support/Ark/DataSourcePool.xojo_code;&h000000004D4337FF;&h0000000016B997FF;false
 Class=CommonDataPool;Modules/Beacon/CommonDataPool.xojo_code;&h0000000032B1E7FF;&h0000000055ADDFFF;false
+Module=PasswordStorage;Modules/PasswordStorage.xojo_code;&h0000000069EF17FF;&h000000001444B7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=6

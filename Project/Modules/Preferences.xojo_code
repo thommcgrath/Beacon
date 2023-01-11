@@ -833,6 +833,26 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.DictionaryValue("Saved Passwords", New Dictionary)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value Is Nil Then
+			    Value = New Dictionary
+			  End If
+			  
+			  Init
+			  mManager.DictionaryValue("Saved Passwords") = Value
+			End Set
+		#tag EndSetter
+		Protected SavedPasswords As Dictionary
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.StringValue("Servers List Name Style", ServersListbox.NamesFull)
 			End Get
 		#tag EndGetter

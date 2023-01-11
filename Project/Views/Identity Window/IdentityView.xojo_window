@@ -259,6 +259,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Width           =   80
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -512,9 +513,15 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI(Identity As Beacon.Identity)
-		  UserIDField.Text = Identity.UserID
-		  PublicKeyArea.Text = BeaconEncryption.PEMEncodePublicKey(Identity.PublicKey)
-		  PrivateKeyArea.Text = BeaconEncryption.PEMEncodePrivateKey(Identity.PrivateKey)
+		  If (Identity Is Nil) = False Then
+		    Self.UserIDField.Text = Identity.UserID
+		    Self.PublicKeyArea.Text = BeaconEncryption.PEMEncodePublicKey(Identity.PublicKey)
+		    Self.PrivateKeyArea.Text = BeaconEncryption.PEMEncodePrivateKey(Identity.PrivateKey)
+		  Else
+		    Self.UserIDField.Text = ""
+		    Self.PublicKeyArea.Text = ""
+		    Self.PrivateKeyArea.Text = ""
+		  End If
 		End Sub
 	#tag EndMethod
 

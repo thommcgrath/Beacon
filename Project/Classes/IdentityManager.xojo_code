@@ -115,21 +115,44 @@ Protected Class IdentityManager
 		  
 		  If Response.Success Then
 		    Try
-		      Var Identity As Beacon.Identity
-		      If Self.mUserPassword.IsEmpty = False Then
-		        Identity = Beacon.Identity.FromUserDictionary(Response.JSON, Self.mUserPassword)
-		        Self.CurrentIdentity(False) = Identity
-		      ElseIf Self.CurrentIdentity <> Nil Then
-		        Identity = Self.CurrentIdentity.Clone
-		        If Identity.ConsumeUserDictionary(Response.JSON) Then
-		          If Identity.Validate() Then
-		            Self.CurrentIdentity(False) = Identity
-		          Else
-		            ShowLogin = True
-		          End If
+		      Var SaveData As Dictionary
+		      
+		      If (Self.mCurrentIdentity Is Nil) = False Then
+		        If Self.mCurrentIdentity.IsEncrypted Then
+		          SaveData = Beacon.Identity.ConvertUserDictionaryWithPassword(Response.JSON, Self.mCurrentIdentity.Password)
+		        Else
+		          SaveData = Beacon.Identity.ConvertUserDictionaryWithKey(Response.JSON, Self.mCurrentIdentity.PrivateKey)
+		        End If
+		      Else
+		        SaveData = Beacon.Identity.ConvertUserDictionaryWithPassword(Response.JSON, Self.mUserPassword)
+		      End If
+		      
+		      ShowLogin = True
+		      If (SaveData Is Nil) = False Then
+		        Var Identity As Beacon.Identity = Beacon.Identity.Import(SaveData, Self.mUserPassword)
+		        If (Identity Is Nil) = False Then
+		          Self.CurrentIdentity(False) = Identity
+		          UserCloud.Sync() // Will only trigger if necessary
+		          ShowLogin = False
 		        End If
 		      End If
-		      UserCloud.Sync() // Will only trigger is necessary
+		      
+		      #if false
+		        Var Identity As Beacon.Identity
+		        If Self.mUserPassword.IsEmpty = False Then
+		          Identity = Beacon.Identity.FromUserDictionary(Response.JSON, Self.mUserPassword)
+		          Self.CurrentIdentity(False) = Identity
+		        ElseIf Self.CurrentIdentity <> Nil Then
+		          Identity = Self.CurrentIdentity.Clone
+		          If Identity.ConsumeUserDictionary(Response.JSON) Then
+		            If Identity.Validate() Then
+		              Self.CurrentIdentity(False) = Identity
+		            Else
+		              ShowLogin = True
+		            End If
+		          End If
+		        End If
+		      #endif
 		    Catch Err As RuntimeException
 		      
 		    End Try
@@ -179,7 +202,7 @@ Protected Class IdentityManager
 		    End If
 		    
 		    Var Dict As Dictionary = Beacon.ParseJSON(Contents)
-		    Self.mCurrentIdentity = Beacon.Identity.Import(Dict)
+		    Self.mCurrentIdentity = Beacon.Identity.Import(Dict, "")
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
@@ -275,7 +298,7 @@ Protected Class IdentityManager
 		  Try
 		    Var Content As String = File.Read(Encodings.UTF8)
 		    Var Dict As Dictionary = Beacon.ParseJSON(Content)
-		    Var Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
+		    Var Identity As Beacon.Identity = Beacon.Identity.Import(Dict, "")
 		    Return Identity
 		  Catch Err As RuntimeException
 		    Return Nil

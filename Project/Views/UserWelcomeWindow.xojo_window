@@ -306,7 +306,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -338,7 +338,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -572,44 +572,11 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   170
+         Top             =   169
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   104
-      End
-      Begin CheckBox LoginRevealCheckbox
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Reveal Password"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   352
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   6
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   203
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   268
       End
       Begin Label ConfirmMessageLabel
          AutoDeactivate  =   True
@@ -1479,7 +1446,7 @@ Begin Window UserWelcomeWindow
          Scope           =   2
          Selectable      =   False
          ShowAsLink      =   True
-         TabIndex        =   7
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Create or Recover Account"
@@ -1488,7 +1455,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   235
+         Top             =   267
          Transparent     =   False
          Underline       =   True
          URL             =   ""
@@ -1509,7 +1476,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   11
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   324
@@ -1537,7 +1504,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   11
+         TabIndex        =   12
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Logging in…"
@@ -1710,7 +1677,7 @@ Begin Window UserWelcomeWindow
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   5
          TabPanelIndex   =   5
          TabStop         =   True
          Tooltip         =   ""
@@ -1742,7 +1709,7 @@ Begin Window UserWelcomeWindow
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   6
          TabPanelIndex   =   5
          TabStop         =   True
          Tooltip         =   ""
@@ -1765,7 +1732,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   7
          TabPanelIndex   =   5
          TabStop         =   True
          Tooltip         =   ""
@@ -1796,7 +1763,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   6
+         TabIndex        =   8
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "Logging in…"
@@ -1831,7 +1798,7 @@ Begin Window UserWelcomeWindow
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   7
+         TabIndex        =   3
          TabPanelIndex   =   5
          TabStop         =   True
          Tooltip         =   ""
@@ -1862,7 +1829,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   8
+         TabIndex        =   4
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "Don't ask for codes on this computer"
@@ -1874,6 +1841,72 @@ Begin Window UserWelcomeWindow
          Underline       =   False
          Visible         =   True
          Width           =   103
+      End
+      Begin CheckBox LoginSavePasswordCheckbox
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Login Automatically"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   352
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   203
+         Transparent     =   False
+         Underline       =   False
+         Value           =   True
+         Visible         =   True
+         VisualState     =   1
+         Width           =   268
+      End
+      Begin CheckBox LoginRevealCheckbox
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Reveal Password"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   352
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   7
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   235
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   268
       End
    End
    Begin URLConnection ConfirmCodeCreationSocket
@@ -2160,12 +2193,13 @@ End
 		Private Sub SetLoginStatus(Status As String)
 		  Self.LoginStatusLabel.Text = Status
 		  
-		  If Status = "" Then
+		  If Status.IsEmpty Then
 		    Self.LoginSpinner.Visible = False
 		    Self.LoginStatusLabel.Visible = False
 		    Self.LoginEmailField.ReadOnly = False
 		    Self.LoginPasswordField.ReadOnly = False
 		    Self.LoginSignupButton.Enabled = True
+		    Self.LoginSavePasswordCheckbox.Enabled = True
 		    Self.CheckLoginButton()
 		    Return
 		  End If
@@ -2176,6 +2210,7 @@ End
 		  Self.LoginEmailField.ReadOnly = True
 		  Self.LoginPasswordField.ReadOnly = True
 		  Self.LoginSignupButton.Enabled = False
+		  Self.LoginSavePasswordCheckbox.Enabled = False
 		End Sub
 	#tag EndMethod
 
@@ -2457,11 +2492,11 @@ End
 		  Self.CheckLoginButton()
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events LoginRevealCheckbox
 	#tag Event
-		Sub Action()
-		  Self.LoginPasswordField.Password = Not Me.Value
+		Sub GotFocus()
+		  If Me.Text.IsEmpty Then
+		    Me.Text = PasswordStorage.RetrievePassword(Self.LoginEmailField.Text.Trim)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2641,6 +2676,20 @@ End
 		  Var RememberWidth As Integer = Self.OTPRememberCheck.Width + 12 + Me.Width
 		  Self.OTPRememberCheck.Left = Self.PagePanel1.Left + ((Self.PagePanel1.Width - RememberWidth) / 2)
 		  Self.OTPRememberLabel.Left = Self.OTPRememberCheck.Right + 12
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LoginSavePasswordCheckbox
+	#tag Event
+		Sub Action()
+		  Self.LoginPasswordField.Password = Not Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LoginRevealCheckbox
+	#tag Event
+		Sub Action()
+		  Self.LoginPasswordField.Password = Not Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2853,12 +2902,19 @@ End
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
 		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Var SessionID As String = Dict.Value("session_id")
+		      Var SessionId As String = Dict.Value("session_id")
+		      Var UserId As String = Dict.Value("user_id")
+		      Var Password As String = Self.LoginPasswordField.Text
+		      Var Email As String = Self.LoginEmailField.Text.Trim
 		      
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True
 		      
-		      App.IdentityManager.RefreshUserDetails(Self.LoginPasswordField.Text)
+		      If Self.LoginSavePasswordCheckbox.Value Then
+		        Call PasswordStorage.SavePassword(Email, UserId, Password)
+		      End If
+		      
+		      App.IdentityManager.RefreshUserDetails(Password)
 		      Self.SetLoginStatus("Downloading keys…")
 		      Self.SetOTPStatus("Downloading keys…")
 		    Catch Err As RuntimeException

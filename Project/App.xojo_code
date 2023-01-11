@@ -822,17 +822,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End Try
 		  
-		  Var Identity As Beacon.Identity
-		  If Beacon.Identity.IsUserDictionary(Dict) Then
+		  Var Identity As Beacon.Identity = Beacon.Identity.Import(Dict, "")
+		  If Identity Is Nil Then
 		    // Password is needed to decrypt
 		    Identity = IdentityDecryptDialog.ShowDecryptIdentityDict(ParentWindow, Dict)
 		    If Identity Is Nil Then
-		      Return
-		    End If
-		  Else
-		    Identity = Beacon.Identity.Import(Dict)
-		    If Identity Is Nil Then
-		      ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
 		      Return
 		    End If
 		  End If

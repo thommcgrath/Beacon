@@ -1,6 +1,16 @@
 #tag Class
 Protected Class OmniLicense
 	#tag Method, Flags = &h0
+		Sub Constructor(Source As Beacon.OmniLicense)
+		  Self.mExpiration = Source.mExpiration
+		  Self.mExpirationString = Source.mExpirationString
+		  Self.mFlags = Source.mFlags
+		  Self.mProductID = Source.mProductID
+		  Self.mValidationString = Source.mValidationString
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Source As Dictionary)
 		  Var ProductID As String = Source.Value("product_id").StringValue
 		  Var Flags As Integer = Source.Value("flags").IntegerValue
