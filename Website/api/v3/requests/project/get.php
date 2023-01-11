@@ -88,15 +88,15 @@ function HandleDocumentDataRequest(\BeaconAPI\Project $project, $version_id = nu
 		}
 	}
 	
-	$compressed = ($best_option == 'gzip');
-	if ($compressed) {
-		header('Content-Encoding: gzip');
-	}
 	try {
 		$project->PreloadContent($version_id); // If there is an error, this one will fire the exception
+		$compressed = ($best_option == 'gzip');
 		echo $project->Content($compressed, false, $version_id); // This one returns an empty string on error, but will call the preload if needed.
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment; filename="' . preg_replace('/[^a-z09\-_ \(\)]/i', '', $project->Title()) . '.beacon"');
+		if ($compressed) {
+			header('Content-Encoding: gzip');
+		}
 		http_response_code(200);
 	} catch (Exception $err) {
 		http_response_code(500);

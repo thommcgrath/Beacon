@@ -38,8 +38,6 @@ function handle_request(array $context): void {
 	}
 	
 	BeaconAPI::ReplySuccess();
-	
-	break;
 }
 
 ?>

@@ -44,7 +44,7 @@ function SaveUser(array $values, string &$message) {
 	
 	$authenticated_user = null;
 	if (BeaconAPI::Authenticated()) {
-		$authenticated_user = BeaconUser::User();
+		$authenticated_user = BeaconAPI::User();
 	}
 	
 	if (isset($values['action']) && strtolower($values['action']) === 'merge') {
