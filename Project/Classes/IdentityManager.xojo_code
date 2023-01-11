@@ -116,20 +116,23 @@ Protected Class IdentityManager
 		  If Response.Success Then
 		    Try
 		      Var SaveData As Dictionary
+		      Var Password As String
 		      
 		      If (Self.mCurrentIdentity Is Nil) = False Then
 		        If Self.mCurrentIdentity.IsEncrypted Then
+		          Password = Self.mCurrentIdentity.Password
 		          SaveData = Beacon.Identity.ConvertUserDictionaryWithPassword(Response.JSON, Self.mCurrentIdentity.Password)
 		        Else
 		          SaveData = Beacon.Identity.ConvertUserDictionaryWithKey(Response.JSON, Self.mCurrentIdentity.PrivateKey)
 		        End If
 		      Else
+		        Password = Self.mUserPassword
 		        SaveData = Beacon.Identity.ConvertUserDictionaryWithPassword(Response.JSON, Self.mUserPassword)
 		      End If
 		      
 		      ShowLogin = True
 		      If (SaveData Is Nil) = False Then
-		        Var Identity As Beacon.Identity = Beacon.Identity.Import(SaveData, Self.mUserPassword)
+		        Var Identity As Beacon.Identity = Beacon.Identity.Import(SaveData, Password)
 		        If (Identity Is Nil) = False Then
 		          Self.CurrentIdentity(False) = Identity
 		          UserCloud.Sync() // Will only trigger if necessary

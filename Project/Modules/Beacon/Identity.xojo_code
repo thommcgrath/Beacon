@@ -151,7 +151,7 @@ Protected Class Identity
 		    Converted.Value("Private") = PrivateEncrypted
 		    Converted.Value("Private Salt") = PrivateSalt
 		    Converted.Value("Private Iterations") = PrivateIterations
-		    Converted.Value("Cloud Key") = EncodeBase64(Crypto.RSAEncrypt(DecodeHex(Converted.Value("Cloud Key")), Converted.Value("Public")))
+		    Converted.Value("Cloud Key") = EncodeBase64(Crypto.RSAEncrypt(DecodeHex(Converted.Value("Cloud Key")), Converted.Value("Public")), 0)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Converting unencrypted to encrypted")
 		    Return Nil
@@ -186,6 +186,12 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
+		  Return Self.Export(False)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Export(ForceUnencrypted As Boolean) As Dictionary
 		  Var Licenses() As Dictionary
 		  For Idx As Integer = 0 To Self.mLicenses.LastIndex
 		    Var License As New Dictionary
@@ -200,7 +206,7 @@ Protected Class Identity
 		  Var Dict As New Dictionary
 		  Dict.Value("Identifier") = Self.mIdentifier
 		  Dict.Value("Public") = Self.mPublicKey
-		  If Self.IsEncrypted Then
+		  If Self.IsEncrypted And ForceUnencrypted = False Then
 		    Dict.Value("Private") = Self.mPrivateKeyEncrypted
 		    Dict.Value("Private Salt") = Self.mPrivateKeySalt
 		    Dict.Value("Private Iterations") = Self.mPrivateKeyIterations
@@ -268,7 +274,7 @@ Protected Class Identity
 		    
 		    Try
 		      Var Key As MemoryBlock = DeriveKey(Password, PrivateIterations, DecodeBase64(PrivateSalt))
-		      PrivateKey = BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKey))
+		      PrivateKey = DefineEncoding(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKey)), Encodings.UTF8)
 		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
@@ -390,8 +396,8 @@ Protected Class Identity
 		    Return 1
 		  End If
 		  
-		  Var SelfHash As String = Beacon.Hash(Beacon.GenerateJSON(Self.Export, False))
-		  Var OtherHash As String = Beacon.Hash(Beacon.GenerateJSON(Other.Export, False))
+		  Var SelfHash As String = Beacon.Hash(Beacon.GenerateJSON(Self.Export(True), False))
+		  Var OtherHash As String = Beacon.Hash(Beacon.GenerateJSON(Other.Export(True), False))
 		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
