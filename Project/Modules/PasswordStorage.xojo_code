@@ -99,6 +99,7 @@ Protected Module PasswordStorage
 		Protected Function SavePassword(Email As String, UserId As String, Password As String) As Boolean
 		  #if TargetMacOS
 		    RemovePassword(UserId)
+		    RemovePassword(Email)
 		    
 		    Var Item As New KeyChainItem
 		    Item.Label = Email
