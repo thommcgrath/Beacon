@@ -115,19 +115,43 @@ Protected Class IdentityManager
 		  
 		  If Response.Success Then
 		    Try
-		      Var SaveData As Dictionary
-		      Var Password As String
+		      Var PossiblePasswords(), PossibleKeys() As String
+		      If Self.mUserPassword.IsEmpty = False Then
+		        PossiblePasswords.Add(Self.mUserPassword)
+		      End If
 		      
 		      If (Self.mCurrentIdentity Is Nil) = False Then
-		        If Self.mCurrentIdentity.IsEncrypted Then
-		          Password = Self.mCurrentIdentity.Password
-		          SaveData = Beacon.Identity.ConvertUserDictionaryWithPassword(Response.JSON, Self.mCurrentIdentity.Password)
-		        Else
-		          SaveData = Beacon.Identity.ConvertUserDictionaryWithKey(Response.JSON, Self.mCurrentIdentity.PrivateKey)
+		        If Self.mCurrentIdentity.IsEncrypted And Self.mCurrentIdentity.Password <> Self.mUserPassword Then
+		          PossiblePasswords.Add(Self.mCurrentIdentity.Password)
 		        End If
-		      Else
-		        Password = Self.mUserPassword
-		        SaveData = Beacon.Identity.ConvertUserDictionaryWithPassword(Response.JSON, Self.mUserPassword)
+		        PossibleKeys.Add(Self.mCurrentIdentity.PrivateKey)
+		      End If
+		      
+		      Var SaveData As Dictionary
+		      Var Password As String
+		      For Each PossiblePassword As String In PossiblePasswords
+		        Try
+		          Var TempSaveData As Dictionary = Beacon.Identity.ConvertUserDictionaryWithPassword(Response.JSON, PossiblePassword)
+		          If (TempSaveData Is Nil) = False Then
+		            SaveData = TempSaveData
+		            Password = PossiblePassword
+		            Exit
+		          End If
+		        Catch Err As RuntimeException
+		        End Try
+		      Next
+		      
+		      If SaveData Is Nil Then
+		        For Each PossibleKey As String In PossibleKeys
+		          Try
+		            Var TempSaveData As Dictionary = Beacon.Identity.ConvertUserDictionaryWithKey(Response.JSON, PossibleKey)
+		            If (TempSaveData Is Nil) = False Then
+		              SaveData = TempSaveData
+		              Exit
+		            End If
+		          Catch Err As RuntimeException
+		          End Try
+		        Next
 		      End If
 		      
 		      ShowLogin = True

@@ -691,6 +691,10 @@ Protected Module Preferences
 		Private mManager As PreferencesManager
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mOnlineToken As String
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
@@ -736,7 +740,21 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.StringValue("Online Token", "")
+			  
+			  If mOnlineToken.IsEmpty Then
+			    Var Token As String = mManager.StringValue("Online Token", "")
+			    If Token.IsEmpty Or v4UUID.IsValid(Token) Then
+			      mOnlineToken = Token
+			    Else
+			      Try
+			        mOnlineToken = DefineEncoding(BeaconEncryption.SlowDecrypt(Beacon.HardwareID, Token), Encodings.UTF8)
+			      Catch Err As RuntimeException
+			        mOnlineToken = ""
+			      End Try
+			    End If
+			  End If
+			  
+			  Return mOnlineToken
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -745,7 +763,12 @@ Protected Module Preferences
 			    Return
 			  End If
 			  
-			  mManager.StringValue("Online Token") = Value
+			  mOnlineToken = Value
+			  If Value.IsEmpty Then
+			    mManager.StringValue("Online Token") = ""
+			  Else
+			    mManager.StringValue("Online Token") = BeaconEncryption.SlowEncrypt(Beacon.HardwareID, Value)
+			  End If
 			  NotificationKit.Post(Notification_OnlineTokenChanged, Value)
 			End Set
 		#tag EndSetter

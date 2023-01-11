@@ -165,6 +165,61 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function SlowDecrypt(Key As String, Source As String) As MemoryBlock
+		  Var Parts() As String = Source.Split(":")
+		  If Parts.Count <> 4 Then
+		    Var Err As New CryptoException
+		    Err.Message = "Incorrect number of parts"
+		    Raise Err
+		  End If
+		  
+		  Var Encrypted As MemoryBlock = DecodeBase64(Parts(0))
+		  Var Salt As MemoryBlock = DecodeBase64(Parts(1))
+		  Var Algorithm As Crypto.HashAlgorithms
+		  Select Case Parts(2)
+		  Case "sha2-512"
+		    Algorithm = Crypto.HashAlgorithms.SHA2_512
+		  Else
+		    Var Err As New CryptoException
+		    Err.Message = "Unknown algorithm " + Parts(2)
+		    Raise Err
+		  End Select
+		  Var Iterations As Integer = Parts(3).ToInteger()
+		  
+		  Var DerivedKey As MemoryBlock = Crypto.PBKDF2(Salt, Key, Iterations, 32, Algorithm)
+		  Return SymmetricDecrypt(DerivedKey, Encrypted)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SlowEncrypt(Key As String, Data As MemoryBlock) As String
+		  Const TargetTime = 250000 // Microseconds
+		  Var Algorithm As Crypto.HashAlgorithms = Crypto.HashAlgorithms.SHA2_512
+		  
+		  If mOptimalIterations = 0 Then
+		    // Encrypt something to first get a baseline
+		    Var Count As Integer = 50000
+		    Var Salt As MemoryBlock = Crypto.GenerateRandomBytes(32)
+		    Var TestData As MemoryBlock = v4UUID.Create.StringValue
+		    
+		    Var Start As Double = System.Microseconds
+		    Call Crypto.PBKDF2(Salt, TestData, Count, 32, Algorithm)
+		    Var Duration As Double = System.Microseconds - Start
+		    
+		    Var Ratio As Double = Duration / TargetTime
+		    
+		    mOptimalIterations = Count / Ratio
+		  End If
+		  
+		  Var Salt As MemoryBlock = Crypto.GenerateRandomBytes(32)
+		  Var DerivedKey As MemoryBlock = Crypto.PBKDF2(Salt, Key, mOptimalIterations, 32, Algorithm)
+		  Var Encrypted As MemoryBlock = SymmetricEncrypt(DerivedKey, Data)
+		  
+		  Return EncodeBase64(Encrypted, 0) + ":" + EncodeBase64(Salt, 0) + ":sha2-512:" + mOptimalIterations.ToString(Locale.Raw, "0")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function SymmetricDecrypt(Key As MemoryBlock, Data As MemoryBlock) As MemoryBlock
 		  If Data Is Nil Or Data.Size = 0 Then
 		    Return ""
@@ -242,6 +297,11 @@ Protected Module BeaconEncryption
 		  Return Header.Encoded + Crypt.Process(Data)
 		End Function
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mOptimalIterations As Integer
+	#tag EndProperty
 
 
 	#tag Constant, Name = SymmetricLittleEndian, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private

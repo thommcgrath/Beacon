@@ -167,6 +167,17 @@ Protected Module Tests
 		  
 		  // Create a test usable by other versions (don't need it enabled right now)
 		  // CreateEncryptionTest()
+		  
+		  // Make sure slow encryption works
+		  Try
+		    Var SlowKey As String = v4UUID.Create.StringValue
+		    Var SlowData As MemoryBlock = Crypto.GenerateRandomBytes(32)
+		    Var SlowEncrypted As String = BeaconEncryption.SlowEncrypt(SlowKey, SlowData)
+		    Var SlowDecrypted As MemoryBlock = BeaconEncryption.SlowDecrypt(SlowKey, SlowEncrypted)
+		    Call Assert(SlowData = SlowDecrypted, "Slow decrypted value does not match original")
+		  Catch Err As RuntimeException
+		    System.DebugLog("Slow encryption exception")
+		  End Try
 		End Sub
 	#tag EndMethod
 

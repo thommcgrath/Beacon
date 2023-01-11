@@ -28,7 +28,7 @@ Protected Module PasswordStorage
 		        Try
 		          Var Dict As Dictionary = Entry.Value
 		          If Dict.Lookup("email", "") = EmailOrUserId Then
-		            UserId = Dict.Key
+		            UserId = Entry.Key
 		            Exit
 		          End If
 		        Catch Err As RuntimeException
@@ -84,10 +84,8 @@ Protected Module PasswordStorage
 		      Return ""
 		    End If
 		    
-		    Var Encrypted As String = DecodeBase64(PasswordData.Lookup("password", ""))
 		    Try
-		      Var Decrypted As String = BeaconEncryption.SymmetricDecrypt(Beacon.HardwareID, Encrypted)
-		      Return Decrypted
+		      Return BeaconEncryption.SlowDecrypt(Beacon.HardwareID, PasswordData.Lookup("password", ""))
 		    Catch Err As CryptoException
 		      Return ""
 		    End Try
@@ -115,7 +113,7 @@ Protected Module PasswordStorage
 		  #else
 		    Var PasswordData As New Dictionary
 		    PasswordData.Value("email") = Email
-		    PasswordData.Value("password") = EncodeBase64(BeaconEncryption.SymmetricEncrypt(Beacon.HardwareID, Password), 0)
+		    PasswordData.Value("password") = BeaconEncryption.SlowEncrypt(Beacon.HardwareID, Password)
 		    
 		    Var SavedPasswords As Dictionary = Preferences.SavedPasswords
 		    SavedPasswords.Value(UserId) = PasswordData
