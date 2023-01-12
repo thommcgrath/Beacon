@@ -24,9 +24,9 @@ if (empty($_POST['email'])) {
 $email = strtolower(trim($_POST['email']));
 $currency = 'USD';
 
-$ark_qty = (isset($_POST['ark']) && boolval($_POST['ark']) === true) ? 1 : 0;
+$ark_qty = (isset($_POST['ark']) && filter_var($_POST['ark'], FILTER_VALIDATE_BOOLEAN) === true) ? 1 : 0;
 $ark_gift_qty = isset($_POST['ark_gift']) ? min(intval($_POST['ark_gift']), 10) : 0;
-$ark2_qty = (isset($_POST['ark2']) && boolval($_POST['ark2']) === true) ? 1 : 0;
+$ark2_qty = (isset($_POST['ark2']) && filter_var($_POST['ark2'], FILTER_VALIDATE_BOOLEAN) === true) ? 1 : 0;
 $ark2_gift_qty = isset($_POST['ark2_gift']) ? min(intval($_POST['ark2_gift']), 10) : 0;
 $stw_qty = isset($_POST['stw']) ? min(intval($_POST['stw']), 10) : 0;
 if ($ark_qty + $ark_gift_qty + $ark2_qty + $ark2_gift_qty + $stw_qty === 0) {
