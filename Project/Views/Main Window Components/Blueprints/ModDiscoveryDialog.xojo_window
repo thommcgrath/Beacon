@@ -642,7 +642,6 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin Thread RunThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -656,7 +655,6 @@ Begin BeaconDialog ModDiscoveryDialog
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
-      Enabled         =   True
       ExecuteMode     =   2
       ExitCode        =   0
       Index           =   -2147483648
@@ -679,7 +677,6 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin TCPSocket RunSocket
       Address         =   "127.0.0.1"
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -1231,6 +1228,18 @@ End
 		  Var Stream As TextInputStream = TextInputStream.Open(LogFile)
 		  Var LogContents As String = Stream.ReadAll(Encodings.UTF8)
 		  Stream.Close
+		  
+		  Var LogsFolder As FolderItem = App.LogsFolder
+		  If (LogsFolder Is Nil) = False And LogsFolder.CheckIsFolder(True) Then
+		    Var DiscoveryLogsFolder As FolderItem = LogsFolder.Child("Mod Discovery")
+		    If DiscoveryLogsFolder.CheckIsFolder(True) Then
+		      Var Now As DateTime = DateTime.Now
+		      Var LogFileBackup As FolderItem = DiscoveryLogsFolder.Child(Beacon.SanitizeFilename(Now.SQLDateTimeWithOffset + ".log"))
+		      Var BackupStream As TextOutputStream = TextOutputStream.Create(LogFileBackup)
+		      BackupStream.Write(LogContents)
+		      BackupStream.Close
+		    End If
+		  End If
 		  
 		  Self.Import(LogContents)
 		  
