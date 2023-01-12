@@ -705,6 +705,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "exit"
 		      Quit
 		    Case "signout"
+		      Var Token As String = Preferences.OnlineToken
+		      If Token.IsEmpty = False Then
+		        Var Request As New BeaconAPI.Request("/session/" + EncodeURLComponent(Token), "DELETE", Nil)
+		        Request.Authenticate(Token)
+		        BeaconAPI.Send(Request)
+		      End If
+		      
 		      Preferences.OnlineEnabled = False
 		      Preferences.OnlineToken = ""
 		      Self.IdentityManager.CurrentIdentity = Nil
@@ -1400,7 +1407,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Sub ShowLoginWindowMessage(WelcomeWindow As UserWelcomeWindow)
-		  WelcomeWindow.ShowAlert("Please sign in again", "There was a problem with your user data. You will need to sign in again.")
+		  WelcomeWindow.ShowAlert("Please log in again", "There was a problem with your user data. You will need to log in again.")
 		End Sub
 	#tag EndMethod
 

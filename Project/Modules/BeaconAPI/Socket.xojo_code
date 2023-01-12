@@ -143,6 +143,9 @@ Protected Class Socket
 		  Next
 		  
 		  Var Response As New BeaconAPI.Response(URL, HTTPStatus, Content, Headers)
+		  #if DebugBuild
+		    System.DebugLog(Self.ActiveRequest.Method + " " + URL + ": " + HTTPStatus.ToString(Locale.Raw, "0"))
+		  #endif
 		  Self.ActiveRequest.InvokeCallback(Response)
 		  Self.ActiveRequest = Nil
 		  

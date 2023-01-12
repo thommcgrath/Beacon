@@ -474,36 +474,36 @@ End
 
 	#tag MenuHandler
 		Function ViewDashboard() As Boolean Handles ViewDashboard.Action
-			Self.ShowView(Self.DashboardPane1)
-			Return True
+		  Self.ShowView(Self.DashboardPane1)
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewDocuments() As Boolean Handles ViewDocuments.Action
-			Self.ShowDocuments()
-			Return True
+		  Self.ShowDocuments()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewEngrams() As Boolean Handles ViewEngrams.Action
-			Self.ShowBlueprints()
-			Return True
+		  Self.ShowBlueprints()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewHelp() As Boolean Handles ViewHelp.Action
-			Self.ShowHelp()
-			Return True
+		  Self.ShowHelp()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewTemplates() As Boolean Handles ViewTemplates.Action
-			Self.ShowTemplates()
-			Return True
+		  Self.ShowTemplates()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
@@ -805,13 +805,13 @@ End
 		    Base.AddMenu(New MenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
 		  Else
 		    If App.IdentityManager.CurrentIdentity Is Nil Or App.IdentityManager.CurrentIdentity.Username.IsEmpty Then
-		      Base.AddMenu(New MenuItem("Sign In", "beacon://action/signin"))
+		      Base.AddMenu(New MenuItem("Log In", "beacon://action/signin"))
 		    Else
 		      Var IdentityItem As New MenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
 		      IdentityItem.Enabled = False
 		      Base.AddMenu(IdentityItem)
 		      Base.AddMenu(New MenuItem("Manage Account", "beacon://action/showaccount"))
-		      Base.AddMenu(New MenuItem("Sign Out", "beacon://action/signout"))
+		      Base.AddMenu(New MenuItem("Log Out", "beacon://action/signout"))
 		    End If
 		  End If
 		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
