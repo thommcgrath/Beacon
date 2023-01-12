@@ -243,7 +243,6 @@ document.addEventListener('DOMContentLoaded', event => {
     var currentPassword = currentPasswordField ? currentPasswordField.value : '';
     var password = newPasswordField ? newPasswordField.value : '';
     var passwordConfirm = confirmPasswordField ? confirmPasswordField.value : '';
-    var passwordAuth = passwordOTPField ? passwordOTPField.value : '';
     var allowVulnerable = password === known_vulnerable_password;
     var regenerateKey = document.getElementById('password_regenerate_check').checked;
     var terminateSessions = regenerateKey;
@@ -259,7 +258,6 @@ document.addEventListener('DOMContentLoaded', event => {
     body.append('current_password', currentPassword);
     body.append('password', password);
     body.append('allow_vulnerable', allowVulnerable);
-    body.append('verification_code', passwordAuth);
     if (terminateSessions) {
       body.append('terminate_sessions', true);
     }
@@ -271,20 +269,17 @@ document.addEventListener('DOMContentLoaded', event => {
       try {
         var obj = JSON.parse(response.body);
         var msg = {};
-        if (regenerate_key) {
+        if (regenerateKey) {
           msg.message = 'Your password and private key have been changed.';
         } else {
           msg.message = 'Your password has been changed.';
         }
-        if (terminate_sessions) {
+        if (terminateSessions) {
           msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
         } else {
           msg.explanation = 'Changing your password does not sign you out of other devices.';
         }
-        BeaconDialog.show(msg.message, msg.explanation).then(() => {
-          var temporary = localStorage && localStorage.getItem('email') !== null ? 'true' : 'false';
-          window.location = "/account/auth?session_id=".concat(obj.session_id, "&return=").concat(encodeURIComponent(window.location), "&temporary=").concat(temporary);
-        });
+        BeaconDialog.show(msg.message, msg.explanation);
       } catch (e) {
         console.log(e);
         BeaconDialog.show('There was an error. Your password may or may not have been changed.');
@@ -322,7 +317,6 @@ document.addEventListener('DOMContentLoaded', event => {
   var newPasswordField = document.getElementById('password_initial_field');
   var confirmPasswordField = document.getElementById('password_confirm_field');
   var passwordActionButton = document.getElementById('password_action_button');
-  var passwordOTPField = document.getElementById('password_totp_field');
   var passwordConfirmCheck = ev => {
     if (!passwordActionButton) {
       return;
@@ -332,7 +326,7 @@ document.addEventListener('DOMContentLoaded', event => {
       passwordActionButton.disabled = true;
       return;
     }
-    passwordActionButton.disabled = currentPasswordField.value.trim() === '' || newPasswordField.value.trim() === '' || newPasswordField.value !== confirmPasswordField.value || passwordOTPField && passwordOTPField.value.trim() === '';
+    passwordActionButton.disabled = currentPasswordField.value.trim() === '' || newPasswordField.value.trim() === '' || newPasswordField.value !== confirmPasswordField.value;
   };
   if (currentPasswordField) {
     currentPasswordField.addEventListener('input', passwordConfirmCheck);
@@ -342,9 +336,6 @@ document.addEventListener('DOMContentLoaded', event => {
   }
   if (confirmPasswordField) {
     confirmPasswordField.addEventListener('input', passwordConfirmCheck);
-  }
-  if (passwordOTPField) {
-    passwordOTPField.addEventListener('input', passwordConfirmCheck);
   }
   var addAuthenticatorButton = document.getElementById('add-authenticator-button');
   var addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
@@ -487,6 +478,44 @@ document.addEventListener('DOMContentLoaded', event => {
         });
       });
     }
+  }
+  var replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
+  if (replaceBackupCodesButton) {
+    replaceBackupCodesButton.addEventListener('click', ev => {
+      BeaconDialog.confirm('Replace backup codes?', 'This will replace all of your backup codes with new ones.').then(() => {
+        BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {
+          Authorization: "Session ".concat(sessionId)
+        }).then(response => {
+          try {
+            var backupCodesTable = document.getElementById('backup-codes');
+            var obj = JSON.parse(response.body);
+            var codes = obj.codes;
+            backupCodesTable.innerHTML = '';
+            for (var code of codes) {
+              var codeElement = document.createElement('div');
+              codeElement.innerText = code;
+              codeElement.className = 'flex-grid-item';
+              backupCodesTable.appendChild(codeElement);
+            }
+          } catch (e) {
+            window.location.reload(true);
+          }
+        }).catch(error => {
+          console.log(JSON.stringify(error));
+          var reason = {
+            message: 'Backup codes not replaced',
+            explanation: "There was a ".concat(error.status, " error.")
+          };
+          try {
+            var obj = JSON.parse(error.body);
+            if (obj.message) {
+              reason.explanation = obj.message;
+            }
+          } catch (e) {}
+          BeaconDialog.show(reason.message, reason.explanation);
+        });
+      }).catch(() => {});
+    });
   }
 
   /* ! Sessions */

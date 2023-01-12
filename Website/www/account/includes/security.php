@@ -16,7 +16,6 @@ if ($has_authenticators) {
 		<p><input type="password" id="password_current_field" placeholder="Current Password"></p>
 		<p><input type="password" id="password_initial_field" placeholder="New Password" minlength="8"></p>
 		<p><input type="password" id="password_confirm_field" placeholder="Confirm New Password" minlength="8"></p>
-		<?php if ($has_authenticators) { ?><p><input type="text" id="password_totp_field" placeholder="Two Step Verification Code"></p><?php } ?>
 		<div class="subsection">
 			<p><label class="checkbox"><input type="checkbox" id="password_regenerate_check" value="true"><span></span>Replace private key</label></p>
 			<p class="text-red bold uppercase text-center">Read this carefully!</p>
@@ -62,6 +61,7 @@ if ($has_authenticators) {
 		}
 		echo '</div>';
 	?>
+	<p class="text-right"><button id="replace-backup-codes-button">Replace Backup Codes</button></p>
 </div>
 <?php } ?>
 <?php BeaconTemplate::StartModal('add-authenticator-modal'); ?>
