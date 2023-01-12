@@ -6,9 +6,18 @@ if (!BeaconTemplate::IsHTML()) {
 }
 
 $description = BeaconTemplate::PageDescription();
+	
+$body_class = BeaconTemplate::BodyClass();
+$theme_colors = [];
+if ($body_class === 'purple') {
+	$theme_colors[''] = '#9c0fb0';
+} else {
+	$theme_colors['(prefers-color-scheme: light)'] = '#ffffff';
+	$theme_colors['(prefers-color-scheme: dark)'] = '#262626';
+}
 
 ?><!DOCTYPE html>
-<html lang="en"<?php if (BeaconTemplate::BodyClass() != '') { echo ' class="' . BeaconTemplate::BodyClass() . '"'; } ?>>
+<html lang="en"<?php if ($body_class !== '') { echo ' class="' . $body_class . '"'; } ?>>
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,8 +33,15 @@ $description = BeaconTemplate::PageDescription();
 		<meta name="apple-mobile-web-app-title" content="Beacon">
 		<meta name="application-name" content="Beacon">
 		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
-		<meta name="theme-color" content="#9c0fb0">
-		<meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
+		<?php
+		foreach ($theme_colors as $media => $color) {
+			if (empty($media)) {
+				echo "<meta name=\"theme-color\" content=\"{$color}\">\n\t\t";
+			} else {
+				echo "<meta name=\"theme-color\" media=\"{$media}\" content=\"{$color}\">\n\t\t";
+			}
+		}
+		?><meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
 		<link href="<?php echo BeaconCommon::AssetURI('default.scss'); ?>" rel="stylesheet" type="text/css">
 		<link href="<?php echo BeaconCommon::AssetURI('colors.scss'); ?>" rel="stylesheet" type="text/css">
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
