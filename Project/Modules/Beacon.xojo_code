@@ -1363,6 +1363,12 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SystemAccountName() As String
+		  Return SystemInformationMBS.ShortUsername
+		End Function
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h1
 		Protected Delegate Function URLHandler(URL As String) As Boolean
 	#tag EndDelegateDeclaration

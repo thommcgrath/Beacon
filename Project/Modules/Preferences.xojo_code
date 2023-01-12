@@ -747,7 +747,7 @@ Protected Module Preferences
 			      mOnlineToken = Token
 			    Else
 			      Try
-			        mOnlineToken = DefineEncoding(BeaconEncryption.SlowDecrypt(Beacon.HardwareID, Token), Encodings.UTF8)
+			        mOnlineToken = DefineEncoding(BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Token), Encodings.UTF8)
 			      Catch Err As RuntimeException
 			        mOnlineToken = ""
 			      End Try
@@ -767,7 +767,7 @@ Protected Module Preferences
 			  If Value.IsEmpty Then
 			    mManager.StringValue("Online Token") = ""
 			  Else
-			    mManager.StringValue("Online Token") = BeaconEncryption.SlowEncrypt(Beacon.HardwareID, Value)
+			    mManager.StringValue("Online Token") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Value)
 			  End If
 			  NotificationKit.Post(Notification_OnlineTokenChanged, Value)
 			End Set
