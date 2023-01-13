@@ -88,7 +88,7 @@ Protected Module PasswordStorage
 		    
 		    Try
 		      Var Email As String = PasswordData.Lookup("email", "")
-		      Return BeaconEncryption.SlowDecrypt(Email.Lowercase + " " UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, PasswordData.Lookup("password", ""))
+		      Return BeaconEncryption.SlowDecrypt(Email.Lowercase + " " + UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, PasswordData.Lookup("password", ""))
 		    Catch Err As CryptoException
 		      Return ""
 		    End Try
@@ -116,7 +116,7 @@ Protected Module PasswordStorage
 		  #else
 		    Var PasswordData As New Dictionary
 		    PasswordData.Value("email") = Email
-		    PasswordData.Value("password") = BeaconEncryption.SlowEncrypt(Email.Lowercase + " " UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Password)
+		    PasswordData.Value("password") = BeaconEncryption.SlowEncrypt(Email.Lowercase + " " + UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Password)
 		    
 		    Var SavedPasswords As Dictionary = Preferences.SavedPasswords
 		    SavedPasswords.Value(UserId) = PasswordData

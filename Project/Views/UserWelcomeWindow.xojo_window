@@ -2495,7 +2495,10 @@ End
 	#tag Event
 		Sub GotFocus()
 		  If Me.Text.IsEmpty Then
-		    Me.Text = PasswordStorage.RetrievePassword(Self.LoginEmailField.Text.Trim)
+		    Try
+		      Me.Text = PasswordStorage.RetrievePassword(Self.LoginEmailField.Text.Trim)
+		    Catch Err As UnsupportedOperationException
+		    End Try
 		  End If
 		End Sub
 	#tag EndEvent
