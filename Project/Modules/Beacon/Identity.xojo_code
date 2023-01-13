@@ -233,10 +233,14 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Shared Function Import(Source As Dictionary, Password As String) As Beacon.Identity
 		  If IsUserDictionary(Source) Then
-		    Source = ConvertUserDictionaryWithPassword(Source, Password)
+		    Try
+		      Source = ConvertUserDictionaryWithPassword(Source, Password)
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
 		  End If
 		  
-		  If Source.HasKey("Identifier") = False Or Source.HasKey("Public") = False Or Source.HasKey("Private") = False Then
+		  If Source Is Nil Or Source.HasKey("Identifier") = False Or Source.HasKey("Public") = False Or Source.HasKey("Private") = False Then
 		    Return Nil
 		  End If
 		  
@@ -370,7 +374,7 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Shared Function IsUserDictionary(Dict As Dictionary) As Boolean
-		  If Dict = Nil Then
+		  If Dict Is Nil Then
 		    Return False
 		  End If
 		  
