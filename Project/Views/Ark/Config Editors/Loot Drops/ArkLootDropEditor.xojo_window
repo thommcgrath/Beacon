@@ -659,7 +659,7 @@ End
 		  Data.GameIniContent = Content
 		  
 		  Self.mImporter = New Ark.ImportThread(Data, Self.Project)
-		  Self.mImporter.Priority = Thread.LowestPriority
+		  Self.mImporter.Priority = Thread.NormalPriority
 		  AddHandler mImporter.Finished, WeakAddressOf mImporter_Finished
 		  AddHandler mImporter.UpdateUI, WeakAddressOf mImporter_UpdateUI
 		  Self.mImporter.Start

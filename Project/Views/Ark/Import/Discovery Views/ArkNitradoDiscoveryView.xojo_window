@@ -369,7 +369,6 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
       End
    End
    Begin Beacon.OAuth2Client AuthClient
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -391,6 +390,7 @@ End
 	#tag Event
 		Sub Begin()
 		  Self.List.RemoveAllRows()
+		  Self.mPendingListActions = 0
 		  
 		  If Self.mAccounts.Count = 0 Then
 		    Self.StartNewAccount()

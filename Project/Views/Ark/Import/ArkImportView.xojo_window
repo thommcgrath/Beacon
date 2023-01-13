@@ -928,7 +928,6 @@ End
 		    End If
 		    
 		    Var Importer As New Ark.ImportThread(Ark.DiscoveredData(Data(I)), Self.mDestinationProject)
-		    Importer.Priority = Thread.LowestPriority
 		    Importer.Start
 		    Self.mImporters(I) = Importer
 		    
@@ -936,8 +935,33 @@ End
 		    Self.StatusList.RowTagAt(I) = Importer
 		  Next
 		  
+		  Self.SetThreadPriorities()
 		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
 		  Self.Views.SelectedPanelIndex = Self.PageStatus
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetThreadPriorities()
+		  // Dynamically adjusts thread priority depending on the number that are actively running
+		  
+		  Var ActiveThreads() As Ark.ImportThread
+		  For Each Importer As Ark.ImportThread In Self.mImporters
+		    If Importer Is Nil Then
+		      Continue
+		    End If
+		    
+		    If Importer.ThreadState <> Thread.ThreadStates.NotRunning Then
+		      ActiveThreads.Add(Importer)
+		    End If
+		  Next
+		  
+		  Var Priority As Integer = If(ActiveThreads.Count > 3, Thread.LowestPriority, Thread.NormalPriority)
+		  For Each Importer As Ark.ImportThread In ActiveThreads
+		    If Importer.Priority <> Priority Then
+		      Importer.Priority = Priority
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -1305,6 +1329,8 @@ End
 #tag Events DiscoveryWatcher
 	#tag Event
 		Sub Action()
+		  Self.SetThreadPriorities()
+		  
 		  Var AllFinished As Boolean = True
 		  Var ErrorCount, SuccessCount As Integer
 		  For I As Integer = 0 To Self.StatusList.LastRowIndex
