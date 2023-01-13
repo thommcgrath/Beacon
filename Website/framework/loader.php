@@ -13,7 +13,7 @@ if (isset($_SERVER['API_VERSION'])) {
 	$api_version = $_SERVER['API_VERSION'];
 }
 if (is_int($api_version) === false || isset($api_version) === false || empty($api_version)) {
-	$api_version = 3;
+	$api_version = 4;
 }
 $_SERVER['API_VERSION'] = $api_version;
 
