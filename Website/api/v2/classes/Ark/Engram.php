@@ -3,16 +3,33 @@
 namespace Ark;
 
 class Engram extends \BeaconAPI\Ark\Engram {
-	protected static function SQLColumns() {
-		$columns = parent::SQLColumns();
-		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT object_id, quantity, exact FROM ark.crafting_costs WHERE engram_id = ark.engrams.object_id) AS recipe_template) AS recipe';
-		return $columns;
+	protected $recipe = null;
+	
+	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
+		parent::__construct($row);
+		
+		$this->recipe = is_null($row->Field('recipe')) ? null : json_decode($row->Field('recipe'), true);
+	}
+	
+	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
+		$schema = parent::BuildDatabaseSchema();
+		$schema->importColumn('(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT object_id, quantity, exact FROM ark.crafting_costs WHERE engram_id = ark.engrams.object_id) AS recipe_template) AS recipe');
+		return $schema;
 	}
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['resource_url'] = \BeaconAPI::URL('engram/' . urlencode($this->ObjectID()));
+		if (is_null($this->recipe) || count($this->recipe) == 0) {
+			$json['recipe'] = null;
+		} else {
+			$json['recipe'] = $this->recipe;
+		}
 		return $json;
+	}
+	
+	public function Recipe() {
+		return $this->recipe;
 	}
 	
 	protected function SaveChildrenHook(\BeaconDatabase $database) {

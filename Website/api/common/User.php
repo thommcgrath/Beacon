@@ -787,6 +787,7 @@ class User implements \JsonSerializable {
 		$arr = [
 			'user_id' => $this->user_id,
 			'username' => $this->username,
+			'username_full' => $this->username . '#' . $this->Suffix(),
 			'public_key' => $this->public_key,
 			'private_key' => $this->private_key,
 			'private_key_salt' => $this->private_key_salt,

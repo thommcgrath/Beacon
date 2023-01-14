@@ -8,8 +8,42 @@ class Engram extends \Ark\Blueprint {
 	protected $required_level = null;
 	protected $stack_size = null;
 	protected $item_id = null;
-	protected $recipe = null;
 	protected $gfi = null;
+	
+	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
+		parent::__construct($row);
+		
+		$this->entry_string = $row->Field('entry_string');
+		$this->required_points = $row->Field('required_points');
+		$this->required_level = $row->Field('required_level');
+		$this->stack_size = $row->Field('stack_size');
+		$this->item_id = $row->Field('item_id');
+		$this->gfi = $row->Field('gfi');
+	}
+	
+	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
+		$schema = parent::BuildDatabaseSchema();
+		$schema->setTable('engrams');
+		$schema->addColumn('entry_string');
+		$schema->addColumn('required_points');
+		$schema->addColumn('required_level');
+		$schema->addColumn('stack_size');
+		$schema->addColumn('item_id');
+		$schema->addColumn('gfi');
+		return $schema;
+	}
+	
+	protected static function BuildSearchParameters(\BeaconAPI\DatabaseSearchParameters $parameters, array $filters): void {
+		parent::BuildSearchParameters($parameters, $filters);
+			
+		$schema = static::DatabaseSchema();
+		$table = $schema->table();
+		
+		if (isset($filters['entry_string'])) {
+			$parameters->clauses[] = $table . '.entry_string = $' . $parameters->placeholder++;
+			$parameters->values[] = $filters['entry_string'];
+		}
+	}
 	
 	protected static function TableName() {
 		return 'engrams';
@@ -94,10 +128,6 @@ class Engram extends \Ark\Blueprint {
 		return is_null($this->item_id) ? null : intval($this->item_id);
 	}
 	
-	public function Recipe() {
-		return $this->recipe;
-	}
-	
 	public function GFICode(): ?string {
 		return $this->gfi;
 	}
@@ -123,11 +153,6 @@ class Engram extends \Ark\Blueprint {
 		$json['required_level'] = $this->RequiredLevel();
 		$json['stack_size'] = $this->StackSize();
 		$json['item_id'] = $this->ItemID();
-		if (is_null($this->recipe) || count($this->recipe) == 0) {
-			$json['recipe'] = null;
-		} else {
-			$json['recipe'] = $this->recipe;
-		}
 		return $json;
 	}
 	

@@ -30,33 +30,37 @@ abstract class Core {
 		}
 	}
 	
-	public static function APIVersion() {
-		return 'v0';
+	public static function APIVersionNumber(): int {
+		return 0;
 	}
 	
-	public static function UsesLegacyEncryption() {
+	public static function APIVersion(): string {
+		return 'v' . static::APIVersionNumber();
+	}
+	
+	public static function UsesLegacyEncryption(): bool {
 		return true;
 	}
 	
 	public static function Body() {
-		if (self::$body_raw === null) {
-			if (self::Method() == 'GET') {
-				self::$body_raw = $_SERVER['QUERY_STRING'];
+		if (static::$body_raw === null) {
+			if (static::Method() == 'GET') {
+				static::$body_raw = $_SERVER['QUERY_STRING'];
 			} else {
-				self::$body_raw = file_get_contents('php://input');
+				static::$body_raw = file_get_contents('php://input');
 			}
 			if (isset($_SERVER['HTTP_CONTENT_ENCODING']) && $_SERVER['HTTP_CONTENT_ENCODING'] == 'gzip') {
-				self::$body_raw = gzdecode(self::$body_raw);
+				static::$body_raw = gzdecode(static::$body_raw);
 			}
 		}
-		return self::$body_raw;
+		return static::$body_raw;
 	}
 	
 	public static function JSONPayload() {
-		if (self::$payload === null) {
-			self::$payload = json_decode(self::Body(), true);
+		if (static::$payload === null) {
+			static::$payload = json_decode(static::Body(), true);
 		}
-		return self::$payload;
+		return static::$payload;
 	}
 	
 	public static function ReplySuccess($payload = null, int $code = 200) {
@@ -81,7 +85,7 @@ abstract class Core {
 	}
 	
 	public static function RequireKeys(string ...$keys) {
-		$request = self::JSONPayload();
+		$request = static::JSONPayload();
 		$missing = array();
 		foreach ($keys as $key) {
 			if (!isset($request[$key])) {
@@ -89,7 +93,7 @@ abstract class Core {
 			}
 		}
 		if (count($missing) > 0) {
-			self::ReplyError('Missing required keys.', $missing);
+			static::ReplyError('Missing required keys.', $missing);
 		}
 	}
 	
@@ -101,7 +105,7 @@ abstract class Core {
 			}
 		}
 		if (count($missing) > 0) {
-			self::ReplyError('Missing required parameters.', $missing);
+			static::ReplyError('Missing required parameters.', $missing);
 		}
 	}
 	
@@ -126,8 +130,8 @@ abstract class Core {
 				return false;
 			}
 			
-			self::$user_id = $session->UserID();
-			self::$auth_style = self::AUTH_STYLE_SESSION;
+			static::$user_id = $session->UserID();
+			static::$auth_style = self::AUTH_STYLE_SESSION;
 			
 			$session->Renew();
 			
@@ -145,8 +149,8 @@ abstract class Core {
 				}
 				return false;
 			}
-			self::$user_id = $user->UserID();
-			self::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
+			static::$user_id = $user->UserID();
+			static::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
 			return true;
 		}
 		return false;
@@ -162,8 +166,8 @@ abstract class Core {
 		}
 		
 		if ($user->CheckSignature($challenge, $signature)) {
-			self::$user_id = $user->UserID();
-			self::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
+			static::$user_id = $user->UserID();
+			static::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
 			return true;
 		}
 		
@@ -182,11 +186,13 @@ abstract class Core {
 		
 		$authorized = false;
 		$content = '';
-		self::$user_id = \BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
+		static::$user_id = \BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
 		$http_fail_status = 401;
 		
 		if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-			$http_fail_status = 403;
+			if (static::APIVersion() < 4) {
+				$http_fail_status = 403;
+			}
 			$optional = false; // if authorization included, it is no longer optional
 			$authorization = $_SERVER['HTTP_AUTHORIZATION'];
 			$pos = strpos($authorization, ' ');
@@ -195,7 +201,8 @@ abstract class Core {
 			
 			switch ($auth_type) {
 			case 'session':
-				$authorized = self::AuthorizeWithSessionID($auth_value);
+			case 'bearer':
+				$authorized = static::AuthorizeWithSessionID($auth_value);
 				break;
 			case 'basic':
 				if ($permissive) {
@@ -209,16 +216,16 @@ abstract class Core {
 						// with 2FA enabled, only session tokens and challenges are accepted
 						if (is_null($user) === false && $user->Is2FAProtected() === false) {
 							$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-							$content = self::Method() . chr(10) . $url;
-							if (self::Method() !== 'GET') {
-								$content .= chr(10) . self::Body();
+							$content = static::Method() . chr(10) . $url;
+							if (static::Method() !== 'GET') {
+								$content .= chr(10) . static::Body();
 							}
 							
-							$authorized = self::AuthorizeWithSignature($user, $content, $password);
+							$authorized = static::AuthorizeWithSignature($user, $content, $password);
 						}
 					} elseif (\BeaconUser::ValidateEmail($username)) {
 						// password authorization
-						$authorized = self::AuthorizeWithPassword($username, $password);
+						$authorized = static::AuthorizeWithPassword($username, $password);
 					}
 				}
 				break;
@@ -243,11 +250,11 @@ abstract class Core {
 				}
 				break;
 			}
-		} elseif (self::Method() === 'POST' && self::ContentType() === 'application/json') {
+		} elseif (static::Method() === 'POST' && static::ContentType() === 'application/json') {
 			if ($permissive) {
-				$payload = self::JSONPayload();
+				$payload = static::JSONPayload();
 				if ($payload !== false && (empty($payload['username']) === false && empty($payload['password']) === false)) {
-					$authorized = self::AuthorizeWithPassword($payload['username'], $payload['password']);
+					$authorized = static::AuthorizeWithPassword($payload['username'], $payload['password']);
 				} elseif ($payload !== false && (empty($payload['user_id']) === false && empty($payload['signature']) === false)) {
 					$database = \BeaconCommon::Database();
 					$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $payload['user_id']);
@@ -255,42 +262,42 @@ abstract class Core {
 						$challenge = $results->Field('challenge');
 						$user = \BeaconUser::GetByUserID($payload['user_id']);
 						if (is_null($user) === false) {
-							$authorized = self::AuthorizeWithSignature($user, $challenge, $payload['signature']);
+							$authorized = static::AuthorizeWithSignature($user, $challenge, $payload['signature']);
 						}
 					}
 				}
 			}
 		} elseif (empty($_SERVER['HTTP_X_BEACON_TOKEN']) === false) {
-			$authorized = self::AuthorizeWithSessionID($_SERVER['HTTP_X_BEACON_TOKEN']);
+			$authorized = static::AuthorizeWithSessionID($_SERVER['HTTP_X_BEACON_TOKEN']);
 		}
 		
 		if ($authorized) {
 			$database = \BeaconCommon::Database();
 			$database->BeginTransaction();
-			$database->Query('DELETE FROM user_challenges WHERE user_id = $1;', self::$user_id);
+			$database->Query('DELETE FROM user_challenges WHERE user_id = $1;', static::$user_id);
 			$database->Commit();
 		}
 		
 		if ((!$authorized) && (!$optional)) {
 			header('WWW-Authenticate: Basic realm="Beacon API"');
-			self::ReplyError('Unauthorized', $content, $http_fail_status);
+			static::ReplyError('Unauthorized', $content, $http_fail_status);
 		}
 	}
 	
 	public static function Authenticated() {
-		return is_null(self::$auth_style) == false;
+		return is_null(static::$auth_style) == false;
 	}
 	
 	public static function AuthenticationMethod() {
-		return self::$auth_style;
+		return static::$auth_style;
 	}
 	
 	public static function UserID() {
-		return self::$user_id;
+		return static::$user_id;
 	}
 	
 	public static function User() {
-		return \BeaconUser::GetByUserID(self::$user_id);
+		return \BeaconUser::GetByUserID(static::$user_id);
 	}
 	
 	public static function ObjectID(int $place = 0) {
@@ -311,7 +318,7 @@ abstract class Core {
 	}
 	
 	public static function ObjectCount() {
-		$object_id = self::ObjectID();
+		$object_id = static::ObjectID();
 		$arr = explode(',', $object_id);
 		return count($arr);
 	}
@@ -346,7 +353,7 @@ abstract class Core {
 			}
 			$route_expression = '/^' . $route_expression . '$/';
 			
-			self::$routes[$route] = [
+			static::$routes[$route] = [
 				'expression' => $route_expression,
 				'handlers' => $handlers,
 				'variables' => $variables
@@ -356,7 +363,7 @@ abstract class Core {
 	
 	public static function HandleRequest(string $root): void {
 		$request_route = '/' . $_GET['route'];
-		foreach (self::$routes as $route => $route_info) {
+		foreach (static::$routes as $route => $route_info) {
 			$route_expression = $route_info['expression'];
 			$handlers = $route_info['handlers'];
 			$variables = $route_info['variables'];

@@ -7,6 +7,49 @@ class Blueprint extends \Ark\GenericObject {
 	protected $path;
 	protected $class_string;
 	
+	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
+		parent::__construct($row);
+		
+		$this->availability = $row->Field('availability');
+		$this->path = $row->Field('path');
+		$this->class_string = $row->Field('class_string');	
+	}
+	
+	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
+		$schema = parent::BuildDatabaseSchema();
+		$schema->setTable('blueprints');
+		$schema->addColumn('availability');
+		$schema->addColumn('path');
+		$schema->addColumn('class_string');
+		return $schema;
+	}
+	
+	protected static function BuildSearchParameters(\BeaconAPI\DatabaseSearchParameters $parameters, array $filters): void {
+		parent::BuildSearchParameters($parameters, $filters);
+			
+		$schema = static::DatabaseSchema();
+		$table = $schema->table();
+		
+		if (isset($filters['path'])) {
+			if (preg_match('/^[A-F0-9]{32}$/i', $filters['path'])) {
+				$parameters->clauses[] = 'MD5(LOWER(' . $table . '.path)) = $' . $parameters->placeholder++;
+			} else {
+				$parameters->clauses[] = $table . '.path = $' . $parameters->placeholder++;
+			}
+			$parameters->values[] = $filters['path'];
+		}
+		
+		if (isset($filters['class_string'])) {
+			$parameters->clauses[] = $table . '.class_string = $' . $parameters->placeholder++;
+			$parameters->values[] = $filters['class_string'];
+		}
+		
+		if (isset($filters['availability'])) {
+			$parameters->clauses[] = '(' . $table . '.availability & $' . $parameters->placeholder . ') = $' . $parameters->placeholder++;
+			$parameters->values[] = $filters['availability'];
+		}
+	}
+	
 	public static function GetByObjectPath(string $path, int $min_version = -1, DateTime $updated_since = null) {
 		$objects = static::Get('path:' . $path, $min_version, $updated_since);
 		if (count($objects) == 1) {

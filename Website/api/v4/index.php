@@ -4,56 +4,72 @@ require(dirname(__FILE__) . '/loader.php');
 
 BeaconAPI::RegisterRoutes(
 	[
-		'/ark/blueprint' => [
-			'GET' => 'ark/blueprint/list',
-			'POST' => 'ark/blueprint/edit'
+		'/ark/blueprints' => [
+			'GET' => 'ark/blueprints/list',
+			'POST' => 'ark/blueprints/edit'
 		],
-		'/ark/color_set' => [
-			'GET' => 'ark/color_set/list'
+		'/ark/colorSets' => [
+			'GET' => 'ark/colorSets/list'
 		],
-		'/ark/color_set/{color_set_id}' => [
-			'GET' => 'ark/color_set/get'
+		'/ark/colorSets/{colorSetId}' => [
+			'GET' => 'ark/colorSets/get'
 		],
-		'/ark/color' => [
-			'GET' => 'ark/color/list'
+		'/ark/colors' => [
+			'GET' => 'ark/colors/list'
 		],
-		'/ark/color/{color_id}' => [
-			'GET' => 'ark/color/get'
+		'/ark/colors/{colorId}' => [
+			'GET' => 'ark/colors/get'
 		],
-		'/ark/event' => [
-			'GET' => 'ark/event/list'
+		'/ark/engrams' => [
+			'GET' => 'ark/engrams/list',
+			'POST' => 'ark/engrams/create'
 		],
-		'/ark/event/{event_id}' => [
-			'GET' => 'ark/event/get'
+		'/ark/engrams/{engramId}' => [
+			'GET' => 'ark/engrams/get',
+			'POST' => 'ark/engrams/edit',
+			'DELETE' => 'ark/engrams/delete'
 		],
-		'/ark/generate/{project_id}' => [
+		'/ark/events' => [
+			'GET' => 'ark/events/list'
+		],
+		'/ark/events/{eventId}' => [
+			'GET' => 'ark/events/get'
+		],
+		'/ark/projects/{projectId}/generatedLines' => [
 			'GET' => 'ark/generate',
 			'POST' => 'ark/generate'
 		],
-		'/ark/map' => [
-			'GET' => 'ark/map/list'
+		'/ark/maps' => [
+			'GET' => 'ark/maps/list'
 		],
-		'/ark/map/{map_id}' => [
-			'GET' => 'ark/map/get'
+		'/ark/maps/{mapId}' => [
+			'GET' => 'ark/maps/get'
 		],
-		'/ark/mod' => [
-			'GET' => 'ark/mod/list',
-			'POST' => 'ark/mod/edit'
+		'/ark/mods' => [
+			'GET' => 'ark/mods/list',
+			'POST' => 'ark/mods/create'
 		],
-		'/ark/mod/{workshop_id}' => [
-			'GET' => 'ark/mod/get',
-			'DELETE' => 'ark/mod/delete'
+		'/ark/mods/{modId}' => [
+			'GET' => 'ark/mods/get',
+			'POST' => 'ark/mods/edit',
+			'DELETE' => 'ark/mods/delete'
 		],
-		'/authenticator' => [
-			'POST' => 'authenticator/create',
-			'GET' => 'authenticator/list'
+		'/ark/mods/{modId}/checkConfirmation' => [
+			'GET' => 'ark/mods/confirm'
 		],
-		'/authenticator/{authenticator_id}' => [
-			'POST' => 'authenticator/edit',
-			'GET' => 'authenticator/get',
-			'DELETE' => 'authenticator/delete'
+		'/ark/mods/{modId}/engrams' => [
+			'GET' => 'ark/engrams/list'
 		],
-		'/challenge/{user_id}' => [
+		'/authenticators' => [
+			'POST' => 'authenticators/create',
+			'GET' => 'authenticators/list'
+		],
+		'/authenticators/{authenticatorId}' => [
+			'POST' => 'authenticators/edit',
+			'GET' => 'authenticators/get',
+			'DELETE' => 'authenticators/delete'
+		],
+		'/challenge/{userId}' => [
 			'GET' => 'challenge'
 		],
 		'/deltas' => [
@@ -62,10 +78,10 @@ BeaconAPI::RegisterRoutes(
 		'/deltas/{version}' => [
 			'GET' => 'deltas'
 		],
-		'/file' => [
+		'/files' => [
 			'GET' => 'file'
 		],
-		'/file/{...file_path}' => [
+		'/files/{...filePath}' => [
 			'GET' => 'file',
 			'POST' => 'file',
 			'DELETE' => 'file'
@@ -73,95 +89,101 @@ BeaconAPI::RegisterRoutes(
 		'/now' => [
 			'GET' => 'now'
 		],
-		'/project' => [
-			'GET' => 'project/list'
+		'/projects' => [
+			'GET' => 'projects/list',
+			'POST' => 'projects/create'
 		],
-		'/project/{project_id}' => [
-			'GET' => 'project/get',
-			'POST' => 'project/edit',
-			'DELETE' => 'project/delete',
-			'HEAD' => 'project/exists'
+		'/projects/{projectId}' => [
+			'GET' => 'projects/get',
+			'POST' => 'projects/edit',
+			'DELETE' => 'projects/delete',
+			'HEAD' => 'projects/exists'
 		],
-		'/project/{project_id}/publish' => [
-			'GET' => 'project/publish',
-			'POST' => 'project/publish'
+		'/projects/{projectId}/Game.ini' => [
+			'GET' => 'projects/generate'
 		],
-		'/project/{project_id}/versions' => [
-			'GET' => 'project/versions'
+		'/projects/{projectId}/versions' => [
+			'GET' => 'projects/versions/list'
 		],
-		'/project/{project_id}/versions/{version_id}' => [
-			'GET' => 'project/get'
+		'/projects/{projectId}/versions/{versionId}' => [
+			'GET' => 'project/versions/get'
 		],
 		'/sentinel/oauth/{provider}' => [
 			'GET' => 'sentinel/oauth'
 		],
-		'/sentinel/player' => [
-			'GET' => 'sentinel/player/get'
+		'/sentinel/players' => [
+			'GET' => 'sentinel/players/list'
 		],
-		'/sentinel/player_note' => [
-			'GET' => 'sentinel/player_note/list',
-			'POST' => 'sentinel/player_note/create'
+		'/sentinel/playerNote' => [
+			'GET' => 'sentinel/playerNotes/list',
+			'POST' => 'sentinel/playerNotes/create'
 		],
-		'/sentinel/service' => [
-			'POST' => 'sentinel/service/create',
-			'GET' => 'sentinel/service/list'
+		'/sentinel/services' => [
+			'POST' => 'sentinel/services/create',
+			'GET' => 'sentinel/services/list'
 		],
-		'/sentinel/service/{service_id}' => [
-			'POST' => 'sentinel/service/edit',
-			'GET' => 'sentinel/service/get',
-			'DELETE' => 'sentinel/service/delete'
+		'/sentinel/services/{serviceId}' => [
+			'POST' => 'sentinel/services/edit',
+			'GET' => 'sentinel/services/get',
+			'DELETE' => 'sentinel/services/delete'
 		],
-		'/sentinel/service/{service_id}/log' => [
+		'/sentinel/services/{serviceId}/logs' => [
 			'GET' => 'sentinel/service/logs'
 		],
-		'/sentinel/service_group' => [
-			'POST' => 'sentinel/service_group/create',
-			'GET' => 'sentinel/service_group/list'
+		'/sentinel/serviceGroups' => [
+			'POST' => 'sentinel/serviceGroups/create',
+			'GET' => 'sentinel/serviceGroups/list'
 		],
-		'/sentinel/service_group/{group_id}' => [
-			'POST' => 'sentinel/service_group/edit',
-			'GET' => 'sentinel/service_group/get',
-			'DELETE' => 'sentinel/service_group/delete'
+		'/sentinel/serviceGroups/{serviceGroupId}' => [
+			'POST' => 'sentinel/serviceGroups/edit',
+			'GET' => 'sentinel/serviceGroups/get',
+			'DELETE' => 'sentinel/serviceGroups/delete'
 		],
-		'/sentinel/service_group/{group_id}/members' => [
-			'GET' => 'sentinel/service_group/members/list',
-			'POST' => 'sentinel/service_group/members/edit'
+		'/sentinel/serviceGroups/{serviceGroupId}/members' => [
+			'GET' => 'sentinel/serviceGroups/members/list',
+			'POST' => 'sentinel/serviceGroups/members/edit'
 		],
-		'/session' => [
-			'POST' => 'session/login'
+		'/sessions' => [
+			'POST' => 'sessions/create'
 		],
-		'/session/{session_id}' => [
-			'GET' => 'session/get',
-			'DELETE' => 'session/logout'
+		'/sessions/{sessionId}' => [
+			'GET' => 'sessions/get',
+			'DELETE' => 'sessions/delete'
 		],
-		'/template_selector' => [
-			'GET' => 'template_selector/list'
+		'/templateSelectors' => [
+			'GET' => 'templateSelectors/list'
 		],
-		'/template_selector/{selector_id}' => [
-			'GET' => 'template_selector/get'
+		'/templateSelectors/{templateSelectorId}' => [
+			'GET' => 'templateSelectors/get'
 		],
-		'/template' => [
-			'GET' => 'template/list'
+		'/templates' => [
+			'GET' => 'templates/list'
 		],
-		'/template/{template_id}' => [
-			'GET' => 'template/get'
+		'/templates/{templateId}' => [
+			'GET' => 'templates/get'
 		],
-		'/user' => [
-			'GET' => 'user/get',
-			'POST' => 'user/create'
+		'/users' => [
+			'GET' => 'users/list',
+			'POST' => 'users/create'
 		],
-		'/user/{user_id}' => [
-			'GET' => 'user/get',
-			'DELETE' => 'user/delete'
+		'/users/{userId}' => [
+			'GET' => 'users/get',
+			'POST' => 'users/edit',
+			'DELETE' => 'users/delete'
+		],
+		'/users/{userId}/ark/mods' => [
+			'GET' => 'ark/mods/list'
+		],
+		'/users/{userId}/projects' => [
+			'GET' => 'projects/list'
 		]
 	]
 );
 
-BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'loot_source');
-BeaconObjectManager::RegisterRoutes('Ark\Creature', 'ark', 'creature');
-BeaconObjectManager::RegisterRoutes('Ark\Engram', 'ark', 'engram');
-BeaconObjectManager::RegisterRoutes('Ark\ConfigLine', 'ark', 'ini_option');
-BeaconObjectManager::RegisterRoutes('Ark\SpawnPoint', 'ark', 'spawn_point');
+BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'lootContainers');
+BeaconObjectManager::RegisterRoutes('Ark\Creature', 'ark', 'creatures');
+BeaconObjectManager::RegisterRoutes('Ark\ConfigLine', 'ark', 'configOptions');
+BeaconObjectManager::RegisterRoutes('Ark\SpawnPoint', 'ark', 'spawnPoints');
 
 BeaconAPI::HandleRequest(dirname(__FILE__) . '/requests');
 

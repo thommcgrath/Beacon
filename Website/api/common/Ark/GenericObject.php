@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Ark;
 
-class GenericObject implements \JsonSerializable {
+class GenericObject extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 	protected $object_id;
 	protected $object_group;
 	protected $label;
@@ -15,17 +15,85 @@ class GenericObject implements \JsonSerializable {
 	
 	const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
 	
-	public function __construct($object_id = null) {
-		if ($object_id === null) {
-			$this->object_id = \BeaconCommon::GenerateUUID();
+	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
+		$tags = substr($row->Field('tags'), 1, -1);
+		if (strlen($tags) > 0) {
+			$tags = explode(',', $tags);
 		} else {
-			$this->object_id = $object_id;
+			$tags = array();
+		}
+		asort($tags);
+		
+		$this->object_id = $row->Field('object_id');
+		$this->object_group = $row->Field('table_name');
+		$this->label = $row->Field('label');
+		$this->alternate_label = $row->Field('alternate_label');
+		$this->min_version = intval($row->Field('min_version'));
+		$this->mod_id = $row->Field('mod_id');
+		$this->mod_name = $row->Field('mod_name');
+		$this->mod_workshop_id = $row->Field('mod_workshop_id');
+		$this->tags = array_values($tags);
+	}
+	
+	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
+		return new \BeaconAPI\DatabaseSchema('ark', 'objects', 'object_id', [
+			'label',
+			'alternate_label',
+			'tags'
+		], [
+			'INNER JOIN ark.mods ON (%%TABLE%%.mod_id = mods.mod_id)'
+		], [
+			'GREATEST(%%TABLE%%.min_version, mods.min_version) AS min_version',
+			'mods.mod_id',
+			'mods.name AS mod_name',
+			'ABS(mods.workshop_id) AS mod_workshop_id',
+			'SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5) AS table_name'
+		]);
+	}
+	
+	protected static function BuildSearchParameters(\BeaconAPI\DatabaseSearchParameters $parameters, array $filters): void {
+		$schema = static::DatabaseSchema();
+		$table = $schema->table();
+		$parameters->orderBy = $table . '.label';
+		$parameters->allowAll = true;
+		
+		if (isset($filters['mod_id'])) {
+			if (\BeaconCommon::IsUUID($filters['mod_id']) === true) {
+				$parameters->clauses[] = $table . '.mod_id = $' . $parameters->placeholder++;
+			} else {
+				$parameters->clauses[] = 'ABS(mods.workshop_id) = ABS($' . $parameters->placeholder++ . ')';
+			}
+			$parameters->values[] = $filters['mod_id'];
+		}
+		
+		if (isset($filters['last_update'])) {
+			$parameters->clauses[] = $table . '.last_update > $' . $parameters->placeholder++;
+			$parameters->values[] = $filters['last_update'];
+		}
+		
+		if (isset($filters['min_version'])) {
+			$parameters->clauses[] = $table . '.min_version < $' . $parameters->placeholder++;
+			$parameters->values[] = $filters['min_version'];
+		}
+		
+		if (isset($filters['tag'])) {
+			$parameters->clauses[] = '$' . $parameters->placeholder++ . ' = ANY(' . $table . '.tags)';
+			$parameters->values[] = $filters['tag'];
+		}
+		
+		if (isset($filters['tags'])) {
+			$tags = explode(',', $filters['tags']);
+			foreach ($tags as $tag) {
+				$parameters->clauses[] = '$' . $parameters->placeholder++ . ' = ANY(' . $table . '.tags)';
+				$parameters->values[] = $tag;
+			}
 		}
 	}
 	
-	protected static function SQLColumns() {
+	/*public static function SQLColumns(): array {
 		$table = static::TableName();
 		return [
+			new \BeaconAPI\DatabaseColumn('ark.mods', object_id),
 			$table . '.object_id',
 			$table . '.label',
 			$table . '.alternate_label',
@@ -37,17 +105,21 @@ class GenericObject implements \JsonSerializable {
 		];
 	}
 	
-	protected static function SortColumn() {
+	public static function SQLSortColumn(): string {
 		return 'label';
 	}
 	
-	protected static function SchemaName() {
+	public static function SQLSchemaName(): string {
 		return 'ark';
 	}
 	
-	protected static function TableName() {
+	public static function SQLTableName(): string {
 		return 'objects';
 	}
+	
+	public static function SQLPrimaryKey(): string {
+		return 'object_id';
+	}*/
 	
 	protected static function BuildSQL(...$clauses) {
 		if ((count($clauses) == 1) && (is_array($clauses[0]))) {
@@ -117,7 +189,7 @@ class GenericObject implements \JsonSerializable {
 		return $obj;
 	}
 	
-	public function Save() {
+	/*public function Save() {
 		$schema = static::SchemaName();
 		$table = static::TableName();
 		
@@ -168,7 +240,7 @@ class GenericObject implements \JsonSerializable {
 		}
 		$this->SaveChildrenHook($database);
 		$database->Commit();
-	}
+	}*/
 	
 	protected function SaveChildrenHook(\BeaconDatabase $database) {
 	}
@@ -398,18 +470,18 @@ class GenericObject implements \JsonSerializable {
 	}
 	
 	public function jsonSerialize(): mixed {
-		return array(
+		return [
 			'id' => $this->object_id,
 			'label' => $this->label,
 			'alternate_label' => $this->alternate_label,
-			'mod' => array(
+			'mod' => [
 				'id' => $this->mod_id,
 				'name' => $this->mod_name
-			),
+			],
 			'group' => $this->object_group,
 			'tags' => $this->tags,
 			'min_version' => $this->min_version
-		);
+		];
 	}
 	
 	public function ObjectID() {
