@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Ark;
 
-class GenericObject extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
+class GenericObject implements \JsonSerializable {
 	protected $object_id;
 	protected $object_group;
 	protected $label;
@@ -15,85 +15,17 @@ class GenericObject extends \BeaconAPI\DatabaseObject implements \JsonSerializab
 	
 	const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
 	
-	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
-		$tags = substr($row->Field('tags'), 1, -1);
-		if (strlen($tags) > 0) {
-			$tags = explode(',', $tags);
+	public function __construct($object_id = null) {
+		if ($object_id === null) {
+			$this->object_id = \BeaconCommon::GenerateUUID();
 		} else {
-			$tags = array();
-		}
-		asort($tags);
-		
-		$this->object_id = $row->Field('object_id');
-		$this->object_group = $row->Field('table_name');
-		$this->label = $row->Field('label');
-		$this->alternate_label = $row->Field('alternate_label');
-		$this->min_version = intval($row->Field('min_version'));
-		$this->mod_id = $row->Field('mod_id');
-		$this->mod_name = $row->Field('mod_name');
-		$this->mod_workshop_id = $row->Field('mod_workshop_id');
-		$this->tags = array_values($tags);
-	}
-	
-	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
-		return new \BeaconAPI\DatabaseSchema('ark', 'objects', [
-			new \BeaconAPI\DatabaseObjectProperty('id', ['primaryKey' => true, 'columnName' => 'object_id']),
-			new \BeaconAPI\DatabaseObjectProperty('label'),
-			new \BeaconAPI\DatabaseObjectProperty('alternate_label'),
-			new \BeaconAPI\DatabaseObjectProperty('tags'),
-			new \BeaconAPI\DatabaseObjectProperty('min_version', ['accessor' => 'GREATEST(%%TABLE%%.min_version, mods.min_version)', 'setter' => 'mod_id = %%PLACEHOLDER%%']),
-			new \BeaconAPI\DatabaseObjectProperty('mod_id', ['accessor' => 'mods.mod_id']),
-			new \BeaconAPI\DatabaseObjectProperty('mod_name', ['accessor' => 'mods.name']),
-			new \BeaconAPI\DatabaseObjectProperty('mod_workshop_id', ['accessor' => 'ABS(mods.workshop_id)']),
-			new \BeaconAPI\DatabaseObjectProperty('table_name', ['accessor' => 'SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5)'])
-		], [
-			'INNER JOIN ark.mods ON (%%TABLE%%.mod_id = mods.mod_id)'
-		]);
-	}
-	
-	protected static function BuildSearchParameters(\BeaconAPI\DatabaseSearchParameters $parameters, array $filters): void {
-		$schema = static::DatabaseSchema();
-		$table = $schema->table();
-		$parameters->orderBy = $table . '.label';
-		$parameters->allowAll = true;
-		
-		if (isset($filters['mod_id'])) {
-			if (\BeaconCommon::IsUUID($filters['mod_id']) === true) {
-				$parameters->clauses[] = $table . '.mod_id = $' . $parameters->placeholder++;
-			} else {
-				$parameters->clauses[] = 'ABS(mods.workshop_id) = ABS($' . $parameters->placeholder++ . ')';
-			}
-			$parameters->values[] = $filters['mod_id'];
-		}
-		
-		if (isset($filters['last_update'])) {
-			$parameters->clauses[] = $table . '.last_update > $' . $parameters->placeholder++;
-			$parameters->values[] = $filters['last_update'];
-		}
-		
-		if (isset($filters['min_version'])) {
-			$parameters->clauses[] = $table . '.min_version < $' . $parameters->placeholder++;
-			$parameters->values[] = $filters['min_version'];
-		}
-		
-		if (isset($filters['tag'])) {
-			$parameters->clauses[] = '$' . $parameters->placeholder++ . ' = ANY(' . $table . '.tags)';
-			$parameters->values[] = $filters['tag'];
-		}
-		
-		if (isset($filters['tags'])) {
-			$tags = explode(',', $filters['tags']);
-			foreach ($tags as $tag) {
-				$parameters->clauses[] = '$' . $parameters->placeholder++ . ' = ANY(' . $table . '.tags)';
-				$parameters->values[] = $tag;
-			}
+			$this->object_id = $object_id;
 		}
 	}
 	
-	/*public static function SQLColumns(): array {
+	protected static function SQLColumns() {
 		$table = static::TableName();
 		return [
-			new \BeaconAPI\DatabaseColumn('ark.mods', object_id),
 			$table . '.object_id',
 			$table . '.label',
 			$table . '.alternate_label',
@@ -105,21 +37,17 @@ class GenericObject extends \BeaconAPI\DatabaseObject implements \JsonSerializab
 		];
 	}
 	
-	public static function SQLSortColumn(): string {
+	protected static function SortColumn() {
 		return 'label';
 	}
 	
-	public static function SQLSchemaName(): string {
+	protected static function SchemaName() {
 		return 'ark';
 	}
 	
-	public static function SQLTableName(): string {
+	protected static function TableName() {
 		return 'objects';
 	}
-	
-	public static function SQLPrimaryKey(): string {
-		return 'object_id';
-	}*/
 	
 	protected static function BuildSQL(...$clauses) {
 		if ((count($clauses) == 1) && (is_array($clauses[0]))) {
@@ -189,7 +117,7 @@ class GenericObject extends \BeaconAPI\DatabaseObject implements \JsonSerializab
 		return $obj;
 	}
 	
-	/*public function Save() {
+	public function Save() {
 		$schema = static::SchemaName();
 		$table = static::TableName();
 		
@@ -240,7 +168,7 @@ class GenericObject extends \BeaconAPI\DatabaseObject implements \JsonSerializab
 		}
 		$this->SaveChildrenHook($database);
 		$database->Commit();
-	}*/
+	}
 	
 	protected function SaveChildrenHook(\BeaconDatabase $database) {
 	}
@@ -470,18 +398,18 @@ class GenericObject extends \BeaconAPI\DatabaseObject implements \JsonSerializab
 	}
 	
 	public function jsonSerialize(): mixed {
-		return [
+		return array(
 			'id' => $this->object_id,
 			'label' => $this->label,
 			'alternate_label' => $this->alternate_label,
-			'mod' => [
+			'mod' => array(
 				'id' => $this->mod_id,
 				'name' => $this->mod_name
-			],
+			),
 			'group' => $this->object_group,
 			'tags' => $this->tags,
 			'min_version' => $this->min_version
-		];
+		);
 	}
 	
 	public function ObjectID() {

@@ -1,11 +1,13 @@
 <?php
 
 abstract class BeaconAPI extends \BeaconAPI\Core {
-	public static function APIVersionNumber(): int {
-		return 2;
+	protected static $version = 2;
+	
+	public static function APIVersion() {
+		return 'v' . self::$version;
 	}
 	
-	public static function UsesLegacyEncryption(): bool {
+	public static function UsesLegacyEncryption() {
 		return false;
 	}
 	
