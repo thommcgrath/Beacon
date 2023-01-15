@@ -1,6 +1,7 @@
 <?php
 
-namespace BeaconAPI;
+namespace BeaconAPI\v4;
+use BeaconCloudStorage, BeaconCommon, BeaconEncryption, BeaconRecordSet, BeaconShop, Exception;
 
 class User implements \JsonSerializable {
 	const ARK_FREE = false;
@@ -33,7 +34,7 @@ class User implements \JsonSerializable {
 	private $has_child_accounts = null;
 	
 	public function __construct($source = null) {
-		if ($source instanceof \BeaconRecordSet) {
+		if ($source instanceof BeaconRecordSet) {
 			$this->user_id = $source->Field('user_id');
 			$this->username = $source->Field('username');
 			$this->email_id = $source->Field('email_id');
@@ -46,10 +47,10 @@ class User implements \JsonSerializable {
 			$this->enabled = $source->Field('enabled');
 			$this->require_password_change = $source->Field('require_password_change');
 			$this->parent_account_id = $source->Field('parent_account_id');
-		} elseif (is_string($source) && \BeaconCommon::IsUUID($source)) {
+		} elseif (is_string($source) && BeaconCommon::IsUUID($source)) {
 			$this->user_id = $source;
 		} elseif (is_null($source)) {
-			$this->user_id = \BeaconCommon::GenerateUUID();
+			$this->user_id = BeaconCommon::GenerateUUID();
 		}
 	}
 	
@@ -64,7 +65,7 @@ class User implements \JsonSerializable {
 	}
 	
 	public function SetEmailID(string $email_id) {
-		if (\BeaconCommon::IsUUID($email_id)) {
+		if (BeaconCommon::IsUUID($email_id)) {
 			$this->email_id = $email_id;
 			return true;
 		}
@@ -73,7 +74,7 @@ class User implements \JsonSerializable {
 	
 	public function SetEmailAddress(string $email) {
 		if (self::ValidateEmail($email)) {
-			$database = \BeaconCommon::Database();
+			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
 			$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
 			$database->Commit();
@@ -120,35 +121,35 @@ class User implements \JsonSerializable {
 	}
 	
 	public function DecryptedPrivateKey(string $password) {
-		$hash = \BeaconEncryption::HashFromPassword($password, hex2bin($this->private_key_salt), $this->private_key_iterations);
+		$hash = BeaconEncryption::HashFromPassword($password, hex2bin($this->private_key_salt), $this->private_key_iterations);
 		try {
-			$decrypted = \BeaconEncryption::SymmetricDecrypt($hash, hex2bin($this->private_key));
+			$decrypted = BeaconEncryption::SymmetricDecrypt($hash, hex2bin($this->private_key));
 			if (is_null($decrypted)) {
 				return null;
 			}
 			return $decrypted;
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			return null;
 		}
 	}
 	
 	public function SetDecryptedPrivateKey(string $password, string $private_key) {
-		$salt = \BeaconEncryption::GenerateSalt();
+		$salt = BeaconEncryption::GenerateSalt();
 		$iterations = 12000;
-		$hash = \BeaconEncryption::HashFromPassword($password, $salt, $iterations);
-		$encrypted = bin2hex(\BeaconEncryption::SymmetricEncrypt($hash, $private_key, \BeaconAPI::UsesLegacyEncryption()));
+		$hash = BeaconEncryption::HashFromPassword($password, $salt, $iterations);
+		$encrypted = bin2hex(BeaconEncryption::SymmetricEncrypt($hash, $private_key, Core::UsesLegacyEncryption()));
 		$salt = bin2hex($salt);
 		
 		// test if the public key needs to be changed
 		try {
-			$test_value = \BeaconCommon::GenerateUUID();
-			$signature = \BeaconEncryption::RSASign($private_key, $test_value);
-			$verified = \BeaconEncryption::RSAVerify($this->public_key, $test_value, $signature);
-		} catch (\Exception $err) {
+			$test_value = BeaconCommon::GenerateUUID();
+			$signature = BeaconEncryption::RSASign($private_key, $test_value);
+			$verified = BeaconEncryption::RSAVerify($this->public_key, $test_value, $signature);
+		} catch (Exception $err) {
 			$verified = false;
 		}
 		if ($verified === false) {
-			$new_public_key = \BeaconEncryption::ExtractPublicKey($private_key);
+			$new_public_key = BeaconEncryption::ExtractPublicKey($private_key);
 			if (is_null($new_public_key) === false) {
 				$this->public_key = $new_public_key;
 				$this->SetDecryptedUsercloudKey(self::GenerateUsercloudKey());
@@ -224,7 +225,7 @@ class User implements \JsonSerializable {
 	
 	public function HasChildAccounts() {
 		if (is_null($this->has_child_accounts)) {
- 			$database = \BeaconCommon::Database();
+ 			$database = BeaconCommon::Database();
  			$results = $database->Query('SELECT COUNT(user_id) AS user_count FROM users WHERE parent_account_id = $1;', $this->user_id);
  			$this->has_child_accounts = intval($results->Field('user_count')) > 0;
  		}
@@ -233,7 +234,7 @@ class User implements \JsonSerializable {
 	
 	public function ChildAccounts() {
 		if (is_null($this->child_accounts)) {
- 			$database = \BeaconCommon::Database();
+ 			$database = BeaconCommon::Database();
  			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE parent_account_id = $1;', $this->user_id);
  			$this->child_accounts = static::GetFromResults($results);
  			$this->has_child_accounts = count($this->child_accounts) > 0;
@@ -252,7 +253,7 @@ class User implements \JsonSerializable {
 	
 	public function ParentAccount() {
 		if (is_null($this->parent_account_id) === false) {
-			return \BeaconUser::GetByUserID($this->parent_account_id);
+			return static::GetByUserID($this->parent_account_id);
 		}
 		return null;
 	}
@@ -262,13 +263,13 @@ class User implements \JsonSerializable {
  			return 0;
  		}
 
-  		$database = \BeaconCommon::Database();
+  		$database = BeaconCommon::Database();
  		$results = $database->Query('SELECT SUM(child_seat_count) AS total_seat_count FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
  		return intval($results->Field('total_seat_count'));
 	}
 	
 	public function UsedChildSeats() {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
  		$results = $database->Query('SELECT COUNT(users) AS used_seat_count FROM users WHERE parent_account_id = $1 AND enabled = TRUE AND banned = FALSE;', $this->user_id);
  		return intval($results->Field('used_seat_count'));
 	}
@@ -303,19 +304,19 @@ class User implements \JsonSerializable {
 		}
 		
 		// If it's a UUID, it's obviously not a backup code
-		if (\BeaconCommon::IsUUID($code) === true) {
+		if (BeaconCommon::IsUUID($code) === true) {
 			return $this->IsDeviceTrusted($code);
 		}
 		
 		// Finally, try backup codes
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT * FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->user_id, $code);
 		if ($rows->RecordCount() === 1) {
 			if ($verifyOnly === false) {
 				$database->BeginTransaction();
 				$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->user_id, $code);
 				$backup_codes_removed[] = $code;
-				$new_code = \BeaconCommon::GenerateRandomKey(6);
+				$new_code = BeaconCommon::GenerateRandomKey(6);
 				$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->user_id, $new_code);
 				$backup_codes_added[] = $new_code;
 				$database->Commit();
@@ -337,7 +338,7 @@ class User implements \JsonSerializable {
 		
 		$changed = false;
 		while (count($this->backup_codes) < 10) {
-			$code = \BeaconCommon::GenerateRandomKey(6);
+			$code = BeaconCommon::GenerateRandomKey(6);
 			$this->backup_codes[] = $code;
 			$this->backup_codes_added[] = $code;
 			$changed = true;
@@ -354,7 +355,7 @@ class User implements \JsonSerializable {
 	public function Get2FABackupCodes(): array {
 		if (is_null($this->backup_codes)) {
 			$this->backup_codes = [];
-			$database = \BeaconCommon::Database();
+			$database = BeaconCommon::Database();
 			$rows = $database->Query('SELECT code FROM public.user_backup_codes WHERE user_id = $1;', $this->user_id);
 			while (!$rows->EOF()) {
 				$this->backup_codes[] = $rows->Field('code');
@@ -404,15 +405,15 @@ class User implements \JsonSerializable {
 	
 	public function DecryptedUsercloudKey(string $private_key) {
 		try {
-			return \BeaconEncryption::RSADecrypt($private_key, hex2bin($this->usercloud_key));
-		} catch (\Exception $err) {
+			return BeaconEncryption::RSADecrypt($private_key, hex2bin($this->usercloud_key));
+		} catch (Exception $err) {
 			return null;
 		}
 	}
 	
 	public function SetDecryptedUsercloudKey(string $key, bool $delete_files = true): bool {
 		try {
-			$this->usercloud_key = bin2hex(\BeaconEncryption::RSAEncrypt($this->public_key, $key));
+			$this->usercloud_key = bin2hex(BeaconEncryption::RSAEncrypt($this->public_key, $key));
 			$this->usercloud_delete_files = $delete_files;
 			
 			$children = $this->ChildAccounts();
@@ -421,7 +422,7 @@ class User implements \JsonSerializable {
 			}
 			
 			return true;
-		} catch (\Exception $err) {
+		} catch (Exception $err) {
 			return false;
 		}
 	}
@@ -431,13 +432,13 @@ class User implements \JsonSerializable {
 	}
 	
 	public function HasFiles() {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT COUNT(remote_path) AS num_files FROM usercloud WHERE remote_path LIKE $1 AND size_in_bytes > 0 AND deleted = FALSE;', '/' . $this->UserID() . '/%');
 		return $results->Field('num_files') > 0;
 	}
 	
 	public function HasEncryptedFiles() {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT COUNT(remote_path) AS num_files FROM usercloud WHERE remote_path LIKE $1 AND size_in_bytes > 0 AND deleted = FALSE AND header IS NOT NULL;', '/' . $this->UserID() . '/%');
 		return $results->Field('num_files') > 0;
 	}
@@ -459,8 +460,8 @@ class User implements \JsonSerializable {
 			return false;
 		}
 		
-		if (\BeaconAPI::UsesLegacyEncryption() === false && strtolower(substr($decrypted, 0, 4)) === '8a01') {
-			$this->SetDecryptedPrivateKey($password, $decrypted, \BeaconAPI::UsesLegacyEncryption());
+		if (Core::UsesLegacyEncryption() === false && strtolower(substr($decrypted, 0, 4)) === '8a01') {
+			$this->SetDecryptedPrivateKey($password, $decrypted, Core::UsesLegacyEncryption());
 		}
 		
 		return true;
@@ -481,7 +482,7 @@ class User implements \JsonSerializable {
 			
 			$children = $this->ChildAccounts();
 			foreach ($children as $child) {
-				$child_password = \BeaconCommon::GenerateUUID();
+				$child_password = BeaconCommon::GenerateUUID();
 				if ($child->ReplacePassword($child_password, $private_key, $usercloud_key)) {
 					$child->SetRequiresPasswordChange(true);
 				}
@@ -499,9 +500,9 @@ class User implements \JsonSerializable {
 		}
 		
 		try {
-			$database = \BeaconCommon::Database();
+			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
-			if (\BeaconCommon::IsUUID($email)) {
+			if (BeaconCommon::IsUUID($email)) {
 				$email_id = $email;
 			} else {
 				$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
@@ -510,7 +511,7 @@ class User implements \JsonSerializable {
 			
 			if (empty($username)) {
 				if (empty($this->username)) {
-					$database = \BeaconCommon::Database();
+					$database = BeaconCommon::Database();
 					$results = $database->Query('SELECT generate_username() AS username;');
 					$username = $results->Field('username');
 				} else {
@@ -527,7 +528,7 @@ class User implements \JsonSerializable {
 			$this->email_id = $email_id;
 			
 			return true;
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			return false;
 		}
 	}
@@ -547,7 +548,7 @@ class User implements \JsonSerializable {
 				
 				$public_key = null;
 				$private_key = null;
-				\BeaconEncryption::GenerateKeyPair($public_key, $private_key);
+				BeaconEncryption::GenerateKeyPair($public_key, $private_key);
 					
 				$this->SetPublicKey($public_key);
 				$this->SetDecryptedUsercloudKey($usercloud_key, false);
@@ -555,7 +556,7 @@ class User implements \JsonSerializable {
 			$this->SetDecryptedPrivateKey($new_password, $private_key);
 			$this->SetRequiresPasswordChange(false);
 			return true;
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			return false;
 		}
 	}
@@ -567,7 +568,7 @@ class User implements \JsonSerializable {
 		// This is because the function is VOLATILE and will be executed for every row in the user table unless
 		// treated as a subquery. Or omit the second parameter, which is a STABLE function and performs fine.
 		// The second parameter should only be used when updating the email row is desired.
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
 		if ($results->RecordCount() !== 1 || is_null($results->Field('email_id'))) {
 			return null;
@@ -593,7 +594,7 @@ class User implements \JsonSerializable {
 	}
 	
 	public static function GetByEmailID(string $email_id) {
-			$database = \BeaconCommon::Database();
+			$database = BeaconCommon::Database();
 			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = ANY($1);', '{' . $email_id . '}');
 			$users = static::GetFromResults($results);
 			if (count($users) == 1) {
@@ -602,7 +603,7 @@ class User implements \JsonSerializable {
 		}
 	
 	public static function GetByUserID(string $user_id) {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');
 		$users = static::GetFromResults($results);
 		if (count($users) == 1) {
@@ -614,7 +615,7 @@ class User implements \JsonSerializable {
 		$display_name = substr($username, 0, -9);
 		$suffix = strtolower(substr($username, -8));
 		
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE username = $1 AND SUBSTRING(LOWER(user_id::TEXT) FROM 1 FOR 8) = $2;', $display_name, $suffix);
 		$users = static::GetFromResults($results);
 		if (count($users) == 1) {
@@ -622,7 +623,7 @@ class User implements \JsonSerializable {
 		}
 	}
 	
-	protected static function GetFromResults(\BeaconRecordSet $results) {
+	protected static function GetFromResults(BeaconRecordSet $results) {
 		if ($results === null || $results->RecordCount() === 0) {
 			return array();
 		}
@@ -667,7 +668,7 @@ class User implements \JsonSerializable {
 	/* !Everything Else */
 	
 	public function MergeUsers(... $user_ids) {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		try {
 			$database->BeginTransaction();
 			foreach ($user_ids as $user_id) {
@@ -680,15 +681,15 @@ class User implements \JsonSerializable {
 			}
 			$database->Commit();
 			return true;
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			return false;
 		}
 	}
 	
 	public function Commit() {
-		$original_user = \BeaconUser::GetByUserID($this->user_id);
+		$original_user = static::GetByUserID($this->user_id);
 		$changes = [];
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		
 		if (is_null($original_user)) {
 			$changes['user_id'] = $this->user_id;
@@ -709,7 +710,7 @@ class User implements \JsonSerializable {
 						$database->Insert('public.user_backup_codes', ['user_id' => $this->user_id, 'code' => $code]);
 					}
 				}
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				return false;
 			}
 		} else {
@@ -733,10 +734,10 @@ class User implements \JsonSerializable {
 					
 					if ($this->IsChildAccount() === false && array_key_exists('usercloud_key', $changes) && $this->usercloud_delete_files === true) {
 						// The cloud key has been changed, so we need to cleanup the cloud files
-						$cloud_files = \BeaconCloudStorage::ListFiles('/' . $this->UserID() . '/');
+						$cloud_files = BeaconCloudStorage::ListFiles('/' . $this->UserID() . '/');
 						foreach ($cloud_files as $file) {
 							if ($file['deleted'] === false && is_null($file['header']) === false) {
-								\BeaconCloudStorage::DeleteFile($file['path']);
+								BeaconCloudStorage::DeleteFile($file['path']);
 							}
 						}
 					}
@@ -751,7 +752,7 @@ class User implements \JsonSerializable {
 				}
 				
 				$database->Commit();
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				return false;
 			}
 		}
@@ -763,7 +764,7 @@ class User implements \JsonSerializable {
 	}
 	
 	public function CheckSignature(string $data, string $signature) {
-		return \BeaconEncryption::RSAVerify($this->public_key, $data, $signature);
+		return BeaconEncryption::RSAVerify($this->public_key, $data, $signature);
 	}
 	
 	protected static function SQLColumns() {
@@ -809,17 +810,17 @@ class User implements \JsonSerializable {
 			return;
 		}
 		
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$purchases = [];
 		$hash_members = [];
 		$combined_flags = 0;
 		
 		$free_licenses = [];
 		if (self::ARK_FREE) {
-			$free_licenses[] = \BeaconShop::ARK_PRODUCT_ID;
+			$free_licenses[] = BeaconShop::ARK_PRODUCT_ID;
 		}
 		if (self::ARK2_FREE) {
-			$free_licenses[] = \BeaconShop::ARK2_PRODUCT_ID;
+			$free_licenses[] = BeaconShop::ARK2_PRODUCT_ID;
 		}
 		if (count($free_licenses) > 0) {
 			$expires = (floor(time() / 604800) * 604800) + 1209600;
@@ -883,7 +884,7 @@ class User implements \JsonSerializable {
 			$fields[] = $this->expiration;
 		}
 		$signature = '';
-		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
 			$this->signatures['1'] = bin2hex($signature);
 		}
 		
@@ -893,7 +894,7 @@ class User implements \JsonSerializable {
 			$fields[] = $this->expiration;
 		}
 		$signature = '';
-		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
 			$this->signatures['2'] = bin2hex($signature);
 		}
 		
@@ -903,19 +904,19 @@ class User implements \JsonSerializable {
 			$fields[] = $this->expiration;
 		}
 		$signature = '';
-		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
 			$this->signatures['3'] = bin2hex($signature);
 		}
 	}
 	
 	public function Delete() {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		try {
 			$database->BeginTransaction();
 			$database->Query('DELETE FROM users WHERE user_id = $1;', $this->user_id);
 			$database->Commit();
 			return true;
-		} catch (\Exception $err) {
+		} catch (Exception $err) {
 			$database->Rollback();
 			return false;
 		}
@@ -924,7 +925,7 @@ class User implements \JsonSerializable {
 	/* ! Trusted Devices */
 	
 	public function TrustDevice(string $device_id): void {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$device_hash = $this->PrepareDeviceHash($device_id);
 		$database->BeginTransaction();
 		$database->Query('INSERT INTO public.trusted_devices (device_id_hash, user_id) VALUES ($1, $2) ON CONFLICT (device_id_hash) DO NOTHING;', $device_hash, $this->UserID());
@@ -932,7 +933,7 @@ class User implements \JsonSerializable {
 	}
 	
 	public function UntrustDevice(string $device_id): void {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$device_hash = $this->PrepareDeviceHash($device_id);
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM public.trusted_devices WHERE device_id_hash = $1 AND user_id = $2;', $device_hash, $this->UserID());
@@ -940,14 +941,14 @@ class User implements \JsonSerializable {
 	}
 	
 	public function UntrustAllDevices(): void {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM public.trusted_devices WHERE user_id = $1;', $this->UserID());
 		$database->Commit();
 	}
 	
 	public function IsDeviceTrusted(string $device_id): bool {
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$device_hash = $this->PrepareDeviceHash($device_id);
 		$rows = $database->Query('SELECT device_id_hash FROM public.trusted_devices WHERE device_id_hash = $1 AND user_id = $2;', $device_hash, $this->UserID());
 		return $rows->RecordCount() === 1;

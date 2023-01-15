@@ -1,6 +1,6 @@
 <?php
 
-namespace BeaconAPI;
+namespace BeaconAPI\v4;
 
 class DatabaseObjectProperty {
 	const kEditableNever = 0;

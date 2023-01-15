@@ -183,10 +183,8 @@ Core::RegisterRoutes(
 	]
 );
 
-print_r(class_parents('BeaconAPI\v4\Ark\Engram'));
-
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Mod', 'ark/mods', 'modId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Engram', 'ark/engrams', 'engramId');
+//DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Engram', 'ark/engrams', 'engramId');
 
 //BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'lootContainers');
 //BeaconObjectManager::RegisterRoutes('Ark\Creature', 'ark', 'creatures');

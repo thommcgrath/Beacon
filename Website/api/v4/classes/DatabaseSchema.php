@@ -1,6 +1,6 @@
 <?php
 
-namespace BeaconAPI;
+namespace BeaconAPI\v4;
 
 class DatabaseSchema {
 	protected $schema = 'public';

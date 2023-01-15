@@ -2,7 +2,7 @@
 
 namespace BeaconAPI;
 
-trait Core {
+trait APICore {
 	protected static $user_id = null;
 	protected static $payload = null;
 	protected static $body_raw = null;
