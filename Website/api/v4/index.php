@@ -1,8 +1,10 @@
 <?php
 
+namespace BeaconAPI\v4;
+
 require(dirname(__FILE__) . '/loader.php');
 
-BeaconAPI::RegisterRoutes(
+Core::RegisterRoutes(
 	[
 		'/ark/blueprints' => [
 			'GET' => 'ark/blueprints/list',
@@ -45,15 +47,16 @@ BeaconAPI::RegisterRoutes(
 		'/ark/maps/{mapId}' => [
 			'GET' => 'ark/maps/get'
 		],
-		'/ark/mods' => [
+		/*'/ark/mods' => [
 			'GET' => 'ark/mods/list',
-			'POST' => 'ark/mods/create'
+			'POST' => 'ark/mods/bulk',
+			'DELETE' => 'ark/mods/bulk'
 		],
 		'/ark/mods/{modId}' => [
 			'GET' => 'ark/mods/get',
 			'POST' => 'ark/mods/edit',
 			'DELETE' => 'ark/mods/delete'
-		],
+		],*/
 		'/ark/mods/{modId}/checkConfirmation' => [
 			'GET' => 'ark/mods/confirm'
 		],
@@ -180,11 +183,16 @@ BeaconAPI::RegisterRoutes(
 	]
 );
 
-BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'lootContainers');
-BeaconObjectManager::RegisterRoutes('Ark\Creature', 'ark', 'creatures');
-BeaconObjectManager::RegisterRoutes('Ark\ConfigLine', 'ark', 'configOptions');
-BeaconObjectManager::RegisterRoutes('Ark\SpawnPoint', 'ark', 'spawnPoints');
+print_r(class_parents('BeaconAPI\v4\Ark\Engram'));
 
-BeaconAPI::HandleRequest(dirname(__FILE__) . '/requests');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Mod', 'ark/mods', 'modId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Engram', 'ark/engrams', 'engramId');
+
+//BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'lootContainers');
+//BeaconObjectManager::RegisterRoutes('Ark\Creature', 'ark', 'creatures');
+//BeaconObjectManager::RegisterRoutes('Ark\ConfigLine', 'ark', 'configOptions');
+//BeaconObjectManager::RegisterRoutes('Ark\SpawnPoint', 'ark', 'spawnPoints');
+
+Core::HandleRequest(dirname(__FILE__) . '/requests');
 
 ?>

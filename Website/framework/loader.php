@@ -18,22 +18,25 @@ if (is_int($api_version) === false || isset($api_version) === false || empty($ap
 $_SERVER['API_VERSION'] = $api_version;
 
 spl_autoload_register(function($class_name) {
-	$filename = str_replace('\\', '/', $class_name) . '.php';
-	$paths = [dirname(__FILE__) . '/classes/' . $filename];
-	$path_parts = explode('\\', $class_name, 2);
+	$parent = dirname(__FILE__) . '/classes';
 	
-	if (count($path_parts) === 2 && $path_parts[0] === 'BeaconAPI') {
-		$paths[] = dirname(__FILE__, 2) . '/api/common/' . str_replace('\\', '/', $path_parts[1]) . '.php';
-	} elseif (count($path_parts) === 2) {
-		$paths[] = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/' . strtolower($path_parts[0]) . '/classes/' . str_replace('\\', '/', $path_parts[1]) . '.php';
-	}
-	$paths[] = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/classes/' . $filename;
-	
-	foreach ($paths as $path) {
-		if (file_exists($path)) {
-			include($path);
-			return;
+	if (str_starts_with($class_name, 'BeaconAPI\\')) {
+		$version = null;
+		$api_root = dirname(__FILE__, 2) . '/api';
+		$class_name = substr($class_name, 10);
+		if (preg_match('/^(v\d+)\\\/', $class_name, $matches) === 1) {
+			// Explicit version
+			$version = $matches[1];
+			$class_name = substr($class_name, strlen($version) + 1);
+			$parent = $api_root . '/' . $version . '/classes';
+		} else {
+			$parent = $api_root . '/common';
 		}
+	}
+	
+	$filename = str_replace('\\', '/', $class_name) . '.php';
+	if (file_exists("{$parent}/{$filename}")) {
+		include("{$parent}/{$filename}");
 	}
 });
 
@@ -124,9 +127,9 @@ BeaconErrors::StartWatching();
 	}
 	$policy = implode(' ', $groups);
 	
-	header('Content-Security-Policy: ' . $policy);
-	header('Cache-Control: public, max-age=3600, must-revalidate');
-	header('X-Endpoint-Server: ' . gethostname());
+	//header('Content-Security-Policy: ' . $policy);
+	//header('Cache-Control: public, max-age=3600, must-revalidate');
+	//header('X-Endpoint-Server: ' . gethostname());
 })();
 
 BeaconTemplate::Start();

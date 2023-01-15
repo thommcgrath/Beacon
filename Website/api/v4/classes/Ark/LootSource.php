@@ -1,6 +1,7 @@
 <?php
 
-namespace Ark;
+namespace BeaconAPI\v4\Ark;
+use BeaconCommon, BeaconDatabase, BeaconResetSet, Exception;
 
 class LootSource extends \BeaconAPI\Ark\LootSource {
 	protected $min_item_sets = 1;
@@ -17,7 +18,7 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 		return $columns;
 	}
 	
-	protected static function FromRow(\BeaconRecordSet $row) {
+	protected static function FromRow(BeaconRecordSet $row) {
 		$obj = parent::FromRow($row);
 		if ($obj === null) {
 			return null;
@@ -94,29 +95,29 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 			if (is_numeric($json['min_item_sets'])) {
 				$this->min_item_sets = intval($json['min_item_sets']);
 			} else {
-				throw new \Exception('Minimum item sets must be a number greater than or equal to zero.');
+				throw new Exception('Minimum item sets must be a number greater than or equal to zero.');
 			}
 		}
 		if (array_key_exists('max_item_sets', $json)) {
 			if (is_numeric($json['max_item_sets'])) {
 				$this->max_item_sets = intval($json['max_item_sets']);
 			} else {
-				throw new \Exception('Maximum item sets must be a number greater than or equal to zero.');
+				throw new Exception('Maximum item sets must be a number greater than or equal to zero.');
 			}
 		}
 		if (array_key_exists('prevent_duplicates', $json)) {
 			if (is_bool($json['prevent_duplicates'])) {
 				$this->prevent_duplicates = boolval($json['prevent_duplicates']);
 			} else {
-				throw new \Exception('Prevent duplicates must be a boolean.');
+				throw new Exception('Prevent duplicates must be a boolean.');
 			}
 		}
 		if (array_key_exists('contents', $json)) {
 			$sets = $json['contents'];
-			if (is_null($sets) || (is_array($sets) && \BeaconCommon::IsAssoc($sets) === false)) {
+			if (is_null($sets) || (is_array($sets) && BeaconCommon::IsAssoc($sets) === false)) {
 				$this->item_sets = $sets;
 			} else {
-				throw new \Exception('Item sets must be an array of loot item sets.');
+				throw new Exception('Item sets must be an array of loot item sets.');
 			}
 		}
 	}
@@ -136,28 +137,28 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 		}
 	}
 	
-	protected function SaveChildrenHook(\BeaconDatabase $database) {
+	protected function SaveChildrenHook(BeaconDatabase $database) {
 		parent::SaveChildrenHook($database);
 		
 		$this->SaveItemSets($database);
 	}
 	
-	protected function SaveItemSets(\BeaconDatabase $database): void {
+	protected function SaveItemSets(BeaconDatabase $database): void {
 		$loot_source_id = $this->ObjectID();
 		$keep_sets = [];
 		$counters = [];
 		if (is_null($this->item_sets) === false) {
 			foreach ($this->item_sets as $item_set) {
 				$loot_item_set_id = $item_set['loot_item_set_id'];
-				if (\BeaconCommon::IsUUID($loot_item_set_id)) {
+				if (BeaconCommon::IsUUID($loot_item_set_id)) {
 					$keep_sets[] = $loot_item_set_id;
 				} else {
-					throw new \Exception('Item set ID is not a v4 UUID.');
+					throw new Exception('Item set ID is not a v4 UUID.');
 				}
 				
-				$item_set['sync_sort_key'] = \BeaconCommon::CreateUniqueSort(implode(',', [
-					\BeaconCommon::SortString($item_set['label']),
-					\BeaconCommon::SortDouble($item_set['weight'])
+				$item_set['sync_sort_key'] = BeaconCommon::CreateUniqueSort(implode(',', [
+					BeaconCommon::SortString($item_set['label']),
+					BeaconCommon::SortDouble($item_set['weight'])
 				]), $counters);
 				$item_set['loot_source_id'] = $loot_source_id;
 				$entries = $item_set['entries'];
@@ -175,25 +176,25 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 		}
 	}
 	
-	protected function SaveItemSetEntries(\BeaconDatabase $database, string $loot_item_set_id, array|null $entries) {
+	protected function SaveItemSetEntries(BeaconDatabase $database, string $loot_item_set_id, array|null $entries) {
 		$keep_entries = [];
 		$counters = [];
 		if (is_null($entries) === false) {
 			foreach ($entries as $entry) {
 				$loot_item_set_entry_id = $entry['loot_item_set_entry_id'];
-				if (\BeaconCommon::IsUUID($loot_item_set_entry_id)) {
+				if (BeaconCommon::IsUUID($loot_item_set_entry_id)) {
 					$keep_entries[] = $loot_item_set_entry_id;
 				} else {
-					throw new \Exception('Entry ID is not a v4 UUID.');
+					throw new Exception('Entry ID is not a v4 UUID.');
 				}
 				
-				$entry['sync_sort_key'] = \BeaconCommon::CreateUniqueSort(implode(',', [
-					\BeaconCommon::SortDouble($entry['weight']),
-					\BeaconCommon::SortInteger($entry['min_quantity']),
-					\BeaconCommon::SortInteger($entry['max_quantity']),
-					\BeaconCommon::SortDouble($entry['blueprint_chance']),
-					\BeaconCommon::SortString($entry['min_quality']),
-					\BeaconCommon::SortString($entry['max_quality'])
+				$entry['sync_sort_key'] = BeaconCommon::CreateUniqueSort(implode(',', [
+					BeaconCommon::SortDouble($entry['weight']),
+					BeaconCommon::SortInteger($entry['min_quantity']),
+					BeaconCommon::SortInteger($entry['max_quantity']),
+					BeaconCommon::SortDouble($entry['blueprint_chance']),
+					BeaconCommon::SortString($entry['min_quality']),
+					BeaconCommon::SortString($entry['max_quality'])
 				]), $counters);
 				$entry['loot_item_set_id'] = $loot_item_set_id;
 				$options = $entry['options'];
@@ -210,16 +211,16 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 		}
 	}
 	
-	protected function SaveItemSetEntryOptions(\BeaconDatabase $database, string $loot_item_set_entry_id, array|null $options) {
+	protected function SaveItemSetEntryOptions(BeaconDatabase $database, string $loot_item_set_entry_id, array|null $options) {
 		$keep_options = [];
 		$counters = [];
 		if (is_null($options) === false) {
 			foreach ($options as $option) {
 				$loot_item_set_entry_option_id = $option['loot_item_set_entry_option_id'];
-				if (\BeaconCommon::IsUUID($loot_item_set_entry_option_id)) {
+				if (BeaconCommon::IsUUID($loot_item_set_entry_option_id)) {
 					$keep_options[] = $loot_item_set_entry_option_id;
 				} else {
-					throw new \Exception('Option ID is not a v4 UUID.');
+					throw new Exception('Option ID is not a v4 UUID.');
 				}
 				
 				if (array_key_exists('engram', $option)) {
@@ -229,14 +230,14 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 				} elseif (array_key_exists('engram_id', $option)) {
 					$rows = $database->Query('SELECT class_string FROM ark.engrams WHERE object_id = $1;', $option['engram_id']);
 					if ($rows->RecordCount() !== 1) {
-						throw new \Exception('Unable to find engram by UUID.');
+						throw new Exception('Unable to find engram by UUID.');
 					}
 					$class_string = $rows->Field('class_string');
 				}
 				
-				$option['sync_sort_key'] = \BeaconCommon::CreateUniqueSort(implode(',', [
-					\BeaconCommon::SortString($class_string),
-					\BeaconCommon::SortDouble($option['weight'])
+				$option['sync_sort_key'] = BeaconCommon::CreateUniqueSort(implode(',', [
+					BeaconCommon::SortString($class_string),
+					BeaconCommon::SortDouble($option['weight'])
 				]), $counters);
 				$option['loot_item_set_entry_id'] = $loot_item_set_entry_id;
 				

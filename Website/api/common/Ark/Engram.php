@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Ark;
 
-class Engram extends \Ark\Blueprint {
+class Engram extends Blueprint {
 	protected $entry_string = null;
 	protected $required_points = null;
 	protected $required_level = null;

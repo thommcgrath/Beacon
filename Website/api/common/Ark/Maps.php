@@ -1,6 +1,6 @@
 <?php
 
-namespace Ark;
+namespace BeaconAPI\Ark;
 
 abstract class Maps {
 	public static function All() {

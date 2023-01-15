@@ -1,10 +1,11 @@
 <?php
 
-namespace Ark;
+namespace BeaconAPI\v4;
+use BeaconAPI\Core;
 
-abstract class Project extends \BeaconAPI\Ark\Project {
+abstract class Project extends \BeaconAPI\Project {
 	public function ResourceURL() {
-		return \BeaconAPI::URL('project/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
+		return Core::URL('projects/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
 	}
 }
 

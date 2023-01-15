@@ -1,6 +1,7 @@
 <?php
 
-namespace Ark;
+namespace BeaconAPI\v4\Ark;
+use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception, BeaconAPI\Core;
 
 class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 	protected $populations = null;
@@ -13,7 +14,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		return $columns;
 	}
 	
-	protected static function FromRow(\BeaconRecordSet $row) {
+	protected static function FromRow(BeaconRecordSet $row) {
 		$obj = parent::FromRow($row);
 		if ($obj === null) {
 			return null;
@@ -141,7 +142,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		} else {
 			$json['populations'] = $this->populations;
 		}
-		$json['resource_url'] = \BeaconAPI::URL('ark/spawn_point/' . urlencode($this->ObjectID()));
+		$json['resource_url'] = Core::URL('ark/spawn_point/' . urlencode($this->ObjectID()));
 		return $json;
 	}
 	
@@ -150,40 +151,40 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		
 		if (array_key_exists('sets', $json)) {
 			$sets = $json['sets'];
-			if (is_null($sets) || (is_array($sets) && \BeaconCommon::IsAssoc($sets) === false)) {
+			if (is_null($sets) || (is_array($sets) && BeaconCommon::IsAssoc($sets) === false)) {
 				$this->groups = $sets;
 			} else {
-				throw new \Exception('Sets should be an array of spawn entry sets.');
+				throw new Exception('Sets should be an array of spawn entry sets.');
 			}
 		}
 		
 		if (array_key_exists('limits', $json)) {
 			$limits = $json['limits'];
-			if (is_null($limits) || (is_array($limits) && \BeaconCommon::IsAssoc($limits) === false)) {
+			if (is_null($limits) || (is_array($limits) && BeaconCommon::IsAssoc($limits) === false)) {
 				$this->limits = $limits;
 			} else {
-				throw new \Exception('Limits should be an array of structures.'); 
+				throw new Exception('Limits should be an array of structures.'); 
 			}
 		}
 	}
 	
-	protected function SaveChildrenHook(\BeaconDatabase $database) {
+	protected function SaveChildrenHook(BeaconDatabase $database) {
 		parent::SaveChildrenHook($database);
 		
 		$this->SaveSets($database);
 		$this->SaveLimits($database);
 	}
 	
-	protected function SaveSets(\BeaconDatabase $database) {
+	protected function SaveSets(BeaconDatabase $database) {
 		$spawn_point_id = $this->ObjectID();
 		$sets_list = [];
 		if (is_null($this->groups) === false) {
 			foreach ($this->groups as $set) {
 				$set_id = $set['spawn_point_set_id'];
-				if (\BeaconCommon::IsUUID($set_id)) {
+				if (BeaconCommon::IsUUID($set_id)) {
 					$sets_list[] = $set_id;
 				} else {
-					throw new \Exception('Spawn point set id is not a uuid.');
+					throw new Exception('Spawn point set id is not a uuid.');
 				}
 				
 				$set['spawn_point_id'] = $spawn_point_id;
@@ -209,7 +210,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		}
 	}
 	
-	protected function SaveSetEntries(\BeaconDatabase $database, string $spawn_point_set_id, $entries) {
+	protected function SaveSetEntries(BeaconDatabase $database, string $spawn_point_set_id, $entries) {
 		$keep_entries = [];
 		if (is_null($entries) === false) {
 			foreach ($entries as $entry) {
@@ -237,7 +238,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		}
 	}
 	
-	protected function SaveSetEntryLevels(\BeaconDatabase $database, string $spawn_point_set_entry_id, $levels) {
+	protected function SaveSetEntryLevels(BeaconDatabase $database, string $spawn_point_set_entry_id, $levels) {
 		$keep_levels = [];
 		if (is_null($levels) === false) {
 			foreach ($levels as $level) {
@@ -257,7 +258,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		}
 	}
 	
-	protected function SaveSetReplacements(\BeaconDatabase $database, string $spawn_point_set_id, $replacements) {
+	protected function SaveSetReplacements(BeaconDatabase $database, string $spawn_point_set_id, $replacements) {
 		$keep_replacements = [];
 		if (is_null($replacements) === false) {
 			foreach ($replacements as $replacement) {
@@ -280,17 +281,17 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		}
 	}
 	
-	protected function SaveLimits(\BeaconDatabase $database) {
+	protected function SaveLimits(BeaconDatabase $database) {
 		$spawn_point_id = $this->ObjectID();
 		$creature_list = [];
 		if (is_null($this->limits) === false) {
 			foreach ($this->limits as $limit) {
 				$creature_id = $limit['creature']['UUID'];
 				$percentage = $limit['max_percent'];
-				if (\BeaconCommon::IsUUID($creature_id)) {
+				if (BeaconCommon::IsUUID($creature_id)) {
 					$creature_list[] = $creature_id;
 				} else {
-					throw new \Exception('Key for limit is not a uuid.');
+					throw new Exception('Key for limit is not a uuid.');
 				}
 				
 				$database->Query('INSERT INTO ark.spawn_point_limits (spawn_point_id, creature_id, max_percentage) VALUES ($1, $2, $3) ON CONFLICT (spawn_point_id, creature_id) DO UPDATE SET max_percentage = $3 WHERE spawn_point_limits.max_percentage IS DISTINCT FROM $3;', $spawn_point_id, $creature_id, $percentage);

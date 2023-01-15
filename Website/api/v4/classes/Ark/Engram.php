@@ -1,11 +1,12 @@
 <?php
 
-namespace Ark;
+namespace BeaconAPI\v4\Ark;
+use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception, BeaconAPI\Core, BeaconAPI\DatabaseSchema, BeaconAPI\DatabaseObjectProperty;
 
 class Engram extends \BeaconAPI\Ark\Engram {
 	protected $recipe = null;
 	
-	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
+	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
 		
 		$recipe = is_null($row->Field('recipe')) ? null : json_decode($row->Field('recipe'), true);
@@ -31,9 +32,9 @@ class Engram extends \BeaconAPI\Ark\Engram {
 		}
 	}
 	
-	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
+	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
-		$schema->AddColumn(new \BeaconAPI\DatabaseObjectProperty('recipe', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, ingredients.class_string, ingredients.mod_id, quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template)']));
+		$schema->AddColumn(new DatabaseObjectProperty('recipe', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, ingredients.class_string, ingredients.mod_id, quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template)']));
 		return $schema;
 	}
 	
@@ -47,7 +48,7 @@ class Engram extends \BeaconAPI\Ark\Engram {
 		return $columns;
 	}
 	
-	protected static function FromRow(\BeaconRecordSet $row) {
+	protected static function FromRow(BeaconRecordSet $row) {
 		$obj = parent::FromRow($row);
 		if ($obj === null) {
 			return null;
@@ -78,7 +79,7 @@ class Engram extends \BeaconAPI\Ark\Engram {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
-		$json['resource_url'] = \BeaconAPI::URL('ark/engrams/' . urlencode($this->UUID()));
+		$json['resource_url'] = Core::URL('ark/engrams/' . urlencode($this->UUID()));
 		if (is_null($this->recipe) || count($this->recipe) == 0) {
 			$json['recipe'] = null;
 		} else {
@@ -87,7 +88,7 @@ class Engram extends \BeaconAPI\Ark\Engram {
 		return $json;
 	}
 	
-	protected function SaveChildrenHook(\BeaconDatabase $database) {
+	protected function SaveChildrenHook(BeaconDatabase $database) {
 		parent::SaveChildrenHook($database);
 		$object_id = $this->ObjectID();
 		
@@ -102,8 +103,8 @@ class Engram extends \BeaconAPI\Ark\Engram {
 			$quantity = intval($ingredient['quantity']);
 			$require_exact = boolval($ingredient['exact']);
 			
-			if (\BeaconCommon::IsUUID($ingredient_id) === false) {
-				throw new \Exception('Recipe ingredient should be a v4 UUID.');
+			if (BeaconCommon::IsUUID($ingredient_id) === false) {
+				throw new Exception('Recipe ingredient should be a v4 UUID.');
 			}
 			$keep_ingredients[] = $ingredient_id;
 			

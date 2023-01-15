@@ -1,6 +1,13 @@
 <?php
 
-abstract class BeaconAPI extends \BeaconAPI\Core {
+namespace BeaconAPI\v4;
+use DateTime, BeaconCommon;
+
+abstract class Core {
+	use \BeaconAPI\Core {
+		ReplySuccess as CommonReplySuccess;
+	}
+	
 	public static function APIVersionNumber(): int {
 		return 4;
 	}
@@ -11,14 +18,14 @@ abstract class BeaconAPI extends \BeaconAPI\Core {
 	
 	public static function Deletions(int $min_version = -1, \DateTime $since = null) {
 		if ($since === null) {
-			$since = new \DateTime('2000-01-01');
+			$since = new DateTime('2000-01-01');
 		}
 		
 		if ($min_version == -1) {
-			$min_version = \BeaconCommon::MinVersion();
+			$min_version = BeaconCommon::MinVersion();
 		}
 		
-		$database = \BeaconCommon::Database();
+		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT object_id, game_id, from_table, label, tag FROM public.deletions WHERE min_version <= $1 AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
 		$arr = array();
 		while (!$results->EOF()) {
@@ -40,7 +47,7 @@ abstract class BeaconAPI extends \BeaconAPI\Core {
 		if (preg_match('/^\/user$/', $request_route) || preg_match('/^\/user\//', $request_route)) {
 			static::Authorize();
 			$request_route = str_replace('/user', '/users/' . static::UserID(), $request_route);
-		}
+		}		
 		
 		foreach (static::$routes as $route => $route_info) {
 			$route_expression = $route_info['expression'];
@@ -88,10 +95,19 @@ abstract class BeaconAPI extends \BeaconAPI\Core {
 				'path_parameters' => $path_parameters,
 				'route_key' => $route_key
 			];
-			$handler($context);
+			$response = $handler($context);
+			$response->Flush();
 			return;
 		}
 		static::ReplyError('Endpoint not found: Route not registered.', null, 404);
+	}
+	
+	public static function ReplySuccess($payload = null, int $code = 200) {
+		if (empty($payload)) {
+			$code = 204;
+		}
+		
+		static::CommonReplySuccess($payload, $code);
 	}
 }
 

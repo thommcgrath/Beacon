@@ -2,7 +2,7 @@
 	
 namespace BeaconAPI\Ark;
 
-class Blueprint extends \Ark\GenericObject {
+class Blueprint extends GenericObject {
 	protected $availability;
 	protected $path;
 	protected $class_string;

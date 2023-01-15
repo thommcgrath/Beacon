@@ -1,6 +1,7 @@
 <?php
 
-namespace Ark;
+namespace BeaconAPI\v4\Ark;
+use BeaconAPI\Core;
 
 class Project extends \BeaconAPI\Ark\Project {
 	public function jsonSerialize(): mixed {
@@ -22,7 +23,7 @@ class Project extends \BeaconAPI\Ark\Project {
 	}
 	
 	public function ResourceURL() {
-		return \BeaconAPI::URL('project/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
+		return Core::URL('project/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
 	}
 	
 	protected static function HookValidateMultipart(array &$required_vars, string &$reason) {

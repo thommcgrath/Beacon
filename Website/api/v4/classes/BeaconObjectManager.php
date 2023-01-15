@@ -1,5 +1,7 @@
 <?php
 
+namespace BeaconAPI\v4;
+
 class BeaconObjectManager {
 	const FeatureList = 1;
 	const FeatureGet = 2;

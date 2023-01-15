@@ -1,6 +1,7 @@
 <?php
 
-namespace Ark;
+namespace BeaconAPI\v4\Ark;
+use BeaconAPI\Core, BeaconRecordSet;
 
 class ConfigLine extends \BeaconAPI\Ark\ConfigLine {
 	protected ?array $uwp_changes;
@@ -11,7 +12,7 @@ class ConfigLine extends \BeaconAPI\Ark\ConfigLine {
 		return $columns;
 	}
 	
-	protected static function FromRow(\BeaconRecordSet $row) {
+	protected static function FromRow(BeaconRecordSet $row) {
 		$obj = parent::FromRow($row);
 		if ($obj === null) {
 			return null;
@@ -22,7 +23,7 @@ class ConfigLine extends \BeaconAPI\Ark\ConfigLine {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
-		$json['resource_url'] = \BeaconAPI::URL('ark/ini_option/' . urlencode($this->ObjectID()));
+		$json['resource_url'] = Core::URL('ark/ini_option/' . urlencode($this->ObjectID()));
 		$json['uwp_changes'] = $this->uwp_changes;
 		return $json;
 	}

@@ -85,6 +85,7 @@ class Mod extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 				return $mods['results'][0];
 			}
 		}
+		return null;
 	}
 	
 	protected static function BuildSearchParameters(\BeaconAPI\DatabaseSearchParameters $parameters, array $filters): void {
