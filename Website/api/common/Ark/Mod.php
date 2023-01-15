@@ -5,6 +5,7 @@ namespace BeaconAPI\Ark;
 class Mod extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 	protected $mod_id = '';
 	protected $workshop_id = '';
+	protected $user_id = '';
 	protected $name = '';
 	protected $confirmed = false;
 	protected $confirmation_code = '';
@@ -17,6 +18,7 @@ class Mod extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 	protected function __construct(\BeaconPostgreSQLRecordSet $row) {
 		$this->mod_id = $row->Field('mod_id');
 		$this->workshop_id = abs($row->Field('workshop_id'));
+		$this->user_id = $row->Field('user_id');
 		$this->name = $row->Field('name');
 		$this->confirmed = $row->Field('confirmed');
 		$this->confirmation_code = $row->Field('confirmation_code');
@@ -28,12 +30,14 @@ class Mod extends \BeaconAPI\DatabaseObject implements \JsonSerializable {
 	}
 	
 	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
-		return new \BeaconAPI\DatabaseSchema('ark', 'mods', 'mod_id', [
+		return new \BeaconAPI\DatabaseSchema('ark', 'mods', [
+			new \BeaconAPI\DatabaseObjectProperty('mod_id', ['primaryKey' => true]),
 			'workshop_id',
-			'name',
+			'user_id',
+			new \BeaconAPI\DatabaseObjectProperty('name', ['editable' => \BeaconAPI\DatabaseObjectProperty::kEditableAlways]),
 			'confirmed',
 			'confirmation_code',
-			'pull_url',
+			new \BeaconAPI\DatabaseObjectProperty('pull_url', ['editable' => \BeaconAPI\DatabaseObjectProperty::kEditableAlways]),
 			'last_pull_hash',
 			'console_safe',
 			'default_enabled',

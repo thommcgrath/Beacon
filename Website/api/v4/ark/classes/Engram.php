@@ -33,7 +33,7 @@ class Engram extends \BeaconAPI\Ark\Engram {
 	
 	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
-		$schema->importColumn('(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, ingredients.class_string, ingredients.mod_id, quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template) AS recipe');
+		$schema->AddColumn(new \BeaconAPI\DatabaseObjectProperty('recipe', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, ingredients.class_string, ingredients.mod_id, quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template)']));
 		return $schema;
 	}
 	

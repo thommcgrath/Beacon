@@ -36,18 +36,18 @@ class GenericObject extends \BeaconAPI\DatabaseObject implements \JsonSerializab
 	}
 	
 	public static function BuildDatabaseSchema(): \BeaconAPI\DatabaseSchema {
-		return new \BeaconAPI\DatabaseSchema('ark', 'objects', 'object_id', [
-			'label',
-			'alternate_label',
-			'tags'
+		return new \BeaconAPI\DatabaseSchema('ark', 'objects', [
+			new \BeaconAPI\DatabaseObjectProperty('id', ['primaryKey' => true, 'columnName' => 'object_id']),
+			new \BeaconAPI\DatabaseObjectProperty('label'),
+			new \BeaconAPI\DatabaseObjectProperty('alternate_label'),
+			new \BeaconAPI\DatabaseObjectProperty('tags'),
+			new \BeaconAPI\DatabaseObjectProperty('min_version', ['accessor' => 'GREATEST(%%TABLE%%.min_version, mods.min_version)', 'setter' => 'mod_id = %%PLACEHOLDER%%']),
+			new \BeaconAPI\DatabaseObjectProperty('mod_id', ['accessor' => 'mods.mod_id']),
+			new \BeaconAPI\DatabaseObjectProperty('mod_name', ['accessor' => 'mods.name']),
+			new \BeaconAPI\DatabaseObjectProperty('mod_workshop_id', ['accessor' => 'ABS(mods.workshop_id)']),
+			new \BeaconAPI\DatabaseObjectProperty('table_name', ['accessor' => 'SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5)'])
 		], [
 			'INNER JOIN ark.mods ON (%%TABLE%%.mod_id = mods.mod_id)'
-		], [
-			'GREATEST(%%TABLE%%.min_version, mods.min_version) AS min_version',
-			'mods.mod_id',
-			'mods.name AS mod_name',
-			'ABS(mods.workshop_id) AS mod_workshop_id',
-			'SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5) AS table_name'
 		]);
 	}
 	

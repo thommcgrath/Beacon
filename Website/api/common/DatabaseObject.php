@@ -59,7 +59,7 @@ abstract class DatabaseObject {
 	public static function Fetch(string $uuid): ?DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$database = \BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . $schema->selectColumns() . ' FROM ' . $schema->fromClause() . ' WHERE ' . $schema->primaryKey(true) . ' = $1;', $uuid);
+		$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1;', $uuid);
 		if (is_null($rows) && $rows->RecordCount() !== 1) {
 			return null;
 		}
@@ -77,48 +77,110 @@ abstract class DatabaseObject {
 		}
 	}
 	
-	public function Edit(array $properties): void {
-		$whitelist = static::HookGetEditableProperties();
-		foreach ($whitelist as $property_name) {
-			if (array_key_exists($property_name, $properties)) {
-				$this->SetProperty($property_name, $properties[$property_name]);
-			}
+	public static function Create(array $properties): DatabaseObject {
+		$schema = static::DatabaseSchema();
+		$primaryKeyColumn = $schema->PrimaryKey(false);
+		if (isset($properties[$primaryKeyColumn]) && \BeaconCommon::IsUUID($properties[$primaryKeyColumn])) {
+			$primaryKey = $properties[$primaryKeyColumn];
+		} else {
+			$primaryKey = \BeaconCommon::GenerateUUID();
 		}
 		
+		$placeholders = ['$1'];
+		$values = [$primaryKey];
+		$columns = [$primaryKeyColumn];
+		$placeholder = 2;
+		
+		$editableColumns = static::EditableProperties(DatabaseObjectProperty::kEditableAtCreation);
+		foreach ($editableColumns as $definition) {
+			if ($definition->IsPrimaryKey()) {
+				continue;
+			}
+			
+			$propertyName = $definition->PropertyName();
+			if (isset($properties[$propertyName]) === false) {
+				continue;
+			}
+			
+			$placeholders[] = '$' . $placeholder++;
+			$columns[] = $definition->ColumnName();
+			$values[] = $properties[$propertyName];
+		}
+		
+		$database = \BeaconCommon::Database();
+		try {
+			$database->BeginTransaction();
+			$database->Query("INSERT INTO " . $schema->Table(true) . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ");", $values);
+			$obj = static::Fetch($primaryKey);
+			if (is_null($obj)) {
+				throw new \Exception("No object inserted into database.");
+			}
+			$database->Commit();
+			return $obj;
+		} catch (\Exception $err) {
+			$database->Rollback();
+			throw $err;
+		}
+	}
+	
+	public function Edit(array $properties): void {
+		$whitelist = static::EditableProperties(DatabaseObjectProperty::kEditableLater);
+		foreach ($whitelist as $definition) {
+			$propertyName = $definition->PropertyName();
+			if (array_key_exists($propertyName, $properties)) {
+				$this->SetProperty($propertyName, $properties[$propertyName]);
+			}
+		}
 		$this->Save();
 	}
 	
 	public function Save(): void {
+		$database = \BeaconCommon::Database();
+			
 		if (count($this->changed_properties) === 0) {
+			try {
+				$database->BeginTransaction();
+				$this->SaveChildObjects();
+				$database->Commit();
+			} catch (\Exception $err) {
+				$database->Rollback();
+				throw $err;
+			}
 			return;
 		}
 		
+		$schema = static::DatabaseSchema();
 		$placeholder = 1;
 		$assignments = [];
 		$values = [];
-		foreach ($this->changed_properties as $property) {
-			$this->HookPrepareColumnWrite($property, $placeholder, $assignments, $values);
+		$uuid = $this->UUID();
+		foreach ($this->changed_properties as $propertyName) {
+			$definition = $schema->Property($propertyName);
+			$assignments[] = $definition->Setter('$' . $placeholder++);
+			$values[] = $this->$propertyName;
 		}
-		$values[] = $this->UUID();
+		$values[] = $uuid;
 		
-		$schema = static::DatabaseSchema();
-		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query('UPDATE ' . $schema->table(true) . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $schema->primaryKey(true) . ' = $' . $placeholder++ . ';', $values);
-		$rows = $database->Query('SELECT ' . $schema->selectColumns() . ' FROM ' . $schema->fromClause() . ' WHERE ' . $schema->primaryKey(true) . ' = $1;', $this->UUID());
-		$database->Commit();
+		try {
+			$database->Query('UPDATE ' . $schema->Table(true) . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $schema->PrimaryKey(true) . ' = $' . $placeholder++ . ';', $values);
+			$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1;', $uuid);
+			$this->SaveChildObjects();
+			$database->Commit();
+		} catch (\Exception $err) {
+			$database->Rollback();
+			throw $err;
+		}
 		
 		$this->__construct($rows);
 		$this->changed_properties = [];
 	}
 	
-	protected static function HookGetEditableProperties(): array {
-		return [];
+	protected static function EditableProperties(int $flags): array {
+		return static::DatabaseSchema()->EditableColumns($flags);
 	}
 	
-	protected function HookPrepareColumnWrite(string $property, int &$placeholder, array &$assignments, array &$values): void {
-		$assignments[] = '"' . $property . '" = $' . $placeholder++;
-		$values[] = $this->$property;
+	protected function SaveChildObjects(): void {
 	}
 	
 	public function UUID(): string {
@@ -136,7 +198,7 @@ abstract class DatabaseObject {
 		if (isset($filters['page'])) {
 			$params->pageNum = intval($filters['page']);
 		}
-		$params->orderBy = $schema->primaryKey(true);
+		$params->orderBy = $schema->PrimaryKey(true);
 		
 		static::BuildSearchParameters($params, $filters);
 			
@@ -158,8 +220,8 @@ abstract class DatabaseObject {
 		}
 		
 		$totalRowCount = 0;
-		$primaryKey = $schema->primaryKey(true);
-		$from = $schema->fromClause();
+		$primaryKey = $schema->PrimaryKey(true);
+		$from = $schema->FromClause();
 		$database = \BeaconCommon::Database();
 			
 		if ($legacyMode === false) {
@@ -169,11 +231,12 @@ abstract class DatabaseObject {
 			}
 			$sql .= ';';
 			//echo "$sql\n";
+			//var_dump($params->values);
 			$totalRows = $database->Query($sql, $params->values);
 			$totalRowCount = intval($totalRows->Field('num_results'));
 		}
 		
-		$sql = "SELECT " . $schema->selectColumns() . " FROM {$from}";
+		$sql = "SELECT " . $schema->SelectColumns() . " FROM {$from}";
 		if (count($params->clauses) > 0) {
 			$sql .= ' WHERE ' . implode(' AND ', $params->clauses);
 		}
