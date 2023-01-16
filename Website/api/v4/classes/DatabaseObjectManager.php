@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use Exception;
+use BeaconCommon, Exception;
 
 class DatabaseObjectManager {
 	const kFeatureCreate = 1;
@@ -83,7 +83,47 @@ class DatabaseObjectManager {
 	}
 	
 	public function HandleCreate(array $context): APIResponse {
+		if (Core::IsJSONContentType() === false) {
+			return APIResponse::NewJSONError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
+		}
 		
+		$body = Core::BodyAsJSON();
+		if (BeaconCommon::IsAssoc($body)) {
+			$members = [$body];
+			$multi = false;
+		} else {
+			$members = $body;
+			$multi = true;
+		}
+		
+		$schema = $this->className::DatabaseSchema();
+		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+		$newObjects = [];
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		foreach ($members as $memberData) {
+			try {
+				if (isset($memberData[$primaryKeyProperty]) === false) {
+					$memberData[$primaryKeyProperty] = BeaconCommon::GenerateUUID();
+				}
+				
+				$newObjects[] = $this->className::Create($memberData);
+			} catch (Exception $err) {
+				$database->Rollback();
+				return APIResponse::NewJSONError($err->getMessage(), $err, 500);
+			}
+		}
+		if (count($newObjects) !== count($members)) {
+			$database->Rollback();
+			return APIResponse::NewJSONError('Incorrect number of objects created.', ['sent' => $members, 'created' => $newObjects], 500);
+		}
+		$database->Commit();
+		
+		if ($multi) {
+			return APIResponse::NewJSON($newObjects, 201);
+		} else {
+			return APIResponse::NewJSON($newObjects[0], 201);
+		}
 	}
 	
 	public function HandleList(array $context): APIResponse {

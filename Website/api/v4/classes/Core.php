@@ -57,13 +57,17 @@ class Core {
 		return static::$body_raw;
 	}
 	
-	public static function JSONPayload() {
+	public static function IsJSONContentType(): bool {
+		$header = strtolower($_SERVER['HTTP_CONTENT_TYPE']);
+		return ($header === 'application/json' || str_starts_with($header, 'application/json;'));
+	}
+	
+	public static function BodyAsJSON() {
 		if (static::$payload === null) {
 			static::$payload = json_decode(static::Body(), true);
 		}
 		return static::$payload;
 	}
-	
 	
 	// deprecated
 	public static function ReplySuccess(?array $payload = null): void {
@@ -194,7 +198,6 @@ class Core {
 			$auth_value = substr($authorization, $pos + 1);
 			
 			switch ($auth_type) {
-			case 'session':
 			case 'bearer':
 				$authorized = static::AuthorizeWithSessionID($auth_value);
 				break;

@@ -58,9 +58,9 @@ class DatabaseObjectProperty {
 	
 	public function Setter(string $placeholder): string {
 		if (is_null($this->setter)) {
-			return "{$this->columnName} = {$placeholder}";
+			return $placeholder;
 		} else {
-			return str_replace('%%PLACEHOLDER%%', $placeholder, "{$this->setter} = {$placeholder}");
+			return str_replace('%%PLACEHOLDER%%', $placeholder, $this->setter);
 		}
 	}
 	
@@ -70,6 +70,10 @@ class DatabaseObjectProperty {
 	
 	public function IsPrimaryKey(): bool {
 		return $this->primaryKey;
+	}
+	
+	public function IsSettable() {
+		return is_null($this->accessor) || is_null($this->setter) === false;
 	}
 }
 

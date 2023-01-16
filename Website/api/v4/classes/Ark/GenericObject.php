@@ -43,8 +43,8 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('label'),
 			new DatabaseObjectProperty('alternate_label'),
 			new DatabaseObjectProperty('tags'),
-			new DatabaseObjectProperty('min_version', ['accessor' => 'GREATEST(%%TABLE%%.min_version, mods.min_version)', 'setter' => 'mod_id = %%PLACEHOLDER%%']),
-			new DatabaseObjectProperty('mod_id', ['accessor' => 'mods.mod_id']),
+			new DatabaseObjectProperty('min_version', ['accessor' => 'GREATEST(%%TABLE%%.min_version, mods.min_version)', 'setter' => '%%PLACEHOLDER%%']),
+			new DatabaseObjectProperty('mod_id', ['accessor' => 'mods.mod_id', 'setter' => '%%PLACEHOLDER%%']),
 			new DatabaseObjectProperty('mod_name', ['accessor' => 'mods.name']),
 			new DatabaseObjectProperty('mod_workshop_id', ['accessor' => 'ABS(mods.workshop_id)']),
 			new DatabaseObjectProperty('table_name', ['accessor' => 'SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5)'])
@@ -90,6 +90,24 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 				$parameters->values[] = $tag;
 			}
 		}
+	}
+	
+	protected static function PreparePropertyValue(string $propertyName, DatabaseObjectProperty $definition, mixed $value, string &$setter): mixed {
+		switch ($propertyName) {
+		case 'tags':
+			$tags = [];
+			if (is_string($value)) {
+				$tags = explode(',', $value);
+			} else if (is_array($value)) {
+				$tags = $value;
+			}
+			asort($tags);
+			$setter = 'ARRAY(SELECT JSONB_ARRAY_ELEMENTS_TEXT(' . $setter . '))';
+			return json_encode($tags);
+			break;
+		default:
+			return parent::PreparePropertyValue($propertyName, $definition, $value, $setter);
+		}	
 	}
 	
 	protected static function BuildSQL(...$clauses) {

@@ -4,6 +4,12 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet, Exception;
 
 abstract class DatabaseObject {
+	const kPermissionCreate = 1;
+	const kPermissionRead = 2;
+	const kPermissionUpdate = 4;
+	const kPermissionDelete = 8;
+	const kPermissionAll = self::kPermissionCreate | self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
+	
 	protected $changed_properties = [];
 	protected static $schema = null;
 	
@@ -40,6 +46,25 @@ abstract class DatabaseObject {
 	protected static function ValidateProperty(string $property, mixed $value): void {
 	}
 	
+	protected static function PreparePropertyValue(string $propertyName, DatabaseObjectProperty $definition, mixed $value, string &$setter): mixed {
+		// By default, do nothing
+		return $value;
+	}
+	
+	// Need a way to check incoming array data for permission
+	
+	static function CheckClassPermission(User $user, int $desiredPermissions): bool {
+		return false;
+	}
+	
+	function CheckPermission(User $user, int $desiredPermissions): bool {
+		if (static::CheckClassPermission($user, $desiredPermissions) === false) {
+			return false;
+		}
+		
+		return false;	
+	}
+	
 	protected function SetProperty(string $property, mixed $value): void {
 		if ($this->$property !== $value) {
 			static::ValidateProperty($property, $value);
@@ -50,21 +75,24 @@ abstract class DatabaseObject {
 	
 	public static function Create(array $properties): DatabaseObject {
 		$schema = static::DatabaseSchema();
-		$primaryKeyColumn = $schema->PrimaryKey(false);
-		if (isset($properties[$primaryKeyColumn]) && BeaconCommon::IsUUID($properties[$primaryKeyColumn])) {
-			$primaryKey = $properties[$primaryKeyColumn];
+		$primaryKeyColumn = $schema->PrimaryColumn();
+		$primaryKeyName = $primaryKeyColumn->PropertyName();
+		if (isset($properties[$primaryKeyName]) && BeaconCommon::IsUUID($properties[$primaryKeyName])) {
+			$primaryKey = $properties[$primaryKeyName];
 		} else {
 			$primaryKey = BeaconCommon::GenerateUUID();
 		}
 		
-		$placeholders = ['$1'];
-		$values = [$primaryKey];
-		$columns = [$primaryKeyColumn];
+		$primaryKeyPlaceholder = $primaryKeyColumn->Setter('$1');
+		$values = [static::PreparePropertyValue($primaryKeyName, $primaryKeyColumn, $primaryKey, $primaryKeyPlaceholder)];
+		$placeholders = [$primaryKeyPlaceholder];
+		$columns = [$primaryKeyColumn->ColumnName()];
 		$placeholder = 2;
 		
 		$editableColumns = static::EditableProperties(DatabaseObjectProperty::kEditableAtCreation);
 		foreach ($editableColumns as $definition) {
-			if ($definition->IsPrimaryKey()) {
+			if ($definition->IsPrimaryKey() || $definition->IsSettable() === false) {
+				echo "Skipping {$definition->PropertyName()}...\n";
 				continue;
 			}
 			
@@ -73,9 +101,12 @@ abstract class DatabaseObject {
 				continue;
 			}
 			
-			$placeholders[] = '$' . $placeholder++;
+			$valuePlaceholder = $definition->Setter('$' . $placeholder++);
+			$value = static::PreparePropertyValue($propertyName, $definition, $properties[$propertyName], $valuePlaceholder);
+			
+			$placeholders[] = $valuePlaceholder;
 			$columns[] = $definition->ColumnName();
-			$values[] = $properties[$propertyName];
+			$values[] = $value;
 		}
 		
 		$database = BeaconCommon::Database();
