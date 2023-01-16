@@ -201,6 +201,7 @@ abstract class DatabaseObject {
 				$sql .= " WHERE " . implode(' AND ', $params->clauses);
 			}
 			$sql .= ';';
+			//echo "{$sql}\n";
 			$totalRows = $database->Query($sql, $params->values);
 			$totalRowCount = intval($totalRows->Field('num_results'));
 		}
@@ -218,6 +219,7 @@ abstract class DatabaseObject {
 			$params->values[] = $params->pageSize;
 		}
 		
+		//echo "{$sql}\n";
 		$rows = $database->Query($sql, $params->values);
 		$members = static::FromRows($rows);
 		

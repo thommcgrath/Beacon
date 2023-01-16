@@ -6,37 +6,6 @@ require(dirname(__FILE__) . '/loader.php');
 
 Core::RegisterRoutes(
 	[
-		'/ark/blueprints' => [
-			'GET' => 'ark/blueprints/list',
-			'POST' => 'ark/blueprints/edit'
-		],
-		'/ark/colorSets' => [
-			'GET' => 'ark/colorSets/list'
-		],
-		'/ark/colorSets/{colorSetId}' => [
-			'GET' => 'ark/colorSets/get'
-		],
-		'/ark/colors' => [
-			'GET' => 'ark/colors/list'
-		],
-		'/ark/colors/{colorId}' => [
-			'GET' => 'ark/colors/get'
-		],
-		'/ark/engrams' => [
-			'GET' => 'ark/engrams/list',
-			'POST' => 'ark/engrams/create'
-		],
-		'/ark/engrams/{engramId}' => [
-			'GET' => 'ark/engrams/get',
-			'POST' => 'ark/engrams/edit',
-			'DELETE' => 'ark/engrams/delete'
-		],
-		'/ark/events' => [
-			'GET' => 'ark/events/list'
-		],
-		'/ark/events/{eventId}' => [
-			'GET' => 'ark/events/get'
-		],
 		'/ark/projects/{projectId}/generatedLines' => [
 			'GET' => 'ark/generate',
 			'POST' => 'ark/generate'
@@ -183,8 +152,14 @@ Core::RegisterRoutes(
 	]
 );
 
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Blueprint', 'ark/blueprints', 'blueprintId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Color', 'ark/colors', 'colorId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ColorSet', 'ark/colorSets', 'colorSetId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ConfigLine', 'ark/configOptions', 'configOptionId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Engram', 'ark/engrams', 'engramId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Event', 'ark/events', 'eventId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Mod', 'ark/mods', 'modId');
-//DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Engram', 'ark/engrams', 'engramId');
+
 
 //BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'lootContainers');
 //BeaconObjectManager::RegisterRoutes('Ark\Creature', 'ark', 'creatures');

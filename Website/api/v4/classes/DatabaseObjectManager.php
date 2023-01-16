@@ -10,6 +10,7 @@ class DatabaseObjectManager {
 	const kFeatureDelete = 8;
 	const kFeatureSingle = 16;
 	const kFeatureBulk = 32;
+	const kFeatureReadOnly = self::kFeatureRead | self::kFeatureSingle | self::kFeatureBulk;
 	const kFeatureAll = self::kFeatureCreate | self::kFeatureRead | self::kFeatureUpdate | self::kFeatureDelete | self::kFeatureSingle | self::kFeatureBulk;
 	
 	protected $className = null;
@@ -77,7 +78,7 @@ class DatabaseObjectManager {
 				$methods['DELETE'] = [$this, 'HandleDelete'];
 			}
 			
-			Core::RegisterRoutes(["/{$this->path}/\{{$this->varName}\}" => $methods]);
+			Core::RegisterRoutes(["/{$this->path}/{{$this->varName}}" => $methods]);
 		}
 	}
 	

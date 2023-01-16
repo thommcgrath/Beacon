@@ -82,6 +82,12 @@ class DatabaseSchema {
 		}
 	}
 	
+	public function AddColumns(array $columns): void {
+		foreach ($columns as $column) {
+			$this->AddColumn($column);
+		}	
+	}
+	
 	public function AddJoin(string $join): void {
 		if (in_array($join, $this->joins) === false) {
 			$this->joins[] = $join;

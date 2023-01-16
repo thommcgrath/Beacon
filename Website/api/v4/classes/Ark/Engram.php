@@ -1,9 +1,10 @@
 <?php
 
 namespace BeaconAPI\v4\Ark;
-use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception, BeaconAPI\Core, BeaconAPI\DatabaseSchema, BeaconAPI\DatabaseObjectProperty;
+use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema};
+use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
-class Engram extends \BeaconAPI\Ark\Engram {
+class Engram extends Blueprint {
 	protected $recipe = null;
 	
 	protected function __construct(BeaconRecordSet $row) {
@@ -34,6 +35,7 @@ class Engram extends \BeaconAPI\Ark\Engram {
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
+		$schema->SetTable('engrams');
 		$schema->AddColumn(new DatabaseObjectProperty('recipe', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, ingredients.class_string, ingredients.mod_id, quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template)']));
 		return $schema;
 	}

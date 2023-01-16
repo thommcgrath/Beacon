@@ -13,7 +13,7 @@ class APIResponse {
 		$this->code = $code;
 	}
 	
-	public static function NewJSON(?array $obj, int $code): APIResponse {
+	public static function NewJSON(mixed $obj, int $code): APIResponse {
 		return new static($code, json_encode($obj, JSON_PRETTY_PRINT), ['Content-Type' => 'application/json']);
 	}
 	
