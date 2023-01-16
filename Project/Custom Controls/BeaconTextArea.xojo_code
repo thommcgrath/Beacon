@@ -3,8 +3,8 @@ Protected Class BeaconTextArea
 Inherits TextArea
 	#tag MenuHandler
 		Function EditPaste() As Boolean Handles EditPaste.Action
-			Self.Paste()
-			Return True
+		  Self.Paste()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 

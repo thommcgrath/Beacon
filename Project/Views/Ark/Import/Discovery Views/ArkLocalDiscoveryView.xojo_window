@@ -29,8 +29,10 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
    Begin CodeEditor ConfigArea
       AutoDeactivate  =   True
       Enabled         =   True
+      HasBorder       =   False
       Height          =   221
       HelpTag         =   ""
+      HorizontalScrollPosition=   0
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   20
@@ -40,11 +42,13 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      SelectionLength =   0
       ShowInfoBar     =   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   123
+      VerticalScrollPosition=   0
       Visible         =   True
       Width           =   560
    End

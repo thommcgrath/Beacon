@@ -36,13 +36,13 @@ Implements ObservationKit.Observable
 
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			If Self.Changed Then
-			RaiseEvent ShouldSave(False)
-			End If
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  If Self.Changed Then
+		    RaiseEvent ShouldSave(False)
+		  End If
 		End Function
 	#tag EndMenuHandler
 

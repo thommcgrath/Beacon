@@ -924,6 +924,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
+         State           =   1
          TabIndex        =   14
          TabPanelIndex   =   1
          TabStop         =   True
@@ -933,7 +934,6 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Underline       =   False
          Value           =   True
          Visible         =   True
-         VisualState     =   1
          Width           =   268
       End
    End

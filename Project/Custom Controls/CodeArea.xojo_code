@@ -36,8 +36,8 @@ Inherits TextArea
 
 	#tag MenuHandler
 		Function EditCopy() As Boolean Handles EditCopy.Action
-			Self.Copy()
-			Return True
+		  Self.Copy()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 

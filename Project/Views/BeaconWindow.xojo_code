@@ -97,22 +97,22 @@ Inherits Window
 
 	#tag MenuHandler
 		Function FileClose() As Boolean Handles FileClose.Action
-			Self.Close
-			Return True
+		  Self.Close
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function WindowMinimize() As Boolean Handles WindowMinimize.Action
-			Self.Minimize
-			Return True
+		  Self.Minimize
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function WindowZoom() As Boolean Handles WindowZoom.Action
-			Self.Maximize
-			Return True
+		  Self.Maximize
+		  Return True
 		End Function
 	#tag EndMenuHandler
 

@@ -701,6 +701,7 @@ Begin ServerViewContainer FTPServerView
          Top             =   197
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   199

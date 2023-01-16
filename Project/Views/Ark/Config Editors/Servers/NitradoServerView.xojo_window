@@ -235,6 +235,7 @@ Begin ServerViewContainer NitradoServerView
       End
    End
    Begin Beacon.OAuth2Client Auth
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
