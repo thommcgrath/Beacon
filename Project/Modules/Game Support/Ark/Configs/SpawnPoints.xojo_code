@@ -249,14 +249,23 @@ Inherits Ark.ConfigGroup
 		        Var ReplacementClasses(), ReplacementWeights() As String
 		        
 		        For Each ToCreature As Ark.Creature In ReplacementCreatures
-		          Var Weight As Double = Set.CreatureReplacementWeight(FromCreature, ToCreature)
+		          Var Weight As NullableDouble = Set.CreatureReplacementWeight(FromCreature, ToCreature)
+		          If Weight Is Nil Then
+		            App.Log("Warning: Could not find weight for replacing " + FromCreature.ClassString + " with " + ToCreature.ClassString)
+		            Continue
+		          End If
 		          ReplacementClasses.Add("""" + ToCreature.ClassString + """")
-		          ReplacementWeights.Add(Weight.PrettyText)
+		          ReplacementWeights.Add(Weight.DoubleValue.PrettyText)
 		        Next
 		        
-		        Replacements.Add("(FromClass=""" + FromCreature.ClassString + """,ToClasses=(" + ReplacementClasses.Join(",") + "),Weights=(" + ReplacementWeights.Join(",") + "))")
+		        If ReplacementClasses.Count > 0 Then
+		          Replacements.Add("(FromClass=""" + FromCreature.ClassString + """,ToClasses=(" + ReplacementClasses.Join(",") + "),Weights=(" + ReplacementWeights.Join(",") + "))")
+		        End If
 		      Next
-		      Members.Add("NPCRandomSpawnClassWeights=(" + Replacements.Join(",") + ")")
+		      
+		      If Replacements.Count > 0 Then
+		        Members.Add("NPCRandomSpawnClassWeights=(" + Replacements.Join(",") + ")")
+		      End If
 		    End If
 		    
 		    If IncludeMinLevelMultiplier Or IncludeMaxLevelMultiplier Or IncludeMinLevelOffset Or IncludeMaxLevelOffset Or IncludeLevelOverride Then
