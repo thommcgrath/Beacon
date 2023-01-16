@@ -677,7 +677,7 @@ End
 		      If Cancelled = False Then
 		        If Self.mImported Is Nil Or Self.mImported.BlueprintCount = 0 Then
 		          Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
-		        ElseIf Self.mImported.ModNameCount = 1 Then
+		        ElseIf Self.mImported.ModCount = 1 Then
 		          // Just import what was found
 		          Var FoundBlueprints() As Ark.Blueprint = Self.mImported.Blueprints
 		          Self.mController.SaveBlueprints(FoundBlueprints)
@@ -685,18 +685,18 @@ End
 		          Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(FoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
 		        Else
 		          // Show a prompt
-		          Var ChosenNames() As String = SelectModPrefixDialog.Present(Self, Self.mImported.ModNames)
-		          If ChosenNames.Count > 0 Then
+		          Var ChosenTags() As String = SelectModPrefixDialog.Present(Self, Self.mImported)
+		          If ChosenTags.Count > 0 Then
 		            Var ChosenBlueprints() As Ark.Blueprint
 		            Var FoundBlueprints() As Ark.Blueprint = Self.mImported.Blueprints
-		            For Each Name As String In ChosenNames
-		              Var Prefix As String = "/Game/Mods/" + Name + "/"
+		            For Each Tag As String In ChosenTags
+		              Var Prefix As String = "/Game/Mods/" + Tag + "/"
 		              For Each Blueprint As Ark.Blueprint In FoundBlueprints
 		                If Blueprint.Path.BeginsWith(Prefix) Then
 		                  ChosenBlueprints.Add(Blueprint)
 		                End If
 		              Next Blueprint
-		            Next Name
+		            Next Tag
 		            
 		            Self.mController.SaveBlueprints(ChosenBlueprints)
 		            Self.UpdateList(ChosenBlueprints)

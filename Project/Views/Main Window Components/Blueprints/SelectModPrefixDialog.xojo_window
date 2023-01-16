@@ -127,7 +127,7 @@ Begin BeaconDialog SelectModPrefixDialog
       Height          =   214
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   " 	Mod Tag"
+      InitialValue    =   " 	Mod Name or Tag"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -222,33 +222,33 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Names() As String)
-		  Self.mNames = Names
+		Private Sub Constructor(Importer As Ark.BlueprintImporter)
+		  Self.mImporter = Importer
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Names() As String) As String()
-		  Var ChosenNames() As String
+		Shared Function Present(Parent As Window, Importer As Ark.BlueprintImporter) As String()
+		  Var ChosenTags() As String
 		  If Parent Is Nil Then
-		    Return ChosenNames
+		    Return ChosenTags
 		  End If
 		  
-		  Var Win As New SelectModPrefixDialog(Names)
+		  Var Win As New SelectModPrefixDialog(Importer)
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  ChosenNames = Win.mChosenNames
-		  Return ChosenNames
+		  ChosenTags = Win.mChosenTags
+		  Return ChosenTags
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mChosenNames() As String
+		Private mChosenTags() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNames() As String
+		Private mImporter As Ark.BlueprintImporter
 	#tag EndProperty
 
 
@@ -259,10 +259,12 @@ End
 		Sub Open()
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		  
-		  For Each Name As String In Self.mNames
-		    Me.AddRow("", Name)
+		  Var Tags() As String = Self.mImporter.ModTags
+		  For Each Tag As String In Tags
+		    Me.AddRow("", Self.mImporter.ModNameForTag(Tag))
+		    Me.RowTagAt(Me.LastAddedRowIndex) = Tag
 		    Me.CellCheckBoxValueAt(Me.LastAddedRowIndex, 0) = True
-		  Next Name
+		  Next Tag
 		  
 		  Me.Sort
 		End Sub
@@ -276,7 +278,7 @@ End
 		      Continue
 		    End If
 		    
-		    Self.mChosenNames.Add(Self.List.CellValueAt(Idx, 1))
+		    Self.mChosenTags.Add(Self.List.RowTagAt(Idx))
 		  Next Idx
 		  
 		  Self.Hide
