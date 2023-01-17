@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', event => {
       addAuthenticatorActionButton.addEventListener('click', ev => {
         var otp = new jsOTP.totp();
         var userCode = addAuthenticatorCodeField.value.trim();
-        var nickname = addAuthenticatorNicknameField.value.trim();
+        authenticator.nickname = addAuthenticatorNicknameField.value.trim();
         if (userCode !== otp.getOtp(authenticator.metadata.secret)) {
           addAuthenticatorCodeField.classList.add('invalid');
           var label = document.querySelector("label[for=\"".concat(addAuthenticatorCodeField.id, "\"]"));
