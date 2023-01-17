@@ -22,6 +22,28 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 		$this->metadata = json_decode($row->Field('metadata'), true);
 	}
 	
+	public static function BuildDatabaseSchema(): DatabaseSchema {
+		return new DatabaseSchema('public', 'user_authenticators', [
+			new DatabaseObjectProperty('authenticator_id', ['primaryKey' => true]),
+			new DatabaseObjectProperty('user_id'),
+			new DatabaseObjectProperty('type'),
+			new DatabaseObjectProperty('nickname', ['editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('date_added', ['accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.date_added)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
+			new DatabaseObjectProperty('metadata')
+		]);
+	}
+	
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+		$schema = static::DatabaseSchema();
+		
+		if (isset($filters['user_id']) === false) {
+			throw new Exception('Must include user_id filter');
+		}
+		
+		$parameters->AddFromFilter($schema, $filters, 'user_id');
+		$parameters->AddFromFilter($schema, $filters, 'type');
+	}
+	
 	public static function SQLSchemaName(): string {
 		return 'public';
 	}
@@ -46,13 +68,13 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 		];
 	}
 	
-	public static function Create(string $authenticator_id, string $user_id, string $type, string $nickname, array $metadata): Authenticator {
+	/*public static function Create(string $authenticator_id, string $user_id, string $type, string $nickname, array $metadata): Authenticator {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query('INSERT INTO ' . static::SQLLongTableName() . ' (authenticator_id, user_id, type, nickname, date_added, metadata) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, $5);', $authenticator_id, $user_id, $type, $nickname, json_encode($metadata));
 		$database->Commit();
 		return static::GetByAuthenticatorID($authenticator_id);
-	}
+	}*/
 	
 	public static function GetForUser(User $user, ?string $type = null): array {
 		return static::GetForUserID($user->UserID(), $type);

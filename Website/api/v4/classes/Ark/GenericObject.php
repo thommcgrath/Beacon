@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Ark;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, DateTime, Exception;
 
 class GenericObject extends DatabaseObject implements \JsonSerializable {
@@ -101,13 +101,55 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 			} else if (is_array($value)) {
 				$tags = $value;
 			}
-			asort($tags);
+			sort($tags);
 			$setter = 'ARRAY(SELECT JSONB_ARRAY_ELEMENTS_TEXT(' . $setter . '))';
 			return json_encode($tags);
 			break;
 		default:
 			return parent::PreparePropertyValue($propertyName, $definition, $value, $setter);
-		}	
+		}
+	}
+	
+	public static function CheckClassPermission(?User $user, array $members, int $desiredPermissions): bool {
+		// If the only thing the user wants is read, that will be allowed
+		if ($desiredPermissions === DatabaseObject::kPermissionRead) {
+			return true;
+		}
+		
+		if (is_null($user) || count($members) === 0) {
+			return false;
+		}
+		
+		$mods = [];
+		foreach ($members as $memberData) {
+			if (isset($memberData['mod_id']) === false) {
+				return false;
+			}
+			
+			$mod_id = $memberData['mod_id'];
+			if (isset($mods[$mod_id])) {
+				// Already confirmed ok
+				continue;
+			}
+			
+			if (BeaconCommon::IsUUID($mod_id) === false) {
+				return false;
+			}
+			
+			$mod = Mod::Fetch($mod_id);
+			if (is_null($mod)) {
+				return false;
+			}
+			
+			if ($mod->UserId() !== $user->UserId()) {
+				return false;
+			}
+			
+			// approved
+			$mods[$mod->ModId()] = $mod;
+		}
+		
+		return true;
 	}
 	
 	protected static function BuildSQL(...$clauses) {

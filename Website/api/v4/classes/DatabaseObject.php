@@ -11,17 +11,18 @@ abstract class DatabaseObject {
 	const kPermissionAll = self::kPermissionCreate | self::kPermissionRead | self::kPermissionUpdate | self::kPermissionDelete;
 	
 	protected $changed_properties = [];
-	protected static $schema = null;
+	protected static $schema = [];
 	
 	abstract protected function __construct(BeaconRecordSet $row);
 	abstract public static function BuildDatabaseSchema(): DatabaseSchema;
 	abstract protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void;
 		
 	public static function DatabaseSchema(): DatabaseSchema {
-		if (is_null(static::$schema)) {
-			static::$schema = static::BuildDatabaseSchema();
+		$calledClass = get_called_class();
+		if (array_key_exists($calledClass, static::$schema) === false) {
+			static::$schema[$calledClass] = static::BuildDatabaseSchema();
 		}
-		return static::$schema;
+		return static::$schema[$calledClass];
 	}
 	
 	protected static function FromRows(BeaconRecordSet $rows): array {
@@ -37,7 +38,7 @@ abstract class DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1;', $uuid);
-		if (is_null($rows) && $rows->RecordCount() !== 1) {
+		if (is_null($rows) || $rows->RecordCount() !== 1) {
 			return null;
 		}
 		return new static($rows);
@@ -53,16 +54,8 @@ abstract class DatabaseObject {
 	
 	// Need a way to check incoming array data for permission
 	
-	static function CheckClassPermission(User $user, int $desiredPermissions): bool {
-		return false;
-	}
-	
-	function CheckPermission(User $user, int $desiredPermissions): bool {
-		if (static::CheckClassPermission($user, $desiredPermissions) === false) {
-			return false;
-		}
-		
-		return false;	
+	public static function CheckClassPermission(?User $user, array $members, int $desiredPermissions): bool {
+		return $desiredPermissions === static::kPermissionRead;
 	}
 	
 	protected function SetProperty(string $property, mixed $value): void {
@@ -77,7 +70,7 @@ abstract class DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$primaryKeyColumn = $schema->PrimaryColumn();
 		$primaryKeyName = $primaryKeyColumn->PropertyName();
-		if (isset($properties[$primaryKeyName]) && BeaconCommon::IsUUID($properties[$primaryKeyName])) {
+		if (isset($properties[$primaryKeyName])) {
 			$primaryKey = $properties[$primaryKeyName];
 		} else {
 			$primaryKey = BeaconCommon::GenerateUUID();
@@ -92,7 +85,6 @@ abstract class DatabaseObject {
 		$editableColumns = static::EditableProperties(DatabaseObjectProperty::kEditableAtCreation);
 		foreach ($editableColumns as $definition) {
 			if ($definition->IsPrimaryKey() || $definition->IsSettable() === false) {
-				echo "Skipping {$definition->PropertyName()}...\n";
 				continue;
 			}
 			

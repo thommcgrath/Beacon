@@ -10,12 +10,12 @@ class Core {
 	protected static $auth_style = null;
 	protected static $routes = [];
 	
-	const AUTH_STYLE_PUBLIC_KEY = 'public key';
-	const AUTH_STYLE_EMAIL_WITH_PASSWORD = 'email+password';
-	const AUTH_STYLE_SESSION = 'session';
+	const kAuthChallenge = 'public key';
+	const kAuthEmail = 'email+password';
+	const kAuthBearer = 'session';
 	
-	const AUTH_OPTIONAL = 1;
-	const AUTH_PERMISSIVE = 2;
+	const kAuthFlagOptional = 1;
+	const kAuthFlagPermissive = 2;
 	
 	public static function HandleCORS(): void {
 		header('Access-Control-Allow-Origin: *');
@@ -70,7 +70,7 @@ class Core {
 	}
 	
 	// deprecated
-	public static function ReplySuccess(?array $payload = null): void {
+	public static function ReplySuccess(mixed $payload = null): void {
 		if (empty($payload)) {
 			APIResponse::NewNoContent()->Flush();
 		} else {
@@ -80,7 +80,7 @@ class Core {
 	}
 	
 	// deprecated
-	public static function ReplyError(string $message, array $payload = null, int $code) {
+	public static function ReplyError(string $message, mixed $payload = null, int $code) {
 		APIResponse::NewJSONError($message, $payload, $code)->Flush();
 		exit;
 	}
@@ -132,7 +132,7 @@ class Core {
 			}
 			
 			static::$user_id = $session->UserID();
-			static::$auth_style = self::AUTH_STYLE_SESSION;
+			static::$auth_style = self::kAuthBearer;
 			
 			$session->Renew();
 			
@@ -151,7 +151,7 @@ class Core {
 				return false;
 			}
 			static::$user_id = $user->UserID();
-			static::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
+			static::$auth_style = self::kAuthEmail;
 			return true;
 		}
 		return false;
@@ -168,7 +168,7 @@ class Core {
 		
 		if ($user->CheckSignature($challenge, $signature)) {
 			static::$user_id = $user->UserID();
-			static::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
+			static::$auth_style = self::kAuthChallenge;
 			return true;
 		}
 		
@@ -177,13 +177,13 @@ class Core {
 	
 	public static function Authorize(bool|int $flags = 0) {
 		if ($flags === true) {
-			$flags = self::AUTH_OPTIONAL;
+			$flags = self::kAuthFlagOptional;
 		} else if ($flags === false) {
 			$flags = 0;
 		}	
 		
-		$optional = ($flags & self::AUTH_OPTIONAL) === self::AUTH_OPTIONAL;
-		$permissive = ($flags & self::AUTH_PERMISSIVE) === self::AUTH_PERMISSIVE;
+		$optional = ($flags & self::kAuthFlagOptional) === self::kAuthFlagOptional;
+		$permissive = ($flags & self::kAuthFlagPermissive) === self::kAuthFlagPermissive;
 		
 		$authorized = false;
 		$content = '';
@@ -401,7 +401,7 @@ class Core {
 					http_response_code(500); // Set a default. If there is a fatal error, it'll still be set.
 					require($handler_file);
 				} catch (\Throwable $err) {
-					static::ReplyError('Error loading api source file.', null, 500);
+					static::ReplyError((BeaconCommon::InProduction() ? 'Error loading api source file.' : $err->getMessage()), null, 500);
 				}
 			} else if (is_callable($handler) === true) {
 				// nothing to do

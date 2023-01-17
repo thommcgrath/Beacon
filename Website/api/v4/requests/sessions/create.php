@@ -1,14 +1,16 @@
 <?php
 
-BeaconAPI::Authorize(BeaconAPI::AUTH_PERMISSIVE);
+use BeaconAPI\v4\{APIResponse, Core, Session};
+
+Core::Authorize(Core::kAuthFlagPermissive);
 	
-function handle_request(array $context): void {
-	$user = BeaconAPI::User();
+function handle_request(array $context): APIResponse {
+	$user = Core::User();
 	if (is_null($user) || $user->CanSignIn() === false) {
-		BeaconAPI::ReplyError('Invalid user', ['code' => 'USER_DISABLED'], 400);
+		return APIResponse::NewJSONError('Invalid user', ['code' => 'USER_DISABLED'], 400);
 	}
 	
-	$obj = BeaconAPI::JSONPayload();
+	$obj = Core::BodyAsJSON();
 	$verification_code = null;
 	$device_id = null;
 	$trust = null;
@@ -27,9 +29,9 @@ function handle_request(array $context): void {
 		$verification_code = $device_id;
 	}
 	
-	$session = BeaconSession::Create($user, $verification_code);
+	$session = Session::CreateForUser($user, $verification_code);
 	if (is_null($session)) {
-		BeaconAPI::ReplyError('Verification needed', ['code' => '2FA_ENABLED'], 403);
+		return APIResponse::NewJSONError('Verification needed', ['code' => '2FA_ENABLED'], 403);
 	}
 	
 	if (is_null($device_id) === false) {
@@ -40,7 +42,7 @@ function handle_request(array $context): void {
 		}
 	}
 	
-	BeaconAPI::ReplySuccess($session);
+	return APIResponse::NewJSON($session, 201);
 }
 
 ?>

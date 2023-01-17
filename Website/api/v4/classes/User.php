@@ -56,15 +56,15 @@ class User implements \JsonSerializable {
 	
 	/* !Basic Properties */
 	
-	public function UserID() {
+	public function UserId() {
 		return $this->user_id;
 	}
 	
-	public function EmailID() {
+	public function EmailId() {
 		return $this->email_id;
 	}
 	
-	public function SetEmailID(string $email_id) {
+	public function SetEmailId(string $email_id) {
 		if (BeaconCommon::IsUUID($email_id)) {
 			$this->email_id = $email_id;
 			return true;
@@ -285,12 +285,13 @@ class User implements \JsonSerializable {
 	/* !Two Factor Authentication */
 	
 	public function Is2FAProtected(): bool {
-		return Authenticator::UserIDHasAuthenticators($this->user_id);
+		$authenticators = Authenticator::Search(['user_id' => $this->user_id], true);
+		return count($authenticators) > 0;
 	}
 	
 	// $code may be a TOTP, backup code, or trusted device id
 	public function Verify2FACode(string $code, bool $verifyOnly = false): bool {
-		$authenticators = Authenticator::GetForUserID($this->user_id);
+		$authenticators = Authenticator::Search(['user_id' => $this->user_id], true);
 		if (count($authenticators) === 0) {
 			// If there are no authenticators, the account is not 2FA protected
 			return false;
@@ -379,7 +380,7 @@ class User implements \JsonSerializable {
 	
 	/* !Cloud Files */
 	
-	public function CloudUserID() {
+	public function CloudUserId() {
 		if (is_null($this->parent_account_id)) {
 			return $this->user_id;
 		} else {
@@ -593,22 +594,33 @@ class User implements \JsonSerializable {
 		return $users[0];
 	}
 	
-	public static function GetByEmailID(string $email_id) {
-			$database = BeaconCommon::Database();
-			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = ANY($1);', '{' . $email_id . '}');
-			$users = static::GetFromResults($results);
-			if (count($users) == 1) {
-				return $users[0];
-			}
-		}
-	
-	public static function GetByUserID(string $user_id) {
+	public static function GetByEmailId(string $email_id) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = ANY($1);', '{' . $email_id . '}');
 		$users = static::GetFromResults($results);
 		if (count($users) == 1) {
 			return $users[0];
 		}
+	}
+	
+	public static function Fetch(string $user_id): ?static {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = $1;', $user_id);
+		if ($results->RecordCount() === 1) {
+			return new static($results);
+		}
+		return null;
+	}
+	
+	// Deprecated
+	public static function GetByUserId(string $user_id) {
+		return static::Fetch($user_id);
+		/*$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');
+		$users = static::GetFromResults($results);
+		if (count($users) == 1) {
+			return $users[0];
+		}*/
 	}
 	
 	public static function GetByExtendedUsername(string $username) {

@@ -18,7 +18,6 @@ class DatabaseObjectManager {
 	protected $path = null;
 	protected $varName = null;
 	
-	
 	public function __construct(string $className, string $path, string $varName, int $features = self::kFeatureAll) {
 		if (class_exists($className) === false) {
 			throw new Exception('Class `' . $className . '` does not exist.');
@@ -83,6 +82,8 @@ class DatabaseObjectManager {
 	}
 	
 	public function HandleCreate(array $context): APIResponse {
+		Core::Authorize();
+		
 		if (Core::IsJSONContentType() === false) {
 			return APIResponse::NewJSONError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
 		}
@@ -96,6 +97,11 @@ class DatabaseObjectManager {
 			$multi = true;
 		}
 		
+		$user = Core::User();
+		if ($this->className::CheckClassPermission($user, $members, DatabaseObject::kPermissionCreate) === false) {
+			return APIResponse::NewJSONError('Forbidden', $members, 403);
+		}
+			
 		$schema = $this->className::DatabaseSchema();
 		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
 		$newObjects = [];
@@ -107,7 +113,12 @@ class DatabaseObjectManager {
 					$memberData[$primaryKeyProperty] = BeaconCommon::GenerateUUID();
 				}
 				
-				$newObjects[] = $this->className::Create($memberData);
+				$created = $this->className::Create($memberData);
+				if (is_null($created)) {
+					$database->Rollback();
+					return APIResponse::NewJSONError('Object was not created', $memberData, 500);
+				}
+				$newObjects[] = $created;
 			} catch (Exception $err) {
 				$database->Rollback();
 				return APIResponse::NewJSONError($err->getMessage(), $err, 500);
@@ -115,7 +126,7 @@ class DatabaseObjectManager {
 		}
 		if (count($newObjects) !== count($members)) {
 			$database->Rollback();
-			return APIResponse::NewJSONError('Incorrect number of objects created.', ['sent' => $members, 'created' => $newObjects], 500);
+			return APIResponse::NewJSONError('Incorrect number of objects created', ['sent' => $members, 'created' => $newObjects], 500);
 		}
 		$database->Commit();
 		

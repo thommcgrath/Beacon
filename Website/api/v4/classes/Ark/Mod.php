@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Ark;
-use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
 use BeaconCommon, BeaconRecordSet, BeaconWorkshopItem;
 
 class Mod extends DatabaseObject implements \JsonSerializable {
@@ -51,9 +51,9 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 		if (BeaconCommon::IsUUID($uuid)) {
 			return parent::Fetch($uuid);
 		} else {
-			$mods = static::Search(['workshop_id' => $uuid]);
-			if ($mods['totalResults'] === 1) {
-				return $mods['results'][0];
+			$mods = static::Search(['workshop_id' => $uuid], true);
+			if (count($mods) === 1) {
+				return $mods[0];
 			}
 		}
 		return null;
@@ -120,12 +120,25 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 		$parameters->orderBy = $table . '.name';
 	}
 	
+	public static function CheckClassPermission(?User $user, array $members, int $desiredPermissions): bool {
+		if ($desiredPermissions === DatabaseObject::kPermissionCreate || $desiredPermissions === DatabaseObject::kPermissionRead) {
+			return true;
+		}
+		
+		// This is incomplete
+		return false;
+	}
+	
 	public function ModID(): string {
 		return $this->mod_id;
 	}
 	
 	public function WorkshopID(): string {
 		return $this->workshop_id;
+	}
+	
+	public function UserId(): string {
+		return $this->user_id;
 	}
 	
 	public function Name(): string {
