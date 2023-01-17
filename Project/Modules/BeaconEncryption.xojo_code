@@ -139,6 +139,7 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h0
 		Function Process(Extends Cipher As CipherMBS, Data As MemoryBlock) As MemoryBlock
+		  #Pragma BreakOnExceptions Off
 		  Var Initial As MemoryBlock = Cipher.ProcessMemory(Data)
 		  If Initial Is Nil Then
 		    Return Cipher.FinalizeAsMemory

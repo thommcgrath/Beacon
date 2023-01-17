@@ -67,6 +67,7 @@ Protected Module PasswordStorage
 		    Var UserId As String
 		    If SavedPasswords.HasKey(EmailOrUserId) Then
 		      PasswordData = SavedPasswords.Value(EmailOrUserId)
+		      UserId = EmailOrUserId
 		    Else
 		      For Each Entry As DictionaryEntry In SavedPasswords
 		        Try
