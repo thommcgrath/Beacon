@@ -50,6 +50,10 @@ Core::RegisterRoutes(
 		'/deltas/{version}' => [
 			'GET' => 'deltas'
 		],
+		'/emailVerification/{email}' => [
+			'GET' => 'emailVerification/get',
+			'PUT' => 'emailVerification/create'
+		],
 		'/files' => [
 			'GET' => 'file'
 		],
@@ -135,13 +139,14 @@ Core::RegisterRoutes(
 			'GET' => 'templates/get'
 		],
 		'/users' => [
-			'GET' => 'users/list',
 			'POST' => 'users/create'
 		],
 		'/users/{userId}' => [
 			'GET' => 'users/get',
-			'POST' => 'users/edit',
-			'DELETE' => 'users/delete'
+			'PATCH' => 'users/edit'
+		],
+		'/users/{userId}/merge' => [
+			'POST' => 'users/merge'
 		],
 		'/users/{userId}/ark/mods' => [
 			'GET' => 'ark/mods/list'

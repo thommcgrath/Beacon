@@ -383,9 +383,6 @@ class Core {
 			}
 			
 			$request_method = strtoupper($_SERVER['REQUEST_METHOD']);
-			if ($request_method === 'PUT') {
-				$request_method = 'POST';
-			}
 			if (isset($handlers[$request_method]) === false) {
 				static::ReplyError('Method not allowed', null, 405);
 			}
