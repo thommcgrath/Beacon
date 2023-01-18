@@ -56,23 +56,29 @@ Beacon needs the full blueprint path to everything you want to add. Beacon can e
 
 ### Getting Started
 
-At the top of the window, select the **Blueprints**{:.ui-keyword} view. This is where mod authors can manage the engrams, creatures, and spawn points their mod provides. But all Beacon users also have a "User Blueprints" mod that is exclusive to their Beacon account. This isn't really a mod, but it is used by Beacon to separate user-specific content from content shared by all users. For most users, selecting the **Blueprints**{:.ui-keyword} view will also automatically open the **User Blueprints**{:.ui-keyword} mod for editing.
+At the top of the window, select the **Blueprints**{:.ui-keyword} view. This is where mod authors can manage the engrams, creatures, loot drops, and spawn points their mod provides. But all Beacon users their own local mods that are exclusive to their Beacon account. Each user starts with a local mod called "User Blueprints" that will open automatically if you have no other mods registered. You can either add all mod items to this User Blueprints mod, or you can add additional mods and add blueprints to them for better organization.
+
+#### Registering a Mod
+
+In the mod switcher - that is, the line directly below the **Home**{:.ui-keyword}, **Projects**{:.ui-keyword}, **Blueprints**{:.ui-keyword}, **Templates**{:.ui-keyword}, **Help**{:.ui-keyword} view switcher - you will see a **Mods**{:.ui-keyword} item on the far left. Click if if it's not already selected. Directly below that **Mods**{:.ui-keyword} item is a **Register Mod**{:.ui-keyword} button. Click it to begin adding a mod to Beacon.
+
+In the window appears, Beacon will ask if you're a mod author. Choose "I am a server admin who wants to add mod items to Beacon" to create a local mod. At the next screen, give your mod a name. Adding the workshop id is optional, but strongly recommended. If you provide it, Beacon will be able to do things such as turning it on for projects that import ini files with the mod enabled. Lastly, the "Show me instructions when finished" checkbox will cause Beacon to open this guide after you click **OK**{:.ui-keyword}, so you probably don't need that checked.
 
 {% include image.html file="user_blueprints.png" file2x="user_blueprints@2x.png" caption="The Blueprints view provides access to the blueprints you have added to Beacon." %}
 
 In the **User Blueprints**{:.ui-keyword} mod tab there are seven buttons. From left to right, they are:
 
-- **New Blueprint**, which is used for adding a blueprint manually.
-- **Save** or **Publish** will be used for saving changes to the mod. **Save** will be displayed for the **User Blueprints**{:.ui-keyword} mod, while **Publish** will be displayed for globally-shared mods.
-- **Revert** will discard all the changes made and restore the mod back to the last saved or published state.
-- **Import File**, which imports all available blueprints from the selected file. The file must contain the cheat codes; it cannot import from Ark game files.
-- **Import URL**, which imports all available blueprints from the provided url. The url must contain the cheat codes.
-- **Import Copied**, which will be disabled until you have copied cheat codes. Pressing it will import from the copied cheat codes.
-- **Export**, will prepare a JSON file of your blueprints that can be imported by another user or onto another computer.
+- **New Blueprint**{:.ui-keyword}, which is used for adding a blueprint manually.
+- **Save**{:.ui-keyword} or **Publish**{:.ui-keyword} will be used for saving changes to the mod. **Save**{:.ui-keyword} will be displayed for local mods, while **Publish**{:.ui-keyword} will be displayed for globally-shared mods.
+- **Revert**{:.ui-keyword} will discard all the changes made and restore the mod back to the last saved or published state.
+- **Import File**{:.ui-keyword}, which imports all available blueprints from the selected file. The file must contain the cheat codes; it cannot import from Ark game files.
+- **Import URL**{:.ui-keyword}, which imports all available blueprints from the provided url. The url must contain the cheat codes.
+- **Import Copied**{:.ui-keyword}, which will be disabled until you have copied cheat codes. Pressing it will import from the copied cheat codes.
+- **Export**{:.ui-keyword}, will prepare a JSON file of your blueprints that can be imported by another user or onto another computer.
 
 #### Adding From a Website
 
-The easiest way to get items into Beacon is using the **Import URL**{:.ui-keyword} button described above. Enter the full URL to a web page containing the cheat codes, and Beacon will attempt to do the rest.
+An easy way to get items into Beacon is using the **Import URL**{:.ui-keyword} button described above. Enter the full URL to a web page containing the cheat codes, and Beacon will attempt to do the rest.
 
 {% include image.html file="import_url.png" file2x="import_url@2x.png" caption="Importing blueprints from a web page." %}
 
@@ -84,7 +90,7 @@ When adding from a website isn't practical, you can also copy the cheat codes fo
 
 #### Adding From a File
 
-Beacon can also import from a file on your computer. Just like the other methods, formatting is not important to Beacon. Select a file containing cheat codes in some form, and Beacon will try to find them.
+Beacon can also import from a file on your computer. Just like the other methods, formatting is not important to Beacon. Select a file containing cheat codes in some form, and Beacon will try to find them. This option supports blueprints exported using the **Export**{:.ui-keyword} button, as well as server log files containing [DataDumper](https://steamcommunity.com/sharedfiles/filedetails/?id=2171967557) mod output.
 
 #### Adding Manually
 
@@ -104,7 +110,13 @@ Every field is important in some way. For imported blueprints, the **Type**{:.ui
 
 Beacon will guess at the blueprint name based on its path. While these are reasonable guesses, if you wish to fine tune the names, use the **Name**{:.ui-keyword} field to do so.
 
-The **Tags**{:.ui-keyword} field allows you to add organization to your blueprints. You can add as many tags as you like, separated by commas. Beacon uses a few special tags. `Blueprintable` means the blueprint can be a blueprint in the game, and causes Beacon to enable the **Chance To Be Blueprint**{:.ui-keyword} setting in the loot drop editor. The `Blueprint` tag is tells Beacon the blueprint is a recipe, such as the "Element from Dust" blueprint that crafts Element. The `Generic` tag tells Beacon that the blueprint is non-specific, such as "Any Egg" or "Any Artifact" and is intended for use in crafting recipes. The loot drop editor will not export or deploy drops containing engrams with either the `Blueprint` or `Generic` tags.
+The **Tags**{:.ui-keyword} field allows you to add organization to your blueprints. You can add as many tags as you like, separated by commas. Beacon uses a few special tags:
+- `Blueprintable` means the blueprint can be a blueprint in the game, and causes Beacon to enable the **Chance To Be Blueprint**{:.ui-keyword} setting in the loot drop editor.
+- `Blueprint` tells Beacon the blueprint is a recipe, such as the "Element from Dust" blueprint that crafts Element.
+- `Generic` tells Beacon that the blueprint is non-specific, such as "Any Egg" or "Any Artifact" and is intended for use in crafting recipes.
+- `No Fibercraft` tells Beacon not to include it in crafting cost overrides when using the "Setup Fibercraft Server" tool.
+
+> The loot drop editor will not export or deploy drops containing engrams with either the `Blueprint` or `Generic` tags.
 
 The **Map Availability**{:.ui-keyword} checkboxes tell Beacon which maps to pre-select when adding the blueprint to a Preset. Most users choose to leave all maps selected.
 
@@ -112,35 +124,25 @@ There is an **Advanced**{:.ui-keyword} tab at the top of the blueprint editor th
 
 #### Engrams
 
-**Entry String**{:.ui-keyword}, **Unlockable At Level**{:.ui-keyword}, and **Required Engram Points**{:.ui-keyword} will allow the engram to appear in the **Engram Control**{:.ui-keyword} editor. If the engram has only an entry string, it will be treated as a Tek engram. Otherwise, both the level and point requirements must be included.
-
-**Stack Size**{:.ui-keyword} is used by Beacon's **Stack Sizes**{:.ui-keyword} editor to make sure the user does not set the stack size greater than Ark can handle. For example, Ark stack sizes cannot exceed 2,147,483,647. If the engram normally stacks to 1,000 and the user were to enter a **Global Stack Size Multiplier**{:.ui-keyword} value of 10,000,000 (don't laugh, users do it) Beacon will know the engram would exceed the maximum and automatically insert a `ConfigOverrideItemMaxQuantity` line to limit the engram appropriately.
-
-**Crafting Recipe**{:.ui-keyword} is used by Beacon's **Crafting Cost**{:.ui-keyword} editor when the user checks the **Load Official Values When Available**{:.ui-keyword} checkbox. It also allows the **Adjust All Crafting Costs**{:.ui-keyword} tool to work on the engram.
+- **Entry String**{:.ui-keyword}, **Unlockable At Level**{:.ui-keyword}, and **Required Engram Points**{:.ui-keyword} will allow the engram to appear in the **Engram Control**{:.ui-keyword} editor. If the engram has only an entry string, it will be treated as a Tek engram. Otherwise, both the level and point requirements must be included.
+- **Stack Size**{:.ui-keyword} is used by Beacon's **Stack Sizes**{:.ui-keyword} editor to make sure the user does not set the stack size greater than Ark can handle. For example, Ark stack sizes cannot exceed 2,147,483,647. If the engram normally stacks to 1,000 and the user were to enter a **Global Stack Size Multiplier**{:.ui-keyword} value of 10,000,000 (don't laugh, users do it) Beacon will know the engram would exceed the maximum and automatically insert a `ConfigOverrideItemMaxQuantity` line to limit the engram appropriately.
+- **Crafting Recipe**{:.ui-keyword} is used by Beacon's **Crafting Cost**{:.ui-keyword} editor when the user checks the **Load Official Values When Available**{:.ui-keyword} checkbox. It also allows the **Adjust All Crafting Costs**{:.ui-keyword} tool to work on the engram.
 
 #### Creatures
 
-**Incubation Time**{:.ui-keyword} and **Mature Time**{:.ui-keyword} are for the incubation/gestation time and mature times for the creature. Setting these values will allow the creature to appear in the **Breeding Multipliers**{:.ui-keyword} editor.
+- **Incubation Time**{:.ui-keyword} and **Mature Time**{:.ui-keyword} are for the incubation/gestation time and mature times for the creature. Setting these values will allow the creature to appear in the **Breeding Multipliers**{:.ui-keyword} editor.
+- **Mating Interval Min**{:.ui-keyword} and **Mating Interval Max**{:.ui-keyword} are used to specify the default range of the creature's mating interval.
+- **Stats**{:.ui-keyword} will allow the creature to appear as a preview option in Beacon's **Stat Multipliers**{:.ui-keyword} editor.
 
-**Mating Interval Min**{:.ui-keyword} and **Mating Interval Max**{:.ui-keyword} are used to specify the default range of the creature's mating interval.
+#### Loot Drops
 
-**Stats**{:.ui-keyword} will allow the creature to appear as a preview option in Beacon's **Stat Multipliers**{:.ui-keyword} editor.
-
-#### Loot Drop
-
-**Minimum Multiplier**{:.ui-keyword} and **Maximum Multiplier**{:.ui-keyword} describe the range of quality multipliers the game will add to everything in the drop. If you don't know these, leave them at 1.0.
-
-**Icon**{:.ui-keyword} and **Icon Color**{:.ui-keyword} allow you to choose how the drop appears in Beacon's lists.
-
-Turn on **Experimental**{:.ui-keyword} if the drop should be hidden until the **Show Experimental Loot Drops**{:.ui-keyword} option is turned on.
-
-**Minimum Item Sets**{:.ui-keyword} is the minimum number of item sets the drop **must** contain. For example, if the drop does not work properly without at least two item sets, set this to two. This is not the minimum range of item sets to be chosen.
-
-**Notes**{:.ui-keyword} will be displayed below the drop in the **Add Loot Drop**{:.ui-keyword} list, as well as inside the **Item Sets**{:.ui-keyword} column. This is most useful for instructions about what makes the drop unusual, if anything.
-
-**Sort Order**{:.ui-keyword} helps Beacon decide how to sort the drop in the list. For example, Aberration Green has a value of 3, Aberration Green Bonus has 4, and Aberration Blue has 5. Island Blue also uses 5 though, so Beacon will sort Aberration Blue and Island Blue together, alphabetically. The **Suggest**{:.ui-keyword} button will guess at a value to use based on the icon.
-
-Lastly, the **Contents**{:.ui-keyword} tab is a full-featured loot drop editor. This sets the contents of the drop when the **Load Default Contents When Available**{:.ui-keyword} option is enabled.
+- **Minimum Multiplier**{:.ui-keyword} and **Maximum Multiplier**{:.ui-keyword} describe the range of quality multipliers the game will add to everything in the drop. If you don't know these, leave them at 1.0.
+- **Icon**{:.ui-keyword} and **Icon Color**{:.ui-keyword} allow you to choose how the drop appears in Beacon's lists.
+- Turn on **Experimental**{:.ui-keyword} if the drop should be hidden until the **Show Experimental Loot Drops**{:.ui-keyword} option is turned on.
+- **Minimum Item Sets**{:.ui-keyword} is the minimum number of item sets the drop **must** contain. For example, if the drop does not work properly without at least two item sets, set this to two. This is not the minimum range of item sets to be chosen.
+- **Notes**{:.ui-keyword} will be displayed below the drop in the **Add Loot Drop**{:.ui-keyword} list, as well as inside the **Item Sets**{:.ui-keyword} column. This is most useful for instructions about what makes the drop unusual, if anything.
+- **Sort Order**{:.ui-keyword} helps Beacon decide how to sort the drop in the list. For example, Aberration Green has a value of 3, Aberration Green Bonus has 4, and Aberration Blue has 5. Island Blue also uses 5 though, so Beacon will sort Aberration Blue and Island Blue together, alphabetically. The - **Suggest**{:.ui-keyword} button will guess at a value to use based on the icon.
+- The **Contents**{:.ui-keyword} tab is a full-featured loot drop editor. This sets the contents of the drop when the **Load Default Contents When Available**{:.ui-keyword} option is enabled.
 
 #### Spawn Points
 
