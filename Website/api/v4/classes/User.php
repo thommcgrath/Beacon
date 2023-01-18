@@ -15,7 +15,6 @@ class User implements \JsonSerializable {
 	protected $license_mask = -1;
 	protected $licenses = [];
 	protected $licenses_loaded = false;
-	protected $parent_account_id = null;
 	protected $private_key = null;
 	protected $private_key_iterations = null;
 	protected $private_key_salt = null;
@@ -30,9 +29,6 @@ class User implements \JsonSerializable {
 	protected $backup_codes_added = [];
 	protected $backup_codes_removed = [];
 	
-	private $child_accounts = null;
-	private $has_child_accounts = null;
-	
 	public function __construct($source = null) {
 		if ($source instanceof BeaconRecordSet) {
 			$this->user_id = $source->Field('user_id');
@@ -46,7 +42,6 @@ class User implements \JsonSerializable {
 			$this->banned = $source->Field('banned');
 			$this->enabled = $source->Field('enabled');
 			$this->require_password_change = $source->Field('require_password_change');
-			$this->parent_account_id = $source->Field('parent_account_id');
 		} elseif (is_string($source) && BeaconCommon::IsUUID($source)) {
 			$this->user_id = $source;
 		} elseif (is_null($source)) {
@@ -88,8 +83,12 @@ class User implements \JsonSerializable {
 		return substr($this->user_id, 0, 8);
 	}
 	
-	public function Username() {
-		return $this->username;
+	public function Username(bool $with_suffix = false) {
+		$name = $this->username;
+		if ($with_suffix) {
+			$name .= '#' . $this->Suffix();
+		}
+		return $name;
 	}
 	
 	public function SetUsername(string $username) {
@@ -217,71 +216,6 @@ class User implements \JsonSerializable {
 		return $this->IsEnabled() === true && $this->RequiresPasswordChange() === false;
 	}
 	
-	/* !Child Accounts */
-	
-	public function IsChildAccount() {
-		return is_null($this->parent_account_id) === false;
-	}
-	
-	public function HasChildAccounts() {
-		if (is_null($this->has_child_accounts)) {
- 			$database = BeaconCommon::Database();
- 			$results = $database->Query('SELECT COUNT(user_id) AS user_count FROM users WHERE parent_account_id = $1;', $this->user_id);
- 			$this->has_child_accounts = intval($results->Field('user_count')) > 0;
- 		}
- 		return $this->has_child_accounts;
-	}
-	
-	public function ChildAccounts() {
-		if (is_null($this->child_accounts)) {
- 			$database = BeaconCommon::Database();
- 			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE parent_account_id = $1;', $this->user_id);
- 			$this->child_accounts = static::GetFromResults($results);
- 			$this->has_child_accounts = count($this->child_accounts) > 0;
- 		}
- 		return $this->child_accounts;
-	}
-	
-	public function ParentAccountID() {
-		return $this->parent_account_id;
-	}
-	
-	public function SetParentAccountID($parent_account_id) {
-		$this->parent_account_id = $parent_account_id;
-		return true;
-	}
-	
-	public function ParentAccount() {
-		if (is_null($this->parent_account_id) === false) {
-			return static::GetByUserID($this->parent_account_id);
-		}
-		return null;
-	}
-	
-	public function TotalChildSeats() {
-		if ($this->banned) {
- 			return 0;
- 		}
-
-  		$database = BeaconCommon::Database();
- 		$results = $database->Query('SELECT SUM(child_seat_count) AS total_seat_count FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
- 		return intval($results->Field('total_seat_count'));
-	}
-	
-	public function UsedChildSeats() {
-		$database = BeaconCommon::Database();
- 		$results = $database->Query('SELECT COUNT(users) AS used_seat_count FROM users WHERE parent_account_id = $1 AND enabled = TRUE AND banned = FALSE;', $this->user_id);
- 		return intval($results->Field('used_seat_count'));
-	}
-	
-	public function RemainingChildSeats() {
-		return $this->TotalChildSeats() - $this->UsedChildSeats();
-	}
-	
-	public function CanAddChildAccount() {
-		return $this->RemainingChildSeats() > 0;
-	}
-	
 	/* !Two Factor Authentication */
 	
 	public function Is2FAProtected(): bool {
@@ -381,11 +315,7 @@ class User implements \JsonSerializable {
 	/* !Cloud Files */
 	
 	public function CloudUserId() {
-		if (is_null($this->parent_account_id)) {
-			return $this->user_id;
-		} else {
-			return $this->parent_account_id;
-		}
+		return $this->user_id;
 	}
 	
 	public function UsercloudKey() {
@@ -395,12 +325,6 @@ class User implements \JsonSerializable {
 	public function SetUsercloudKey(string $key, bool $delete_files = true): bool {
 		$this->usercloud_key = $key;
 		$this->usercloud_delete_files = $delete_files;
-		
-		$children = $this->ChildAccounts();
-		foreach ($children as $child) {
-			$child->SetUsercloudKey($key);
-		}
-		
 		return true;
 	}
 	
@@ -416,12 +340,6 @@ class User implements \JsonSerializable {
 		try {
 			$this->usercloud_key = bin2hex(BeaconEncryption::RSAEncrypt($this->public_key, $key));
 			$this->usercloud_delete_files = $delete_files;
-			
-			$children = $this->ChildAccounts();
-			foreach ($children as $child) {
-				$child->SetDecryptedUsercloudKey($key);
-			}
-			
 			return true;
 		} catch (Exception $err) {
 			return false;
@@ -480,15 +398,6 @@ class User implements \JsonSerializable {
 		if ($this->SetDecryptedPrivateKey($password, $private_key)) {
 			$this->SetDecryptedUsercloudKey($usercloud_key);
 			$this->SetRequiresPasswordChange(false);
-			
-			$children = $this->ChildAccounts();
-			foreach ($children as $child) {
-				$child_password = BeaconCommon::GenerateUUID();
-				if ($child->ReplacePassword($child_password, $private_key, $usercloud_key)) {
-					$child->SetRequiresPasswordChange(true);
-				}
-			}
-			
 			return true;
 		} else {
 			return false;
@@ -564,48 +473,40 @@ class User implements \JsonSerializable {
 	
 	/* !User Lookup */
 	
-	public static function GetByEmail(string $email) {
-		// When doing a SELECT with uuid_for_email(email, create), you must wrap it in its own SELECT statement.
-		// This is because the function is VOLATILE and will be executed for every row in the user table unless
-		// treated as a subquery. Or omit the second parameter, which is a STABLE function and performs fine.
-		// The second parameter should only be used when updating the email row is desired.
-		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
-		if ($results->RecordCount() !== 1 || is_null($results->Field('email_id'))) {
-			return null;
-		}
-		$email_id = $results->Field('email_id');
-		
-		$results = $database->Query('SELECT email_needs_update($1::UUID) AS update_needed;', $email_id);
-		if ($results->RecordCount() !== 1 || is_null($results->Field('update_needed'))) {
-			return null;
-		}
-		if ($results->Field('update_needed')) {
-			$database->BeginTransaction();
-			$database->Query('SELECT uuid_for_email($1, TRUE);', $email);
-			$database->Commit();
-		}
-		
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = $1;', $email_id);
-		$users = static::GetFromResults($results);
-		if (count($users) !== 1) {
-			return null;
-		}
-		return $users[0];
-	}
-	
-	public static function GetByEmailId(string $email_id) {
-		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = ANY($1);', '{' . $email_id . '}');
-		$users = static::GetFromResults($results);
-		if (count($users) == 1) {
-			return $users[0];
-		}
-	}
-	
 	public static function Fetch(string $user_id): ?static {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = $1;', $user_id);
+		if (BeaconCommon::IsUUID($user_id)) {
+			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = $1 OR email_id = $1;', $user_id);
+		} else if (static::ValidateEmail($user_id)) {
+			// When doing a SELECT with uuid_for_email(email, create), you must wrap it in its own SELECT statement.
+			// This is because the function is VOLATILE and will be executed for every row in the user table unless
+			// treated as a subquery. Or omit the second parameter, which is a STABLE function and performs fine.
+			// The second parameter should only be used when updating the email row is desired.
+			
+			$results = $database->Query('SELECT uuid_for_email($1) AS email_id;', $user_id);
+			if ($results->RecordCount() !== 1 || is_null($results->Field('email_id'))) {
+				return null;
+			}
+			$email_id = $results->Field('email_id');
+			
+			$results = $database->Query('SELECT email_needs_update($1::UUID) AS update_needed;', $email_id);
+			if ($results->RecordCount() !== 1 || is_null($results->Field('update_needed'))) {
+				return null;
+			}
+			if ($results->Field('update_needed')) {
+				$database->BeginTransaction();
+				$database->Query('SELECT uuid_for_email($1, TRUE);', $email);
+				$database->Commit();
+			}
+			
+			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = $1;', $email_id);
+		} else if (static::IsExtendedUsername($user_id)) {
+			$display_name = substr($user_id, 0, -9);
+			$suffix = strtolower(substr($user_id, -8));
+			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE username = $1 AND SUBSTRING(LOWER(user_id::TEXT) FROM 1 FOR 8) = $2;', $display_name, $suffix);
+		} else {
+			return null;
+		}
 		if ($results->RecordCount() === 1) {
 			return new static($results);
 		}
@@ -613,40 +514,23 @@ class User implements \JsonSerializable {
 	}
 	
 	// Deprecated
+	public static function GetByEmail(string $email) {
+		return static::Fetch($email);
+	}
+	
+	// Deprecated
+	public static function GetByEmailId(string $email_id) {
+		return static::Fetch($email_id);
+	}
+	
+	// Deprecated
 	public static function GetByUserId(string $user_id) {
 		return static::Fetch($user_id);
-		/*$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');
-		$users = static::GetFromResults($results);
-		if (count($users) == 1) {
-			return $users[0];
-		}*/
 	}
 	
+	// Deprecated
 	public static function GetByExtendedUsername(string $username) {
-		$display_name = substr($username, 0, -9);
-		$suffix = strtolower(substr($username, -8));
-		
-		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE username = $1 AND SUBSTRING(LOWER(user_id::TEXT) FROM 1 FOR 8) = $2;', $display_name, $suffix);
-		$users = static::GetFromResults($results);
-		if (count($users) == 1) {
-			return $users[0];
-		}
-	}
-	
-	protected static function GetFromResults(BeaconRecordSet $results) {
-		if ($results === null || $results->RecordCount() === 0) {
-			return array();
-		}
-		
-		$users = array();
-		while (!$results->EOF()) {
-			$user = new static($results);
-			$users[] = $user;
-			$results->MoveNext();
-		}
-		return $users;
+		return static::Fetch($username);
 	}
 	
 	/* !Validation */
@@ -714,7 +598,6 @@ class User implements \JsonSerializable {
 			$changes['usercloud_key'] = $this->usercloud_key;
 			$changes['enabled'] = $this->enabled;
 			$changes['require_password_change'] = $this->require_password_change;
-			$changes['parent_account_id'] = $this->parent_account_id;
 			try {
 				$database->Insert('users', $changes);
 				if (is_null($this->backup_codes) === false) {
@@ -726,7 +609,7 @@ class User implements \JsonSerializable {
 				return false;
 			}
 		} else {
-			$keys = ['username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled', 'require_password_change', 'parent_account_id'];
+			$keys = ['username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled', 'require_password_change'];
 			foreach ($keys as $key) {
 				if ($this->$key !== $original_user->$key) {
 					$changes[$key] = $this->$key;
@@ -744,7 +627,7 @@ class User implements \JsonSerializable {
 						$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $this->email_id);
 					}
 					
-					if ($this->IsChildAccount() === false && array_key_exists('usercloud_key', $changes) && $this->usercloud_delete_files === true) {
+					if (array_key_exists('usercloud_key', $changes) && $this->usercloud_delete_files === true) {
 						// The cloud key has been changed, so we need to cleanup the cloud files
 						$cloud_files = BeaconCloudStorage::ListFiles('/' . $this->UserID() . '/');
 						foreach ($cloud_files as $file) {
@@ -791,8 +674,7 @@ class User implements \JsonSerializable {
 			'users.usercloud_key',
 			'users.banned',
 			'users.enabled',
-			'users.require_password_change',
-			'users.parent_account_id'
+			'users.require_password_change'
 		];
 	}
 	

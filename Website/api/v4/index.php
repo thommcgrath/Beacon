@@ -143,7 +143,8 @@ Core::RegisterRoutes(
 		],
 		'/users/{userId}' => [
 			'GET' => 'users/get',
-			'PATCH' => 'users/edit'
+			'PATCH' => 'users/edit',
+			'PUT' => 'users/create'
 		],
 		'/users/{userId}/merge' => [
 			'POST' => 'users/merge'

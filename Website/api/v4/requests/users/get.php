@@ -1,31 +1,25 @@
 <?php
 
-function handle_request(array $context): void {
+use BeaconAPI\v4\{Core, User, APIResponse};
+Core::Authorize(Core::kAuthFlagOptional);
+
+function handle_request(array $context): APIResponse {
 	$identifier = $context['path_parameters']['userId'];
-	if (BeaconCommon::IsUUID($identifier)) {
-		$user = BeaconUser::GetByUserID($identifier);
-	} elseif (BeaconUser::ValidateEmail($identifier)) {
-		$user = BeaconUser::GetByEmail($identifier);
-	} elseif (BeaconUser::IsExtendedUsername($identifier)) {
-		$user = BeaconUser::GetByExtendedUsername($identifier);
-	} else {
-		$user = null;
-	}
-	
+	$user = User::Fetch($identifier);
 	if (is_null($user)) {
-		BeaconAPI::ReplyError('User not found', $users, 404);
+		return APIResponse::NewJSONError('User not found', $identifier, 404);
 	}
 	
-	if ($user->UserID() === BeaconAPI::UserID()) {
+	if (Core::Authenticated() && $user->UserId() === Core::UserId()) {
 		$user_info = $user;
 	} else {
 		// don't use the regular method that includes lots of values
 		$user_info = [
-			'user_id' => $user->UserID(),
-			'username_full' => $user->Username() . '#' . $user->Suffix(),
+			'user_id' => $user->UserId(),
+			'username_full' => $user->Username(true),
 			'public_key' => $user->PublicKey()
 		];
 	}
 	
-	BeaconAPI::ReplySuccess($user_info);
+	return APIResponse::NewJSON($user_info, 200);
 }

@@ -88,7 +88,14 @@ class EmailVerificationCode implements \JsonSerializable {
 		
 		$code_hash = base64_encode(hash('sha512', $email_id . $code, true));
 		$rows = $database->Query('SELECT email_id FROM public.email_verification_codes WHERE email_id = $1 AND code_hash = $2 AND expiration > CURRENT_TIMESTAMP;', $email_id, $code_hash);
-		return $rows->RecordCount() === 1;
+		if ($rows->RecordCount() === 0) {
+			return false;
+		}
+		
+		$database->BeginTransaction();
+		$database->Query('UPDATE public.email_verification_codes SET verified = TRUE WHERE email_id = $1;', $email_id);
+		$database->Commit();
+		return true;
 	}
 	
 	public function CheckCode(string $code): bool {
@@ -141,6 +148,20 @@ class EmailVerificationCode implements \JsonSerializable {
 			'code' => $code,
 			'verified' => $this->verified
 		];	
+	}
+	
+	public static function Clear(string $email): void {
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = uuid_for_email($1);', $email);
+		$database->Commit();
+	}
+	
+	public function Delete(): void {
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = $1;', $this->email_id);
+		$database->Commit();
 	}
 }
 
