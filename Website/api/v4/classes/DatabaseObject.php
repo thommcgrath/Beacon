@@ -25,10 +25,15 @@ abstract class DatabaseObject {
 		return static::$schema[$calledClass];
 	}
 	
+	// Seems odd, but allows subclasses to implement as a factory
+	protected static function NewInstance(BeaconRecordSet $rows): DatabaseObject {
+		return new static($rows);
+	}
+	
 	protected static function FromRows(BeaconRecordSet $rows): array {
 		$objects = [];
 		while (!$rows->EOF()) {
-			$objects[] = new static($rows);
+			$objects[] = static::NewInstance($rows);
 			$rows->MoveNext();
 		}
 		return $objects;
@@ -41,7 +46,7 @@ abstract class DatabaseObject {
 		if (is_null($rows) || $rows->RecordCount() !== 1) {
 			return null;
 		}
-		return new static($rows);
+		return static::NewInstance($rows);
 	}
 	
 	protected static function ValidateProperty(string $property, mixed $value): void {

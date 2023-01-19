@@ -1,29 +1,61 @@
 <?php
 
 namespace BeaconAPI\v4\Ark;
-use BeaconAPI\Core;
+use BeaconAPI\v4\{Core};
 
-class Project extends \BeaconAPI\Ark\Project {
+class Project extends \BeaconAPI\v4\Project {
 	public function jsonSerialize(): mixed {
-		return [
-			'project_id' => $this->project_id,
-			'game_id' => $this->game_id,
-			'user_id' => $this->user_id,
-			'owner_id' => $this->owner_id,
-			'name' => $this->title,
-			'description' => $this->description,
-			'revision' => $this->revision,
-			'download_count' => $this->download_count,
-			'last_updated' => $this->last_update->format('Y-m-d H:i:sO'),
-			'console_safe' => $this->console_safe,
-			'map_mask' => $this->MapMask(),
-			'difficulty' => $this->DifficultyValue(),
-			'resource_url' => $this->ResourceURL()
-		];
+		$json = parent::jsonSerialize();
+		$json['map_mask'] = $this->MapMask();
+		$json['difficulty'] = $this->DifficultyValue();
+		return $json;
+	}
+	
+	public function MapMask(): int {
+		return array_key_exists('map', $this->game_specific) ? intval($this->game_specific['map']) : 0;
+	}
+	
+	public function DifficultyValue(): float {
+		return array_key_exists('difficulty', $this->game_specific) ? floatval($this->game_specific['difficulty']) : 0;
+		return $this->difficulty_value;
+	}
+	
+	public function RequiredMods(bool $as_array): array|string {
+		if (array_key_exists('mods', $this->game_specific)) {
+			$mods = $this->game_specific['mods'];
+			if ($as_array) {
+				return $mods;
+			} else {
+				return implode(',', $mods);
+			}
+		} else {
+			if ($as_array) {
+				return [];
+			} else {
+				return '';
+			}
+		}
+	}
+	
+	public function ImplementedConfigs(bool $as_array): array|string {
+		if (array_key_exists('included_editors', $this->game_specific)) {
+			$editors = $this->game_specific['included_editors'];
+			if ($as_array) {
+				return $editors;
+			} else {
+				return implode(',', $editors);
+			}
+		} else {
+			if ($as_array) {
+				return [];
+			} else {
+				return '';
+			}
+		}
 	}
 	
 	public function ResourceURL() {
-		return Core::URL('project/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
+		return Core::URL('projects/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
 	}
 	
 	protected static function HookValidateMultipart(array &$required_vars, string &$reason) {

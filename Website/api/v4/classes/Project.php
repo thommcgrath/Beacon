@@ -1,9 +1,10 @@
 <?php
 
 namespace BeaconAPI\v4;
+use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconCloudStorage, BeaconCommon, BeaconRecordSet, DateTime, Exception;
 
-abstract class Project implements \JsonSerializable {
+abstract class Project extends DatabaseObject implements \JsonSerializable {
 	const PUBLISH_STATUS_PRIVATE = 'Private';
 	const PUBLISH_STATUS_REQUESTED = 'Requested';
 	const PUBLISH_STATUS_APPROVED = 'Approved';
@@ -24,6 +25,63 @@ abstract class Project implements \JsonSerializable {
 	protected $published = self::PUBLISH_STATUS_PRIVATE;
 	protected $content = [];
 	protected $storage_path = null;
+	
+	protected function __construct(BeaconRecordSet $row) {
+		$this->project_id = $row->Field('project_id');
+		$this->game_id = $row->Field('game_id');
+		$this->title = $row->Field('title');
+		$this->description = $row->Field('description');
+		$this->revision = intval($row->Field('revision'));
+		$this->download_count = intval($row->Field('download_count'));
+		$this->last_update = new DateTime($row->Field('last_update'));
+		$this->user_id = $row->Field('user_id');
+		$this->owner_id = $row->Field('owner_id');
+		$this->published = $row->Field('published');
+		$this->console_safe = boolval($row->Field('console_safe'));
+		$this->game_specific = json_decode($row->Field('game_specific'), true);
+		$this->storage_path = $row->Field('storage_path');
+	}
+	
+	public static function BuildDatabaseSchema(): DatabaseSchema {
+		return new DatabaseSchema('public', 'allowed_projects', [
+			new DatabaseObjectProperty('project_id', ['primaryKey' => true]),
+			new DatabaseObjectProperty('game_id'),
+			new DatabaseObjectProperty('game_specific'),
+			new DatabaseObjectProperty('user_id'),
+			new DatabaseObjectProperty('owner_id'),
+			new DatabaseObjectProperty('title'),
+			new DatabaseObjectProperty('description'),
+			new DatabaseObjectProperty('console_safe'),
+			new DatabaseObjectProperty('last_update'),
+			new DatabaseObjectProperty('revision'),
+			new DatabaseObjectProperty('download_count'),
+			new DatabaseObjectProperty('published'),
+			new DatabaseObjectProperty('storage_path')
+		]);
+	}
+	
+	protected static function NewInstance(BeaconRecordSet $rows): Project {
+		$game_id = $rows->Field('game_id');
+		switch ($game_id) {
+		case 'Ark':
+			return new Ark\Project($rows);
+			break;
+		default:
+			throw new Exception('Unknown game ' . $game_id);
+		}
+	}
+	
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+		$parameters->orderBy = 'last_update DESC';
+		
+		// We want to list only "original" projects, not shared projects.
+		$parameters->clauses[] = 'user_id = owner_id';
+		
+		$schema = static::DatabaseSchema();
+		$parameters->AddFromFilter($schema, $filters, 'user_id');
+		$parameters->AddFromFilter($schema, $filters, 'published');
+		$parameters->AddFromFilter($schema, $filters, 'console_safe');
+	}
 	
 	public static function SchemaName() {
 		return 'public';
@@ -60,7 +118,20 @@ abstract class Project implements \JsonSerializable {
 	}
 	
 	public function jsonSerialize(): mixed {
-		throw new Exception('Subclasses need to override.');
+		return [
+			'project_id' => $this->project_id,
+			'game_id' => $this->game_id,
+			'user_id' => $this->user_id,
+			'owner_id' => $this->owner_id,
+			'name' => $this->title,
+			'description' => $this->description,
+			'revision' => $this->revision,
+			'download_count' => $this->download_count,
+			'last_updated' => $this->last_update->format('Y-m-d H:i:sO'),
+			'console_safe' => $this->console_safe,
+			'published' => $this->published,
+			'resource_url' => $this->ResourceURL()
+		];
 	}
 		
 	public function ProjectID() {
@@ -278,7 +349,7 @@ abstract class Project implements \JsonSerializable {
 		
 	}
 	
-	public static function Search(array $params, string $order_by = 'last_update DESC', int $count = 0, int $offset = 0, bool $count_only = false) {
+	/*public static function Search(array $params, string $order_by = 'last_update DESC', int $count = 0, int $offset = 0, bool $count_only = false) {
 		$next_placeholder = 1;
 		$values = array();
 		$clauses = array();
@@ -338,7 +409,7 @@ abstract class Project implements \JsonSerializable {
 			$results = $database->Query($sql, $values);
 			return self::GetFromResults($results);
 		}
-	}
+	}*/
 	
 	public static function GetFromResults(BeaconRecordSet $results) {
 		if ($results === null || $results->RecordCount() === 0) {
@@ -356,32 +427,9 @@ abstract class Project implements \JsonSerializable {
 		return $projects;
 	}
 	
+	// Deprecated
 	protected static function GetFromResult(BeaconRecordSet $results) {
-		// This is a factory method. Not my favorite, but it'll do.
-		
-		$game_id = $results->Field('game_id');
-		$project = null;
-		switch ($game_id) {
-		case 'Ark':
-			$project = new Ark\Project();
-			break;
-		default:
-			throw new Exception('Unknown game ' . $game_id);
-		}
-		$project->project_id = $results->Field('project_id');
-		$project->game_id = $game_id;
-		$project->title = $results->Field('title');
-		$project->description = $results->Field('description');
-		$project->revision = intval($results->Field('revision'));
-		$project->download_count = intval($results->Field('download_count'));
-		$project->last_update = new DateTime($results->Field('last_update'));
-		$project->user_id = $results->Field('user_id');
-		$project->owner_id = $results->Field('owner_id');
-		$project->published = $results->Field('published');
-		$project->console_safe = boolval($results->Field('console_safe'));
-		$project->game_specific = json_decode($results->Field('game_specific'), true);
-		$project->storage_path = $results->Field('storage_path');
-		return $project;
+		return static::NewInstance($results);
 	}
 	
 	protected static function BuildSQL(string $clause = '', string $order_by = 'last_update DESC', int $count = 0, int $offset = 0) {

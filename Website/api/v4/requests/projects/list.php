@@ -1,15 +1,31 @@
 <?php
 
-BeaconAPI::Authorize(true);
+use BeaconAPI\v4\{APIResponse, Core, Project, User};
 
-function handle_request(array $context): void {
-	$database = \BeaconCommon::Database();
-	$user_id = BeaconAPI::Authenticated() ? BeaconAPI::UserID() : null;
-	$params = [];
+function handle_request(array $context): APIResponse {
+	$database = BeaconCommon::Database();
+	$user_id = Core::Authenticated() ? Core::UserId() : null;
+	
+	$public_only = true;
+	$filters = $_GET;
+	if ($context['route_key'] === 'GET /users/{userId}/projects') {
+		$filters['user_id'] = $context['path_parameters']['userId'];
+		if ($context['path_parameters']['userId'] === $user_id) {
+			$public_only = false;
+		}
+	}
+	if ($public_only) {
+		$filters['published'] = 'Approved';	
+	}
+	
+	$results = Project::Search($filters);
+	return APIResponse::NewJSON($results, 200);
+	
+	/*$params = [];
 	$clauses = [];
-	if (isset($_GET['user_id'])) {
+	if ($context['route_key'] === 'GET /users/{userId/projects') {
 		$clauses[] = 'user_id = ::limit_user_id::';
-		$params['limit_user_id'] = $_GET['user_id'];
+		$params['limit_user_id'] = $context['path_parameters']['userId'];
 	}
 	if (isset($user_id)) {
 		$clauses[] = '(user_id = ::current_user_id:: OR (published = \'Approved\' AND role = \'Owner\'))';
@@ -42,7 +58,7 @@ function handle_request(array $context): void {
 			$clauses[] = "project_id = '00000000-0000-0000-0000-000000000000'";
 		}
 	}
-	$sql = 'SELECT ' . implode(', ', \BeaconAPI\Project::SQLColumns()) . ' FROM ' . \BeaconAPI\Project::SchemaName() . '.' . \BeaconAPI\Project::AllowedTableName() . ' WHERE ' . implode(' AND ', $clauses);
+	$sql = 'SELECT ' . implode(', ', Project::SQLColumns()) . ' FROM ' . Project::SchemaName() . '.' . Project::AllowedTableName() . ' WHERE ' . implode(' AND ', $clauses);
 	
 	$sort_column = 'last_update';
 	$sort_direction = 'DESC';
@@ -82,8 +98,8 @@ function handle_request(array $context): void {
 	}
 	
 	$results = $database->Query($sql, $values);
-	$projects = \BeaconAPI\Project::GetFromResults($results);
-	BeaconAPI::ReplySuccess($projects);
+	$projects = Project::GetFromResults($results);*/
+	return APIResponse::NewJSON($projects, 200);
 }
 
 ?>
