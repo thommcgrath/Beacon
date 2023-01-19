@@ -104,8 +104,11 @@ abstract class BeaconEncryption {
 	}
 	
 	public static function PublicKeyToPEM(string $public_key): string {
-		if (substr($public_key, 0, 26) != '-----BEGIN PUBLIC KEY-----') {
-			$public_key = hex2bin($public_key);
+		if (str_starts_with($public_key, '-----BEGIN PUBLIC KEY-----') === false) {
+			$public_key = @hex2bin($public_key);
+			if ($private_key === false) {
+				throw new Exception('Invalid hex input');
+			}
 			$public_key = trim(chunk_split(base64_encode($public_key), 64, "\n"));
 			$public_key = "-----BEGIN PUBLIC KEY-----\n$public_key\n-----END PUBLIC KEY-----";
 		}
@@ -113,8 +116,11 @@ abstract class BeaconEncryption {
 	}
 	
 	public static function PrivateKeyToPEM(string $private_key): string {
-		if (substr($private_key, 0, 32) != '-----BEGIN RSA PRIVATE KEY-----') {
-			$private_key = hex2bin($private_key);
+		if (str_starts_with($private_key, '-----BEGIN RSA PRIVATE KEY-----') === false) {
+			$private_key = @hex2bin($private_key);
+			if ($private_key === false) {
+				throw new Exception('Invalid hex input');
+			}
 			$private_key = trim(chunk_split(base64_encode($private_key), 64, "\n"));
 			$private_key = "-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----";
 		}

@@ -146,6 +146,9 @@ Core::RegisterRoutes(
 			'PATCH' => 'users/edit',
 			'PUT' => 'users/create'
 		],
+		'/users/{userId}/challenge' => [
+			'GET' => 'users/challenge'
+		],
 		'/users/{userId}/merge' => [
 			'POST' => 'users/merge'
 		],

@@ -676,5 +676,3 @@ abstract class Project implements \JsonSerializable {
 }
 	
 ?>
-
-?>

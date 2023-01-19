@@ -583,7 +583,7 @@ class User implements \JsonSerializable {
 	}
 	
 	public function Commit() {
-		$original_user = static::GetByUserID($this->user_id);
+		$original_user = static::Fetch($this->user_id);
 		$changes = [];
 		$database = BeaconCommon::Database();
 		

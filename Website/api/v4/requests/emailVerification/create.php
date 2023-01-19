@@ -16,6 +16,7 @@ function handle_request(array $context): APIResponse {
 		if (is_null($verification) === false && $verification->CheckCode($code)) {
 			return APIResponse::NewJSON($verification, 200);
 		}
+		return APIResponse::NewJSONError('Incorrect verification code', $body, 400);
 	}
 	if (isset($body['key'])) {
 		$key = $body['key'];
