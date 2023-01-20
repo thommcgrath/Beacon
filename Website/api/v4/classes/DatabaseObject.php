@@ -42,14 +42,14 @@ abstract class DatabaseObject {
 	public static function Exists(string $uuid): bool {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM ' . $schema->Table(true) . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1);', $uuid);
+		$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM ' . $schema->Schema() . '.' . $schema->Table() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ');', $uuid);
 		return $rows->Field('exists');
 	}
 	
 	public static function Fetch(string $uuid): ?DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1;', $uuid);
+		$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';', $uuid);
 		if (is_null($rows) || $rows->RecordCount() !== 1) {
 			return null;
 		}
@@ -169,8 +169,9 @@ abstract class DatabaseObject {
 		
 		$database->BeginTransaction();
 		try {
-			$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $schema->PrimaryKey(false) . ' = $' . $placeholder++ . ';', $values);
-			$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1;', $uuid);
+			$primaryKeyColumn = $schema->PrimaryColumn();
+			$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $primaryKeyColumn->ColumnName() . ' = ' . $schema->PrimarySetter('$' . $placeholder++) . ';', $values);
+			$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';', $uuid);
 			$this->SaveChildObjects();
 			$database->Commit();
 		} catch (Exception $err) {
@@ -190,7 +191,7 @@ abstract class DatabaseObject {
 	}
 	
 	public function UUID(): string {
-		$primary_key = static::DatabaseSchema()->primaryKey(false);
+		$primary_key = static::DatabaseSchema()->PrimaryColumn()->PropertyName();
 		return $this->$primary_key;
 	}
 	
@@ -209,7 +210,7 @@ abstract class DatabaseObject {
 				$params->pageNum = $page;
 			}
 		}
-		$params->orderBy = $schema->PrimaryKey(true);
+		$params->orderBy = $schema->PrimaryAccessor();
 		
 		static::BuildSearchParameters($params, $filters);
 			
@@ -233,7 +234,7 @@ abstract class DatabaseObject {
 		}
 		
 		$totalRowCount = 0;
-		$primaryKey = $schema->PrimaryKey(true);
+		$primaryKey = $schema->PrimarySelector();
 		$from = $schema->FromClause();
 		$database = BeaconCommon::Database();
 			
@@ -287,7 +288,7 @@ abstract class DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryKey(false) . ' = $1;', $this->UUID());
+		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->UUID());
 		$database->Commit();
 	}
 }

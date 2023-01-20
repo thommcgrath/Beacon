@@ -17,7 +17,8 @@ class DatabaseSearchParameters {
 			if (is_null($definition)) {
 				return;
 			}
-			$this->clauses[] = $schema->Table(false) . '.' . $definition->ColumnName() . ' = $' . $this->placeholder++;
+			$table = $schema->Table();
+			$this->clauses[] = $definition->Accessor($table) . ' = ' . $definition->Setter('$' . $this->placeholder++);
 			$this->values[] = $filters[$propertyName];
 		}
 	}

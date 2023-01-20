@@ -77,13 +77,13 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		$user_id = Core::UserId();
 		$database = BeaconCommon::Database();
 			
-		$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1';
+		$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1');
 		$values = [$uuid];
 		if (is_null($user_id) === false) {
-			$sql .= ' AND user_id = $2;';
+			$sql .= ' AND ' . $schema->Accessor('user_id') . ' = ' . $schema->Setter('user_id', '$2') . ';';
 			$values[] = $user_id;
 		} else {
-			$sql .= ' AND user_id = owner_id;';
+			$sql .= ' AND ' . $schema->Accessor('user_id') . ' = ' . $schema->Accessor('owner_id') . ';';
 		}
 		
 		$rows = $database->Query($sql, $values);
@@ -95,7 +95,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 	
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
 		$schema = static::DatabaseSchema();
-		$table = static::DatabaseSchema()->Table(false);
+		$table = static::DatabaseSchema()->Table();
 		
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';
@@ -234,7 +234,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		$database = BeaconCommon::Database();
 		$schema = static::DatabaseSchema();
 		
-		$results = $database->Query('SELECT published FROM ' . $schema->Table(true) . ' WHERE project_id = $1;', $this->project_id);
+		$results = $database->Query('SELECT published FROM ' . $schema->Table() . ' WHERE project_id = $1;', $this->project_id);
 		$current_status = $results->Field('published');
 		$new_status = $current_status;
 		if ($desired_status == self::kPublishStatusRequested || $desired_status == self::kPublishStatusApproved) {
@@ -304,7 +304,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		}
 		if ($new_status != $current_status) {
 			$database->BeginTransaction();
-			$database->Query('UPDATE ' . $schema->Table(true) . ' SET published = $2 WHERE project_id = $1;', $this->project_id, $new_status);
+			$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET published = $2 WHERE project_id = $1;', $this->project_id, $new_status);
 			$database->Commit();
 		}
 		$this->published = $new_status;
@@ -479,7 +479,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		$game_id = isset($project['GameID']) ? $project['GameID'] : 'Ark';
 		
 		// check if the project already exists
-		$results = $database->Query('SELECT project_id, storage_path FROM ' . $schema->Table(true) . ' WHERE project_id = $1;', $project_id);
+		$results = $database->Query('SELECT project_id, storage_path FROM ' . $schema->Table() . ' WHERE project_id = $1;', $project_id);
 		$new_project = $results->RecordCount() == 0;
 		$storage_path = null;
 		
@@ -487,7 +487,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		if ($new_project == false) {
 			$storage_path = $results->Field('storage_path');
 			
-			$results = $database->Query('SELECT role, owner_id FROM ' . $schema->Table(true) . ' WHERE project_id = $1 AND user_id = $2;', $project_id, $user->UserId());
+			$results = $database->Query('SELECT role, owner_id FROM ' . $schema->Table() . ' WHERE project_id = $1 AND user_id = $2;', $project_id, $user->UserId());
 			if ($results->RecordCount() == 0) {
 				$reason = 'Access denied for project ' . $project_id . '.';
 				return false;
@@ -567,7 +567,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 					$placeholder++;
 				}
 				
-				$database->Query('INSERT INTO ' . $schema->Table(true) . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
+				$database->Query('INSERT INTO ' . $schema->Table() . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
 			} else {
 				$assignments = ['revision = revision + 1', 'last_update = CURRENT_TIMESTAMP', 'deleted = FALSE'];
 				foreach ($row_values as $column => $value) {
@@ -576,7 +576,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 					$placeholder++;
 				}
 				
-				$database->Query('UPDATE ' . $schema->Table(true) . ' SET ' . implode(', ', $assignments) . ' WHERE project_id = $1 AND user_id = $2;', $values);
+				$database->Query('UPDATE ' . $schema->Table() . ' SET ' . implode(', ', $assignments) . ' WHERE project_id = $1 AND user_id = $2;', $values);
 			}
 			foreach ($guest_ids_to_add as $guest_id) {
 				$database->Query('INSERT INTO ' . $schema->Schema() . '.guest_projects (project_id, user_id) VALUES ($1, $2);', $project_id, $guest_id);

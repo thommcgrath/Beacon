@@ -29,12 +29,8 @@ class DatabaseSchema {
 		$this->schema = $schema;
 	}
 	
-	public function Table(bool $full = false): string {
-		if ($full) {
-			return $this->schema . '.' . $this->table;
-		} else {
-			return $this->table;
-		}
+	public function Table(): string {
+		return $this->table;
 	}
 	
 	public function SetTable(string $table): void {
@@ -67,12 +63,53 @@ class DatabaseSchema {
 		$this->AddColumn($column);
 	}
 	
-	public function PrimaryKey(bool $full = false): string {
-		if ($full) {
-			return $this->primaryColumn->Accessor($this->table);
-		} else {
-			return $this->primaryColumn->ColumnName();
+	public function PrimarySelector(): string {
+		return $this->Selector($this->primaryColumn);
+	}
+	
+	public function PrimaryAccessor(): string {
+		return $this->Accessor($this->primaryColumn);
+	}
+	
+	public function PrimarySetter(string $placeholder): string {
+		return $this->Setter($this->primaryColumn, $placeholder);
+	}
+	
+	public function Selector(string|DatabaseObjectProperty $column): string {
+		if (is_string($column)) {
+			$columnName = $column;
+			$column = $this->Column($columnName);
+			if (is_null($column)) {
+				throw new Exception("Unknown column {$columnName}");
+			}
 		}
+		
+		return $column->Selector($this->table);
+	}
+	
+	public function Accessor(string|DatabaseObjectProperty $column): string {
+		if (is_string($column)) {
+			$columnName = $column;
+			$column = $this->Column($columnName);
+			if (is_null($column)) {
+				throw new Exception("Unknown column {$columnName}");
+			}
+		}
+		
+		return $column->Accessor($this->table);
+	}
+	
+	// This doesn't do much, it's just for API consistency
+	public function Setter(string|DatabaseObjectProperty $column, string $placeholder): string {
+		if (is_string($column)) {
+			$columnName = $column;
+			$column = $this->Column($columnName);
+			if (is_null($column)) {
+				throw new Exception("Unknown column {$columnName}");
+			}
+		}
+		
+		return $column->Setter($placeholder);
 	}
 	
 	public function AddColumn(string|DatabaseObjectProperty $column): void {
@@ -125,13 +162,13 @@ class DatabaseSchema {
 	}
 	
 	public function FromClause(): string {
-		return str_replace(['%%SCHEMA%%', '%%TABLE%%'], [$this->schema, $this->table], implode(' ', array_merge([$this->Table(true)], $this->joins)));
+		return str_replace(['%%SCHEMA%%', '%%TABLE%%'], [$this->schema, $this->table], implode(' ', array_merge(["{$this->schema}.{$this->table}"], $this->joins)));
 	}
 	
 	public function SelectColumns(): string {
 		$selectors = [];
 		foreach ($this->columns as $definition) {
-			$selectors[] = $definition->Accessor($this->table);
+			$selectors[] = $definition->Selector($this->table);
 		}
 		return implode(', ', $selectors);
 	}

@@ -10,6 +10,7 @@ class DatabaseObjectProperty {
 	
 	protected $propertyName;
 	protected $columnName;
+	protected $alias = null;
 	protected $accessor = null;
 	protected $setter = null;
 	protected $editable = self::kEditableAtCreation;
@@ -38,6 +39,10 @@ class DatabaseObjectProperty {
 		if (isset($options['primaryKey'])) {
 			$this->primaryKey = $options['primaryKey'];
 		}
+		
+		if (isset($options['alias'])) {
+			$this->alias = $options['alias'];
+		}
 	}
 	
 	public function PropertyName(): string {
@@ -48,11 +53,29 @@ class DatabaseObjectProperty {
 		return $this->columnName;
 	}
 	
+	public function Alias(): ?string {
+		return $this->alias;	
+	}
+	
+	public function Selector(string $table): string {
+		$selector = $this->Accessor($table);
+		if (is_null($this->accessor) === false) {
+			if (is_null($this->alias) === false) {
+				$selector .= " AS {$this->alias}";
+			} else {
+				$selector .= " AS {$this->columnName}";
+			}
+		} else if (is_null($this->alias) === false) {
+			$selector .= " AS {$this->alias}";
+		}
+		return $selector;
+	}
+	
 	public function Accessor(string $table): string {
 		if (is_null($this->accessor)) {
 			return "{$table}.{$this->columnName}";
 		} else {
-			return str_replace('%%TABLE%%', $table, "{$this->accessor} AS {$this->columnName}");
+			return str_replace(['%%TABLE%%', '%%COLUMN%%'], [$table, $this->columnName], $this->accessor);
 		}
 	}
 	
