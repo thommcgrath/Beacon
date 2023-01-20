@@ -39,6 +39,13 @@ abstract class DatabaseObject {
 		return $objects;
 	}
 	
+	public static function Exists(string $uuid): bool {
+		$schema = static::DatabaseSchema();
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT EXISTS(SELECT 1 FROM ' . $schema->Table(true) . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1);', $uuid);
+		return $rows->Field('exists');
+	}
+	
 	public static function Fetch(string $uuid): ?DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
@@ -109,7 +116,7 @@ abstract class DatabaseObject {
 		$database = BeaconCommon::Database();
 		try {
 			$database->BeginTransaction();
-			$database->Query("INSERT INTO " . $schema->Table(true) . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ");", $values);
+			$database->Query("INSERT INTO " . $schema->WriteableTable() . " (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ");", $values);
 			$obj = static::Fetch($primaryKey);
 			if (is_null($obj)) {
 				throw new Exception("No object inserted into database.");
@@ -155,14 +162,14 @@ abstract class DatabaseObject {
 		$uuid = $this->UUID();
 		foreach ($this->changed_properties as $propertyName) {
 			$definition = $schema->Property($propertyName);
-			$assignments[] = $definition->Setter('$' . $placeholder++);
+			$assignments[] = $definition->ColumnName() . ' = ' . $definition->Setter('$' . $placeholder++);
 			$values[] = $this->$propertyName;
 		}
 		$values[] = $uuid;
 		
 		$database->BeginTransaction();
 		try {
-			$database->Query('UPDATE ' . $schema->Table(true) . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $schema->PrimaryKey(true) . ' = $' . $placeholder++ . ';', $values);
+			$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $schema->PrimaryKey(false) . ' = $' . $placeholder++ . ';', $values);
 			$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1;', $uuid);
 			$this->SaveChildObjects();
 			$database->Commit();
@@ -191,11 +198,16 @@ abstract class DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$params = new DatabaseSearchParameters();
 		if (isset($filters['pageSize'])) {
-			$params->pageSize = intval($filters['pageSize']);
-			$params->pageNum = 1;
+			$pageSize = filter_var($filters['pageSize'], FILTER_VALIDATE_INT);
+			if ($pageSize !== false) {
+				$params->pageSize = $pageSize;
+			}
 		}
 		if (isset($filters['page'])) {
-			$params->pageNum = intval($filters['page']);
+			$page = filter_var($filters['page'], FILTER_VALIDATE_INT);
+			if ($page !== false) {
+				$params->pageNum = $page;
+			}
 		}
 		$params->orderBy = $schema->PrimaryKey(true);
 		
@@ -204,18 +216,20 @@ abstract class DatabaseObject {
 		$params->pageNum = max($params->pageNum, 1);
 		$params->pageSize = min($params->pageSize, 250);
 		
+		if ($legacyMode) {
+			$emptyReturn = [];
+		} else {
+			$emptyReturn = [
+				'totalResults' => 0,
+				'pageSize' => $params->pageSize,
+				'pages' => 0,
+				'page' => $params->pageNum,
+				'results' => []
+			];
+		}
+		
 		if (count($params->clauses) === 0 && $params->allowAll !== true) {
-			if ($legacyMode) {
-				return [];
-			} else {
-				return [
-					'totalResults' => 0,
-					'pageSize' => $params->pageSize,
-					'pages' => 0,
-					'page' => $params->pageNum,
-					'results' => []
-				];
-			}
+			return $emptyReturn;
 		}
 		
 		$totalRowCount = 0;
@@ -230,8 +244,13 @@ abstract class DatabaseObject {
 			}
 			$sql .= ';';
 			//echo "{$sql}\n";
+			//print_r($params->values);
 			$totalRows = $database->Query($sql, $params->values);
 			$totalRowCount = intval($totalRows->Field('num_results'));
+			
+			if ($totalRowCount === 0) {
+				return $emptyReturn;
+			}
 		}
 		
 		$sql = "SELECT " . $schema->SelectColumns() . " FROM {$from}";
@@ -262,6 +281,14 @@ abstract class DatabaseObject {
 				'results' => $members
 			];
 		}
+	}
+	
+	public function Delete(): void {
+		$schema = static::DatabaseSchema();
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryKey(false) . ' = $1;', $this->UUID());
+		$database->Commit();
 	}
 }
 

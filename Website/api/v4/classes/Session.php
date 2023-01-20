@@ -112,7 +112,6 @@ class Session extends DatabaseObject implements \JsonSerializable {
 			$session = static::Create($properties);
 			$session->session_id = $session_id;
 		} catch (Exception $err) {
-			echo $err->getMessage();
 			return null;
 		}
 		

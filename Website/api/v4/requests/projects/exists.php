@@ -1,14 +1,11 @@
 <?php
 
-function handle_request(array $context): void {
-	$project_id = $context['path_parameters']['project_id'];
-	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT project_id, user_id FROM ' . \BeaconAPI\Project::SchemaName() . '.' . \BeaconAPI\Project::TableName() . ' WHERE project_id = $1 AND deleted = FALSE;', $project_id);
-	if ($results->RecordCount() == 1) {
-		http_response_code(200);
-	} else {
-		http_response_code(404);
-	}
+use BeaconAPI\v4\{APIResponse, Project};
+
+function handle_request(array $context): APIResponse {
+	$project_id = $context['path_parameters']['projectId'];
+	$exists = Project::Exists($project_id);
+	return new APIResponse($exists ? 200 : 404, null);
 }
 
 ?>

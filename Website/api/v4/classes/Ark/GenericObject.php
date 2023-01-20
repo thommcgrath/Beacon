@@ -555,13 +555,6 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		return $this->mod_workshop_id;
 	}
 	
-	public function Delete() {
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM ' . static::TableName() . ' WHERE object_id = $1;', $this->object_id);
-		$database->Commit();
-	}
-	
 	public static function NormalizeTag(string $tag) {
 		$tag = strtolower($tag);
 		$tag = preg_replace('/[^\w]/', '', $tag);

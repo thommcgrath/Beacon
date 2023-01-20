@@ -14,6 +14,9 @@ class DatabaseSearchParameters {
 	public function AddFromFilter(DatabaseSchema $schema, array $filters, string $propertyName): void {
 		if (isset($filters[$propertyName])) {
 			$definition = $schema->Property($propertyName);
+			if (is_null($definition)) {
+				return;
+			}
 			$this->clauses[] = $schema->Table(false) . '.' . $definition->ColumnName() . ' = $' . $this->placeholder++;
 			$this->values[] = $filters[$propertyName];
 		}

@@ -79,10 +79,10 @@ Core::RegisterRoutes(
 			'GET' => 'projects/generate'
 		],
 		'/projects/{projectId}/versions' => [
-			'GET' => 'projects/versions/list'
+			'GET' => 'projects/get'
 		],
 		'/projects/{projectId}/versions/{versionId}' => [
-			'GET' => 'project/versions/get'
+			'GET' => 'projects/get'
 		],
 		'/sentinel/oauth/{provider}' => [
 			'GET' => 'sentinel/oauth'

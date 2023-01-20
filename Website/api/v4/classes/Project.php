@@ -1,15 +1,14 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
-use BeaconCloudStorage, BeaconCommon, BeaconRecordSet, DateTime, Exception;
+use BeaconCloudStorage, BeaconCommon, BeaconRecordSet, BeaconSearch, DateTime, Exception;
 
 abstract class Project extends DatabaseObject implements \JsonSerializable {
-	const PUBLISH_STATUS_PRIVATE = 'Private';
-	const PUBLISH_STATUS_REQUESTED = 'Requested';
-	const PUBLISH_STATUS_APPROVED = 'Approved';
-	const PUBLISH_STATUS_APPROVED_PRIVATE = 'Approved But Private';
-	const PUBLISH_STATUS_DENIED = 'Denied';
+	public const kPublishStatusPrivate = 'Private';
+	public const kPublishStatusRequested = 'Requested';
+	public const kPublishStatusApproved = 'Approved';
+	public const kPublishStatusApprovedPrivate = 'Approved But Private';
+	public const kPublishStatusDenied = 'Denied';
 	
 	protected $project_id = '';
 	protected $game_id = '';
@@ -22,7 +21,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 	protected $last_update = null;
 	protected $revision = 1;
 	protected $download_count = 0;
-	protected $published = self::PUBLISH_STATUS_PRIVATE;
+	protected $published = self::kPublishStatusPrivate;
 	protected $content = [];
 	protected $storage_path = null;
 	
@@ -43,7 +42,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('public', 'allowed_projects', [
+		$schema = new DatabaseSchema('public', 'allowed_projects', [
 			new DatabaseObjectProperty('project_id', ['primaryKey' => true]),
 			new DatabaseObjectProperty('game_id'),
 			new DatabaseObjectProperty('game_specific'),
@@ -58,6 +57,8 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('published'),
 			new DatabaseObjectProperty('storage_path')
 		]);
+		$schema->SetWriteableTable('projects');
+		return $schema;
 	}
 	
 	protected static function NewInstance(BeaconRecordSet $rows): Project {
@@ -71,50 +72,83 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		}
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
-		$parameters->orderBy = 'last_update DESC';
-		
-		// We want to list only "original" projects, not shared projects.
-		$parameters->clauses[] = 'user_id = owner_id';
-		
+	public static function Fetch(string $uuid): ?DatabaseObject {
 		$schema = static::DatabaseSchema();
-		$parameters->AddFromFilter($schema, $filters, 'user_id');
+		$user_id = Core::UserId();
+		$database = BeaconCommon::Database();
+			
+		$sql = 'SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryKey(true) . ' = $1';
+		$values = [$uuid];
+		if (is_null($user_id) === false) {
+			$sql .= ' AND user_id = $2;';
+			$values[] = $user_id;
+		} else {
+			$sql .= ' AND user_id = owner_id;';
+		}
+		
+		$rows = $database->Query($sql, $values);
+		if (is_null($rows) || $rows->RecordCount() !== 1) {
+			return null;
+		}
+		return static::NewInstance($rows);
+	}
+	
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+		$schema = static::DatabaseSchema();
+		$table = static::DatabaseSchema()->Table(false);
+		
+		$sort_column = 'last_update';
+		$sort_direction = 'DESC';
+		if (isset($filters['sort'])) {
+			switch ($filters['sort']) {
+			case 'download_count':
+				$sort_column = 'download_count';
+				break;
+			case 'name':
+				$sort_column = 'title';
+				break;
+			case 'console_safe':
+				$sort_column = 'console_safe';
+				break;
+			case 'description':
+				$sort_column = 'description';
+				break;
+			}
+		}
+		if (isset($filters['direction'])) {
+			$sort_direction = (strtolower($filters['direction']) === 'desc' ? 'DESC' : 'ASC');
+		}
+		$parameters->orderBy = "{$table}.{$sort_column} {$sort_direction}";
+		
+		if (isset($filters['user_id']) && empty($filters['user_id']) === false) {
+			$parameters->AddFromFilter($schema, $filters, 'user_id');
+		} else {
+			$user_id = Core::UserId();
+			if (is_null($user_id) === false) {
+				$parameters->clauses[] = $table . '.user_id = $' . $parameters->placeholder++;
+				$parameters->values[] = $user_id;
+			} else {
+				$parameters->clauses[] = $table . '.user_id = owner_id';
+			}
+		}
+		
 		$parameters->AddFromFilter($schema, $filters, 'published');
 		$parameters->AddFromFilter($schema, $filters, 'console_safe');
-	}
-	
-	public static function SchemaName() {
-		return 'public';
-	}
 		
-	public static function TableName() {
-		return 'projects';
-	}
-	
-	public static function AllowedTableName() {
-		return 'allowed_projects';
-	}
-	
-	public static function GuestTableName() {
-		return 'guest_projects';
-	}
-	
-	public static function SQLColumns() {
-		return [
-			'project_id',
-			'game_id',
-			'user_id',
-			'owner_id',
-			'title',
-			'description',
-			'console_safe',
-			'last_update',
-			'revision',
-			'download_count',
-			'published',
-			'game_specific',
-			'storage_path'
-		];
+		if (isset($filters['search']) && empty($filters['search']) === false) {
+			$search = new BeaconSearch();
+			$results = $search->Search($filters['search'], null, 100, 'Document');
+			if (count($results) > 0) {
+				$ids = [];
+				foreach ($results as $result) {
+					$ids[] = $result['objectID'];
+				}
+				$parameters->clauses[] = $table . '.project_id = ANY($' . $parameters->placeholder++ . ')';
+				$parameters->values[] = '{' . implode(',', $ids) . '}';
+			} else {
+				$parameters->clauses[] = "{$table}.project_id = '00000000-0000-0000-0000-000000000000'";
+			}
+		}
 	}
 	
 	public function jsonSerialize(): mixed {
@@ -134,151 +168,149 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		];
 	}
 		
-	public function ProjectID() {
+	public function ProjectId(): string {
 		return $this->project_id;
 	}
 	
-	public function DocumentID() {
-		// Legacy compatibility alias
-		return $this->project_id;
-	}
-	
-	public function GameID() {
+	public function GameId(): string {
 		return $this->game_id;
 	}
 	
-	public function GameURLComponent() {
+	public function GameURLComponent(): string {
 		switch ($this->game_id) {
 		case 'Ark':
 			return 'ark';
 		}
 	}
 	
-	public function UserID() {
+	public function UserId(): string {
 		return $this->user_id;
 	}
 	
-	public function OwnerID() {
+	public function OwnerId(): string {
 		return $this->owner_id;
 	}
 	
-	public function Title() {
+	public function Title(): string {
 		return $this->title;
 	}
 	
-	public function Name() {
-		// Legacy compatibility alias
-		return $this->title;
-	}
-	
-	public function Description() {
+	public function Description(): string {
 		return $this->description;
 	}
 	
-	public function ConsoleSafe() {
+	public function ConsoleSafe(): bool {
 		return $this->console_safe;
 	}
 	
-	public function LastUpdated() {
+	public function LastUpdated(): DateTime {
 		return $this->last_update;
 	}
 	
-	public function Revision() {
+	public function Revision(): int {
 		return $this->revision;
 	}
 	
-	public function DownloadCount() {
+	public function DownloadCount(): int {
 		return $this->download_count;
 	}
 	
-	public function IsPublic() {
-		return $this->published == PUBLISH_STATUS_APPROVED;
+	public function IncrementDownloadCount(bool $autosave = true): void {
+		$this->SetProperty('download_count', $this->download_count + 1);
+		if ($autosave) {
+			$this->Save();
+		}
 	}
 	
-	public function PublishStatus() {
+	public function IsPublic(): bool {
+		return $this->published == self::kPublishStatusApproved;
+	}
+	
+	public function PublishStatus(): string {
 		return $this->published;
 	}
 	
-	public function SetPublishStatus(string $desired_status) {
+	public function SetPublishStatus(string $desired_status): void {
 		$database = BeaconCommon::Database();
+		$schema = static::DatabaseSchema();
 		
-		$results = $database->Query('SELECT published FROM ' . static::SchemaName() . '.' . static::AllowedTableName() . ' WHERE project_id = $1;', $this->project_id);
+		$results = $database->Query('SELECT published FROM ' . $schema->Table(true) . ' WHERE project_id = $1;', $this->project_id);
 		$current_status = $results->Field('published');
 		$new_status = $current_status;
-		if ($desired_status == self::PUBLISH_STATUS_REQUESTED || $desired_status == self::PUBLISH_STATUS_APPROVED) {
-			if ($current_status == self::PUBLISH_STATUS_APPROVED_PRIVATE) {
-				$new_status = self::PUBLISH_STATUS_APPROVED;
-			} elseif ($current_status == self::PUBLISH_STATUS_PRIVATE) {
+		if ($desired_status == self::kPublishStatusRequested || $desired_status == self::kPublishStatusApproved) {
+			if ($current_status == self::kPublishStatusApprovedPrivate) {
+				$new_status = self::kPublishStatusApproved;
+			} elseif ($current_status == self::kPublishStatusPrivate) {
 				if (empty(trim($this->description))) {
-					$new_status = self::PUBLISH_STATUS_DENIED;
+					$new_status = self::kPublishStatusDenied;
 				} else {
-					$new_status = self::PUBLISH_STATUS_REQUESTED;
+					$new_status = self::kPublishStatusRequested;
 					$attachment = array(
 						'title' => $this->title,
 						'text' => $this->description,
 						'fallback' => 'Unable to show response buttons.',
 						'callback_id' => 'publish_document:' . $this->project_id,
-						'actions' => array(
-							array(
+						'actions' => [
+							[
 								'name' => 'status',
 								'text' => 'Approve',
 								'type' => 'button',
-								'value' => self::PUBLISH_STATUS_APPROVED,
-								'confirm' => array(
+								'value' => self::kPublishStatusApproved,
+								'confirm' => [
 									'text' => 'Are you sure you want to approve this project?',
 									'ok_text' => 'Approve'
-								)
-							),
-							array(
+								]
+							],
+							[
 								'name' => 'status',
 								'text' => 'Deny',
 								'type' => 'button',
-								'value' => self::PUBLISH_STATUS_DENIED,
-								'confirm' => array(
+								'value' => self::kPublishStatusDenied,
+								'confirm' => [
 									'text' => 'Are you sure you want to reject this project?',
 									'ok_text' => 'Deny'
-								)
-							)
-						),
+								]
+							]
+						],
 						'fields' => array()
 					);
 					
-					$user = User::GetByUserID($this->user_id);
+					$user = User::Fetch($this->user_id);
 					if (is_null($user) === false) {
 						if ($user->IsAnonymous()) {
 							$username = 'Anonymous';
 						} else {
 							$username = $user->Username() . '#' . $user->Suffix();
 						}
-						$attachment['fields'][] = array(
+						$attachment['fields'][] = [
 							'title' => 'Author',
 							'value' => $username
-						);
+						];
 					}
 					
-					$obj = array(
+					$obj = [
 						'text' => 'Request to publish project',
 						'attachments' => array($attachment)
-					);
+					];
 					BeaconCommon::PostSlackRaw(json_encode($obj));
 				}
 			}
 		} else {
-			if ($current_status == self::PUBLISH_STATUS_APPROVED) {
-				$new_status = self::PUBLISH_STATUS_APPROVED_PRIVATE;
-			} elseif ($current_status == self::PUBLISH_STATUS_REQUESTED) {
-				$new_status = self::PUBLISH_STATUS_PRIVATE;
+			if ($current_status == self::kPublishStatusApproved) {
+				$new_status = self::kPublishStatusApprovedPrivate;
+			} elseif ($current_status == self::kPublishStatusRequested) {
+				$new_status = self::kPublishStatusPrivate;
 			}
 		}
 		if ($new_status != $current_status) {
 			$database->BeginTransaction();
-			$database->Query('UPDATE ' . static::SchemaName() . '.' . static::TableName() . ' SET published = $2 WHERE project_id = $1;', $this->project_id, $new_status);
+			$database->Query('UPDATE ' . $schema->Table(true) . ' SET published = $2 WHERE project_id = $1;', $this->project_id, $new_status);
 			$database->Commit();
 		}
 		$this->published = $new_status;
 	}
 	
-	public function PreloadContent($version_id = null) {
+	public function PreloadContent($version_id = null): string {
 		$content_key = (is_null($version_id) === true ? '' : $version_id);
 		if (array_key_exists($content_key, $this->content) === true) {
 			return $content_key;
@@ -288,7 +320,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		return $content_key;
 	}	
 	
-	public function Content(bool $compressed = false, bool $parsed = true, $version_id = null) {
+	public function Content(bool $compressed = false, bool $parsed = true, $version_id = null): string {
 		try {
 			$content_key = $this->PreloadContent($version_id);
 		} catch (Exception $err) {
@@ -310,168 +342,20 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		}
 	}
 	
-	public function ResourceURL() {
+	public function ResourceURL(): string {
 		return Core::URL('projects/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
 	}
 	
-	public static function GetAll() {
-		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('user_id = owner_id'));
-		return self::GetFromResults($results);
-	}
-	
-	public static function GetByDocumentID(string $project_id) {
-		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('project_id = ANY($1) AND user_id = owner_id'), '{' . $project_id . '}');
-		return self::GetFromResults($results);
-	}
-	
-	public static function GetDocumentByID(string $project_id) {
-		// Just an alias for GetByDocumentID to make sense with GetSharedDocumentByID
-		return self::GetByDocumentID($project_id);
-	}
-	
-	public static function GetSharedDocumentByID(string $project_id, $user_id) {
-		if (is_null($user_id)) {
-			return self::GetByDocumentID($project_id);
-		}
-		
-		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('project_id = ANY($1) AND user_id = $2'), '{' . $project_id . '}', $user_id);
-		$projects = self::GetFromResults($results);
-		if (count($projects) === 0) {
-			$projects = self::GetByDocumentID($project_id);
-		}
-		return $projects;
-	}
-	
-	protected static function HookHandleSearchKey(string $column, $value, array &$clauses, array &$values, int &$next_placeholder) {
-		
-	}
-	
-	/*public static function Search(array $params, string $order_by = 'last_update DESC', int $count = 0, int $offset = 0, bool $count_only = false) {
-		$next_placeholder = 1;
-		$values = array();
-		$clauses = array();
-		
-		foreach ($params as $column => $value) {
-			switch ($column) {
-			case 'project_id':
-			case 'document_id':
-			case 'id':
-				if (is_array($value)) {
-					$values[] = '{' . implode(',', $value) . '}';
-					$clauses[] = 'project_id = ANY($' . $next_placeholder++ . ')';
-				} elseif (BeaconCommon::IsUUID($value)) {
-					$values[] = $value;
-					$clauses[] = 'project_id = $' . $next_placeholder++;
-				}
-				break;
-			case 'public':
-			case 'is_public':
-				$clauses[] = 'published = \'Approved\'';
-				break;
-			case 'published':
-				$values[] = $value;
-				$clauses[] = 'published = $' . $next_placeholder++;
-				break;
-			case 'user_id':
-				if (is_array($value)) {
-					$values[] = '{' . implode(',', $value) . '}';
-					$clauses[] = 'user_id = ANY($' . $next_placeholder++ . ')';
-				} elseif (is_null($value)) {
-					$clauses[] = 'user_id IS NULL';
-				} elseif (BeaconCommon::IsUUID($value)) {
-					$values[] = $value;
-					$clauses[] = 'user_id = $' . $next_placeholder++;
-				}
-				break;
-			case 'console_safe':
-				$values[] = boolval($value);
-				$clauses[] = 'console_safe = $' . $next_placeholder++;
-				break;
-			default:
-				static::HookHandleSearchKey($column, $value, $clauses, $values, $next_placeholder);
-				break;
-			}
-		}
-		
-		// We want to list only "original" projects, not shared projects.
-		$clauses[] = 'user_id = owner_id';
-		
-		$database = BeaconCommon::Database();
-		if ($count_only) {
-			$sql = 'SELECT COUNT(project_id) AS project_count FROM ' . static::SchemaName() . '.' . static::AllowedTableName() . ' WHERE ' . implode(' AND ', $clauses) . ';';
-			$results = $database->Query($sql, $values);
-			return $results->Field('project_count');
-		} else {
-			$sql = static::BuildSQL(implode(' AND ', $clauses), $order_by, $count, $offset);
-			$results = $database->Query($sql, $values);
-			return self::GetFromResults($results);
-		}
-	}*/
-	
-	public static function GetFromResults(BeaconRecordSet $results) {
-		if ($results === null || $results->RecordCount() === 0) {
-			return array();
-		}
-		
-		$projects = array();
-		while (!$results->EOF()) {
-			$project = static::GetFromResult($results);
-			if ($project !== null) {
-				$projects[] = $project;
-			}
-			$results->MoveNext();
-		}
-		return $projects;
-	}
-	
-	// Deprecated
-	protected static function GetFromResult(BeaconRecordSet $results) {
-		return static::NewInstance($results);
-	}
-	
-	protected static function BuildSQL(string $clause = '', string $order_by = 'last_update DESC', int $count = 0, int $offset = 0) {
-		$sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SchemaName() . '.' . static::AllowedTableName();
-		if ($clause !== '') {
-			$sql .= ' WHERE ' . $clause;
-		}
-		if ($order_by !== '') {
-			$sql .= ' ORDER BY ' . $order_by;
-		}
-		if ($count > 0) {
-			$sql .= ' LIMIT ' . $count;
-		}
-		if ($offset > 0) {
-			$sql .= ' OFFSET ' . $offset;
-		}
-		$sql .= ';';
-		return $sql;
-	}
-	
-	public function CloudStoragePath() {
+	public function CloudStoragePath(): string {
 		if (is_null($this->storage_path)) {
-			$this->storage_path = static::GenerateCloudStoragePath($this->project_id);
+			$this->storage_path = '/Projects/' . strtolower($project_id) . '.beacon';
 		}
 		return $this->storage_path;
 	}
 	
-	protected static function GenerateCloudStoragePath(string $project_id) {
-		return '/Projects/' . strtolower($project_id) . '.beacon';
-	}
-	
-	protected static function HookValidateMultipart(array &$required_vars, string &$reason) {
-		return true;
-	}
-	
-	protected static function HookMultipartAddProjectValues(array &$project, string &$reason) {
-		return true;
-	}
-	
-	public static function SaveFromMultipart(User $user, string &$reason) {
+	public static function SaveFromMultipart(User $user, string &$reason): bool {
 		$required_vars = ['keys', 'title', 'uuid', 'version'];
-		if (static::HookValidateMultipart($required_vars, $reason) === false) {
+		if (static::ValidateMultipart($required_vars, $reason) === false) {
 			return false;
 		}
 		$missing_vars = [];
@@ -556,25 +440,33 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		}
 		$project['EncryptionKeys'] = $keys;
 		
-		if (static::HookMultipartAddProjectValues($project, $reason) === false) {
+		if (static::MultipartAddProjectValues($project, $reason) === false) {
 			return false;
 		}
 		
 		return self::SaveFromArray($project, $user, $_FILES['contents'], $reason);
 	}
 	
-	public static function SaveFromContent(string $project_id, User $user, $file_content, string &$reason) {
+	protected static function ValidateMultipart(array &$required_vars, string &$reason): bool {
+		return true;
 	}
 	
-	protected static function HookRowSaveData(array $project, array &$row_values) {
+	protected static function MultipartAddProjectValues(array &$project, string &$reason): bool {
+		return true;
 	}
 	
-	protected static function SaveFromArray(array $project, User $user, $contents, string &$reason) {
+	protected static function AddColumnValues(array $project, array &$row_values): bool {
+		return true;
+	}
+	
+	protected static function SaveFromArray(array $project, User $user, $contents, string &$reason): bool {
 		$project_version = intval($project['Version']);
 		if ($project_version < 2) {
 			$reason = 'Version 1 projects are no longer not accepted.';
 			return false;
 		}
+		
+		$schema = static::DatabaseSchema();
 		
 		$database = BeaconCommon::Database();
 		$project_id = $project['Identifier'];
@@ -587,7 +479,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		$game_id = isset($project['GameID']) ? $project['GameID'] : 'Ark';
 		
 		// check if the project already exists
-		$results = $database->Query('SELECT project_id, storage_path FROM ' . static::SchemaName() . '.' . static::TableName() . ' WHERE project_id = $1;', $project_id);
+		$results = $database->Query('SELECT project_id, storage_path FROM ' . $schema->Table(true) . ' WHERE project_id = $1;', $project_id);
 		$new_project = $results->RecordCount() == 0;
 		$storage_path = null;
 		
@@ -595,7 +487,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		if ($new_project == false) {
 			$storage_path = $results->Field('storage_path');
 			
-			$results = $database->Query('SELECT role, owner_id FROM ' . static::SchemaName() . '.' . static::AllowedTableName() . ' WHERE project_id = $1 AND user_id = $2;', $project_id, $user->UserID());
+			$results = $database->Query('SELECT role, owner_id FROM ' . $schema->Table(true) . ' WHERE project_id = $1 AND user_id = $2;', $project_id, $user->UserId());
 			if ($results->RecordCount() == 0) {
 				$reason = 'Access denied for project ' . $project_id . '.';
 				return false;
@@ -603,41 +495,42 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 			$role = $results->Field('role');
 			$owner_id = $results->Field('owner_id');
 		} else {
-			$storage_path = static::GenerateCloudStoragePath($project_id);
-			
-			if ($user->IsChildAccount()) {
-				$role = 'Team';
-				$owner_id = $user->ParentAccountID();
-			} else {
-				$role = 'Owner';
-				$owner_id = $user->UserID();
-			}
+			$storage_path = static::CloudStoragePath($project_id);
+			$role = 'Owner';
+			$owner_id = $user->UserId();
 		}
 		
-		$guests_to_add = [];
-		$guests_to_remove = [];
+		$guest_ids_to_add = [];
+		$guest_ids_to_remove = [];
 		if (isset($project['EncryptionKeys']) && is_array($project['EncryptionKeys']) && BeaconCommon::IsAssoc($project['EncryptionKeys'])) {
 			$encryption_keys = $project['EncryptionKeys'];
-			$allowed_users = array_keys($encryption_keys);
+			$allowed_users_ids = array_keys($encryption_keys);
 			
-			$desired_guests = [];
-			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $owner_id);
+			$desired_guest_ids = [];
+			foreach ($allowed_user_ids as $allowed_user_id) {
+				if (strtolower($allowed_user_id) === strtolower($owner_id)) {
+					continue;
+				}
+				
+				$allowed_user = User::Fetch($allowed_user_id);
+				if (is_null($allowed_user)) {
+					continue;
+				}
+				
+				$desired_guest_ids[] = $allowed_user->UserId();
+			}
+			
+			$current_guest_ids = [];
+			$results = $database->Query('SELECT user_id FROM ' . $schema->Schema() . '.guest_projects WHERE project_id = $1;', $project_id);
 			while (!$results->EOF()) {
-				$desired_guests[] = $results->Field('user_id');
+				$current_guest_ids[] = $results->Field('user_id');
 				$results->MoveNext();
 			}
 			
-			$current_guests = [];
-			$results = $database->Query('SELECT user_id FROM ' . static::SchemaName() . '.' . static::GuestTableName() . ' WHERE project_id = $1;', $project_id);
-			while (!$results->EOF()) {
-				$current_guests[] = $results->Field('user_id');
-				$results->MoveNext();
-			}
+			$guest_ids_to_add = array_diff($desired_guest_ids, $current_guest_ids);
+			$guest_ids_to_remove = array_diff($current_guest_ids, $desired_guest_ids);
 			
-			$guests_to_add = array_diff($desired_guests, $current_guests);
-			$guests_to_remove = array_diff($current_guests, $desired_guests);
-			
-			if ($role !== 'Owner' && (count($guests_to_add) > 0 || count($guests_to_remove) > 0)) {
+			if ($role !== 'Owner' && (count($guest_ids_to_add) > 0 || count($guest_ids_to_remove) > 0)) {
 				$reason = 'Only the owner may add or remove users.';
 				return false;
 			}
@@ -656,7 +549,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 				'game_specific' => '{}',
 				'game_id' => $game_id
 			];
-			static::HookRowSaveData($project, $row_values);
+			static::AddColumnValues($project, $row_values);
 			
 			$placeholder = 3;
 			$values = [$project_id, $owner_id];
@@ -674,7 +567,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 					$placeholder++;
 				}
 				
-				$database->Query('INSERT INTO ' . static::SchemaName() . '.' . static::TableName() . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
+				$database->Query('INSERT INTO ' . $schema->Table(true) . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
 			} else {
 				$assignments = ['revision = revision + 1', 'last_update = CURRENT_TIMESTAMP', 'deleted = FALSE'];
 				foreach ($row_values as $column => $value) {
@@ -683,13 +576,13 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 					$placeholder++;
 				}
 				
-				$database->Query('UPDATE ' . static::SchemaName() . '.' . static::TableName() . ' SET ' . implode(', ', $assignments) . ' WHERE project_id = $1 AND user_id = $2;', $values);
+				$database->Query('UPDATE ' . $schema->Table(true) . ' SET ' . implode(', ', $assignments) . ' WHERE project_id = $1 AND user_id = $2;', $values);
 			}
-			foreach ($guests_to_add as $guest_id) {
-				$database->Query('INSERT INTO ' . static::SchemaName() . '.' . static::GuestTableName() . ' (project_id, user_id) VALUES ($1, $2);', $project_id, $guest_id);
+			foreach ($guest_ids_to_add as $guest_id) {
+				$database->Query('INSERT INTO ' . $schema->Schema() . '.guest_projects (project_id, user_id) VALUES ($1, $2);', $project_id, $guest_id);
 			}
-			foreach ($guests_to_remove as $guest_id) {
-				$database->Query('DELETE FROM ' . static::SchemaName() . '.' . static::GuestTableName() . ' WHERE project_id = $1 AND user_id = $2;', $project_id, $guest_id);
+			foreach ($guest_ids_to_remove as $guest_id) {
+				$database->Query('DELETE FROM ' . $schema->Schema() . '.guest_projects WHERE project_id = $1 AND user_id = $2;', $project_id, $guest_id);
 			}
 			$database->Commit();
 		} catch (Exception $err) {
@@ -720,6 +613,30 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 			$versions[$idx]['resource_url'] = $api_path . '/versions/' . urlencode($versions[$idx]['version_id']) . $api_query;
 		}
 		return $versions;
+	}
+	
+	public function Delete(): void {
+		$database = BeaconCommon::Database();
+		if ($this->user_id === $this->owner_id) {
+			// Project owner. If there are other users, pick one to transfer ownership to.
+			$rows = $database->Query('SELECT user_id FROM public.guest_projects WHERE project_id = $1;', $this->project_id);
+			if ($rows->RecordCount() > 0) {
+				$new_owner_id = $rows->Field('user_id');
+				$database->BeginTransaction();
+				$database->Query('UPDATE public.projects SET user_id = $2 WHERE project_id = $1;', $this->project_id, $new_owner_id);
+				$database->Query('DELETE FROM public.guest_projects WHERE project_id = $1 AND user_id = $2;', $this->project_id, $new_owner_id);
+				$database->Commit();
+			} else {
+				$database->BeginTransaction();
+				$database->Query('UPDATE public.projects SET deleted = TRUE WHERE project_id = $1;', $this->project_id);
+				$database->Commit();	
+			}
+		} else {
+			// Project guest. Remove the user.
+			$database->BeginTransaction();
+			$database->Query('DELETE FROM public.guest_projects WHERE project_id = $1 AND user_id = $2;', $this->project_id, $this->user_id);
+			$database->Commit();
+		}
 	}
 }
 	

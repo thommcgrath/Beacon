@@ -5,6 +5,7 @@ namespace BeaconAPI\v4;
 class DatabaseSchema {
 	protected $schema = 'public';
 	protected $table = '';
+	protected $writeableTable = '';
 	protected $primaryColumn = null;
 	protected $columns = [];
 	protected $properties = [];
@@ -13,6 +14,7 @@ class DatabaseSchema {
 	public function __construct(string $schema, string $table, array $definitions, array $joins = []) {
 		$this->schema = $schema;
 		$this->table = $table;
+		$this->writeableTable = $table;
 		foreach ($definitions as $definition) {
 			$this->AddColumn($definition);
 		}
@@ -37,6 +39,14 @@ class DatabaseSchema {
 	
 	public function SetTable(string $table): void {
 		$this->table = $table;
+	}
+	
+	public function WriteableTable(): string {
+		return $this->schema . '.' . $this->writeableTable;
+	}
+	
+	public function SetWriteableTable(string $table): void {
+		$this->writeableTable = $table;
 	}
 	
 	public function PrimaryColumn(): DatabaseObjectProperty {

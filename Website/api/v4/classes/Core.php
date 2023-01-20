@@ -19,7 +19,7 @@ class Core {
 	
 	public static function HandleCORS(): void {
 		header('Access-Control-Allow-Origin: *');
-		header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT, PATCH, OPTIONS');
+		header('Access-Control-Allow-Methods: DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT');
 		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');
 		header('Access-Control-Expose-Headers: Content-Length,Content-Range');
 		header('Vary: Origin');
