@@ -67,11 +67,12 @@ Core::RegisterRoutes(
 		],
 		'/projects' => [
 			'GET' => 'projects/list',
-			'POST' => 'projects/create'
+			'DELETE' => 'projects/delete'
 		],
 		'/projects/{projectId}' => [
 			'GET' => 'projects/get',
-			'POST' => 'projects/edit',
+			'PATCH' => 'projects/edit',
+			'PUT' => 'projects/create',
 			'DELETE' => 'projects/delete',
 			'HEAD' => 'projects/exists'
 		],

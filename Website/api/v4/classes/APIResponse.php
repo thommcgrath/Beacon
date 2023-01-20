@@ -4,10 +4,10 @@ namespace BeaconAPI\v4;
 
 class APIResponse {
 	protected $headers = [];
-	protected $body = null;
-	protected $code = null;
+	protected $body = '';
+	protected $code = 500;
 	
-	public function __construct(int $code, ?string $body, array $headers = []) {
+	public function __construct(int $code, string $body = '', array $headers = []) {
 		$this->headers = $headers;
 		$this->body = $body;
 		$this->code = $code;
@@ -25,17 +25,31 @@ class APIResponse {
 	}
 	
 	public static function NewNoContent(): APIResponse {
-		return new static(204, null);
+		return new static(204);
+	}
+	
+	public function Body(): string {
+		return $this->body;
+	}
+	
+	public function Code(): int {
+		return $this->code;
+	}
+	
+	public function HeaderKeys(): array {
+		return array_keys($this->headers);
+	}
+	
+	public function Header(string $key): string {
+		return $this->headers[$key];
 	}
 	
 	public function Flush(): void {
-		http_response_code($this->code);
+		http_response_code($this->Code());
 		foreach ($this->headers as $header => $value) {
 			header("{$header}: {$value}");
 		}
-		if (empty($this->body) === false) {
-			echo $this->body;
-		}
+		echo $this->Body();
 	}
 }
 
