@@ -198,6 +198,9 @@ abstract class BeaconCloudStorage {
 			$results = $database->Query('SELECT hostname FROM usercloud_queue WHERE remote_path = $1 AND request_method = $2 AND hostname != $3;', $remote_path, 'PUT', $hostname);
 			if ($results->RecordCount() > 0) {
 				$session = ssh2_connect($results->Field('hostname'), 22);
+				if ($session === false) {
+					return static::FAILED_TO_WARM_CACHE;
+				}
 				$keyfile = BeaconCommon::FrameworkPath() . '/keys/cacheshare';
 				ssh2_auth_pubkey_file($session, 'cacheshare', $keyfile . '.pub', $keyfile, BeaconCommon::GetGlobal('CacheShare Secret'));
 				$remote_handle = @fopen("ssh2.sftp://$session/beacon-usercloud$remote_path", 'rb');
