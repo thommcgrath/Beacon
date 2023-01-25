@@ -95,7 +95,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 	
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
 		$schema = static::DatabaseSchema();
-		$table = static::DatabaseSchema()->Table();
+		$table = $schema->Table();
 		
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';

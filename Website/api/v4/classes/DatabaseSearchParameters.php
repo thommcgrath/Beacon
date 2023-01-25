@@ -11,14 +11,18 @@ class DatabaseSearchParameters {
 	public $pageNum = 1;
 	public $orderBy = null;
 	
-	public function AddFromFilter(DatabaseSchema $schema, array $filters, string $propertyName): void {
+	public function AddFromFilter(DatabaseSchema $schema, array $filters, string|DatabaseObjectProperty $property): void {
+		if (is_string($property)) {
+			$property = $schema->Property($property);
+		}
+		if (is_null($property)) {
+			return;
+		}
+		
+		$propertyName = $property->PropertyName();
 		if (isset($filters[$propertyName])) {
-			$definition = $schema->Property($propertyName);
-			if (is_null($definition)) {
-				return;
-			}
 			$table = $schema->Table();
-			$this->clauses[] = $definition->Accessor($table) . ' = ' . $definition->Setter('$' . $this->placeholder++);
+			$this->clauses[] = $schema->Accessor($property) . ' = ' . $schema->Setter($property, '$' . $this->placeholder++);
 			$this->values[] = $filters[$propertyName];
 		}
 	}

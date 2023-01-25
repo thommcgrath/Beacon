@@ -83,6 +83,18 @@ abstract class DatabaseObject {
 		}
 		$params->orderBy = $schema->PrimaryAccessor();
 		
+		$minVersionProperty = $schema->Property('minVersion');
+		if (is_null($minVersionProperty) === false) {
+			$minVersion = false;
+			if (isset($filters['minVersion'])) {
+				$minVersion = filter_var($filters['minVersion'], FILTER_VALIDATE_INT);
+			}
+			if ($minVersion !== false && $minVersion > 0) {
+				$params->clauses[] = $schema->Accessor($minVersionProperty) . ' <= ' . $schema->Setter($minVersionProperty, '$' . $params->placeholder++);
+				$params->values[] = $filters['minVersion'];
+			}
+		}
+		
 		static::BuildSearchParameters($params, $filters);
 			
 		$params->pageNum = max($params->pageNum, 1);
@@ -161,6 +173,12 @@ abstract class DatabaseObject {
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->UUID());
 		$database->Commit();
+	}
+	
+	public function HasProperty(string $propertyName): bool {
+		$schema = static::DatabaseSchema();
+		$property = $schema->Property($propertyName);
+		return is_null($property) === false;
 	}
 }
 
