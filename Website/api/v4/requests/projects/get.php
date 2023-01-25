@@ -17,16 +17,12 @@ function handle_request(array $context): APIResponse {
 	}
 	
 	switch ($context['route_key']) {
+	case 'GET /projects/{projectId}/metadata':
+		return APIResponse::NewJSON($project, 200);
 	case 'GET /projects/{projectId}':
-		$simple = isset($_GET['simple']);
-		if ($simple) {
-			return APIResponse::NewJSON($project, 200);
-		}
-		
 		if (is_null($authorized_user_id) || $authorized_user_id !== $project->UserId()) {
 			$project->IncrementDownloadCount();
 		}
-		
 		return HandleDocumentDataRequest($project, null);
 	case 'GET /projects/{projectId}/versions':
 		return APIResponse::NewJSON($project->Versions(), 200);

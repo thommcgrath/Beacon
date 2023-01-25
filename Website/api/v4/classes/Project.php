@@ -460,8 +460,8 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	protected static function SaveFromArray(array $project, User $user, $contents, string &$reason): bool {
-		$project_version = intval($project['Version']);
-		if ($project_version < 2) {
+		$project_version = filter_var($project['Version'], FILTER_VALIDATE_INT);
+		if ($project_version === false || $project_version < 2) {
 			$reason = 'Version 1 projects are no longer not accepted.';
 			return false;
 		}

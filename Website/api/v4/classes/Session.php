@@ -1,10 +1,11 @@
 <?php
 	
 namespace BeaconAPI\v4;
-use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconCommon, BeaconRecordSet, DateTime, Exception;
 
 class Session extends DatabaseObject implements \JsonSerializable {
+	use DatabaseCommonWriterObject;
+	
 	const COOKIE_NAME = 'beacon_auth';
 	
 	protected $session_hash = '';

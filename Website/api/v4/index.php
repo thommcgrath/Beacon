@@ -67,17 +67,20 @@ Core::RegisterRoutes(
 		],
 		'/projects' => [
 			'GET' => 'projects/list',
+			'POST' => 'projects/create',
 			'DELETE' => 'projects/delete'
 		],
 		'/projects/{projectId}' => [
 			'GET' => 'projects/get',
 			'PATCH' => 'projects/edit',
-			'PUT' => 'projects/create',
 			'DELETE' => 'projects/delete',
 			'HEAD' => 'projects/exists'
 		],
 		'/projects/{projectId}/Game.ini' => [
 			'GET' => 'projects/generate'
+		],
+		'/projects/{projectId}/metadata' => [
+			'GET' => 'projects/get'
 		],
 		'/projects/{projectId}/versions' => [
 			'GET' => 'projects/get'

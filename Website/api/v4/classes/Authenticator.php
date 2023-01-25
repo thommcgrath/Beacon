@@ -4,6 +4,8 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet;
 
 class Authenticator extends DatabaseObject implements \JsonSerializable {
+	use DatabaseCommonWriterObject;
+	
 	const TYPE_TOTP = 'TOTP';
 	
 	protected $authenticator_id;

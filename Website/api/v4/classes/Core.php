@@ -57,9 +57,16 @@ class Core {
 		return static::$body_raw;
 	}
 	
+	public static function ContentType(): string {
+		if (isset($_SERVER['HTTP_CONTENT_TYPE']) === false) {
+			return '';
+		}
+		
+		return strtok(strtolower($_SERVER['HTTP_CONTENT_TYPE']), ';');
+	}
+	
 	public static function IsJSONContentType(): bool {
-		$header = strtolower($_SERVER['HTTP_CONTENT_TYPE']);
-		return ($header === 'application/json' || str_starts_with($header, 'application/json;'));
+		return static::ContentType() === 'application/json';
 	}
 	
 	public static function BodyAsJSON() {
@@ -112,15 +119,6 @@ class Core {
 	
 	public static function Method() {
 		return strtoupper($_SERVER['REQUEST_METHOD']);
-	}
-	
-	public static function ContentType() {
-		$pos = strpos($_SERVER['CONTENT_TYPE'], ';');
-		if ($pos === false) {
-			return strtolower($_SERVER['CONTENT_TYPE']);
-		} else {
-			return substr(strtolower($_SERVER['CONTENT_TYPE']), 0, $pos);
-		}
 	}
 	
 	protected static function AuthorizeWithSessionID(string $session_id) {
