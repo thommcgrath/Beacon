@@ -11,7 +11,7 @@ class DatabaseSearchParameters {
 	public $pageNum = 1;
 	public $orderBy = null;
 	
-	public function AddFromFilter(DatabaseSchema $schema, array $filters, string|DatabaseObjectProperty $property): void {
+	public function AddFromFilter(DatabaseSchema $schema, array $filters, string|DatabaseObjectProperty $property, string $operator = '='): void {
 		if (is_string($property)) {
 			$property = $schema->Property($property);
 		}
@@ -21,8 +21,7 @@ class DatabaseSearchParameters {
 		
 		$propertyName = $property->PropertyName();
 		if (isset($filters[$propertyName])) {
-			$table = $schema->Table();
-			$this->clauses[] = $schema->Accessor($property) . ' = ' . $schema->Setter($property, '$' . $this->placeholder++);
+			$this->clauses[] = $schema->Comparison($property, $operator, $this->placeholder++);
 			$this->values[] = $filters[$propertyName];
 		}
 	}

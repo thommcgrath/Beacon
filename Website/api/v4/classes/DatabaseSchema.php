@@ -1,6 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
+use Exception;
 
 class DatabaseSchema {
 	protected $schema = 'public';
@@ -90,7 +91,7 @@ class DatabaseSchema {
 	public function Accessor(string|DatabaseObjectProperty $column): string {
 		if (is_string($column)) {
 			$columnName = $column;
-			$column = $this->Column($columnName);
+			$column = $this->Column($columnName) ?? $this->Property($columnName);
 			if (is_null($column)) {
 				throw new Exception("Unknown column {$columnName}");
 			}
@@ -100,16 +101,28 @@ class DatabaseSchema {
 	}
 	
 	// This doesn't do much, it's just for API consistency
-	public function Setter(string|DatabaseObjectProperty $column, string $placeholder): string {
+	public function Setter(string|DatabaseObjectProperty $column, string|int $placeholder): string {
 		if (is_string($column)) {
 			$columnName = $column;
-			$column = $this->Column($columnName);
+			$column = $this->Column($columnName) ?? $this->Property($columnName);
 			if (is_null($column)) {
 				throw new Exception("Unknown column {$columnName}");
 			}
 		}
 		
 		return $column->Setter($placeholder);
+	}
+	
+	public function Comparison(string|DatabaseObjectProperty $column, string $operator, string|int $placeholder): string {
+		if (is_string($column)) {
+			$columnName = $column;
+			$column = $this->Column($columnName) ?? $this->Property($columnName);
+			if (is_null($column)) {
+				throw new Exception("Unknown column {$columnName}");
+			}
+		}
+		
+		return $column->Accessor($this->table) . ' ' . $operator . ' ' . $column->Setter($placeholder);
 	}
 	
 	public function AddColumn(string|DatabaseObjectProperty $column): void {

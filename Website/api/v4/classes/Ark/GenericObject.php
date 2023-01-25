@@ -5,49 +5,52 @@ use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, Databa
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, DateTime, Exception;
 
 class GenericObject extends DatabaseObject implements \JsonSerializable {
-	protected $object_id;
-	protected $object_group;
+	protected $objectId;
+	protected $objectGroup;
 	protected $label;
-	protected $alternate_label;
-	protected $min_version = 0;
-	protected $mod_id;
-	protected $mod_name;
-	protected $mod_workshop_id;
+	protected $alternateLabel;
+	protected $minVersion = 0;
+	protected $modId;
+	protected $modName;
+	protected $modWorkshopId;
 	protected $tags = [];
+	protected $lastUpdate = 0;
 	
-	const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
+	//const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$tags = substr($row->Field('tags'), 1, -1);
 		if (strlen($tags) > 0) {
 			$tags = explode(',', $tags);
 		} else {
-			$tags = array();
+			$tags = [];
 		}
 		asort($tags);
 		
-		$this->object_id = $row->Field('object_id');
-		$this->object_group = $row->Field('table_name');
+		$this->objectId = $row->Field('object_id');
+		$this->objectGroup = $row->Field('object_group');
 		$this->label = $row->Field('label');
-		$this->alternate_label = $row->Field('alternate_label');
-		$this->min_version = intval($row->Field('min_version'));
-		$this->mod_id = $row->Field('mod_id');
-		$this->mod_name = $row->Field('mod_name');
-		$this->mod_workshop_id = $row->Field('mod_workshop_id');
+		$this->alternateLabel = $row->Field('alternate_label');
+		$this->minVersion = intval($row->Field('min_version'));
+		$this->modId = $row->Field('mod_id');
+		$this->modName = $row->Field('mod_name');
+		$this->modWorkshopId = $row->Field('mod_workshop_id');
 		$this->tags = array_values($tags);
+		$this->lastUpdate = $row->Field('last_update');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'objects', [
-			new DatabaseObjectProperty('id', ['primaryKey' => true, 'columnName' => 'object_id']),
+			new DatabaseObjectProperty('objectId', ['primaryKey' => true, 'columnName' => 'object_id']),
+			new DatabaseObjectProperty('objectGroup', ['accessor' => 'SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5)', 'columnName' => 'object_group']),
 			new DatabaseObjectProperty('label'),
-			new DatabaseObjectProperty('alternate_label'),
+			new DatabaseObjectProperty('alternateLabel', ['columnName' => 'alternate_label']),
 			new DatabaseObjectProperty('tags'),
-			new DatabaseObjectProperty('min_version', ['accessor' => 'GREATEST(%%TABLE%%.min_version, mods.min_version)', 'setter' => '%%PLACEHOLDER%%']),
-			new DatabaseObjectProperty('mod_id', ['accessor' => 'mods.mod_id', 'setter' => '%%PLACEHOLDER%%']),
-			new DatabaseObjectProperty('mod_name', ['accessor' => 'mods.name']),
-			new DatabaseObjectProperty('mod_workshop_id', ['accessor' => 'ABS(mods.workshop_id)']),
-			new DatabaseObjectProperty('table_name', ['accessor' => 'SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5)'])
+			new DatabaseObjectProperty('minVersion', ['accessor' => 'GREATEST(%%TABLE%%.min_version, mods.min_version)', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'min_version']),
+			new DatabaseObjectProperty('modId', ['accessor' => 'mods.mod_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'mod_id']),
+			new DatabaseObjectProperty('modName', ['accessor' => 'mods.name', 'columnName' => 'mod_name']),
+			new DatabaseObjectProperty('modWorkshopId', ['accessor' => 'ABS(mods.workshop_id)', 'columnName' => 'mod_workshop_id']),
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => "%%TABLE%%.%%COLUMN%% AT TIME ZONE 'UTC'"])
 		], [
 			'INNER JOIN ark.mods ON (%%TABLE%%.mod_id = mods.mod_id)'
 		]);
@@ -55,44 +58,35 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 	
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
 		$schema = static::DatabaseSchema();
-		$table = $schema->table();
-		$parameters->orderBy = $table . '.label';
+		$parameters->orderBy = $schema->Accessor('label');
 		$parameters->allowAll = true;
+		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		
-		if (isset($filters['mod_id'])) {
-			if (BeaconCommon::IsUUID($filters['mod_id']) === true) {
-				$parameters->clauses[] = $table . '.mod_id = $' . $parameters->placeholder++;
+		if (isset($filters['modId'])) {
+			if (BeaconCommon::IsUUID($filters['modId']) === true) {
+				$parameters->clauses[] = $schema->Comparison('modId', '=', $parameters->placeholder++);
 			} else {
-				$parameters->clauses[] = 'ABS(mods.workshop_id) = ABS($' . $parameters->placeholder++ . ')';
+				$modWorkshopIdProperty = $schema->Property('modWorkshopId');
+				$parameters->clauses[] = $schema->Accessor($modWorkshopIdProperty) . ' = ABS(' . $schema->Setter($modWorkshopIdProperty, $parameters->placeholder++) . ')';
 			}
-			$parameters->values[] = $filters['mod_id'];
-		}
-		
-		if (isset($filters['last_update'])) {
-			$parameters->clauses[] = $table . '.last_update > $' . $parameters->placeholder++;
-			$parameters->values[] = $filters['last_update'];
-		}
-		
-		if (isset($filters['min_version'])) {
-			$parameters->clauses[] = $table . '.min_version < $' . $parameters->placeholder++;
-			$parameters->values[] = $filters['min_version'];
+			$parameters->values[] = $filters['modId'];
 		}
 		
 		if (isset($filters['tag'])) {
-			$parameters->clauses[] = '$' . $parameters->placeholder++ . ' = ANY(' . $table . '.tags)';
+			$parameters->clauses[] = $schema->Setter('tags', $parameters->placeholder++) . ' = ANY(' . $schema->Accessor('tags') . ')';
 			$parameters->values[] = $filters['tag'];
 		}
 		
 		if (isset($filters['tags'])) {
 			$tags = explode(',', $filters['tags']);
 			foreach ($tags as $tag) {
-				$parameters->clauses[] = '$' . $parameters->placeholder++ . ' = ANY(' . $table . '.tags)';
+				$parameters->clauses[] = $schema->Setter('tags', $parameters->placeholder++) . ' = ANY(' . $schema->Accessor('tags') . ')';
 				$parameters->values[] = $tag;
 			}
 		}
 	}
 	
-	protected static function PreparePropertyValue(string $propertyName, DatabaseObjectProperty $definition, mixed $value, string &$setter): mixed {
+	/*protected static function PreparePropertyValue(string $propertyName, DatabaseObjectProperty $definition, mixed $value, string &$setter): mixed {
 		switch ($propertyName) {
 		case 'tags':
 			$tags = [];
@@ -108,7 +102,7 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		default:
 			return parent::PreparePropertyValue($propertyName, $definition, $value, $setter);
 		}
-	}
+	}*/
 	
 	public static function CheckClassPermission(?User $user, array $members, int $desiredPermissions): bool {
 		// If the only thing the user wants is read, that will be allowed
@@ -122,21 +116,21 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		
 		$mods = [];
 		foreach ($members as $memberData) {
-			if (isset($memberData['mod_id']) === false) {
+			if (isset($memberData['modId']) === false) {
 				return false;
 			}
 			
-			$mod_id = $memberData['mod_id'];
-			if (isset($mods[$mod_id])) {
+			$modId = $memberData['modId'];
+			if (isset($mods[$modId])) {
 				// Already confirmed ok
 				continue;
 			}
 			
-			if (BeaconCommon::IsUUID($mod_id) === false) {
+			if (BeaconCommon::IsUUID($modId) === false) {
 				return false;
 			}
 			
-			$mod = Mod::Fetch($mod_id);
+			$mod = Mod::Fetch($modId);
 			if (is_null($mod)) {
 				return false;
 			}
@@ -152,7 +146,7 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		return true;
 	}
 	
-	protected static function BuildSQL(...$clauses) {
+	/*protected static function BuildSQL(...$clauses) {
 		if ((count($clauses) == 1) && (is_array($clauses[0]))) {
 			$clauses = $clauses[0];
 		}
@@ -220,7 +214,7 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		return $obj;
 	}
 	
-	/*public function Save() {
+	public function Save() {
 		$schema = static::SchemaName();
 		$table = static::TableName();
 		
@@ -271,7 +265,7 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		}
 		$this->SaveChildrenHook($database);
 		$database->Commit();
-	}*/
+	}
 	
 	protected function SaveChildrenHook(BeaconDatabase $database) {
 	}
@@ -437,7 +431,7 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		$obj->mod_workshop_id = $row->Field('mod_workshop_id');
 		$obj->tags = array_values($tags);
 		return $obj;
-	}
+	}*/
 	
 	public static function LastUpdate(int $min_version = -1) {
 		$database = BeaconCommon::Database();
@@ -502,57 +496,63 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 	
 	public function jsonSerialize(): mixed {
 		return [
-			'id' => $this->object_id,
+			'objectId' => $this->objectId,
+			'fingerprint' => $this->Fingerprint(),
+			'objectGroup' => $this->objectGroup,
 			'label' => $this->label,
-			'alternate_label' => $this->alternate_label,
+			'alternateLabel' => $this->alternateLabel,
 			'mod' => [
-				'id' => $this->mod_id,
-				'name' => $this->mod_name
+				'id' => $this->modId,
+				'name' => $this->modName
 			],
-			'group' => $this->object_group,
 			'tags' => $this->tags,
-			'min_version' => $this->min_version
+			'minVersion' => $this->minVersion,
+			'lastUpdate' => $this->lastUpdate
 		];
 	}
 	
-	public function ObjectID() {
-		return $this->object_id;
+	public function ObjectId(): string {
+		return $this->objectId;
 	}
 	
-	public function ObjectGroup() {
-		return $this->object_group;
+	public function ObjectGroup(): string {
+		return $this->objectGroup;
 	}
 	
-	public function Label() {
+	public function Fingerprint(): string {
+		return base64_encode(hash('sha1', $this->modWorkshopId . ':' . strtolower($this->path), true));
+	}
+	
+	public function Label(): string {
 		return $this->label;
 	}
 	
-	public function SetLabel(string $label) {
+	public function SetLabel(string $label): void {
 		$this->label = $label;
 	}
 	
-	public function AlternateLabel() {
-		return $this->alternate_label;
+	public function AlternateLabel(): ?string {
+		return $this->alternateLabel;
 	}
 	
-	public function SetAlternateLabel(string $alternate_label) {
-		$this->alternate_label = $alternate_label;
+	public function SetAlternateLabel(?string $alternateLabel): void {
+		$this->alternateLabel = $alternateLabel;
 	}
 	
-	public function MinVersion() {
-		return $this->min_version;
+	public function MinVersion(): int {
+		return $this->minVersion;
 	}
 	
-	public function ModID() {
-		return $this->mod_id;
+	public function ModId(): string {
+		return $this->modId;
 	}
 	
-	public function ModName() {
-		return $this->mod_name;
+	public function ModName(): string {
+		return $this->modName;
 	}
 	
-	public function ModWorkshopID() {
-		return $this->mod_workshop_id;
+	public function ModWorkshopId(): string {
+		return $this->modWorkshopId;
 	}
 	
 	public static function NormalizeTag(string $tag) {

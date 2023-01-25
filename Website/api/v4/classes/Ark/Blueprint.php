@@ -1,20 +1,20 @@
 <?php
 	
 namespace BeaconAPI\v4\Ark;
-use BeaconAPI\v4\{DatabaseSchema, DatabaseSearchParameters};
+use BeaconAPI\v4\{DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconCommon, BeaconRecordSet, DateTime;
 
 class Blueprint extends GenericObject {
 	protected $availability;
 	protected $path;
-	protected $class_string;
+	protected $classString;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
 		
 		$this->availability = $row->Field('availability');
 		$this->path = $row->Field('path');
-		$this->class_string = $row->Field('class_string');	
+		$this->classString = $row->Field('class_string');	
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -22,7 +22,7 @@ class Blueprint extends GenericObject {
 		$schema->setTable('blueprints');
 		$schema->addColumn('availability');
 		$schema->addColumn('path');
-		$schema->addColumn('class_string');
+		$schema->addColumn(new DatabaseObjectProperty('classString', ['columnName' => 'class_string']));
 		return $schema;
 	}
 	
@@ -30,29 +30,17 @@ class Blueprint extends GenericObject {
 		parent::BuildSearchParameters($parameters, $filters);
 			
 		$schema = static::DatabaseSchema();
-		$table = $schema->table();
-		
-		if (isset($filters['path'])) {
-			if (preg_match('/^[A-F0-9]{32}$/i', $filters['path'])) {
-				$parameters->clauses[] = 'MD5(LOWER(' . $table . '.path)) = $' . $parameters->placeholder++;
-			} else {
-				$parameters->clauses[] = $table . '.path = $' . $parameters->placeholder++;
-			}
-			$parameters->values[] = $filters['path'];
-		}
-		
-		if (isset($filters['class_string'])) {
-			$parameters->clauses[] = $table . '.class_string = $' . $parameters->placeholder++;
-			$parameters->values[] = $filters['class_string'];
-		}
+		$parameters->AddFromFilter($schema, $filters, 'path');
+		$parameters->AddFromFilter($schema, $filters, 'classString');
 		
 		if (isset($filters['availability'])) {
-			$parameters->clauses[] = '(' . $table . '.availability & $' . $parameters->placeholder . ') = $' . $parameters->placeholder++;
+			$availabilityProperty = $schema->Property('availability');
+			$parameters->clauses[] = '(' . $schema->Accessor($availabilityProperty) . ' & ' . $schema->Setter($availabilityProperty, $parameters->placeholder) . ') = ' . $schema->Setter($availabilityProperty, $parameters->placeholder++);
 			$parameters->values[] = $filters['availability'];
 		}
 	}
 	
-	public static function GetByObjectPath(string $path, int $min_version = -1, DateTime $updated_since = null) {
+	/*public static function GetByObjectPath(string $path, int $min_version = -1, DateTime $updated_since = null) {
 		$objects = static::Get('path:' . $path, $min_version, $updated_since);
 		if (count($objects) == 1) {
 			return $objects[0];
@@ -121,53 +109,59 @@ class Blueprint extends GenericObject {
 		}
 		
 		return parent::ListValueToParameter($value, $possible_columns);
+	}*/
+	
+	public static function Fetch(string $uuid): ?static {
+		if (BeaconCommon::IsUUID($uuid)) {
+			return parent::Fetch($uuid);
+		} else if (str_contains($uuid, '/')) {
+			$blueprints = static::Search(['path' => $uuid], true);
+			if (count($blueprints) === 1) {
+				return $blueprints[0];
+			}
+		} else {
+			$blueprints = static::Search(['classString' => $uuid], true);
+			if (count($blueprints) === 1) {
+				return $blueprints[0];
+			}
+		}
+		return null;
 	}
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		$json['availability'] = intval($this->availability);
 		$json['path'] = $this->path;
-		$json['class_string'] = $this->class_string;
-		$json['spawn'] = $this->SpawnCode();
-		
+		$json['classString'] = $this->classString;
 		return $json;
 	}
 	
-	public function Path() {
+	public function Path(): string {
 		return $this->path;
 	}
 	
-	public function Hash() {
-		return md5(strtolower($this->path));
-	}
-	
-	public function SetPath(string $path) {
+	public function SetPath(string $path): void {
 		$this->path = $path;
 		$this->class_string = self::ClassFromPath($path);
 	}
 	
-	public function ClassString() {
-		return $this->class_string;
+	public function ClassString(): string {
+		return $this->classString;
 	}
 	
-	public function IsAmbiguous() {
-		// deprecated
-		return false;
-	}
-	
-	public function Availability() {
+	public function Availability(): int {
 		return $this->availability;
 	}
 	
-	public function SetAvailability(int $availability) {
+	public function SetAvailability(int $availability): void {
 		$this->availability = $availability;
 	}
 	
-	public function AvailableTo(int $mask) {
+	public function AvailableTo(int $mask): bool {
 		return ($this->availability & $mask) !== 0;
 	}
 	
-	public function SetAvailableTo(int $mask, bool $available) {
+	public function SetAvailableTo(int $mask, bool $available): void {
 		if ($available) {
 			$this->availability = $this->availability | $mask;
 		} else {
@@ -175,11 +169,7 @@ class Blueprint extends GenericObject {
 		}
 	}
 	
-	public function SpawnCode() {
-		return 'cheat summon ' . $this->ClassString();
-	}
-	
-	protected static function ClassFromPath(string $path) {
+	protected static function ClassFromPath(string $path): string {
 		$components = explode('/', $path);
 		$tail = array_pop($components);
 		$components = explode('.', $tail);
@@ -187,38 +177,8 @@ class Blueprint extends GenericObject {
 		return $class . '_C';
 	}
 	
-	public function RelatedObjectIDs() {
-		return array();
-	}
-	
-	public function FindGFICode(bool &$perfect) {
-		$database = BeaconCommon::Database();
-		$words = explode('_', $this->class_string);
-		if (count($words) >= 3) {
-			array_pop($words);
-			array_shift($words);
-		}
-		$simple_class_string = strtolower(implode('_', $words));
-		
-		$min_match_len = strlen($simple_class_string);
-		$min_match = '';
-		$found = false;
-		for ($len = 2; $len <= strlen($simple_class_string); $len++) {
-			for ($offset = 0; $offset < strlen($simple_class_string) - ($len - 1); $offset++) {
-				$chunk = substr($simple_class_string, $offset, $len);
-				$rows = $database->Query('SELECT object_id FROM ' . $this->SchemaName() . '.engrams WHERE mod_id IN (SELECT mod_id FROM ' . $this->SchemaName() . '.mods WHERE is_official = TRUE AND confirmed = TRUE) AND class_string LIKE $1 AND class_string != $2;', '%' . $chunk . '%', $this->class_string);
-				if ($rows->RecordCount() === 0) {
-					$perfect = true;
-					return $chunk;
-				} elseif ($rows->RecordCount() < $min_match_len) {
-					$min_match_len = $rows->RecordCount();
-					$min_match = $chunk;
-				}
-			}
-		}
-		
-		$perfect = false;
-		return $min_match;
+	public function RelatedObjectIDs(): array {
+		return [];
 	}
 }
 

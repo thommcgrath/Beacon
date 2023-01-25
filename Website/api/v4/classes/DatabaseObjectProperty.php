@@ -79,7 +79,10 @@ class DatabaseObjectProperty {
 		}
 	}
 	
-	public function Setter(string $placeholder): string {
+	public function Setter(string|int $placeholder): string {
+		if (is_int($placeholder)) {
+			$placeholder = '$' . $placeholder;
+		}
 		if (is_null($this->setter)) {
 			return $placeholder;
 		} else {
