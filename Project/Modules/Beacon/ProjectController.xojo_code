@@ -277,9 +277,13 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  If FileContent.Size > 2 And FileContent.UInt8Value(0) = &h1F And FileContent.UInt8Value(1) = &h8B Then
+		  If FileContent.Size >= 8 And (FileContent.UInt64Value(0) = Beacon.Project.BinaryFormatBEBOM Or FileContent.UInt64Value(0) = Beacon.Project.BinaryFormatLEBOM) Then
+		    // New binary project format
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Project format is newer than this version of Beacon understands")
+		    Return
+		  ElseIf FileContent.Size >= 2 And FileContent.UInt8Value(0) = &h1F And FileContent.UInt8Value(1) = &h8B Then
 		    Var Decompressed As String = Beacon.Decompress(FileContent)
-		    If Decompressed <> "" Then
+		    If Decompressed.IsEmpty = False Then
 		      FileContent = Decompressed.DefineEncoding(Encodings.UTF8)
 		    Else
 		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to decompress file")
