@@ -845,11 +845,11 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectorCache As Dictionary
+		Private Shared mSelectorCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTemplateCache As Dictionary
+		Private Shared mTemplateCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
