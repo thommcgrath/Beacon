@@ -4,11 +4,11 @@ namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseCommonWriterObject, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
 use BeaconCommon, BeaconRecordSet, BeaconWorkshopItem;
 
-class Mod extends DatabaseObject implements \JsonSerializable {
+class ContentPack extends DatabaseObject implements \JsonSerializable {
 	use DatabaseCommonWriterObject;
 	
-	protected $modId = '';
-	protected $workshopId = '';
+	protected $contentPackId = '';
+	protected $steamId = '';
 	protected $userId = '';
 	protected $name = '';
 	protected $isConfirmed = false;
@@ -20,10 +20,11 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 	protected $minVersion = 0;
 	protected $isOfficial = false;
 	protected $isIncludedInDeltas = false;
+	protected $isApp = false;
 	
 	protected function __construct(BeaconRecordSet $row) {
-		$this->modId = $row->Field('mod_id');
-		$this->workshopId = abs($row->Field('workshop_id'));
+		$this->contentPackId = $row->Field('mod_id');
+		$this->steamId = abs($row->Field('workshop_id'));
 		$this->userId = $row->Field('user_id');
 		$this->name = $row->Field('name');
 		$this->isConfirmed = filter_var($row->Field('confirmed'), FILTER_VALIDATE_BOOL);
@@ -35,12 +36,13 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 		$this->minVersion = intval($row->Field('min_version'));
 		$this->isOfficial = filter_var($row->Field('is_official'), FILTER_VALIDATE_BOOL);
 		$this->isIncludedInDeltas = filter_var($row->Field('include_in_deltas'), FILTER_VALIDATE_BOOL);
+		$this->isApp = filter_var($row->Field('is_app'), FILTER_VALIDATE_BOOL);
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'mods', [
-			new DatabaseObjectProperty('modId', ['primaryKey' => true, 'columnName' => 'mod_id']),
-			new DatabaseObjectProperty('workshopId', ['columnName' => 'workshop_id', 'accessor' => 'ABS(%%TABLE%%.%%COLUMN%%)', 'setter' => 'ABS(%%PLACEHOLDER%%)']),
+			new DatabaseObjectProperty('contentPackId', ['primaryKey' => true, 'columnName' => 'mod_id']),
+			new DatabaseObjectProperty('steamId', ['columnName' => 'workshop_id']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('isConfirmed', ['columnName' => 'confirmed']),
@@ -51,7 +53,8 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('isDefaultEnabled', ['columnName' => 'default_enabled']),
 			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official']),
-			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas'])
+			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas']),
+			new DatabaseObjectProperty('isApp', ['columnName' => 'is_app'])
 		]);
 	}
 	
@@ -59,9 +62,9 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 		if (BeaconCommon::IsUUID($uuid)) {
 			return parent::Fetch($uuid);
 		} else {
-			$mods = static::Search(['workshopId' => $uuid], true);
-			if (count($mods) === 1) {
-				return $mods[0];
+			$packs = static::Search(['steamId' => $uuid], true);
+			if (count($packs) === 1) {
+				return $packs[0];
 			}
 		}
 		return null;
@@ -77,18 +80,18 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'isIncludedInDeltas', '=');
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 			
-		if (isset($filters['workshopId'])) {
-			$workshopId = filter_var($filters['workshopId'], FILTER_VALIDATE_INT);
-			if ($workshopId !== false) {
-				$workshopIdProperty = $schema->Property('workshopId');
-				$parameters->clauses[] = $schema->Comparison('workshopId', '=', $parameters->placeholder++);
-				$parameters->values[] = $workshopId;
+		if (isset($filters['steamId'])) {
+			$steamId = filter_var($filters['steamId'], FILTER_VALIDATE_INT);
+			if ($steamId !== false) {
+				$steamIdProperty = $schema->Property('steamId');
+				$parameters->clauses[] = $schema->Comparison('steamId', '=', $parameters->placeholder++);
+				$parameters->values[] = $steamId;
 			}
 		}
 		
-		if (isset($filters['modId']) && BeaconCommon::IsUUID($filters['modId']) === true) {
-			$parameters->clauses[] = $schema->Comparison('modId', '=', $parameters->placeholder++);
-			$parameters->values[] = $filters['modId'];
+		if (isset($filters['contentPackId']) && BeaconCommon::IsUUID($filters['contentPackId']) === true) {
+			$parameters->clauses[] = $schema->Comparison('contentPackId', '=', $parameters->placeholder++);
+			$parameters->values[] = $filters['contentPackId'];
 		}
 		
 		if (isset($filters['pullUrl'])) {
@@ -114,12 +117,20 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 		return false;
 	}
 	
-	public function ModID(): string {
-		return $this->modId;
+	public function ContentPackId(): string {
+		return $this->contentPackId;
 	}
 	
-	public function WorkshopID(): string {
-		return $this->workshopId;
+	public function SteamId(): string {
+		return $this->steamId;
+	}
+	
+	public function SteamUrl(): string {
+		if ($this->isApp) {
+			return "https://store.steampowered.com/app/{$this->steamId}";
+		} else {
+			return "https://steamcommunity.com/sharedfiles/filedetails/?id={$this->steamId}";
+		}
 	}
 	
 	public function UserId(): string {
@@ -150,15 +161,23 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 		return $this->minVersion;
 	}
 	
+	public function IsApp(): bool {
+		return $this->isApp;
+	}
+	
 	public function AttemptConfirmation(): bool {
-		$workshop_item = BeaconWorkshopItem::Load($this->workshopId);
-		if ($workshop_item === null) {
+		if ($this->isApp) {
+			return true;
+		}
+		
+		$workshop_item = BeaconWorkshopItem::Load($this->steamId);
+		if (is_null($workshop_item)) {
 			return false;
 		}
 		if (BeaconCommon::InDevelopment() || $workshop_item->ContainsString($this->confirmationCode)) {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
-			$database->Query('UPDATE ark.mods SET confirmed = TRUE WHERE mod_id = $1;', $this->modId);
+			$database->Query('UPDATE ark.mods SET confirmed = TRUE WHERE mod_id = $1;', $this->contentPackId);
 			$database->Commit();
 			$this->isConfirmed = true;
 			return true;
@@ -169,20 +188,17 @@ class Mod extends DatabaseObject implements \JsonSerializable {
 	
 	public function jsonSerialize(): mixed {
 		return [
-			'modId' => $this->modId,
-			'workshopId' => abs($this->workshopId),
+			'contentPackId' => $this->contentPackId,
+			'steamId' => $this->steamId,
+			'steamUrl' => $this->SteamUrl(),
 			'name' => $this->name,
-			'workshopUrl' => BeaconWorkshopItem::URLForModID($this->workshopId),
+			'isApp' => $this->isApp,
 			'isConfirmed' => $this->isConfirmed,
 			'isConsoleSafe' => $this->isConsoleSafe,
 			'isDefaultEnabled' => $this->isDefaultEnabled,
 			'isIncludedInDeltas' => $this->isIncludedInDeltas,
 			'isOfficial' => $this->isOfficial,
 			'confirmationCode' => $this->confirmationCode,
-			'resourceUrl' => Core::URL('ark/mods/' . $this->modId),
-			'confirmUrl' => Core::URL('ark/mods/' . $this->modId . '/checkConfirmation'),
-			'engramsUrl' => Core::URL('ark/mods/' . $this->modId . '/engrams'),
-			'spawncodesUrl' => BeaconCommon::AbsoluteURL('/spawn/?modId=' . $this->workshopId),
 			'pullUrl' => $this->pullUrl,
 			'minVersion' => $this->minVersion
 		];

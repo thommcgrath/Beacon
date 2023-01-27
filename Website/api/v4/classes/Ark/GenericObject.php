@@ -10,9 +10,9 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 	protected $label;
 	protected $alternateLabel;
 	protected $minVersion = 0;
-	protected $modId;
-	protected $modName;
-	protected $modWorkshopId;
+	protected $contentPackId;
+	protected $contentPackName;
+	protected $contentPackSteamId;
 	protected $tags = [];
 	protected $lastUpdate = 0;
 	
@@ -32,9 +32,9 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		$this->label = $row->Field('label');
 		$this->alternateLabel = $row->Field('alternate_label');
 		$this->minVersion = intval($row->Field('min_version'));
-		$this->modId = $row->Field('mod_id');
-		$this->modName = $row->Field('mod_name');
-		$this->modWorkshopId = $row->Field('mod_workshop_id');
+		$this->contentPackId = $row->Field('mod_id');
+		$this->contentPackName = $row->Field('mod_name');
+		$this->contentPackSteamId = $row->Field('mod_workshop_id');
 		$this->tags = array_values($tags);
 		$this->lastUpdate = $row->Field('last_update');
 	}
@@ -47,9 +47,9 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('alternateLabel', ['columnName' => 'alternate_label']),
 			new DatabaseObjectProperty('tags'),
 			new DatabaseObjectProperty('minVersion', ['accessor' => 'GREATEST(%%TABLE%%.min_version, mods.min_version)', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'min_version']),
-			new DatabaseObjectProperty('modId', ['accessor' => 'mods.mod_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'mod_id']),
-			new DatabaseObjectProperty('modName', ['accessor' => 'mods.name', 'columnName' => 'mod_name']),
-			new DatabaseObjectProperty('modWorkshopId', ['accessor' => 'ABS(mods.workshop_id)', 'columnName' => 'mod_workshop_id']),
+			new DatabaseObjectProperty('contentPackId', ['accessor' => 'mods.mod_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'mod_id']),
+			new DatabaseObjectProperty('contentPackName', ['accessor' => 'mods.name', 'columnName' => 'mod_name']),
+			new DatabaseObjectProperty('contentPackSteamId', ['accessor' => 'ABS(mods.workshop_id)', 'columnName' => 'mod_workshop_id']),
 			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => "%%TABLE%%.%%COLUMN%% AT TIME ZONE 'UTC'"])
 		], [
 			'INNER JOIN ark.mods ON (%%TABLE%%.mod_id = mods.mod_id)'
@@ -62,14 +62,13 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		
-		if (isset($filters['modId'])) {
-			if (BeaconCommon::IsUUID($filters['modId']) === true) {
-				$parameters->clauses[] = $schema->Comparison('modId', '=', $parameters->placeholder++);
+		if (isset($filters['contentPackId'])) {
+			if (BeaconCommon::IsUUID($filters['contentPackId']) === true) {
+				$parameters->clauses[] = $schema->Comparison('contentPackId', '=', $parameters->placeholder++);
 			} else {
-				$modWorkshopIdProperty = $schema->Property('modWorkshopId');
-				$parameters->clauses[] = $schema->Accessor($modWorkshopIdProperty) . ' = ABS(' . $schema->Setter($modWorkshopIdProperty, $parameters->placeholder++) . ')';
+				$parameters->clauses[] = $schema->Comparison('contentPackSteamId', '=', $parameters->placeholder++);
 			}
-			$parameters->values[] = $filters['modId'];
+			$parameters->values[] = $filters['contentPackId'];
 		}
 		
 		if (isset($filters['tag'])) {
@@ -114,33 +113,33 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 			return false;
 		}
 		
-		$mods = [];
+		$contentPacks = [];
 		foreach ($members as $memberData) {
-			if (isset($memberData['modId']) === false) {
+			if (isset($memberData['contentPackId']) === false) {
 				return false;
 			}
 			
-			$modId = $memberData['modId'];
-			if (isset($mods[$modId])) {
+			$contentPackId = $memberData['contentPackId'];
+			if (isset($contentPacks[$contentPackId])) {
 				// Already confirmed ok
 				continue;
 			}
 			
-			if (BeaconCommon::IsUUID($modId) === false) {
+			if (BeaconCommon::IsUUID($contentPackId) === false) {
 				return false;
 			}
 			
-			$mod = Mod::Fetch($modId);
-			if (is_null($mod)) {
+			$contentPack = ContentPack::Fetch($contentPackId);
+			if (is_null($contentPack)) {
 				return false;
 			}
 			
-			if ($mod->UserId() !== $user->UserId()) {
+			if ($contentPack->UserId() !== $contentPack->UserId()) {
 				return false;
 			}
 			
 			// approved
-			$mods[$mod->ModId()] = $mod;
+			$contentPacks[$contentPackId] = $contentPack;
 		}
 		
 		return true;
@@ -483,8 +482,8 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		$arr = array();
 		while (!$results->EOF()) {
 			$arr[] = [
-				'object_id' => $results->Field('object_id'),
-				'min_version' => $results->Field('min_version'),
+				'objectId' => $results->Field('object_id'),
+				'minVersion' => $results->Field('min_version'),
 				'group' => $results->Field('from_table'),
 				'label' => $results->Field('label'),
 				'tag' => $results->Field('tag')
@@ -500,9 +499,9 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 			'objectGroup' => $this->objectGroup,
 			'label' => $this->label,
 			'alternateLabel' => $this->alternateLabel,
-			'mod' => [
-				'id' => $this->modId,
-				'name' => $this->modName
+			'contentPack' => [
+				'id' => $this->contentPackId,
+				'name' => $this->contentPackName
 			],
 			'tags' => $this->tags,
 			'minVersion' => $this->minVersion,

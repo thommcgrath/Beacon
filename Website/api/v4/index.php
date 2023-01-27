@@ -171,7 +171,7 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ColorSet', 'ark/colorSet
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ConfigLine', 'ark/configOptions', 'configOptionId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Engram', 'ark/engrams', 'engramId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Event', 'ark/events', 'eventId', DatabaseObjectManager::kFeatureReadOnly);
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Mod', 'ark/mods', 'modId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ContentPack', 'ark/contentPacks', 'contentPackId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootContainerIcon', 'ark/lootContainerIcons', 'lootContainerIconId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootContainer', 'ark/lootContainers', 'lootContainerId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Map', 'ark/maps', 'mapId');
