@@ -5,19 +5,19 @@ use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, 
 use BeaconCommon, BeaconRecordSet, DateTime;
 
 class Color extends DatabaseObject implements \JsonSerializable {
-	protected $color_id;
+	protected $colorId;
 	protected $name;
 	protected $code;
 	
 	protected function __construct(BeaconRecordSet $row) {
-		$this->color_id = intval($row->Field('color_id'));
+		$this->colorId = intval($row->Field('color_id'));
 		$this->name = $row->Field('color_name');
 		$this->code = $row->Field('color_code');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'colors', [
-			New DatabaseObjectProperty('color_id', ['primaryKey' => true]),
+			New DatabaseObjectProperty('colorId', ['primaryKey' => true, 'columnName' => 'color_id']),
 			New DatabaseObjectProperty('name', ['columnName' => 'color_name']),
 			New DatabaseObjectProperty('code', ['columnName' => 'color_code'])
 		]);
@@ -30,7 +30,7 @@ class Color extends DatabaseObject implements \JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'code');
 	}
 	
-	protected static function SQLColumns() {
+	/*protected static function SQLColumns() {
 		return [
 			'ark.colors.color_id',
 			'ark.colors.color_name',
@@ -65,26 +65,26 @@ class Color extends DatabaseObject implements \JsonSerializable {
 		$obj->color_name = $row->Field('color_name');
 		$obj->color_code = $row->Field('color_code');
 		return $obj;
-	}
+	}*/
 	
 	public function jsonSerialize(): mixed {
 		return [
-			'color_id' => $this->color_id,
-			'label' => $this->name,
-			'hex' => $this->code
+			'colorId' => $this->colorId,
+			'name' => $this->name,
+			'code' => $this->code
 		];
 	}
 	
 	public function ColorId(): int {
-		return $this->color_id;
+		return $this->colorId;
 	}
 	
 	public function Label(): string {
-		return $this->color_name;
+		return $this->name;
 	}
 	
 	public function Hex(): string {
-		return $this->color_code;
+		return $this->code;
 	}
 }
 

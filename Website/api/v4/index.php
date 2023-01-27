@@ -10,13 +10,13 @@ Core::RegisterRoutes(
 			'GET' => 'ark/generate',
 			'POST' => 'ark/generate'
 		],
-		'/ark/maps' => [
+		/*'/ark/maps' => [
 			'GET' => 'ark/maps/list'
 		],
 		'/ark/maps/{mapId}' => [
 			'GET' => 'ark/maps/get'
 		],
-		/*'/ark/mods' => [
+		'/ark/mods' => [
 			'GET' => 'ark/mods/list',
 			'POST' => 'ark/mods/bulk',
 			'DELETE' => 'ark/mods/bulk'
@@ -172,6 +172,10 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ConfigLine', 'ark/config
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Engram', 'ark/engrams', 'engramId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Event', 'ark/events', 'eventId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Mod', 'ark/mods', 'modId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootContainerIcon', 'ark/lootContainerIcons', 'lootContainerIconId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootContainer', 'ark/lootContainers', 'lootContainerId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Map', 'ark/maps', 'mapId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\GameVariable', 'ark/gameVariables', 'key');
 
 
 //BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'lootContainers');

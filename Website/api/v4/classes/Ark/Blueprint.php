@@ -32,6 +32,7 @@ class Blueprint extends GenericObject {
 		$schema = static::DatabaseSchema();
 		$parameters->AddFromFilter($schema, $filters, 'path');
 		$parameters->AddFromFilter($schema, $filters, 'classString');
+		$parameters->AddFromFilter($schema, $filters, 'modId');
 		
 		if (isset($filters['availability'])) {
 			$availabilityProperty = $schema->Property('availability');
@@ -130,6 +131,7 @@ class Blueprint extends GenericObject {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
+		$json['fingerprint'] = $this->Fingerprint();
 		$json['availability'] = intval($this->availability);
 		$json['path'] = $this->path;
 		$json['classString'] = $this->classString;
@@ -179,6 +181,10 @@ class Blueprint extends GenericObject {
 	
 	public function RelatedObjectIDs(): array {
 		return [];
+	}
+	
+	public function Fingerprint(): string {
+		return base64_encode(hash('sha1', $this->modWorkshopId . ':' . strtolower($this->path), true));
 	}
 }
 

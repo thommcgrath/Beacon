@@ -45,7 +45,7 @@ abstract class DatabaseObject {
 		return $rows->Field('exists');
 	}
 	
-	public static function Fetch(string $uuid): ?DatabaseObject {
+	public static function Fetch(string $uuid): ?static {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';', $uuid);

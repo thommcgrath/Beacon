@@ -5,34 +5,35 @@ use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, 
 use BeaconCommon, BeaconRecordSet, DateTime;
 
 class ColorSet extends DatabaseObject implements \JsonSerializable {
-	protected $color_set_id;
+	protected $colorSetId;
 	protected $label;
-	protected $class_string;
+	protected $classString;
 	
 	protected function __construct(BeaconRecordSet $row) {
-		$this->color_set_id = $row->Field('color_set_id');
+		$this->colorSetId = $row->Field('color_set_id');
 		$this->label = $row->Field('label');
-		$this->class_string = $row->Field('class_string');
+		$this->classString = $row->Field('class_string');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'color_sets', [
-			New DatabaseObjectProperty('color_set_id', ['primaryKey' => true]),
+			New DatabaseObjectProperty('colorSetId', ['primaryKey' => true, 'columnName' => 'color_set_id']),
 			New DatabaseObjectProperty('label'),
-			New DatabaseObjectProperty('class_string')
+			New DatabaseObjectProperty('classString', ['columnName' => 'class_string'])
 		]);
 	}
 	
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
 		$parameters->allowAll = true;
 		$parameters->orderBy = 'label';
+		$parameters->AddFromFilter(static::DatabaseSchema(), $filters, 'classString');
 	}
 	
-	protected static function SQLColumns() {
+	/*protected static function SQLColumns() {
 		return [
-			'ark.color_sets.color_set_id',
+			'ark.color_sets.colorSetId',
 			'ark.color_sets.label',
-			'ark.color_sets.class_string'
+			'ark.color_sets.classString'
 		];
 	}
 	
@@ -49,7 +50,7 @@ class ColorSet extends DatabaseObject implements \JsonSerializable {
 	
 	public static function GetForUUID(string $uuid) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.color_sets WHERE color_set_id = $1 ORDER BY label;', $uuid);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.color_sets WHERE colorSetId = $1 ORDER BY label;', $uuid);
 		if ($results->RecordCount() === 1) {
 			return static::FromRow($results);
 		} else {
@@ -59,22 +60,35 @@ class ColorSet extends DatabaseObject implements \JsonSerializable {
 	
 	protected static function FromRow(BeaconRecordSet $row) {
 		$obj = new static();
-		$obj->color_set_id = $row->Field('color_set_id');
+		$obj->colorSetId = $row->Field('colorSetId');
 		$obj->label = $row->Field('label');
-		$obj->class_string = $row->Field('class_string');
+		$obj->classString = $row->Field('classString');
 		return $obj;
+	}*/
+	
+	public static function Fetch(string $uuid): ?static {
+		if (BeaconCommon::IsUUID($uuid)) {
+			return parent::Fetch($uuid);
+		}
+		
+		$colors = static::Search(['classString' => $uuid], true);
+		if (count($colors) === 1) {
+			return $colors[0];
+		}
+		
+		return null;
 	}
 	
 	public function jsonSerialize(): mixed {
 		return [
-			'color_set_id' => $this->color_set_id,
+			'colorSetId' => $this->colorSetId,
 			'label' => $this->label,
-			'class_string' => $this->class_string
+			'classString' => $this->classString
 		];
 	}
 	
 	public function ColorSetId(): string {
-		return $this->color_set_id;
+		return $this->colorSetId;
 	}
 	
 	public function Label(): string {
@@ -82,7 +96,7 @@ class ColorSet extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public function ClassString(): string {
-		return $this->class_string;
+		return $this->classString;
 	}
 }
 

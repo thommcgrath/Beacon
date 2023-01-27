@@ -497,7 +497,6 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'objectId' => $this->objectId,
-			'fingerprint' => $this->Fingerprint(),
 			'objectGroup' => $this->objectGroup,
 			'label' => $this->label,
 			'alternateLabel' => $this->alternateLabel,
@@ -517,10 +516,6 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 	
 	public function ObjectGroup(): string {
 		return $this->objectGroup;
-	}
-	
-	public function Fingerprint(): string {
-		return base64_encode(hash('sha1', $this->modWorkshopId . ':' . strtolower($this->path), true));
 	}
 	
 	public function Label(): string {

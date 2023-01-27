@@ -30,15 +30,7 @@ class Engram extends Blueprint {
 			$this->recipe = [];
 			foreach ($recipe as $ingredient) {
 				$this->recipe[] = [
-					'engram' => [
-						'Schema' => 'Beacon.BlueprintReference',
-						'Version' => 1,
-						'Kind' => 'Engram',
-						'UUID' => $ingredient['object_id'],
-						'Path' => $ingredient['path'],
-						'Class' => $ingredient['class_string'],
-						'ModUUID' => $ingredient['mod_id']
-					],
+					'engramId' => $ingredient['engramId'],
 					'quantity' => $ingredient['quantity'],
 					'exact' => $ingredient['exact']
 				];
@@ -49,7 +41,7 @@ class Engram extends Blueprint {
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
 		$schema->SetTable('engrams');
-		$schema->AddColumn(new DatabaseObjectProperty('recipe', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, ingredients.class_string, ingredients.mod_id, quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template)', 'columnName' => 'recipe']));
+		$schema->AddColumn(new DatabaseObjectProperty('recipe', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id AS "engramId", quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template)', 'columnName' => 'recipe']));
 		$schema->AddColumn(new DatabaseObjectProperty('entryString', ['columnName' => 'entry_string']));
 		$schema->AddColumn(new DatabaseObjectProperty('requiredPoints', ['columnName' => 'required_points']));
 		$schema->AddColumn(new DatabaseObjectProperty('requiredLevel', ['columnName' => 'required_level']));
@@ -134,7 +126,6 @@ class Engram extends Blueprint {
 		$json['requiredLevel'] = $this->requiredLevel;
 		$json['stackSize'] = $this->stackSize;
 		$json['itemId'] = $this->itemId;
-		$json['resourceUrl'] = Core::URL('ark/engrams/' . urlencode($this->UUID()));
 		if (is_null($this->recipe) || count($this->recipe) == 0) {
 			$json['recipe'] = null;
 		} else {

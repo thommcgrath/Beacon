@@ -2,20 +2,20 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
-use BeaconCommon, BeaconRecordSet, DateTime;
+use BeaconCommon, BeaconRecordSet;
 
 class Event extends DatabaseObject implements \JsonSerializable {
-	protected $event_id;
+	protected $eventId;
 	protected $name;
-	protected $ark_code;
+	protected $arkCode;
 	protected $rates = [];
 	protected $colors = [];
 	protected $engrams = [];
 	
 	protected function __construct(BeaconRecordSet $row) {
-		$this->event_id = $row->Field('event_id');
+		$this->eventId = $row->Field('event_id');
 		$this->name = $row->Field('event_name');
-		$this->ark_code = $row->Field('event_code');
+		$this->arkCode = $row->Field('event_code');
 		$this->rates = is_null($row->Field('rates')) === false ? json_decode($row->Field('rates'), true) : [];
 		$this->colors = is_null($row->Field('colors')) === false ? json_decode($row->Field('colors'), true) : [];
 		$this->engrams = is_null($row->Field('engrams')) === false ? json_decode($row->Field('engrams'), true) : [];
@@ -23,27 +23,27 @@ class Event extends DatabaseObject implements \JsonSerializable {
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'events', [
-			New DatabaseObjectProperty('event_id', ['primaryKey' => true]),
+			New DatabaseObjectProperty('eventId', ['primaryKey' => true, 'columnName' => 'event_id']),
 			New DatabaseObjectProperty('name', ['columnName' => 'event_name']),
-			New DatabaseObjectProperty('ark_code', ['columnName' => 'event_code']),
-			New DatabaseObjectProperty('rates', ['accessor' => '(SELECT json_agg(row_to_json(rates_template)) FROM (SELECT ark.event_rates.ini_option AS object_id, ark.event_rates.multiplier FROM ark.event_rates INNER JOIN ark.ini_options ON (ark.event_rates.ini_option = ark.ini_options.object_id) WHERE ark.event_rates.event_id = ark.events.event_id) AS rates_template)']),
-			New DatabaseObjectProperty('colors', ['accessor' => '(SELECT json_agg(color_id ORDER BY color_id) FROM ark.event_colors WHERE ark.event_colors.event_id = ark.events.event_id)']),
-			New DatabaseObjectProperty('engrams', ['accessor' => '(SELECT json_agg(object_id) FROM ark.event_engrams WHERE ark.event_engrams.event_id = ark.events.event_id)'])
+			New DatabaseObjectProperty('arkCode', ['columnName' => 'event_code']),
+			New DatabaseObjectProperty('rates', ['accessor' => '(SELECT json_agg(row_to_json(rates_template)) FROM (SELECT event_rates.ini_option AS "configOptionId", event_rates.multiplier FROM ark.event_rates INNER JOIN ark.ini_options ON (event_rates.ini_option = ini_options.object_id) WHERE event_rates.event_id = events.event_id) AS rates_template)']),
+			New DatabaseObjectProperty('colors', ['accessor' => '(SELECT json_agg(color_id ORDER BY color_id) FROM ark.event_colors WHERE event_colors.event_id = events.event_id)']),
+			New DatabaseObjectProperty('engrams', ['accessor' => '(SELECT json_agg(object_id) FROM ark.event_engrams WHERE event_engrams.event_id = events.event_id)'])
 		]);
 	}
 	
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
 		$parameters->allowAll = true;
 		$parameters->orderBy = 'event_name';
-		$parameters->AddFromFilter(static::DatabaseSchema(), $filters, 'ark_code');
+		$parameters->AddFromFilter(static::DatabaseSchema(), $filters, 'arkCode');
 	}
 	
-	public static function Fetch(string $uuid): ?DatabaseObject {
+	public static function Fetch(string $uuid): ?static {
 		if (BeaconCommon::IsUUID($uuid)) {
 			return parent::Fetch($uuid);
 		}
 		
-		$results = static::Search(['ark_code' => $uuid], true);
+		$results = static::Search(['arkCode' => $uuid], true);
 		if (count($results) === 1) {
 			return $results[0];
 		}
@@ -51,14 +51,14 @@ class Event extends DatabaseObject implements \JsonSerializable {
 		return null;
 	}
 	
-	protected static function SQLColumns() {
+	/*protected static function SQLColumns() {
 		return [
-			'ark.events.event_id',
+			'ark.events.eventId',
 			'ark.events.event_name',
 			'ark.events.event_code',
-			'(SELECT json_agg(row_to_json(rates_template)) FROM (SELECT ark.event_rates.ini_option AS object_id, ark.event_rates.multiplier FROM ark.event_rates INNER JOIN ark.ini_options ON (ark.event_rates.ini_option = ark.ini_options.object_id) WHERE ark.event_rates.event_id = ark.events.event_id) AS rates_template) AS rates',
-			'(SELECT json_agg(color_id ORDER BY color_id) FROM ark.event_colors WHERE ark.event_colors.event_id = ark.events.event_id) AS colors',
-			'(SELECT json_agg(object_id) FROM ark.event_engrams WHERE ark.event_engrams.event_id = ark.events.event_id) AS engrams'
+			'(SELECT json_agg(row_to_json(rates_template)) FROM (SELECT ark.event_rates.ini_option AS object_id, ark.event_rates.multiplier FROM ark.event_rates INNER JOIN ark.ini_options ON (ark.event_rates.ini_option = ark.ini_options.object_id) WHERE ark.event_rates.eventId = ark.events.eventId) AS rates_template) AS rates',
+			'(SELECT json_agg(color_id ORDER BY color_id) FROM ark.event_colors WHERE ark.event_colors.eventId = ark.events.eventId) AS colors',
+			'(SELECT json_agg(object_id) FROM ark.event_engrams WHERE ark.event_engrams.eventId = ark.events.eventId) AS engrams'
 		];
 	}
 	
@@ -85,7 +85,7 @@ class Event extends DatabaseObject implements \JsonSerializable {
 	
 	public static function GetForUUID(string $uuid) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.events WHERE event_id = $1;', $uuid);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.events WHERE eventId = $1;', $uuid);
 		if ($results->RecordCount() === 1) {
 			return static::FromRow($results);
 		} else {
@@ -95,20 +95,20 @@ class Event extends DatabaseObject implements \JsonSerializable {
 	
 	protected static function FromRow(\BeaconRecordSet $row) {
 		$obj = new static();
-		$obj->event_id = $row->Field('event_id');
+		$obj->eventId = $row->Field('eventId');
 		$obj->name = $row->Field('event_name');
 		$obj->event_code = $row->Field('event_code');
 		$obj->event_rates = is_null($row->Field('rates')) === false ? json_decode($row->Field('rates'), true) : [];
 		$obj->event_colors = is_null($row->Field('colors')) === false ? json_decode($row->Field('colors'), true) : [];
 		$obj->event_engrams = is_null($row->Field('engrams')) === false ? json_decode($row->Field('engrams'), true) : [];
 		return $obj;
-	}
+	}*/
 	
 	public function jsonSerialize(): mixed {
 		return [
-			'event_id' => $this->event_id,
+			'eventId' => $this->eventId,
+			'arkCode' => $this->arkCode,
 			'label' => $this->name,
-			'ark_code' => $this->ark_code,
 			'rates' => $this->rates,
 			'colors' => $this->colors,
 			'engrams' => $this->engrams
@@ -116,7 +116,7 @@ class Event extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public function EventId(): string {
-		return $this->event_id;
+		return $this->eventId;
 	}
 	
 	public function Label(): string {
