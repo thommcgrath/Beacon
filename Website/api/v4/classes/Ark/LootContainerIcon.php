@@ -9,8 +9,12 @@ class LootContainerIcon extends GenericObject {
 	
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
-		$this->objectGroup = 'lootContainerIcons';
+		
 		$this->iconData = $row->Field('icon_data');	
+	}
+	
+	protected static function CustomVariablePrefix(): string {
+		return 'lootContainerIcon';
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -31,6 +35,7 @@ class LootContainerIcon extends GenericObject {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
+		unset($json['lootContainerIconGroup']);
 		$json['iconData'] = base64_encode($this->iconData);
 		return $json;
 	}

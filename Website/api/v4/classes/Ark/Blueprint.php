@@ -17,6 +17,10 @@ class Blueprint extends GenericObject {
 		$this->classString = $row->Field('class_string');	
 	}
 	
+	protected static function CustomVariablePrefix(): string {
+		return 'blueprint';
+	}
+	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
 		$schema->SetTable('blueprints');

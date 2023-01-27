@@ -4,7 +4,7 @@ namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconRecordSet;
 
-class ConfigLine extends GenericObject {
+class ConfigOption extends GenericObject {
 	const FILE_GAME_INI = 'Game.ini';
 	const FILE_GAMEUSERSETTINGS_INI = 'GameUserSettings.ini';
 	const FILE_COMMANDLINE_FLAG = 'CommandLineFlag'; // A flag has no equals sign, its presence means true.
@@ -42,7 +42,6 @@ class ConfigLine extends GenericObject {
 	
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
-		$this->objectGroup = 'configOptions';
 			
 		$this->nativeEditorVersion = $row->Field('native_editor_version');
 		$this->file = $row->Field('file');
@@ -60,6 +59,10 @@ class ConfigLine extends GenericObject {
 		$this->customSort = $row->Field('custom_sort');
 		$this->gsaPlaceholder = $row->Field('gsa_placeholder');
 		$this->uwpChanges = is_null($row->Field('uwp_changes')) ? null : json_decode($row->Field('uwp_changes'), true);
+	}
+	
+	protected static function CustomVariablePrefix(): string {
+		return 'configOption';
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -144,6 +147,7 @@ class ConfigLine extends GenericObject {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
+		unset($json['configOptionGroup']);
 		$json['nativeEditorVersion'] = $this->nativeEditorVersion;
 		$json['file'] = $this->file;
 		$json['header'] = $this->header;

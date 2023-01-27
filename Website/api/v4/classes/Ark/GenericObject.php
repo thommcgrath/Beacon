@@ -39,10 +39,15 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		$this->lastUpdate = $row->Field('last_update');
 	}
 	
+	protected static function CustomVariablePrefix(): string {
+		return 'object';
+	}
+	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
+		$prefix = static::CustomVariablePrefix();
 		return new DatabaseSchema('ark', 'objects', [
-			new DatabaseObjectProperty('objectId', ['primaryKey' => true, 'columnName' => 'object_id']),
-			new DatabaseObjectProperty('objectGroup', ['accessor' => 'SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5)', 'columnName' => 'object_group']),
+			new DatabaseObjectProperty($prefix . 'Id', ['primaryKey' => true, 'columnName' => 'object_id']),
+			new DatabaseObjectProperty($prefix . 'Group', ['accessor' => 'ark.table_to_group(SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5))', 'columnName' => 'object_group']),
 			new DatabaseObjectProperty('label'),
 			new DatabaseObjectProperty('alternateLabel', ['columnName' => 'alternate_label']),
 			new DatabaseObjectProperty('tags'),
@@ -471,13 +476,16 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		}
 		
 		$database = BeaconCommon::Database();
-		$schema = static::SchemaName();
-		$table = static::TableName();
+		$columns = 'object_id, ark.table_to_group(from_table) AS from_table, label, min_version, action_time, tag';
+		$mySchema = self::DatabaseSchema();
+		$classSchema = static::DatabaseSchema();
+		$schema = $classSchema->Schema();
+		$table = $classSchema->Table();
 		
-		if ($table == self::TableName()) {
-			$results = $database->Query('SELECT * FROM ' . $schema . '.deletions WHERE min_version <= $1 AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
+		if ($schema === $mySchema->Schema() && $table === $mySchema->Table()) {
+			$results = $database->Query("SELECT {$columns} FROM {$schema}.deletions WHERE min_version <= $1 AND action_time > $2;", $min_version, $since->format('Y-m-d H:i:sO'));
 		} else {
-			$results = $database->Query('SELECT * FROM ' . $schema . '.deletions WHERE min_version <= $1 AND action_time > $2 AND from_table = $3;', $min_version, $since->format('Y-m-d H:i:sO'), $table);
+			$results = $database->Query("SELECT {$columns} FROM {$schema}.deletions WHERE min_version <= $1 AND action_time > $2 AND from_table = $3;", $min_version, $since->format('Y-m-d H:i:sO'), $table);
 		}
 		$arr = array();
 		while (!$results->EOF()) {
@@ -494,9 +502,10 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public function jsonSerialize(): mixed {
+		$prefix = static::CustomVariablePrefix();
 		return [
-			'objectId' => $this->objectId,
-			'objectGroup' => $this->objectGroup,
+			$prefix . 'Id' => $this->objectId,
+			$prefix . 'Group' => $this->objectGroup,
 			'label' => $this->label,
 			'alternateLabel' => $this->alternateLabel,
 			'contentPack' => [
@@ -507,6 +516,10 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 			'minVersion' => $this->minVersion,
 			'lastUpdate' => $this->lastUpdate
 		];
+	}
+	
+	public function UUID(): string {
+		return $this->objectId;
 	}
 	
 	public function ObjectId(): string {

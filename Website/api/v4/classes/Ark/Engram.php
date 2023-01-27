@@ -38,6 +38,10 @@ class Engram extends Blueprint {
 		}
 	}
 	
+	protected static function CustomVariablePrefix(): string {
+		return 'engram';
+	}
+	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
 		$schema->SetTable('engrams');
@@ -120,6 +124,7 @@ class Engram extends Blueprint {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
+		unset($json['engramGroup']);
 		$json['spawn'] = $this->SpawnCode();
 		$json['entryString'] = $this->entryString;
 		$json['requiredPoints'] = $this->requiredPoints;

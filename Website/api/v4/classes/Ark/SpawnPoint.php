@@ -11,7 +11,6 @@ class SpawnPoint extends Blueprint {
 	
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
-		$this->objectGroup = 'spawnPoints';
 		
 		if (is_null($row->Field('spawn_sets')) === false) {
 			$this->groups = json_decode($row->Field('spawn_sets'), true);
@@ -37,6 +36,10 @@ class SpawnPoint extends Blueprint {
 				];
 			}
 		}
+	}
+	
+	protected static function CustomVariablePrefix(): string {
+		return 'spawnPoint';
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -179,6 +182,7 @@ class SpawnPoint extends Blueprint {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
+		unset($json['spawnPointGroup']);
 		if (is_null($this->groups) || count($this->groups) == 0) {
 			$json['sets'] = null;
 		} else {

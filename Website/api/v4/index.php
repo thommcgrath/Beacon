@@ -10,22 +10,6 @@ Core::RegisterRoutes(
 			'GET' => 'ark/generate',
 			'POST' => 'ark/generate'
 		],
-		/*'/ark/maps' => [
-			'GET' => 'ark/maps/list'
-		],
-		'/ark/maps/{mapId}' => [
-			'GET' => 'ark/maps/get'
-		],
-		'/ark/mods' => [
-			'GET' => 'ark/mods/list',
-			'POST' => 'ark/mods/bulk',
-			'DELETE' => 'ark/mods/bulk'
-		],
-		'/ark/mods/{modId}' => [
-			'GET' => 'ark/mods/get',
-			'POST' => 'ark/mods/edit',
-			'DELETE' => 'ark/mods/delete'
-		],*/
 		'/ark/mods/{modId}/checkConfirmation' => [
 			'GET' => 'ark/mods/confirm'
 		],
@@ -168,22 +152,16 @@ Core::RegisterRoutes(
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Blueprint', 'ark/blueprints', 'blueprintId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Color', 'ark/colors', 'colorId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ColorSet', 'ark/colorSets', 'colorSetId', DatabaseObjectManager::kFeatureReadOnly);
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ConfigLine', 'ark/configOptions', 'configOptionId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ConfigOption', 'ark/configOptions', 'configOptionId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ContentPack', 'ark/contentPacks', 'contentPackId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Creature', 'ark/creatures', 'creatureId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Engram', 'ark/engrams', 'engramId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Event', 'ark/events', 'eventId', DatabaseObjectManager::kFeatureReadOnly);
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ContentPack', 'ark/contentPacks', 'contentPackId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootContainerIcon', 'ark/lootContainerIcons', 'lootContainerIconId', DatabaseObjectManager::kFeatureReadOnly);
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootContainer', 'ark/lootContainers', 'lootContainerId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Map', 'ark/maps', 'mapId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\GameVariable', 'ark/gameVariables', 'key');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootContainer', 'ark/lootContainers', 'lootContainerId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootContainerIcon', 'ark/lootContainerIcons', 'lootContainerIconId', DatabaseObjectManager::kFeatureReadOnly);
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Map', 'ark/maps', 'mapId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\SpawnPoint', 'ark/spawnPoints', 'spawnPointId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Creature', 'ark/creatures', 'creatureId');
-
-
-//BeaconObjectManager::RegisterRoutes('Ark\LootSource', 'ark', 'lootContainers');
-//BeaconObjectManager::RegisterRoutes('Ark\Creature', 'ark', 'creatures');
-//BeaconObjectManager::RegisterRoutes('Ark\ConfigLine', 'ark', 'configOptions');
-//BeaconObjectManager::RegisterRoutes('Ark\SpawnPoint', 'ark', 'spawnPoints');
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 

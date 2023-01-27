@@ -23,6 +23,10 @@ class Creature extends Blueprint {
 		$this->usedStats = filter_var($row->Field('used_stats'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 	}
 	
+	protected static function CustomVariablePrefix(): string {
+		return 'creature';
+	}
+	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
 		$schema->SetTable('creatures');
@@ -217,6 +221,7 @@ class Creature extends Blueprint {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
+		unset($json['creatureGroup']);
 		$json['incubationTime'] = $this->incubationTime;
 		$json['matureTime'] = $this->matureTime;
 		$json['stats'] = $this->stats;

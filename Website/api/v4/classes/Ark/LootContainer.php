@@ -21,7 +21,6 @@ class LootContainer extends Blueprint {
 	
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
-		$this->objectGroup = 'lootContainers';
 			
 		$this->multiplierMin = filter_var($row->Field('multiplier_min'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 1.0;
 		$this->multiplierMax = filter_var($row->Field('multiplier_max'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 1.0;
@@ -71,6 +70,10 @@ class LootContainer extends Blueprint {
 		} else {
 			$this->itemSets = null;
 		}
+	}
+	
+	protected static function CustomVariablePrefix(): string {
+		return 'lootContainer';
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -184,6 +187,7 @@ class LootContainer extends Blueprint {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
+		unset($json['lootContainerGroup']);
 		$json['multipliers'] = array(
 			'min' => $this->multiplierMin,
 			'max' => $this->multiplierMax
