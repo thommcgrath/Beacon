@@ -19,10 +19,12 @@ class Blueprint extends GenericObject {
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
-		$schema->setTable('blueprints');
-		$schema->addColumn('availability');
-		$schema->addColumn('path');
-		$schema->addColumn(new DatabaseObjectProperty('classString', ['columnName' => 'class_string']));
+		$schema->SetTable('blueprints');
+		$schema->AddColumns([
+			'availability',
+			'path',
+			new DatabaseObjectProperty('classString', ['columnName' => 'class_string'])
+		]);
 		return $schema;
 	}
 	
