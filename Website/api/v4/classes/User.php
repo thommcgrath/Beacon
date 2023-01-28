@@ -844,7 +844,7 @@ class User implements \JsonSerializable {
 	public function IsDeviceTrusted(string $device_id): bool {
 		$database = BeaconCommon::Database();
 		$device_hash = $this->PrepareDeviceHash($device_id);
-		$rows = $database->Query('SELECT device_id_hash FROM public.trusted_devices WHERE device_id_hash = $1 AND user_id = $2;', $device_hash, $this->UserID());
+		$rows = $database->Query('SELECT device_id_hash FROM public.trusted_devices WHERE device_id_hash = $1 AND user_id = $2;', $device_hash, $this->UserId());
 		return $rows->RecordCount() === 1;
 	}
 	

@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Core, User, APIResponse};
-Core::Authorize(Core::kAuthFlagOptional);
+Core::Authorize('user:read');
 
 function handle_request(array $context): APIResponse {
 	$identifier = $context['path_parameters']['userId'];
@@ -10,7 +10,7 @@ function handle_request(array $context): APIResponse {
 		return APIResponse::NewJSONError('User not found', $identifier, 404);
 	}
 	
-	if (Core::Authenticated() && $user->UserId() === Core::UserId()) {
+	if ($user->UserId() === Core::UserId()) {
 		$user_info = $user;
 	} else {
 		// don't use the regular method that includes lots of values

@@ -1,23 +1,21 @@
 <?php
 
 namespace BeaconAPI\v4;
-use DateTime, BeaconCommon, BeaconLogin;
+use DateTime, BeaconCommon, BeaconLogin, Exception, Throwable;
 
 class Core {
-	protected static $user_id = null;
+	protected static $session = null;
 	protected static $payload = null;
 	protected static $body_raw = null;
-	protected static $auth_style = null;
 	protected static $routes = [];
 	
-	const kAuthChallenge = 'public key';
-	const kAuthEmail = 'email+password';
-	const kAuthBearer = 'session';
+	const kAuthorized = 1;
+	const kAuthErrorNoToken = 2;
+	const kAuthErrorMalformedToken = 3;
+	const kAuthErrorInvalidToken = 4;
+	const kAuthErrorRestrictedScope = 5;
 	
-	const kAuthFlagOptional = 1;
-	const kAuthFlagPermissive = 2;
-	
-	public static function HandleCORS(): void {
+	public static function HandleCors(): void {
 		header('Access-Control-Allow-Origin: *');
 		header('Access-Control-Allow-Methods: DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT');
 		header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');
@@ -31,11 +29,11 @@ class Core {
 		}
 	}
 	
-	public static function APIVersionNumber(): int {
+	public static function ApiVersionNumber(): int {
 		return 4;
 	}
 	
-	public static function APIVersion(): string {
+	public static function ApiVersion(): string {
 		return 'v4';
 	}
 	
@@ -65,11 +63,11 @@ class Core {
 		return strtok(strtolower($_SERVER['HTTP_CONTENT_TYPE']), ';');
 	}
 	
-	public static function IsJSONContentType(): bool {
+	public static function IsJsonContentType(): bool {
 		return static::ContentType() === 'application/json';
 	}
 	
-	public static function BodyAsJSON() {
+	public static function BodyAsJson() {
 		if (static::$payload === null) {
 			static::$payload = json_decode(static::Body(), true);
 		}
@@ -121,186 +119,115 @@ class Core {
 		return strtoupper($_SERVER['REQUEST_METHOD']);
 	}
 	
-	protected static function AuthorizeWithSessionID(string $session_id) {
-		$session = Session::GetBySessionID($session_id);
-		if (is_null($session) == false) {
-			$user = $session->User();
-			if (is_null($user) || $user->CanSignIn() === false) {
-				return false;
-			}
-			
-			static::$user_id = $session->UserID();
-			static::$auth_style = self::kAuthBearer;
-			
-			$session->Renew();
-			
-			return true;
+	public static function Authorize(string ...$requiredScopes): void {
+		if (count($requiredScopes) === 0) {
+			throw new Exception('Did not request any scopes to authorize');
 		}
-		return false;
-	}
-	
-	protected static function AuthorizeWithPassword(string $username, string $password) {
-		$user = User::GetByEmail($username);
-		if (is_null($user) == false && $user->TestPassword($password)) {
-			if ($user->CanSignIn() === false) {
-				if ($user->RequiresPasswordChange() === true) {
-					BeaconLogin::SendForcedPasswordChangeEmail($username, $password);
+		
+		if (is_null(static::$session)) {
+			$token = '';
+			if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+				$header = $_SERVER['HTTP_AUTHORIZATION'];
+				$scheme = strtok($header, ' ');
+				if ($scheme === 'Bearer') {
+					$token = strtok(' ');
 				}
-				return false;
+			} else if (isset($_SERVER['HTTP_X_BEACON_TOKEN'])) {
+				$token = $_SERVER['HTTP_X_BEACON_TOKEN'];
 			}
-			static::$user_id = $user->UserID();
-			static::$auth_style = self::kAuthEmail;
-			return true;
+			
+			$authStatus = static::ConsumeToken($token, $requiredScopes);
+		} else {
+			$authStatus = static::$session->HasScopes($requiredScopes) ? self::kAuthorized : self::kAuthErrorRestrictedScope;
 		}
-		return false;
+		if ($authStatus === self::kAuthorized) {
+			return;
+		}
+		
+		$httpStatus = 401;
+		$params = ['Bearer', 'realm="Beacon API"'];
+		switch ($authStatus) {
+		case self::kAuthErrorNoToken:
+			break;
+		case self::kAuthErrorMalformedToken:
+		case self::kAuthErrorInvalidToken:
+			$params[] = 'error="invalid_token"';
+			$params[] = 'error_description="The access token is invalid, expired, or malformed."';
+			break;
+		case self::kAuthErrorRestrictedScope:
+			$params[] = 'error="insufficient_scope"';
+			$params[] = 'error_description="The access token is valid but does not include the required scopes."';
+			$params[] = 'scope="' . implode(' ', $requiredScopes) . '"';
+			$httpStatus = 403;
+			break;
+		}
+		
+		header('WWW-Authenticate: ' . implode(' ', $params));
+		static::ReplyError('Unauthorized', null, 401);
 	}
 	
-	protected static function AuthorizeWithSignature(User $user, string $challenge, string $signature) {
-		if (is_null($user) || $user->CanSignIn() === false) {
+	protected static function ConsumeToken(string $token, array $requiredScopes): int {
+		if (empty($token)) {
+			return self::kAuthErrorNoToken;
+		}
+		
+		$session = null;
+		try {
+			$session = Session::Fetch($token);
+		} catch (Exception $err) {
+			return self::kAuthErrorMalformedToken;
+		}
+		if (is_null($session)) {
+			return self::kAuthErrorInvalidToken;
+		}
+		if ($session->HasScopes($requiredScopes) === false) {
+			return self::kAuthErrorRestrictedScope;
+		}
+		
+		static::$session = $session;
+		return self::kAuthorized;
+	}
+	
+	public static function Authorized(string ...$scopes): bool {
+		if (is_null(static::$session)) {
 			return false;
 		}
-		
-		if (BeaconCommon::IsHex($signature)) {
-			$signature = hex2bin($signature);
+		if (count($scopes) === 0) {
+			throw new Exception('Did not request any scopes to authorize');
 		}
 		
-		if ($user->CheckSignature($challenge, $signature)) {
-			static::$user_id = $user->UserID();
-			static::$auth_style = self::kAuthChallenge;
-			return true;
-		}
-		
-		return false;
+		return static::$session->HasScopes($scopes);
 	}
 	
-	public static function Authorize(bool|int $flags = 0) {
-		if ($flags === true) {
-			$flags = self::kAuthFlagOptional;
-		} else if ($flags === false) {
-			$flags = 0;
-		}	
-		
-		$optional = ($flags & self::kAuthFlagOptional) === self::kAuthFlagOptional;
-		$permissive = ($flags & self::kAuthFlagPermissive) === self::kAuthFlagPermissive;
-		
-		$authorized = false;
-		$content = '';
-		static::$user_id = BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
-		$http_fail_status = 401;
-		
-		if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-			$optional = false; // if authorization included, it is no longer optional
-			$authorization = $_SERVER['HTTP_AUTHORIZATION'];
-			$pos = strpos($authorization, ' ');
-			$auth_type = strtolower(substr($authorization, 0, $pos));
-			$auth_value = substr($authorization, $pos + 1);
-			
-			switch ($auth_type) {
-			case 'bearer':
-				$authorized = static::AuthorizeWithSessionID($auth_value);
-				break;
-			case 'basic':
-				if ($permissive) {
-					$decoded = base64_decode($auth_value);
-					list($username, $password) = explode(':', $decoded, 2);
-					$authorized = static::AuthorizeWithPassword($username, $password);
-				}
-				break;
-			case 'challenge':
-				if ($permissive) {
-					$decoded = base64_decode($auth_value);
-					list($user_id, $signature) = explode(':', $decoded, 2);
-					
-					if (BeaconCommon::IsUUID($user_id)) {
-						$user = User::GetByUserID($user_id);
-						$database = BeaconCommon::Database();
-						$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $user_id);
-						while (!$results->EOF()) {
-							$challenge = $results->Field('challenge');
-							if (static::AuthorizeWithSignature($user, $challenge, $signature)) {
-								$authorized = true;
-								break;
-							}
-							$results->MoveNext();
-						}
-					}
-				}
-				break;
-			}
-		} elseif (static::Method() === 'POST' && static::ContentType() === 'application/json') {
-			if ($permissive) {
-				$payload = static::JSONPayload();
-				if ($payload !== false && (empty($payload['username']) === false && empty($payload['password']) === false)) {
-					$authorized = static::AuthorizeWithPassword($payload['username'], $payload['password']);
-				} elseif ($payload !== false && (empty($payload['user_id']) === false && empty($payload['signature']) === false)) {
-					$database = BeaconCommon::Database();
-					$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $payload['user_id']);
-					if ($results->RecordCount() == 1) {
-						$challenge = $results->Field('challenge');
-						$user = User::GetByUserID($payload['user_id']);
-						if (is_null($user) === false) {
-							$authorized = static::AuthorizeWithSignature($user, $challenge, $payload['signature']);
-						}
-					}
-				}
-			}
-		} elseif (empty($_SERVER['HTTP_X_BEACON_TOKEN']) === false) {
-			$authorized = static::AuthorizeWithSessionID($_SERVER['HTTP_X_BEACON_TOKEN']);
-		}
-		
-		if ($authorized) {
-			$database = BeaconCommon::Database();
-			$database->BeginTransaction();
-			$database->Query('DELETE FROM user_challenges WHERE user_id = $1;', static::$user_id);
-			$database->Commit();
-		}
-		
-		if ((!$authorized) && (!$optional)) {
-			header('WWW-Authenticate: Basic realm="Beacon API"');
-			static::ReplyError('Unauthorized', $content, $http_fail_status);
-		}
+	public static function Session(): ?Session {
+		return static::$session;
 	}
 	
-	public static function Authenticated() {
-		return is_null(static::$auth_style) == false;
-	}
-	
-	public static function AuthenticationMethod() {
-		return static::$auth_style;
-	}
-	
-	public static function UserID() {
-		return static::$user_id;
-	}
-	
-	public static function User() {
-		return User::GetByUserID(static::$user_id);
-	}
-	
-	public static function ObjectID(int $place = 0) {
-		if (!isset($_SERVER['PATH_INFO'])) {
+	public static function SessionId(): ?string {
+		if (is_null(static::$session)) {
 			return null;
 		}
 		
-		$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-		if ((is_array($request) === false) || (count($request) == 0)) {
+		return static::$session->SessionId();
+	}
+	
+	public static function UserId(): ?string {
+		if (is_null(static::$session)) {
 			return null;
 		}
 		
-		if (empty($request[$place])) {
+		return static::$session->UserId();
+	}
+	
+	public static function User(): ?User {
+		if (is_null(static::$session)) {
 			return null;
 		}
 		
-		return $request[$place];
+		return static::$session->User();
 	}
 	
-	public static function ObjectCount() {
-		$object_id = static::ObjectID();
-		$arr = explode(',', $object_id);
-		return count($arr);
-	}
-	
-	public static function URL(string $path = '/') {
+	public static function Url(string $path = '/') {
 		if (strlen($path) == 0 || substr($path, 0, 1) != '/') {
 			$path = '/' . $path;
 		}
@@ -366,10 +293,13 @@ class Core {
 	public static function HandleRequest(string $root): void {
 		$request_route = '/' . $_GET['route'];
 		
-		if (preg_match('/^\/user$/', $request_route) || preg_match('/^\/user\//', $request_route)) {
-			static::Authorize();
-			$request_route = str_replace('/user', '/users/' . static::UserID(), $request_route);
-		}		
+		if (preg_match('/^\/user(\/.+)?$/', $request_route)) {
+			static::Authorize('user:read');
+			$request_route = str_replace('/user', '/users/' . static::UserId(), $request_route);
+		} else if (preg_match('/^\/session(\/.+)?$/', $request_route)) {
+			static::Authorize('common');
+			$request_route = str_replace('/session', '/sessions/' . static::SessionId(), $request_route);
+		}
 		
 		foreach (static::$routes as $route => $route_info) {
 			$route_expression = $route_info['expression'];
@@ -395,7 +325,7 @@ class Core {
 				try {
 					http_response_code(500); // Set a default. If there is a fatal error, it'll still be set.
 					require($handler_file);
-				} catch (\Throwable $err) {
+				} catch (Throwable $err) {
 					static::ReplyError((BeaconCommon::InProduction() ? 'Error loading api source file.' : $err->getMessage()), null, 500);
 				}
 			} else if (is_callable($handler) === true) {

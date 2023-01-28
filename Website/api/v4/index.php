@@ -6,6 +6,15 @@ require(dirname(__FILE__) . '/loader.php');
 
 Core::RegisterRoutes(
 	[
+		'/applications' => [
+			'GET' => 'applications/list',
+			'POST' => 'applications/create'
+		],
+		'/applications/{applicationId}' => [
+			'GET' => 'applications/get',
+			'PATCH' => 'applications/edit',
+			'DELETE' => 'applications/delete'
+		],
 		'/ark/projects/{projectId}/generatedLines' => [
 			'GET' => 'ark/generate',
 			'POST' => 'ark/generate'
@@ -24,9 +33,6 @@ Core::RegisterRoutes(
 			'POST' => 'authenticators/edit',
 			'GET' => 'authenticators/get',
 			'DELETE' => 'authenticators/delete'
-		],
-		'/challenge/{userId}' => [
-			'GET' => 'challenge'
 		],
 		'/deltas' => [
 			'GET' => 'deltas'

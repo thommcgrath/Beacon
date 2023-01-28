@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{APIResponse, Core, EmailVerificationCode, User};
-Core::Authorize();
+Core::Authorize('user:write');
 
 function handle_request(array $context): APIResponse {
 	$identifier = $context['path_parameters']['userId'];
@@ -14,7 +14,7 @@ function handle_request(array $context): APIResponse {
 		return APIResponse::NewJSONError('Forbidden', $identifier, 403);
 	}
 	
-	$body = Core::BodyAsJSON();
+	$body = Core::BodyAsJson();
 	if (isset($body['username']) && empty($body['username']) === false) {
 		$user->SetUsername($body['username']);	
 	}
