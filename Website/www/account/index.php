@@ -3,7 +3,9 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
-$session = BeaconSession::GetFromCookie();
+use BeaconAPI\v4\{Session, User};
+
+$session = Session::GetFromCookie();
 if (is_null($session)) {
 	BeaconTemplate::StartScript();
 	?><script>
@@ -14,14 +16,14 @@ if (is_null($session)) {
 }
 $session->Renew();
 
-$user = BeaconUser::GetByUserID($session->UserID());
+$user = $session::User();
 BeaconTemplate::SetTitle('Account: ' . $user->Username());
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 BeaconTemplate::StartScript(); ?>
 <script>
 const deviceId = <?php echo json_encode(BeaconCommon::DeviceID()); ?>;
-const sessionId = <?php echo json_encode($session->SessionID()); ?>;
+const sessionId = <?php echo json_encode($session->SessionId()); ?>;
 const apiDomain = <?php echo json_encode(BeaconCommon::APIDomain()); ?>;
 </script><?php
 BeaconTemplate::FinishScript();

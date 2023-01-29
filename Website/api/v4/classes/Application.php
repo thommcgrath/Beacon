@@ -195,7 +195,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 			$callbacksToRemove = array_diff($this->callbacks, $callbacks);
 		}
 		
-		if (count($assignments) === 0 && count($scopesToAdd) === 0 && count($scopesToRemove) === 0 && count($callbacksToAdd) === 0 && count($callbacksToRemove) === 0) {
+		if (count($assignments) === 0 && count($scopesToRemove) === 0 && count($callbacksToAdd) === 0 && count($callbacksToRemove) === 0) {
 			return;
 		}
 		
@@ -211,15 +211,15 @@ class Application extends DatabaseObject implements JsonSerializable {
 		
 		// Since scopes are being removed, we need to adjust sessions accordingly
 		foreach ($scopesToRemove as $scope) {
-			$rows = $database->Query("SELECT session_id, scopes FROM public.sessions WHERE application_id = $1 AND scopes LIKE $1;", $this->applicationId, $scope);
+			$rows = $database->Query("SELECT DISTINCT scopes FROM public.sessions WHERE application_id = $1 AND scopes LIKE $1; AND valid_valut < CURRENT_TIMESTAMP", $this->applicationId, "%{$scope}%");
 			while (!$rows->EOF()) {
-				$sessionHash = $rows->Field('session_id');
-				$scopes = str_replace($scope, '', $rows->Field('scopes'));
-				$scopes = str_replace('  ', ' ', $scopes);
-				if (empty($scopes)) {
-					$database->Query("DELETE FROM public.sessions WHERE session_id = $1;", $sessionHash);
+				$oldScopes = $rows->Field('scopes');
+				$newScopes = str_replace($scope, '', $oldScopes);
+				$newScopes = str_replace('  ', ' ', $newScopes);
+				if (empty($newScopes)) {
+					$database->Query("DELETE FROM public.sessions WHERE application_id = $1 AND scopes = $1 AND valid_until < CURRENT_TIMESTAMP;", $this->applicationId, $oldScopes);
 				} else {
-					$database->Query("UPDATE public.sessions SET scopes = $2 WHERE session_id = $1;", $sessionHash, $scopes);
+					$database->Query("UPDATE public.sessions SET scopes = $3 WHERE application_id = $1 AND scopes = $1;", $this->applicationId, $oldScopes, $newScopes);
 				}
 				$rows->MoveNext();
 			}

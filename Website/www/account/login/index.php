@@ -1,6 +1,9 @@
 <?php
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
+
+use BeaconAPI\v4\{Session, User};
+
 header('Cache-Control: no-cache');
 BeaconCommon::StartSession();
 BeaconTemplate::SetTitle('Beacon Login');
@@ -127,15 +130,15 @@ if (is_null($explicit_email) === false && is_null($explicit_key) === false) {
 	}
 }
 
-$session = BeaconSession::GetFromCookie();
-if (is_null($session) == false) {
-	$user = BeaconUser::GetByUserID($session->UserID());
-	if (is_null($user) == false && is_null($explicit_email) == false) {
-		$desired_user = BeaconUser::GetByEmail($explicit_email);
-		if (is_null($desired_user) == true || $desired_user->UserID() !== $user->UserID()) {
+$session = Session::GetFromCookie();
+if (is_null($session) === false) {
+	$user = $session->User();
+	if (is_null($user) === false && is_null($explicit_email) === false) {
+		$desired_user = User::Fetch($explicit_email);
+		if (is_null($desired_user) === true || $desired_user->UserId() !== $user->UserId()) {
 			$user = null;
 			$session = null;
-			BeaconSession::RemoveCookie();
+			Session::RemoveCookie();
 		}
 	}
 	if (is_null($user) == false) {
@@ -166,7 +169,7 @@ function SetupPrivateKeyImport(string $user_id, string $encrypted_private_key, s
 	}
 	
 	// First, verify that the user exists and the private key matches their public key
-	$user = BeaconUser::GetByUserID($user_id);
+	$user = User::Fetch($user_id);
 	if (is_null($user)) {
 		return false;
 	}
