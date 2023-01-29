@@ -416,29 +416,29 @@ Inherits Listbox
 
 	#tag MenuHandler
 		Function EditClear() As Boolean Handles EditClear.Action
-			Self.DoClear()
-			Return True
+		  Self.DoClear()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function EditCopy() As Boolean Handles EditCopy.Action
-			Self.DoCopy()
-			Return True
+		  Self.DoCopy()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function EditCut() As Boolean Handles EditCut.Action
-			Self.DoCut()
-			Return True
+		  Self.DoCut()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function EditPaste() As Boolean Handles EditPaste.Action
-			Self.DoPaste()
-			Return True
+		  Self.DoPaste()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 

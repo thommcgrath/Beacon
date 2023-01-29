@@ -426,8 +426,11 @@ End
 		    
 		    Var Replacements() As Ark.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
 		    For Each Replacement As Ark.Creature In Replacements
-		      Var Weight As Double = Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, Replacement)
-		      Self.ReplacementsList.AddRow(Weight.PrettyText, Replacement.Label)
+		      Var Weight As NullableDouble = Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, Replacement)
+		      If Weight Is Nil Then
+		        Continue
+		      End If
+		      Self.ReplacementsList.AddRow(Weight.DoubleValue.PrettyText, Replacement.Label)
 		      Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastAddedRowIndex) = Replacement
 		    Next
 		  End If

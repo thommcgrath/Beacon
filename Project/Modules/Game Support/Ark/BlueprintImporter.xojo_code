@@ -30,6 +30,12 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mMods = New Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Import(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
 		  Var Importer As Ark.BlueprintImporter
 		  
@@ -110,10 +116,8 @@ Protected Class BlueprintImporter
 		    If Path.BeginsWith("/Game/Mods/") = False Then
 		      Continue
 		    End If
-		    Var ModName As String = Path.NthField("/", 4)
-		    If Importer.mModNames.IndexOf(ModName) = -1 Then
-		      Importer.mModNames.Add(ModName)
-		    End If
+		    Var ModTag As String = Path.NthField("/", 4)
+		    Importer.mMods.Value(ModTag) = ModTag
 		    
 		    Select Case Type
 		    Case "Engram"
@@ -293,18 +297,17 @@ Protected Class BlueprintImporter
 		      
 		      Importer.mBlueprints.Add(Blueprint)
 		      
-		      If Blueprint.ContentPackName.IsEmpty = False Then
-		        If Importer.mModNames.IndexOf(Blueprint.ContentPackName) = -1 Then
-		          Importer.mModNames.Add(Blueprint.ContentPackName)
+		      Var Path As String = Blueprint.Path
+		      If Path.BeginsWith("/Game/Mods/") Then
+		        Var ModTag As String = Path.NthField("/", 4)
+		        Var ModName As String = ModTag
+		        If Blueprint.ContentPackName.IsEmpty = False Then
+		          ModName = Blueprint.ContentPackName
 		        End If
-		      Else
-		        Var Path As String = Blueprint.Path
-		        If Path.BeginsWith("/Game/Mods/") Then
-		          Var ModName As String = Path.NthField("/", 4)
-		          If Importer.mModNames.IndexOf(ModName) = -1 Then
-		            Importer.mModNames.Add(ModName)
-		          End If
+		        If ModName <> ModTag Then
+		          ModName = ModName + " (" + ModTag + ")"
 		        End If
+		        Importer.mMods.Value(ModTag) = ModName
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
@@ -434,10 +437,8 @@ Protected Class BlueprintImporter
 		      Importer.mBlueprints.Add(Blueprint.Clone)
 		      
 		      If Path.BeginsWith("/Game/Mods/") Then
-		        Var ModName As String = Path.NthField("/", 4)
-		        If Importer.mModNames.IndexOf(ModName) = -1 Then
-		          Importer.mModNames.Add(ModName)
-		        End If
+		        Var ModTag As String = Path.NthField("/", 4)
+		        Importer.mMods.Value(ModTag) = ModTag
 		      End If
 		    Next
 		    
@@ -517,10 +518,8 @@ Protected Class BlueprintImporter
 		    Importer.mBlueprints.Add(Blueprint)
 		    
 		    If Path.BeginsWith("/Game/Mods/") Then
-		      Var ModName As String = Path.NthField("/", 4)
-		      If Importer.mModNames.IndexOf(ModName) = -1 Then
-		        Importer.mModNames.Add(ModName)
-		      End If
+		      Var ModTag As String = Path.NthField("/", 4)
+		      Importer.mMods.Value(ModTag) = ModTag
 		    End If
 		  Next
 		  
@@ -529,31 +528,24 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModNameAt(Index As Integer) As String
-		  Return Self.mModNames(Index)
+		Function ModCount() As Integer
+		  Return Self.mMods.KeyCount
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModNameCount() As Integer
-		  Return Self.mModNames.Count
+		Function ModNameForTag(Tag As String) As String
+		  Return Self.mMods.Lookup(Tag, Tag)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModNameLastIndex() As Integer
-		  Return Self.mModNames.LastIndex
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModNames() As String()
-		  Var Arr() As String
-		  Arr.ResizeTo(Self.mModNames.LastIndex)
-		  For Idx As Integer = Self.mModNames.FirstIndex To Self.mModNames.LastIndex
-		    Arr(Idx) = Self.mModNames(Idx)
+		Function ModTags() As String()
+		  Var Tags() As String
+		  For Each Entry As DictionaryEntry In Self.mMods
+		    Tags.Add(Entry.Key)
 		  Next
-		  Return Arr
+		  Return Tags
 		End Function
 	#tag EndMethod
 
@@ -595,7 +587,7 @@ Protected Class BlueprintImporter
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModNames() As String
+		Private mMods As Dictionary
 	#tag EndProperty
 
 

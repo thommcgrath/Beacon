@@ -44,6 +44,7 @@ Begin BeaconAutopositionWindow DeployManager
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
+      Filter          =   ""
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
@@ -489,6 +490,7 @@ Begin BeaconAutopositionWindow DeployManager
       Begin CodeEditor ReviewArea
          AutoDeactivate  =   True
          Enabled         =   True
+         HasBorder       =   False
          Height          =   416
          HorizontalScrollPosition=   0
          Index           =   -2147483648
@@ -683,6 +685,7 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
    Begin Beacon.OAuth2Client Authorizer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

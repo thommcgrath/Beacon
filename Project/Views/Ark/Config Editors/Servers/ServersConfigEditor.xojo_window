@@ -44,6 +44,7 @@ Begin ArkConfigEditor ServersConfigEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
+      Filter          =   ""
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   False
@@ -251,43 +252,43 @@ End
 
 	#tag MenuHandler
 		Function CopyMOTDToAllServers() As Boolean Handles CopyMOTDToAllServers.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Var CurrentProfileID As String = Self.CurrentProfileID
-			If CurrentProfileID.IsEmpty Then
-			Return True
-			End If
-			Self.CurrentProfileID = ""
-			
-			Var SourceProfile As Ark.ServerProfile
-			Var Bound As Integer = Self.Project.ServerProfileCount - 1
-			For Idx As Integer = 0 To Bound
-			If Self.Project.ServerProfile(Idx).ProfileID = CurrentProfileID And Self.Project.ServerProfile(Idx) IsA Ark.ServerProfile Then
-			SourceProfile = Ark.ServerProfile(Self.Project.ServerProfile(Idx))
-			Exit
-			End If
-			Next
-			
-			If SourceProfile Is Nil Then
-			Self.CurrentProfileID = CurrentProfileID
-			Return True
-			End If
-			
-			Var Message As Ark.ArkML = SourceProfile.MessageOfTheDay
-			Var Duration As Integer = SourceProfile.MessageDuration
-			
-			For Idx As Integer = 0 To Bound
-			If Self.Project.ServerProfile(Idx).ProfileID <> CurrentProfileID And Self.Project.ServerProfile(Idx) IsA Ark.ServerProfile Then
-			Ark.ServerProfile(Self.Project.ServerProfile(Idx)).MessageOfTheDay = Message.Clone
-			Ark.ServerProfile(Self.Project.ServerProfile(Idx)).MessageDuration = Duration
-			Self.Changed = Self.Changed Or Self.Project.Modified
-			End If
-			Next
-			
-			Self.CurrentProfileID = CurrentProfileID
-			Return True
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Var CurrentProfileID As String = Self.CurrentProfileID
+		  If CurrentProfileID.IsEmpty Then
+		    Return True
+		  End If
+		  Self.CurrentProfileID = ""
+		  
+		  Var SourceProfile As Ark.ServerProfile
+		  Var Bound As Integer = Self.Project.ServerProfileCount - 1
+		  For Idx As Integer = 0 To Bound
+		    If Self.Project.ServerProfile(Idx).ProfileID = CurrentProfileID And Self.Project.ServerProfile(Idx) IsA Ark.ServerProfile Then
+		      SourceProfile = Ark.ServerProfile(Self.Project.ServerProfile(Idx))
+		      Exit
+		    End If
+		  Next
+		  
+		  If SourceProfile Is Nil Then
+		    Self.CurrentProfileID = CurrentProfileID
+		    Return True
+		  End If
+		  
+		  Var Message As Ark.ArkML = SourceProfile.MessageOfTheDay
+		  Var Duration As Integer = SourceProfile.MessageDuration
+		  
+		  For Idx As Integer = 0 To Bound
+		    If Self.Project.ServerProfile(Idx).ProfileID <> CurrentProfileID And Self.Project.ServerProfile(Idx) IsA Ark.ServerProfile Then
+		      Ark.ServerProfile(Self.Project.ServerProfile(Idx)).MessageOfTheDay = Message.Clone
+		      Ark.ServerProfile(Self.Project.ServerProfile(Idx)).MessageDuration = Duration
+		      Self.Changed = Self.Changed Or Self.Project.Modified
+		    End If
+		  Next
+		  
+		  Self.CurrentProfileID = CurrentProfileID
+		  Return True
 		End Function
 	#tag EndMenuHandler
 

@@ -1863,6 +1863,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         State           =   1
          TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
@@ -1872,7 +1873,6 @@ Begin Window UserWelcomeWindow
          Underline       =   False
          Value           =   True
          Visible         =   True
-         VisualState     =   1
          Width           =   268
       End
       Begin CheckBox LoginRevealCheckbox
@@ -1911,6 +1911,7 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection ConfirmCodeCreationSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1919,6 +1920,7 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection CheckForConfirmationSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1927,6 +1929,7 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection VerifyConfirmationCodeSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1935,6 +1938,7 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection IdentitySuggestionSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1943,6 +1947,7 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection SubmitIdentitySocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1951,6 +1956,7 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection LoginSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

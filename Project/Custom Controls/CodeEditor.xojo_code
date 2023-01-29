@@ -208,6 +208,14 @@ Implements NotificationKit.Receiver
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="HasBorder"
+			Visible=true
+			Group=""
+			InitialValue=""
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"

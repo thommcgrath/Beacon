@@ -396,6 +396,7 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
    End
    Begin Beacon.ConnectorClientSocket TestSocket
       Address         =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0

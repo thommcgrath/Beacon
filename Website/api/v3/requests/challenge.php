@@ -6,6 +6,9 @@
 
 function handle_request(array $context): void {
 	$user_id = $context['path_parameters']['user_id'];
+	if (is_null(BeaconUser::GetByUserID($user_id))) {
+		BeaconAPI::ReplyError('User not found', $user_id, 404);
+	}
 	$challenge = \BeaconCommon::GenerateUUID();
 
 	$database = \BeaconCommon::Database();

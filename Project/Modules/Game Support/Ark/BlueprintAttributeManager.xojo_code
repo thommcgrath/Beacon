@@ -140,6 +140,7 @@ Protected Class BlueprintAttributeManager
 		        End If
 		      Next
 		      
+		      Call Reference.Resolve // Get the correct UUID from the reference
 		      Var ObjectID As String = Reference.ObjectID
 		      Manager.mReferences.Value(ObjectID) = Reference
 		      Manager.mAttributes.Value(ObjectID) = Attr

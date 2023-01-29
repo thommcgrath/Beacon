@@ -60,12 +60,12 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Call Self.SaveAs()
-			Return True
+		  If Self.IsFrontmost = False Then
+		    Return False
+		  End If
+		  
+		  Call Self.SaveAs()
+		  Return True
 		End Function
 	#tag EndMenuHandler
 

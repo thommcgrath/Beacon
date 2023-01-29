@@ -62,6 +62,7 @@ Begin BeaconDialog ArkExportWindow
    Begin CodeEditor ContentArea
       AutoDeactivate  =   True
       Enabled         =   True
+      HasBorder       =   False
       Height          =   428
       HelpTag         =   ""
       HorizontalScrollPosition=   0

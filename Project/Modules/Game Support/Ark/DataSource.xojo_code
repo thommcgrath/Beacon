@@ -2944,27 +2944,27 @@ Inherits Beacon.DataSource
 
 
 	#tag Property, Flags = &h21
-		Private mConfigKeyCache As Dictionary
+		Private Shared mConfigKeyCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContainerLabelCacheDict As Dictionary
+		Private Shared mContainerLabelCacheDict As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContainerLabelCacheMask As UInt64
+		Private Shared mContainerLabelCacheMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCreatureCache As Dictionary
+		Private Shared mCreatureCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngramCache As Dictionary
+		Private Shared mEngramCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIconCache As Dictionary
+		Private Shared mIconCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -2972,7 +2972,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLootContainerCache As Dictionary
+		Private Shared mLootContainerCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -2984,15 +2984,15 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSpawnLabelCacheDict As Dictionary
+		Private Shared mSpawnLabelCacheDict As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSpawnLabelCacheMask As UInt64
+		Private Shared mSpawnLabelCacheMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSpawnPointCache As Dictionary
+		Private Shared mSpawnPointCache As Dictionary
 	#tag EndProperty
 
 

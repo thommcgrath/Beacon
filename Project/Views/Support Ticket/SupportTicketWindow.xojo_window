@@ -1186,14 +1186,7 @@ End
 		  
 		  Var LogsFolder As FolderItem = App.LogsFolder
 		  If (LogsFolder Is Nil) = False And LogsFolder.Exists Then
-		    Var Pattern As New Regex
-		    Pattern.SearchPattern = "^\d{4}-\d{2}-\d{2}\.log$"
-		    
 		    For Each File As FolderItem In LogsFolder.Children
-		      If Pattern.Search(File.Name) Is Nil Then
-		        Continue
-		      End If
-		      
 		      If Not Self.AddToArchive("Logs", File) Then
 		        // Error will have been set already
 		        Return

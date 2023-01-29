@@ -2028,8 +2028,10 @@ End
 		    Var Replacements() As Ark.Creature = Set.ReplacementCreatures(FromCreature)
 		    Var Map As New Dictionary
 		    For Each ToCreature As Ark.Creature In Replacements
-		      Var Weight As Double = Set.CreatureReplacementWeight(FromCreature, ToCreature)
-		      Map.Value(ToCreature.ObjectID) = Weight
+		      Var Weight As NullableDouble = Set.CreatureReplacementWeight(FromCreature, ToCreature)
+		      If (Weight Is Nil) = False Then
+		        Map.Value(ToCreature.ObjectID) = Weight.DoubleValue
+		      End If
 		    Next
 		    
 		    Var Dict As New Dictionary

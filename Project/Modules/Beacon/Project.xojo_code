@@ -517,6 +517,7 @@ Implements ObservationKit.Observable
 		  Try
 		    Parsed = Beacon.ParseJSON(SaveData)
 		  Catch Err As RuntimeException
+		    FailureReason = "JSON parse error"
 		    App.Log(Err, CurrentMethodName, "Failed to parse JSON")
 		    Return Nil
 		  End Try
@@ -1108,6 +1109,12 @@ Implements ObservationKit.Observable
 
 
 	#tag Constant, Name = BaseConfigSetName, Type = String, Dynamic = False, Default = \"Base", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = BinaryFormatBEBOM, Type = Double, Dynamic = False, Default = \"3470482855257601832", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = BinaryFormatLEBOM, Type = Double, Dynamic = False, Default = \"2916000471902660912", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SaveDataVersion, Type = Double, Dynamic = False, Default = \"6", Scope = Protected
