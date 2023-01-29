@@ -48,7 +48,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$this->secret = BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('App Secret Encryption Key'), base64_decode($row->Field('secret')));
 		$this->name = $row->Field('name');
 		$this->website = $row->Field('website');
-		$this->scopes = json_decode($row->Field('scopes'), true);
+		$this->scopes = explode(' ', $row->Field('scopes'));
 		$this->callbacks = json_decode($row->Field('callbacks'), true);
 	}
 	
@@ -59,7 +59,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('secret'),
 			new DatabaseObjectProperty('name'),
 			new DatabaseObjectProperty('website'),
-			new DatabaseObjectProperty('scopes', ['columnName' => 'scopes', 'accessor' => "(SELECT COALESCE(array_to_json(array_agg(scopes_template.scope)), '[]') FROM (SELECT scope FROM application_scopes WHERE application_id = applications.application_id ORDER BY scope) AS scopes_template)"]),
+			new DatabaseObjectProperty('scopes'),
 			new DatabaseObjectProperty('callbacks', ['columnName' => 'callbacks', 'accessor' => "(SELECT COALESCE(array_to_json(array_agg(callbacks_template.url)), '[]') FROM (SELECT url FROM application_callbacks WHERE application_id = applications.application_id ORDER BY url) AS callbacks_template)"])
 		]);
 	}
@@ -93,6 +93,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 		if (in_array(self::kScopeCommon, $scopes) === false) {
 			$scopes[] = self::kScopeCommon;
 		}
+		sort($scopes);
 		
 		foreach ($callbacks as $url) {
 			if (filter_var($url, FILTER_VALIDATE_URL) === false) {
@@ -112,10 +113,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 		
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.applications (application_id, secret, name, website, user_id) VALUES ($1, $2, $3, $4, $5);", $applicationId, $secretEncrypted, $name, $website, $userId);
-		foreach ($scopes as $scope) {
-			$database->Query("INSERT INTO public.application_scopes (application_id, scope) VALUES ($1, $2);", $applicationId, $scope);
-		}
+		$database->Query("INSERT INTO public.applications (application_id, secret, name, website, user_id, scopes) VALUES ($1, $2, $3, $4, $5, $6);", $applicationId, $secretEncrypted, $name, $website, $userId, implode(' ', $scopes));
 		foreach ($callbacks as $url) {
 			$database->Query("INSERT INTO public.application_callbacks (application_id, url) VALUES ($1, $2);", $applicationId, $url);
 		}
@@ -152,7 +150,6 @@ class Application extends DatabaseObject implements JsonSerializable {
 			$values[] = $secretEncrypted;
 		}
 		
-		$scopesToAdd = [];
 		$scopesToRemove = [];
 		if (isset($properties['scopes'])) {
 			$scopes = $properties['scopes'];
@@ -170,7 +167,10 @@ class Application extends DatabaseObject implements JsonSerializable {
 				$scopes[] = self::kScopeCommon;
 			}
 			
-			$scopesToAdd = array_diff($scopes, $this->scopes);
+			sort($scopes);
+			$assignments[] = 'scopes = $' . $placeholder++;
+			$values[] = implode(' ', $scopes);
+			
 			$scopesToRemove = array_diff($this->scopes, $scopes);
 		}
 		
@@ -202,21 +202,29 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query("UPDATE public.applications SET " . implode(', ', $assignments) . " WHERE application_id = $1;", $values);
-		foreach ($scopesToAdd as $scope) {
-			$database->Query("INSERT INTO public.application_scopes (application_id, scope) VALUES ($1, $2);", $this->applicationId, $scope);
-		}
-		foreach ($scopesToRemove as $scope) {
-			$database->Query("DELETE FROM public.application_scopes WHERE application_id = $1 AND scope = $2;", $this->applicationId, $scope);
-		}
 		foreach ($callbacksToAdd as $url) {
 			$database->Query("INSERT INTO public.application_callbacks (application_id, url) VALUES ($1, $2);", $this->applicationId, $url);
 		}
 		foreach ($callbacksToRemove as $url) {
 			$database->Query("DELETE FROM public.application_callbacks WHERE application_id = $1 AND url = $2;", $this->applicationId, $url);
 		}
-		if (count($scopesToAdd) > 0 || count($scopesToRemove) > 0) {
-			$database->Query("DELETE FROM public.sessions WHERE application_id = $1;", $this->applicationId);
+		
+		// Since scopes are being removed, we need to adjust sessions accordingly
+		foreach ($scopesToRemove as $scope) {
+			$rows = $database->Query("SELECT session_id, scopes FROM public.sessions WHERE application_id = $1 AND scopes LIKE $1;", $this->applicationId, $scope);
+			while (!$rows->EOF()) {
+				$sessionHash = $rows->Field('session_id');
+				$scopes = str_replace($scope, '', $rows->Field('scopes'));
+				$scopes = str_replace('  ', ' ', $scopes);
+				if (empty($scopes)) {
+					$database->Query("DELETE FROM public.sessions WHERE session_id = $1;", $sessionHash);
+				} else {
+					$database->Query("UPDATE public.sessions SET scopes = $2 WHERE session_id = $1;", $sessionHash, $scopes);
+				}
+				$rows->MoveNext();
+			}
 		}
+		
 		$database->Commit();
 		
 		$schema = static::DatabaseSchema();
@@ -260,8 +268,92 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return in_array($scope, $this->scopes);
 	}
 	
+	public function HasScopes(array $scopes): bool {
+		if (count($scopes) === 0) {
+			return false;
+		}
+		
+		foreach ($scopes as $scope) {
+			if ($this->HasScope($scope) === false) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	public function CallbackAllowed(string $url): bool {
 		return in_array($url, $this->callbacks);
+	}
+	
+	public function BeginLogin(array $scopes, string $callback, string $state): ?string {
+		if ($this->CallbackAllowed($callback) === false) {
+			return null;
+		}
+		
+		if (in_array(self::kScopeCommon, $scopes) === false) {
+			$scopes[] = self::kScopeCommon;
+		}
+		if ($this->HasScopes($scopes) === false) {
+			return null;
+		}
+		
+		$loginId = BeaconCommon::GenerateUUID();
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query("INSERT INTO public.application_logins (login_id, application_id, scopes, callback, state) VALUES ($1, $2, $3, $4, $5);", $loginId, $this->applicationId, implode(' ', $scopes), $callback, $state);
+		$database->Commit();
+		
+		return $loginId;
+	}
+	
+	public function IssueGrantCode(string $loginId, string $userId): ?string {
+		$url = null;
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query("DELETE FROM public.application_logins WHERE expiration < CURRENT_TIMESTAMP;");
+		$rows = $database->Query("SELECT callback, state FROM public.application_logins WHERE login_in = $1 AND expiration > CURRENT_TIMESTAMP AND code IS NULL;", $loginId);
+		if ($rows->RecordCount() === 1) {
+			$code = BeaconCommon::GenerateUUID();
+			$codeHash = $this->HashGrantCode($code);
+			$database->Query("UPDATE public.application_logins SET user_id = $2, code = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL WHERE login_id = $1;", $loginId, $userId, $codeHash);
+			
+			$url = $rows->Field('callback');
+			if (str_contains($url, '?')) {
+				$url .= '&';
+			} else {
+				$url .= '?';
+			}
+			$url .= 'code=' . urlencode($code) . '&state=' . urlencode($rows->Field('state'));
+		}
+		$database->Commit();
+		return $url;
+	}
+	
+	public function RedeemGrantCode(string $code): ?Session {
+		$codeHash = $this->HashGrantCode($code);
+		$database = BeaconCommon::Database();
+		$rows = $database->Query("SELECT * FROM public.application_logins WHERE application_id = $1 AND code = $2 AND expiration > CURRENT_TIMESTAMP;", $this->applicationId, $codeHash);
+		if ($rows->RecordCount() !== 1) {
+			return null;
+		}
+		$loginId = $rows->Field('login_id');
+		$userId = $rows->Field('user_id');
+		$scopes = explode($rows->Field('scopes'));
+		$user = User::Fetch($userId);
+		if (is_null($user)) {
+			// This should be impossible thanks to foreign key constraints
+			return null;
+		}
+		$database->BeginTransaction();
+		$session = Session::Create($user, $this, $scopes);
+		$database->Query("DELETE FROM public.application_logins WHERE login_id = $1 OR expiration < CURRENT_TIMESTAMP;", $loginId);
+		$database->Commit();
+		return $session;
+	}
+	
+	protected function HashGrantCode(string $code): string {
+		return base64_encode(hash('sha3-512', "{$this->applicationId}.{$code}", true));
 	}
 	
 	public function jsonSerialize(): mixed {

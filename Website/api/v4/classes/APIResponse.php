@@ -28,6 +28,10 @@ class APIResponse {
 		return new static(204);
 	}
 	
+	public static function NewRedirect(string $destination, bool $temporary = true): APIResponse {
+		return new static(($temporary ? 302 : 301), "Redirect to {$destination}", ['Location' => $destination]);
+	}
+	
 	public function Body(): string {
 		return $this->body;
 	}

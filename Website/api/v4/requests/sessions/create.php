@@ -19,11 +19,11 @@ function handle_request(array $context): APIResponse {
 			}
 			
 			$application = Application::Fetch($obj['client_id']);
-			if ($application->HasScope('password_auth') === false) {
+			if (is_null($application)) {
 				return APIResponse::NewJSONError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
 			}
-			if ($application->DecryptSecret() === false) {
-				return APIResponse::NewJSONError('Internal server error', ['code' => 'BAD_SECRET'], 500);
+			if ($application->HasScope('password_auth') === false) {
+				return APIResponse::NewJSONError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
 			}
 			$client_secret = $application->Secret();
 			
@@ -97,49 +97,28 @@ function handle_request(array $context): APIResponse {
 		}
 	} else if (BeaconCommon::HasAllKeys($obj, 'grant_type', 'redirect_uri', 'code', 'client_id', 'client_secret')) {
 		// OAuth
+		if ($obj['grant_type'] !== 'authorization_code') {
+			return APIResponse::NewJSONError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
+		}
+		$application = Application::Fetch($obj['client_id']);
+		if (is_null($application)) {
+			return APIResponse::NewJSONError('Invalid client id', ['code' => 'INVALID_CLIENT_ID'], 400);
+		}
+		$client_secret = $application->Secret();
+		if ($obj['client_secret'] !== $client_secret) {
+			return APIResponse::NewJSONError('Invalid client secret', ['code' => 'INVALID_CLIENT_SECRET'], 400);
+		}
+		if ($application->CallbackAllowed($obj['redirect_uri']) === false) {
+			return APIResponse::NewJSONError('Redirect URI is not whitelisted', ['code' => 'INVALID_REDIRECT_URI'], 400);
+		}
+		$session = $application->RedeemGrantCode($obj['code']);
+		if (is_null($session)) {
+			return APIResponse::NewJSONError('Invalid code', ['code' => 'INVALID_CODE'], 400);
+		}
+		return APIResponse::NewJSON($session, 201);
 	} else {
 		return APIResponse::NewJSONError('Invalid authorization parameters', null, 401);
 	}
-	
-	
-	/*$user = Core::User();
-	if (is_null($user) || $user->CanSignIn() === false) {
-		return APIResponse::NewJSONError('Invalid user', ['code' => 'USER_DISABLED'], 400);
-	}
-	
-	$obj = Core::BodyAsJSON();
-	$verification_code = null;
-	$device_id = null;
-	$trust = null;
-	if (is_null($obj) === false) {
-		if (isset($obj['verification_code'])) {
-			$verification_code = (string) $obj['verification_code'];
-		}
-		if (isset($obj['trust'])) {
-			$trust = filter_var($obj['trust'], FILTER_VALIDATE_BOOLEAN);
-		}
-		if (isset($obj['device_id'])) {
-			$device_id = (string) $obj['device_id'];
-		}
-	}
-	if (is_null($verification_code) && is_null($device_id) === false) {
-		$verification_code = $device_id;
-	}
-	
-	$session = Session::CreateForUser($user, $verification_code);
-	if (is_null($session)) {
-		return APIResponse::NewJSONError('Verification needed', ['code' => '2FA_ENABLED'], 403);
-	}
-	
-	if (is_null($device_id) === false) {
-		if ($trust === true) {
-			$user->TrustDevice($device_id);
-		} else if ($trust === false) {
-			$user->UntrustDevice($device_id);
-		}
-	}
-	
-	return APIResponse::NewJSON($session, 201);*/
 }
 
 ?>

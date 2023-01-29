@@ -52,6 +52,9 @@ Core::RegisterRoutes(
 			'POST' => 'file',
 			'DELETE' => 'file'
 		],
+		'/login' => [
+			'GET' => 'login'
+		],
 		'/now' => [
 			'GET' => 'now'
 		],

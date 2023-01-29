@@ -28,7 +28,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		$this->applicationId = $row->Field('application_id');
 		$this->applicationName = $row->Field('application_name');
 		$this->applicationWebsite = $row->Field('application_website');
-		$this->scopes = json_decode($row->Field('scopes'), true);
+		$this->scopes = explode(' ', $row->Field('scopes'));
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -42,7 +42,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('applicationId', ['columnName' => 'application_id', 'accessor' => 'applications.application_id']),
 			new DatabaseObjectProperty('applicationName', ['columnName' => 'application_name', 'accessor' => 'applications.name']),
 			new DatabaseObjectProperty('applicationWebsite', ['columnName' => 'application_website', 'accessor' => 'applications.website']),
-			new DatabaseObjectProperty('scopes', ['columnName' => 'scopes', 'accessor' => '(SELECT array_to_json(array_agg(scope_template.scope)) FROM (SELECT application_scopes.scope FROM public.application_scopes WHERE application_scopes.application_id = sessions.application_id ORDER BY application_scopes.scope) AS scope_template)'])
+			new DatabaseObjectProperty('scopes')
 		], [
 			'INNER JOIN public.applications ON (sessions.application_id = applications.application_id)'
 		]);
@@ -99,11 +99,17 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		return base64_encode(hash('sha3-512', $sessionId, true));
 	}
 	
-	public static function Create(User $user, Application $app): static {
+	public static function Create(User $user, Application $app, ?array $scopes = null): static {
 		$schema = static::DatabaseSchema();
 		$table = $schema->WriteableTable();
 		$sessionId = BeaconCommon::GenerateUUID();
 		$sessionHash = static::PrepareHash($sessionId);
+		if (is_null($scopes)) {
+			$scopes = $app->Scopes();
+		} else if (count($scopes) === 0) {
+			throw new Exception('Must request at least one scope');
+		}
+		sort($scopes);
 			
 		$values = [
 			$sessionHash,
@@ -112,13 +118,14 @@ class Session extends DatabaseObject implements \JsonSerializable {
 			BeaconCommon::RemoteAddr(),
 			BeaconCommon::RemoteCountry(),
 			(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : ''),
-			$app->ApplicationId()
+			$app->ApplicationId(),
+			implode(' ', $scopes)
 		];
 		
 		$database = BeaconCommon::Database();
 		try {
 			$database->BeginTransaction();
-			$database->Query("INSERT INTO {$table} (session_id, user_id, valid_until, remote_ip, remote_country, remote_agent, application_id) VALUES ($1, $2, CURRENT_TIMESTAMP(0) + $3::INTERVAL, $4, $5, $6, $7);", $values);
+			$database->Query("INSERT INTO {$table} (session_id, user_id, valid_until, remote_ip, remote_country, remote_agent, application_id, scopes) VALUES ($1, $2, CURRENT_TIMESTAMP(0) + $3::INTERVAL, $4, $5, $6, $7, $8);", $values);
 			$session = static::Fetch($sessionId);
 			if (is_null($session)) {
 				throw new Exception('Could not retrieve new session');
@@ -186,7 +193,8 @@ class Session extends DatabaseObject implements \JsonSerializable {
 				'id' => $this->applicationId,
 				'name' => $this->applicationName,
 				'website' => $this->applicationWebsite
-			]
+			],
+			'scopes' => $this->scopes
 		];
 	}
 	
