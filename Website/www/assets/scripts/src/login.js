@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				sessionBody.trust = totpRememberCheck.value;
 			}
 			
-			BeaconWebRequest.post(`http://${apiDomain}/v3/session`, sessionBody, { Authorization: `Basic ${btoa(loginEmail + ':' + loginPassword)}` }).then((response) => {
+			BeaconWebRequest.post(`https://${apiDomain}/v3/session`, sessionBody, { Authorization: `Basic ${btoa(loginEmail + ':' + loginPassword)}` }).then((response) => {
 				if (localStorage && loginRemember) {
 					localStorage.setItem('email', loginEmail);
 				}
