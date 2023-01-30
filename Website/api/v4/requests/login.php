@@ -25,7 +25,7 @@ function handle_request(array $context): APIResponse {
 		return APIResponse::NewJsonError('Invalid scope or redirect_uri', null, 400);
 	}
 	
-	$loginUrl = BeaconCommon::AbsoluteUrl('/account/login?flowId=' . urlencode($flow->FlowId()));
+	$loginUrl = BeaconCommon::AbsoluteUrl('/account/login?flow_id=' . urlencode($flow->FlowId()));
 	return APIResponse::NewRedirect($loginUrl);
 }
 

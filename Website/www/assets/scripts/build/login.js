@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   var currentPage = '';
-  var pages = ['login', 'totp', 'recover', 'verify', 'password', 'loading'];
+  var pages = ['login', 'totp', 'recover', 'verify', 'password', 'loading', 'authorize'];
   pages.forEach(pageName => {
     var element = document.getElementById("page_".concat(pageName));
     if (!element) {
@@ -47,13 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
   var loginEmailField = document.getElementById('login_email_field');
   var loginPasswordField = document.getElementById('login_password_field');
   var loginRememberCheck = document.getElementById('login_remember_check');
-  var loginReturnField = document.getElementById('login_return_field');
   var loginRecoverButton = document.getElementById('login_recover_button');
   var loginCancelButton = document.getElementById('login_cancel_button');
   var loginActionButton = document.getElementById('login_action_button');
-  var loginExplicitEmailField = document.getElementById('login_explicit_email');
-  var loginExplicitCodeField = document.getElementById('login_explicit_code');
-  var loginExplicitPasswordField = document.getElementById('login_explicit_password');
   var totpPage = document.getElementById('page_totp');
   var totpForm = document.getElementById('login_form_totp');
   var totpCodeField = document.getElementById('totp_code_field');
@@ -83,20 +79,22 @@ document.addEventListener('DOMContentLoaded', () => {
   var passwordAuthenticatorCodeParagraph = document.getElementById('password_totp_paragraph');
   var passwordAuthenticatorCodeLabel = document.getElementById('password_totp_label');
   var passwordAuthenticatorCodeField = document.getElementById('password_totp_field');
-  var loginReturnURI = loginReturnField ? loginReturnField.value : '';
+  var authorizePage = document.getElementById('page_authorize');
+  var authorizeActionButton = document.getElementById('authorize_action_button');
+  var authorizeCancelButton = document.getElementById('authorize_cancel_button');
+  var loginReturnURI = loginParams.return;
   var loginRemember = false;
   var storedRemember = false;
   var storedEmail = null;
-  var explicitEmail = loginExplicitEmailField ? loginExplicitEmailField.value : null;
-  if (explicitEmail === null && localStorage) {
+  var explicitEmail = loginParams.email;
+  if (!explicitEmail && localStorage) {
     storedEmail = localStorage.getItem('email');
     storedRemember = storedEmail !== null;
   }
-  var consumeURI = passwordPage ? passwordPage.getAttribute('beacon-consumer-uri') : '';
 
   // !Login Page
   if (loginEmailField) {
-    if (explicitEmail !== null) {
+    if (explicitEmail) {
       loginEmailField.value = explicitEmail;
     } else if (storedRemember) {
       loginEmailField.value = storedEmail;
@@ -128,16 +126,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       showPage('loading');
       var sessionBody = {
-        device_id: deviceId
+        email: loginEmail,
+        password: loginPassword,
+        challenge: loginParams.challenge,
+        challengeExpiration: loginParams.challengeExpiration,
+        deviceId: loginParams.deviceId,
+        loginId: loginParams.loginId
       };
       var totpCode = totpCodeField.value.trim();
       if (Boolean(totpCode) === true) {
-        sessionBody.verification_code = totpCode;
-        sessionBody.trust = totpRememberCheck.value;
+        sessionBody.verificationCode = totpCode;
+        sessionBody.trust = totpRememberCheck.checked;
       }
-      BeaconWebRequest.post("https://".concat(apiDomain, "/v3/session"), sessionBody, {
-        Authorization: "Basic ".concat(btoa(loginEmail + ':' + loginPassword))
-      }).then(response => {
+      BeaconWebRequest.post("/account/login/check", sessionBody).then(response => {
         if (localStorage && loginRemember) {
           localStorage.setItem('email', loginEmail);
         }
@@ -146,9 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         try {
           var obj = JSON.parse(response.body);
-          var url = consumeURI;
-          url = url.replace('{{session_id}}', encodeURIComponent(obj.session_id));
-          url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
+          var url = loginParams.redeemUrl;
+          url = url.replace('{{session_id}}', encodeURIComponent(obj.sessionId));
+          if (loginParams.flowId) {
+            url = url.replace('{{return_uri}}', encodeURIComponent(window.location.href));
+          } else {
+            url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
+          }
           url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
           url = url.replace('{{temporary}}', loginRemember == false ? 'true' : 'false');
           window.location = url;
@@ -158,12 +163,33 @@ document.addEventListener('DOMContentLoaded', () => {
       }).catch(error => {
         console.log(JSON.stringify(error));
         switch (error.status) {
-          case 401:
-          case 403:
+          case 400:
+            var loginErrorExplanation = 'There was an expected error.';
             try {
               var obj = JSON.parse(error.body);
               var code = obj.details.code;
-              if (code === '2FA_ENABLED') {
+              if (obj.message) {
+                loginErrorExplanation = obj.message;
+              }
+              switch (code) {
+                case 'CHALLENGE_TIMEOUT':
+                  loginErrorExplanation = 'The login process timed out. Please try again.';
+                  break;
+                case 'COMPLETED':
+                  loginErrorExplanation = 'This authorization has already been completed. Please start again.';
+                  break;
+              }
+            } catch (e) {}
+            BeaconDialog.show('Unable to complete login', loginErrorExplanation).then(() => {
+              showPage('login');
+            });
+            break;
+          case 401:
+          case 403:
+            try {
+              var _obj = JSON.parse(error.body);
+              var _code = _obj.details.code;
+              if (_code === '2FA_ENABLED') {
                 showPage('totp');
                 focusFirst([totpCodeField]);
                 break;
@@ -228,6 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       var params = new URLSearchParams();
       params.append('email', recoverEmailField.value.trim());
+      if (loginParams.loginId) {
+        params.append('flowId', loginParams.loginId);
+      }
       BeaconWebRequest.post('/account/login/email', params).then(response => {
         try {
           var obj = JSON.parse(response.body);
@@ -350,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
       var passwordInitial = passwordInitialField ? passwordInitialField.value : '';
       var passwordConfirm = passwordConfirmField ? passwordConfirmField.value : '';
       var passwordAllowVulnerable = passwordInitial === knownVulnerablePassword;
-      var passwordPrevious = loginExplicitPasswordField ? loginExplicitPasswordField.value : null;
       var passwordAuthenticatorCode = passwordAuthenticatorCodeField ? passwordAuthenticatorCodeField.value : '';
       if (passwordInitial.length < 8) {
         BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.');
@@ -368,9 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
       form.append('allow_vulnerable', passwordAllowVulnerable);
       form.append('confirm_reset_children', passwordConfirmChildrenReset);
       form.append('verification_code', passwordAuthenticatorCode);
-      if (passwordPrevious) {
-        form.append('previous_password', passwordPrevious);
-      }
+      form.append('no_session', 'true');
       showPage('loading');
       BeaconWebRequest.post('/account/login/password', form).then(response => {
         try {
@@ -378,12 +404,15 @@ document.addEventListener('DOMContentLoaded', () => {
           if (localStorage && loginRemember) {
             localStorage.setItem('email', passwordEmail);
           }
-          var url = consumeURI;
-          url = url.replace('{{session_id}}', encodeURIComponent(obj.session_id));
-          url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
-          url = url.replace('{{user_password}}', encodeURIComponent(passwordInitial));
-          url = url.replace('{{temporary}}', loginRemember === false ? 'false' : 'true');
-          window.location = url;
+
+          // Password has been changed, so now we run through normal login
+          loginEmailField.value = passwordEmail;
+          loginPasswordField.value = passwordInitial;
+          totpCodeField.value = passwordAuthenticatorCode;
+          loginForm.dispatchEvent(new Event('submit', {
+            'bubbles': true,
+            'cancelable': true
+          }));
         } catch (e) {
           console.log(e);
         }
@@ -488,20 +517,60 @@ document.addEventListener('DOMContentLoaded', () => {
       return false;
     });
   }
+
+  // !Authorization form
+  if (authorizeCancelButton) {
+    authorizeCancelButton.addEventListener('click', ev => {
+      loginPasswordField.value = '';
+      window.location = '/account/';
+    });
+  }
+  if (authorizeActionButton) {
+    authorizeActionButton.addEventListener('click', ev => {
+      var authorizationBody = {
+        deviceId: loginParams.deviceId,
+        flowId: loginParams.flowId,
+        challenge: loginParams.challenge,
+        challengeExpiration: loginParams.challengeExpiration
+      };
+      BeaconWebRequest.post('/account/login/authorize', authorizationBody).then(response => {
+        try {
+          var obj = JSON.parse(response.body);
+          var callback = obj.callback;
+          window.location = callback;
+        } catch (e) {
+          console.log(e);
+          BeaconDialog.show('Unexpected error', "There was an error: ".concat(e.message));
+        }
+      }).catch(error => {
+        console.log(JSON.stringify(error));
+        try {
+          var _obj$message;
+          var obj = JSON.parse(error.body);
+          var errorExplanation = (_obj$message = obj.message) !== null && _obj$message !== void 0 ? _obj$message : "There was a ".concat(error.status, " error");
+          BeaconDialog.show('Unable to authorize app', errorExplanation);
+        } catch (e) {
+          console.log(e);
+          BeaconDialog.show('Unexpected error', "There was an error: ".concat(e.message));
+        }
+      });
+    });
+  }
   if (window.location.hash == '#create') {
     if (recoverEmailField && explicitEmail) {
       recoverEmailField.value = explicitEmail;
     }
     showPage('recover');
-  } else if (loginExplicitEmailField && loginExplicitCodeField && verifyCodeField && verifyEmailField) {
-    verifyEmailField.value = loginExplicitEmailField.value;
-    verifyCodeField.value = loginExplicitCodeField.value;
+  } else if (loginParams.email && loginParams.code) {
+    verifyEmailField.value = loginParams.email;
+    verifyCodeField.value = loginParams.code;
     verifyForm.dispatchEvent(new Event('submit', {
       'bubbles': true,
       'cancelable': true
     }));
   }
-  if (window.location.search !== '') {
-    window.history.pushState({}, '', '/account/login/');
-  }
+
+  //if (window.location.search !== '') {
+  //	window.history.pushState({}, '', '/account/login');	
+  //}
 });

@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (loginRememberCheck) {
 		loginRememberCheck.checked = storedRemember;
 	}
-	if (loginForm || totpForm || authorizeActionButton) {
+	if (loginForm || totpForm) {
 		const loginFunction = (ev) => {
 			ev.preventDefault();
 			
@@ -146,27 +146,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			
 			const sessionBody = {
 				email: loginEmail,
+				password: loginPassword,
 				challenge: loginParams.challenge,
 				challengeExpiration: loginParams.challengeExpiration,
 				deviceId: loginParams.deviceId,
 				loginId: loginParams.loginId
 			};
-			if (loginParams.appChallenge && loginParams.appChallengeExpiration) {
-				sessionBody.appChallenge = loginParams.appChallenge;
-				sessionBody.appChallengeExpiration = loginParams.appChallengeExpiration;
-			} else {
-				sessionBody.password = loginPassword;
-				const totpCode = totpCodeField.value.trim();
-				if (Boolean(totpCode) === true) {
-					sessionBody.verificationCode = totpCode;
-					sessionBody.trust = totpRememberCheck.checked;
-				}
+			const totpCode = totpCodeField.value.trim();
+			if (Boolean(totpCode) === true) {
+				sessionBody.verificationCode = totpCode;
+				sessionBody.trust = totpRememberCheck.checked;
 			}
-			
-			// We just stored these on sessionBody, clear them so the user gets a new auth
-			// prompt if there is an error.
-			loginParams.appChallenge = null;
-			loginParams.appChallengeExpiration = null;
 			
 			BeaconWebRequest.post(`/account/login/check`, sessionBody).then((response) => {
 				if (localStorage && loginRemember) {
@@ -178,21 +168,17 @@ document.addEventListener('DOMContentLoaded', () => {
 				
 				try {
 					const obj = JSON.parse(response.body);
-					if (obj.sessionId) {
-						let url = loginParams.redeemUrl;
-						url = url.replace('{{session_id}}', encodeURIComponent(obj.sessionId));
+					let url = loginParams.redeemUrl;
+					url = url.replace('{{session_id}}', encodeURIComponent(obj.sessionId));
+					if (loginParams.flowId) {
+						url = url.replace('{{return_uri}}', encodeURIComponent(window.location.href));
+					} else {
 						url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
-						url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
-						url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
-						
-						window.location = url;
-					} else if (obj.appChallenge) {
-						loginParams.appChallenge = obj.appChallenge;
-						loginParams.appChallengeExpiration = obj.appChallengeExpiration;
-						showPage('authorize');
-					} else if (obj.callback) {
-						window.location = obj.callback;
 					}
+					url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
+					url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
+					
+					window.location = url;
 				} catch (e) {
 					console.log(e);
 				}
@@ -258,10 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		
 		if (totpForm) {
 			totpForm.addEventListener('submit', loginFunction);
-		}
-		
-		if (authorizeActionButton) {
-			authorizeActionButton.addEventListener('click', loginFunction);
 		}
 	}
 	
@@ -593,12 +575,42 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	
 	// !Authorization form
-	if (passwordCancelButton) {
-		passwordCancelButton.addEventListener('click', (ev) => {
-			loginParams.appChallenge = null;
-			loginParams.appChallengeExpiration = null;
+	if (authorizeCancelButton) {
+		authorizeCancelButton.addEventListener('click', (ev) => {
 			loginPasswordField.value = '';
-			showPage('login');
+			window.location = '/account/';
+		});
+	}
+	
+	if (authorizeActionButton) {
+		authorizeActionButton.addEventListener('click', (ev) => {
+			const authorizationBody = {
+				deviceId: loginParams.deviceId,
+				flowId: loginParams.flowId,
+				challenge: loginParams.challenge,
+				challengeExpiration: loginParams.challengeExpiration
+			};
+			
+			BeaconWebRequest.post('/account/login/authorize', authorizationBody).then((response) => {
+				try {
+					const obj = JSON.parse(response.body);
+					const callback = obj.callback;
+					window.location = callback;
+				} catch (e) {
+					console.log(e);
+					BeaconDialog.show('Unexpected error', `There was an error: ${e.message}`);
+				}
+			}).catch((error) => {
+				console.log(JSON.stringify(error));
+				try {
+					const obj = JSON.parse(error.body);
+					const errorExplanation = obj.message ?? `There was a ${error.status} error`;
+					BeaconDialog.show('Unable to authorize app', errorExplanation);
+				} catch (e) {
+					console.log(e);
+					BeaconDialog.show('Unexpected error', `There was an error: ${e.message}`);
+				}
+			});
 		});
 	}
 	

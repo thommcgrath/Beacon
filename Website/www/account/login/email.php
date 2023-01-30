@@ -21,7 +21,7 @@ if (isset($_POST['key'])) {
 	$params['key'] = $_POST['key'];
 }
 if (isset($_POST['flowId'])) {
-	$params['flowId'] = $_POST['flowId'];
+	$params['flow_id'] = $_POST['flowId'];
 }
 $verification = EmailVerificationCode::Create($email, $params); // Email sent here
 	

@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, ApplicationAuthFlow};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, Session};
 
 class BeaconLogin {
 	public static function Show(array $params): void {
@@ -8,44 +8,139 @@ class BeaconLogin {
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
 		
 		$deviceId = BeaconCommon::DeviceId();
-		$challengeExpiration = time() + 300;
-		$challengeSecret = Application::Fetch(BeaconCommon::BeaconAppId)->Secret();
-		$challengeRaw = $deviceId . $challengeExpiration . $challengeSecret;
-		
 		$params['apiDomain'] = BeaconCommon::APIDomain();
 		$params['deviceId'] = $deviceId;
 		
-		$app = null;
-		if ($params['loginId'] && BeaconCommon::IsUUID($params['loginId'])) {
-			$loginId = $params['loginId'];
-			$challengeRaw .= $loginId;
+		$session = Session::GetFromCookie();
+		$flowId = $params['flowId'] ?? null;
+		$flow = null;
+		$params['challengeExpiration'] = time() + 300;
+		if (is_null($session) === false) {
+			if (is_null($flowId)) {
+				// We're not authorizing an app, so there's nothing to do here.
+				BeaconCommon::Redirect($params['return']);
+				return;
+			}
 			
-			$flow = ApplicationAuthFlow::Fetch($loginId);
-			if (is_null($flow)) {
+			$flow = ApplicationAuthFlow::Fetch($flowId);
+			if (is_null($flow) || $flow->IsCompleted()) {
+				// Show an error
 				echo '<h1>Expired Login Request</h1>';
 				echo '<p>This login request has expired or has already been completed. Please request a new login from your app.</p>';
-				echo '<p class="text-center"><a class="button" href="/account/login">Back</a></p>';
+				echo '<p class="text-center"><a class="button" href="/account/">Account Home</a></p>';
 				return;
-			} else {
-				$app = $flow->Application();
-				$params['app'] = [
-					'id' => $app->ApplicationId(),
-					'name' => $app->Name(),
-					'website' => $app->Website(),
-					'icon' => $app->IconUrl(),
-					'scopes' => $flow->Scopes()
-				];
 			}
+			
+			$params['challenge'] = $flow->NewChallenge($deviceId, $session->User(), $params['challengeExpiration']);
+		} else {
+			$challengeSecret = Application::Fetch(BeaconCommon::BeaconAppId)->Secret();
+			$challengeRaw = $deviceId . $params['challengeExpiration'] . $challengeSecret;
+			if (is_null($flow) === false) {
+				$challengeRaw .= $flow->FlowId();
+			}
+			$params['challenge'] = base64_encode(hash('sha3-512', $challengeRaw, true));
 		}
-		
-		$params['challenge'] = base64_encode(hash('sha3-512', $challengeRaw, true));
-		$params['challengeExpiration'] = $challengeExpiration;
 		
 		BeaconTemplate::StartScript();
 		echo "<script>\n";
 		echo "const loginParams = " . json_encode($params, JSON_PRETTY_PRINT) . ";\n";
 		echo "</script>";
 		BeaconTemplate::FinishScript();
+			
+		if (is_null($flow) === false) {
+			$app = $flow->Application();
+			?><div id="page_authorize">
+				<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services?</h3>
+				<div class="app_id">
+					<div class="app_id_avatar"><?php echo $app->IconHtml(64); ?></div>
+					<div class="api_id_namecard"><span class="bold larger"><?php echo htmlentities($app->Name()); ?></span><br>Website: <a href="<?php echo htmlentities($app->Website()); ?>" target="_top"><?php echo htmlentities($app->Website()); ?></a></div>
+				</div>
+				<p class="explanation smaller italic">This is a unofficial application and not affiliate with Beacon / The ZAZ Studios. Only allow access to applications you trust. This permission can be revoked in your account control panel.</p>
+				<p class="explanation"><?php echo htmlentities($app->Name()); ?> will be able to:</p>
+				<ul>
+					<?php
+					$scopes = $flow->Scopes();
+					$features = [];
+					foreach ($scopes as $scope) {
+						$feature = strtok($scope, ':');
+						$permissions = strtok(':');
+						if ($permissions === false || $permissions === 'write') {
+							$features[$feature] = 'readwrite';
+						} else {
+							$features[$feature] = $permissions;
+						}
+					}
+					
+					foreach ($features as $feature => $permissions) {
+						$message = '';
+						switch ($feature) {
+						case 'common':
+							$message = 'Edit basic objects such as Ark blueprints.';
+							break;
+						case 'apps':
+							if ($permissions === 'readwrite') {
+								$message = 'Edit your developer identity and credentials.';
+							} else {
+								$message = 'View your developer identity and credentials.';
+							}
+							break;
+						case 'sentinel_logs':
+							if ($permissions === 'readwrite') {
+								$message = 'Edit your Sentinel logs.';
+							} else {
+								$message = 'Read your Sentinel logs.';
+							}
+							break;
+						case 'sentinel_players':
+							if ($permissions === 'readwrite') {
+								$message = 'Edit your Sentinel players.';
+							} else {
+								$message = 'Read your Sentinel players.';
+							}
+							break;
+						case 'sentinel_services':
+							if ($permissions === 'readwrite') {
+								$message = 'Edit your Sentinel servers and groups.';
+							} else {
+								$message = 'Read your Sentinel servers and groups.';
+							}
+							break;
+						case 'user':
+							if ($permissions === 'readwrite') {
+								$message = 'Edit your user info.';
+							} else {
+								$message = 'Read your user info.';
+							}
+							break;
+						}
+						if (empty($message) === false) {
+							echo '<li>' . htmlentities($message) . '</li>';
+						}
+					}
+					?>
+				</ul>
+				<p class="explanation"><?php echo htmlentities($app->Name()); ?> will <strong>not</strong> be able to:</p>
+				<ul>
+					<li>Decrypt user files and project data.</li>
+					<li>Know your account email or password.</li>
+					<li><?php
+					
+					$jokePermissions = [
+						'Summon a typhoon of staplers.',
+						'Make breakfast.',
+						'Play a fiddle on a roof.',
+						'Take the red pill.',
+						'Influence the passage of time.'
+					];
+					$index = array_rand($jokePermissions, 1);
+					echo htmlentities($jokePermissions[$index]);
+						
+					?></li>
+				</ul>
+				<ul class="buttons"><li><button class="default" id="authorize_action_button">Allow</button></li><li><button id="authorize_cancel_button">Cancel</button></li></ul>
+			</div><?php
+			return;
+		}
 		
 		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT generate_username() AS username;');
@@ -99,98 +194,7 @@ class BeaconLogin {
 		<ul class="buttons"><li><input type="submit" id="password_action_button" value="Finish"></li><li><a id="password_cancel_button" class="button" href="#<?php echo BeaconCommon::GenerateRandomKey(6); ?>">Cancel</a></li></ul>
 	</form>
 </div>
-<?php if (is_null($app) === false) { ?>
-<div id="page_authorize">
-	<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services?</h3>
-	<div class="app_id">
-		<div class="app_id_avatar"><?php echo $app->IconHtml(64); ?></div>
-		<div class="api_id_namecard"><span class="bold larger"><?php echo htmlentities($app->Name()); ?></span><br>Website: <a href="<?php echo htmlentities($app->Website()); ?>" target="_top"><?php echo htmlentities($app->Website()); ?></a></div>
-	</div>
-	<p class="explanation smaller italic">This is a unofficial application and not affiliate with Beacon / The ZAZ Studios. Only allow access to applications you trust. This permission can be revoked in your account control panel.</p>
-	<p class="explanation"><?php echo htmlentities($app->Name()); ?> will be able to:</p>
-	<ul>
-		<?php
-		$scopes = $app->Scopes();
-		$features = [];
-		foreach ($scopes as $scope) {
-			$feature = strtok($scope, ':');
-			$permissions = strtok(':');
-			if ($permissions === false || $permissions === 'write') {
-				$features[$feature] = 'readwrite';
-			} else {
-				$features[$feature] = $permissions;
-			}
-		}
-		
-		foreach ($features as $feature => $permissions) {
-			$message = '';
-			switch ($feature) {
-			case 'common':
-				$message = 'Edit basic objects such as Ark blueprints.';
-				break;
-			case 'apps':
-				if ($permissions === 'readwrite') {
-					$message = 'Edit your developer identity and credentials.';
-				} else {
-					$message = 'View your developer identity and credentials.';
-				}
-				break;
-			case 'sentinel_logs':
-				if ($permissions === 'readwrite') {
-					$message = 'Edit your Sentinel logs.';
-				} else {
-					$message = 'Read your Sentinel logs.';
-				}
-				break;
-			case 'sentinel_players':
-				if ($permissions === 'readwrite') {
-					$message = 'Edit your Sentinel players.';
-				} else {
-					$message = 'Read your Sentinel players.';
-				}
-				break;
-			case 'sentinel_services':
-				if ($permissions === 'readwrite') {
-					$message = 'Edit your Sentinel servers and groups.';
-				} else {
-					$message = 'Read your Sentinel servers and groups.';
-				}
-				break;
-			case 'user':
-				if ($permissions === 'readwrite') {
-					$message = 'Edit your user info.';
-				} else {
-					$message = 'Read your user info.';
-				}
-				break;
-			}
-			if (empty($message) === false) {
-				echo '<li>' . htmlentities($message) . '</li>';
-			}
-		}
-		?>
-	</ul>
-	<p class="explanation"><?php echo htmlentities($app->Name()); ?> will <strong>not</strong> be able to:</p>
-	<ul>
-		<li>Decrypt user files and project data.</li>
-		<li>Know your account email or password.</li>
-		<li><?php
-		
-		$jokePermissions = [
-			'Summon an army of staplers.',
-			'Make breakfast.',
-			'Play a fiddle on a roof.',
-			'Take the red pill.',
-			'Influence the passage of time.'
-		];
-		$index = array_rand($jokePermissions, 1);
-		echo htmlentities($jokePermissions[$index]);
-			
-		?></li>
-	</ul>
-	<ul class="buttons"><li><button class="default" id="authorize_action_button">Allow</button></li><li><button id="authorize_cancel_button">Cancel</button></li></ul>
-</div><?php
-		}
+<?php
 	}
 	
 	public static function GenerateUsername(): string {
