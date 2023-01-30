@@ -21,9 +21,9 @@ $login_only = isset($_GET['login_only']) ? (strtolower($_GET['login_only']) == '
 </div>
 <?php } ?>
 <?php
-	$login = new BeaconLogin();
-	$login->with_remember_me = false;
-	$login->with_login_cancel = true;
-	$login->session_consumer_uri = 'beacon://set_user_token?token={{session_id}}&password={{user_password}}';
-	$login->Show();
+	BeaconLogin::Show([
+		'withRemember' => false,
+		'withCancel' => true,
+		'redeemUrl' => 'beacon://set_user_token?token={{session_id}}&password={{user_password}}'
+	]);
 ?>

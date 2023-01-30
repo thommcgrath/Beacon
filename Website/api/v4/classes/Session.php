@@ -99,7 +99,17 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		return base64_encode(hash('sha3-512', $sessionId, true));
 	}
 	
-	public static function Create(User $user, Application $app, ?array $scopes = null): static {
+	public static function Create(User $user, Application|string $app, ?array $scopes = null): static {
+		if (is_string($app)) {
+			if (BeaconCommon::IsUUID($app) === false) {
+				throw new Exception('Application ID is not a UUID');
+			}
+			$app = Application::Fetch($app);
+			if (is_null($app)) {
+				throw new Exception('Unknown application UUID');
+			}
+		}
+		
 		$schema = static::DatabaseSchema();
 		$table = $schema->WriteableTable();
 		$sessionId = BeaconCommon::GenerateUUID();
@@ -199,7 +209,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public function SendCookie(bool $temporary = false): void {
-		setcookie(self::COOKIE_NAME, $this->session_id, [
+		setcookie(self::COOKIE_NAME, $this->sessionId, [
 			'expires' => ($temporary ? 0 : $this->Expiration()->getTimestamp()),
 			'path' => '/account',
 			'domain' =>'',

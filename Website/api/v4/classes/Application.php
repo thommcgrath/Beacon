@@ -248,8 +248,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return $this->name;
 	}
 	
-	public function IconUrl(): string {
-		return '';
+	public function IconUrl(string $suffix = ''): string {
+		return 'https://assets.usebeacon.app/avatars/' . $this->ApplicationId() . '/avatar' . $suffix . '.png';
 	}
 	
 	public function Website(): string {
@@ -284,76 +284,6 @@ class Application extends DatabaseObject implements JsonSerializable {
 	
 	public function CallbackAllowed(string $url): bool {
 		return in_array($url, $this->callbacks);
-	}
-	
-	public function BeginLogin(array $scopes, string $callback, string $state): ?string {
-		if ($this->CallbackAllowed($callback) === false) {
-			return null;
-		}
-		
-		if (in_array(self::kScopeCommon, $scopes) === false) {
-			$scopes[] = self::kScopeCommon;
-		}
-		if ($this->HasScopes($scopes) === false) {
-			return null;
-		}
-		
-		$loginId = BeaconCommon::GenerateUUID();
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.application_logins (login_id, application_id, scopes, callback, state) VALUES ($1, $2, $3, $4, $5);", $loginId, $this->applicationId, implode(' ', $scopes), $callback, $state);
-		$database->Commit();
-		
-		return $loginId;
-	}
-	
-	public function IssueGrantCode(string $loginId, string $userId): ?string {
-		$url = null;
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query("DELETE FROM public.application_logins WHERE expiration < CURRENT_TIMESTAMP;");
-		$rows = $database->Query("SELECT callback, state FROM public.application_logins WHERE login_in = $1 AND expiration > CURRENT_TIMESTAMP AND code IS NULL;", $loginId);
-		if ($rows->RecordCount() === 1) {
-			$code = BeaconCommon::GenerateUUID();
-			$codeHash = $this->HashGrantCode($code);
-			$database->Query("UPDATE public.application_logins SET user_id = $2, code = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL WHERE login_id = $1;", $loginId, $userId, $codeHash);
-			
-			$url = $rows->Field('callback');
-			if (str_contains($url, '?')) {
-				$url .= '&';
-			} else {
-				$url .= '?';
-			}
-			$url .= 'code=' . urlencode($code) . '&state=' . urlencode($rows->Field('state'));
-		}
-		$database->Commit();
-		return $url;
-	}
-	
-	public function RedeemGrantCode(string $code): ?Session {
-		$codeHash = $this->HashGrantCode($code);
-		$database = BeaconCommon::Database();
-		$rows = $database->Query("SELECT * FROM public.application_logins WHERE application_id = $1 AND code = $2 AND expiration > CURRENT_TIMESTAMP;", $this->applicationId, $codeHash);
-		if ($rows->RecordCount() !== 1) {
-			return null;
-		}
-		$loginId = $rows->Field('login_id');
-		$userId = $rows->Field('user_id');
-		$scopes = explode($rows->Field('scopes'));
-		$user = User::Fetch($userId);
-		if (is_null($user)) {
-			// This should be impossible thanks to foreign key constraints
-			return null;
-		}
-		$database->BeginTransaction();
-		$session = Session::Create($user, $this, $scopes);
-		$database->Query("DELETE FROM public.application_logins WHERE login_id = $1 OR expiration < CURRENT_TIMESTAMP;", $loginId);
-		$database->Commit();
-		return $session;
-	}
-	
-	protected function HashGrantCode(string $code): string {
-		return base64_encode(hash('sha3-512', "{$this->applicationId}.{$code}", true));
 	}
 	
 	public function jsonSerialize(): mixed {

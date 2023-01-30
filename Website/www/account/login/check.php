@@ -2,6 +2,102 @@
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 header('Cache-Control: no-cache');
+header('Content-Type: application/json');
+
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, APIResponse, Core, Session, User};
+
+$obj = Core::BodyAsJson();
+$deviceId = $obj['deviceId'] ?? '';
+$loginId = $obj['loginId'] ?? null;
+$appChallenge = $obj['appChallenge'] ?? null;
+$appChallengeExpiration = $obj['appChallengeExpiration'] ?? 0;
+
+$app = Application::Fetch(BeaconCommon::BeaconAppId);
+$challengeSecret = $app->Secret();
+$challengeExpiration = $obj['challengeExpiration'] ?? 0;
+$challengeRaw = $deviceId . $challengeExpiration . $challengeSecret;
+if (is_null($loginId) === false) {
+	$challengeRaw .= $loginId;
+}
+
+$challenge = base64_encode(hash('sha3-512', $challengeRaw, true));
+$sentChallenge = $obj['challenge'] ?? '';
+$challengeExpiration = $obj['challengeExpiration'] ?? 0;
+if ($challengeExpiration < time() || $challenge !== $sentChallenge) {
+	APIResponse::NewJsonError('Timed Out', ['code' => 'CHALLENGE_TIMEOUT'], 400)->Flush();
+	exit;
+}
+
+$email = $obj['email'] ?? '';
+$user = User::Fetch($email);
+if (is_null($user)) {
+	APIResponse::NewJsonError('Incorrect username or password', ['code' => 'BAD_LOGIN'], 401)->Flush();
+	exit;
+}
+
+// The user has already completed login, this is just to finish the flow
+if (is_null($loginId) === false && is_null($appChallenge) === false) {
+	$flow = ApplicationAuthFlow::Fetch($loginId);
+	if (is_null($flow) || $flow->IsCompleted()) {
+		APIResponse::NewJsonError('This authentication flow has already been completed', ['code' => 'COMPLETED'], 400)->Flush();
+		exit;
+	}
+	
+	try {
+		$callback = $flow->Authorize($deviceId, $appChallenge, $appChallengeExpiration, $user);
+		http_response_code(200);
+		echo json_encode(['callback' => $callback], JSON_PRETTY_PRINT);
+	} catch (Exception $err) {
+		APIResponse::NewJsonError('Authorization could not be completed. It may have expired. Please try again.', ['code' => 'EXPIRED'], 400)->Flush();
+	}
+	exit;
+}
+
+$password = $obj['password'] ?? '';
+$verificationCode = $obj['verificationCode'] ?? '';
+$trust = $obj['trust'] ?? null;
+
+if ($user->TestPassword($password) === false) {
+	APIResponse::NewJsonError('Incorrect username or password', ['code' => 'BAD_LOGIN'], 401)->Flush();
+	exit;
+}
+if (empty($verificationCode)) {
+	$verificationCode = $deviceId;
+}
+if ($user->Is2FAProtected()) {
+	if ($user->Verify2FACode($verificationCode, false) === false) {
+		APIResponse::NewJsonError('Incorrect username or password', ['code' => '2FA_ENABLED'], 403)->Flush();
+		exit;
+	}
+	
+	if (empty($deviceId) === false) {
+		if ($trust === true) {
+			$user->TrustDevice($deviceId);
+		} else if ($trust === false) {
+			$user->TrustDevice($deviceId);
+		}	
+	}
+}
+
+if (is_null($loginId)) {
+	$session = Session::Create($user, $app);
+	http_response_code(201);
+	echo json_encode($session, JSON_PRETTY_PRINT);
+} else {
+	$flow = ApplicationAuthFlow::Fetch($loginId);
+	if (is_null($flow) || $flow->IsCompleted()) {
+		APIResponse::NewJsonError('This authentication flow has already been completed', ['code' => 'COMPLETED'], 400)->Flush();
+		exit;
+	}
+	
+	http_response_code(200);
+	$expiration = time() + 300;
+	echo json_encode([
+		'appChallenge' => $flow->NewChallenge($deviceId, $user, $expiration),
+		'appChallengeExpiration' => $expiration
+	], JSON_PRETTY_PRINT);
+}
+exit;
 
 if (empty($_POST['email']) || empty($_POST['password'])) {
 	header('Location: ./');

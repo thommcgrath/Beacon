@@ -9,20 +9,20 @@ $session = Session::GetFromCookie();
 if (is_null($session)) {
 	BeaconTemplate::StartScript();
 	?><script>
-	window.location = `/account/login/?return=${encodeURIComponent(window.location.href)}`;
+	window.location = `/account/login?return=${encodeURIComponent(window.location.href)}`;
 	</script><?php
 	BeaconTemplate::FinishScript();
 	exit;
 }
 $session->Renew();
 
-$user = $session::User();
+$user = $session->User();
 BeaconTemplate::SetTitle('Account: ' . $user->Username());
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 BeaconTemplate::StartScript(); ?>
 <script>
-const deviceId = <?php echo json_encode(BeaconCommon::DeviceID()); ?>;
+const deviceId = <?php echo json_encode(BeaconCommon::DeviceId()); ?>;
 const sessionId = <?php echo json_encode($session->SessionId()); ?>;
 const apiDomain = <?php echo json_encode(BeaconCommon::APIDomain()); ?>;
 </script><?php

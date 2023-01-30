@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 	let currentPage = '';
-	const pages = ['login', 'totp', 'recover', 'verify', 'password', 'loading'];
+	const pages = ['login', 'totp', 'recover', 'verify', 'password', 'loading', 'authorize'];
 	pages.forEach((pageName) => {
 		const element = document.getElementById(`page_${pageName}`);
 		if (!element) {
@@ -51,13 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const loginEmailField = document.getElementById('login_email_field');
 	const loginPasswordField = document.getElementById('login_password_field');
 	const loginRememberCheck = document.getElementById('login_remember_check');
-	const loginReturnField = document.getElementById('login_return_field');
 	const loginRecoverButton = document.getElementById('login_recover_button');
 	const loginCancelButton = document.getElementById('login_cancel_button');
 	const loginActionButton = document.getElementById('login_action_button');
-	const loginExplicitEmailField = document.getElementById('login_explicit_email');
-	const loginExplicitCodeField = document.getElementById('login_explicit_code');
-	const loginExplicitPasswordField = document.getElementById('login_explicit_password');
 	
 	const totpPage = document.getElementById('page_totp');
 	const totpForm = document.getElementById('login_form_totp');
@@ -92,23 +88,25 @@ document.addEventListener('DOMContentLoaded', () => {
 	const passwordAuthenticatorCodeLabel = document.getElementById('password_totp_label');
 	const passwordAuthenticatorCodeField = document.getElementById('password_totp_field');
 	
-	const loginReturnURI = (loginReturnField) ? loginReturnField.value : '';
+	const authorizePage = document.getElementById('page_authorize');
+	const authorizeActionButton = document.getElementById('authorize_action_button');
+	const authorizeCancelButton = document.getElementById('authorize_cancel_button');
+	
+	const loginReturnURI = loginParams.return;
 	let loginRemember = false;
 	
 	let storedRemember = false;
 	let storedEmail = null;
-	const explicitEmail = (loginExplicitEmailField) ? loginExplicitEmailField.value : null;
+	const explicitEmail = loginParams.email;
 	
-	if (explicitEmail === null && localStorage) {
+	if (!explicitEmail && localStorage) {
 		storedEmail = localStorage.getItem('email');
 		storedRemember = (storedEmail !== null);
 	}
 	
-	const consumeURI = (passwordPage) ? passwordPage.getAttribute('beacon-consumer-uri') : '';
-	
 	// !Login Page
 	if (loginEmailField) {
-		if (explicitEmail !== null) {
+		if (explicitEmail) {
 			loginEmailField.value = explicitEmail;
 		} else if (storedRemember) {
 			loginEmailField.value = storedEmail;
@@ -117,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (loginRememberCheck) {
 		loginRememberCheck.checked = storedRemember;
 	}
-	if (loginForm || totpForm) {
+	if (loginForm || totpForm || authorizeActionButton) {
 		const loginFunction = (ev) => {
 			ev.preventDefault();
 			
@@ -147,15 +145,30 @@ document.addEventListener('DOMContentLoaded', () => {
 			showPage('loading');
 			
 			const sessionBody = {
-				device_id: deviceId
+				email: loginEmail,
+				challenge: loginParams.challenge,
+				challengeExpiration: loginParams.challengeExpiration,
+				deviceId: loginParams.deviceId,
+				loginId: loginParams.loginId
 			};
-			const totpCode = totpCodeField.value.trim();
-			if (Boolean(totpCode) === true) {
-				sessionBody.verification_code = totpCode;
-				sessionBody.trust = totpRememberCheck.value;
+			if (loginParams.appChallenge && loginParams.appChallengeExpiration) {
+				sessionBody.appChallenge = loginParams.appChallenge;
+				sessionBody.appChallengeExpiration = loginParams.appChallengeExpiration;
+			} else {
+				sessionBody.password = loginPassword;
+				const totpCode = totpCodeField.value.trim();
+				if (Boolean(totpCode) === true) {
+					sessionBody.verificationCode = totpCode;
+					sessionBody.trust = totpRememberCheck.checked;
+				}
 			}
 			
-			BeaconWebRequest.post(`https://${apiDomain}/v3/session`, sessionBody, { Authorization: `Basic ${btoa(loginEmail + ':' + loginPassword)}` }).then((response) => {
+			// We just stored these on sessionBody, clear them so the user gets a new auth
+			// prompt if there is an error.
+			loginParams.appChallenge = null;
+			loginParams.appChallengeExpiration = null;
+			
+			BeaconWebRequest.post(`/account/login/check`, sessionBody).then((response) => {
 				if (localStorage && loginRemember) {
 					localStorage.setItem('email', loginEmail);
 				}
@@ -165,13 +178,21 @@ document.addEventListener('DOMContentLoaded', () => {
 				
 				try {
 					const obj = JSON.parse(response.body);
-					let url = consumeURI;
-					url = url.replace('{{session_id}}', encodeURIComponent(obj.session_id));
-					url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
-					url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
-					url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
-					
-					window.location = url;
+					if (obj.sessionId) {
+						let url = loginParams.redeemUrl;
+						url = url.replace('{{session_id}}', encodeURIComponent(obj.sessionId));
+						url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
+						url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
+						url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
+						
+						window.location = url;
+					} else if (obj.appChallenge) {
+						loginParams.appChallenge = obj.appChallenge;
+						loginParams.appChallengeExpiration = obj.appChallengeExpiration;
+						showPage('authorize');
+					} else if (obj.callback) {
+						window.location = obj.callback;
+					}
 				} catch (e) {
 					console.log(e);
 				}
@@ -179,6 +200,27 @@ document.addEventListener('DOMContentLoaded', () => {
 				console.log(JSON.stringify(error));
 				
 				switch (error.status) {
+				case 400:
+					let loginErrorExplanation = 'There was an expected error.';
+					try {
+						const obj = JSON.parse(error.body);
+						const code = obj.details.code;
+						switch(code) {
+						case 'CHALLENGE_TIMEOUT':
+							loginErrorExplanation = 'The login process timed out. Please try again.';
+							break;
+						case 'COMPLETED':
+							loginErrorExplanation = 'This authorization has already been completed. Please start again.';
+							break;
+						}
+					} catch (e) {
+					}
+					
+					BeaconDialog.show('Unable to complete login', loginErrorExplanation).then(() => {
+						showPage('login');
+					});
+					
+					break;
 				case 401:
 				case 403:
 					try {
@@ -213,6 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		
 		if (totpForm) {
 			totpForm.addEventListener('submit', loginFunction);
+		}
+		
+		if (authorizeActionButton) {
+			authorizeActionButton.addEventListener('click', loginFunction);
 		}
 	}
 	
@@ -261,6 +307,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			
 			const params = new URLSearchParams();
 			params.append('email', recoverEmailField.value.trim());
+			if (loginParams.loginId) {
+				params.append('flowId', loginParams.loginId);
+			}
 			
 			BeaconWebRequest.post('/account/login/email', params).then((response) => {
 				try {
@@ -397,7 +446,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			const passwordInitial = (passwordInitialField) ? passwordInitialField.value : '';
 			const passwordConfirm = (passwordConfirmField) ? passwordConfirmField.value : '';
 			const passwordAllowVulnerable = (passwordInitial === knownVulnerablePassword);
-			const passwordPrevious = (loginExplicitPasswordField) ? loginExplicitPasswordField.value : null;
 			const passwordAuthenticatorCode = (passwordAuthenticatorCodeField) ? passwordAuthenticatorCodeField.value : '';
 			
 			if (passwordInitial.length < 8) {
@@ -417,9 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			form.append('allow_vulnerable', passwordAllowVulnerable);
 			form.append('confirm_reset_children', passwordConfirmChildrenReset);
 			form.append('verification_code', passwordAuthenticatorCode);
-			if (passwordPrevious) {
-				form.append('previous_password', passwordPrevious);
-			}
+			form.append('no_session', 'true');
 			
 			showPage('loading');
 			BeaconWebRequest.post('/account/login/password', form).then((response) => {
@@ -429,13 +475,11 @@ document.addEventListener('DOMContentLoaded', () => {
 						localStorage.setItem('email', passwordEmail);
 					}
 					
-					let url = consumeURI;
-					url = url.replace('{{session_id}}', encodeURIComponent(obj.session_id));
-					url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
-					url = url.replace('{{user_password}}', encodeURIComponent(passwordInitial));
-					url = url.replace('{{temporary}}', (loginRemember === false ? 'false' : 'true'));
-					
-					window.location = url;
+					// Password has been changed, so now we run through normal login
+					loginEmailField.value = passwordEmail;
+					loginPasswordField.value = passwordInitial;
+					totpCodeField.value = passwordAuthenticatorCode;
+					loginForm.dispatchEvent(new Event('submit', {'bubbles': true, 'cancelable': true}));
 				} catch (e) {
 					console.log(e);
 				}
@@ -545,19 +589,28 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 	
+	// !Authorization form
+	if (passwordCancelButton) {
+		passwordCancelButton.addEventListener('click', (ev) => {
+			loginParams.appChallenge = null;
+			loginParams.appChallengeExpiration = null;
+			loginPasswordField.value = '';
+			showPage('login');
+		});
+	}
+	
 	if (window.location.hash == '#create') {
 		if (recoverEmailField && explicitEmail) {
 			recoverEmailField.value = explicitEmail;
 		}
 		showPage('recover');
-	} else if (loginExplicitEmailField && loginExplicitCodeField && verifyCodeField && verifyEmailField) {
-		verifyEmailField.value = loginExplicitEmailField.value;
-		verifyCodeField.value = loginExplicitCodeField.value;
-		
+	} else if (loginParams.email && loginParams.code) {
+		verifyEmailField.value = loginParams.email;
+		verifyCodeField.value = loginParams.code;
 		verifyForm.dispatchEvent(new Event('submit', {'bubbles': true, 'cancelable': true}));
 	}
 	
-	if (window.location.search !== '') {
-		window.history.pushState({}, '', '/account/login/');	
-	}
+	//if (window.location.search !== '') {
+	//	window.history.pushState({}, '', '/account/login');	
+	//}
 });

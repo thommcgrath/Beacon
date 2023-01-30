@@ -1,24 +1,58 @@
 <?php
 
+use BeaconAPI\v4\{Application, ApplicationAuthFlow};
+
 class BeaconLogin {
-	public $with_login_cancel = false;
-	public $with_remember_me = true;
-	public $session_consumer_uri = '';
-	
-	public function Show(): void {
+	public static function Show(array $params): void {
 		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('login.scss'));
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
 		
+		$deviceId = BeaconCommon::DeviceId();
+		$challengeExpiration = time() + 300;
+		$challengeSecret = Application::Fetch(BeaconCommon::BeaconAppId)->Secret();
+		$challengeRaw = $deviceId . $challengeExpiration . $challengeSecret;
+		
+		$params['apiDomain'] = BeaconCommon::APIDomain();
+		$params['deviceId'] = $deviceId;
+		
+		$app = null;
+		if ($params['loginId'] && BeaconCommon::IsUUID($params['loginId'])) {
+			$loginId = $params['loginId'];
+			$challengeRaw .= $loginId;
+			
+			$flow = ApplicationAuthFlow::Fetch($loginId);
+			if (is_null($flow)) {
+				echo '<h1>Expired Login Request</h1>';
+				echo '<p>This login request has expired or has already been completed. Please request a new login from your app.</p>';
+				echo '<p class="text-center"><a class="button" href="/account/login">Back</a></p>';
+				return;
+			} else {
+				$app = $flow->Application();
+				$params['app'] = [
+					'id' => $app->ApplicationId(),
+					'name' => $app->Name(),
+					'website' => $app->Website(),
+					'icon' => $app->IconUrl(),
+					'scopes' => $flow->Scopes()
+				];
+			}
+		}
+		
+		$params['challenge'] = base64_encode(hash('sha3-512', $challengeRaw, true));
+		$params['challengeExpiration'] = $challengeExpiration;
+		
 		BeaconTemplate::StartScript();
 		echo "<script>\n";
-		echo "const apiDomain = " . json_encode(BeaconCommon::APIDomain()) . ";\n";
-		echo "const deviceId = " . json_encode(BeaconCommon::DeviceID()) . ";\n";
+		echo "const loginParams = " . json_encode($params, JSON_PRETTY_PRINT) . ";\n";
 		echo "</script>";
 		BeaconTemplate::FinishScript();
 		
 		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT generate_username() AS username;');
 		$default_username = $results->Field('username');
+		
+		$withRememberMe = $params['withRemember'] ?? true;
+		$withCancel = $params['withCancel'] ?? false;
 		
 		?>
 <div id="page_loading">
@@ -28,8 +62,8 @@ class BeaconLogin {
 	<form id="login_form_intro" action="check" method="post">
 		<p><input type="email" name="email" placeholder="E-Mail Address" id="login_email_field" required></p>
 		<p><input type="password" name="password" placeholder="Password" id="login_password_field" minlength="8" title="Enter a password with at least 8 characters" required></p>
-		<?php if ($this->with_remember_me) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
-		<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($this->with_login_cancel) { ?><li><button id="login_cancel_button">Cancel</button></li><?php } ?></ul>
+		<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
+		<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button">Cancel</button></li><?php } ?></ul>
 	</form>
 </div>
 <div id="page_totp">
@@ -55,8 +89,8 @@ class BeaconLogin {
 		<ul class="buttons"><li><input type="submit" id="verify_action_button" value="Continue"></li><li><a id="verify_cancel_button" class="button" href="#<?php echo BeaconCommon::GenerateRandomKey(6); ?>">Cancel</a></li></ul>
 	</form>
 </div>
-<div id="page_password" class="as-new-user" beacon-consumer-uri="<?php echo htmlentities($this->session_consumer_uri); ?>">
-	<p class="explanation"><span class="new-user-part">Time to choose a username and password. Your username can be anything you wish.</span><span class="recover-user-part">Time to choose a new password.</span> Your password must be at least 8 characters long, but there are no other wacky requirements. This password will protect your account's private key, so the longer, the better.</p>
+<div id="page_password" class="as-new-user">
+	<p class="explanation"><span class="new-user-part">Time to choose a username and password. Your username can be anything you wish.</span><span class="recover-user-part">Time to choose a new password.</span> Your password must be at least 8 characters long, and must not contain too many repeating characters, but there are no other wacky requirements. This password will protect your account's private key, so the longer, the better.</p>
 	<form id="login_password_form">
 		<p class="new-user-part"><input type="hidden" id="password_email_field" value=""><input type="hidden" id="password_code_field" value=""><input type="text" id="username_field" placeholder="Username" minlength="1"><br><span class="smaller">Perhaps <a href="#" id="suggested-username-link" class="username-suggestion" beacon-username="<?php echo htmlentities($default_username); ?>"><?php echo htmlentities($default_username); ?></a> has a nice ring to it? Or maybe <a href="#" id="new-suggestion-link">another suggestion</a>?</span></p>
 		<p><label for="password_initial_field">Password</label><br><input type="password" id="password_initial_field" placeholder="Password" minlength="8"></p>
@@ -65,90 +99,102 @@ class BeaconLogin {
 		<ul class="buttons"><li><input type="submit" id="password_action_button" value="Finish"></li><li><a id="password_cancel_button" class="button" href="#<?php echo BeaconCommon::GenerateRandomKey(6); ?>">Cancel</a></li></ul>
 	</form>
 </div>
+<?php if (is_null($app) === false) { ?>
+<div id="page_authorize">
+	<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services?</h3>
+	<div class="app_id">
+		<div class="app_id_avatar"><img src="<?php echo htmlentities($app->IconUrl()); ?>" srcset="<?php echo htmlentities($app->IconUrl()); ?>, <?php echo htmlentities($app->IconUrl('@2x')); ?> 2x, <?php echo htmlentities($app->IconUrl('@3x')); ?> 3x"></div>
+		<div class="api_id_namecard"><span class="bold larger"><?php echo htmlentities($app->Name()); ?></span><br>Website: <a href="<?php echo htmlentities($app->Website()); ?>" target="_top"><?php echo htmlentities($app->Website()); ?></a></div>
+	</div>
+	<p class="explanation smaller italic">This is a unofficial application and not affiliate with Beacon / The ZAZ Studios. Only allow access to applications you trust. This permission can be revoked in your account control panel.</p>
+	<p class="explanation"><?php echo htmlentities($app->Name()); ?> will be able to:</p>
+	<ul>
 		<?php
+		$scopes = $app->Scopes();
+		$features = [];
+		foreach ($scopes as $scope) {
+			$feature = strtok($scope, ':');
+			$permissions = strtok(':');
+			if ($permissions === false || $permissions === 'write') {
+				$features[$feature] = 'readwrite';
+			} else {
+				$features[$feature] = $permissions;
+			}
+		}
+		
+		foreach ($features as $feature => $permissions) {
+			$message = '';
+			switch ($feature) {
+			case 'common':
+				$message = 'Edit basic objects such as Ark blueprints.';
+				break;
+			case 'apps':
+				if ($permissions === 'readwrite') {
+					$message = 'Edit your developer identity and credentials.';
+				} else {
+					$message = 'View your developer identity and credentials.';
+				}
+				break;
+			case 'sentinel_logs':
+				if ($permissions === 'readwrite') {
+					$message = 'Edit your Sentinel logs.';
+				} else {
+					$message = 'Read your Sentinel logs.';
+				}
+				break;
+			case 'sentinel_players':
+				if ($permissions === 'readwrite') {
+					$message = 'Edit your Sentinel players.';
+				} else {
+					$message = 'Read your Sentinel players.';
+				}
+				break;
+			case 'sentinel_services':
+				if ($permissions === 'readwrite') {
+					$message = 'Edit your Sentinel servers and groups.';
+				} else {
+					$message = 'Read your Sentinel servers and groups.';
+				}
+				break;
+			case 'user':
+				if ($permissions === 'readwrite') {
+					$message = 'Edit your user info.';
+				} else {
+					$message = 'Read your user info.';
+				}
+				break;
+			}
+			if (empty($message) === false) {
+				echo '<li>' . htmlentities($message) . '</li>';
+			}
+		}
+		?>
+	</ul>
+	<p class="explanation"><?php echo htmlentities($app->Name()); ?> will <strong>not</strong> be able to:</p>
+	<ul>
+		<li>Decrypt user files and project data.</li>
+		<li>Know your account email or password.</li>
+		<li><?php
+		
+		$jokePermissions = [
+			'Summon an army of staplers.',
+			'Make breakfast.',
+			'Play a fiddle on a roof.'
+		];
+		$index = array_rand($jokePermissions, 1);
+		echo htmlentities($jokePermissions[$index]);
+			
+		?></li>
+	</ul>
+	<ul class="buttons"><li><button class="default" id="authorize_action_button">Allow</button></li><li><button id="authorize_cancel_button">Cancel</button></li></ul>
+</div><?php
+		}
 	}
 	
 	public static function GenerateUsername(): string {
 		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT generate_username() AS username;');
 		return $results->Field('username');
-	}
-	
-	public static function GenerateVerificationCode(string $email, ?string $key = null): ?string {
-		if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-			return null;
-		}
-		
-		$database = BeaconCommon::Database();
-		$code = BeaconCommon::GenerateRandomKey(6, '0123456789');
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM email_verification WHERE email_id = uuid_for_email($1);', $email);
-		if (is_null($key)) {
-			$database->Query('INSERT INTO email_verification (email_id, code) VALUES (uuid_for_email($1, TRUE), encode(digest($2, \'sha512\'), \'hex\'));', $email, $code);
-		} else {
-			$encrypted_code = bin2hex(BeaconEncryption::SymmetricEncrypt($key, $code, false));
-			$database->Query('INSERT INTO email_verification (email_id, code) VALUES (uuid_for_email($1, TRUE), $2);', $email, $encrypted_code);
-		}
-		$database->Commit();
-		
-		return $code;
-	}
-	
-	public static function GenerateVerificationLink(string $email, ?string $password = null): ?string {
-		$code = static::GenerateVerificationCode($email);
-		if (is_null($code)) {
-			return null;
-		}
-		
-		$path = '/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code);
-		
-		if (is_null($password) === false) {
-			if (is_string($password) === false) {
-				return null;
-			}
-			$path .= '&password=' . urlencode($password);
-		}
-		
-		return BeaconCommon::AbsoluteURL($path);
-	}
-	
-	public static function SendVerification(string $email, ?string $key = null, string $subject = 'Enter code $code in Beacon to verify your email address'): bool {
-		$code = static::GenerateVerificationCode($email, $key);
-		if (is_null($code)) {
-			return false;
-		}
-		
-		$subject = str_replace('$code', $code, $subject);
-		$code_spaced = implode(' ', str_split($code));
-		$url = BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code) . (is_null($key) ? '' : '&key=' . urlencode($key)));
-		$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, simply reply to this email." . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to ' . BeaconCommon::RemoteAddr() : '');
-		$html = '<center>You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.<br /><br /><span style="font-weight:bold;font-size: x-large">' . $code_spaced . '</span><br /><br />Alternatively, you may use the following link to continue the process automatically:<br /><br /><a href="' . $url . '">' . $url . '</a><br /><br />If you need help, simply reply to this email.' . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to <span style="font-weight:bold">' . htmlentities(BeaconCommon::RemoteAddr()) . '</span>' : '') . '</center>';
-		
-		return BeaconEmail::SendMail($email, $subject, $plain, $html);
-	}
-	
-	public static function SendTeamWelcome(string $email, string $password, string $parent, string $subject = 'Welcome to your Beacon Team'): bool {
-		$link = static::GenerateVerificationLink($email, $password);
-		if (is_null($link)) {
-			return false;
-		}
-		
-		$plain = "A Beacon account has been created for you by $parent to share access to their Beacon documents. Please follow the link below to verify your email address and create a password for your account.\n\n$link";
-		$html = '<center>A Beacon account has been created for you by ' . htmlentities($parent) . ' to share access to their Beacon documents. Please follow the link below to verify your email address and create a password for your account.<br /><br /><a href="' . htmlentities($link) . '">' . htmlentities($link) . '</a></center>';
-		
-		return BeaconEmail::SendMail($email, $subject, $plain, $html);
-	}
-	
-	public static function SendForcedPasswordChangeEmail(string $email, string $password, string $subject = 'Please change your Beacon account password'): bool {
-		$link = static::GenerateVerificationLink($email, $password);
-		if (is_null($link)) {
-			return false;
-		}
-		
-		$plain = "A mandatory password change has been initiated for your Beacon account. Please follow the link below to verify your email address and create a new password for your account.\n\n$link";
-		$html = '<center>A mandatory password change has been initiated for your Beacon account. Please follow the link below to verify your email address and create a new password for your account.<br /><br /><a href="' . htmlentities($link) . '">' . htmlentities($link) . '</a></center>';
-		
-		return BeaconEmail::SendMail($email, $subject, $plain, $html);
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, APIResponse, Core};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, APIResponse, Core};
 
 function handle_request(array $context): APIResponse {
 	if (BeaconCommon::HasAllKeys($_GET, 'client_id', 'redirect_uri', 'state', 'response_type', 'scope') === false) {
@@ -20,12 +20,12 @@ function handle_request(array $context): APIResponse {
 	$scopes = explode(' ', $_GET['scope']);
 	$state = $_GET['state'];
 	
-	$loginId = $application->BeginLogin($scopes, $redirect_uri, $state);
-	if (is_null($loginId)) {
+	$flow = ApplicationAuthFlow::Create($application, $scopes, $redirect_uri, $state);
+	if (is_null($flow)) {
 		return APIResponse::NewJsonError('Invalid scope or redirect_uri', null, 400);
 	}
 	
-	$loginUrl = BeaconCommon::AbsoluteUrl('/account/login?flowId=' . urlencode($loginId));
+	$loginUrl = BeaconCommon::AbsoluteUrl('/account/login?flowId=' . urlencode($flow->FlowId()));
 	return APIResponse::NewRedirect($loginUrl);
 }
 

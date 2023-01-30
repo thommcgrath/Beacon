@@ -3,25 +3,27 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
+use BeaconAPI\v4\Session;
+
 $return_uri = isset($_GET['return']) ? $_GET['return'] : '/';
 if (stripos($return_uri, '://') === false) {
-	$return_uri = BeaconCommon::AbsoluteURL($return_uri);
+	$return_uri = BeaconCommon::AbsoluteUrl($return_uri);
 }
 
-$temporary = isset($_GET['temporary']) ? strtolower($_GET['temporary']) == 'true' : false;
+$temporary = filter_var($_GET['temporary'] ?? false, FILTER_VALIDATE_BOOL);
 
 if (isset($_GET['session_id'])) {
 	$session_id = $_GET['session_id'];
-	$session = BeaconSession::GetBySessionID($session_id);
+	$session = Session::Fetch($session_id);
 	if (is_null($session) === false) {
 		$session->SendCookie($temporary);
 	}
 } else {
-	$session = BeaconSession::GetFromCookie();
+	$session = Session::GetFromCookie();
 	if (is_null($session) === false) {
 		$session->Delete();
 	}
-	BeaconSession::RemoveCookie();
+	Session::RemoveCookie();
 }
 
 BeaconCommon::Redirect($return_uri);

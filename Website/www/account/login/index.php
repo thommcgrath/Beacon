@@ -2,12 +2,53 @@
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-use BeaconAPI\v4\{Session, User};
+use BeaconAPI\v4\{EmailVerificationCode, Session, User};
 
 header('Cache-Control: no-cache');
 BeaconCommon::StartSession();
 BeaconTemplate::SetTitle('Beacon Login');
 BeaconTemplate::SetBodyClass('purple');
+BeaconTemplate::AddHeaderLine('<link rel="canonical" href="' . BeaconCommon::AbsoluteUrl('/account/login') . '">');
+
+$loginId = $_GET['flowId'] ?? null;
+$email = $_GET['email'] ?? null;
+$returnUrl = $_GET['return'] ?? BeaconCommon::AbsoluteURL('/account/');
+$verificationCode = $_GET['code'] ?? null;
+$verificationKey = $_GET['key'] ?? null;
+
+if (is_null($email) === false && (is_null($verificationCode) === false || is_null($verificationKey) === false)) {
+	// May not exit here
+	RunEmailVerification($email, $verificationCode, $verificationKey);
+}
+
+$session = Session::GetFromCookie();
+if (is_null($session) === false) {
+	$user = $session->User();
+	if (is_null($user) === false && is_null($email) === false) {
+		$desired_user = User::Fetch($email);
+		if (is_null($desired_user) || $desired_user->UserId() !== $user->UserId()) {
+			$user = null;
+			$session = null;
+			Session::RemoveCookie();
+		}
+	}
+	if (is_null($user) === false) {
+		BeaconCommon::Redirect($returnUrl);
+	}
+}
+
+$loginParams = [
+	'loginId' => $loginId,
+	'email' => $email,
+	'return' => $returnUrl,
+	'code' => $verificationCode,
+	'withRemember' => true,
+	'withCancel' => false,
+	'redeemUrl' => BeaconCommon::AbsoluteUrl('/account/auth?session_id={{session_id}}&return={{return_uri}}&temporary={{temporary}}')
+];
+
+/*echo json_encode($loginParams, JSON_PRETTY_PRINT);
+exit;
 
 $cleanup_url = false;
 	
@@ -36,11 +77,11 @@ if (empty($_GET['password']) === false) {
 	$cleanup_url = true;
 }
 
-/*if ($cleanup_url) {
+if ($cleanup_url) {
 	header('Location: /account/login/');
 	http_response_code(302);
 	exit;
-}*/
+}
 
 if (isset($_SESSION['login_return_url'])) {
 	$return_url = $_SESSION['login_return_url'];
@@ -144,26 +185,62 @@ if (is_null($session) === false) {
 	if (is_null($user) == false) {
 		BeaconCommon::Redirect($return_url);
 	}
-}
+}*/
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
+/*
+<input type="hidden" id="login_return_field" value="<?php echo htmlentities($return_url); ?>">
+<?php if (is_null($explicit_email) === false) { ?><input type="hidden" id="login_explicit_email" value="<?php echo htmlentities($explicit_email); ?>"><?php } ?>
+<?php if (is_null($explicit_code) === false) { ?><input type="hidden" id="login_explicit_code" value="<?php echo htmlentities($explicit_code); ?>"><?php } ?>
+<?php if (is_null($explicit_email) === false && is_null($explicit_code) === false && is_null($explicit_password) === false) { ?><input type="hidden" id="login_explicit_password" value="<?php echo htmlentities($explicit_password); ?>"><?php } ?>
+*/
+
 ?>
 <div id="login_container">
-	<h1>Beacon Login<input type="hidden" id="login_return_field" value="<?php echo htmlentities($return_url); ?>">
-	<?php if (is_null($explicit_email) === false) { ?><input type="hidden" id="login_explicit_email" value="<?php echo htmlentities($explicit_email); ?>"><?php } ?>
-	<?php if (is_null($explicit_code) === false) { ?><input type="hidden" id="login_explicit_code" value="<?php echo htmlentities($explicit_code); ?>"><?php } ?>
-	<?php if (is_null($explicit_email) === false && is_null($explicit_code) === false && is_null($explicit_password) === false) { ?><input type="hidden" id="login_explicit_password" value="<?php echo htmlentities($explicit_password); ?>"><?php } ?></h1>
-	<?php
-		$login = new BeaconLogin();
+	<h1>Beacon Login</h1>
+	<?php BeaconLogin::Show($loginParams);
+		/*$login = new BeaconLogin();
 		$login->with_remember_me = true;
 		$login->with_login_cancel = false;
 		$login->session_consumer_uri = '/account/auth?session_id={{session_id}}&return={{return_uri}}&temporary={{temporary}}';
-		$login->Show();
+		$login->Show();*/
 	?>
 </div><?php
 
-function SetupPrivateKeyImport(string $user_id, string $encrypted_private_key, string $secret) {
+function ExitWithMessage(string $message, string $explanation, string $backUrl = ''): void {
+	echo '<div id="login_container">';
+	echo '<h1>' . htmlentities($message) . '</h1>';
+	echo '<p>' . htmlentities($explanation) . '</p>';
+	if (empty($backUrl) === false) {
+		echo '<p class="text-center"><a class="button" href="' . htmlentities($backUrl) . '">Back</a></p>';
+	}
+	echo '</div>';
+	exit;
+}
+
+function RunEmailVerification(string $email, ?string $verificationCode, ?string $verificationKey): void {
+	$verification = EmailVerificationCode::Fetch($email);
+	if (is_null($verification)) {
+		ExitWithMessage('Address Not Verified', 'No verification code was found for email ' . $email . '. Return to the login page and request a new code.', '/account/login?email=' . urlencode($email) . '#create');
+	}
+	
+	$continueLogin = true;
+	if (is_null($verificationKey) === false && $verification->DecryptCode($verificationKey)) {
+		$verificationCode = $verification->Code();
+		$continueLogin = false;
+	}
+	
+	if (is_null($verificationCode) || $verification->CheckCode($verificationCode) === false) {
+		ExitWithMessage('Address Not Verified', 'The verification code is not correct. If you requested a code more than once, only the newest code will be valid. Wait for the email to arrive, and try again.', '/account/login?email=' . urlencode($email) . '#create');
+	}
+	
+	if ($continueLogin === false) {
+		ExitWithMessage('Address Confirmed', 'You can now close this window and continue following the instructions inside Beacon.');
+	}
+}
+
+/*function SetupPrivateKeyImport(string $user_id, string $encrypted_private_key, string $secret) {
 	if (!BeaconCommon::IsUUID($user_id)) {
 		return false;
 	}
@@ -191,6 +268,6 @@ function SetupPrivateKeyImport(string $user_id, string $encrypted_private_key, s
 	$_SESSION['login_private_key_secret'] = $secret;
 	
 	return true;
-}
+}*/
 
 ?>

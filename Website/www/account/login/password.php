@@ -1,5 +1,7 @@
 <?php
 
+// This file is for a "hard" password reset, for when the user forgets their password
+
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');
@@ -7,12 +9,14 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
+use BeaconAPI\v4\{EmailVerificationCode, Session, User};
+
 define('ERR_EMAIL_NOT_VERIFIED', 436);
 define('ERR_PASSWORD_VIOLATES_RULES', 437);
 define('ERR_PASSWORD_COMPROMISED', 438);
 define('ERR_CONFIRM_CHILD_RESET', 439);
 
-if (empty($_POST['email']) || BeaconUser::ValidateEmail($_POST['email']) == false || empty($_POST['password']) || empty($_POST['code']) || empty($_POST['username'])) {
+if (empty($_POST['email']) || BeaconEmail::IsEmailValid($_POST['email']) == false || empty($_POST['password']) || empty($_POST['code']) || empty($_POST['username'])) {
 	http_response_code(400);
 	echo json_encode(['message' => 'Missing parameters.'], JSON_PRETTY_PRINT);
 	exit;
@@ -22,26 +26,18 @@ $user_id = null;
 $email = $_POST['email'];
 $password = $_POST['password'];
 $code = $_POST['code'];
-$key = isset($_POST['key']) ? $_POST['key'] : null;
 $username = trim($_POST['username']); // only used for new accounts
 $allow_vulnerable = isset($_POST['allow_vulnerable']) ? filter_var($_POST['allow_vulnerable'], FILTER_VALIDATE_BOOLEAN) : false;
-$confirm_reset_children = isset($_POST['confirm_reset_children']) ? filter_var($_POST['confirm_reset_children'], FILTER_VALIDATE_BOOLEAN) : false;
-$current_password = (isset($_POST['previous_password']) && empty($_POST['previous_password']) === false) ? $_POST['previous_password'] : null;
-$database = BeaconCommon::Database();
-
-// get the email uuid
-$results = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
-$email_id = $results->Field('email_id');
-
-// validate the code, and if provided, the key
-if (ValidateCode($email_id, $code, $key) == false) {
+	
+$verification = EmailVerificationCode::Fetch($email);
+if (is_null($verification) || $verification->CheckCode($code) === false) {
 	http_response_code(ERR_EMAIL_NOT_VERIFIED);
 	echo json_encode(['message' => 'Email not verified.'], JSON_PRETTY_PRINT);
 	exit;
 }
 
 // make sure the password is a good password
-if (!BeaconUser::ValidatePassword($password)) {
+if (User::ValidatePassword($password) === false) {
 	http_response_code(ERR_PASSWORD_VIOLATES_RULES);
 	echo json_encode(['message' => 'Password must be at least 8 characters and you should avoid repeating characters.'], JSON_PRETTY_PRINT);
 	exit;
@@ -67,52 +63,32 @@ if ($allow_vulnerable == false) {
 }
 
 // get the user id if this user already has an account
-$new_user = true;
-$results = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $email_id);
-if ($results->RecordCount() == 1) {
-	$user_id = $results->Field('user_id');
-	$user = BeaconUser::GetByUserID($user_id);
-	$new_user = false;
-} else {
-	$user = new BeaconUser();
+$new_user = false;
+$user = User::Fetch($email);
+if (is_null($user)) {
+	$new_user = true;
+	$user = new User;
 }
 
+$database = BeaconCommon::Database();
+$database->BeginTransaction();
+
 $verification_code = $_POST['verification_code'] ?? '';
-if ($user->Is2FAProtected() && $user->Verify2FACode($verification_code, true) === false) {
+if ($user->Is2FAProtected() && $user->Verify2FACode($verification_code) === false) {
+	$database->Rollback();
 	http_response_code(403);
 	echo json_encode(['message' => 'Verification code required.', 'details' => [ 'code' => '2FA_ENABLED' ]], JSON_PRETTY_PRINT);
 	exit;
 }
 
-$database->BeginTransaction();
-if (is_null($current_password)) {
-	if ($user->IsChildAccount()) {
-		$database->Rollback();
-		http_response_code(500);
-		echo json_encode(['message' => 'Cannot force change a child account password.'], JSON_PRETTY_PRINT);
-		exit;
-	}
-	if ($user->HasChildAccounts() === true && $confirm_reset_children === false) {
-		$database->Rollback();
-		http_response_code(ERR_CONFIRM_CHILD_RESET);
-		echo json_encode(['message' => 'All team passwords will also be reset. Include `confirm_reset_children` to confirm.'], JSON_PRETTY_PRINT);
-		exit;
-	}
-	
-	$public_key = null;
-	$private_key = null;
-	BeaconEncryption::GenerateKeyPair($public_key, $private_key);
-	
-	if ($user->AddAuthentication($username, $email, $password, $private_key) === false && $user->ReplacePassword($password, $private_key, BeaconUser::GenerateUsercloudKey()) === false) {
-		$database->Rollback();
-		http_response_code(500);
-		echo json_encode(['message' => 'There was an error updating authentication parameters.'], JSON_PRETTY_PRINT);
-		exit;
-	}
-} else if ($user->ChangePassword($current_password, $password) === false) {
+$public_key = null;
+$private_key = null;
+BeaconEncryption::GenerateKeyPair($public_key, $private_key);
+
+if ($user->AddAuthentication($username, $email, $password, $private_key) === false && $user->ReplacePassword($password, $private_key, User::GenerateUsercloudKey()) === false) {
 	$database->Rollback();
 	http_response_code(500);
-	echo json_encode(['message' => 'Failed to gracefully change password'], JSON_PRETTY_PRINT);
+	echo json_encode(['message' => 'There was an error updating authentication parameters.'], JSON_PRETTY_PRINT);
 	exit;
 }
 if ($user->Commit() === false) {
@@ -123,26 +99,24 @@ if ($user->Commit() === false) {
 }
 
 // delete all sessions
-$sessions = BeaconSession::GetForUser($user);
+$sessions = Session::Search(['userId' => $user->UserId()], true);
 foreach ($sessions as $session) {
 	$session->Delete();
 }
 
-// get a new session
-$session = BeaconSession::Create($user, $verification_code);
-if (is_null($session)) {
-	$database->Rollback();
-	http_response_code(403);
-	echo json_encode(['message' => 'Verification code required.', 'details' => [ 'code' => '2FA_ENABLED' ]], JSON_PRETTY_PRINT);
-	exit;
+$no_session = filter_var($_POST['no_session'], FILTER_VALIDATE_INT);
+$response = [
+	'user_id' => $user->UserId()
+];
+
+if ($no_session === false) {
+	// get a new session
+	$session = Session::Create($user, BeaconCommon::BeaconAppId);
+	$response['session_id'] = $session->SessionId();
 }
 
-$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $email_id);
+$verification->Delete();
 $database->Commit();
-
-$response = [
-	'session_id' => $session->SessionID()
-];
 
 if ($new_user) {
 	$subject = 'Welcome to Beacon';
@@ -152,38 +126,5 @@ if ($new_user) {
 
 http_response_code(200);
 echo json_encode($response, JSON_PRETTY_PRINT);
-
-function ValidateCode(string $email_id, string $code, $key) {
-	if (BeaconCommon::InProduction() === false) {
-		return true;
-	}
-	
-	$database = BeaconCommon::Database();
-	
-	if (is_null($key) == false) {
-		$results = $database->Query('SELECT verified, code FROM email_verification WHERE email_id = $1;', $email_id);
-		if ($results->RecordCount() == 0) {
-			return false;
-		}
-		
-		$encrypted_code = $results->Field('code');
-		$verified = $results->Field('verified');
-		if ($verified == false) {
-			return false;
-		}
-		try {
-			$decrypted_code = BeaconEncryption::SymmetricDecrypt($key, hex2bin($encrypted_code));
-			return $decrypted_code === $code;
-		} catch (Exception $err) {
-			return false;
-		}
-	} else {
-		$results = $database->Query('SELECT * FROM email_verification WHERE email_id = $1 AND code = encode(digest($2, \'sha512\'), \'hex\');', $email_id, $code);	
-		if ($results->RecordCount() == 0) {
-			return false;
-		}
-		return true;
-	}
-}
 
 ?>

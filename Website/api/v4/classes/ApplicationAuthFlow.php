@@ -1,0 +1,186 @@
+<?php
+
+namespace BeaconAPI\v4;
+use BeaconCommon, BeaconRecordSet, DateTime, Exception, JsonSerializable;
+
+class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
+	protected $flowId = null;
+	protected $applicationId = null;
+	protected $application = null;
+	protected $scopes = [];
+	protected $callback = null;
+	protected $state = null;
+	protected $code = null;
+	protected $userId = null;
+	protected $user = null;
+	protected $expired = null;
+	
+	public function __construct(BeaconRecordSet $row) {
+		$this->flowId = $row->Field('login_id');
+		$this->applicationId = $row->Field('application_id');
+		$this->scopes = explode(' ', $row->Field('scopes'));
+		$this->callback = $row->Field('callback');
+		$this->state = $row->Field('state');
+		$this->code = $row->Field('code');
+		$this->userId = $row->Field('user_id');
+		$this->expired = $row->Field('expiration');
+	}
+	
+	public static function BuildDatabaseSchema(): DatabaseSchema {
+		return new DatabaseSchema('public', 'application_logins', [
+			new DatabaseObjectProperty('flowId', ['primaryKey' => true, 'columnName' => 'login_id']),
+			new DatabaseObjectProperty('applicationId', ['columnName' => 'application_id']),
+			new DatabaseObjectProperty('scopes'),
+			new DatabaseObjectProperty('callback'),
+			new DatabaseObjectProperty('state'),
+			new DatabaseObjectProperty('code'),
+			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
+			new DatabaseObjectProperty('expired', ['columnName' => 'expiration', 'accessor' => "(%%TABLE%%.%%COLUMN%% < CURRENT_TIMESTAMP)::BOOLEAN"])
+		]);
+	}
+	
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+		$schema = static::DatabaseSchema();
+		$parameters->AddFromFilter($schema, $filters, 'userId');
+		$parameters->AddFromFilter($schema, $filters, 'applicationId');
+		$parameters->AddFromFilter($schema, $filters, 'code');
+	}
+	
+	public static function Fetch(string $uuid): ?static {
+		$flow = parent::Fetch($uuid);
+		if (is_null($flow) || $flow->expired) {
+			return null;
+		}
+		return $flow;
+	}
+	
+	public static function Create(Application $app, array $scopes, string $callback, string $state): static {
+		if ($app->CallbackAllowed($callback) === false) {
+			throw new Exception('Redirect uri is not whitelisted');
+		}
+		
+		if (in_array(Application::kScopeCommon, $scopes) === false) {
+			$scopes[] = Application::kScopeCommon;
+		}
+		if ($app->HasScopes($scopes) === false) {
+			throw new Exception('Application is not authorized for all requested scopes');
+		}
+		
+		$flowId = BeaconCommon::GenerateUUID();
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query("INSERT INTO public.application_logins (login_id, application_id, scopes, callback, state) VALUES ($1, $2, $3, $4, $5);", $flowId, $app->ApplicationId(), implode(' ', $scopes), $callback, $state);
+		$database->Commit();
+		return static::Fetch($flowId);
+	}
+	
+	public function FlowId(): string {
+		return $this->flowId;
+	}
+	
+	public function ApplicationId(): string {
+		return $this->applicationId;
+	}
+	
+	public function Application(): Application {
+		if (is_null($this->application)) {
+			$this->application = Application::Fetch($this->applicationId);
+		}
+		return $this->application;
+	}
+	
+	public function Scopes(): array {
+		return $this->scopes;
+	}
+	
+	public function Callback(): string {
+		return $this->callback;
+	}
+	
+	public function State(): string {
+		return $this->state;
+	}
+	
+	public function Code(): ?string {
+		return $this->code;
+	}
+	
+	public function UserId(): ?string {
+		return $this->userId;
+	}
+	
+	public function User(): ?User {
+		if (is_null($this->user)) {
+			$this->user = User::Fetch($this->userId);
+		}
+		return $this->user;
+	}
+	
+	public function IsCompleted(): bool {
+		return is_null($this->code) === false && is_null($this->userId) === false;
+	}
+	
+	public function NewChallenge(string $deviceId, User $user, int $expiration): string {
+		$challengeSecret = $this->Application()->Secret();
+		$challengeRaw = $deviceId . $expiration . $challengeSecret . $this->flowId . $user->UserId();
+		return base64_encode(hash('sha3-512', $challengeRaw, true));
+	}
+	
+	public function Authorize(string $deviceId, string $challenge, int $expiration, User $user): string {
+		if ($this->IsCompleted()) {
+			throw new Error('Authorization has already been completed');
+		}
+		
+		$correctChallenge = $this->NewChallenge($deviceId, $user, $expiration);
+		if ($expiration < time() || $challenge !== $correctChallenge) {
+			throw new Error('Incorrect challenge');
+		}
+		
+		$code = BeaconCommon::GenerateUUID();
+		$codeHash = static::PrepareCodeHash($this->applicationId, $this->Application()->Secret(), $code);
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query("DELETE FROM public.application_logins WHERE expiration < CURRENT_TIMESTAMP;");
+		$database->Query("UPDATE public.application_logins SET code = $2, user_id = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL WHERE login_id = $1 AND expiration > CURRENT_TIMESTAMP AND code IS NULL;", $this->flowId, $codeHash, $user->UserId());
+		$database->Commit();
+		
+		$this->code = $codeHash;
+		$this->userId = $user->UserId();
+		$this->user = $user;
+		
+		return $this->callback . (str_contains($this->callback, '?') ? '&' : '?') . http_build_query([
+			'code' => $code,
+			'state' => $this->state
+		]);
+	}
+	
+	public static function Redeem(string $applicationId, string $applicationSecret, string $code): Session {
+		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $code);
+		$flows = static::Search(['code' => $codeHash], true);
+		if (count($flows) !== 1) {
+			throw new Exception('Authorization flow not found');
+		}
+		$flow = $flows[0];
+		
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$session = Session::Create($user, $flow->Application(), $flow->scopes);
+		$database->Query("DELETE FROM public.application_logins WHERE login_id = $1 OR expiration < CURRENT_TIMESTAMP;", $flow->FlowId());
+		$database->Commit();
+		return $session;
+	}
+	
+	protected static function PrepareCodeHash(string $applicationId, string $applicationSecret, string $code): string {
+		return base64_encode(hash('sha3-512', "{$applicationId}.{$applicationSecret}.{$code}", true));
+	}
+	
+	public function jsonSerialize(): mixed {
+		return [
+			'flowId' => $this->flowId,
+			'applicationId' => $this->applicationId,
+			'scopes' => $this->scopes
+		];
+	}
+}
+
+?>
