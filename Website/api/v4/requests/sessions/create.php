@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, APIResponse, Core, Session, User};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, APIResponse, Core, Session, User};
 
 // To issue a token, both the client and the user need to be positively identified
 // This can either be done with the username and password, or with OAuth.
@@ -100,7 +100,8 @@ function handle_request(array $context): APIResponse {
 		if ($obj['grant_type'] !== 'authorization_code') {
 			return APIResponse::NewJSONError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
 		}
-		$application = Application::Fetch($obj['client_id']);
+		$session = ApplicationAuthFlow::Redeem($obj['client_id'], $obj['client_secret'], $obj['code']);
+		/*$application = Application::Fetch($obj['client_id']);
 		if (is_null($application)) {
 			return APIResponse::NewJSONError('Invalid client id', ['code' => 'INVALID_CLIENT_ID'], 400);
 		}
@@ -111,7 +112,7 @@ function handle_request(array $context): APIResponse {
 		if ($application->CallbackAllowed($obj['redirect_uri']) === false) {
 			return APIResponse::NewJSONError('Redirect URI is not whitelisted', ['code' => 'INVALID_REDIRECT_URI'], 400);
 		}
-		$session = $application->RedeemGrantCode($obj['code']);
+		$session = $application->RedeemGrantCode($obj['code']);*/
 		if (is_null($session)) {
 			return APIResponse::NewJSONError('Invalid code', ['code' => 'INVALID_CODE'], 400);
 		}

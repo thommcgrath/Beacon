@@ -9,6 +9,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 	protected $secret = null;
 	protected $name = null;
 	protected $website = null;
+	protected $iconBaseName = null;
+	protected $iconFormat = null;
 	protected $scopes = [];
 	protected $callbacks = [];
 	
@@ -48,6 +50,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$this->secret = BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('App Secret Encryption Key'), base64_decode($row->Field('secret')));
 		$this->name = $row->Field('name');
 		$this->website = $row->Field('website');
+		$this->iconBaseName = $row->Field('icon_base_filename');
+		$this->iconFormat = $row->Field('icon_format');
 		$this->scopes = explode(' ', $row->Field('scopes'));
 		$this->callbacks = json_decode($row->Field('callbacks'), true);
 	}
@@ -59,6 +63,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('secret'),
 			new DatabaseObjectProperty('name'),
 			new DatabaseObjectProperty('website'),
+			new DatabaseObjectProperty('iconBaseName', ['columnName' => 'icon_base_filename']),
+			new DatabaseObjectProperty('iconFormat', ['columnName' => 'icon_format']),
 			new DatabaseObjectProperty('scopes'),
 			new DatabaseObjectProperty('callbacks', ['columnName' => 'callbacks', 'accessor' => "(SELECT COALESCE(array_to_json(array_agg(callbacks_template.url)), '[]') FROM (SELECT url FROM application_callbacks WHERE application_id = applications.application_id ORDER BY url) AS callbacks_template)"])
 		]);
@@ -248,8 +254,37 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return $this->name;
 	}
 	
-	public function IconUrl(string $suffix = ''): string {
-		return 'https://assets.usebeacon.app/avatars/' . $this->ApplicationId() . '/avatar' . $suffix . '.png';
+	public function IconUrl(?int $size = null): string {
+		$suffix = '';
+		if ($this->iconFormat === 'svg') {
+			// size is irrelevant
+		} else if (is_null($size)) {
+			$suffix = '_original';
+		} else if ($size <= 32) {
+			$suffix = '_32px';
+		} else if ($size <= 64) {
+			$suffix = '_64px';
+		} else if ($size <= 128) {
+			$suffix = '_128px';
+		} else if ($size <= 256) {
+			$suffix = '_256px';
+		} else if ($size <= 512) {
+			$suffix = '_512px';
+		} else {
+			$suffix = '_1024px';
+		}
+		
+		// Don't panic, uploading an avatar sets the iconBaseName to appId/avatar. This way we can
+		// keep default/common icons too though.
+		return "https://assets.usebeacon.app/avatars/{$this->iconBaseName}{$suffix}.{$this->iconFormat}";
+	}
+	
+	public function IconHtml(int $size): string {
+		if ($this->iconFormat === 'svg') {
+			return '<img src="' . htmlentities($this->IconUrl()) . '" width="' . $size . '" height="' . $size . '" alt="">';
+		} else {
+			return '<img src="' . htmlentities($this->IconUrl($size)) . '" srcset="' . htmlentities($this->IconUrl($size)) . ', ' . htmlentities($this->IconUrl($size * 2)) . ' 2x, ' . htmlentities($this->IconUrl($size * 3)) . ' 3x" width="' . $size . '" height="' . $size . '" alt="">';
+		}
 	}
 	
 	public function Website(): string {

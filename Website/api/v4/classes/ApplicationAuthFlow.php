@@ -3,37 +3,37 @@
 namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet, DateTime, Exception, JsonSerializable;
 
-class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
+class ApplicationAuthFlow extends DatabaseObject {
 	protected $flowId = null;
 	protected $applicationId = null;
 	protected $application = null;
 	protected $scopes = [];
 	protected $callback = null;
 	protected $state = null;
-	protected $code = null;
+	protected $codeHash = null;
 	protected $userId = null;
 	protected $user = null;
 	protected $expired = null;
 	
 	public function __construct(BeaconRecordSet $row) {
-		$this->flowId = $row->Field('login_id');
+		$this->flowId = $row->Field('flow_id');
 		$this->applicationId = $row->Field('application_id');
 		$this->scopes = explode(' ', $row->Field('scopes'));
 		$this->callback = $row->Field('callback');
 		$this->state = $row->Field('state');
-		$this->code = $row->Field('code');
+		$this->codeHash = $row->Field('code_hash');
 		$this->userId = $row->Field('user_id');
 		$this->expired = $row->Field('expiration');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('public', 'application_logins', [
-			new DatabaseObjectProperty('flowId', ['primaryKey' => true, 'columnName' => 'login_id']),
+		return new DatabaseSchema('public', 'application_auth_flows', [
+			new DatabaseObjectProperty('flowId', ['primaryKey' => true, 'columnName' => 'flow_id']),
 			new DatabaseObjectProperty('applicationId', ['columnName' => 'application_id']),
 			new DatabaseObjectProperty('scopes'),
 			new DatabaseObjectProperty('callback'),
 			new DatabaseObjectProperty('state'),
-			new DatabaseObjectProperty('code'),
+			new DatabaseObjectProperty('codeHash', ['columnName' => 'code_hash']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('expired', ['columnName' => 'expiration', 'accessor' => "(%%TABLE%%.%%COLUMN%% < CURRENT_TIMESTAMP)::BOOLEAN"])
 		]);
@@ -43,7 +43,7 @@ class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
 		$schema = static::DatabaseSchema();
 		$parameters->AddFromFilter($schema, $filters, 'userId');
 		$parameters->AddFromFilter($schema, $filters, 'applicationId');
-		$parameters->AddFromFilter($schema, $filters, 'code');
+		$parameters->AddFromFilter($schema, $filters, 'codeHash');
 	}
 	
 	public static function Fetch(string $uuid): ?static {
@@ -65,11 +65,12 @@ class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
 		if ($app->HasScopes($scopes) === false) {
 			throw new Exception('Application is not authorized for all requested scopes');
 		}
+		sort($scopes);
 		
 		$flowId = BeaconCommon::GenerateUUID();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.application_logins (login_id, application_id, scopes, callback, state) VALUES ($1, $2, $3, $4, $5);", $flowId, $app->ApplicationId(), implode(' ', $scopes), $callback, $state);
+		$database->Query("INSERT INTO public.application_auth_flows (flow_id, application_id, scopes, callback, state) VALUES ($1, $2, $3, $4, $5);", $flowId, $app->ApplicationId(), implode(' ', $scopes), $callback, $state);
 		$database->Commit();
 		return static::Fetch($flowId);
 	}
@@ -101,8 +102,8 @@ class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
 		return $this->state;
 	}
 	
-	public function Code(): ?string {
-		return $this->code;
+	public function CodeHash(): ?string {
+		return $this->codeHash;
 	}
 	
 	public function UserId(): ?string {
@@ -117,7 +118,7 @@ class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public function IsCompleted(): bool {
-		return is_null($this->code) === false && is_null($this->userId) === false;
+		return is_null($this->codeHash) === false && is_null($this->userId) === false;
 	}
 	
 	public function NewChallenge(string $deviceId, User $user, int $expiration): string {
@@ -140,11 +141,11 @@ class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
 		$codeHash = static::PrepareCodeHash($this->applicationId, $this->Application()->Secret(), $code);
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("DELETE FROM public.application_logins WHERE expiration < CURRENT_TIMESTAMP;");
-		$database->Query("UPDATE public.application_logins SET code = $2, user_id = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL WHERE login_id = $1 AND expiration > CURRENT_TIMESTAMP AND code IS NULL;", $this->flowId, $codeHash, $user->UserId());
+		$database->Query("DELETE FROM public.application_auth_flows WHERE expiration < CURRENT_TIMESTAMP;");
+		$database->Query("UPDATE public.application_auth_flows SET code_hash = $2, user_id = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL WHERE flow_id = $1 AND expiration > CURRENT_TIMESTAMP AND code_hash IS NULL;", $this->flowId, $codeHash, $user->UserId());
 		$database->Commit();
 		
-		$this->code = $codeHash;
+		$this->codeHash = $codeHash;
 		$this->userId = $user->UserId();
 		$this->user = $user;
 		
@@ -156,7 +157,7 @@ class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
 	
 	public static function Redeem(string $applicationId, string $applicationSecret, string $code): Session {
 		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $code);
-		$flows = static::Search(['code' => $codeHash], true);
+		$flows = static::Search(['codeHash' => $codeHash], true);
 		if (count($flows) !== 1) {
 			throw new Exception('Authorization flow not found');
 		}
@@ -164,22 +165,14 @@ class ApplicationAuthFlow extends DatabaseObject implements JsonSerializable {
 		
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$session = Session::Create($user, $flow->Application(), $flow->scopes);
-		$database->Query("DELETE FROM public.application_logins WHERE login_id = $1 OR expiration < CURRENT_TIMESTAMP;", $flow->FlowId());
+		$session = Session::Create($flow->User(), $flow->Application(), $flow->scopes);
+		$database->Query("DELETE FROM public.application_auth_flows WHERE flow_id = $1 OR expiration < CURRENT_TIMESTAMP;", $flow->FlowId());
 		$database->Commit();
 		return $session;
 	}
 	
 	protected static function PrepareCodeHash(string $applicationId, string $applicationSecret, string $code): string {
 		return base64_encode(hash('sha3-512', "{$applicationId}.{$applicationSecret}.{$code}", true));
-	}
-	
-	public function jsonSerialize(): mixed {
-		return [
-			'flowId' => $this->flowId,
-			'applicationId' => $this->applicationId,
-			'scopes' => $this->scopes
-		];
 	}
 }
 

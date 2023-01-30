@@ -48,7 +48,7 @@ if (is_null($loginId) === false && is_null($appChallenge) === false) {
 		http_response_code(200);
 		echo json_encode(['callback' => $callback], JSON_PRETTY_PRINT);
 	} catch (Exception $err) {
-		APIResponse::NewJsonError('Authorization could not be completed. It may have expired. Please try again.', ['code' => 'EXPIRED'], 400)->Flush();
+		APIResponse::NewJsonError('Authorization could not be completed. It may have expired. Please try again.', ['code' => 'EXPIRED', 'exception' => $err->getMessage()], 400)->Flush();
 	}
 	exit;
 }

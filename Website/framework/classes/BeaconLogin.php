@@ -103,7 +103,7 @@ class BeaconLogin {
 <div id="page_authorize">
 	<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services?</h3>
 	<div class="app_id">
-		<div class="app_id_avatar"><img src="<?php echo htmlentities($app->IconUrl()); ?>" srcset="<?php echo htmlentities($app->IconUrl()); ?>, <?php echo htmlentities($app->IconUrl('@2x')); ?> 2x, <?php echo htmlentities($app->IconUrl('@3x')); ?> 3x"></div>
+		<div class="app_id_avatar"><?php echo $app->IconHtml(64); ?></div>
 		<div class="api_id_namecard"><span class="bold larger"><?php echo htmlentities($app->Name()); ?></span><br>Website: <a href="<?php echo htmlentities($app->Website()); ?>" target="_top"><?php echo htmlentities($app->Website()); ?></a></div>
 	</div>
 	<p class="explanation smaller italic">This is a unofficial application and not affiliate with Beacon / The ZAZ Studios. Only allow access to applications you trust. This permission can be revoked in your account control panel.</p>
@@ -179,7 +179,9 @@ class BeaconLogin {
 		$jokePermissions = [
 			'Summon an army of staplers.',
 			'Make breakfast.',
-			'Play a fiddle on a roof.'
+			'Play a fiddle on a roof.',
+			'Take the red pill.',
+			'Influence the passage of time.'
 		];
 		$index = array_rand($jokePermissions, 1);
 		echo htmlentities($jokePermissions[$index]);

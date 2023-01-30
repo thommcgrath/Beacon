@@ -205,6 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
 					try {
 						const obj = JSON.parse(error.body);
 						const code = obj.details.code;
+						if (obj.message) {
+							loginErrorExplanation = obj.message;
+						}
 						switch(code) {
 						case 'CHALLENGE_TIMEOUT':
 							loginErrorExplanation = 'The login process timed out. Please try again.';
