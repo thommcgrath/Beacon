@@ -3,11 +3,13 @@
 namespace BeaconAPI\v4;
 use BeaconCloudStorage, BeaconCommon, BeaconEmail, BeaconEncryption, BeaconRecordSet, BeaconShop, Exception;
 
-class User implements \JsonSerializable {
-	const ARK_FREE = false;
-	const ARK2_FREE = false;
-	
+class User extends DatabaseObject implements \JsonSerializable {
+	protected $backupCodes = null;
+	protected $backupCodesAdded = [];
+	protected $backupCodesRemoved = [];
 	protected $banned = false;
+	protected $cloudKey = null;
+	protected $deleteCloudFiles = false;
 	protected $emailId = null;
 	protected $enabled = true;
 	protected $expiration = '';
@@ -20,30 +22,72 @@ class User implements \JsonSerializable {
 	protected $requirePasswordChange = false;
 	protected $signatures = [];
 	protected $userId = '';
-	protected $cloudKey = null;
-	protected $deleteCloudFiles = false;
 	protected $username = null;
-	protected $backupCodes = null;
-	protected $backupCodesAdded = [];
-	protected $backupCodesRemoved = [];
 	
-	public function __construct($source = null) {
-		if ($source instanceof BeaconRecordSet) {
-			$this->userId = $source->Field('user_id');
-			$this->username = $source->Field('username');
-			$this->emailId = $source->Field('email_id');
-			$this->publicKey = $source->Field('public_key');
-			$this->privateKey = $source->Field('private_key');
-			$this->privateKeySalt = $source->Field('private_key_salt');
-			$this->privateKeyIterations = intval($source->Field('private_key_iterations'));
-			$this->cloudKey = $source->Field('usercloud_key');
-			$this->banned = $source->Field('banned');
-			$this->enabled = $source->Field('enabled');
-			$this->requirePasswordChange = $source->Field('require_password_change');
-		} elseif (is_string($source) && BeaconCommon::IsUUID($source)) {
-			$this->userId = $source;
-		} elseif (is_null($source)) {
-			$this->userId = BeaconCommon::GenerateUUID();
+	public function __construct(BeaconRecordSet $row) {
+		$this->backupCodes = null;
+		$this->backupCodesAdded = [];
+		$this->backupCodesRemoved = [];
+		$this->banned = filter_var($row->Field('banned'), FILTER_VALIDATE_BOOL);
+		$this->cloudKey = $row->Field('usercloud_key');
+		$this->deleteCloudFiles = false;
+		$this->emailId = $row->Field('email_id');
+		$this->enabled = filter_var($row->Field('enabled'), FILTER_VALIDATE_BOOL);
+		$this->expiration = '';
+		$this->licenses = [];
+		$this->licensesLoaded = false;
+		$this->privateKey = $row->Field('private_key');
+		$this->privateKeyIterations = filter_var($row->Field('private_key_iterations'), FILTER_VALIDATE_INT);
+		$this->privateKeySalt = $row->Field('private_key_salt');
+		$this->publicKey = $row->Field('public_key');
+		$this->requirePasswordChange = filter_var($row->Field('require_password_change'), FILTER_VALIDATE_BOOL);
+		$this->signatures = [];
+		$this->userId = $row->Field('user_id');
+		$this->username = $row->Field('username');
+	}
+	
+	public static function BuildDatabaseSchema(): DatabaseSchema {
+		return new DatabaseSchema('public', 'users', [
+			new DatabaseObjectProperty('userId', ['primaryKey' => true, 'columnName' => 'user_id']),
+			new DatabaseObjectProperty('emailId', ['columnName' => 'email_id']),
+			new DatabaseObjectProperty('username'),
+			new DatabaseObjectProperty('publicKey', ['columnName' => 'public_key']),
+			new DatabaseObjectProperty('privateKey', ['columnName' => 'private_key']),
+			new DatabaseObjectProperty('privateKeySalt', ['columnName' => 'private_key_salt']),
+			new DatabaseObjectProperty('privateKeyIterations', ['columnName' => 'private_key_iterations']),
+			new DatabaseObjectProperty('cloudKey', ['columnName' => 'usercloud_key']),
+			new DatabaseObjectProperty('banned'),
+			new DatabaseObjectProperty('enabled'),
+			new DatabaseObjectProperty('requiredPasswordChange', ['columnName' => 'require_password_change'])
+		]);
+	}
+	
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+		$schema = static::DatabaseSchema();
+		$parameters->AddFromFilter($schema, $filters, 'userId');
+		$parameters->AddFromFilter($schema, $filters, 'emailId');
+		
+		if (isset($filters['userId|emailId']) || isset($filters['emailId|userId'])) {
+			$parameters->clauses[] = '(' . $schema->Comparison('userId', '=', $parameters->placeholder) . ' OR ' . $schema->Comparison('emailId', '=', $parameters->placeholder++) . ')';
+			$parameters->values[] = $filters['userId|emailId'] ?? $filters['emailId|userId'];
+		}
+		
+		if (isset($filters['email']) && BeaconEmail::IsEmailValid($filters['email'])) {
+			$parameters->clauses[] = $schema->Comparison('emailId', '=', '(SELECT uuid_for_email($' . $parameters->placeholder++ . '))');
+			$parameters->values[] = $filters['email'];
+		}
+		
+		if (isset($filters['username'])) {
+			$username = strtok($filters['username'], '#');
+			$suffix = strtok('#');
+			
+			$parameters->clauses[] = $schema->Comparison('username', '=', $parameters->placeholder++);
+			$parameters->values[] = $username;
+			
+			if ($suffix !== false) {
+				$parameters->clauses[] = 'SUBSTRING(LOWER(' . $schema->Accessor('userId') . '::TEXT) FROM 1 FOR 8) = $' . $parameters->placeholder++;
+				$parameters->values[] = $suffix;
+			}
 		}
 	}
 	
@@ -461,43 +505,34 @@ class User implements \JsonSerializable {
 	/* !User Lookup */
 	
 	public static function Fetch(string $userId): ?static {
-		$database = BeaconCommon::Database();
+		$filters = [];
+		$email = null;
 		if (BeaconCommon::IsUUID($userId)) {
-			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = $1 OR email_id = $1;', $userId);
-		} else if (BeaconEmail::IsEmailValid($userId)) {
-			// When doing a SELECT with uuid_for_email(email, create), you must wrap it in its own SELECT statement.
-			// This is because the function is VOLATILE and will be executed for every row in the user table unless
-			// treated as a subquery. Or omit the second parameter, which is a STABLE function and performs fine.
-			// The second parameter should only be used when updating the email row is desired.
-			
-			$results = $database->Query('SELECT uuid_for_email($1) AS email_id;', $userId);
-			if ($results->RecordCount() !== 1 || is_null($results->Field('email_id'))) {
-				return null;
-			}
-			$emailId = $results->Field('email_id');
-			
-			$results = $database->Query('SELECT email_needs_update($1::UUID) AS update_needed;', $emailId);
-			if ($results->RecordCount() !== 1 || is_null($results->Field('update_needed'))) {
-				return null;
-			}
-			if ($results->Field('update_needed')) {
-				$database->BeginTransaction();
-				$database->Query('SELECT uuid_for_email($1, TRUE);', $email);
-				$database->Commit();
-			}
-			
-			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = $1;', $emailId);
+			$filters['userId|emailId'] = $userId;
 		} else if (static::IsExtendedUsername($userId)) {
-			$displayName = substr($userId, 0, -9);
-			$suffix = strtolower(substr($userId, -8));
-			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE username = $1 AND SUBSTRING(LOWER(user_id::TEXT) FROM 1 FOR 8) = $2;', $displayName, $suffix);
+			$filters['username'] = $userId;
 		} else {
+			$filters['email'] = $userId;
+			$email = $userId;
+		}
+		
+		$users = static::Search($filters, true);
+		if (count($users) !== 1) {
 			return null;
 		}
-		if ($results->RecordCount() === 1) {
-			return new static($results);
+		
+		$user = $users[0];
+		if (is_null($email) === false) {
+			$database = BeaconCommon::Database();
+			$rows = $database->Query("SELECT email_needs_update($1::UUID) AS update_needed;", $user->EmailId());
+			if (filter_var($rows->Field('update_needed'), FILTER_VALIDATE_BOOL)) {
+				$database->BeginTransaction();
+				$database->Query("SELECT uuid_for_email($1, TRUE);", $email);
+				$database->Commit();	
+			}
 		}
-		return null;
+		
+		return $user;
 	}
 	
 	/* !Validation */
@@ -606,22 +641,6 @@ class User implements \JsonSerializable {
 		return BeaconEncryption::RSAVerify($this->publicKey, $data, $signature);
 	}
 	
-	protected static function SQLColumns(): array {
-		return [
-			'users.user_id',
-			'users.email_id',
-			'users.username',
-			'users.public_key',
-			'users.private_key',
-			'users.private_key_salt',
-			'users.private_key_iterations',
-			'users.usercloud_key',
-			'users.banned',
-			'users.enabled',
-			'users.require_password_change'
-		];
-	}
-	
 	public function jsonSerialize(): mixed {
 		$arr = [
 			'userId' => $this->userId,
@@ -672,19 +691,6 @@ class User implements \JsonSerializable {
 		$signature = '';
 		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
 			$this->signatures['3'] = bin2hex($signature);
-		}
-	}
-	
-	public function Delete(): bool {
-		$database = BeaconCommon::Database();
-		try {
-			$database->BeginTransaction();
-			$database->Query('DELETE FROM users WHERE user_id = $1;', $this->userId);
-			$database->Commit();
-			return true;
-		} catch (Exception $err) {
-			$database->Rollback();
-			return false;
 		}
 	}
 	
