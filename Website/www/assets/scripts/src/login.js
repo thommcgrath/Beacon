@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				sessionBody.trust = totpRememberCheck.checked;
 			}
 			
-			BeaconWebRequest.post(`/account/login/check`, sessionBody).then((response) => {
+			BeaconWebRequest.post(`/account/auth/authenticate`, sessionBody).then((response) => {
 				if (localStorage && loginRemember) {
 					localStorage.setItem('email', loginEmail);
 				}
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				params.append('flowId', loginParams.loginId);
 			}
 			
-			BeaconWebRequest.post('/account/login/email', params).then((response) => {
+			BeaconWebRequest.post('/account/auth/email', params).then((response) => {
 				try {
 					const obj = JSON.parse(response.body);
 					if (recoverActionButton) {
@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			params.append('email', verifyEmailField.value.trim());
 			params.append('code', verifyCodeField.value.trim());
 			
-			BeaconWebRequest.post('/account/login/verify', params).then((response) => {
+			BeaconWebRequest.post('/account/auth/verify', params).then((response) => {
 				try {
 					const obj = JSON.parse(response.body);
 					if (obj.verified) {
@@ -453,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			form.append('no_session', 'true');
 			
 			showPage('loading');
-			BeaconWebRequest.post('/account/login/password', form).then((response) => {
+			BeaconWebRequest.post('/account/auth/password', form).then((response) => {
 				try {
 					const obj = JSON.parse(response.body);
 					if (localStorage && loginRemember) {
@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				challengeExpiration: loginParams.challengeExpiration
 			};
 			
-			BeaconWebRequest.post('/account/login/authorize', authorizationBody).then((response) => {
+			BeaconWebRequest.post('/account/auth/authorize', authorizationBody).then((response) => {
 				try {
 					const obj = JSON.parse(response.body);
 					const callback = obj.callback;

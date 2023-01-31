@@ -7,30 +7,42 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-use BeaconAPI\v4\EmailVerificationCode;
-
-if (empty($_POST['email']) || BeaconEmail::IsEmailValid($_POST['email']) == false) {
+if (empty($_POST['email']) || BeaconUser::ValidateEmail($_POST['email']) == false) {
 	http_response_code(400);
-	echo json_encode([], JSON_PRETTY_PRINT);
+	echo json_encode(array(), JSON_PRETTY_PRINT);
 	exit;
 }
 
 $email = $_POST['email'];
-$params = [];
-if (isset($_POST['key'])) {
-	$params['key'] = $_POST['key'];
-}
-if (isset($_POST['flowId'])) {
-	$params['flow_id'] = $_POST['flowId'];
-}
-$verification = EmailVerificationCode::Create($email, $params); // Email sent here
-	
-if (is_null($verification)) {
-	echo json_encode(['message' => 'Unable to deliver to ' . $email . '. The mail server may be rejecting messages. Contact support at help@usebeacon.app once the mailbox is working again.'], JSON_PRETTY_PRINT);
-	return;
+$key = isset($_POST['key']) ? $_POST['key'] : null;
+
+$user = BeaconUser::GetByEmail($email);
+if (is_null($user) === false) {
+	if ($user->IsChildAccount()) {
+		http_response_code(400);
+		echo json_encode([
+			'error' => true,
+			'message' => 'Child accounts cannot reset their own passwords. Contact the parent account owner to begin the password reset.'
+		], JSON_PRETTY_PRINT);
+		return;
+	} elseif ($user->IsEnabled() === false) {
+		http_response_code(400);
+		echo json_encode([
+			'error' => true,
+			'message' => 'Account is disabled.'
+		], JSON_PRETTY_PRINT);
+		return;
+	}
 }
 
-http_response_code(200);
-echo json_encode(['email' => $email, 'verified' => false], JSON_PRETTY_PRINT);
+if (BeaconLogin::SendVerification($email, $key)) {
+	http_response_code(200);
+	echo json_encode($response = array(
+		'email' => $email,
+		'verified' => false
+	), JSON_PRETTY_PRINT);
+} else {
+	echo json_encode(array('message' => 'Unable to deliver to ' . $email . '. The mail server may be rejecting messages. Contact support at help@usebeacon.app once the mailbox is working again.'), JSON_PRETTY_PRINT);
+}
 
 ?>

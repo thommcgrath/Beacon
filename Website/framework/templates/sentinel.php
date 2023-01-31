@@ -137,7 +137,7 @@ $sidebar_items = [
 				<li><a href="#" id="user-menu-copy-id" userid="<?php echo htmlentities($user->UserID()); ?>">Copy User ID</a></li>
 				<li><hr></li>
 				<li><a href="/account/" id="user-menu-account">My Account</a></li>
-				<li><a href="/account/auth?return=%2F" id="user-menu-logout">Log Out</a></li>
+				<li><a href="/account/auth/redeem?return=%2F" id="user-menu-logout">Log Out</a></li>
 			</ul>
 		</div>
 	</body>

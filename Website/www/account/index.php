@@ -32,7 +32,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('account.js'));
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
 
-?><h1 id="account-user-header" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>"><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
+?><h1 id="account-user-header" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>"><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth/redeem?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
 <div class="page-panel" id="panel-account">
 	<div class="page-panel-nav">
 		<ul>

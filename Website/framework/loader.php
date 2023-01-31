@@ -18,25 +18,57 @@ if (is_int($api_version) === false || isset($api_version) === false || empty($ap
 $_SERVER['API_VERSION'] = $api_version;
 
 spl_autoload_register(function($class_name) {
-	$parent = dirname(__FILE__) . '/classes';
+	$original_class_name = $class_name;
+	
+	$api_root = dirname(__FILE__, 2) . '/api';
+	$paths = [
+		dirname(__FILE__) . '/classes'
+	];
+	
+	/*
+	Modern:
+		BeaconAPI\v4\Project = v4/classes/Project.php
+		BeaconAPI\v4\Ark\Project = v4/classes/Ark/Project.php
+		BeaconAPI\v4\User = v4/classes/User.php
+		
+	Legacy:
+		BeaconAPI\Project = common/classes/Project.php
+		BeaconAPI\Ark\Project = common/Ark/classes/Project.php
+		Ark\Project = v3/ark/classes/Project.php
+		BeaconUser = v3/classes/BeaconUser.php
+	*/
 	
 	if (str_starts_with($class_name, 'BeaconAPI\\')) {
-		$version = null;
-		$api_root = dirname(__FILE__, 2) . '/api';
 		$class_name = substr($class_name, 10);
 		if (preg_match('/^(v\d+)\\\/', $class_name, $matches) === 1) {
 			// Explicit version
 			$version = $matches[1];
 			$class_name = substr($class_name, strlen($version) + 1);
-			$parent = $api_root . '/' . $version . '/classes';
+			$paths[] = "{$api_root}/{$version}/classes";
 		} else {
-			$parent = $api_root . '/common';
+			// Old messy style
+			if (str_starts_with($class_name, 'Ark\\')) {
+				$class_name = substr($class_name, 4);
+				$paths[] = "{$api_root}/common/Ark";
+			} else {
+				$paths[] = "{$api_root}/common";
+			}
 		}
+	} else if (str_starts_with($class_name, 'Ark\\')) {
+		$api_root = dirname(__FILE__, 2) . '/api';
+		$class_name = substr($class_name, 4);
+		$paths[] = "{$api_root}/v3/ark/classes";
 	}
 	
+	// Search the v3 classes last
+	$paths[] = "{$api_root}/v3/classes";
+	
 	$filename = str_replace('\\', '/', $class_name) . '.php';
-	if (file_exists("{$parent}/{$filename}")) {
-		include("{$parent}/{$filename}");
+	foreach ($paths as $path) {
+		if (file_exists("{$path}/{$filename}")) {
+			include("{$path}/{$filename}");
+			return;
+		}
 	}
 });
 

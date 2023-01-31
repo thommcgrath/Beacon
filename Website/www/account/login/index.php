@@ -28,7 +28,7 @@ $loginParams = [
 	'code' => $verificationCode,
 	'withRemember' => true,
 	'withCancel' => false,
-	'redeemUrl' => BeaconCommon::AbsoluteUrl('/account/auth?session_id={{session_id}}&return={{return_uri}}&temporary={{temporary}}')
+	'redeemUrl' => BeaconCommon::AbsoluteUrl('/account/auth/redeem?session_id={{session_id}}&return={{return_uri}}&temporary={{temporary}}')
 ];
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
