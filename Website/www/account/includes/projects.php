@@ -1,11 +1,13 @@
 <?php
 
+use BeaconAPI\v4\Project;
+
 echo '<div class="visual-group"><h3>Your Projects</h3>';
 
-$keys = array(
-	'user_id' => $user->UserID()
-);
-$projects = \Ark\Project::Search($keys);
+$keys = [
+	'user_id' => $user->UserId()
+];
+$projects = Project::Search($keys, true);
 if (count($projects) > 0) {
 	echo '<table class="generic">';
 	echo '<thead><tr><th>Name</th><th class="low-priority">Downloads</th><th class="low-priority">Revision</th><th class="text-center low-priority">Published</th><th class="low-priority">Delete</th></tr></thead>';

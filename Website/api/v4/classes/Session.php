@@ -95,8 +95,12 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		return $this->applicationId;
 	}
 	
-	protected static function PrepareHash(string $sessionId): string {
-		return base64_encode(hash('sha3-512', $sessionId, true));
+	protected static function PrepareHash(string $sessionId, bool $legacy = false): string {
+		if ($legacy) {
+			return strtolower(hash('sha512', $sessionId, false));
+		} else {
+			return base64_encode(hash('sha3-512', $sessionId, true));
+		}
 	}
 	
 	public static function Create(User $user, Application|string $app, ?array $scopes = null): static {
@@ -150,7 +154,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 	
 	public static function Fetch(string $sessionId): ?static {
 		if (BeaconCommon::IsUUID($sessionId)) {
-			$session = parent::Fetch(static::PrepareHash($sessionId));
+			$session = parent::Fetch(static::PrepareHash($sessionId), false) ?? parent::Fetch(static::PrepareHash($sessionId, true));
 			if (is_null($session) === false) {
 				$session->sessionId = $sessionId;
 				return $session;
@@ -263,7 +267,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public static function GetForUserID(string $user_id): array {
-		return static::Search(['user_id' => $user_id], true);
+		return static::Search(['userId' => $user_id], true);
 	}
 	
 	public static function GetForUser(User $user): array {

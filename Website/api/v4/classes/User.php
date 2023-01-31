@@ -219,13 +219,12 @@ class User implements \JsonSerializable {
 	/* !Two Factor Authentication */
 	
 	public function Is2FAProtected(): bool {
-		$authenticators = Authenticator::Search(['user_id' => $this->user_id], true);
-		return count($authenticators) > 0;
+		return Authenticator::UserIdHasAuthenticators($this->user_id);
 	}
 	
 	// $code may be a TOTP, backup code, or trusted device id
 	public function Verify2FACode(string $code, bool $verifyOnly = false): bool {
-		$authenticators = Authenticator::Search(['user_id' => $this->user_id], true);
+		$authenticators = Authenticator::Search(['userId' => $this->user_id], true);
 		if (count($authenticators) === 0) {
 			// If there are no authenticators, the account is not 2FA protected
 			return false;

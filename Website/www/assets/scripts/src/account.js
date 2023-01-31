@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			const resource_name = event.target.getAttribute('beacon-resource-name');
 			
 			BeaconDialog.confirm('Are you sure you want to delete the project "' + resource_name + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete').then((reason) => {
-				BeaconWebRequest.delete(resource_url, { Authorization: `Session ${sessionId}` }).then((response) => {
+				BeaconWebRequest.delete(resource_url, { Authorization: `Bearer ${sessionId}` }).then((response) => {
 					BeaconDialog.show('Project deleted', '"' + resource_name + '" has been deleted.').then(() => {
 						window.location.reload(true);
 					});
@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 					return;
 				}
 				
-				BeaconWebRequest.post(`https://${apiDomain}/v3/authenticator`, authenticator, { Authorization: `Session ${sessionId}` }).then((response) => {
+				BeaconWebRequest.post(`https://${apiDomain}/v4/authenticators`, authenticator, { Authorization: `Bearer ${sessionId}` }).then((response) => {
 					window.location.reload(true);
 				}).catch((error) => {
 					console.log(JSON.stringify(error));
@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				}
 				
 				BeaconDialog.confirm(confirm.message, confirm.explanation).then(() => {
-					BeaconWebRequest.delete(`https://${apiDomain}/v3/authenticator/${authenticatorId}`, {Authorization: `Session ${sessionId}`}).then((response) => {
+					BeaconWebRequest.delete(`https://${apiDomain}/v4/authenticators/${authenticatorId}`, {Authorization: `Bearer ${sessionId}`}).then((response) => {
 						const row = document.getElementById(`authenticator-${authenticatorId}`);
 						if (row && numAuthenticators > 1) {
 							row.remove();
@@ -538,7 +538,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	if (replaceBackupCodesButton) {
 		replaceBackupCodesButton.addEventListener('click', (ev) => {
 			BeaconDialog.confirm('Replace backup codes?', 'This will replace all of your backup codes with new ones.').then(() => {
-				BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {Authorization: `Session ${sessionId}`}).then((response) => {
+				BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {Authorization: `Bearer ${sessionId}`}).then((response) => {
 					try {
 						const backupCodesTable = document.getElementById('backup-codes');
 						const obj = JSON.parse(response.body);
@@ -579,7 +579,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const revokeAction = (event) => {
 		event.preventDefault();
 		
-		BeaconWebRequest.delete(`http://${apiDomain}/v3/session/${event.target.getAttribute('sessionHash')}`, { Authorization: `Session ${sessionId}` }).then((response) => {
+		
+		BeaconWebRequest.delete(`https://${apiDomain}/v4/sessions/${encodeURIComponent(event.target.getAttribute('sessionHash'))}`, { Authorization: `Bearer ${sessionId}` }).then((response) => {
 			BeaconDialog.show('Session revoked', 'Be aware that any enabled user with a copy of your account\'s private key can start a new session.').then(() => {
 				window.location.reload(true);
 			});

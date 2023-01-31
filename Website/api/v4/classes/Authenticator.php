@@ -1,36 +1,36 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconRecordSet;
+use BeaconCommon, BeaconRecordSet, Exception;
 
 class Authenticator extends DatabaseObject implements \JsonSerializable {
 	use DatabaseCommonWriterObject;
 	
 	const TYPE_TOTP = 'TOTP';
 	
-	protected $authenticator_id;
-	protected $user_id;
+	protected $authenticatorId;
+	protected $userId;
 	protected $type;
 	protected $nickname;
-	protected $date_added;
+	protected $dateAdded;
 	protected $metadata;
 	
 	protected function __construct(BeaconRecordSet $row) {
-		$this->authenticator_id = $row->Field('authenticator_id');
-		$this->user_id = $row->Field('user_id');
+		$this->authenticatorId = $row->Field('authenticator_id');
+		$this->userId = $row->Field('user_id');
 		$this->type = $row->Field('type');
 		$this->nickname = $row->Field('nickname');
-		$this->date_added = intval($row->Field('date_added'));
+		$this->dateAdded = intval($row->Field('date_added'));
 		$this->metadata = json_decode($row->Field('metadata'), true);
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('public', 'user_authenticators', [
-			new DatabaseObjectProperty('authenticator_id', ['primaryKey' => true]),
-			new DatabaseObjectProperty('user_id'),
+			new DatabaseObjectProperty('authenticatorId', ['primaryKey' => true, 'columnName' => 'authenticator_id']),
+			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('type'),
 			new DatabaseObjectProperty('nickname', ['editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('date_added', ['accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.date_added)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
+			new DatabaseObjectProperty('dateAdded', ['columnName' => 'date_added', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('metadata')
 		]);
 	}
@@ -38,36 +38,12 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
 		$schema = static::DatabaseSchema();
 		
-		if (isset($filters['user_id']) === false) {
-			throw new Exception('Must include user_id filter');
+		if (isset($filters['userId']) === false) {
+			throw new Exception('Must include userId filter');
 		}
 		
-		$parameters->AddFromFilter($schema, $filters, 'user_id');
+		$parameters->AddFromFilter($schema, $filters, 'userId');
 		$parameters->AddFromFilter($schema, $filters, 'type');
-	}
-	
-	public static function SQLSchemaName(): string {
-		return 'public';
-	}
-	
-	public static function SQLTableName(): string {
-		return 'user_authenticators';
-	}
-	
-	public static function SQLPrimaryKey(): string {
-		return 'authenticator_id';
-	}
-	
-	public static function SQLColumns(): array {
-		$table = static::SQLTableName();
-		return [
-			"$table.authenticator_id",
-			"$table.user_id",
-			"$table.type",
-			"$table.nickname",
-			"EXTRACT(EPOCH FROM $table.date_added) AS date_added",
-			"$table.metadata"
-		];
 	}
 	
 	/*public static function Create(string $authenticator_id, string $user_id, string $type, string $nickname, array $metadata): Authenticator {
@@ -78,62 +54,29 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 		return static::GetByAuthenticatorID($authenticator_id);
 	}*/
 	
-	public static function GetForUser(User $user, ?string $type = null): array {
-		return static::GetForUserID($user->UserID(), $type);
-	}
-	
-	public static function GetForUserID(string $user_id, ?string $type = null): array {
-		$table = static::SQLTableName();
-		$sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE ' . $table . '.user_id = $1';
-		$values = [$user_id];
-		if (is_null($type) === false) {
-			$sql .= ' AND ' . $table . '.type = $2';
-			$values[] = $type;
-		}
-		$sql .= ' ORDER BY ' . $table . '.date_added DESC;';
-		$database = BeaconCommon::Database();
-		$rows = $database->Query($sql, $values);
-		$authenticators = [];
-		while (!$rows->EOF()) {
-			$authenticators[] = new static($rows);
-			$rows->MoveNext();
-		}
-		return $authenticators;
-	}
-	
 	public static function UserHasAuthenticators(User $user, ?string $type = null): bool {
-		return static::UserIDHasAuthenticators($user->UserID(), $type);
+		return static::UserIdHasAuthenticators($user->UserId(), $type);
 	}
 	
-	public static function UserIDHasAuthenticators(string $user_id, ?string $type = null): bool {
-		$table = static::SQLTableName();
-		$sql = 'SELECT COUNT(' . $table . '.authenticator_id) AS num_authenticators FROM ' . static::SQLLongTableName() . ' WHERE ' . $table . '.user_id = $1';
-		$values = [$user_id];
+	public static function UserIdHasAuthenticators(string $userId, ?string $type = null): bool {
+		$filters = [
+			'userId' => $userId,
+			'pageSize' => 1
+		];
 		if (is_null($type) === false) {
-			$sql .= ' AND ' . $table . '.type = $2';
-			$values[] = $type;
+			$filters['type'] = $type;
 		}
-		$database = BeaconCommon::Database();
-		$rows = $database->Query($sql, $values);
-		return $rows->Field('num_authenticators') > 0;
+		
+		$authenticators = static::Search($filters);
+		return $authenticators['totalResults'] > 0;
 	}
 	
-	public static function GetByAuthenticatorID(string $authenticator_id): ?Authenticator {
-		$database = BeaconCommon::Database();
-		$table = static::SQLTableName();
-		$sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLLongTableName() . ' WHERE ' . $table . '.authenticator_id = $1;';
-		$rows = $database->Query($sql, $authenticator_id);
-		if ($rows->RecordCount() === 1) {
-			return new static($rows);
-		}
+	public function AuthenticatorId(): string {
+		return $this->authenticatorId;
 	}
 	
-	public function AuthenticatorID(): string {
-		return $this->authenticator_id;
-	}
-	
-	public function UserID(): string {
-		return $this->user_id;
+	public function UserId(): string {
+		return $this->userId;
 	}
 	
 	public function Type(): string {
@@ -149,7 +92,7 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public function DateAdded(): int {
-		return $this->date_added;
+		return $this->dateAdded;
 	}
 	
 	public function Metadata(): array {
@@ -193,10 +136,10 @@ class Authenticator extends DatabaseObject implements \JsonSerializable {
 	public function jsonSerialize(): mixed {
 		// We don't need the user id since users should not be able to query other user's authenticators
 		return [
-			'authenticator_id' => $this->authenticator_id,
+			'authenticatorId' => $this->authenticatorId,
 			'type' => $this->type,
 			'nickname' => $this->nickname,
-			'date_added' => $this->date_added,
+			'dateAdded' => $this->dateAdded,
 			'metadata' => $this->metadata
 		];
 	}

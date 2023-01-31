@@ -1,6 +1,8 @@
 <?php
 
-$sessions = BeaconSession::GetForUser($user);
+use BeaconAPI\v4\Session;
+
+$sessions = Session::Search(['userId' => $user->UserId()], true);
 
 BeaconTemplate::AddStyleSheet('/assets/css/flags.css');
 
@@ -9,7 +11,7 @@ echo '<h3>Active Sessions</h3>';
 echo '<table class="generic" id="session_table">';
 echo '<thead><tr><th>Device</th><th class="address_column low-priority">Address</th><th class="country_column low-priority">Country</th><th class="revoke_column low-priority">Actions</th></tr></thead>';
 
-$user_addr = \BeaconCommon::RemoteAddr();
+$user_addr = BeaconCommon::RemoteAddr();
 $current_session = $session;
 foreach ($sessions as $session) {
 	$remote_ip = $session->RemoteAddr();
@@ -52,7 +54,7 @@ foreach ($sessions as $session) {
 	if ($current_session->SessionHash() === $session->SessionHash()) {
 		$revoke_html = '<span class="self text-lighter">This is your active session</span>';
 	} else {
-		$revoke_html = '<a href="#" sessionHash="' . $session->SessionHash() . '" class="revokeLink">Revoke</a>';
+		$revoke_html = '<a href="#" sessionHash="' . htmlentities($session->SessionHash()) . '" class="revokeLink">Revoke</a>';
 	}
 	
 	$actions = [$flag_html, $revoke_html, 'Address: ' . $address_html];

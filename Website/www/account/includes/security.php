@@ -1,7 +1,9 @@
 <?php
 
+use BeaconAPI\v4\Authenticator;
+
 $two_factor_enabled = BeaconCommon::GetGlobal('2FA Enabled');
-$authenticators = BeaconAPI\Authenticator::GetForUser($user);
+$authenticators = Authenticator::Search(['userId' => $user->UserId()], true);
 $has_authenticators = count($authenticators) > 0;
 
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('jsOTP-es5-min.js'));
@@ -39,7 +41,7 @@ if ($has_authenticators) {
 		echo '<p>Two step authentication is <strong>enabled</strong> for your account. An authenticator code is required to sign in on an untrusted device, and to change or reset your password.</p>';
 		echo '<table class="generic" id="authenticators-table"><thead><tr><th>Nickname</th><th class="low-priority">Date Added (<span id="authenticators_time_zone_name">UTC</span>)</th><th class="min-width">Actions</th></tr></thead><tbody>';
 		foreach ($authenticators as $authenticator) {
-			echo '<tr id="authenticator-' . htmlentities($authenticator->AuthenticatorID()) . '"><td>' . htmlentities($authenticator->Nickname()) . '<div class="row-details">Date Added: <time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></div></td><td class="low-priority"><time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></td><td class="min-width"><button beacon-authenticator-id="' . htmlentities($authenticator->AuthenticatorID()) . '" beacon-authenticator-name="' . html_entity_decode($authenticator->Nickname()) . '" class="delete_authenticator_button destructive">Delete</a></td></tr>';
+			echo '<tr id="authenticator-' . htmlentities($authenticator->AuthenticatorId()) . '"><td>' . htmlentities($authenticator->Nickname()) . '<div class="row-details">Date Added: <time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></div></td><td class="low-priority"><time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></td><td class="min-width"><button beacon-authenticator-id="' . htmlentities($authenticator->AuthenticatorId()) . '" beacon-authenticator-name="' . html_entity_decode($authenticator->Nickname()) . '" class="delete_authenticator_button destructive">Delete</a></td></tr>';
 		}
 		echo '</table></table>';
 	} else {

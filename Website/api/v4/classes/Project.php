@@ -72,7 +72,7 @@ abstract class Project extends DatabaseObject implements \JsonSerializable {
 		}
 	}
 	
-	public static function Fetch(string $uuid): ?DatabaseObject {
+	public static function Fetch(string $uuid): ?static {
 		$schema = static::DatabaseSchema();
 		$user_id = Core::UserId();
 		$database = BeaconCommon::Database();
