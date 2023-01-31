@@ -28,7 +28,11 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		$this->applicationId = $row->Field('application_id');
 		$this->applicationName = $row->Field('application_name');
 		$this->applicationWebsite = $row->Field('application_website');
-		$this->scopes = explode(' ', $row->Field('scopes'));
+		if (is_null($row->Field('scopes')) === false) {
+			$this->scopes = explode(' ', $row->Field('scopes'));
+		} else {
+			$this->scopes = [];
+		}
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -44,7 +48,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('applicationWebsite', ['columnName' => 'application_website', 'accessor' => 'applications.website']),
 			new DatabaseObjectProperty('scopes')
 		], [
-			'INNER JOIN public.applications ON (sessions.application_id = applications.application_id)'
+			'LEFT JOIN public.applications ON (sessions.application_id = applications.application_id)'
 		]);
 	}
 	
@@ -53,6 +57,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'userId');
 		$parameters->AddFromFilter($schema, $filters, 'sessionId');
 		$parameters->orderBy = $schema->Accessor('validUntil') . ' DESC';
+		$parameters->clauses[] = $schema->Comparison('validUntil', '>', 'CURRENT_TIMESTAMP');
 	}
 	
 	public function SessionId(): string {

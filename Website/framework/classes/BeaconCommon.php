@@ -4,7 +4,8 @@ abstract class BeaconCommon {
 	const DBKEY_READONLY = 'reader';
 	const DBKEY_WRITABLE = 'writer';
 	
-	const BeaconAppId = '12877547-7ad0-466f-a001-77815043c96b';
+	const BeaconAppId = '9f823fcf-eb7a-41c0-9e4b-db8ed4396f80';
+	const BeaconWebsiteAppId = '12877547-7ad0-466f-a001-77815043c96b';
 	
 	protected static ?BeaconDatabase $database = null;
 	protected static array $globals = [];

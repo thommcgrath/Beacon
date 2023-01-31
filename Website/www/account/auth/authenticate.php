@@ -10,7 +10,7 @@ $obj = Core::BodyAsJson();
 $deviceId = $obj['deviceId'] ?? '';
 $flowId = $obj['flowId'] ?? null;
 
-$app = Application::Fetch(BeaconCommon::BeaconAppId);
+$app = Application::Fetch(BeaconCommon::BeaconWebsiteAppId);
 $challengeSecret = $app->Secret();
 $challengeExpiration = $obj['challengeExpiration'] ?? 0;
 $challengeRaw = $deviceId . $challengeExpiration . $challengeSecret;

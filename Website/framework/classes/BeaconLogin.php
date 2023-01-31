@@ -33,7 +33,7 @@ class BeaconLogin {
 			
 			$params['challenge'] = $flow->NewChallenge($deviceId, $session->User(), $params['challengeExpiration']);
 		} else {
-			$challengeSecret = Application::Fetch(BeaconCommon::BeaconAppId)->Secret();
+			$challengeSecret = Application::Fetch(BeaconCommon::BeaconWebsiteAppId)->Secret();
 			$challengeRaw = $deviceId . $params['challengeExpiration'] . $challengeSecret;
 			if (is_null($flow) === false) {
 				$challengeRaw .= $flow->FlowId();

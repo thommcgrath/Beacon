@@ -111,7 +111,7 @@ $response = [
 
 if ($no_session === false) {
 	// get a new session
-	$session = Session::Create($user, BeaconCommon::BeaconAppId);
+	$session = Session::Create($user, BeaconCommon::BeaconWebsiteAppId);
 	$response['session_id'] = $session->SessionId();
 }
 
