@@ -8,6 +8,7 @@ class License extends DatabaseObject implements JsonSerializable {
 	protected $userId;
 	protected $purchaseId;
 	protected $productId;
+	protected $productName;
 	protected $productFlags;
 	protected $expiration;
 	
@@ -16,6 +17,7 @@ class License extends DatabaseObject implements JsonSerializable {
 		$this->userId = $row->Field('user_id');
 		$this->purchaseId = $row->Field('purchase_id');
 		$this->productId = $row->Field('product_id');
+		$this->productName = $row->Field('product_name');
 		$this->productFlags = filter_var($row->Field('product_flags'), FILTER_VALIDATE_INT);
 		$this->expiration = $row->Field('expiration');
 	}
@@ -26,6 +28,7 @@ class License extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id', 'accessor' => 'users.user_id']),
 			new DatabaseObjectProperty('purchaseId', ['columnName' => 'purchase_id']),
 			new DatabaseObjectProperty('productId', ['columnName' => 'product_id']),
+			new DatabaseObjectProperty('productName', ['columnName' => 'product_name', 'accessor' => 'products.product_name']),
 			new DatabaseObjectProperty('productFlags', ['columnName' => 'product_flags', 'accessor' => 'products.flags']),
 			new DatabaseObjectProperty('expiration', ['accessor' => "DATE_TRUNC('second', %%TABLE%%.%%COLUMN%%)"])
 		], [
@@ -56,6 +59,10 @@ class License extends DatabaseObject implements JsonSerializable {
 	
 	public function ProductId(): string {
 		return $this->productId;
+	}
+	
+	public function ProductName(): string {
+		return $this->productName;
 	}
 	
 	public function ProductFlags(): int {

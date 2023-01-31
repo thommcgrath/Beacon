@@ -1,15 +1,15 @@
 <?php
 
 $database = BeaconCommon::Database();
-$licenses = $database->Query('SELECT purchase_id, product_id, product_name, purchase_date, EXTRACT(epoch FROM expiration) AS expiration FROM purchased_products WHERE purchaser_email = $1;', $user->EmailID());
-$has_purchased = $licenses->RecordCount() > 0;
-$purchases = $database->Query('SELECT purchase_id, EXTRACT(epoch FROM purchase_date) AS purchase_date, total_paid, currency, refunded FROM purchases WHERE purchaser_email = $1 ORDER BY purchase_date DESC;', $user->EmailID());
-
+$licenses = $user->Licenses();
+$has_purchased = count($licenses) > 0;
 if (!$has_purchased) {
 	echo '<p class="text-center">You have not purchased Beacon Omni.<br><a href="/omni/">Learn more about Beacon Omni here.</a></p>';
 	ShowGiftCodes();
 	return;
 }
+
+$purchases = $database->Query('SELECT purchase_id, EXTRACT(epoch FROM purchase_date) AS purchase_date, total_paid, currency, refunded FROM purchases WHERE purchaser_email = $1 ORDER BY purchase_date DESC;', $user->EmailID());
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 
@@ -86,39 +86,38 @@ function ShowGiftCodes() {
 function ShowLicenses() {
 	global $user, $licenses;
 	
-	if ($licenses->RecordCount() === 0) {
+	if (count($licenses) === 0) {
 		return;
 	}
 	
 	echo '<div id="section-licenses" class="visual-group">';
 	echo '<h3>Licenses</h3>';
 	echo '<table class="generic"><thead><tr><th class="w-50">Product</th><th class="low-priority w-25">Updates Until</th><th class="low-priority w-25">Actions</th></thead>';
-	while ($licenses->EOF() === false) {
-		$purchase_id = $licenses->Field('purchase_id');
-		$product_id = $licenses->Field('product_id');
-		$product_name = $licenses->Field('product_name');
-		$expiration_seconds = $licenses->Field('expiration');
+	foreach ($licenses as $license) {
+		$purchaseId = $license->PurchaseId();
+		$productId = $license->ProductId();
+		$productName = $license->ProductName();
+		$expiration = $license->Expiration();
 		$actions = [
-			'View' => '/account/purchase/' . $purchase_id
+			'View' => '/account/purchase/' . $purchaseId
 		];
 		
-		if (is_null($expiration_seconds)) {
-			$expiration_str = 'Forever';
+		if (is_null($expiration)) {
+			$expirationText = 'Forever';
 		} else {
-			$expiration_str = '<time datetime="' . date('Y-m-d H:i:s.000O', $expiration_seconds) . '">' . htmlentities(date('F jS Y', $expiration_seconds)) . '</time>';
-			$renew_caption = ($expiration_seconds < time() ? 'Renew' : 'Extend');
-			$actions[$renew_caption] = '/omni/buy/' . $product_id;
+			$exp = new DateTime($expiration);
+			$expirationText = '<time datetime="' . htmlentities($exp->format('Y-m-d H:i:s.000O')) . '">' . htmlentities($exp->format('F jS Y')) . '</time>';
+			$renew_caption = ($exp->getTimestamp() < time() ? 'Renew' : 'Extend');
+			$actions[$renew_caption] = '/omni/buy/' . $productId;
 		}
 		
-		$actions_html_members = [];
+		$actionHtmlMembers = [];
 		foreach ($actions as $text => $url) {
-			$actions_html_members[] = '<a class="action-link" href="' . htmlentities($url) . '">' . htmlentities($text) . '</a>';
+			$actionHtmlMembers[] = '<a class="action-link" href="' . htmlentities($url) . '">' . htmlentities($text) . '</a>';
 		}
-		$actions_html = implode(' ', $actions_html_members);
+		$actionsHtml = implode(' ', $actionHtmlMembers);
 		
-		echo '<tr><td class="w-50">' . htmlentities($product_name) . '<div class="row-details"><span class="detail">Receives updates through ' . $expiration_str . '</span><span class="detail">Actions: ' . $actions_html . '</div></td><td class="low-priority w-25">' . $expiration_str . '</td><td class="low-priority w-25 text-center">' . $actions_html . '</td></tr>';
-		
-		$licenses->MoveNext();
+		echo '<tr><td class="w-50">' . htmlentities($productName) . '<div class="row-details"><span class="detail">Receives updates through ' . $expirationText . '</span><span class="detail">Actions: ' . $actionsHtml . '</div></td><td class="low-priority w-25">' . $expirationText . '</td><td class="low-priority w-25 text-center">' . $actionsHtml . '</td></tr>';
 	}
 	echo '</table>';
 	echo '</div>';
