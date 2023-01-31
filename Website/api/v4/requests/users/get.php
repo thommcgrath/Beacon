@@ -11,15 +11,19 @@ function handle_request(array $context): APIResponse {
 	}
 	
 	if ($user->UserId() === Core::UserId()) {
-		$user_info = $user;
+		if (isset($_GET['deviceId']) && ($deviceId = $_GET['deviceId']) && BeaconCommon::IsUUID($deviceId)) {
+			$user->PrepareSignatures($deviceId);
+		}
+		$userInfo = $user;
 	} else {
 		// don't use the regular method that includes lots of values
-		$user_info = [
-			'user_id' => $user->UserId(),
-			'username_full' => $user->Username(true),
-			'public_key' => $user->PublicKey()
+		$userInfo = [
+			'userId' => $user->UserId(),
+			'username' => $user->Username(false),
+			'usernameFull' => $user->Username(true),
+			'publicKey' => $user->PublicKey()
 		];
 	}
 	
-	return APIResponse::NewJSON($user_info, 200);
+	return APIResponse::NewJSON($userInfo, 200);
 }

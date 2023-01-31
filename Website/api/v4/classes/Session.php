@@ -91,7 +91,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		return $this->remoteAgent;
 	}
 	
-	public function ApplicationId(): string {
+	public function ApplicationId(): ?string {
 		return $this->applicationId;
 	}
 	
