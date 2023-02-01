@@ -3,22 +3,24 @@
 namespace BeaconAPI\v4;
 use BeaconCommon, Exception;
 
-trait DatabaseCommonWriterObject {
-	protected $changed_properties = [];
+abstract class MutableDatabaseObject extends DatabaseObject {
+	protected $changedProperties = [];
 	
-	protected static function ValidateProperty(string $property, mixed $value): void {
-	}
-	
-	protected static function PreparePropertyValue(string $propertyName, DatabaseObjectProperty $definition, mixed $value, string &$setter): mixed {
+	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
 		// By default, do nothing
 		return $value;
 	}
 	
-	protected function SetProperty(string $property, mixed $value): void {
-		if ($this->$property !== $value) {
-			static::ValidateProperty($property, $value);
-			$this->$property = $value;
-			$this->changed_properties[] = $property;
+	protected function SetProperty(string|DatabaseObjectProperty $property, mixed $value): void {
+		if (is_string($property)) {
+			$schema = $this->DatabaseSchema();
+			$property = $schema->Property($property);
+		}
+		
+		$propertyName = $property->PropertyName();
+		if ($this->$propertyName !== $value) {
+			$this->$propertyName = static::PreparePropertyValue($property, $value);
+			$this->changedProperties[] = $propertyName;
 		}
 	}
 	
@@ -32,8 +34,8 @@ trait DatabaseCommonWriterObject {
 			$primaryKey = BeaconCommon::GenerateUUID();
 		}
 		
-		$primaryKeyPlaceholder = $primaryKeyColumn->Setter('$1');
-		$values = [static::PreparePropertyValue($primaryKeyName, $primaryKeyColumn, $primaryKey, $primaryKeyPlaceholder)];
+		$primaryKeyPlaceholder = $primaryKeyColumn->Setter(1);
+		$values = [static::PreparePropertyValue($primaryKeyColumn, $primaryKey)];
 		$placeholders = [$primaryKeyPlaceholder];
 		$columns = [$primaryKeyColumn->ColumnName()];
 		$placeholder = 2;
@@ -49,8 +51,8 @@ trait DatabaseCommonWriterObject {
 				continue;
 			}
 			
-			$valuePlaceholder = $definition->Setter('$' . $placeholder++);
-			$value = static::PreparePropertyValue($propertyName, $definition, $properties[$propertyName], $valuePlaceholder);
+			$valuePlaceholder = $definition->Setter($placeholder++);
+			$value = static::PreparePropertyValue($definition, $properties[$propertyName]);
 			
 			$placeholders[] = $valuePlaceholder;
 			$columns[] = $definition->ColumnName();
@@ -85,17 +87,7 @@ trait DatabaseCommonWriterObject {
 	}
 	
 	public function Save(): void {
-		$database = BeaconCommon::Database();
-			
-		if (count($this->changed_properties) === 0) {
-			try {
-				$database->BeginTransaction();
-				$this->SaveChildObjects();
-				$database->Commit();
-			} catch (Exception $err) {
-				$database->Rollback();
-				throw $err;
-			}
+		if ($this->HasPendingChanges() === false) {
 			return;
 		}
 		
@@ -103,36 +95,53 @@ trait DatabaseCommonWriterObject {
 		$placeholder = 1;
 		$assignments = [];
 		$values = [];
-		$uuid = $this->UUID();
-		foreach ($this->changed_properties as $propertyName) {
+		$primaryKey = $this->PrimaryKey();
+		foreach ($this->changedProperties as $propertyName) {
 			$definition = $schema->Property($propertyName);
 			$assignments[] = $definition->ColumnName() . ' = ' . $definition->Setter('$' . $placeholder++);
 			$values[] = $this->$propertyName;
 		}
-		$values[] = $uuid;
+		$values[] = $primaryKey;
 		
-		$database->BeginTransaction();
+		$database = BeaconCommon::Database();
 		try {
-			$primaryKeyColumn = $schema->PrimaryColumn();
-			$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $primaryKeyColumn->ColumnName() . ' = ' . $schema->PrimarySetter('$' . $placeholder++) . ';', $values);
-			$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';', $uuid);
+			$database->BeginTransaction();
+			$rows = null;
+			if (count($this->changedProperties) > 0) {
+				$primaryKeyColumn = $schema->PrimaryColumn();
+				$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET ' . implode(', ', $assignments) . ' WHERE ' . $primaryKeyColumn->ColumnName() . ' = ' . $schema->PrimarySetter($placeholder++) . ';', $values);
+				$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter(1) . ';', $primaryKey);
+			}
 			$this->SaveChildObjects();
 			$database->Commit();
+			
+			if (is_null($rows) === false) {
+				$this->__construct($rows);
+				$this->changedProperties = [];
+			}
+			
+			$this->CleanupChildObjects();
 		} catch (Exception $err) {
-			$database->Rollback();
+			if ($database->InTransaction()) {
+				$database->Rollback();
+			}
 			throw $err;
 		}
-		
-		$this->__construct($rows);
-		$this->changed_properties = [];
 	}
 	
 	protected static function EditableProperties(int $flags): array {
 		return static::DatabaseSchema()->EditableColumns($flags);
 	}
 	
+	protected function HasPendingChanges(): bool {
+		return count($this->changedProperties) > 0;
+	}
+	
 	protected function SaveChildObjects(): void {
-	}	
+	}
+	
+	protected function CleanupChildObjects(): void {
+	}
 }
 
 ?>

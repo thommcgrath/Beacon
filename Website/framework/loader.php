@@ -8,19 +8,21 @@ mb_http_output('UTF-8');
 mb_internal_encoding('UTF-8');
 ini_set('serialize_precision', -1);
 
+// Keep version set to v3, v4 is accessed explicitly
 global $api_version;
 if (isset($_SERVER['API_VERSION'])) {
 	$api_version = $_SERVER['API_VERSION'];
 }
 if (is_int($api_version) === false || isset($api_version) === false || empty($api_version)) {
-	$api_version = 4;
+	$api_version = 3;
 }
 $_SERVER['API_VERSION'] = $api_version;
 
 spl_autoload_register(function($class_name) {
 	$original_class_name = $class_name;
 	
-	$api_root = dirname(__FILE__, 2) . '/api';
+	$apiVersion = $_SERVER['API_VERSION'];
+	$apiRoot = dirname(__FILE__, 2) . '/api';
 	$paths = [
 		dirname(__FILE__) . '/classes'
 	];
@@ -44,24 +46,24 @@ spl_autoload_register(function($class_name) {
 			// Explicit version
 			$version = $matches[1];
 			$class_name = substr($class_name, strlen($version) + 1);
-			$paths[] = "{$api_root}/{$version}/classes";
+			$paths[] = "{$apiRoot}/{$version}/classes";
 		} else {
 			// Old messy style
 			if (str_starts_with($class_name, 'Ark\\')) {
 				$class_name = substr($class_name, 4);
-				$paths[] = "{$api_root}/common/Ark";
+				$paths[] = "{$apiRoot}/common/Ark";
 			} else {
-				$paths[] = "{$api_root}/common";
+				$paths[] = "{$apiRoot}/common";
 			}
 		}
 	} else if (str_starts_with($class_name, 'Ark\\')) {
-		$api_root = dirname(__FILE__, 2) . '/api';
+		$apiRoot = dirname(__FILE__, 2) . '/api';
 		$class_name = substr($class_name, 4);
-		$paths[] = "{$api_root}/v3/ark/classes";
+		$paths[] = "{$apiRoot}/v{$apiVersion}/ark/classes";
 	}
 	
 	// Search the v3 classes last
-	$paths[] = "{$api_root}/v3/classes";
+	$paths[] = "{$apiRoot}/v{$apiVersion}/classes";
 	
 	$filename = str_replace('\\', '/', $class_name) . '.php';
 	foreach ($paths as $path) {

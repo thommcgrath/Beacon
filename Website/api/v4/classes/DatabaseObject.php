@@ -61,6 +61,12 @@ abstract class DatabaseObject {
 		return $desiredPermissions === static::kPermissionRead;
 	}
 	
+	public function PrimaryKey(): string {
+		$primaryKey = static::DatabaseSchema()->PrimaryColumn()->PropertyName();
+		return $this->$primaryKey;
+	}
+	
+	// Deprecated
 	public function UUID(): string {
 		$primary_key = static::DatabaseSchema()->PrimaryColumn()->PropertyName();
 		return $this->$primary_key;

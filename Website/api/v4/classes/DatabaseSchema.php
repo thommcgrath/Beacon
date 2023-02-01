@@ -72,7 +72,7 @@ class DatabaseSchema {
 		return $this->Accessor($this->primaryColumn);
 	}
 	
-	public function PrimarySetter(string $placeholder): string {
+	public function PrimarySetter(string|int $placeholder): string {
 		return $this->Setter($this->primaryColumn, $placeholder);
 	}
 	

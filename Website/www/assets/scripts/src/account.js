@@ -306,42 +306,36 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				} else {
 					msg.message = 'Your password has been changed.';
 				}
-				if (terminateSessions) {
-					msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
-				} else {
-					msg.explanation = 'Changing your password does not sign you out of other devices.';
-				}
+				msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
 				BeaconDialog.show(msg.message, msg.explanation);
 			} catch (e) {
 				console.log(e)
 				BeaconDialog.show('There was an error. Your password may or may not have been changed.');
 			}
 		}).catch((error) => {
+			let errorMessage = 'Unable to change password';
+			let errorExplanation = `There was a ${error.status} error while trying to change your password.`;
+			try {
+				const obj = JSON.parse(error.body);
+				if (obj.message) {
+					errorExplanation = obj.message;
+				}
+			} catch (e) {
+			}
+			
 			switch (error.status) {
 			case 403:
-				BeaconDialog.show('Incorrect Two Step Verification Code', 'Please get a new code from your authenticator app.');
-				break;
-			case 436:
-			case 437:
-			case 439:
-				try {
-					const obj = JSON.parse(error.body);
-					BeaconDialog.show('Unable to change password', obj.message);
-				} catch (e) {
-					BeaconDialog.show('Unable to change password', e.message);
-				}
+				errorMessage = 'Incorrect Two Step Verification Code';
+				errorExplanation = 'Please get a new code from your authenticator app.';
 				break;
 			case 438:
 				known_vulnerable_password = password;
-				BeaconDialog.show('Your password is vulnerable.', 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.');
-				break;
-			case 500:
-				BeaconDialog.show('Password not changed.', 'Your password has not been changed because your current password is not correct.');
-				break;
-			default:
-				BeaconDialog.show('Unable to change password', `There was a ${error.status} error while trying to create your account.`);
+				errorMessage = 'Your password is vulnerable.';
+				errorExplanation = 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.';
 				break;
 			}
+			
+			BeaconDialog.show(errorMessage, errorExplanation);
 		});
 		
 		return false;

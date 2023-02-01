@@ -450,12 +450,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			form.append('allow_vulnerable', passwordAllowVulnerable);
 			form.append('confirm_reset_children', passwordConfirmChildrenReset);
 			form.append('verification_code', passwordAuthenticatorCode);
-			form.append('no_session', 'true');
 			
 			showPage('loading');
 			BeaconWebRequest.post('/account/auth/password', form).then((response) => {
 				try {
-					const obj = JSON.parse(response.body);
 					if (localStorage && loginRemember) {
 						localStorage.setItem('email', passwordEmail);
 					}

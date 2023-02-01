@@ -1,9 +1,9 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCloudStorage, BeaconCommon, BeaconEmail, BeaconEncryption, BeaconRecordSet, BeaconShop, Exception;
+use BeaconCloudStorage, BeaconCommon, BeaconEmail, BeaconEncryption, BeaconRecordSet, BeaconShop, Exception, JsonSerializable;
 
-class User extends DatabaseObject implements \JsonSerializable {
+class User extends MutableDatabaseObject implements JsonSerializable {
 	protected $backupCodes = null;
 	protected $backupCodesAdded = [];
 	protected $backupCodesRemoved = [];
@@ -49,13 +49,13 @@ class User extends DatabaseObject implements \JsonSerializable {
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('public', 'users', [
 			new DatabaseObjectProperty('userId', ['primaryKey' => true, 'columnName' => 'user_id']),
-			new DatabaseObjectProperty('emailId', ['columnName' => 'email_id']),
-			new DatabaseObjectProperty('username'),
-			new DatabaseObjectProperty('publicKey', ['columnName' => 'public_key']),
-			new DatabaseObjectProperty('privateKey', ['columnName' => 'private_key']),
-			new DatabaseObjectProperty('privateKeySalt', ['columnName' => 'private_key_salt']),
-			new DatabaseObjectProperty('privateKeyIterations', ['columnName' => 'private_key_iterations']),
-			new DatabaseObjectProperty('cloudKey', ['columnName' => 'usercloud_key']),
+			new DatabaseObjectProperty('emailId', ['columnName' => 'email_id', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('username', ['editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('publicKey', ['columnName' => 'public_key', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('privateKey', ['columnName' => 'private_key', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('privateKeySalt', ['columnName' => 'private_key_salt', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('privateKeyIterations', ['columnName' => 'private_key_iterations', 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('cloudKey', ['columnName' => 'usercloud_key', 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('banned'),
 			new DatabaseObjectProperty('enabled'),
 			new DatabaseObjectProperty('requiredPasswordChange', ['columnName' => 'require_password_change'])
@@ -91,6 +91,77 @@ class User extends DatabaseObject implements \JsonSerializable {
 		}
 	}
 	
+	public static function Create(array $properties): static {
+		if (BeaconCommon::HasAllKeys($properties, 'publicKey', 'cloudKey') === false) {
+			throw new Exception('Missing required properties.');
+		}
+		$publicKey = BeaconEncryption::PublicKeyToPem($properties['publicKey']);
+		$cloudKey = $properties['cloudKey'];
+		if (BeaconEncryption::IsEncrypted(hex2bin($cloudKey)) === false) {
+			throw new Exception('Cloud key is not encrypted.');
+		}
+		
+		$userId = $properties['userId'] ?? BeaconCommon::GenerateUUID();
+		$database = BeaconCommon::Database();
+		
+		if (BeaconCommon::HasAnyKeys($properties, 'email', 'username', 'privateKey', 'privateKeySalt', 'privateKeyIterations') === false) {
+			// Anonymous
+			$database->BeginTransaction();
+			$database->Query("INSERT INTO public.users (user_id, public_key, usercloud_key) VALUES ($1, $2, $3);", $userId, $publicKey, $cloudKey);
+			$database->Commit();
+			return static::Fetch($userId);
+		}
+		
+		if (BeaconCommon::HasAllKeys('email', 'username', 'privateKey', 'privateKeySalt', 'privateKeyIterations') === false) {
+			throw new Exception('Missing required properties.');
+		}
+		
+		$username = $properties['username'];
+		if (static::ValidateUsername($username) === false) {
+			throw new Exception('Username must not contain a # character.');
+		}
+		
+		$email = strtolower($properties['email']);
+		if (BeaconEmail::IsEmailValid($email) === false) {
+			throw new Exception('Email address is not valid.');
+		}
+		
+		$privateKey = $properties['privateKey'];
+		if (BeaconEncryption::IsEncrypted(hex2bin($privateKey)) === false) {
+			throw new Exception('Private key is not encrypted.');
+		}
+		
+		$privateKeySalt = $properties['privateKeySalt'];
+		$privateKeyIterations = filter_var($properties['privateKeyIterations'], FILTER_VALIDATE_INT);
+		if ($privateKeyIterations === false) {
+			throw new Exception('Property privateKeyIterations should be a number');
+		}
+		
+		$database->BeginTransaction();
+		$database->Query("INSERT INTO public.users (user_id, public_key, usercloud_key, email_id, username, private_key, private_key_salt, private_key_iterations) VALUES ($1, $2, $3, uuid_for_email($4, TRUE), $5, $6, $7, $8);", $userId, $publicKey, $cloudKey, $email, $username, $privateKey, $privateKeySalt, $privateKeyIterations);
+		$database->Commit();
+		
+		return static::Fetch($userId);
+	}
+	
+	public function Edit(array $properties): void {
+		if (empty($properties['email']) === false) {
+			$email = $properties['email'];
+			if (BeaconEmail::IsEmailValid($email) === false) {
+				throw new Exception('Email address is not valid.');
+			}
+			
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			$rows = $database->Query("SELECT uuid_for_email($1, TRUE) AS email_id;", $email);
+			$database->Commit();
+			
+			$properties['emailId'] = $rows->Field('email_id');
+		}
+		
+		parent::Edit($properties);
+	}
+	
 	/* !Basic Properties */
 	
 	public function UserId(): string {
@@ -101,24 +172,21 @@ class User extends DatabaseObject implements \JsonSerializable {
 		return $this->emailId;
 	}
 	
-	public function SetEmailId(string $emailId): bool {
-		if (BeaconCommon::IsUUID($emailId)) {
-			$this->emailId = $emailId;
-			return true;
-		}
-		return false;
+	public function SetEmailId(string $emailId): void {
+		$this->SetProperty('emailId', $emailId);
 	}
 	
-	public function SetEmailAddress(string $email): bool {
-		if (BeaconEmail::IsEmailValid($email)) {
-			$database = BeaconCommon::Database();
-			$database->BeginTransaction();
-			$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
-			$database->Commit();
-			$this->emailId = $results->Field('email_id');
-			return true;
+	public function SetEmailAddress(string $email): void {
+		if (BeaconEmail::IsEmailValid($email) === false) {
+			throw new Exception('Invalid email address.');
 		}
-		return false;
+		
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$rows = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+		$database->Commit();
+		
+		$this->SetEmailId($rows->Field('email_id'));
 	}
 	
 	public function Suffix(): string {
@@ -133,77 +201,21 @@ class User extends DatabaseObject implements \JsonSerializable {
 		return $name;
 	}
 	
-	public function SetUsername(string $username): bool {
-		$this->username = trim($username);
-		return true;
+	public function SetUsername(string $username): void {
+		$username = trim($username);
+		if (static::ValidateUsername($username) === false) {
+			throw new Exception('Invalid username.');
+		}
+		
+		$this->SetProperty('username', $username);
 	}
 	
 	public function PublicKey(): string {
 		return $this->publicKey;
 	}
 	
-	public function SetPublicKey(string $public_key): bool {
-		if (is_null($this->publicKey) || $public_key !== $this->publicKey) {
-			$this->publicKey = $public_key;
-			return true;
-		}
-		return false;
-	}
-	
-	public function PrivateKey(): ?stirng {
+	public function PrivateKey(): ?string {
 		return $this->privateKey;
-	}
-	
-	public function SetPrivateKey(string $encrypted_private_key, string $salt, int $iterations): bool {
-		$this->privateKey = $encrypted_private_key;
-		$this->privateKeySalt = $salt;
-		$this->privateKeyIterations = $iterations;
-		return true;
-	}
-	
-	public function DecryptedPrivateKey(string $password): ?string {
-		$hash = BeaconEncryption::HashFromPassword($password, hex2bin($this->privateKeySalt), $this->privateKeyIterations);
-		try {
-			$decrypted = BeaconEncryption::SymmetricDecrypt($hash, hex2bin($this->privateKey));
-			if (is_null($decrypted)) {
-				return null;
-			}
-			return $decrypted;
-		} catch (Exception $e) {
-			return null;
-		}
-	}
-	
-	public function SetDecryptedPrivateKey(string $password, string $privateKey): bool {
-		$salt = BeaconEncryption::GenerateSalt();
-		$iterations = 12000;
-		$hash = BeaconEncryption::HashFromPassword($password, $salt, $iterations);
-		$encrypted = bin2hex(BeaconEncryption::SymmetricEncrypt($hash, $privateKey, false));
-		$salt = bin2hex($salt);
-		
-		// test if the public key needs to be changed
-		try {
-			$testValue = BeaconCommon::GenerateUUID();
-			$signature = BeaconEncryption::RSASign($privateKey, $testValue);
-			$verified = BeaconEncryption::RSAVerify($this->publicKey, $testValue, $signature);
-		} catch (Exception $err) {
-			$verified = false;
-		}
-		if ($verified === false) {
-			$newPublicKey = BeaconEncryption::ExtractPublicKey($privateKey);
-			if (is_null($newPublicKey) === false) {
-				$this->publicKey = $newPublicKey;
-				$this->SetDecryptedCloudKey(self::GenerateCloudKey());
-			} else {
-				return false;
-			}
-		}
-		
-		$this->privateKeySalt = $salt;
-		$this->privateKeyIterations = $iterations;
-		$this->privateKey = $encrypted;
-		
-		return true;
 	}
 	
 	public function PrivateKeySalt(): ?string {
@@ -223,7 +235,7 @@ class User extends DatabaseObject implements \JsonSerializable {
 		return $this->licenses;
 	}
 	
-	public function LicenseInfo(string $productId): array {
+	public function LicenseForProductId(string $productId): array {
 		$this->LoadLicenses();
 		if (array_key_exists($productId, $this->licenses)) {
 			return $this->licenses[$productId];
@@ -236,11 +248,6 @@ class User extends DatabaseObject implements \JsonSerializable {
 	
 	public function IsEnabled(): bool {
 		return $this->enabled;
-	}
-	
-	public function SetIsEnabled(bool $enabled): bool {
-		$this->enabled = $enabled;
-		return true;
 	}
 	
 	public function CanSignIn(): bool {
@@ -345,36 +352,8 @@ class User extends DatabaseObject implements \JsonSerializable {
 	
 	/* !Cloud Files */
 	
-	public function CloudUserId() {
-		return $this->userId;
-	}
-	
 	public function CloudKey() {
 		return $this->cloudKey;
-	}
-	
-	public function SetCloudKey(string $key, bool $delete_files = true): bool {
-		$this->cloudKey = $key;
-		$this->deleteCloudFiles = $delete_files;
-		return true;
-	}
-	
-	public function DecryptedCloudKey(string $privateKey): ?string {
-		try {
-			return BeaconEncryption::RSADecrypt($privateKey, hex2bin($this->cloudKey));
-		} catch (Exception $err) {
-			return null;
-		}
-	}
-	
-	public function SetDecryptedCloudKey(string $key, bool $delete_files = true): bool {
-		try {
-			$this->cloudKey = bin2hex(BeaconEncryption::RSAEncrypt($this->publicKey, $key));
-			$this->deleteCloudFiles = $delete_files;
-			return true;
-		} catch (Exception $err) {
-			return false;
-		}
 	}
 	
 	public static function GenerateCloudKey(): string {
@@ -399,107 +378,33 @@ class User extends DatabaseObject implements \JsonSerializable {
 		return $this->requirePasswordChange;
 	}
 	
-	public function SetRequiresPasswordChange(bool $required): bool {
-		$this->requirePasswordChange = $required;
-		return true;
-	}
-	
 	public function TestPassword(string $password): bool {
-		$decrypted = $this->DecryptedPrivateKey($password);
-		if (is_null($decrypted)) {
+		$privateKeySalt = hex2bin($this->privateKeySalt);
+		$privateKeyIterations = $this->privateKeyIterations;
+		$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
+		$privateKeyPem = null;
+		try {
+			$privateKeyPem = BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($this->privateKey));
+		} catch (Exception $err) {
 			return false;
 		}
 		
-		if (Core::UsesLegacyEncryption() === false && strtolower(substr($decrypted, 0, 4)) === '8a01') {
-			$this->SetDecryptedPrivateKey($password, $decrypted, Core::UsesLegacyEncryption());
+		if (strtolower(substr($privateKeyPem, 0, 4)) === '8a01') {
+			$privateKeySalt = BeaconEncryption::GenerateSalt();
+			$privateKeyIterations = rand(100000, 111111);
+			$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
+			$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
+				
+			$changes = [
+				'privateKey' => bin2hex($encryptedPrivateKey),
+				'privateKeySalt' => bin2hex($privateKeySalt),
+				'privateKeyIterations' => $privateKeyIterations
+			];
+			
+			$this->Edit($changes);
 		}
 		
 		return true;
-	}
-	
-	public function ReplacePassword(string $password, string $privateKey, ?string $cloudKey): bool {
-		if (empty($this->emailId)) {
-			return false;
-		}
-		
-		if (is_null($cloudKey)) {
-			$cloudKey = static::GenerateCloudKey();
-		}
-		
-		if ($this->SetDecryptedPrivateKey($password, $privateKey)) {
-			$this->SetDecryptedCloudKey($cloudKey);
-			$this->SetRequiresPasswordChange(false);
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	public function AddAuthentication(string $username, string $email, string $password, string $privateKey): bool {
-		if (empty($this->privateKey) == false) {
-			return false;
-		}
-		
-		try {
-			$database = BeaconCommon::Database();
-			$database->BeginTransaction();
-			if (BeaconCommon::IsUUID($email)) {
-				$emailId = $email;
-			} else {
-				$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
-				$emailId = $results->Field('email_id');
-			}
-			
-			if (empty($username)) {
-				if (empty($this->username)) {
-					$database = BeaconCommon::Database();
-					$results = $database->Query('SELECT generate_username() AS username;');
-					$username = $results->Field('username');
-				} else {
-					$username = $this->username;
-				}
-			}
-			
-			$this->SetDecryptedPrivateKey($password, $privateKey);
-			$this->SetDecryptedCloudKey(static::GenerateCloudKey());
-			$this->SetRequiresPasswordChange(false);
-			$database->Commit();
-			
-			$this->username = $username;
-			$this->emailId = $emailId;
-			
-			return true;
-		} catch (Exception $e) {
-			return false;
-		}
-	}
-	
-	public function ChangePassword(string $oldPassword, string $newPassword, bool $regeneratePrivateKey = false): bool {
-		try {
-			$privateKey = $this->DecryptedPrivateKey($oldPassword);
-			if (is_null($privateKey)) {
-				return false;
-			}
-			
-			if ($regeneratePrivateKey) {
-				$cloudKey = $this->DecryptedCloudKey($privateKey);
-				if (is_null($cloudKey)) {
-					return false;
-				}
-				
-				$publicKey = null;
-				$privateKey = null;
-				BeaconEncryption::GenerateKeyPair($publicKey, $privateKey);
-					
-				$this->SetPublicKey($publicKey);
-				$this->SetDecryptedCloudKey($cloudKey, false);
-			}
-			$this->SetDecryptedPrivateKey($newPassword, $privateKey);
-			$this->SetRequiresPasswordChange(false);
-			return true;
-		} catch (Exception $e) {
-			return false;
-		}
 	}
 	
 	/* !User Lookup */
@@ -537,6 +442,10 @@ class User extends DatabaseObject implements \JsonSerializable {
 	
 	/* !Validation */
 	
+	public static function ValidateUsername(string $username): bool {
+		return str_contains($username, '#') === false && strlen($username) < 64;
+	}
+	
 	public static function ValidatePassword(string $password): bool {
 		$passlen = strlen($password);
 		
@@ -561,7 +470,7 @@ class User extends DatabaseObject implements \JsonSerializable {
 	
 	/* !Everything Else */
 	
-	public function Commit(): bool {
+	/*public function Commit(): bool {
 		$original_user = static::Fetch($this->userId);
 		$changes = [];
 		$database = BeaconCommon::Database();
@@ -635,6 +544,29 @@ class User extends DatabaseObject implements \JsonSerializable {
 		$this->backupCodesRemoved = [];
 		
 		return true;
+	}*/
+	
+	protected function HasPendingChanges(): bool {
+		return parent::HasPendingChanges() || count($this->backupCodesAdded) > 0 || count($this->backupCodesRemoved) > 0;
+	}
+	
+	protected function SaveChildObjects(): void {
+		parent::SaveChildObjects();
+		
+		foreach ($this->backupCodesRemoved as $code) {
+			$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
+		}
+		
+		foreach ($this->backupCodesAdded as $code) {
+			$database->Query('INSERT INTO public.user_backup_codes (user_id, code) VALUES ($1, $2);', $this->userId, $code);
+		}
+	}
+	
+	protected function CleanupChildObjects(): void {
+		parent::CleanupChildObjects();
+		
+		$this->backupCodesAdded = [];
+		$this->backupCodesRemoved = [];
 	}
 	
 	public function CheckSignature(string $data, string $signature): bool {
@@ -642,7 +574,7 @@ class User extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public function jsonSerialize(): mixed {
-		$arr = [
+		$json = [
 			'userId' => $this->userId,
 			'username' => $this->username,
 			'usernameFull' => $this->Username(true),
@@ -656,9 +588,9 @@ class User extends DatabaseObject implements \JsonSerializable {
 			'cloudKey' => $this->cloudKey
 		];
 		if (empty($this->expiration) === false) {
-			$arr['expiration'] = $this->expiration;
+			$json['expiration'] = $this->expiration;
 		}
-		return $arr;
+		return $json;
 	}
 	
 	public function LoadLicenses(): void {
