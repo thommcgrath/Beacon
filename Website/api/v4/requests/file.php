@@ -4,21 +4,21 @@ BeaconAPI::Authorize();
 	
 function handleRequest(array $context): APIResponse {
 	$user = BeaconAPI::User();
-	$prefix = '/' . $user->CloudUserID();
+	$prefix = '/' . $user->UserID();
 	$prefix_len = strlen($prefix);
 	$remote_path = $prefix . '/';
-	if (isset($context['pathParameters']['file_path'])) {
-		$remote_path .= $context['pathParameters']['file_path'];
+	if (isset($context['pathParameters']['filePath'])) {
+		$remote_path .= $context['pathParameters']['filePath'];
 	}
 	
-	$prohibited_path = '/' . $user->CloudUserID() . '/Documents/';
+	$prohibited_path = '/' . $user->UserID() . '/Documents/';
 	if (str_starts_with($remote_path, $prohibited_path)) {
-		BeaconAPI::ReplyError('Use the document API for accessing documents', null, 446);
+		BeaconAPI::ReplyError('Use the projects API for accessing projects', null, 446);
 	}
 	
 	switch ($context['routeKey']) {
 	case 'GET /file':
-	case 'GET /file/{...file_path}':
+	case 'GET /file/{...filePath}':
 		$dir = str_ends_with($remote_path, '/');
 		if ($dir) {
 			$list = BeaconCloudStorage::ListFiles($remote_path);
@@ -36,8 +36,8 @@ function handleRequest(array $context): APIResponse {
 			BeaconCloudStorage::StreamFile($remote_path);
 		}
 		break;
-	case 'POST /file/{...file_path}':
-	case 'PUT /file/{...file_path}':
+	case 'POST /file/{...filePath}':
+	case 'PUT /file/{...filePath}':
 		if (BeaconCloudStorage::PutFile($remote_path, BeaconAPI::Body())) {
 			$details = BeaconCloudStorage::DetailsForFile($remote_path);
 			$details['path'] = substr($details['path'], $prefix_len);
@@ -46,7 +46,7 @@ function handleRequest(array $context): APIResponse {
 			BeaconAPI::ReplyError('Something went wrong');
 		}
 		break;
-	case 'DELETE /file/{...file_path}':
+	case 'DELETE /file/{...filePath}':
 		BeaconCloudStorage::DeleteFile($remote_path);
 		break;
 	}

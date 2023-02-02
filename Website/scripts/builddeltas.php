@@ -10,7 +10,7 @@ if (array_key_exists('delta_version', $options) === false) {
 	echo "Delta version should be an integer.\n";
 	exit;
 }
-$delta_version = intval($options['delta_version']);
+$delta_version = filter_var($options['delta_version'], FILTER_VALIDATE_INT);
 switch ($delta_version) {
 case 6:
 	$api_version = 3;
@@ -83,6 +83,7 @@ if (count($required_versions) == 0) {
 	exit;
 }
 
+$cdn = BeaconCDN::DeltasZone();
 foreach ($required_versions as $version) {
 	echo "Building delta for version $version...\n";
 	
@@ -119,9 +120,12 @@ foreach ($required_versions as $version) {
 	$full_path = $prefix . '/Complete.beacondata?t=' . $timestamp . '&bcdn_filename=Complete.beacondata';
 	$full_prepared = gzencode(json_encode($full_data));
 	$full_size = strlen($full_prepared);
-	if (UploadFile($full_path, $full_prepared) === false) {
-		echo "Unable to upload $full_path\n";
+	try {
+		$cdn->PutFile($full_path, $full_prepared);
+	} catch (Exception $err) {
 		$database->Rollback();
+		echo "Unable to upload {$full_path}\n";
+		echo $err->getMessage() . "\n";
 		continue;
 	}
 	
@@ -129,9 +133,12 @@ foreach ($required_versions as $version) {
 		$delta_path = $prefix . '/' . $last_database_update->format('YmdHis') . '.beacondata?bcdn_filename=' . $last_database_update->format('YmdHis') . '.beacondata';
 		$delta_prepared = gzencode(json_encode($delta_data));
 		$delta_size = strlen($delta_prepared);
-		if (UploadFile($delta_path, $delta_prepared) === false) {
-			echo "Unable to upload $delta_path\n";
+		try {
+			$cdn->PutFile($delta_path, $delta_prepared);
+		} catch (Exception $err) {
 			$database->Rollback();
+			echo "Unable to upload {$delta_path}\n";
+			echo $err->getMessage() . "\n";
 			continue;
 		}
 	} else {
@@ -210,32 +217,6 @@ function DataForVersion(int $version, $since) {
 		break;
 	}
 	return $arr;
-}
-
-function UploadFile(string $path, string $data) {
-	if (substr($path, 0, 1) === '/') {
-		$path = substr($path, 1);
-	}
-	$url = 'https://ny.storage.bunnycdn.com/beacon-updates/' . $path;
-	
-	$headers = [
-		'AccessKey: ' . BeaconCommon::GetGlobal('BunnyCDN_Deltas_Password'),
-		'Content-Type: application/octet-stream'
-	];
-	
-	$curl = curl_init($url);
-	curl_setopt($curl, CURLOPT_HEADER, true);
-	curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
-	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
-	
-	$response = curl_exec($curl);
-	$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
-	
-	return $status === 201;
 }
 
 ?>
