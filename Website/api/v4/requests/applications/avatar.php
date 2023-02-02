@@ -43,13 +43,15 @@ function handleRequest(array $context): APIResponse {
 		$magick = new Imagick();
 		$magick->setBackgroundColor('none');
 		$magick->readImageBlob($original);
-		$magick->setImageFormat('png24');
+		if ($magick->getImageColorspace() !== Imagick::COLORSPACE_SRGB) {
+			$magick->transformImageColorspace(Imagick::COLORSPACE_SRGB);
+		}
 		$magick->resizeImage($size, $size, Imagick::FILTER_BOX, 1, true);
 		$actualWidth = $magick->getImageWidth();
 		$actualHeight = $magick->getImageHeight();
 		
 		$canvas = new Imagick();
-		$canvas->newImage($size, $size, 'none', 'png');
+		$canvas->newImage($size, $size, 'white', 'png');
 		$canvas->compositeImage($magick, Imagick::COMPOSITE_OVER, floor(($size - $actualWidth) / 2), floor(($size - $actualHeight) / 2));
 		
 		$magick->clear();
@@ -62,6 +64,8 @@ function handleRequest(array $context): APIResponse {
 		$canvas->destroy();
 		$canvas = null;
 	}
+	
+	//return new APIResponse(200, $uploads['1024px.png'], ['Content-Type' => 'image/png']);
 	
 	$cdn = BeaconCDN::AssetsZone();
 	foreach ($uploads as $filename => $data) {

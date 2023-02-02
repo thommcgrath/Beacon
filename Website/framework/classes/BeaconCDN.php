@@ -25,7 +25,7 @@ class BeaconCDN {
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'AccessKey' => $this->apiKey
+			'AccessKey: ' . $this->apiKey
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -53,23 +53,22 @@ class BeaconCDN {
 			$path = substr($path, 1);
 		}
 		
-		/*$curl = curl_init("https://{$this->endpoint}/{$this->zoneName}/{$path}");
+		$curl = curl_init("https://{$this->endpoint}/{$this->zoneName}/{$path}");
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+		curl_setopt($curl, CURLOPT_HTTPHEADER, [
+			'AccessKey: ' . $this->apiKey,
+			//'Checksum: ' . hash('sha256', $content),
+			'Content-Type: application/octet-stream'
+		]);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
-		curl_setopt($curl, CURLOPT_HEADER, true);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'AccessKey' => $this->apiKey,
-			'Checksum' => hash('sha256', $content),
-			'Content-Type' => 'application/octet-stream'
-		]);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
 		
 		if ($http_status !== 201) {
-			throw new Exception($response);
+			throw new Exception('File was not accepted by BunnyCDN');
 		}
 		
 		$purgeUrl = urlencode("https://{$this->zoneDomain}/{$path}");
@@ -77,11 +76,11 @@ class BeaconCDN {
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'AccessKey' => BeaconCommon::GetGlobal('BunnyCDN API Key')
+			'AccessKey: ' . BeaconCommon::GetGlobal('BunnyCDN API Key')
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);*/
+		curl_close($curl);
 	}
 	
 	public function DeleteFile(string $path): void {
@@ -89,11 +88,11 @@ class BeaconCDN {
 			$path = substr($path, 1);
 		}
 		
-		/*$curl = curl_init("https://{$this->endpoint}/{$this->zoneName}/{$path}");
+		$curl = curl_init("https://{$this->endpoint}/{$this->zoneName}/{$path}");
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'AccessKey' => $this->apiKey
+			'AccessKey: ' . $this->apiKey
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -101,7 +100,7 @@ class BeaconCDN {
 		
 		if ($http_status !== 200) {
 			throw new Exception($response);
-		}*/
+		}
 	}
 	
 	public function GetFile(string $path): string {
@@ -113,7 +112,7 @@ class BeaconCDN {
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, [
-			'AccessKey' => $this->apiKey
+			'AccessKey: ' . $this->apiKey
 		]);
 		$response = curl_exec($curl);
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
