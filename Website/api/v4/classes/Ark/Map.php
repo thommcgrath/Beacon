@@ -6,7 +6,7 @@ use BeaconCommon, BeaconRecordSet;
 
 class Map extends DatabaseObject implements \JsonSerializable {
 	protected $mapId = null;
-	protected $modId = null;
+	protected $contentPackId = null;
 	protected $label = null;
 	protected $arkIdentifier = null;
 	protected $difficultyScale = null;
@@ -16,7 +16,7 @@ class Map extends DatabaseObject implements \JsonSerializable {
 	
 	public function __construct(BeaconRecordSet $row) {
 		$this->mapId = $row->Field('map_id');
-		$this->modId = $row->Field('mod_id');
+		$this->contentPackId = $row->Field('mod_id');
 		$this->label = $row->Field('label');
 		$this->arkIdentifier = $row->Field('ark_identifier');
 		$this->difficultyScale = filter_var($row->Field('difficulty_scale'), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? 4.0;
@@ -28,7 +28,7 @@ class Map extends DatabaseObject implements \JsonSerializable {
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'maps', [
 			new DatabaseObjectProperty('mapId', ['primaryKey' => true, 'columnName' => 'map_id']),
-			new DatabaseObjectProperty('modId', ['columnName' => 'mod_id']),
+			new DatabaseObjectProperty('contentPackId', ['columnName' => 'mod_id']),
 			new DatabaseObjectProperty('label'),
 			new DatabaseObjectProperty('arkIdentifier', ['columnName' => 'ark_identifier']),
 			new DatabaseObjectProperty('difficultyScale', ['columnName' => 'difficulty_scale']),
@@ -43,11 +43,21 @@ class Map extends DatabaseObject implements \JsonSerializable {
 		$parameters->allowAll = true;
 		$parameters->orderBy = $schema->Accessor('isOfficial') . ' DESC, ' . $schema->Accessor('sortOrder') . ', ' . $schema->Accessor('label');
 		$parameters->AddFromFilter($schema, $filters, 'arkIdentifier');
+		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		
 		if (isset($filters['mask'])) {
 			$maskProperty = $schema->Property('mask');
 			$parameters->clauses[] = '(' . $schema->Setter($maskProperty, $parameters->placeholder++) . ' & ' . $schema->Accessor($maskProperty) . ') = ' . $schema->Accessor($maskProperty);
 			$parameters->values[] = $filters['mask'];
+		}
+		
+		if (isset($filters['contentPackId'])) {
+			if (BeaconCommon::IsUUID($filters['contentPackId']) === true) {
+				$parameters->clauses[] = $schema->Comparison('contentPackId', '=', $parameters->placeholder++);
+			} else {
+				$parameters->clauses[] = $schema->Comparison('contentPackSteamId', '=', $parameters->placeholder++);
+			}
+			$parameters->values[] = $filters['contentPackId'];
 		}
 	}
 	
@@ -95,7 +105,7 @@ class Map extends DatabaseObject implements \JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'mapId' => $this->mapId,
-			'modId' => $this->modId,
+			'contentPackId' => $this->contentPackId,
 			'label' => $this->label,
 			'arkIdentifier' => $this->arkIdentifier,
 			'difficultyScale' => $this->difficultyScale,

@@ -28,6 +28,7 @@ class Color extends DatabaseObject implements \JsonSerializable {
 		
 		$schema = static::DatabaseSchema();
 		$parameters->AddFromFilter($schema, $filters, 'code');
+		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 	}
 	
 	/*protected static function SQLColumns() {

@@ -33,9 +33,11 @@ class Event extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+		$schema = static::DatabaseSchema();
 		$parameters->allowAll = true;
 		$parameters->orderBy = 'event_name';
-		$parameters->AddFromFilter(static::DatabaseSchema(), $filters, 'arkCode');
+		$parameters->AddFromFilter($schema, $filters, 'arkCode');
+		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 	}
 	
 	public static function Fetch(string $uuid): ?static {

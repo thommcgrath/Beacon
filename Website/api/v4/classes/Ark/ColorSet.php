@@ -24,9 +24,11 @@ class ColorSet extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+		$schema = static::DatabaseSchema();
 		$parameters->allowAll = true;
 		$parameters->orderBy = 'label';
-		$parameters->AddFromFilter(static::DatabaseSchema(), $filters, 'classString');
+		$parameters->AddFromFilter($schema, $filters, 'classString');
+		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 	}
 	
 	/*protected static function SQLColumns() {

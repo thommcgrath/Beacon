@@ -12,6 +12,9 @@ if (array_key_exists('delta_version', $options) === false) {
 }
 $delta_version = filter_var($options['delta_version'], FILTER_VALIDATE_INT);
 switch ($delta_version) {
+case 7:
+	// Don't change $api_version, it affects how the Ark namespace behaves in v3 and lower.
+	break;
 case 6:
 	$api_version = 3;
 	break;
@@ -34,6 +37,8 @@ while (ob_get_level() > 0) {
 	ob_end_clean();
 }
 
+$apiRoot = dirname(__FILE__, 2) . '/api';
+
 $database = BeaconCommon::Database();
 $sem = sem_get(crc32($database->DatabaseName() . $delta_version), 1);
 if (sem_acquire($sem) === false) {
@@ -51,12 +56,12 @@ if ($rows->RecordCount() > 0) {
 	$database->Rollback();
 }
 
-$last_database_update = BeaconCommon::NewestUpdateTimestamp();
+$lastDatabaseUpdate = BeaconCommon::NewestUpdateTimestamp();
 $cutoff = new DateTime();
 $cutoff->sub(new DateInterval('PT15M'));
 
-if ($force == false && $last_database_update >= $cutoff) {
-	$ready = clone $last_database_update;
+if ($force == false && $lastDatabaseUpdate >= $cutoff) {
+	$ready = clone $lastDatabaseUpdate;
 	$ready->add(new DateInterval('PT15M'));
 	echo "Database has changes that will be ready at " . $ready->format('Y-m-d H:i:s') . " UTC if nothing else changes.\n";
 	sem_release($sem);
@@ -64,7 +69,7 @@ if ($force == false && $last_database_update >= $cutoff) {
 }
 
 $required_versions = [$delta_version];
-$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d H:i:sO'));
+$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $lastDatabaseUpdate->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
 		$version = $results->Field('version');
@@ -87,11 +92,16 @@ $cdn = BeaconCDN::DeltasZone();
 foreach ($required_versions as $version) {
 	echo "Building delta for version $version...\n";
 	
+	if ($version >= 7) {
+		include("$apiRoot/v4/includes/builddeltas.php");
+		continue;
+	}
+	
 	$full_data = DataForVersion($version, null);
 	if ($version === 5) {
-		$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+		$full_data['timestamp'] = $lastDatabaseUpdate->format('Y-m-d H:i:s');
 	} else {
-		$full_data['timestamp'] = $last_database_update->getTimestamp();
+		$full_data['timestamp'] = $lastDatabaseUpdate->getTimestamp();
 	}
 	
 	$results = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1 AND type = \'Delta\';', $version);
@@ -100,16 +110,16 @@ foreach ($required_versions as $version) {
 		
 		$delta_data = DataForVersion($version, $since);
 		if ($version === 5) {
-			$delta_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+			$delta_data['timestamp'] = $lastDatabaseUpdate->format('Y-m-d H:i:s');
 		} else {
-			$delta_data['timestamp'] = $last_database_update->getTimestamp();
+			$delta_data['timestamp'] = $lastDatabaseUpdate->getTimestamp();
 		}
 	} else {
 		$delta_data = null;
 	}
 	
 	$prefix = '/v' . $version;
-	$timestamp = $last_database_update->format('U');
+	$timestamp = $lastDatabaseUpdate->format('U');
 	if (BeaconCommon::InProduction() == false) {
 		$prefix .= '/' . BeaconCommon::EnvironmentName();
 		$timestamp += rand(-1800,1800);
@@ -130,7 +140,7 @@ foreach ($required_versions as $version) {
 	}
 	
 	if (is_null($delta_data) == false) {
-		$delta_path = $prefix . '/' . $last_database_update->format('YmdHis') . '.beacondata?bcdn_filename=' . $last_database_update->format('YmdHis') . '.beacondata';
+		$delta_path = $prefix . '/' . $lastDatabaseUpdate->format('YmdHis') . '.beacondata?bcdn_filename=' . $lastDatabaseUpdate->format('YmdHis') . '.beacondata';
 		$delta_prepared = gzencode(json_encode($delta_data));
 		$delta_size = strlen($delta_prepared);
 		try {
@@ -148,11 +158,11 @@ foreach ($required_versions as $version) {
 	
 	$results = $database->Query('SELECT file_id FROM update_files WHERE version = $1 AND type = \'Complete\';', $version);
 	if ($results->RecordCount() == 1) {
-		$database->Query('UPDATE update_files SET created = $2, path = $3, size = $4 WHERE file_id = $1;', $results->Field('file_id'), $last_database_update->format('Y-m-d H:i:sO'), $full_path, $full_size);
+		$database->Query('UPDATE update_files SET created = $2, path = $3, size = $4 WHERE file_id = $1;', $results->Field('file_id'), $lastDatabaseUpdate->format('Y-m-d H:i:sO'), $full_path, $full_size);
 	} else {
-		$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Complete\');', $last_database_update->format('Y-m-d H:i:sO'), $version, $full_path, $full_size);
+		$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Complete\');', $lastDatabaseUpdate->format('Y-m-d H:i:sO'), $version, $full_path, $full_size);
 	}
-	$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Delta\');', $last_database_update->format('Y-m-d H:i:sO'), $version, $delta_path, $delta_size);
+	$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Delta\');', $lastDatabaseUpdate->format('Y-m-d H:i:sO'), $version, $delta_path, $delta_size);
 	$database->Commit();
 	
 	echo "Delta for version $version uploaded to $delta_path\n";
@@ -161,7 +171,7 @@ foreach ($required_versions as $version) {
 sem_release($sem);
 exit;
 
-function DataForVersion(int $version, $since) {
+function DataForVersion(int $version, $since): array {
 	$arr = null;
 	switch ($version) {
 	case 6:
