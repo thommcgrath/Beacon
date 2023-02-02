@@ -15,6 +15,9 @@ Core::RegisterRoutes(
 			'PATCH' => 'applications/edit',
 			'DELETE' => 'applications/delete'
 		],
+		'/applications/{applicationId}/avatar' => [
+			'PUT' => 'applications/avatar'
+		],
 		'/ark/projects/{projectId}/generatedLines' => [
 			'GET' => 'ark/generate',
 			'POST' => 'ark/generate'

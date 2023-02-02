@@ -134,6 +134,11 @@ class Application extends DatabaseObject implements JsonSerializable {
 			$values[] = $properties['name'];
 		}
 		
+		if (isset($properties['iconFilename']) && $properties['iconFilename'] !== $this->iconFilename) {
+			$assignments[] = 'icon_filename = $' . $placeholder++;
+			$values[] = $properties['iconFilename'];
+		}
+		
 		if (isset($properties['website']) && $properties['website'] !== $this->website) {
 			$website = $properties['website'];
 			if (filter_var($website, FILTER_VALIDATE_URL) === false) {
@@ -256,6 +261,9 @@ class Application extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public function IconUrl(?int $size = null): string {
+		if (is_null($size)) {
+			$size = 1024;
+		}
 		if ($size <= 32) {
 			$sizeSpec = '32px';
 		} else if ($size <= 64) {
