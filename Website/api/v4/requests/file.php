@@ -2,13 +2,13 @@
 
 BeaconAPI::Authorize();
 	
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$user = BeaconAPI::User();
 	$prefix = '/' . $user->CloudUserID();
 	$prefix_len = strlen($prefix);
 	$remote_path = $prefix . '/';
-	if (isset($context['path_parameters']['file_path'])) {
-		$remote_path .= $context['path_parameters']['file_path'];
+	if (isset($context['pathParameters']['file_path'])) {
+		$remote_path .= $context['pathParameters']['file_path'];
 	}
 	
 	$prohibited_path = '/' . $user->CloudUserID() . '/Documents/';
@@ -16,7 +16,7 @@ function handle_request(array $context): void {
 		BeaconAPI::ReplyError('Use the document API for accessing documents', null, 446);
 	}
 	
-	switch ($context['route_key']) {
+	switch ($context['routeKey']) {
 	case 'GET /file':
 	case 'GET /file/{...file_path}':
 		$dir = str_ends_with($remote_path, '/');

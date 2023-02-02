@@ -2,7 +2,7 @@
 
 use BeaconAPI\v4\{APIResponse, Core, EmailVerificationCode, User, UserGenerator};
 
-function handle_request(array $context): APIResponse {
+function handleRequest(array $context): APIResponse {
 	if (Core::IsJsonContentType() === false) {
 		return APIResponse::NewJSONError('Send a JSON payload', null, 400);
 	}
@@ -26,8 +26,8 @@ function handle_request(array $context): APIResponse {
 		return APIResponse::NewJSONError('Do not include user id', $payload, 400);
 	}
 	
-	if ($context['route_key'] === 'PUT /users/{userId}') {
-		$userId = $context['path_parameters']['userId'];
+	if ($context['routeKey'] === 'PUT /users/{userId}') {
+		$userId = $context['pathParameters']['userId'];
 		$user = User::Fetch($userId);
 		if (is_null($user) === false) {
 			return APIResponse::NewJSONError('User already exists', $payload, 400);

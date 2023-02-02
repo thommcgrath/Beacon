@@ -2,7 +2,7 @@
 
 use BeaconAPI\v4\{Application, ApplicationAuthFlow, APIResponse, Core};
 
-function handle_request(array $context): APIResponse {
+function handleRequest(array $context): APIResponse {
 	if (BeaconCommon::HasAllKeys($_GET, 'client_id', 'redirect_uri', 'state', 'response_type', 'scope') === false) {
 		return APIResponse::NewJsonError('Missing parameters', null, 400);
 	}

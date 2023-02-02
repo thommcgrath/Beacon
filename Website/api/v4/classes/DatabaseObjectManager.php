@@ -150,7 +150,7 @@ class DatabaseObjectManager {
 	}
 	
 	public function HandleFetch(array $context): APIResponse {
-		$uuid = $context['path_parameters'][$this->varName];
+		$uuid = $context['pathParameters'][$this->varName];
 		try {
 			$obj = $this->className::Fetch($uuid);
 			if ($obj) {

@@ -3,8 +3,8 @@
 use BeaconAPI\v4\{APIResponse, Core, Project, User};
 Core::Authorize(Core::kAuthFlagOptional);
 	
-function handle_request(array $context): APIResponse {
-	$project_id = $context['path_parameters']['projectId'];
+function handleRequest(array $context): APIResponse {
+	$project_id = $context['pathParameters']['projectId'];
 	$authorized_user_id = Core::UserId();
 		
 	if (!BeaconCommon::IsUUID($project_id)) {
@@ -16,7 +16,7 @@ function handle_request(array $context): APIResponse {
 		return APIResponse::NewJSONError('Project not found', $project_id, 404);
 	}
 	
-	switch ($context['route_key']) {
+	switch ($context['routeKey']) {
 	case 'GET /projects/{projectId}/metadata':
 		return APIResponse::NewJSON($project, 200);
 	case 'GET /projects/{projectId}':
@@ -27,7 +27,7 @@ function handle_request(array $context): APIResponse {
 	case 'GET /projects/{projectId}/versions':
 		return APIResponse::NewJSON($project->Versions(), 200);
 	case 'GET /projects/{projectId}/versions/{versionId}':
-		$version_id = $context['path_parameters']['versionId'];
+		$version_id = $context['pathParameters']['versionId'];
 		return HandleDocumentDataRequest($project, $version_id);
 	}
 }

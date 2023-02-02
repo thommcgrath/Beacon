@@ -2,9 +2,9 @@
 
 BeaconAPI::Authorize();
 	
-function handle_request(array $context): void {
-	if (isset($context['path_parameters']['workshop_id'])) {
-		$workshop_id = $context['path_parameters']['workshop_id'];
+function handleRequest(array $context): APIResponse {
+	if (isset($context['pathParameters']['workshop_id'])) {
+		$workshop_id = $context['pathParameters']['workshop_id'];
 	} else if (BeaconAPI::ContentType() === 'text/plain') {
 		$workshop_id = BeaconAPI::Body();
 	} else {

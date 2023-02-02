@@ -6,8 +6,8 @@
 
 use BeaconAPI\v4\{APIResponse, APIResponseBatch, Core, Project, User};
 
-function handle_request(array $context): APIResponse {
-	$identifier = $context['path_parameters']['userId'];
+function handleRequest(array $context): APIResponse {
+	$identifier = $context['pathParameters']['userId'];
 	$authenticatedUser = User::Fetch($identifier);
 	if (is_null($authenticatedUser)) {
 		return APIResponse::NewJsonError('User not found', $identifier, 404);

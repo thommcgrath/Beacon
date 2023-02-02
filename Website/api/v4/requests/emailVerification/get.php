@@ -2,8 +2,8 @@
 
 use BeaconAPI\v4\{APIResponse, Core, EmailVerificationCode};
 
-function handle_request(array $context): APIResponse {
-	$email = $context['path_parameters']['email'];
+function handleRequest(array $context): APIResponse {
+	$email = $context['pathParameters']['email'];
 	if (BeaconEmail::IsEmailValid($email) === false) {
 		return APIResponse::NewJSONError('Malformed email address', $email, 400);
 	}

@@ -2,9 +2,9 @@
 
 BeaconAPI::Authorize();
 	
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$user_id = BeaconAPI::UserID();
-	$provider = $context['path_parameters']['provider'];
+	$provider = $context['pathParameters']['provider'];
 	
 	$oauth = Sentinel\OAuth::Lookup($user_id, $provider);
 	if ($oauth && $oauth->Test(true)) {

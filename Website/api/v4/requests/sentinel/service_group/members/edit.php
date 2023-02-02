@@ -2,10 +2,10 @@
 
 BeaconAPI::Authorize();
 	
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$user_id = BeaconAPI::UserID();
-	$group_id = $context['path_parameters']['group_id'];
-	$group = Sentinel\ServiceGroup::GetByGroupID($context['path_parameters']['group_id']);
+	$group_id = $context['pathParameters']['group_id'];
+	$group = Sentinel\ServiceGroup::GetByGroupID($context['pathParameters']['group_id']);
 	if (is_null($group) || $group->HasPermission($user_id, Sentinel\ServiceGroup::PermissionEdit) === false) {
 		BeaconAPI::ReplyError('Unauthorized', null, 401);
 	}

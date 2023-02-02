@@ -1,6 +1,6 @@
 <?php
 
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$color_sets = Ark\ColorSet::GetAll();
 	BeaconAPI::ReplySuccess($color_sets);
 }

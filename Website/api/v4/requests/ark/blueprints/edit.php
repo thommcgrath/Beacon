@@ -8,7 +8,7 @@
 
 BeaconAPI::Authorize();
 
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$database = \BeaconCommon::Database();
 	$user_id = BeaconAPI::UserID();
 	$blueprints = BeaconAPI::JSONPayload();

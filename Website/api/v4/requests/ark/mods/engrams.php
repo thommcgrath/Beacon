@@ -1,7 +1,7 @@
 <?php
 
-function handle_request(array $context): void {
-	$mod_id = $context['path_parameters']['modId'];
+function handleRequest(array $context): APIResponse {
+	$mod_id = $context['pathParameters']['modId'];
 	
 	$filters = $_GET;
 	if (BeaconCommon::IsUUID($mod_id)) {

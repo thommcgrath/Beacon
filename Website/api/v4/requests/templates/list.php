@@ -2,7 +2,7 @@
 
 use BeaconAPI\v4\{APIResponse, Template};
 
-function handle_request(array $context): APIResponse {
+function handleRequest(array $context): APIResponse {
 	return APIResponse::NewJSON(Template::Search($_GET), 200);
 }
 

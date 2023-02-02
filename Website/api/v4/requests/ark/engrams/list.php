@@ -1,10 +1,10 @@
 <?php
 
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$filters = $_GET;
 	
-	if ($context['route_key'] === 'GET /ark/mods/{modId}/engrams') {
-		$filters['mod_id'] = $context['path_parameters']['modId'];
+	if ($context['routeKey'] === 'GET /ark/mods/{modId}/engrams') {
+		$filters['mod_id'] = $context['pathParameters']['modId'];
 	}
 	
 	BeaconAPI::ReplySuccess(Ark\Engram::Search($filters));

@@ -3,8 +3,8 @@
 use BeaconAPI\v4\{Core, User, APIResponse};
 Core::Authorize('user:read');
 
-function handle_request(array $context): APIResponse {
-	$identifier = $context['path_parameters']['userId'];
+function handleRequest(array $context): APIResponse {
+	$identifier = $context['pathParameters']['userId'];
 	$user = User::Fetch($identifier);
 	if (is_null($user)) {
 		return APIResponse::NewJSONError('User not found', $identifier, 404);

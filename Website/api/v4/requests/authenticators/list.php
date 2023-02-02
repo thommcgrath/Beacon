@@ -2,7 +2,7 @@
 
 BeaconAPI::Authorize();
 	
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$user_id = BeaconAPI::UserID();
 	$type = null;
 	if (isset($_GET['type']) && empty($_GET['type']) === false) {

@@ -3,8 +3,8 @@
 use BeaconAPI\v4\{APIResponse, APIResponseBatch, Core, Project, User};
 Core::Authorize();
 	
-function handle_request(array $context): APIResponse {
-	if ($context['route_key'] === 'DELETE /projects') {
+function handleRequest(array $context): APIResponse {
+	if ($context['routeKey'] === 'DELETE /projects') {
 		$project_ids = Core::BodyAsJSON();
 		if (is_array($project_ids) === false || BeaconCommon::IsAssoc($project_ids)) {
 			return APIResponse::NewJSONError('Send an array of project uuids', $project_ids, 400);
@@ -17,7 +17,7 @@ function handle_request(array $context): APIResponse {
 		}
 		return $responses;
 	} else {
-		return DeleteProject($context['path_parameters']['projectId'], Core::UserId());
+		return DeleteProject($context['pathParameters']['projectId'], Core::UserId());
 	}
 }
 

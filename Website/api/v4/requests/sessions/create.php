@@ -7,7 +7,7 @@ use BeaconAPI\v4\{Application, ApplicationAuthFlow, APIResponse, Core, Session, 
 // For OAuth, the redemption request will include the client id and secret
 // For password, we cannot simply include the secret so a challenge is needed.
 	
-function handle_request(array $context): APIResponse {
+function handleRequest(array $context): APIResponse {
 	$obj = Core::BodyAsJSON();
 	if (BeaconCommon::HasAllKeys($obj, 'email', 'password', 'client_id', 'signature')) {
 		// Password auth

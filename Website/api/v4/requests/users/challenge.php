@@ -6,7 +6,7 @@
 
 use BeaconAPI\v4\{APIResponse, Core, User};
 
-function handle_request(array $context): APIResponse {
+function handleRequest(array $context): APIResponse {
 	$identifier = $context['pathParameters']['userId'];
 	$user = User::Fetch($identifier);
 	if (is_null($user)) {

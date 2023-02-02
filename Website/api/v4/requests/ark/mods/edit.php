@@ -2,7 +2,7 @@
 
 BeaconAPI::Authorize();
 	
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$user_id = BeaconAPI::UserID();
 		
 	if (BeaconAPI::ContentType() !== 'application/json') {

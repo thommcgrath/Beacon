@@ -4,7 +4,7 @@ BeaconAPI::Authorize();
 	
 // This endpoint supports bulk creation and edting
 	
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$properties = BeaconAPI::JSONPayload();
 	
 	if (BeaconCommon::IsAssoc($properties)) {
@@ -17,7 +17,7 @@ function handle_request(array $context): void {
 	
 	$database = BeaconCommon::Database();
 	$user_id = BeaconAPI::UserID();
-	switch ($context['route_key']) {
+	switch ($context['routeKey']) {
 	case 'POST /ark/mods':
 		$createdMods = [];
 		$database->BeginTransaction();

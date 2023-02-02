@@ -1,8 +1,8 @@
 <?php
 
-function handle_request(array $context): void {
-	if (isset($context['path_parameters']['version'])) {
-		$version = intval($context['path_parameters']['version']);
+function handleRequest(array $context): APIResponse {
+	if (isset($context['pathParameters']['version'])) {
+		$version = intval($context['pathParameters']['version']);
 	} else if (isset($_GET['version'])) {
 		$version = intval($_GET['version']);
 	} else {

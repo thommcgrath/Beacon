@@ -1,7 +1,7 @@
 <?php
 
-function handle_request(array $context): void {
-	$event_id = $context['path_parameters']['event_id'];
+function handleRequest(array $context): APIResponse {
+	$event_id = $context['pathParameters']['event_id'];
 	if (BeaconCommon::IsUUID($event_id)) {
 		$event = Ark\Event::GetForUUID($event_id);
 	} else {

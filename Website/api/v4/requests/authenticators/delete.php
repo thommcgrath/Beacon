@@ -2,10 +2,10 @@
 
 BeaconAPI::Authorize();
 	
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$user = BeaconAPI::User();
 	$user_id = $user->UserID();
-	$authenticator_id = $context['path_parameters']['authenticator_id'];
+	$authenticator_id = $context['pathParameters']['authenticator_id'];
 	$authenticator = Authenticator::GetByAuthenticatorID($authenticator_id);
 	if ($authenticator && $authenticator->UserID() === $user_id) {
 		$database = BeaconCommon::Database();

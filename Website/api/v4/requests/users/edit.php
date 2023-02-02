@@ -3,8 +3,8 @@
 use BeaconAPI\v4\{APIResponse, Core, EmailVerificationCode, User};
 Core::Authorize('user:write');
 
-function handle_request(array $context): APIResponse {
-	$identifier = $context['path_parameters']['userId'];
+function handleRequest(array $context): APIResponse {
+	$identifier = $context['pathParameters']['userId'];
 	$user = User::Fetch($identifier);
 	if (is_null($user)) {
 		return APIResponse::NewJSONError('User not found', $identifier, 404);

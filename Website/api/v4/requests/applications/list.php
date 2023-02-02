@@ -4,7 +4,7 @@ use BeaconAPI\v4\{APIResponse, Application, Core};
 
 Core::Authorize('apps:read');
 
-function handle_request(array $context): APIResponse {
+function handleRequest(array $context): APIResponse {
 	$filters = $_GET;
 	$filters['userId'] = Core::UserId();
 		

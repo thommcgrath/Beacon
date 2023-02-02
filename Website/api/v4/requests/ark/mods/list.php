@@ -1,13 +1,13 @@
 <?php
 
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$filters = $_GET;
 	$mods = [];
-	switch ($context['route_key']) {
+	switch ($context['routeKey']) {
 	case 'GET /ark/mods':
 		break;
 	case 'GET /users/{userId}/ark/mods':
-		$filters['user_id'] = $context['path_parameters']['userId'];
+		$filters['user_id'] = $context['pathParameters']['userId'];
 		break;
 	}
 	BeaconAPI::ReplySuccess(Ark\Mod::Search($filters));

@@ -2,9 +2,9 @@
 
 BeaconAPI::Authorize();
 	
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$user_id = BeaconAPI::UserID();
-	$service_id = $context['path_parameters']['service_id'];
+	$service_id = $context['pathParameters']['service_id'];
 	$service = Sentinel\Service::GetByServiceID($service_id);
 	if (is_null($service) || $service->HasPermission($user_id, Sentinel\Service::PermissionView) === false) {
 		BeaconAPI::ReplyError('Service not found.', null, 404);

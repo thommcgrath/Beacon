@@ -1,6 +1,6 @@
 <?php
 
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$events = Ark\Event::GetAll();
 	BeaconAPI::ReplySuccess($events);
 }

@@ -2,10 +2,10 @@
 
 BeaconAPI::Authorize();
 
-function handle_request(array $context): void {
+function handleRequest(array $context): APIResponse {
 	$user_id = BeaconAPI::UserID();
 		
-	$service = Sentinel\Service::GetByServiceID($context['path_parameters']['service_id']);
+	$service = Sentinel\Service::GetByServiceID($context['pathParameters']['service_id']);
 	if ($service && $service->HasPermission($user_id, Sentinel\Service::PermissionDelete)) {
 		$service->Delete();
 		BeaconAPI::ReplySuccess('', 204);

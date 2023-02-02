@@ -2,8 +2,8 @@
 
 BeaconAPI::Authorize(true);
 
-function handle_request(array $context): void {
-	$project_id = $context['path_parameters']['project_id'];
+function handleRequest(array $context): APIResponse {
+	$project_id = $context['pathParameters']['project_id'];
 	if (\BeaconCommon::IsUUID($project_id) === false) {
 		BeaconAPI::ReplyError('Request a specific project', null, 400);
 	}
@@ -31,7 +31,7 @@ function handle_request(array $context): void {
 	}
 	
 	$original_ini = '';
-	if ($context['route_key'] === 'POST /ark/generate/{project_id}') {
+	if ($context['routeKey'] === 'POST /ark/generate/{project_id}') {
 		if (BeaconAPI::ContentType() === 'application/x-www-form-urlencoded' || BeaconAPI::ContentType() === 'multipart/form-data') {
 			if (isset($_POST['content'])) {
 				$original_ini = $_POST['content'];

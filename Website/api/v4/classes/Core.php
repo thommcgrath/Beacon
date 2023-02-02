@@ -322,7 +322,7 @@ class Core {
 				if (file_exists($handlerFile) === false) {
 					static::ReplyError('Endpoint not found', null, 404);
 				}
-				$handler = 'handle_request';
+				$handler = 'handleRequest';
 				try {
 					http_response_code(500); // Set a default. If there is a fatal error, it'll still be set.
 					require($handlerFile);
@@ -344,9 +344,7 @@ class Core {
 			// include path_parameters and route_key for older implementations
 			$context = [
 				'pathParameters' => $pathParameters,
-				'routeKey' => $routeKey,
-				'path_parameters' => $pathParameters,
-				'route_key' => $routeKey
+				'routeKey' => $routeKey
 			];
 			$response = $handler($context);
 			$response->Flush();

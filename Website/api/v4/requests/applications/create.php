@@ -4,7 +4,7 @@ use BeaconAPI\v4\{APIResponse, Application, Core};
 
 Core::Authorize('apps:write');
 
-function handle_request(array $context): APIResponse {
+function handleRequest(array $context): APIResponse {
 	if (Core::IsJsonContentType() === false) {
 		return APIResponse::NewJsonError('Send a JSON body', null, 400);
 	}
