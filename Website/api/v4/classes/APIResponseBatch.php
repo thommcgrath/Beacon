@@ -4,39 +4,39 @@ namespace BeaconAPI\v4;
 
 class APIResponseBatch extends APIResponse {
 	protected $responses = [];
-	protected $key_property = '';
+	protected $keyProperty = '';
 	
-	public function __construct(string $key_property) {
-		$this->key_property = $key_property;
+	public function __construct(string $keyProperty) {
+		$this->keyProperty = $keyProperty;
 		$this->headers['Content-Type'] = 'application/json';
 	}
 	
-	public function AddResponse(string $key_property_value, APIResponse $response): void {
-		$this->responses[$key_property_value] = $response;	
+	public function AddResponse(string $keyPropertyValue, APIResponse $response): void {
+		$this->responses[$keyPropertyValue] = $response;	
 	}
 	
 	public function Body(): string {
 		$pieces	= [];
 		
-		foreach ($this->responses as $key_property_value => $response) {
+		foreach ($this->responses as $keyPropertyValue => $response) {
 			$headers = [];
 			$keys = $response->HeaderKeys();
-			$is_json = false;
+			$isJson = false;
 			foreach ($keys as $key) {
 				$value = $response->Header($key);
 				$headers[$key] = $value;
 				if ($key === 'Content-Type' && ($value === 'application/json' || str_starts_with($value, 'application/json;'))) {
-					$is_json = true;
+					$isJson = true;
 				}
 			}
 			
 			$body = $response->Body();
-			if ($is_json) {
+			if ($isJson) {
 				$body = json_decode($body, true);
 			}
 			
 			$pieces[] = [
-				$this->key_property => $key_property_value,
+				$this->keyProperty => $keyPropertyValue,
 				'headers' => $headers,
 				'status' => $response->Code(),
 				'body' => $body
@@ -52,7 +52,7 @@ class APIResponseBatch extends APIResponse {
 		$num_server_error = 0;
 		$num_client_error = 0;
 		$num_success = 0;
-		foreach ($this->responses as $key_property_value => $response) {
+		foreach ($this->responses as $keyPropertyValue => $response) {
 			$status = $response->Code();
 			if ($status >= 500) {
 				$num_server_error++;

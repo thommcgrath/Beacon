@@ -7,10 +7,10 @@
 use BeaconAPI\v4\{APIResponse, Core, User};
 
 function handle_request(array $context): APIResponse {
-	$identifier = $context['path_parameters']['userId'];
+	$identifier = $context['pathParameters']['userId'];
 	$user = User::Fetch($identifier);
 	if (is_null($user)) {
-		return APIResponse::NewJSONError('User not found', $identifier, 404);
+		return APIResponse::NewJsonError('User not found', $identifier, 404);
 	}
 	
 	$challenge = BeaconCommon::GenerateUUID();
@@ -20,7 +20,7 @@ function handle_request(array $context): APIResponse {
 	$database->Query('INSERT INTO user_challenges (user_id, challenge) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET challenge = $2;', $user->UserId(), $challenge);
 	$database->Commit();
 
-	return APIResponse::NewJSON(['user_id' => $user->UserID(), 'challenge' => $challenge], 201);
+	return APIResponse::NewJson(['userId' => $user->UserId(), 'challenge' => $challenge], 201);
 }
 
 ?>
