@@ -240,7 +240,7 @@ class Core {
 		foreach ($routes as $route => $handlers) {
 			preg_match_all('/\{((\.\.\.)?[a-zA-Z0-9\-_]+?)\}/', $route, $placeholders);
 			
-			$route_expression = str_replace('/', '\\/', $route);
+			$routeExpression = str_replace('/', '\\/', $route);
 			$match_count = count($placeholders[0]);
 			$variables = [];
 			for ($idx = 0; $idx < $match_count; $idx++) {
@@ -254,12 +254,12 @@ class Core {
 				}
 				$variables[] = $key;
 				$pattern = '(?P<' . $key . '>[^' . $exclude . ']+?)';
-				$route_expression = str_replace($original, $pattern, $route_expression);
+				$routeExpression = str_replace($original, $pattern, $routeExpression);
 			}
-			$route_expression = '/^' . $route_expression . '$/';
+			$routeExpression = '/^' . $routeExpression . '$/';
 			
 			static::$routes[$route] = [
-				'expression' => $route_expression,
+				'expression' => $routeExpression,
 				'handlers' => $handlers,
 				'variables' => $variables
 			];
@@ -292,40 +292,40 @@ class Core {
 	}
 	
 	public static function HandleRequest(string $root): void {
-		$request_route = '/' . $_GET['route'];
+		$requestRoute = '/' . $_GET['route'];
 		
-		if (preg_match('/^\/user(\/.+)?$/', $request_route)) {
+		if (preg_match('/^\/user(\/.+)?$/', $requestRoute)) {
 			static::Authorize('user:read');
-			$request_route = str_replace('/user', '/users/' . static::UserId(), $request_route);
-		} else if (preg_match('/^\/session(\/.+)?$/', $request_route)) {
+			$requestRoute = str_replace('/user', '/users/' . static::UserId(), $requestRoute);
+		} else if (preg_match('/^\/session(\/.+)?$/', $requestRoute)) {
 			static::Authorize('common');
-			$request_route = str_replace('/session', '/sessions/' . static::SessionId(), $request_route);
+			$requestRoute = str_replace('/session', '/sessions/' . static::SessionId(), $requestRoute);
 		}
 		
-		foreach (static::$routes as $route => $route_info) {
-			$route_expression = $route_info['expression'];
-			$handlers = $route_info['handlers'];
-			$variables = $route_info['variables'];
+		foreach (static::$routes as $route => $routeInfo) {
+			$routeExpression = $routeInfo['expression'];
+			$handlers = $routeInfo['handlers'];
+			$variables = $routeInfo['variables'];
 			
-			if (preg_match($route_expression, $request_route, $matches) !== 1) {
+			if (preg_match($routeExpression, $requestRoute, $matches) !== 1) {
 				continue;
 			}
 			
-			$request_method = strtoupper($_SERVER['REQUEST_METHOD']);
-			if (isset($handlers[$request_method]) === false) {
+			$requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
+			if (isset($handlers[$requestMethod]) === false) {
 				static::ReplyError('Method not allowed', null, 405);
 			}
 			
-			$handler = $handlers[$request_method];
+			$handler = $handlers[$requestMethod];
 			if (is_string($handler)) {
-				$handler_file = $root . '/' . $handler . '.php';
-				if (file_exists($handler_file) === false) {
+				$handlerFile = $root . '/' . $handler . '.php';
+				if (file_exists($handlerFile) === false) {
 					static::ReplyError('Endpoint not found', null, 404);
 				}
 				$handler = 'handle_request';
 				try {
 					http_response_code(500); // Set a default. If there is a fatal error, it'll still be set.
-					require($handler_file);
+					require($handlerFile);
 				} catch (Throwable $err) {
 					static::ReplyError((BeaconCommon::InProduction() ? 'Error loading api source file.' : $err->getMessage()), null, 500);
 				}
@@ -335,15 +335,18 @@ class Core {
 				static::ReplyError('Endpoint not found', null, 404);
 			}
 			
-			$route_key = $request_method . ' ' . $route;
-			$path_parameters = [];
-			foreach ($variables as $variable_name) {
-				$path_parameters[$variable_name] = $matches[$variable_name];
+			$routeKey = $requestMethod . ' ' . $route;
+			$pathParameters = [];
+			foreach ($variables as $variableName) {
+				$pathParameters[$variableName] = $matches[$variableName];
 			}
 			
+			// include path_parameters and route_key for older implementations
 			$context = [
-				'path_parameters' => $path_parameters,
-				'route_key' => $route_key
+				'pathParameters' => $pathParameters,
+				'routeKey' => $routeKey,
+				'path_parameters' => $pathParameters,
+				'route_key' => $routeKey
 			];
 			$response = $handler($context);
 			$response->Flush();

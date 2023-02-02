@@ -106,7 +106,7 @@ abstract class BeaconEncryption {
 	public static function PublicKeyToPEM(string $public_key): string {
 		if (str_starts_with($public_key, '-----BEGIN PUBLIC KEY-----') === false) {
 			$public_key = @hex2bin($public_key);
-			if ($private_key === false) {
+			if ($public_key === false) {
 				throw new Exception('Invalid hex input');
 			}
 			$public_key = trim(chunk_split(base64_encode($public_key), 64, "\n"));
@@ -158,6 +158,12 @@ abstract class BeaconEncryption {
 	}
 	
 	public static function IsEncrypted(string $data): bool {
+		if (empty($data)) {
+			return false;
+		}
+		if (BeaconCommon::IsHex($data)) {
+			$data = hex2bin($data);
+		}
 		return (unpack('C', $data[0])[1] === self::SymmetricMagicByte);
 	}
 	

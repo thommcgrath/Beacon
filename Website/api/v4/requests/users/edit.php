@@ -14,28 +14,30 @@ function handle_request(array $context): APIResponse {
 		return APIResponse::NewJSONError('Forbidden', $identifier, 403);
 	}
 	
-	$body = Core::BodyAsJson();
-	if (isset($body['username']) && empty($body['username']) === false) {
-		$user->SetUsername($body['username']);	
-	}
-	if (isset($body['email']) && empty($body['email']) === false) {
-		if (isset($body['verification_code']) === false || empty($body['verification_code'])) {
-			return APIResponse::NewJSONError('Missing verification code', $payload, 400);
+	try {
+		$body = Core::BodyAsJson();
+		
+		$email = $body['email'] ?? null;
+		if (empty($email) === false) {
+			$verificationCode = $body['verificationCode'] ?? null;
+			if (empty($verificationCode)) {
+				return APIResponse::NewJSONError('Missing verification code', $body, 400);
+			}
+			
+			$emailVerification = EmailVerificationCode::Fetch($email);
+			if (is_null($emailVerification) || $emailVerification->CheckCode($verificationCode) === false) {
+				return APIResponse::NewJSONError('Incorrect verification code', $body, 400);
+			}
 		}
 		
-		$email = $body['email'];
-		$verification_code = $body['verification_code'];
-		
-		if (EmailVerificationCode::IsEmailVerified($email, $verification_code) === false) {
-			return APIResponse::NewJSONError('Incorrect verification code', $body, 400);
+		$user->Edit($body);
+		if (empty($emailVerification) === false) {
+			$emailVerification->Delete();
 		}
-		
-		$user->SetEmailAddress($email);
+		return APIResponse::NewJSON($user, 200);
+	} catch (Exception $err) {
+		return APIResponse::NewJSONError($err->getMessage(), $body, 400);
 	}
-	
-	$user->Commit();
-	
-	return APIResponse::NewJSON($user, 200);
 }
 
 ?>

@@ -3,13 +3,13 @@
 use BeaconAPI\v4\{APIResponse, Core, EmailVerificationCode};
 
 function handle_request(array $context): APIResponse {
-	$email = $context['path_parameters']['email'];
+	$email = $context['pathParameters']['email'];
 	if (BeaconEmail::IsEmailValid($email) === false) {
-		return APIResponse::NewJSONError('Malformed email address', $email, 400);
+		return APIResponse::NewJsonError('Malformed email address', $email, 400);
 	}
 	
-	$key = null;
-	$body = Core::BodyAsJSON();
+	$body = Core::BodyAsJson();
+	$params = [];
 	if (isset($body['code'])) {
 		$code = $body['code'];
 		$verification = EmailVerificationCode::Fetch($email);
@@ -19,11 +19,11 @@ function handle_request(array $context): APIResponse {
 		return APIResponse::NewJSONError('Incorrect verification code', $body, 400);
 	}
 	if (isset($body['key'])) {
-		$key = $body['key'];
+		$params['key'] = $body['key'];
 	}
 	
-	$verification = EmailVerificationCode::Create($email, $key);
-	return APIResponse::NewJSON($verification, 201);
+	$verification = EmailVerificationCode::Create($email, $params);
+	return APIResponse::NewJson($verification, 201);
 }
 
 ?>

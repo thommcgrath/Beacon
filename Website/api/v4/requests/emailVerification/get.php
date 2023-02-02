@@ -9,7 +9,10 @@ function handle_request(array $context): APIResponse {
 	}
 	
 	$code = EmailVerificationCode::Fetch($email);
-		
+	if (empty($code)) {
+		return APIResponse::NewJsonError('Verification not started', $email, 404);
+	}
+	
 	if (isset($_GET['key'])) {
 		$code->DecryptCode($_GET['key']);
 	}

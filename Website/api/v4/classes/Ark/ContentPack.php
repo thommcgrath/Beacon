@@ -1,12 +1,10 @@
 <?php
 
 namespace BeaconAPI\v4\Ark;
-use BeaconAPI\v4\{Core, DatabaseCommonWriterObject, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
+use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
 use BeaconCommon, BeaconRecordSet, BeaconWorkshopItem;
 
 class ContentPack extends DatabaseObject implements \JsonSerializable {
-	use DatabaseCommonWriterObject;
-	
 	protected $contentPackId = '';
 	protected $steamId = '';
 	protected $userId = '';

@@ -97,8 +97,8 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 		}
 		$publicKey = BeaconEncryption::PublicKeyToPem($properties['publicKey']);
 		$cloudKey = $properties['cloudKey'];
-		if (BeaconEncryption::IsEncrypted(hex2bin($cloudKey)) === false) {
-			throw new Exception('Cloud key is not encrypted.');
+		if (BeaconCommon::IsHex($cloudKey) === false) {
+			throw new Exception('Cloud key should be hex-encoded.');
 		}
 		
 		$userId = $properties['userId'] ?? BeaconCommon::GenerateUUID();
@@ -112,7 +112,7 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 			return static::Fetch($userId);
 		}
 		
-		if (BeaconCommon::HasAllKeys('email', 'username', 'privateKey', 'privateKeySalt', 'privateKeyIterations') === false) {
+		if (BeaconCommon::HasAllKeys($properties, 'email', 'username', 'privateKey', 'privateKeySalt', 'privateKeyIterations') === false) {
 			throw new Exception('Missing required properties.');
 		}
 		

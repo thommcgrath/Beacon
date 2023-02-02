@@ -645,8 +645,8 @@ abstract class BeaconCommon {
 		return number_format($num, $i);
 	}
 	
-	public static function IsHex($content): bool {
-		if (!is_string($content)) {
+	public static function IsHex(mixed $content): bool {
+		if (is_string($content) === false || strlen($content) % 2 != 0) {
 			return false;
 		}
 		
