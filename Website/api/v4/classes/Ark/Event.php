@@ -11,6 +11,7 @@ class Event extends DatabaseObject implements \JsonSerializable {
 	protected $rates = [];
 	protected $colors = [];
 	protected $engrams = [];
+	protected $lastUpdate = null;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->eventId = $row->Field('event_id');
@@ -19,6 +20,7 @@ class Event extends DatabaseObject implements \JsonSerializable {
 		$this->rates = is_null($row->Field('rates')) === false ? json_decode($row->Field('rates'), true) : [];
 		$this->colors = is_null($row->Field('colors')) === false ? json_decode($row->Field('colors'), true) : [];
 		$this->engrams = is_null($row->Field('engrams')) === false ? json_decode($row->Field('engrams'), true) : [];
+		$this->lastUpdate = $row->Field('last_update');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -28,7 +30,8 @@ class Event extends DatabaseObject implements \JsonSerializable {
 			New DatabaseObjectProperty('arkCode', ['columnName' => 'event_code']),
 			New DatabaseObjectProperty('rates', ['accessor' => '(SELECT json_agg(row_to_json(rates_template)) FROM (SELECT event_rates.ini_option AS "configOptionId", event_rates.multiplier FROM ark.event_rates INNER JOIN ark.ini_options ON (event_rates.ini_option = ini_options.object_id) WHERE event_rates.event_id = events.event_id) AS rates_template)']),
 			New DatabaseObjectProperty('colors', ['accessor' => '(SELECT json_agg(color_id ORDER BY color_id) FROM ark.event_colors WHERE event_colors.event_id = events.event_id)']),
-			New DatabaseObjectProperty('engrams', ['accessor' => '(SELECT json_agg(object_id) FROM ark.event_engrams WHERE event_engrams.event_id = events.event_id)'])
+			New DatabaseObjectProperty('engrams', ['accessor' => '(SELECT json_agg(object_id) FROM ark.event_engrams WHERE event_engrams.event_id = events.event_id)']),
+			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update'])
 		]);
 	}
 	
@@ -113,7 +116,8 @@ class Event extends DatabaseObject implements \JsonSerializable {
 			'label' => $this->name,
 			'rates' => $this->rates,
 			'colors' => $this->colors,
-			'engrams' => $this->engrams
+			'engrams' => $this->engrams,
+			'lastUpdate' => $this->lastUpdate
 		];
 	}
 	

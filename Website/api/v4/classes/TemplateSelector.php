@@ -8,6 +8,7 @@ class TemplateSelector extends DatabaseObject implements \JsonSerializable {
 	protected $gameId;
 	protected $label;
 	protected $minVersion;
+	protected $lastUpdate;
 	protected $language;
 	protected $code;
 	
@@ -16,6 +17,7 @@ class TemplateSelector extends DatabaseObject implements \JsonSerializable {
 		$this->gameId = $row->Field('game_id');
 		$this->label = $row->Field('label');
 		$this->minVersion = $row->Field('min_version');
+		$this->lastUpdate = $row->Field('last_update');
 		$this->language = $row->Field('language');
 		$this->code = $row->Field('code');
 	}
@@ -26,6 +28,7 @@ class TemplateSelector extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
 			new DatabaseObjectProperty('label'),
 			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update']),
 			new DatabaseObjectProperty('language'),
 			new DatabaseObjectProperty('code')
 		]);
@@ -35,6 +38,7 @@ class TemplateSelector extends DatabaseObject implements \JsonSerializable {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Accessor('label');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
+		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		$parameters->allowAll = true;
 	}
 	
@@ -44,6 +48,7 @@ class TemplateSelector extends DatabaseObject implements \JsonSerializable {
 			'gameId' => $this->gameId,
 			'label' => $this->label,
 			'minVersion' => $this->minVersion,
+			'lastUpdate' => $this->lastUpdate,
 			'language' => $this->language,
 			'code' => $this->code
 		];

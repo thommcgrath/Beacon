@@ -8,6 +8,7 @@ class Template extends DatabaseObject implements \JsonSerializable {
 	protected $gameId;
 	protected $label;
 	protected $minVersion;
+	protected $lastUpdate;
 	protected $contents;
 	
 	protected function __construct(BeaconRecordSet $row) {
@@ -15,6 +16,7 @@ class Template extends DatabaseObject implements \JsonSerializable {
 		$this->gameId = $row->Field('game_id');
 		$this->label = $row->Field('label');
 		$this->minVersion = $row->Field('min_version');
+		$this->lastUpdate = $row->Field('last_update');
 		$this->contents = $row->Field('contents');
 	}
 	
@@ -24,6 +26,7 @@ class Template extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
 			new DatabaseObjectProperty('label'),
 			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update']),
 			new DatabaseObjectProperty('contents')
 		]);
 	}
@@ -32,6 +35,7 @@ class Template extends DatabaseObject implements \JsonSerializable {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Table() . '.label';
 		$parameters->AddFromFilter($schema, $filters, 'game_id');
+		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		$parameters->allowAll = true;
 	}
 	
@@ -41,6 +45,7 @@ class Template extends DatabaseObject implements \JsonSerializable {
 			'gameId' => $this->gameId,
 			'label' => $this->label,
 			'minVersion' => $this->minVersion,
+			'lastUpdate' => $this->lastUpdate,
 			'contents' => $this->contents
 		];
 	}

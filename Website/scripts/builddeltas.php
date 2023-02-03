@@ -69,7 +69,7 @@ if ($force == false && $lastDatabaseUpdate >= $cutoff) {
 }
 
 $required_versions = [$delta_version];
-$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $lastDatabaseUpdate->format('Y-m-d H:i:sO'));
+$results = $database->Query("SELECT file_id, version FROM update_files WHERE created = $1 AND type = 'Delta';", $lastDatabaseUpdate->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
 		$version = $results->Field('version');
@@ -77,7 +77,7 @@ if ($results->RecordCount() > 0) {
 			if (($key = array_search($version, $required_versions)) !== false) {
 				unset($required_versions[$key]);
 			}
-			echo "Version " . $version . " already prepared.\n";
+			echo "Version {$version} already prepared.\n";
 		}
 		$results->MoveNext();
 	}
@@ -90,7 +90,7 @@ if (count($required_versions) == 0) {
 
 $cdn = BeaconCDN::DeltasZone();
 foreach ($required_versions as $version) {
-	echo "Building delta for version $version...\n";
+	echo "Building delta for version {$version}...\n";
 	
 	if ($version >= 7) {
 		include("$apiRoot/v4/includes/builddeltas.php");

@@ -13,6 +13,7 @@ class Map extends DatabaseObject implements \JsonSerializable {
 	protected $isOfficial = null;
 	protected $mask = null;
 	protected $sortOrder = null;
+	protected $lastUpdate = null;
 	
 	public function __construct(BeaconRecordSet $row) {
 		$this->mapId = $row->Field('map_id');
@@ -23,6 +24,7 @@ class Map extends DatabaseObject implements \JsonSerializable {
 		$this->isOfficial = filter_var($row->Field('official'), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? false;
 		$this->mask = filter_var($row->Field('mask'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 0;
 		$this->sortOrder = filter_var($row->Field('sort'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 999;
+		$this->lastUpdate = $row->Field('last_update');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -34,7 +36,8 @@ class Map extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('difficultyScale', ['columnName' => 'difficulty_scale']),
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'official']),
 			new DatabaseObjectProperty('mask'),
-			new DatabaseObjectProperty('sortOrder', ['columnName' => 'sort'])
+			new DatabaseObjectProperty('sortOrder', ['columnName' => 'sort']),
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update'])
 		]);	
 	}
 	
@@ -111,7 +114,8 @@ class Map extends DatabaseObject implements \JsonSerializable {
 			'difficultyScale' => $this->difficultyScale,
 			'isOfficial' => $this->isOfficial,
 			'mask' => $this->mask,
-			'sortOrder' => $this->sortOrder
+			'sortOrder' => $this->sortOrder,
+			'lastUpdate' => $this->lastUpdate
 		];
 	}
 	

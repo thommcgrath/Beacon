@@ -8,18 +8,21 @@ class ColorSet extends DatabaseObject implements \JsonSerializable {
 	protected $colorSetId;
 	protected $label;
 	protected $classString;
+	protected $lastUpdate;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->colorSetId = $row->Field('color_set_id');
 		$this->label = $row->Field('label');
 		$this->classString = $row->Field('class_string');
+		$this->lastUpdate = $row->Field('last_update');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'color_sets', [
 			New DatabaseObjectProperty('colorSetId', ['primaryKey' => true, 'columnName' => 'color_set_id']),
 			New DatabaseObjectProperty('label'),
-			New DatabaseObjectProperty('classString', ['columnName' => 'class_string'])
+			New DatabaseObjectProperty('classString', ['columnName' => 'class_string']),
+			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update'])
 		]);
 	}
 	
@@ -85,7 +88,8 @@ class ColorSet extends DatabaseObject implements \JsonSerializable {
 		return [
 			'colorSetId' => $this->colorSetId,
 			'label' => $this->label,
-			'classString' => $this->classString
+			'classString' => $this->classString,
+			'lastUpdate' => $this->lastUpdate
 		];
 	}
 	
