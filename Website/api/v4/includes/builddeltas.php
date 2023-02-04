@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Template, TemplateSelector};
+use BeaconAPI\v4\{Core, Template, TemplateSelector};
 use BeaconAPI\v4\Ark\{Color, ColorSet, ConfigOption, ContentPack, Creature, Engram, Event, GameVariable, LootContainer, LootContainerIcon, Map, SpawnPoint};
 
 $buildDeltas = false;
@@ -12,8 +12,6 @@ if (is_null($rows->Field('since')) == false) {
 } else {
 	$since = new DateTime('2000-01-01 00:00:00');
 }
-
-echo "Looking for changes since " . $since->format('Y-m-d H:i:s') . "\n";
 
 // Need to find the mods that have changes since the last run
 $rows = $database->Query("SELECT mod_id FROM ark.mod_update_times WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
@@ -104,6 +102,13 @@ function BuildDataFile(?ContentPack $pack, ?DateTime $since, ?array $subfiles = 
 			'templateSelectors' => TemplateSelector::Search($filters, true)
 		];
 		
+		if ($isComplete === false) {
+			$deletions = Core::Deletions(-1, $since);
+			if (count($deletions) > 0) {
+				$file['deletions'] = $deletions;
+			}
+		}
+		
 		$path = "{$root}/Main.beacondata";
 		$filename = "{$label}-Main.beacondata";
 	} else {
@@ -157,8 +162,9 @@ function BuildDataFile(?ContentPack $pack, ?DateTime $since, ?array $subfiles = 
 	$fileContents = gzencode(json_encode($file));
 	$fileSize = strlen($fileContents);
 	
+	// TODO: Should there be more specific type values?
 	try {
-		//$cdn->PutFile($path, $fileContents);
+		$cdn->PutFile($path, $fileContents);
 		$path = "{$path}?bcdn_filename={$filename}";
 		echo "Uploaded $path\n";
 		$database->Query("DELETE FROM public.update_files WHERE version = $1 AND type = $2 AND path = $3;", 7, $type, $path);
