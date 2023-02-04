@@ -871,7 +871,7 @@ abstract class BeaconCommon {
 		return rtrim($binary, "\0");
 	}
 	
-	public static function DeviceID(): string {
+	public static function DeviceId(): string {
 		if (isset($_COOKIE['beacon_device_id'])) {
 			return $_COOKIE['beacon_device_id'];
 		}
@@ -888,6 +888,60 @@ abstract class BeaconCommon {
 		$_COOKIE['beacon_device_id'] = $device_id;
 		
 		return $device_id;
+	}
+	
+	public static function SanitizeFilename(string $filename, int $maxLength = 0): string {
+		// Yes, this could be done a little "nicer" with arrays, but the hyphens and double spaces need to happen in the correct order
+		
+		$filename = preg_replace([
+			'/[\/\\:]/u',
+			'/[<>""|?*\x00-\x1F]+/u',
+			'/(\s+-+)|(-+\s+)/u',
+			'/\s{2,}/u'
+		], [
+			'-',
+			'',
+			' ',
+			' '
+		], $filename);
+		
+		$filename = trim($filename, ". \n\r\t\v\x00");
+		
+		if ($maxLength > 0 && strlen($filename) > $maxLength) {
+			$filename = str_replace('-', '', $filename);
+			$parts = explode('.', $filename);
+			if (count($parts) >= 2 && strlen($parts[array_key_last($parts)]) + 1 < $maxLength && str_contains($parts[array_key_last($parts)], ' ') === false) {
+				$extension = '.' . $parts[array_key_last($parts)];
+				unset($parts[array_key_last($parts)]);
+				$basename = implode('.', $parts);
+				$maxLength = $maxLength - strlen($extension);
+			} else {
+				$basename = $filename;
+			}
+			
+			if ($maxLength > 1) {
+				$maxLength = $maxLength - 1;
+			}
+			$prefixLength = ceil($maxLength / 2);
+			$suffixLength = $maxLength - $prefixLength;
+			$prefix = trim(substr($basename, 0, $prefixLength));
+			$suffix = trim(substr($basename, $suffixLength * -1));
+			$filename = $prefix . ($prefixLength + $suffixLength > 1 ? '…' : '') . $suffix;
+		}
+		
+		return $filename;
+		
+		// Remove path separators
+		/*$filename = preg_replace('/[/\\:]/u', '-', $filename);
+		
+		// Remove control characters
+		$filename = preg_replace('/[<>""|?*\x00-\x1F]+/u', '', $filename);
+		
+		// Remove lone hypens
+		$filename = preg_replace('/(\s+-+)|(-+\s+)/u', ' ', $filename);
+		
+		// Simplify double spaces
+		$filename = preg_replace('/\s{2,}/u', ' ', $filename);*/
 	}
 }
 

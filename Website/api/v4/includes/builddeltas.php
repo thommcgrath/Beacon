@@ -3,57 +3,96 @@
 use BeaconAPI\v4\{Core, Template, TemplateSelector};
 use BeaconAPI\v4\Ark\{Color, ColorSet, ConfigOption, ContentPack, Creature, Engram, Event, GameVariable, LootContainer, LootContainerIcon, Map, SpawnPoint};
 
+$root = "/v{$version}";
+if (BeaconCommon::InProduction() == false) {
+	$root .= '/' . BeaconCommon::EnvironmentName();
+}
+
+$deltaLabel = '';
 $buildDeltas = false;
 $since = null;
-$rows = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1;', 7);
+$rows = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1;', $version);
 if (is_null($rows->Field('since')) == false) {
 	$since = new DateTime($rows->Field('since'));
 	$buildDeltas = true;
+	$deltaLabel = $lastDatabaseUpdate->format('YmdHis');
 } else {
 	$since = new DateTime('2000-01-01 00:00:00');
 }
 
-// Need to find the mods that have changes since the last run
-$rows = $database->Query("SELECT mod_id FROM ark.mod_update_times WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
-$updatedModIds = [];
-while (!$rows->EOF()) {
-	$updatedModIds[] = $rows->Field('mod_id');
-	$rows->MoveNext();
+// Start getting the archive ready
+$completeArchive = new Archiver('Complete');
+BuildMainFile($completeArchive, null);
+
+// And delta archive
+$deltaArchive = null;
+if ($buildDeltas) {
+	$deltaArchive = new Archiver($deltaLabel);
+	BuildMainFile($deltaArchive, $since);
 }
 
-$deltaUrls = [];
-foreach ($updatedModIds as $modId) {
-	$pack = ContentPack::Fetch($modId);
+// Need to find the mods that have changes since the last run
+$rows = $database->Query("SELECT mod_id FROM ark.mod_update_times WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
+while (!$rows->EOF()) {
+	$pack = ContentPack::Fetch($rows->Field('mod_id'));
 	if ($pack->IsIncludedInDeltas() === false) {
+		$rows->MoveNext();
 		continue;
 	}
 	
-	BuildDataFile($pack, null);
+	BuildArkContentPackFile($completeArchive, null, $pack);
+	
 	if ($buildDeltas) {
-		$deltaUrl = BuildDataFile($pack, $since);
-		$deltaUrls[] = $deltaUrl;
+		BuildArkContentPackFile($deltaArchive, $since, $pack);
 	}
-}
-
-$rows = $database->Query("SELECT path FROM public.update_files WHERE type = 'Complete' AND version = 7 AND path != '/v7/dev/Complete/Main.beacondata?bcdn_filename=Complete-Main.beacondata';");
-$completeUrls = [];
-while (!$rows->EOF()) {
-	$completeUrls[] = $rows->Field('path');
+	
 	$rows->MoveNext();
 }
 
-$completeMainUrl = BuildDataFile(null, null, $completeUrls);
+$completeUrl = $completeArchive->Upload($cdn, $root, 'Complete.beacondata');
+$completeSize = $completeArchive->Size();
 if ($buildDeltas) {
-	$deltaMainUrl = BuildDataFile(null, $since, $deltaUrls);
+	$deltaUrl = $deltaArchive->Upload($cdn, $root, "{$deltaLabel}.beacondata");
+	$deltaSize = $deltaArchive->Size();
+} else {
+	$deltaUrl = $completeUrl;
+	$deltaSize = $completeSize;
 }
 
-return;
+// End, functions below
 
-function BuildDataFile(?ContentPack $pack, ?DateTime $since, ?array $subfiles = null): ?string {
-	global $lastDatabaseUpdate, $database;
+function BuildMainFile(Archiver $archive, ?DateTime $since): void {
+	BuildFile([
+		'archive' => $archive,
+		'class' => 'Main',
+		'since' => $since
+	]);
+}
+
+function BuildArkContentPackFile(Archiver $archive, ?DateTime $since, ContentPack $contentPack): void {
+	BuildFile([
+		'archive' => $archive,
+		'class' => 'Ark/Mod',
+		'since' => $since,
+		'ark' => [
+			'contentPack' => $contentPack
+		]
+	]);
+}
+
+function BuildFile(array $settings): void {
+	global $lastDatabaseUpdate, $database, $root, $version;
+	
+	$archive = $settings['archive'] ?? null;
+	$since = $settings['since'] ?? null;
+	$class = $settings['class'] ?? null;
+	
+	if (is_null($class)) {
+		throw new Exception('Missing class variable in settings');
+	}
 	
 	$isComplete = is_null($since);
-	$isMain = is_null($pack);
+	$isMain = $class === 'Main';
 	
 	if ($isComplete) {
 		$label = 'Complete';
@@ -69,26 +108,18 @@ function BuildDataFile(?ContentPack $pack, ?DateTime $since, ?array $subfiles = 
 	if ($isComplete === false) {
 		$filters['lastUpdate'] = $since->format('Y-m-d H:i:s');
 	}
-	if ($isMain === false) {
-		$filters['contentPackId'] = $pack->ContentPackId();
-	}
 	
 	$file = [
 		'timestamp' => $lastDatabaseUpdate->getTimestamp(),
 		'isFull' => true,
-		'version' => 7
+		'version' => $version
 	];
-	
-	$root = "/v7";
-	if (BeaconCommon::InProduction() == false) {
-		$root .= '/' . BeaconCommon::EnvironmentName();
-	}
-	$root .= "/{$label}";
 	
 	$ark = [];
 	$common = [];
 	
-	if ($isMain) {
+	switch ($class) {
+	case 'Main':
 		$ark = [
 			'colors' => Color::Search($filters, true),
 			'colorSets' => ColorSet::Search($filters, true),
@@ -109,9 +140,12 @@ function BuildDataFile(?ContentPack $pack, ?DateTime $since, ?array $subfiles = 
 			}
 		}
 		
-		$path = "{$root}/Main.beacondata";
-		$filename = "{$label}-Main.beacondata";
-	} else {
+		$localName = 'Main.beacondata';
+		break;
+	case 'Ark/Mod':
+		$pack = $settings['ark']['contentPack'];
+		$filters['contentPackId'] = $pack->ContentPackId();
+		
 		$ark = [
 			'configOptions' => ConfigOption::Search($filters, true),
 			'creatures' => Creature::Search($filters, true),
@@ -122,15 +156,14 @@ function BuildDataFile(?ContentPack $pack, ?DateTime $since, ?array $subfiles = 
 			'spawnPoints' => SpawnPoint::Search($filters, true)
 		];
 		
-		$steamId = $pack->SteamId();
-		$path = "{$root}/Ark/{$steamId}.beacondata";
-		$filename = "{$label}-Ark-{$steamId}.beacondata";
+		$packName = BeaconCommon::SanitizeFilename($pack->Name());
+		$localName = "$packName.beacondata";
+		break;
+	default:
+		throw new Exception("Unknown class {$class}");
 	}
 	
 	$totalItems = 0;
-	if (is_null($subfiles) === false) {
-		$totalItems = count($subfiles);
-	}
 	
 	$sections = [
 		'ark' => $ark,
@@ -151,30 +184,67 @@ function BuildDataFile(?ContentPack $pack, ?DateTime $since, ?array $subfiles = 
 		}
 	}
 	
-	if (is_null($subfiles) === false) {
-		$file['subfiles'] = $subfiles;
-	}
-	
 	if ($totalItems === 0) {
-		return null;
+		return;
 	}
 	
-	$fileContents = gzencode(json_encode($file));
-	$fileSize = strlen($fileContents);
+	$fileContents = json_encode($file);
+	$archive->AddFile($localName, $fileContents);
+}
+
+class Archiver {
+	protected $label;
+	protected $archive;
+	protected $path;
+	protected $manifest;
 	
-	// TODO: Should there be more specific type values?
-	try {
-		$cdn->PutFile($path, $fileContents);
-		$path = "{$path}?bcdn_filename={$filename}";
-		echo "Uploaded $path\n";
-		$database->Query("DELETE FROM public.update_files WHERE version = $1 AND type = $2 AND path = $3;", 7, $type, $path);
-		$database->Query("INSERT INTO public.update_files (version, type, path, created, size) VALUES ($1, $2, $3, $4, $5);", 7, $type, $path, $lastDatabaseUpdate->format('Y-m-d H:i:s'), $fileSize);
-	} catch (Exception $err) {
-		echo "Could not upload: " . $err->getMessage() . "\n";
-		return null;
+	public function __construct(string $label) {
+		$this->label = $label;
+		$this->path = tempnam(sys_get_temp_dir(), $label) . '.tar';
+		$this->archive = new PharData($this->path);
+		$this->manifest = [
+			'files' => []
+		];
 	}
 	
-	return $path;
+	public function AddFile(string $localPath, string $content, bool $first = false): void {
+		$this->archive->addFromString($localPath, $content);
+		if ($first) {
+			array_unique($this->manifest['files'], $localPath);
+		} else {
+			$this->manifest['files'][] = $localPath;
+		}
+	}
+	
+	public function Upload(BeaconCDN $cdn, string $parent, string $filename): string {
+		$this->archive->addFromString('Manifest.json', json_encode($this->manifest));
+		$this->archive->compress(Phar::GZ);
+		
+		$filenameUrl = urlencode($filename);
+		$time = filemtime("{$this->path}.gz");
+		$cdn->PutFile("{$parent}/{$filenameUrl}", file_get_contents("{$this->path}.gz"));
+		
+		return "{$parent}/{$filenameUrl}?bcdn_filename={$filenameUrl}&t={$time}";
+	}
+	
+	public function Size(): int {
+		if (file_exists("{$this->path}.gz")) {
+			return filesize("{$this->path}.gz");
+		} else if (file_exists($this->path)) {
+			return filesize($this->path);
+		} else {
+			return 0;
+		}
+	}
+	
+	public function __destruct() {
+		if (file_exists($this->path)) {
+			unlink($this->path);
+		}
+		if (file_exists("{$this->path}.gz")) {
+			unlink("{$this->path}.gz");
+		}
+	}
 }
 
 ?>
