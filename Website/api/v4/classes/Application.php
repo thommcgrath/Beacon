@@ -12,6 +12,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 	protected $iconFilename = null;
 	protected $scopes = [];
 	protected $callbacks = [];
+	protected $rateLimit = 50;
 	
 	const kScopePasswordAuth = 'password_auth';
 	const kScopeCommon = 'common';
@@ -52,6 +53,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$this->iconFilename = $row->Field('icon_filename');
 		$this->scopes = explode(' ', $row->Field('scopes'));
 		$this->callbacks = json_decode($row->Field('callbacks'), true);
+		$this->rateLimit = filter_var($row->Field('rate_limit'), FILTER_VALIDATE_INT);
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -63,7 +65,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('website'),
 			new DatabaseObjectProperty('iconFilename', ['columnName' => 'icon_filename']),
 			new DatabaseObjectProperty('scopes'),
-			new DatabaseObjectProperty('callbacks', ['columnName' => 'callbacks', 'accessor' => "(SELECT COALESCE(array_to_json(array_agg(callbacks_template.url)), '[]') FROM (SELECT url FROM application_callbacks WHERE application_id = applications.application_id ORDER BY url) AS callbacks_template)"])
+			new DatabaseObjectProperty('callbacks', ['columnName' => 'callbacks', 'accessor' => "(SELECT COALESCE(array_to_json(array_agg(callbacks_template.url)), '[]') FROM (SELECT url FROM application_callbacks WHERE application_id = applications.application_id ORDER BY url) AS callbacks_template)"]),
+			new DatabaseObjectProperty('rate_limit', ['columnName' => 'rate_limit'])
 		]);
 	}
 	
@@ -324,6 +327,10 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return in_array($url, $this->callbacks);
 	}
 	
+	public function RequestLimitPerMinute(): int {
+		return $this->rateLimit;
+	}
+	
 	public function jsonSerialize(): mixed {
 		return [
 			'applicationId' => $this->applicationId,
@@ -332,7 +339,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 			'iconUrl' => $this->IconUrl(),
 			'website' => $this->website,
 			'scopes' => $this->scopes,
-			'callbacks' => $this->callbacks
+			'callbacks' => $this->callbacks,
+			'rateLimit' => $this->rateLimit
 		];
 	}
 }

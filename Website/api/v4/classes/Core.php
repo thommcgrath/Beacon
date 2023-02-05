@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use DateTime, BeaconCommon, BeaconLogin, Exception, Throwable;
+use BeaconCommon, BeaconLogin, BeaconRateLimits, DateTime, Exception, Throwable;
 
 class Core {
 	protected static $session = null;
@@ -144,7 +144,9 @@ class Core {
 			return;
 		}
 		
+		$message = 'Unauthorized';
 		$httpStatus = 401;
+		
 		$params = ['Bearer', 'realm="Beacon API"'];
 		switch ($authStatus) {
 		case self::kAuthErrorNoToken:
@@ -161,9 +163,9 @@ class Core {
 			$httpStatus = 403;
 			break;
 		}
-		
 		header('WWW-Authenticate: ' . implode(' ', $params));
-		static::ReplyError('Unauthorized', null, 401);
+		
+		static::ReplyError($message, null, $httpStatus);
 	}
 	
 	protected static function ConsumeToken(string $token, array $requiredScopes): int {
@@ -316,6 +318,8 @@ class Core {
 				static::ReplyError('Method not allowed', null, 405);
 			}
 			
+			$requiredScopes = ['common'];
+			
 			$handler = $handlers[$requestMethod];
 			if (is_string($handler)) {
 				$handlerFile = $root . '/' . $handler . '.php';
@@ -333,6 +337,29 @@ class Core {
 				// nothing to do
 			} else {
 				static::ReplyError('Endpoint not found', null, 404);
+			}
+			
+			if (count($requiredScopes) > 0) {
+				static::Authorize(...$requiredScopes);
+				$session = static::Session();
+				$app = $session->Application();
+				$rateLimitIdentifier = $session->UserId() . ':' . $app->ApplicationId();
+				$rateLimitCeiling = $app->RequestLimitPerMinute();
+			} else {
+				$rateLimitIdentifier = BeaconCommon::RemoteAddr(false);
+				$rateLimitCeiling = 30;
+			}
+			
+			$rateLimitUsage = BeaconRateLimits::IncrementUsage($rateLimitIdentifier);
+			
+			header('X-RateLimit-Limit: ' . $rateLimitCeiling);
+			header('X-RateLimit-Remaining: ' . ($rateLimitCeiling - $rateLimitUsage));
+			header('X-RateLimit-Reset: 60');
+			
+			if ($rateLimitUsage > $rateLimitCeiling) {
+				header('Retry-After: 10');
+				APIResponse::NewJsonError('Rate limit exceeded', null, 429)->Flush();
+				return;
 			}
 			
 			$routeKey = $requestMethod . ' ' . $route;

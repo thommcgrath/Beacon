@@ -100,6 +100,10 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		return $this->applicationId;
 	}
 	
+	public function Application(): ?Application {
+		return Application::Fetch($this->applicationId);
+	}
+	
 	protected static function PrepareHash(string $sessionId, bool $legacy = false): string {
 		if ($legacy) {
 			return strtolower(hash('sha512', $sessionId, false));

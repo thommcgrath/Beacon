@@ -6,6 +6,9 @@
 
 use BeaconAPI\v4\{APIResponse, Core, User};
 
+// No authorization
+$requiredScopes = [];
+
 function handleRequest(array $context): APIResponse {
 	$identifier = $context['pathParameters']['userId'];
 	$user = User::Fetch($identifier);

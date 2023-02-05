@@ -2,6 +2,8 @@
 
 use BeaconAPI\v4\{Application, ApplicationAuthFlow, APIResponse, Core, Session, User};
 
+$requiredScopes = [];
+
 // To issue a token, both the client and the user need to be positively identified
 // This can either be done with the username and password, or with OAuth.
 // For OAuth, the redemption request will include the client id and secret
