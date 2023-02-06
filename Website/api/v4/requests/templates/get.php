@@ -1,14 +1,14 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Template};
+use BeaconAPI\v4\{Response, Template};
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$templateId = $context['pathParameters']['templateId'];
 	$template = Template::Fetch($templateId);
 	if (is_null($template)) {
-		return APIResponse::NewJSONError('Template not found', null, 404);
+		return Response::NewJsonError('Template not found', null, 404);
 	} else {
-		return APIResponse::NewJSON($template, 200);
+		return Response::NewJson($template, 200);
 	}
 }
 

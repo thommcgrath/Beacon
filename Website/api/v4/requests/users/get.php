@@ -1,13 +1,13 @@
 <?php
 
-use BeaconAPI\v4\{Core, User, APIResponse};
+use BeaconAPI\v4\{Core, User, Response};
 Core::Authorize('user:read');
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];
 	$user = User::Fetch($identifier);
 	if (is_null($user)) {
-		return APIResponse::NewJSONError('User not found', $identifier, 404);
+		return Response::NewJsonError('User not found', $identifier, 404);
 	}
 	
 	if ($user->UserId() === Core::UserId()) {
@@ -25,5 +25,5 @@ function handleRequest(array $context): APIResponse {
 		];
 	}
 	
-	return APIResponse::NewJSON($userInfo, 200);
+	return Response::NewJson($userInfo, 200);
 }

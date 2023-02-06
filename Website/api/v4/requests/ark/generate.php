@@ -2,7 +2,7 @@
 
 BeaconAPI::Authorize(true);
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$project_id = $context['pathParameters']['project_id'];
 	if (\BeaconCommon::IsUUID($project_id) === false) {
 		BeaconAPI::ReplyError('Request a specific project', null, 400);

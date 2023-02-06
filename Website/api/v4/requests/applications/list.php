@@ -1,14 +1,14 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Application, Core};
+use BeaconAPI\v4\{Response, Application, Core};
 
 Core::Authorize('apps:read');
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$filters = $_GET;
 	$filters['userId'] = Core::UserId();
 		
-	return APIResponse::NewJSON(Application::Search($filters), 200);
+	return Response::NewJson(Application::Search($filters), 200);
 }
 
 ?>

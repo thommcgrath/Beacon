@@ -2,7 +2,7 @@
 
 BeaconAPI::Authorize();
 	
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$user_id = BeaconAPI::UserID();
 	$group_id = $context['pathParameters']['group_id'];
 	$group = Sentinel\ServiceGroup::GetByGroupID($context['pathParameters']['group_id']);

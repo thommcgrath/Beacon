@@ -8,16 +8,16 @@ http_response_code(500);
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-use BeaconAPI\v4\{APIResponse, Session, User, UserGenerator};
+use BeaconAPI\v4\{Response, Session, User, UserGenerator};
 
 $activeSession = Session::GetFromCookie();
 if (is_null($activeSession)) {
-	APIResponse::NewJsonError('Unauthorized', null, 401)->Flush();
+	Response::NewJsonError('Unauthorized', null, 401)->Flush();
 	exit;
 }
 
 if (empty($_POST['current_password']) || empty($_POST['password'])) {
-	APIResponse::NewJsonError('Missing parameters', null, 400)->Flush();
+	Response::NewJsonError('Missing parameters', null, 400)->Flush();
 	exit;
 }
 
@@ -30,7 +30,7 @@ $terminateSessions = filter_var($_POST['terminate_sessions'] ?? false, FILTER_VA
 $database = BeaconCommon::Database();
 
 if (!User::ValidatePassword($password)) {
-	APIResponse::NewJsonError('Password must be at least 8 characters and you should avoid repeating characters.', null, 437)->Flush();
+	Response::NewJsonError('Password must be at least 8 characters and you should avoid repeating characters.', null, 437)->Flush();
 	exit;
 }
 
@@ -45,7 +45,7 @@ if ($allowVulnerable == false) {
 		$hash = strtolower(substr($hash, 0, 35));
 		if ($hash == $suffix && $count > 0) {
 			// vulnerable
-			APIResponse::NewJsonError('Password is listed as vulnerable according to haveibeenpwned.com.', null, 438)->Flush();
+			Response::NewJsonError('Password is listed as vulnerable according to haveibeenpwned.com.', null, 438)->Flush();
 			exit;
 		}
 	}
@@ -54,12 +54,12 @@ if ($allowVulnerable == false) {
 $user = $activeSession->User();
 try {
 	UserGenerator::ChangePassword($user, $currentPassword, $password, $activeSession, $regenerateKey);
-	APIResponse::NewJson([
+	Response::NewJson([
 		'session_id' => $activeSession->SessionId()
 	], 200)->Flush();
 	exit;
 } catch (Exception $err) {
-	APIResponse::NewJsonError($err->getMessage(), null, 400)->Flush();
+	Response::NewJsonError($err->getMessage(), null, 400)->Flush();
 	exit;
 }
 

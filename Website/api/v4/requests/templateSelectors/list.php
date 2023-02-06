@@ -1,9 +1,9 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, TemplateSelector};
+use BeaconAPI\v4\{Response, TemplateSelector};
 
-function handleRequest(array $context): APIResponse {
-	return APIResponse::NewJSON(TemplateSelector::Search($_GET), 200);
+function handleRequest(array $context): Response {
+	return Response::NewJson(TemplateSelector::Search($_GET), 200);
 }
 
 ?>

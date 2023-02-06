@@ -9,7 +9,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-use BeaconAPI\v4\{APIResponse, EmailVerificationCode, Session, User, UserGenerator};
+use BeaconAPI\v4\{Response, EmailVerificationCode, Session, User, UserGenerator};
 
 define('ERR_EMAIL_NOT_VERIFIED', 436);
 define('ERR_PASSWORD_VIOLATES_RULES', 437);
@@ -17,7 +17,7 @@ define('ERR_PASSWORD_COMPROMISED', 438);
 define('ERR_CONFIRM_CHILD_RESET', 439);
 
 if (empty($_POST['email']) || empty($_POST['password']) || empty($_POST['code'])) {
-	APIResponse::NewJsonError('Missing parameters.', null, 400)->Flush();
+	Response::NewJsonError('Missing parameters.', null, 400)->Flush();
 	exit;
 }
 
@@ -29,13 +29,13 @@ $allow_vulnerable = filter_var($_POST['allow_vulnerable'] ?? false, FILTER_VALID
 	
 $verification = EmailVerificationCode::Fetch($email);
 if (is_null($verification) || $verification->CheckCode($code) === false) {
-	APIResponse::NewJsonError('Email not verified.', null, ERR_EMAIL_NOT_VERIFIED)->Flush();
+	Response::NewJsonError('Email not verified.', null, ERR_EMAIL_NOT_VERIFIED)->Flush();
 	exit;
 }
 
 // make sure the password is a good password
 if (User::ValidatePassword($password) === false) {
-	APIResponse::NewJsonError('Password must be at least 8 characters and you should avoid repeating characters.', null, ERR_PASSWORD_VIOLATES_RULES)->Flush();
+	Response::NewJsonError('Password must be at least 8 characters and you should avoid repeating characters.', null, ERR_PASSWORD_VIOLATES_RULES)->Flush();
 	exit;
 }
 
@@ -51,7 +51,7 @@ if ($allow_vulnerable == false) {
 		$hash = strtolower(substr($hash, 0, 35));
 		if ($hash == $suffix && $count > 0) {
 			// vulnerable
-			APIResponse::NewJsonError('Password is listed as vulnerable according to haveibeenpwned.com.', null, ERR_PASSWORD_COMPROMISED)->Flush();
+			Response::NewJsonError('Password is listed as vulnerable according to haveibeenpwned.com.', null, ERR_PASSWORD_COMPROMISED)->Flush();
 			exit;
 		}
 	}
@@ -93,7 +93,7 @@ try {
 		if ($user->Is2FAProtected() && $user->Verify2FACode($secondFactorCode) === false) {
 			$database->Rollback();
 			
-			APIResponse::NewJsonError('Verification code required.', ['code' => '2FA_ENABLED'], 403)->Flush();
+			Response::NewJsonError('Verification code required.', ['code' => '2FA_ENABLED'], 403)->Flush();
 			exit;
 		}
 		
@@ -111,14 +111,14 @@ try {
 		BeaconEmail::SendMail($email, $subject, $body);
 	}
 	
-	APIResponse::NewJson([
+	Response::NewJson([
 		'userId' => $user->UserId()
 	], 200)->Flush();
 	exit;
 } catch (Exception $err) {
 	$database->Rollback();
 	
-	APIResponse::NewJsonError($err->getMessage(), ['code' => '2FA_ENABLED'], 400)->Flush();
+	Response::NewJsonError($err->getMessage(), ['code' => '2FA_ENABLED'], 400)->Flush();
 	exit;
 }
 

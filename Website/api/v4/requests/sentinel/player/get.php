@@ -2,7 +2,7 @@
 
 BeaconAPI::Authorize();
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	if (isset($_GET['player_id'])) {
 		$player_id = trim($_GET['player_id']);
 		$player = Sentinel\Player::GetByPlayerID($player_id);

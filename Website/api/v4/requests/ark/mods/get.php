@@ -1,6 +1,6 @@
 <?php
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$mod_id = $context['pathParameters']['modId'];
 	
 	$mod = Ark\Mod::Fetch($mod_id);

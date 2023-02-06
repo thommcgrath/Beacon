@@ -2,7 +2,7 @@
 
 BeaconAPI::Authorize();
 	
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$user_id = BeaconAPI::UserID();
 	$service_id = $context['pathParameters']['service_id'];
 	$service = Sentinel\Service::GetByServiceID($service_id);

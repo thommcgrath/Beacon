@@ -1,10 +1,10 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Core};
+use BeaconAPI\v4\{Response, Core};
 
 Core::Authorize('common');
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$version = false;
 	if (isset($context['pathParameters']['version'])) {
 		$version = filter_var($context['pathParameters']['version'], FILTER_VALIDATE_INT);
@@ -12,9 +12,9 @@ function handleRequest(array $context): APIResponse {
 		$version = filter_var($_GET['version'], FILTER_VALIDATE_INT);
 	}
 	if ($version === false) {
-		return APIResponse::NewJsonError('Missing version parameter', null, 400);
+		return Response::NewJsonError('Missing version parameter', null, 400);
 	} else if ($version < 7) {
-		return APIResponse::NewJsonError('Use the v3 API for deltas below version 7', null, 400);
+		return Response::NewJsonError('Use the v3 API for deltas below version 7', null, 400);
 	}
 	
 	$database = BeaconCommon::Database();
@@ -39,7 +39,7 @@ function handleRequest(array $context): APIResponse {
 				$since = new DateTime($_GET['since']);
 			}
 		} catch (Exception $err) {
-			return APIResponse::NewJsonError('Unable to parse timestamp', $err->getMessage(), 400);
+			return Response::NewJsonError('Unable to parse timestamp', $err->getMessage(), 400);
 		}
 		
 		// Get the total size of updates
@@ -64,7 +64,7 @@ function handleRequest(array $context): APIResponse {
 		}
 	}
 	
-	return APIResponse::NewJson(['since' => $since->format('Y-m-d H:i:sO'), 'files' => $paths, 'totalSize' => $total], 200);
+	return Response::NewJson(['since' => $since->format('Y-m-d H:i:sO'), 'files' => $paths, 'totalSize' => $total], 200);
 }
 
 ?>

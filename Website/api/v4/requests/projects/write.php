@@ -1,14 +1,14 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Core, Project, User};
+use BeaconAPI\v4\{Response, Core, Project, User};
 Core::Authorize();
 	
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	if (Core::ContentType() !== 'application/x-beacon-project') {
-		return APIResponse::NewJSONError('Unsupported media type', 'Send application/x-beacon-project', 415);
+		return Response::NewJsonError('Unsupported media type', 'Send application/x-beacon-project', 415);
 	}
 
-	return APIResponse::NewJSONError('Not implemented yet', $project_id, 500);
+	return Response::NewJsonError('Not implemented yet', $project_id, 500);
 }
 
 ?>

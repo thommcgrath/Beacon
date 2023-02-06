@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4;
 
-class APIResponseBatch extends APIResponse {
+class BatchResponse extends Response {
 	protected $responses = [];
 	protected $keyProperty = '';
 	
@@ -11,7 +11,7 @@ class APIResponseBatch extends APIResponse {
 		$this->headers['Content-Type'] = 'application/json';
 	}
 	
-	public function AddResponse(string $keyPropertyValue, APIResponse $response): void {
+	public function AddResponse(string $keyPropertyValue, Response $response): void {
 		$this->responses[$keyPropertyValue] = $response;	
 	}
 	

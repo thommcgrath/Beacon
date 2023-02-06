@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4;
 
-class APIResponse {
+class Response {
 	protected $headers = [];
 	protected $body = '';
 	protected $code = 500;
@@ -13,22 +13,22 @@ class APIResponse {
 		$this->code = $code;
 	}
 	
-	public static function NewJSON(mixed $obj, int $code): APIResponse {
+	public static function NewJson(mixed $obj, int $code): Response {
 		return new static($code, json_encode($obj, JSON_PRETTY_PRINT), ['Content-Type' => 'application/json']);
 	}
 	
-	public static function NewJSONError(string $message, mixed $details, int $code): APIResponse {
-		return APIResponse::NewJSON([
+	public static function NewJsonError(string $message, mixed $details, int $code): Response {
+		return Response::NewJson([
 			'message' => $message,
 			'details' => $details
 		], $code);
 	}
 	
-	public static function NewNoContent(): APIResponse {
+	public static function NewNoContent(): Response {
 		return new static(204);
 	}
 	
-	public static function NewRedirect(string $destination, bool $temporary = true): APIResponse {
+	public static function NewRedirect(string $destination, bool $temporary = true): Response {
 		return new static(($temporary ? 302 : 301), "Redirect to {$destination}", ['Location' => $destination]);
 	}
 	

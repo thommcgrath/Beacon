@@ -1,6 +1,6 @@
 <?php
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$database = \BeaconCommon::Database();
 	$min_version = BeaconCommon::MinVersion();
 	

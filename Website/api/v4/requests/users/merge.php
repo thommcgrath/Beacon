@@ -4,13 +4,13 @@
 // makes a request for a challenge. That could be a bug, but this feature looks
 // to be unused at the moment.
 
-use BeaconAPI\v4\{APIResponse, APIResponseBatch, Core, Project, User};
+use BeaconAPI\v4\{Response, BatchResponse, Core, Project, User};
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];
 	$authenticatedUser = User::Fetch($identifier);
 	if (is_null($authenticatedUser)) {
-		return APIResponse::NewJsonError('User not found', $identifier, 404);
+		return Response::NewJsonError('User not found', $identifier, 404);
 	}
 	
 	$body = Core::BodyAsJson();
@@ -22,7 +22,7 @@ function handleRequest(array $context): APIResponse {
 		$multi = true;
 	}
 	
-	$batch = new APIResponseBatch('userId');
+	$batch = new BatchResponse('userId');
 	$database = BeaconCommon::Database();
 	foreach ($anonymousUsers as $anonymousUser) {
 		$response = MergeUser($authenticatedUser, $anonymousUser);
@@ -31,20 +31,20 @@ function handleRequest(array $context): APIResponse {
 	return $batch;
 }
 
-// Returns an APIResponse
-function MergeUser(User $authenticatedUser, array $anonymousUser): APIResponse {
+// Returns an Response
+function MergeUser(User $authenticatedUser, array $anonymousUser): Response {
 	if (BeaconCommon::HasAllKeys($anonymousUser, 'userId', 'privateKey') === false) {
-		return APIResponse::NewJsonError('Must include userId and privateKey properties.', $anonymousUser, 400);
+		return Response::NewJsonError('Must include userId and privateKey properties.', $anonymousUser, 400);
 	}
 	
 	$userId = $anonymousUser['userId'];
 	$privateKey = $anonymousUser['privateKey'];
 	$user = User::Fetch($userId);
 	if (is_null($user)) {
-		return APIResponse::NewJsonError('User not found.', $anonymousUser, 404);
+		return Response::NewJsonError('User not found.', $anonymousUser, 404);
 	}
 	if ($user->IsAnonymous() === false) {
-		return APIResponse::NewJsonError('User is not anonymous.', $anonymousUser, 403);
+		return Response::NewJsonError('User is not anonymous.', $anonymousUser, 403);
 	}
 	
 	// To confirm ownership, we're going to try to encrypt something with the user's public key and decrypt it with the private
@@ -57,10 +57,10 @@ function MergeUser(User $authenticatedUser, array $anonymousUser): APIResponse {
 		$encrypted = BeaconEncryption::RSAEncrypt($publicKeyPem, $testValue);
 		$decrypted = BeaconEncryption::RSADecrypt($privateKeyPem, $encrypted);
 		if ($decrypted !== $testValue) {
-			return APIResponse::NewJsonError('Could not confirm ownership of user.', $anonymousUser, 400);
+			return Response::NewJsonError('Could not confirm ownership of user.', $anonymousUser, 400);
 		}
 	} catch (Exception $err) {
-		return APIResponse::NewJsonError('Could not confirm ownership of user.', $anonymousUser, 400);
+		return Response::NewJsonError('Could not confirm ownership of user.', $anonymousUser, 400);
 	}
 	
 	$authenticatedUserId = $authenticatedUser->UserId();
@@ -84,7 +84,7 @@ function MergeUser(User $authenticatedUser, array $anonymousUser): APIResponse {
 	$database->Query('DELETE FROM public.users WHERE user_id = $1;', $userId);
 	$database->Commit();
 	
-	return APIResponse::NewJson('User merged.', 200);
+	return Response::NewJson('User merged.', 200);
 }
 
 ?>

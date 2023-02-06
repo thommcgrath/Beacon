@@ -1,6 +1,6 @@
 <?php
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$map_id = $context['pathParameters']['map_id'];
 	if (is_numeric($map_id)) {
 		$maps = Ark\Map::GetForMask($map_id);

@@ -4,7 +4,7 @@ BeaconAPI::Authorize();
 	
 // This endpoint supports bulk creation and edting
 	
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$properties = BeaconAPI::JSONPayload();
 	
 	if (BeaconCommon::IsAssoc($properties)) {

@@ -1,17 +1,17 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Core, EmailVerificationCode, User};
+use BeaconAPI\v4\{Response, Core, EmailVerificationCode, User};
 Core::Authorize('user:write');
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];
 	$user = User::Fetch($identifier);
 	if (is_null($user)) {
-		return APIResponse::NewJSONError('User not found', $identifier, 404);
+		return Response::NewJsonError('User not found', $identifier, 404);
 	}
 	
 	if ($user->UserId() !== Core::UserId()) {
-		return APIResponse::NewJSONError('Forbidden', $identifier, 403);
+		return Response::NewJsonError('Forbidden', $identifier, 403);
 	}
 	
 	try {
@@ -21,12 +21,12 @@ function handleRequest(array $context): APIResponse {
 		if (empty($email) === false) {
 			$verificationCode = $body['verificationCode'] ?? null;
 			if (empty($verificationCode)) {
-				return APIResponse::NewJSONError('Missing verification code', $body, 400);
+				return Response::NewJsonError('Missing verification code', $body, 400);
 			}
 			
 			$emailVerification = EmailVerificationCode::Fetch($email);
 			if (is_null($emailVerification) || $emailVerification->CheckCode($verificationCode) === false) {
-				return APIResponse::NewJSONError('Incorrect verification code', $body, 400);
+				return Response::NewJsonError('Incorrect verification code', $body, 400);
 			}
 		}
 		
@@ -34,9 +34,9 @@ function handleRequest(array $context): APIResponse {
 		if (empty($emailVerification) === false) {
 			$emailVerification->Delete();
 		}
-		return APIResponse::NewJSON($user, 200);
+		return Response::NewJson($user, 200);
 	} catch (Exception $err) {
-		return APIResponse::NewJSONError($err->getMessage(), $body, 400);
+		return Response::NewJsonError($err->getMessage(), $body, 400);
 	}
 }
 

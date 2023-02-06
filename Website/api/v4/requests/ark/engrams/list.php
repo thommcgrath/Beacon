@@ -1,6 +1,6 @@
 <?php
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$filters = $_GET;
 	
 	if ($context['routeKey'] === 'GET /ark/mods/{modId}/engrams') {

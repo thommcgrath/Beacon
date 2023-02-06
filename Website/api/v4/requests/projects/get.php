@@ -1,38 +1,38 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Core, Project, User};
+use BeaconAPI\v4\{Response, Core, Project, User};
 Core::Authorize(Core::kAuthFlagOptional);
 	
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$project_id = $context['pathParameters']['projectId'];
 	$authorized_user_id = Core::UserId();
 		
 	if (!BeaconCommon::IsUUID($project_id)) {
-		return APIResponse::NewJSONError('Must use a v4 UUID', $project_id, 400);
+		return Response::NewJsonError('Must use a v4 UUID', $project_id, 400);
 	}
 	
 	$project = Project::Fetch($project_id);
 	if (is_null($project)) {
-		return APIResponse::NewJSONError('Project not found', $project_id, 404);
+		return Response::NewJsonError('Project not found', $project_id, 404);
 	}
 	
 	switch ($context['routeKey']) {
 	case 'GET /projects/{projectId}/metadata':
-		return APIResponse::NewJSON($project, 200);
+		return Response::NewJson($project, 200);
 	case 'GET /projects/{projectId}':
 		if (is_null($authorized_user_id) || $authorized_user_id !== $project->UserId()) {
 			$project->IncrementDownloadCount();
 		}
 		return HandleDocumentDataRequest($project, null);
 	case 'GET /projects/{projectId}/versions':
-		return APIResponse::NewJSON($project->Versions(), 200);
+		return Response::NewJson($project->Versions(), 200);
 	case 'GET /projects/{projectId}/versions/{versionId}':
 		$version_id = $context['pathParameters']['versionId'];
 		return HandleDocumentDataRequest($project, $version_id);
 	}
 }
 
-function HandleDocumentDataRequest(Project $project, $version_id = null): APIResponse {
+function HandleDocumentDataRequest(Project $project, $version_id = null): Response {
 	$best_option = '*';
 	$accept = isset($_SERVER['HTTP_ACCEPT_ENCODING']) ? strtolower(trim($_SERVER['HTTP_ACCEPT_ENCODING'])) : '';
 	if ($accept !== '') {
@@ -67,9 +67,9 @@ function HandleDocumentDataRequest(Project $project, $version_id = null): APIRes
 			$headers['Content-Encoding'] = 'gzip';
 		}
 		
-		return new APIResponse(200, $project->Content($compressed, false, $version_id), $headers);
+		return new Response(200, $project->Content($compressed, false, $version_id), $headers);
 	} catch (Exception $err) {
-		return APIResponse::NewJSONError($err->getMessage(), null, 500);
+		return Response::NewJsonError($err->getMessage(), null, 500);
 	}
 }
 

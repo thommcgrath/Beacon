@@ -81,11 +81,11 @@ class DatabaseObjectManager {
 		}
 	}
 	
-	public function HandleCreate(array $context): APIResponse {
+	public function HandleCreate(array $context): Response {
 		Core::Authorize();
 		
-		if (Core::IsJSONContentType() === false) {
-			return APIResponse::NewJSONError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
+		if (Core::IsJsonContentType() === false) {
+			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
 		}
 		
 		$body = Core::BodyAsJSON();
@@ -99,7 +99,7 @@ class DatabaseObjectManager {
 		
 		$user = Core::User();
 		if ($this->className::CheckClassPermission($user, $members, DatabaseObject::kPermissionCreate) === false) {
-			return APIResponse::NewJSONError('Forbidden', $members, 403);
+			return Response::NewJsonError('Forbidden', $members, 403);
 		}
 			
 		$schema = $this->className::DatabaseSchema();
@@ -116,54 +116,54 @@ class DatabaseObjectManager {
 				$created = $this->className::Create($memberData);
 				if (is_null($created)) {
 					$database->Rollback();
-					return APIResponse::NewJSONError('Object was not created', $memberData, 500);
+					return Response::NewJsonError('Object was not created', $memberData, 500);
 				}
 				$newObjects[] = $created;
 			} catch (Exception $err) {
 				$database->Rollback();
-				return APIResponse::NewJSONError($err->getMessage(), $err, 500);
+				return Response::NewJsonError($err->getMessage(), $err, 500);
 			}
 		}
 		if (count($newObjects) !== count($members)) {
 			$database->Rollback();
-			return APIResponse::NewJSONError('Incorrect number of objects created', ['sent' => $members, 'created' => $newObjects], 500);
+			return Response::NewJsonError('Incorrect number of objects created', ['sent' => $members, 'created' => $newObjects], 500);
 		}
 		$database->Commit();
 		
 		if ($multi) {
-			return APIResponse::NewJSON($newObjects, 201);
+			return Response::NewJson($newObjects, 201);
 		} else {
-			return APIResponse::NewJSON($newObjects[0], 201);
+			return Response::NewJson($newObjects[0], 201);
 		}
 	}
 	
-	public function HandleList(array $context): APIResponse {
-		return APIResponse::NewJSON($this->className::Search($_GET), 200);
+	public function HandleList(array $context): Response {
+		return Response::NewJson($this->className::Search($_GET), 200);
 	}
 	
-	public function HandleUpdate(array $context): APIResponse {
+	public function HandleUpdate(array $context): Response {
 		
 	}
 	
-	public function HandleReplace(array $context): APIResponse {
+	public function HandleReplace(array $context): Response {
 		
 	}
 	
-	public function HandleFetch(array $context): APIResponse {
+	public function HandleFetch(array $context): Response {
 		$uuid = $context['pathParameters'][$this->varName];
 		try {
 			$obj = $this->className::Fetch($uuid);
 			if ($obj) {
-				return APIResponse::NewJSON($obj, 200);
+				return Response::NewJson($obj, 200);
 			} else {
-				return APIResponse::NewJSONError('Not found', null, 404);
+				return Response::NewJsonError('Not found', null, 404);
 			}
 		} catch (Exception $err) {
-			return APIResponse::NewJSONError($err->getMessage(), null, 500);
+			return Response::NewJsonError($err->getMessage(), null, 500);
 		}
 	}
 	
-	public function HandleDelete(array $contet): APIResponse {
+	public function HandleDelete(array $contet): Response {
 		
 	}
 }

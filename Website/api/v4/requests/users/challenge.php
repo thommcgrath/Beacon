@@ -4,16 +4,16 @@
 // makes a request for a challenge. That could be a bug, but this feature looks
 // to be unused at the moment.
 
-use BeaconAPI\v4\{APIResponse, Core, User};
+use BeaconAPI\v4\{Response, Core, User};
 
 // No authorization
 $requiredScopes = [];
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];
 	$user = User::Fetch($identifier);
 	if (is_null($user)) {
-		return APIResponse::NewJsonError('User not found', $identifier, 404);
+		return Response::NewJsonError('User not found', $identifier, 404);
 	}
 	
 	$challenge = BeaconCommon::GenerateUUID();
@@ -23,7 +23,7 @@ function handleRequest(array $context): APIResponse {
 	$database->Query('INSERT INTO user_challenges (user_id, challenge) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET challenge = $2;', $user->UserId(), $challenge);
 	$database->Commit();
 
-	return APIResponse::NewJson(['userId' => $user->UserId(), 'challenge' => $challenge], 201);
+	return Response::NewJson(['userId' => $user->UserId(), 'challenge' => $challenge], 201);
 }
 
 ?>

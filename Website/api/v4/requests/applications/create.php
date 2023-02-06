@@ -1,12 +1,12 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Application, Core};
+use BeaconAPI\v4\{Response, Application, Core};
 
 Core::Authorize('apps:write');
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	if (Core::IsJsonContentType() === false) {
-		return APIResponse::NewJsonError('Send a JSON body', null, 400);
+		return Response::NewJsonError('Send a JSON body', null, 400);
 	}
 	
 	$obj = Core::BodyAsJson();

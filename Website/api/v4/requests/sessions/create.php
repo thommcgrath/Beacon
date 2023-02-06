@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, ApplicationAuthFlow, APIResponse, Core, Session, User};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, Response, Core, Session, User};
 
 $requiredScopes = [];
 
@@ -9,7 +9,7 @@ $requiredScopes = [];
 // For OAuth, the redemption request will include the client id and secret
 // For password, we cannot simply include the secret so a challenge is needed.
 	
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$obj = Core::BodyAsJSON();
 	if (BeaconCommon::HasAllKeys($obj, 'email', 'password', 'client_id', 'signature')) {
 		// Password auth
@@ -17,15 +17,15 @@ function handleRequest(array $context): APIResponse {
 		try {
 			$user = User::Fetch($obj['email']);
 			if (is_null($user)) {
-				return APIResponse::NewJSONError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
+				return Response::NewJsonError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
 			}
 			
 			$application = Application::Fetch($obj['client_id']);
 			if (is_null($application)) {
-				return APIResponse::NewJSONError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
+				return Response::NewJsonError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
 			}
 			if ($application->HasScope('password_auth') === false) {
-				return APIResponse::NewJSONError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
+				return Response::NewJsonError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
 			}
 			$client_secret = $application->Secret();
 			
@@ -33,7 +33,7 @@ function handleRequest(array $context): APIResponse {
 			$rows = $database->Query("SELECT challenge FROM user_challenges WHERE user_id = $1;", $user->UserId());
 			if ($rows->RecordCount() !== 1) {
 				$database->Rollback();
-				return APIResponse::NewJSONError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
+				return Response::NewJsonError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
 			}
 			
 			$challenge = $rows->Field('challenge');
@@ -41,12 +41,12 @@ function handleRequest(array $context): APIResponse {
 			$computed_signature = base64_encode(hash('sha3-512', $signature_contents, true));
 			if ($computed_signature !== $obj['signature']) {
 				$database->Rollback();
-				return APIResponse::NewJSONError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
+				return Response::NewJsonError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
 			}
 			
 			if ($user->TestPassword($obj['password']) === false) {
 				$database->Rollback();
-				return APIResponse::NewJSONError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
+				return Response::NewJsonError('Authorization failed', ['code' => 'BAD_LOGIN'], 401);
 			}
 			
 			if ($user->Is2FAProtected()) {
@@ -68,13 +68,13 @@ function handleRequest(array $context): APIResponse {
 						$verification_code = $device_id;
 					} else {
 						$database->Rollback();
-						return APIResponse::NewJSONError('Verification needed', ['code' => '2FA_ENABLED'], 403);
+						return Response::NewJsonError('Verification needed', ['code' => '2FA_ENABLED'], 403);
 					}
 				}
 				
 				if ($user->Verify2FACode($verification_code) === false) {
 					$database->Rollback();
-					return APIResponse::NewJSONError('Verification needed', ['code' => '2FA_ENABLED'], 403);
+					return Response::NewJsonError('Verification needed', ['code' => '2FA_ENABLED'], 403);
 				}
 				
 				if (empty($device_id) === false) {
@@ -90,37 +90,37 @@ function handleRequest(array $context): APIResponse {
 			$session = Session::Create($user, $application);
 			$database->Commit();
 			
-			return APIResponse::NewJSON($session, 201);
+			return Response::NewJson($session, 201);
 		} catch (Exception $err) {
 			if ($database->InTransaction()) {
 				$database->ResetTransactions();
 			}
-			return APIResponse::NewJSONError('Internal server error', ['code' => 'EXCEPTION', 'message' => $err->getMessage()], 500);
+			return Response::NewJsonError('Internal server error', ['code' => 'EXCEPTION', 'message' => $err->getMessage()], 500);
 		}
 	} else if (BeaconCommon::HasAllKeys($obj, 'grant_type', 'redirect_uri', 'code', 'client_id', 'client_secret')) {
 		// OAuth
 		if ($obj['grant_type'] !== 'authorization_code') {
-			return APIResponse::NewJSONError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
+			return Response::NewJsonError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
 		}
 		$session = ApplicationAuthFlow::Redeem($obj['client_id'], $obj['client_secret'], $obj['code']);
 		/*$application = Application::Fetch($obj['client_id']);
 		if (is_null($application)) {
-			return APIResponse::NewJSONError('Invalid client id', ['code' => 'INVALID_CLIENT_ID'], 400);
+			return Response::NewJsonError('Invalid client id', ['code' => 'INVALID_CLIENT_ID'], 400);
 		}
 		$client_secret = $application->Secret();
 		if ($obj['client_secret'] !== $client_secret) {
-			return APIResponse::NewJSONError('Invalid client secret', ['code' => 'INVALID_CLIENT_SECRET'], 400);
+			return Response::NewJsonError('Invalid client secret', ['code' => 'INVALID_CLIENT_SECRET'], 400);
 		}
 		if ($application->CallbackAllowed($obj['redirect_uri']) === false) {
-			return APIResponse::NewJSONError('Redirect URI is not whitelisted', ['code' => 'INVALID_REDIRECT_URI'], 400);
+			return Response::NewJsonError('Redirect URI is not whitelisted', ['code' => 'INVALID_REDIRECT_URI'], 400);
 		}
 		$session = $application->RedeemGrantCode($obj['code']);*/
 		if (is_null($session)) {
-			return APIResponse::NewJSONError('Invalid code', ['code' => 'INVALID_CODE'], 400);
+			return Response::NewJsonError('Invalid code', ['code' => 'INVALID_CODE'], 400);
 		}
-		return APIResponse::NewJSON($session, 201);
+		return Response::NewJson($session, 201);
 	} else {
-		return APIResponse::NewJSONError('Invalid authorization parameters', null, 401);
+		return Response::NewJsonError('Invalid authorization parameters', null, 401);
 	}
 }
 

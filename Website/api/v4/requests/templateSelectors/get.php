@@ -1,14 +1,14 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, TemplateSelector};
+use BeaconAPI\v4\{Response, TemplateSelector};
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$templateSelectorId = $context['pathParameters']['templateSelectorId'];
 	$templateSelector = TemplateSelector::Fetch($templateSelectorId);
 	if (is_null($templateSelector)) {
-		return APIResponse::NewJSONError('Template selector not found', null, 404);
+		return Response::NewJsonError('Template selector not found', null, 404);
 	} else {
-		return APIResponse::NewJSON($templateSelector, 200);
+		return Response::NewJson($templateSelector, 200);
 	}
 }
 

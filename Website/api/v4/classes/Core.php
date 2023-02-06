@@ -77,16 +77,16 @@ class Core {
 	// deprecated
 	public static function ReplySuccess(mixed $payload = null): void {
 		if (empty($payload)) {
-			APIResponse::NewNoContent()->Flush();
+			Response::NewNoContent()->Flush();
 		} else {
-			APIResponse::NewJSON($payload, $code)->Flush();
+			Response::NewJson($payload, $code)->Flush();
 		}
 		exit;
 	}
 	
 	// deprecated
 	public static function ReplyError(string $message, mixed $payload = null, int $code) {
-		APIResponse::NewJSONError($message, $payload, $code)->Flush();
+		Response::NewJsonError($message, $payload, $code)->Flush();
 		exit;
 	}
 	
@@ -359,7 +359,7 @@ class Core {
 			
 			if ($rateLimitUsage > $rateLimitCeiling) {
 				header('Retry-After: 10');
-				APIResponse::NewJsonError('Rate limit exceeded', null, 429)->Flush();
+				Response::NewJsonError('Rate limit exceeded', null, 429)->Flush();
 				return;
 			}
 			

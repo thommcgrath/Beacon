@@ -1,10 +1,10 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Core, EmailVerificationCode, User, UserGenerator};
+use BeaconAPI\v4\{Response, Core, EmailVerificationCode, User, UserGenerator};
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	if (Core::IsJsonContentType() === false) {
-		return APIResponse::NewJSONError('Send a JSON payload', null, 400);
+		return Response::NewJsonError('Send a JSON payload', null, 400);
 	}
 	
 	$payload = Core::BodyAsJson();
@@ -13,24 +13,24 @@ function handleRequest(array $context): APIResponse {
 	if (empty($email) === false) {
 		$verificationCode = $payload['verificationCode'] ?? null;
 		if (empty($verificationCode)) {
-			return APIResponse::NewJSONError('Missing verification code', $payload, 400);
+			return Response::NewJsonError('Missing verification code', $payload, 400);
 		}
 		
 		$emailVerification = EmailVerificationCode::Fetch($email);
 		if (is_null($emailVerification) || $emailVerification->CheckCode($verificationCode) === false) {
-			return APIResponse::NewJSONError('Incorrect verification code', $payload, 400);
+			return Response::NewJsonError('Incorrect verification code', $payload, 400);
 		}
 	}
 	
 	if (isset($payload['userId'])) {
-		return APIResponse::NewJSONError('Do not include user id', $payload, 400);
+		return Response::NewJsonError('Do not include user id', $payload, 400);
 	}
 	
 	if ($context['routeKey'] === 'PUT /users/{userId}') {
 		$userId = $context['pathParameters']['userId'];
 		$user = User::Fetch($userId);
 		if (is_null($user) === false) {
-			return APIResponse::NewJSONError('User already exists', $payload, 400);
+			return Response::NewJsonError('User already exists', $payload, 400);
 		}
 	}
 	
@@ -39,9 +39,9 @@ function handleRequest(array $context): APIResponse {
 		if (empty($emailVerification) === false) {
 			$emailVerification->Delete();
 		}
-		return APIResponse::NewJSON($user, 201);
+		return Response::NewJson($user, 201);
 	} catch (Exception $err) {
-		return APIResponse::NewJSONError($err->getMessage(), $payload, 500);
+		return Response::NewJsonError($err->getMessage(), $payload, 500);
 	}
 }
 

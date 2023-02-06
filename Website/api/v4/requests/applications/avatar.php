@@ -1,17 +1,17 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Application, Core};
+use BeaconAPI\v4\{Response, Application, Core};
 
 Core::Authorize('apps:write');
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$appId = $context['pathParameters']['applicationId'];
 	$app = Application::Fetch($appId);
 	if (empty($app)) {
-		return APIResponse::NewJsonError('Application not found', $appId, 404);
+		return Response::NewJsonError('Application not found', $appId, 404);
 	}
 	if ($app->UserId() !== Core::UserId()) {
-		return APIResponse::NewJsonError('Forbidden', $appId, 403);
+		return Response::NewJsonError('Forbidden', $appId, 403);
 	}
 	$appId = $app->ApplicationId();
 	
@@ -30,7 +30,7 @@ function handleRequest(array $context): APIResponse {
 		$extension = 'jpg';
 		break;
 	default:
-		return APIResponse::NewJsonError('Unsupported file type', $mime, 400);
+		return Response::NewJsonError('Unsupported file type', $mime, 400);
 	}
 	
 	$filename = "original.{$extension}";
@@ -65,20 +65,20 @@ function handleRequest(array $context): APIResponse {
 		$canvas = null;
 	}
 	
-	//return new APIResponse(200, $uploads['1024px.png'], ['Content-Type' => 'image/png']);
+	//return new Response(200, $uploads['1024px.png'], ['Content-Type' => 'image/png']);
 	
 	$cdn = BeaconCDN::AssetsZone();
 	foreach ($uploads as $filename => $data) {
 		try {
 			$cdn->PutFile("/images/avatars/{$appId}/{$filename}", $data);
 		} catch (Exception $err) {
-			return APIResponse::NewJsonError('Could not upload avatar', $err->getMessage(), 500);
+			return Response::NewJsonError('Could not upload avatar', $err->getMessage(), 500);
 		}
 	}
 	
 	$app->Edit(['iconFilename' => '{{applicationId}}/{{size}}.png']);
 	
-	return APIResponse::NewJson([
+	return Response::NewJson([
 		'path' => "/images/avatars/{$appId}/",
 		'files' => array_keys($uploads)
 	], 200);

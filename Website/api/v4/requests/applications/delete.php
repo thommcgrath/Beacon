@@ -1,21 +1,21 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Application, Core};
+use BeaconAPI\v4\{Response, Application, Core};
 
 Core::Authorize('apps:write');
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$applicationId = $context['pathParameters']['applicationId'];
 	$app = Application::Fetch($applicationId);
 	if (is_null($app) || $app->UserId() !== Core::UserId()) {
-		return APIResponse::NewJSONError('Application not found', null, 404);
+		return Response::NewJsonError('Application not found', null, 404);
 	}
 	
 	try {
 		$app->Delete();
-		return APIResponse::NewNoContent();
+		return Response::NewNoContent();
 	} catch (Exception $err) {
-		return APIResponse::NewJSONError('Internal server error', null, 500);
+		return Response::NewJsonError('Internal server error', null, 500);
 	}
 }
 

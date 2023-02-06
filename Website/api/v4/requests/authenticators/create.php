@@ -2,7 +2,7 @@
 
 BeaconAPI::Authorize();
 	
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$user = BeaconAPI::User();
 	$user_id = $user->UserID();
 	$object_data = BeaconAPI::JSONPayload();

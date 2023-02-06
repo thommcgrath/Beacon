@@ -1,8 +1,8 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Core, Project, User};
+use BeaconAPI\v4\{Response, Core, Project, User};
 
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$database = BeaconCommon::Database();
 	$user_id = Core::Authenticated() ? Core::UserId() : null;
 	
@@ -20,7 +20,7 @@ function handleRequest(array $context): APIResponse {
 	}
 	
 	$results = Project::Search($filters);
-	return APIResponse::NewJSON($results, 200);
+	return Response::NewJson($results, 200);
 }
 
 ?>

@@ -1,18 +1,18 @@
 <?php
 
-use BeaconAPI\v4\{APIResponse, Core, Session};
+use BeaconAPI\v4\{Response, Core, Session};
 
 Core::Authorize('common');
 	
-function handleRequest(array $context): APIResponse {
+function handleRequest(array $context): Response {
 	$user_id = Core::UserId();
 	$session_id = $context['pathParameters']['sessionId'];
 	$session = Session::Fetch($session_id);
 	if (($session === null) || ($session->UserId() !== $user_id) || $session->User()->CanSignIn() === false) {
-		return APIResponse::NewJSONError('Session not found', ['code' => 'NOT_FOUND'], 404);
+		return Response::NewJsonError('Session not found', ['code' => 'NOT_FOUND'], 404);
 	}
 	
-	return APIResponse::NewJSON($session, 200);
+	return Response::NewJson($session, 200);
 }
 
 ?>
