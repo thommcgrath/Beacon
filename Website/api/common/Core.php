@@ -355,6 +355,8 @@ abstract class Core {
 	}
 	
 	public static function HandleRequest(string $root): void {
+		static::HandleRateLimiting();
+		
 		$request_route = '/' . $_GET['route'];
 		foreach (self::$routes as $route => $route_info) {
 			$route_expression = $route_info['expression'];
@@ -406,6 +408,22 @@ abstract class Core {
 			return;
 		}
 		static::ReplyError('Endpoint not found: Route not registered.', null, 404);
+	}
+	
+	public static function HandleRateLimiting(): void {
+		$limit = 300;
+		
+		$usage = \BeaconRateLimits::IncrementUsage(\BeaconCommon::RemoteAddr(false));
+		$remaining = max($limit - $usage, 0);
+		
+		header('X-RateLimit-Limit: ' . $limit);
+		header('X-RateLimit-Remaining: ' . $remaining);
+		header('X-RateLimit-Reset: 60');
+		
+		if ($usage > $limit) {
+			header('Retry-After: 10');
+			static::ReplyError('Rate limit exceeded', null, 429);
+		}
 	}
 }
 

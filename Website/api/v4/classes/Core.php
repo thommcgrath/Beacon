@@ -351,9 +351,10 @@ class Core {
 			}
 			
 			$rateLimitUsage = BeaconRateLimits::IncrementUsage($rateLimitIdentifier);
+			$rateLimitRemaining = max($rateLimitCeiling - $rateLimitUsage, 0);
 			
 			header('X-RateLimit-Limit: ' . $rateLimitCeiling);
-			header('X-RateLimit-Remaining: ' . ($rateLimitCeiling - $rateLimitUsage));
+			header('X-RateLimit-Remaining: ' . $rateLimitRemaining);
 			header('X-RateLimit-Reset: 60');
 			
 			if ($rateLimitUsage > $rateLimitCeiling) {
