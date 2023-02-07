@@ -2,7 +2,7 @@
 
 use BeaconAPI\v4\{Response, Application, Core};
 
-$requiredScopes[] = 'apps:read';
+$requiredScopes[] = Application::kScopeAppsRead;
 
 function handleRequest(array $context): Response {
 	$applicationId = $context['pathParameters']['applicationId'];

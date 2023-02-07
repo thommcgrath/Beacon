@@ -1,9 +1,8 @@
 <?php
 
-use BeaconAPI\v4\{Response, Application, Core};
+use BeaconAPI\v4\{Application, Core, Response};
 
-$requiredScopes[] = 'apps:write';
-$requiredScopes[] = 'apps:read';
+$requiredScopes[] = Application::kScopeAppsCreate;
 
 function handleRequest(array $context): Response {
 	if (Core::IsJsonContentType() === false) {
@@ -14,9 +13,9 @@ function handleRequest(array $context): Response {
 	$obj['userId'] = Core::UserId();
 	try {
 		$app = Application::Create($obj);
-		return ApiResponse::NewJson($app, 201);
+		return Response::NewJson($app, 201);
 	} catch (Exception $err) {
-		return ApiResponse::NewJsonError($err->getMessage(), $obj, 400);
+		return Response::NewJsonError($err->getMessage(), $obj, 400);
 	}
 }
 

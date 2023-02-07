@@ -1,9 +1,8 @@
 <?php
 
-use BeaconAPI\v4\{Response, Application, Core};
+use BeaconAPI\v4\{Application, Core, Response};
 
-$requiredScopes[] = 'apps:write';
-$requiredScopes[] = 'apps:read';
+$requiredScopes[] = Application::kScopeAppsUpdate;
 
 function handleRequest(array $context): Response {
 	$applicationId = $context['pathParameters']['applicationId'];
@@ -15,9 +14,9 @@ function handleRequest(array $context): Response {
 	$obj = Core::BodyAsJson();
 	try {
 		$app->Edit($obj);
-		return ApiResponse::NewJson($app, 200);
+		return Response::NewJson($app, 200);
 	} catch (Exception $err) {
-		return ApiResponse::NewJsonError($err->getMessage(), $obj, 400);
+		return Response::NewJsonError($err->getMessage(), $obj, 400);
 	}
 }
 

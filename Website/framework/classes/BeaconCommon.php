@@ -295,15 +295,15 @@ abstract class BeaconCommon {
 	}
 	
 	public static function ArrayToEnglish(array $items, string $conjunction = 'and'): string {
-		if (count($items) == 0) {
+		if (count($items) === 0) {
 			return '';
-		} elseif (count($items) == 1) {
-			return $items[0];
-		} elseif (count($items) == 2) {
-			return $items[0] . ' ' . $conjunction . ' ' . $items[1];
+		} elseif (count($items) === 1) {
+			return $items[array_key_first($items)];
+		} elseif (count($items) === 2) {
+			return implode(" {$conjunction} ", $items);
 		} else {
 			$last = array_pop($items);
-			return implode(', ', $items) . ', ' . $conjunction . ' ' . $last;
+			return implode(', ', $items) . ", {$conjunction} {$last}";
 		}
 	}
 	

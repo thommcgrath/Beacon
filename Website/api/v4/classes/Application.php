@@ -16,31 +16,59 @@ class Application extends DatabaseObject implements JsonSerializable {
 	
 	const kScopePasswordAuth = 'password_auth';
 	const kScopeCommon = 'common';
+	const kScopeAppsCreate = 'apps:create';
 	const kScopeAppsRead = 'apps:read';
-	const kScopeAppsWrite = 'apps:write';
+	const kScopeAppsUpdate = 'apps:update';
+	const kScopeAppsDelete = 'apps:delete';
+	const kScopeUsersCreate = 'users:create';
+	const kScopeUsersRead = 'users:read';
+	const kScopeUsersUpdate = 'users:update';
+	const kScopeUsersDelete = 'users:delete';
 	const kScopeSentinelLogsRead = 'sentinel_logs:read';
-	const kScopeSentinelLogsWrite = 'sentinel_logs:write';
+	const kScopeSentinelLogsUpdate = 'sentinel_logs:update';
 	const kScopeSentinelPlayersRead = 'sentinel_players:read';
-	const kScopeSentinelPlayersWrite = 'sentinel_players:write';
+	const kScopeSentinelPlayersUpdate = 'sentinel_players:update';
+	const kScopeSentinelServicesCreate = 'sentinel_services:create';
 	const kScopeSentinelServicesRead = 'sentinel_services:read';
-	const kScopeSentinelServicesWrite = 'sentinel_services:write';
-	const kScopeUserRead = 'user:read';
-	const kScopeUserWrite = 'user:write';
+	const kScopeSentinelServicesUpdate = 'sentinel_services:update';
+	const kScopeSentinelServicesDelete = 'sentinel_services:delete';
 	
 	public static function ValidScopes(): array {
 		return [
 			self::kScopePasswordAuth,
 			self::kScopeCommon,
+			self::kScopeAppsCreate,
 			self::kScopeAppsRead,
-			self::kScopeAppsWrite,
+			self::kScopeAppsUpdate,
+			self::kScopeAppsDelete,
+			self::kScopeUsersCreate,
+			self::kScopeUsersRead,
+			self::kScopeUsersUpdate,
+			self::kScopeUsersDelete,
 			self::kScopeSentinelLogsRead,
-			self::kScopeSentinelLogsWrite,
+			self::kScopeSentinelLogsUpdate,
 			self::kScopeSentinelPlayersRead,
-			self::kScopeSentinelPlayersWrite,
+			self::kScopeSentinelPlayersUpdate,
+			self::kScopeSentinelServicesCreate,
 			self::kScopeSentinelServicesRead,
-			self::kScopeSentinelServicesWrite,
-			self::kScopeUserRead,
-			self::kScopeUserWrite
+			self::kScopeSentinelServicesUpdate,
+			self::kScopeSentinelServicesDelete
+		];
+	}
+	
+	public static function RestrictedScopes(): array {
+		return [
+			self::kScopePasswordAuth,
+			self::kScopeUsersCreate,
+			self::kScopeUsersUpdate,
+			self::kScopeUsersDelete,
+			self::kScopeAppsCreate,
+			self::kScopeAppsRead,
+			self::kScopeAppsUpdate,
+			self::kScopeAppsDelete,
+			self::kScopeSentinelServicesCreate,
+			self::kScopeSentinelServicesUpdate,
+			self::kScopeSentinelServicesDelete
 		];
 	}
 		
@@ -98,6 +126,13 @@ class Application extends DatabaseObject implements JsonSerializable {
 		}
 		if (in_array(self::kScopeCommon, $scopes) === false) {
 			$scopes[] = self::kScopeCommon;
+		}
+		$restrictedScopes = array_intersect($scopes, static::RestrictedScopes());
+		if (count($restrictedScopes) > 0) {
+			sort($restrictedScopes);
+			$restrictedScope = BeaconCommon::ArrayToEnglish($restrictedScopes);
+			$scopeOrScopes = count($restrictedScopes) > 1 ? 'scopes' : 'scope';
+			throw new Exception("This app has requested the restricted {$scopeOrScopes} {$restrictedScope}. Create the app without the {$scopeOrScopes}, then contact support to discuss gaining access.");
 		}
 		sort($scopes);
 		
@@ -177,8 +212,17 @@ class Application extends DatabaseObject implements JsonSerializable {
 			if (in_array(self::kScopeCommon, $scopes) === false) {
 				$scopes[] = self::kScopeCommon;
 			}
-			
 			sort($scopes);
+			
+			$scopesToAdd = array_diff($scopes, $this->scopes);
+			$restrictedScopes = array_intersect($scopesToAdd, static::RestrictedScopes());
+			if (count($restrictedScopes) > 0) {
+				sort($restrictedScopes);
+				$restrictedScope = BeaconCommon::ArrayToEnglish($restrictedScopes);
+				$scopeOrScopes = count($restrictedScopes) > 1 ? 'scopes' : 'scope';
+				throw new Exception("This app has requested the restricted {$scopeOrScopes} {$restrictedScope}. Create the app without the {$scopeOrScopes}, then contact support to discuss gaining access.");
+			}
+			
 			$assignments[] = 'scopes = $' . $placeholder++;
 			$values[] = implode(' ', $scopes);
 			

@@ -132,23 +132,31 @@ class Core {
 		case self::kAuthSchemeBearer:
 			$supportedScopes = [
 				Application::kScopeCommon,
+				Application::kScopeAppsCreate,
 				Application::kScopeAppsRead,
-				Application::kScopeAppsWrite,
+				Application::kScopeAppsUpdate,
+				Application::kScopeAppsDelete,
+				Application::kScopeUsersRead,
+				Application::kScopeUsersUpdate,
+				Application::kScopeUsersDelete,
 				Application::kScopeSentinelLogsRead,
-				Application::kScopeSentinelLogsWrite,
+				Application::kScopeSentinelLogsUpdate,
 				Application::kScopeSentinelPlayersRead,
-				Application::kScopeSentinelPlayersWrite,
+				Application::kScopeSentinelPlayersUpdate,
+				Application::kScopeSentinelServicesCreate,
 				Application::kScopeSentinelServicesRead,
-				Application::kScopeSentinelServicesWrite,
-				Application::kScopeUserRead,
-				Application::kScopeUserWrite
+				Application::kScopeSentinelServicesUpdate,
+				Application::kScopeSentinelServicesDelete
 			];
 			$requiredScopes = [
 				Application::kScopeCommon
 			];
 			break;
 		case self::kAuthSchemeDigest:
-			$supportedScopes = [Application::kScopePasswordAuth];
+			$supportedScopes = [
+				Application::kScopePasswordAuth,
+				Application::kScopeUsersCreate
+			];
 			$requiredScopes = [];
 			break;
 		}
