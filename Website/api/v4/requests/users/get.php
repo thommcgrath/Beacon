@@ -2,7 +2,7 @@
 
 use BeaconAPI\v4\{Core, User, Response};
 
-// common is ok for this
+$requiredScopes[] = Application::kScopeUserRead;
 
 function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];

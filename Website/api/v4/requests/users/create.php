@@ -2,7 +2,7 @@
 
 use BeaconAPI\v4\{Application,Core, EmailVerificationCode, Response, User, UserGenerator};
 
-$requiredScopes = [Application::kScopeUserCreate];
+$requiredScopes[] = Application::kScopeUserCreate;
 $authScheme = Core::kAuthSchemeDigest;
 
 function handleRequest(array $context): Response {

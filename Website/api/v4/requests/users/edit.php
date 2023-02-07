@@ -2,8 +2,7 @@
 
 use BeaconAPI\v4\{Response, Core, EmailVerificationCode, User};
 
-$requiredScopes[] = 'user:read';
-$requiredScopes[] = 'user:write';
+$requiredScopes[] = Application::kScopeUserUpdate;
 
 function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];
