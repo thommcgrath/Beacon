@@ -7,23 +7,23 @@ use BeaconCommon;
 class Project extends \BeaconAPI\v4\Project {
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
-		$json['map_mask'] = $this->MapMask();
+		$json['mapMask'] = $this->MapMask();
 		$json['difficulty'] = $this->DifficultyValue();
 		return $json;
 	}
 	
 	public function MapMask(): int {
-		return array_key_exists('map', $this->game_specific) ? intval($this->game_specific['map']) : 0;
+		return array_key_exists('map', $this->gameSpecific) ? intval($this->gameSpecific['map']) : 0;
 	}
 	
 	public function DifficultyValue(): float {
-		return array_key_exists('difficulty', $this->game_specific) ? floatval($this->game_specific['difficulty']) : 0;
+		return array_key_exists('difficulty', $this->gameSpecific) ? floatval($this->gameSpecific['difficulty']) : 0;
 		return $this->difficulty_value;
 	}
 	
 	public function RequiredMods(bool $as_array): array|string {
-		if (array_key_exists('mods', $this->game_specific)) {
-			$mods = $this->game_specific['mods'];
+		if (array_key_exists('mods', $this->gameSpecific)) {
+			$mods = $this->gameSpecific['mods'];
 			if ($as_array) {
 				return $mods;
 			} else {
@@ -39,8 +39,8 @@ class Project extends \BeaconAPI\v4\Project {
 	}
 	
 	public function ImplementedConfigs(bool $as_array): array|string {
-		if (array_key_exists('included_editors', $this->game_specific)) {
-			$editors = $this->game_specific['included_editors'];
+		if (array_key_exists('included_editors', $this->gameSpecific)) {
+			$editors = $this->gameSpecific['included_editors'];
 			if ($as_array) {
 				return $editors;
 			} else {
@@ -55,16 +55,12 @@ class Project extends \BeaconAPI\v4\Project {
 		}
 	}
 	
-	public function ResourceURL(): string {
-		return Core::URL('projects/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
-	}
-	
 	protected static function ValidateMultipart(array &$required_vars, string &$reason): bool {
 		if (parent::ValidateMultipart($required_vars, $reason) === false) {
 			return false;
 		}
 		
-		$required_vars[] = 'game_id';
+		$required_vars[] = 'gameId';
 		$required_vars[] = 'difficulty';
 		$required_vars[] = 'editors';
 		$required_vars[] = 'map';
@@ -78,7 +74,7 @@ class Project extends \BeaconAPI\v4\Project {
 			return false;
 		}
 		
-		$project['GameID'] = $_POST['game_id'];
+		$project['GameID'] = $_POST['gameId'];
 		
 		$project['Map'] = intval($_POST['map']);
 		$project['DifficultyValue'] = floatval($_POST['difficulty']);

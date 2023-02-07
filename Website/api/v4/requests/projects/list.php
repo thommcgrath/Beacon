@@ -4,14 +4,12 @@ use BeaconAPI\v4\{Response, Core, Project, User};
 
 function handleRequest(array $context): Response {
 	$database = BeaconCommon::Database();
-	$user_id = Core::Authenticated() ? Core::UserId() : null;
-	
 	$public_only = true;
 	$filters = $_GET;
 	$filters['deleted'] = false;
 	if ($context['routeKey'] === 'GET /users/{userId}/projects') {
-		$filters['user_id'] = $context['pathParameters']['userId'];
-		if ($context['pathParameters']['userId'] === $user_id) {
+		$filters['userId'] = $context['pathParameters']['userId'];
+		if ($context['pathParameters']['userId'] === Core::UserId()) {
 			$public_only = false;
 		}
 	}
