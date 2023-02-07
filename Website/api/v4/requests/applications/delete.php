@@ -2,7 +2,8 @@
 
 use BeaconAPI\v4\{Response, Application, Core};
 
-Core::Authorize('apps:write');
+$requiredScopes[] = 'apps:write';
+$requiredScopes[] = 'apps:read';
 
 function handleRequest(array $context): Response {
 	$applicationId = $context['pathParameters']['applicationId'];

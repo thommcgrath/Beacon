@@ -2,7 +2,7 @@
 
 use BeaconAPI\v4\{Response, Application, Core};
 
-Core::Authorize('apps:read');
+$requiredScopes[] = 'apps:read';
 
 function handleRequest(array $context): Response {
 	$filters = $_GET;
