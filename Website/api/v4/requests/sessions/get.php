@@ -1,8 +1,6 @@
 <?php
 
 use BeaconAPI\v4\{Response, Core, Session};
-
-Core::Authorize('common');
 	
 function handleRequest(array $context): Response {
 	$user_id = Core::UserId();

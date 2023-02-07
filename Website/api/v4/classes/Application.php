@@ -311,7 +311,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 	
 	public function HasScopes(array $scopes): bool {
 		if (count($scopes) === 0) {
-			return false;
+			return true;
 		}
 		
 		foreach ($scopes as $scope) {

@@ -37,7 +37,7 @@ abstract class BeaconCache {
 	public static function Remove(string $key): void {
 		static::Init();
 		$key = BeaconCommon::Domain() . ':' . $key;
-		static::$mem->delete($key, $value);
+		static::$mem->delete($key, 0);
 		$status = static::$mem->getResultCode();
 		if ($status != 0) {
 			throw new Exception('Memcached Error: ' . $status);

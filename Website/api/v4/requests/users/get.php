@@ -1,7 +1,8 @@
 <?php
 
 use BeaconAPI\v4\{Core, User, Response};
-Core::Authorize('user:read');
+
+// common is ok for this
 
 function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];

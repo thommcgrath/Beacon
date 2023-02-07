@@ -193,9 +193,9 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 		return substr($this->userId, 0, 8);
 	}
 	
-	public function Username(bool $with_suffix = false): string {
+	public function Username(bool $with_suffix = false): ?string {
 		$name = $this->username;
-		if ($with_suffix) {
+		if ($with_suffix && is_string($name)) {
 			$name .= '#' . $this->Suffix();
 		}
 		return $name;
@@ -576,7 +576,7 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		$json = [
 			'userId' => $this->userId,
-			'username' => $this->username,
+			'username' => $this->Username(false),
 			'usernameFull' => $this->Username(true),
 			'publicKey' => $this->publicKey,
 			'privateKey' => $this->privateKey,

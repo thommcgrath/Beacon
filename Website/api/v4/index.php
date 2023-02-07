@@ -56,7 +56,8 @@ Core::RegisterRoutes(
 			'DELETE' => 'file'
 		],
 		'/login' => [
-			'GET' => 'login'
+			'GET' => 'login',
+			'POST' => 'login'
 		],
 		'/now' => [
 			'GET' => 'now'
@@ -145,9 +146,6 @@ Core::RegisterRoutes(
 			'GET' => 'users/get',
 			'PATCH' => 'users/edit',
 			'PUT' => 'users/create'
-		],
-		'/users/{userId}/challenge' => [
-			'GET' => 'users/challenge'
 		],
 		'/users/{userId}/merge' => [
 			'POST' => 'users/merge'

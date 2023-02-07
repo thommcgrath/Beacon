@@ -43,13 +43,13 @@ if ($sent_state !== $_SESSION['OAUTH_AUTH_STATE']) {
 	exit;
 }
 
-$fields = array(
+$fields = [
 	'grant_type=authorization_code',
 	'client_id=' . urlencode(BeaconCommon::GetGlobal('Nitrado_Client_ID')),
 	'client_secret=' . urlencode(BeaconCommon::GetGlobal('Nitrado_Client_Secret')),
 	'code=' . urlencode($code),
 	'redirect_url=' . urlencode('https://' . $_SERVER['HTTP_HOST'] . '/account/oauth/complete.php')
-);
+];
 
 switch ($_SESSION['OAUTH_PROVIDER']) {
 case 'nitrado':

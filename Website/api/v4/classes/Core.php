@@ -1,19 +1,25 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconLogin, BeaconRateLimits, DateTime, Exception, Throwable;
+use BeaconCache, BeaconCommon, BeaconLogin, BeaconRateLimits, DateTime, Exception, Throwable;
 
 class Core {
-	protected static $session = null;
-	protected static $payload = null;
-	protected static $body_raw = null;
-	protected static $routes = [];
+	const kAuthSchemeBearer = 'Bearer';
+	const kAuthSchemeDigest = 'Digest';
+	const kAuthSchemeNone = 'None';
 	
+	const kUnauthorized = 0;
 	const kAuthorized = 1;
 	const kAuthErrorNoToken = 2;
 	const kAuthErrorMalformedToken = 3;
 	const kAuthErrorInvalidToken = 4;
 	const kAuthErrorRestrictedScope = 5;
+	
+	protected static $session = null;
+	protected static $application = null;
+	protected static $payload = null;
+	protected static $body_raw = null;
+	protected static $routes = [];
 	
 	public static function HandleCors(): void {
 		header('Access-Control-Allow-Origin: *');
@@ -119,56 +125,113 @@ class Core {
 		return strtoupper($_SERVER['REQUEST_METHOD']);
 	}
 	
-	public static function Authorize(string ...$requiredScopes): void {
-		if (count($requiredScopes) === 0) {
+	public static function Authorize(string $scheme, string ...$requestedScopes): void {
+		$supportedScopes = [];
+		$requiredScopes = [];
+		switch ($scheme) {
+		case self::kAuthSchemeBearer:
+			$supportedScopes = [
+				Application::kScopeCommon,
+				Application::kScopeAppsRead,
+				Application::kScopeAppsWrite,
+				Application::kScopeSentinelLogsRead,
+				Application::kScopeSentinelLogsWrite,
+				Application::kScopeSentinelPlayersRead,
+				Application::kScopeSentinelPlayersWrite,
+				Application::kScopeSentinelServicesRead,
+				Application::kScopeSentinelServicesWrite,
+				Application::kScopeUserRead,
+				Application::kScopeUserWrite
+			];
+			$requiredScopes = [
+				Application::kScopeCommon
+			];
+			break;
+		case self::kAuthSchemeDigest:
+			$supportedScopes = [Application::kScopePasswordAuth];
+			$requiredScopes = [];
+			break;
+		}
+		
+		$disallowedScopes = array_diff($requestedScopes, $supportedScopes);
+		$missingScopes = array_diff($requestedScopes, $requiredScopes);
+		$httpStatus = (count($disallowedScopes) > 0 || count($missingScopes) > 0) ? 403 : 401;
+		$message = $httpStatus === 401 ? 'Unauthorized' : 'Forbidden';
+		$authStatus = self::kUnauthorized;
+			
+		$realm = 'Beacon API';
+		$authParams = [$scheme, 'realm="' . $realm . '"'];
+		
+		switch ($scheme) {
+		case self::kAuthSchemeBearer:
+			$authStatus = static::AuthenticateWithBearer($requestedScopes);
+			if ($authStatus === self::kAuthorized) {
+				return;
+			}
+			
+			switch ($authStatus) {
+			case self::kAuthErrorMalformedToken:
+			case self::kAuthErrorInvalidToken:
+				$authParams[] = 'error="invalid_token"';
+				$authParams[] = 'error_description="The access token is invalid, expired, or malformed."';
+				break;
+			case self::kAuthErrorRestrictedScope:
+				$authParams[] = 'error="insufficient_scope"';
+				$authParams[] = 'error_description="The access token is valid but does not include the required scopes."';
+				$authParams[] = 'scope="' . implode(' ', $requestedScopes) . '"';
+				break;
+			}
+			
+			break;
+		case self::kAuthSchemeDigest:
+			// Used for requests like POST /emailVerification/{emailAddress} that are not performed on behalf of a user.
+			$cacheKey = hash('sha1', BeaconCommon::RemoteAddr(false));
+			$authStatus = static::AuthenticateWithDigest($cacheKey, $realm, $requestedScopes);
+			if ($authStatus === self::kAuthorized) {
+				return;
+			}
+			
+			$nonce = BeaconCommon::GenerateUUID();
+			BeaconCache::Set($cacheKey, $nonce, 120);
+			
+			$authParams[] = 'qop="auth"';
+			$authParams[] = 'nonce="' . $nonce . '"';
+			$authParams[] = 'opaque="' . md5($realm) . '"';
+			break;
+		case self::kAuthSchemeNone:
+			return;
+		}
+		
+		header('WWW-Authenticate: ' . implode(' ', $authParams));
+		
+		static::ManageRateLimit();
+		Response::NewJsonError($message, null, $httpStatus)->Flush();
+		exit;
+	}
+	
+	public static function RequestScopes(array ...$scopes): void {
+		if (count($scopes) === 0) {
 			throw new Exception('Did not request any scopes to authorize');
 		}
 		
 		if (is_null(static::$session)) {
-			$token = '';
-			if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-				$header = $_SERVER['HTTP_AUTHORIZATION'];
-				$scheme = strtok($header, ' ');
-				if ($scheme === 'Bearer') {
-					$token = strtok(' ');
-				}
-			} else if (isset($_SERVER['HTTP_X_BEACON_TOKEN'])) {
-				$token = $_SERVER['HTTP_X_BEACON_TOKEN'];
-			}
-			
-			$authStatus = static::ConsumeToken($token, $requiredScopes);
-		} else {
-			$authStatus = static::$session->HasScopes($requiredScopes) ? self::kAuthorized : self::kAuthErrorRestrictedScope;
-		}
-		if ($authStatus === self::kAuthorized) {
-			return;
+			throw new Exception('Unauthorized');
 		}
 		
-		$message = 'Unauthorized';
-		$httpStatus = 401;
-		
-		$params = ['Bearer', 'realm="Beacon API"'];
-		switch ($authStatus) {
-		case self::kAuthErrorNoToken:
-			break;
-		case self::kAuthErrorMalformedToken:
-		case self::kAuthErrorInvalidToken:
-			$params[] = 'error="invalid_token"';
-			$params[] = 'error_description="The access token is invalid, expired, or malformed."';
-			break;
-		case self::kAuthErrorRestrictedScope:
-			$params[] = 'error="insufficient_scope"';
-			$params[] = 'error_description="The access token is valid but does not include the required scopes."';
-			$params[] = 'scope="' . implode(' ', $requiredScopes) . '"';
-			$httpStatus = 403;
-			break;
+		if (static::$session->HasScopes($scopes) === false) {
+			throw new Exception('Scopes not authorized');
 		}
-		header('WWW-Authenticate: ' . implode(' ', $params));
-		
-		static::ReplyError($message, null, $httpStatus);
 	}
 	
-	protected static function ConsumeToken(string $token, array $requiredScopes): int {
+	protected static function AuthenticateWithBearer(array $requestedScopes): int {
+		$header = $_SERVER['HTTP_AUTHORIZATION'] ?? 'Bearer ' . ($_SERVER['HTTP_X_BEACON_TOKEN'] ?? '');
+		$scheme = strtok($header, ' ');
+		
+		if ($scheme !== self::kAuthSchemeBearer) {
+			return self::kUnauthorized;
+		}
+		
+		$token = strtok(' ');
 		if (empty($token)) {
 			return self::kAuthErrorNoToken;
 		}
@@ -182,12 +245,67 @@ class Core {
 		if (is_null($session)) {
 			return self::kAuthErrorInvalidToken;
 		}
-		if ($session->HasScopes($requiredScopes) === false) {
+		if ($session->HasScopes($requestedScopes) === false) {
 			return self::kAuthErrorRestrictedScope;
 		}
 		
 		$session->Renew();
 		static::$session = $session;
+		return self::kAuthorized;
+	}
+	
+	protected static function AuthenticateWithDigest(string $cacheKey, string $realm, array $requestedScopes): int {
+		$header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+		$scheme = strtok($header, ' ');
+		
+		if ($scheme !== self::kAuthSchemeDigest) {
+			$nonce = BeaconCommon::GenerateUUID();
+			BeaconCache::Set($cacheKey, $nonce, 120);
+			return self::kUnauthorized;
+		}
+		
+		$keys = ['nonce', 'nc', 'cnonce', 'qop', 'username', 'uri', 'response'];
+		preg_match_all('@(' . implode('|', $keys) . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', $header, $matches, PREG_SET_ORDER);
+		$values = [];
+		foreach ($matches as $match) {
+			$values[$match[1]] = $match[3] ? $match[3] : $match[4];
+		}
+		
+		if (BeaconCommon::HasAllKeys($values, ...$keys) === false) {
+			return self::kUnauthorized;
+		}
+		
+		$username = $values['username'];
+		if (BeaconCommon::IsUUID($username) === false) {
+			return self::kUnauthorized;
+		}
+		
+		$uri = $values['uri'];
+		$nc = $values['nc'];
+		$cnonce = $values['cnonce'];
+		$qop = $values['qop'];
+		$method = $_SERVER['REQUEST_METHOD'];
+		
+		$app = Application::Fetch($username);
+		if (is_null($app)) {
+			return self::kUnauthorized;
+		} else if ($app->HasScopes($requestedScopes) === false) {
+			return self::kAuthErrorRestrictedScope;
+		}
+		$clientSecret = $app->Secret();
+		
+		$nonce = BeaconCache::Get($cacheKey) ?? '';
+		$hash1 = md5("{$username}:{$realm}:{$clientSecret}");
+		$hash2 = md5("{$method}:{$uri}");
+		$validResponse = md5("{$hash1}:{$nonce}:{$nc}:{$cnonce}:{$qop}:{$hash2}");
+		
+		if ($values['response'] !== $validResponse) {
+			echo "invalid response\n";
+			return self::kUnauthorized;
+		}
+		
+		BeaconCache::Remove($cacheKey);
+		static::$application = $app;
 		return self::kAuthorized;
 	}
 	
@@ -206,12 +324,45 @@ class Core {
 		return static::$session;
 	}
 	
+	public static function SetSession(?Session $session): void {
+		static::$session = $session;
+		if (is_null($session) === false) {
+			static::$application = null;
+		}
+	}
+	
 	public static function SessionId(): ?string {
 		if (is_null(static::$session)) {
 			return null;
 		}
 		
 		return static::$session->SessionId();
+	}
+	
+	public static function Application(): ?Application {
+		if (is_null(static::$application) === false) {
+			return static::$application;
+		} else if (is_null(static::$session) === false) {
+			static::$application = static::$session->Application();
+			return static::$application;
+		} else {
+			return null;
+		}
+	}
+	
+	public static function SetApplication(?Application $app): void {
+		static::$application = $app;
+	}
+	
+	public static function ApplicationId(): ?string {
+		if (is_null(static::$application) === false) {
+			return static::$application->ApplicationId();
+		} else if (is_null(static::$session) === false) {
+			static::$application = static::$session->Application();
+			return static::$application->ApplicationId();
+		} else {
+			return null;
+		}
 	}
 	
 	public static function UserId(): ?string {
@@ -297,10 +448,10 @@ class Core {
 		$requestRoute = '/' . $_GET['route'];
 		
 		if (preg_match('/^\/user(\/.+)?$/', $requestRoute)) {
-			static::Authorize('user:read');
+			static::Authorize(self::kAuthSchemeBearer, 'user:read');
 			$requestRoute = str_replace('/user', '/users/' . static::UserId(), $requestRoute);
 		} else if (preg_match('/^\/session(\/.+)?$/', $requestRoute)) {
-			static::Authorize('common');
+			static::Authorize(self::kAuthSchemeBearer, 'common');
 			$requestRoute = str_replace('/session', '/sessions/' . static::SessionId(), $requestRoute);
 		}
 		
@@ -315,53 +466,41 @@ class Core {
 			
 			$requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
 			if (isset($handlers[$requestMethod]) === false) {
-				static::ReplyError('Method not allowed', null, 405);
+				static::ManageRateLimit();
+				Response::NewJsonError('Method not allowed', null, 405)->Flush();
+				return;
 			}
 			
 			$requiredScopes = ['common'];
+			$authScheme = self::kAuthSchemeBearer;
 			
 			$handler = $handlers[$requestMethod];
 			if (is_string($handler)) {
 				$handlerFile = $root . '/' . $handler . '.php';
 				if (file_exists($handlerFile) === false) {
-					static::ReplyError('Endpoint not found', null, 404);
+					static::ManageRateLimit();
+					Response::NewJsonError('Endpoint not found', null, 404)->Flush();
+					return;
 				}
 				$handler = 'handleRequest';
 				try {
 					http_response_code(500); // Set a default. If there is a fatal error, it'll still be set.
 					require($handlerFile);
 				} catch (Throwable $err) {
-					static::ReplyError((BeaconCommon::InProduction() ? 'Error loading api source file.' : $err->getMessage()), null, 500);
+					static::ManageRateLimit();
+					Response::NewJsonError((BeaconCommon::InProduction() ? 'Error loading api source file.' : $err->getMessage()), null, 500)->Flush();
+					return;
 				}
 			} else if (is_callable($handler) === true) {
 				// nothing to do
 			} else {
-				static::ReplyError('Endpoint not found', null, 404);
-			}
-			
-			if (count($requiredScopes) > 0) {
-				static::Authorize(...$requiredScopes);
-				$session = static::Session();
-				$app = $session->Application();
-				$rateLimitIdentifier = $session->UserId() . ':' . $app->ApplicationId();
-				$rateLimitCeiling = $app->RequestLimitPerMinute();
-			} else {
-				$rateLimitIdentifier = BeaconCommon::RemoteAddr(false);
-				$rateLimitCeiling = 30;
-			}
-			
-			$rateLimitUsage = BeaconRateLimits::IncrementUsage($rateLimitIdentifier);
-			$rateLimitRemaining = max($rateLimitCeiling - $rateLimitUsage, 0);
-			
-			header('X-RateLimit-Limit: ' . $rateLimitCeiling);
-			header('X-RateLimit-Remaining: ' . $rateLimitRemaining);
-			header('X-RateLimit-Reset: 60');
-			
-			if ($rateLimitUsage > $rateLimitCeiling) {
-				header('Retry-After: 10');
-				Response::NewJsonError('Rate limit exceeded', null, 429)->Flush();
+				static::ManageRateLimit();
+				Response::NewJsonError('Endpoint not found', null, 404)->Flush();
 				return;
 			}
+			
+			static::Authorize($authScheme, ...$requiredScopes);
+			static::ManageRateLimit(false); // Check the limit, but don't increment yet
 			
 			$routeKey = $requestMethod . ' ' . $route;
 			$pathParameters = [];
@@ -374,11 +513,55 @@ class Core {
 				'pathParameters' => $pathParameters,
 				'routeKey' => $routeKey
 			];
-			$response = $handler($context);
-			$response->Flush();
+			try {
+				$response = $handler($context);
+				static::ManageRateLimit();
+				$response->Flush();
+			} catch (Exception $err) {
+				static::ManageRateLimit();
+				Response::NewJsonError((BeaconCommon::InProduction() ? 'Internal server error' : $err->getMessage()), null, 500)->Flush();
+				exit;
+			}
 			return;
 		}
-		static::ReplyError('Endpoint not found: Route not registered.', null, 404);
+		
+		static::ManageRateLimit();
+		Response::NewJsonError('Endpoint not found: Route not registered.', null, 404)->Flush();
+	}
+	
+	protected static function ManageRateLimit(bool $incrementUsage = true): void {
+		$session = static::Session();
+		$app = static::Application();
+		if (is_null($session) === false) {
+			$rateLimitIdentifier = $session->UserId();
+		} else {
+			$rateLimitIdentifier = BeaconCommon::RemoteAddr(false);
+		}
+		if (is_null($app) === false) {
+			$rateLimitIdentifier .= ':' . $app->ApplicationId();
+			$rateLimitCeiling = $app->RequestLimitPerMinute();
+		} else {
+			$rateLimitCeiling = 30;
+		}
+		
+		$rateLimitUsage = BeaconRateLimits::GetUsage($rateLimitIdentifier, $incrementUsage);
+		$rateLimitRemaining = max($rateLimitCeiling - $rateLimitUsage, 0);
+		$exceeded = $rateLimitUsage > $rateLimitCeiling;
+		
+		if ($incrementUsage || $exceeded) {
+			header('X-RateLimit-Limit: ' . $rateLimitCeiling);
+			header('X-RateLimit-Remaining: ' . $rateLimitRemaining);
+			header('X-RateLimit-Reset: 60');
+			if (BeaconCommon::InProduction() === false) {
+				header('X-RateLimit-Id: ' . $rateLimitIdentifier);
+			}
+		}
+		
+		if ($exceeded) {
+			header('Retry-After: 10');
+			Response::NewJsonError('Rate limit exceeded', null, 429)->Flush();
+			exit;
+		}
 	}
 }
 

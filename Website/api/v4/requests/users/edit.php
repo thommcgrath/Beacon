@@ -1,7 +1,9 @@
 <?php
 
 use BeaconAPI\v4\{Response, Core, EmailVerificationCode, User};
-Core::Authorize('user:write');
+
+$requiredScopes[] = 'user:read';
+$requiredScopes[] = 'user:write';
 
 function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];

@@ -6,6 +6,9 @@
 
 use BeaconAPI\v4\{Response, BatchResponse, Core, Project, User};
 
+$requiredScopes[] = 'user:read';
+$requiredScopes[] = 'user:write';
+
 function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];
 	$authenticatedUser = User::Fetch($identifier);

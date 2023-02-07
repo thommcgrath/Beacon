@@ -2,6 +2,9 @@
 
 use BeaconAPI\v4\{Response, Core, EmailVerificationCode};
 
+$requiredScopes = [];
+$authScheme = Core::kAuthSchemeDigest;
+
 function handleRequest(array $context): Response {
 	$email = $context['pathParameters']['email'];
 	if (BeaconEmail::IsEmailValid($email) === false) {
