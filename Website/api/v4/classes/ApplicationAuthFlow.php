@@ -138,7 +138,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		}
 		
 		$code = BeaconCommon::GenerateUUID();
-		$codeHash = static::PrepareCodeHash($this->applicationId, $this->Application()->Secret(), $code);
+		$codeHash = static::PrepareCodeHash($this->applicationId, $this->Application()->Secret(), $this->callback, $code);
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query("DELETE FROM public.application_auth_flows WHERE expiration < CURRENT_TIMESTAMP;");
@@ -155,8 +155,8 @@ class ApplicationAuthFlow extends DatabaseObject {
 		]);
 	}
 	
-	public static function Redeem(string $applicationId, string $applicationSecret, string $code): Session {
-		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $code);
+	public static function Redeem(string $applicationId, string $applicationSecret, string $redirectUri, string $code): Session {
+		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $redirectUri, $code);
 		$flows = static::Search(['codeHash' => $codeHash], true);
 		if (count($flows) !== 1) {
 			throw new Exception('Authorization flow not found');
@@ -171,8 +171,8 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return $session;
 	}
 	
-	protected static function PrepareCodeHash(string $applicationId, string $applicationSecret, string $code): string {
-		return base64_encode(hash('sha3-512', "{$applicationId}.{$applicationSecret}.{$code}", true));
+	protected static function PrepareCodeHash(string $applicationId, string $applicationSecret, string $redirectUri, string $code): string {
+		return base64_encode(hash('sha3-512', "{$applicationId}.{$applicationSecret}.{$redirectUri}.{$code}", true));
 	}
 }
 

@@ -10,7 +10,7 @@ $requiredScopes = [];
 // For password, we cannot simply include the secret so a challenge is needed.
 	
 function handleRequest(array $context): Response {
-	$obj = Core::BodyAsJSON();
+	$obj = Core::BodyAsJson();
 	if (BeaconCommon::HasAllKeys($obj, 'email', 'password', 'client_id', 'signature')) {
 		// Password auth
 		$database = BeaconCommon::Database();
@@ -102,19 +102,7 @@ function handleRequest(array $context): Response {
 		if ($obj['grant_type'] !== 'authorization_code') {
 			return Response::NewJsonError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
 		}
-		$session = ApplicationAuthFlow::Redeem($obj['client_id'], $obj['client_secret'], $obj['code']);
-		/*$application = Application::Fetch($obj['client_id']);
-		if (is_null($application)) {
-			return Response::NewJsonError('Invalid client id', ['code' => 'INVALID_CLIENT_ID'], 400);
-		}
-		$client_secret = $application->Secret();
-		if ($obj['client_secret'] !== $client_secret) {
-			return Response::NewJsonError('Invalid client secret', ['code' => 'INVALID_CLIENT_SECRET'], 400);
-		}
-		if ($application->CallbackAllowed($obj['redirect_uri']) === false) {
-			return Response::NewJsonError('Redirect URI is not whitelisted', ['code' => 'INVALID_REDIRECT_URI'], 400);
-		}
-		$session = $application->RedeemGrantCode($obj['code']);*/
+		$session = ApplicationAuthFlow::Redeem($obj['client_id'], $obj['client_secret'], $obj['redirect_uri'], $obj['code']);
 		if (is_null($session)) {
 			return Response::NewJsonError('Invalid code', ['code' => 'INVALID_CODE'], 400);
 		}
