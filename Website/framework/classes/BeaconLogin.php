@@ -55,62 +55,78 @@ class BeaconLogin {
 					<div class="app_id_avatar"><?php echo $app->IconHtml(64); ?></div>
 					<div class="api_id_namecard"><span class="bold larger"><?php echo htmlentities($app->Name()); ?></span><br>Website: <a href="<?php echo htmlentities($app->Website()); ?>" target="_top"><?php echo htmlentities($app->Website()); ?></a></div>
 				</div>
-				<p class="explanation smaller italic">This is a unofficial application and not affiliate with Beacon / The ZAZ Studios. Only allow access to applications you trust. This permission can be revoked in your account control panel.</p>
+				<p class="explanation smaller italic">This is a unofficial application and not affiliated with Beacon / The ZAZ Studios. Only allow access to applications you trust. This permission can be revoked in your account control panel.</p>
 				<p class="explanation"><?php echo htmlentities($app->Name()); ?> will be able to:</p>
 				<ul>
 					<?php
+					
+					define('kBitCreate', 1);
+					define('kBitRead', 2);
+					define('kBitUpdate', 4);
+					define('kBitDelete', 8);
+					
 					$scopes = $flow->Scopes();
 					$features = [];
 					foreach ($scopes as $scope) {
 						$feature = strtok($scope, ':');
 						$permissions = strtok(':');
-						if ($permissions === false || $permissions === 'write') {
-							$features[$feature] = 'readwrite';
+						if ($permissions === false) {
+							$features[$feature] = (kBitCreate | kBitRead | kBitUpdate | kBitDelete);
 						} else {
-							$features[$feature] = $permissions;
+							$bits = 0;
+							switch ($permissions) {
+							case 'create':
+								$bits = kBitCreate;
+								break;
+							case 'read':
+								$bits = kBitRead;
+								break;
+							case 'update':
+								$bits = kBitUpdate;
+								break;
+							case 'delete':
+								$bits = kBitDelete;
+								break;
+							}
+							$features[$feature] = ($features[$feature] ?? 0) | $bits;
 						}
 					}
 					
 					foreach ($features as $feature => $permissions) {
+						$permissionWords = [];
+						if (($permissions & kBitRead) === kBitRead) {
+							$permissionWords[] = 'view';
+						}
+						if (($permissions & kBitCreate) === kBitCreate) {
+							$permissionWords[] = 'create';
+						}
+						if (($permissions & kBitUpdate) === kBitUpdate) {
+							$permissionWords[] = 'edit';
+						}
+						if (($permissions & kBitDelete) === kBitDelete) {
+							$permissionWords[] = 'delete';
+						}
+						$permissionPhrase = ucfirst(BeaconCommon::ArrayToEnglish($permissionWords));
+						
 						$message = '';
 						switch ($feature) {
 						case 'common':
-							$message = 'Edit basic objects such as Ark blueprints.';
+							$message = "{$permissionPhrase} basic objects such as Ark blueprints.";
 							break;
 						case 'apps':
-							if ($permissions === 'readwrite') {
-								$message = 'Edit your developer identity and credentials.';
-							} else {
-								$message = 'View your developer identity and credentials.';
-							}
+							$message = "{$permissionPhrase} your apps and their credentials.";
 							break;
 						case 'sentinel_logs':
-							if ($permissions === 'readwrite') {
-								$message = 'Edit your Sentinel logs.';
-							} else {
-								$message = 'Read your Sentinel logs.';
-							}
+							$message = "{$permissionPhrase} your Sentinel logs.";
 							break;
 						case 'sentinel_players':
-							if ($permissions === 'readwrite') {
-								$message = 'Edit your Sentinel players.';
-							} else {
-								$message = 'Read your Sentinel players.';
-							}
+							$message = "{$permissionPhrase} your Sentinel player notes.";
 							break;
 						case 'sentinel_services':
-							if ($permissions === 'readwrite') {
-								$message = 'Edit your Sentinel servers and groups.';
-							} else {
-								$message = 'Read your Sentinel servers and groups.';
-							}
+							$message = "{$permissionPhrase} your Sentinel servers and groups.";
 							break;
 						case 'user':
-							if ($permissions === 'readwrite') {
-								$message = 'Edit your user info.';
-							} else {
-								$message = 'Read your user info.';
-							}
+							$message = "{$permissionPhrase} your user information.";
 							break;
 						}
 						if (empty($message) === false) {
@@ -130,7 +146,8 @@ class BeaconLogin {
 						'Make breakfast.',
 						'Play a fiddle on a roof.',
 						'Take the red pill.',
-						'Influence the passage of time.'
+						'Influence the passage of time.',
+						'Simply walk into Mordor.'
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);
