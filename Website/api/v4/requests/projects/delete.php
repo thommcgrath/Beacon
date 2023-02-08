@@ -1,7 +1,6 @@
 <?php
 
 use BeaconAPI\v4\{Response, BatchResponse, Core, Project, User};
-Core::Authorize();
 	
 function handleRequest(array $context): Response {
 	if ($context['routeKey'] === 'DELETE /projects') {

@@ -1,7 +1,6 @@
 <?php
 
 use BeaconAPI\v4\{Response, Core, Project, User};
-Core::Authorize();
 	
 function handleRequest(array $context): Response {
 	if (Core::ContentType() !== 'application/x-beacon-project') {

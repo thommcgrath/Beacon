@@ -575,7 +575,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	// !Authorization form
 	if (authorizeCancelButton) {
 		authorizeCancelButton.addEventListener('click', (ev) => {
-			loginPasswordField.value = '';
+			if (loginPasswordField) {
+				loginPasswordField.value = '';
+			}
 			window.location = '/account/';
 		});
 	}
