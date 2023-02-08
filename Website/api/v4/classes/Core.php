@@ -163,51 +163,54 @@ class Core {
 		
 		$disallowedScopes = array_diff($requestedScopes, $supportedScopes);
 		$missingScopes = array_diff($requestedScopes, $requiredScopes);
-		$httpStatus = (count($disallowedScopes) > 0 || count($missingScopes) > 0) ? 403 : 401;
+		$hasScopeViolations = count($disallowedScopes) > 0 || count($missingScopes) > 0;
+		$httpStatus = ($hasScopeViolations) ? 403 : 401;
 		$message = $httpStatus === 401 ? 'Unauthorized' : 'Forbidden';
 		$authStatus = self::kUnauthorized;
 			
 		$realm = 'Beacon API';
 		$authParams = [$scheme, 'realm="' . $realm . '"'];
 		
-		switch ($scheme) {
-		case self::kAuthSchemeBearer:
-			$authStatus = static::AuthenticateWithBearer($requestedScopes);
-			if ($authStatus === self::kAuthorized) {
+		if ($hasScopeViolations === false) {
+			switch ($scheme) {
+			case self::kAuthSchemeBearer:
+				$authStatus = static::AuthenticateWithBearer($requestedScopes);
+				if ($authStatus === self::kAuthorized) {
+					return;
+				}
+				
+				switch ($authStatus) {
+				case self::kAuthErrorMalformedToken:
+				case self::kAuthErrorInvalidToken:
+					$authParams[] = 'error="invalid_token"';
+					$authParams[] = 'error_description="The access token is invalid, expired, or malformed."';
+					break;
+				case self::kAuthErrorRestrictedScope:
+					$authParams[] = 'error="insufficient_scope"';
+					$authParams[] = 'error_description="The access token is valid but does not include the required scopes."';
+					$authParams[] = 'scope="' . implode(' ', $requestedScopes) . '"';
+					break;
+				}
+				
+				break;
+			case self::kAuthSchemeDigest:
+				// Used for requests like POST /emailVerification/{emailAddress} that are not performed on behalf of a user.
+				$cacheKey = hash('sha1', BeaconCommon::RemoteAddr(false));
+				$authStatus = static::AuthenticateWithDigest($cacheKey, $realm, $requestedScopes);
+				if ($authStatus === self::kAuthorized) {
+					return;
+				}
+				
+				$nonce = BeaconCommon::GenerateUUID();
+				BeaconCache::Set($cacheKey, $nonce, 120);
+				
+				$authParams[] = 'qop="auth"';
+				$authParams[] = 'nonce="' . $nonce . '"';
+				$authParams[] = 'opaque="' . md5($realm) . '"';
+				break;
+			case self::kAuthSchemeNone:
 				return;
 			}
-			
-			switch ($authStatus) {
-			case self::kAuthErrorMalformedToken:
-			case self::kAuthErrorInvalidToken:
-				$authParams[] = 'error="invalid_token"';
-				$authParams[] = 'error_description="The access token is invalid, expired, or malformed."';
-				break;
-			case self::kAuthErrorRestrictedScope:
-				$authParams[] = 'error="insufficient_scope"';
-				$authParams[] = 'error_description="The access token is valid but does not include the required scopes."';
-				$authParams[] = 'scope="' . implode(' ', $requestedScopes) . '"';
-				break;
-			}
-			
-			break;
-		case self::kAuthSchemeDigest:
-			// Used for requests like POST /emailVerification/{emailAddress} that are not performed on behalf of a user.
-			$cacheKey = hash('sha1', BeaconCommon::RemoteAddr(false));
-			$authStatus = static::AuthenticateWithDigest($cacheKey, $realm, $requestedScopes);
-			if ($authStatus === self::kAuthorized) {
-				return;
-			}
-			
-			$nonce = BeaconCommon::GenerateUUID();
-			BeaconCache::Set($cacheKey, $nonce, 120);
-			
-			$authParams[] = 'qop="auth"';
-			$authParams[] = 'nonce="' . $nonce . '"';
-			$authParams[] = 'opaque="' . md5($realm) . '"';
-			break;
-		case self::kAuthSchemeNone:
-			return;
 		}
 		
 		header('WWW-Authenticate: ' . implode(' ', $authParams));

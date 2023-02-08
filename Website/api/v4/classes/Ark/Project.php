@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4\Ark;
-use BeaconAPI\v4\{Core};
+use BeaconAPI\v4\{Core, DatabaseSearchParameters};
 use BeaconCommon;
 
 class Project extends \BeaconAPI\v4\Project {
@@ -10,6 +10,19 @@ class Project extends \BeaconAPI\v4\Project {
 		$json['mapMask'] = $this->MapMask();
 		$json['difficulty'] = $this->DifficultyValue();
 		return $json;
+	}
+	
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+		parent::BuildSearchParameters($parameters, $filters);
+		$schema = static::DatabaseSchema();
+			
+		if (isset($filters['allMaps'])) {
+			$parameters->clauses[] = '(game_specific->\'map\')::int & $' . $parameters->placeholder . ' = $' . $parameters->placeholder++;
+			$parameters->values[] = $filters['allMaps'];
+		} else if (isset($filters['anyMaps'])) {
+			$parameters->clauses[] = '(game_specific->\'map\')::int & $' . $parameters->placeholder++ . ' != 0';
+			$parameters->values[] = $filters['anyMaps'];
+		}
 	}
 	
 	public function MapMask(): int {

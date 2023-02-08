@@ -1,6 +1,9 @@
 <?php
 
 use BeaconAPI\v4\{Response, Core, Project, User};
+
+$authScheme = Core::kAuthSchemeNone;
+$requiredScopes = [];
 	
 function handleRequest(array $context): Response {
 	$projectId = $context['pathParameters']['projectId'];

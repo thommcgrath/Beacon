@@ -87,7 +87,6 @@ abstract class DatabaseObject {
 				$params->pageNum = $page;
 			}
 		}
-		$params->orderBy = $schema->PrimaryAccessor();
 		
 		$minVersionProperty = $schema->Property('minVersion');
 		if (is_null($minVersionProperty) === false) {

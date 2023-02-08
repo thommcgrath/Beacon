@@ -47,7 +47,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
-			new DatabaseObjectProperty('ownerId', ['columnName' => 'owner_Id']),
+			new DatabaseObjectProperty('ownerId', ['columnName' => 'owner_id']),
 			new DatabaseObjectProperty('title'),
 			new DatabaseObjectProperty('description'),
 			new DatabaseObjectProperty('consoleSafe', ['columnName' => 'console_safe']),
@@ -131,6 +131,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		
 		$parameters->AddFromFilter($schema, $filters, 'published');
 		$parameters->AddFromFilter($schema, $filters, 'consoleSafe');
+		$parameters->AddFromFilter($schema, $filters, 'gameId');
 		
 		if (isset($filters['search']) && empty($filters['search']) === false) {
 			$search = new BeaconSearch();
