@@ -16,7 +16,7 @@ if (is_null($mod_id) == false) {
 	}
 } elseif (isset($_GET['workshop_id'])) {
 	$workshop_id = $_GET['workshop_id'];
-	if (is_null(filter_var($workshop_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647], 'flags' => FILTER_NULL_ON_FAILURE]))) {
+	if (is_null(filter_var($workshop_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807], 'flags' => FILTER_NULL_ON_FAILURE]))) {
 		header('Location: https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 		http_response_code(302);
 		exit;
