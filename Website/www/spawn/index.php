@@ -75,11 +75,11 @@ $pageCount = $results['pages'];
 $rangeStart = min(1 + (($pageNum - 1) * $pageSize), $blueprintCount);
 $rangeEnd = min($rangeStart + ($pageSize - 1), $blueprintCount);
 
-$canonicalUrl = BuildPaginationLink($pageNum);
+$canonicalUrl = BeaconCommon::AbsoluteUrl(BuildPaginationLink($pageNum));
 BeaconTemplate::AddHeaderLine('<link href="' . htmlentities($canonicalUrl) . '" rel="canonical">');
 
 ?><h1><?php echo htmlentities($title); ?><br><span class="subtitle">Up to date as of <?php echo '<time datetime="' . $lastDatabaseUpdate->format('c') . '">' . $lastDatabaseUpdate->format('F jS, Y') . ' at ' . $lastDatabaseUpdate->format('g:i A') . ' UTC</time>'; ?></span></h1>
-<?php if (is_null($pack)) { ?><div class="notice-block notice-info">
+<?php if (is_null($pack) || $pack->IsOfficial() === true) { ?><div class="notice-block notice-info">
 	<p class="bold">These GFI codes are pretty nuts, do they really work?</p>
 	<p>Yes! We've computed the absolute shortest codes to spawn the desired item. They may look weird, but they really do work.</p>
 	<p class="italic smaller">Disclaimer: These GFI codes are based on the official Ark content. Mods could conflict with these GFI codes.</p>
@@ -191,6 +191,16 @@ function CreateSpawnCode(Blueprint $blueprint): string {
 	$classString = $blueprint->ClassString();
 	switch ($blueprint->ObjectGroup()) {
 	case 'engrams':
+		$gfi = $blueprint->ExtraProperty('gfi');
+		if (is_null($gfi) === false) {
+			return "cheat gfi {$gfi} 1 0 0";
+		}
+		
+		$itemId = $blueprint->ExtraProperty('itemId');
+		if (is_null($itemId) === false) {
+			return "cheat giveitemnum {$itemId} 1 0 0";
+		}
+		
 		return "cheat giveitem {$classString} 1 0 0";
 		break;
 	case 'creatures':

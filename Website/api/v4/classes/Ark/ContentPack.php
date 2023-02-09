@@ -170,6 +170,10 @@ class ContentPack extends DatabaseObject implements \JsonSerializable {
 		return $this->isIncludedInDeltas;
 	}
 	
+	public function IsOfficial(): bool {
+		return $this->isOfficial;
+	}
+	
 	public function AttemptConfirmation(): bool {
 		if ($this->isApp) {
 			return true;
