@@ -106,6 +106,22 @@ echo '</p>'
 		
 	uasort($blueprints, 'CompareBlueprints');
 	
+	// get gfi codes
+	$engramIds = [];
+	$gfiCodes = [];
+	foreach ($blueprints as $blueprint) {
+		if ($blueprint->ObjectGroup() === 'engrams') {
+			$engramIds[] = $blueprint->UUID();
+		}
+	}
+	if (count($engramIds) > 0) {
+		$gfiRows = $database->Query("SELECT object_id, gfi FROM ark.engrams WHERE object_id = ANY($1) AND gfi IS NOT NULL;", '{' . implode(',', $engramIds) . '}');
+		while (!$gfiRows->EOF()) {
+			$gfiCodes[$gfiRows->Field('object_id')] = $gfiRows->Field('gfi');
+			$gfiRows->MoveNext();
+		}
+	}
+	
 	foreach ($blueprints as $blueprint) {
 		$id = $blueprint->UUID();
 		$class = $blueprint->ClassString();
@@ -188,17 +204,14 @@ function CompareBlueprints($left, $right) {
 }
 
 function CreateSpawnCode(Blueprint $blueprint): string {
+	global $gfiCodes;
+	
 	$classString = $blueprint->ClassString();
 	switch ($blueprint->ObjectGroup()) {
 	case 'engrams':
-		$gfi = $blueprint->ExtraProperty('gfi');
+		$gfi = $gfiCodes[$blueprint->UUID()] ?? null;
 		if (is_null($gfi) === false) {
 			return "cheat gfi {$gfi} 1 0 0";
-		}
-		
-		$itemId = $blueprint->ExtraProperty('itemId');
-		if (is_null($itemId) === false) {
-			return "cheat giveitemnum {$itemId} 1 0 0";
 		}
 		
 		return "cheat giveitem {$classString} 1 0 0";

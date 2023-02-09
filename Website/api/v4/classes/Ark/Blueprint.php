@@ -8,15 +8,13 @@ class Blueprint extends GenericObject {
 	protected $availability;
 	protected $path;
 	protected $classString;
-	protected $classExtras;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
 		
 		$this->availability = $row->Field('availability');
 		$this->path = $row->Field('path');
-		$this->classString = $row->Field('class_string');
-		$this->classExtras = json_decode($row->Field('class_extras'), true);
+		$this->classString = $row->Field('class_string');	
 	}
 	
 	protected static function CustomVariablePrefix(): string {
@@ -29,8 +27,7 @@ class Blueprint extends GenericObject {
 		$schema->AddColumns([
 			'availability',
 			'path',
-			new DatabaseObjectProperty('classString', ['columnName' => 'class_string']),
-			new DatabaseObjectProperty('classExtras', ['columnName' => 'class_extras'])
+			new DatabaseObjectProperty('classString', ['columnName' => 'class_string'])
 		]);
 		return $schema;
 	}
@@ -211,14 +208,6 @@ class Blueprint extends GenericObject {
 	
 	public function Fingerprint(): string {
 		return base64_encode(hash('sha1', $this->contentPackSteamId . ':' . strtolower($this->path), true));
-	}
-	
-	public function ExtraProperty(string $key): mixed {
-		if (isset($this->classExtras[$key])) {
-			return $this->classExtras[$key];
-		} else {
-			return null;
-		}
 	}
 }
 
