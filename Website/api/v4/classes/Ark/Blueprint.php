@@ -36,8 +36,26 @@ class Blueprint extends GenericObject {
 		parent::BuildSearchParameters($parameters, $filters);
 			
 		$schema = static::DatabaseSchema();
-		$parameters->AddFromFilter($schema, $filters, 'path');
-		$parameters->AddFromFilter($schema, $filters, 'classString');
+		//$parameters->AddFromFilter($schema, $filters, 'path');
+		//$parameters->AddFromFilter($schema, $filters, 'classString');
+		
+		if (isset($filters['path'])) {
+			if (str_contains($filters['path'], '%')) {
+				$parameters->clauses[] = $schema->Accessor('path') . ' LIKE ' . $schema->Setter('path', $parameters->placeholder++);
+			} else {
+				$parameters->clauses[] = $schema->Comparison('path', '=', $parameters->placeholder++);
+			}
+			$parameters->values[] = $filters['path'];
+		}
+		
+		if (isset($filters['classString'])) {
+			if (str_contains($filters['classString'], '%')) {
+				$parameters->clauses[] = $schema->Accessor('classString') . ' LIKE ' . $schema->Setter('classString', $parameters->placeholder++);
+			} else {
+				$parameters->clauses[] = $schema->Comparison('classString', '=', $parameters->placeholder++);
+			}
+			$parameters->values[] = $filters['classString'];
+		}
 		
 		if (isset($filters['availability'])) {
 			$availabilityProperty = $schema->Property('availability');

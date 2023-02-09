@@ -66,14 +66,68 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('label');
 		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
+		$prefix = static::CustomVariablePrefix();
 		
 		if (isset($filters['contentPackId'])) {
-			if (BeaconCommon::IsUUID($filters['contentPackId']) === true) {
-				$parameters->clauses[] = $schema->Comparison('contentPackId', '=', $parameters->placeholder++);
+			if (is_array($filters['contentPackId'])) {
+				$packs = $filters['contentPackId'];
 			} else {
-				$parameters->clauses[] = $schema->Comparison('contentPackSteamId', '=', $parameters->placeholder++);
+				$packs = [$filters['contentPackId']];
 			}
-			$parameters->values[] = $filters['contentPackId'];
+			$packIds = [];
+			$packSteamIds = [];
+			foreach ($packs as $pack) {
+				if (is_string($pack) && BeaconCommon::IsUUID($pack)) {
+					$packIds[] = $pack;
+				} else if (filter_var($pack, FILTER_VALIDATE_INT) !== false) {
+					$packSteamIds[] = $pack;
+				} else if ($pack instanceof ContentPack) {
+					$packIds[] = $pack->ContentPackId();
+				}
+			}
+			
+			$clauses = [];
+			if (count($packIds) > 1) {
+				$clauses[] = $schema->Accessor('contentPackId') . ' = ANY(' . $schema->Setter('contentPackId', $parameters->placeholder++) . ')';
+				$parameters->values[] = '{' . implode(',', $packIds) . '}';
+			} else if (count($packIds) === 1) {
+				$clauses[] = $schema->Comparison('contentPackId', '=', $parameters->placeholder++);
+				$parameters->values[] = $packIds[array_key_first($packIds)];
+			}
+			if (count($packSteamIds) > 1) {
+				$clauses[] = $schema->Accessor('contentPackSteamId') . ' = ANY(' . $schema->Setter('contentPackSteamId', $parameters->placeholder++) . ')';
+				$parameters->values[] = '{' . implode(',', $packSteamIds) . '}';
+			} else if (count($packSteamIds) === 1) {
+				$clauses[] = $schema->Comparison('contentPackSteamId', '=', $parameters->placeholder++);
+				$parameters->values[] = $packSteamIds[array_key_first($packSteamIds)];
+			}
+			if (count($clauses) > 0) {
+				$parameters->clauses[] = '(' . implode(' OR ', $clauses) . ')';
+			}
+		}
+		
+		if (isset($filters[$prefix . 'Group'])) {
+			$filterKey = $prefix . 'Group';
+			$filterValue = $filters[$filterKey];
+			$groups = [];
+			if (str_contains($filterValue, ',')) {
+				$groups = explode(',', $filterValue);
+			} else {
+				$groups = [$filterValue];
+			}
+			
+			for ($idx = 0; $idx < count($groups); $idx++) {
+				$groups[$idx] = trim($groups[$idx]);
+			}
+			
+			if (count($groups) > 1) {
+				$parameters->clauses[] = $schema->Accessor($filterKey) . ' = ANY(' . $schema->Setter($filterKey, $parameters->placeholder++) . ')';
+				$parameters->values[] = '{' . implode(',', $groups) . '}';
+			} else if (count($groups) === 1) {
+				$group = $groups[array_key_first($groups)];
+				$parameters->clauses[] = $schema->Comparison($filterKey, '=', $parameters->placeholder++);
+				$parameters->values[] = $group;
+			}
 		}
 		
 		if (isset($filters['tag'])) {
@@ -87,6 +141,24 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 				$parameters->clauses[] = $schema->Setter('tags', $parameters->placeholder++) . ' = ANY(' . $schema->Accessor('tags') . ')';
 				$parameters->values[] = $tag;
 			}
+		}
+		
+		if (isset($filters['label'])) {
+			if (str_contains($filters['label'], '%')) {
+				$parameters->clauses[] = $schema->Accessor('label') . ' LIKE ' . $schema->Setter('label', $parameters->placeholder++);
+			} else {
+				$parameters->clauses[] = $schema->Comparison('label', '=', $parameters->placeholder++);
+			}
+			$parameters->values[] = $filters['label'];
+		}
+		
+		if (isset($filters['alternateLabel'])) {
+			if (str_contains($filters['alternateLabel'], '%')) {
+				$parameters->clauses[] = $schema->Accessor('alternateLabel') . ' LIKE ' . $schema->Setter('alternateLabel', $parameters->placeholder++);
+			} else {
+				$parameters->clauses[] = $schema->Comparison('alternateLabel', '=', $parameters->placeholder++);
+			}
+			$parameters->values[] = $filters['alternateLabel'];
 		}
 	}
 	
@@ -550,16 +622,16 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		return $this->minVersion;
 	}
 	
-	public function ModId(): string {
-		return $this->modId;
+	public function ContentPackId(): string {
+		return $this->contentPackId;
 	}
 	
-	public function ModName(): string {
-		return $this->modName;
+	public function ContentPackName(): string {
+		return $this->contentPackName;
 	}
 	
-	public function ModWorkshopId(): string {
-		return $this->modWorkshopId;
+	public function ContentPackSteamId(): string {
+		return $this->contentPackSteamId;
 	}
 	
 	public static function NormalizeTag(string $tag) {

@@ -2,61 +2,67 @@
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
-if (empty($_GET['mod_id']) == false && BeaconCommon::IsUUID($_GET['mod_id'])) {
-	$mod = \Ark\Mod::GetByModID($_GET['mod_id']);
-} elseif (empty($_GET['workshop_id']) == false) {
-	$mods = \Ark\Mod::GetByConfirmedWorkshopID($_GET['workshop_id']);
-	if (is_array($mods) && count($mods) == 1) {
-		$mod = $mods[0];
-	}
-}
-
-if (is_null($mod)) {
+use BeaconAPI\v4\Ark\{ConfigOption, ContentPack, Creature, Engram, LootContainer, SpawnPoint};
+$id = $_GET['modId'] ?? $_GET['steamId'] ?? $_GET['mod_id'] ?? $_GET['workshop_id'] ?? '';
+$pack = ContentPack::Fetch($id);
+if (is_null($pack)) {
 	http_response_code(404);
 	echo '<h1>Mod Not Found</h1><p>The mod may have been deleted. Hopefully not though.</p>';
 	exit;
 }
 
-BeaconTemplate::SetTitle('Mod: ' . $mod->Name());
-BeaconTemplate::SetPageDescription('Beacon has built-in support for the Ark mod "' . $mod->Name() . '" which means its engrams are already part of Beacon\'s database so you can begin using them immediately.');
-$engrams = \Ark\Engram::Get($mod->ModID());
-$loot_sources = \Ark\LootSource::Get($mod->ModID());
-$creatures = \Ark\Creature::Get($mod->ModID());
-$config_options = \Ark\ConfigLine::Get($mod->ModID());
-$has_engrams = count($engrams) > 0;
-$has_loot_sources = count($loot_sources) > 0;
-$has_creatures = count($creatures) > 0;
-$has_config_options = false;//count($config_options) > 0;
-$has_something = $has_engrams || $has_loot_sources || $has_creatures || $has_config_options;
+$filters = [
+	'contentPackId' => $pack->ContentPackId()
+];
 
-?><h1><?php echo htmlentities($mod->Name()); ?></h1>
-<p>Beacon has built-in support for <a href="<?php echo BeaconWorkshopItem::URLForModID($mod->WorkshopID()); ?>"><?php echo htmlentities($mod->Name()); ?></a>. This means its engrams are already part of Beacon's database and you can begin using them immediately.</p>
-<?php if ($has_engrams) { ?>
-<h3 id="engrams"><?php echo htmlentities($mod->Name()); ?> Engrams</h3>
-<p><a href="/mods/<?php echo abs($mod->WorkshopID()); ?>/spawncodes">See the full list with spawn codes here.</a></p>
+BeaconTemplate::SetTitle('Mod: ' . $pack->Name());
+BeaconTemplate::SetPageDescription('Beacon has built-in support for the Ark mod "' . $pack->Name() . '" which means its engrams are already part of Beacon\'s database so you can begin using them immediately.');
+$engrams = Engram::Search($filters, true);
+$lootContainers = LootContainer::Search($filters, true);
+$creatures = Creature::Search($filters, true);
+//$configOptions = ConfigOption::Search($filters, true);
+$spawnPoints = SpawnPoint::Search($filters, true);
+$hasEngrams = count($engrams) > 0;
+$hasLootContainers = count($lootContainers) > 0;
+$hasCreatures = count($creatures) > 0;
+$hasConfigOptions = false;//count($configOptions) > 0;
+$hasSpawnPoints = count($spawnPoints) > 0;
+$hasSomething = $hasEngrams || $hasLootContainers || $hasCreatures || $hasConfigOptions || $hasSpawnPoints;
+
+?><h1><?php echo htmlentities($pack->Name()); ?></h1>
+<p>Beacon has built-in support for <a href="<?php echo htmlentities($pack->SteamUrl()); ?>"><?php echo htmlentities($pack->Name()); ?></a>. This means its engrams are already part of Beacon's database and you can begin using them immediately.</p>
+<?php if ($hasEngrams) { ?>
+<h3 id="engrams"><?php echo htmlentities($pack->Name()); ?> Engrams</h3>
+<p><a href="/mods/<?php echo htmlentities(urlencode($pack->SteamId())); ?>/spawncodes">See the full list with spawn codes here.</a></p>
 <ul class="object_list">
-	<?php foreach ($engrams as $engram) { ?><li><a href="/object/<?php echo urlencode($engram->ObjectID()); ?>"><?php echo htmlentities($engram->Label()); ?></a></li><?php } ?></ul>
+	<?php foreach ($engrams as $engram) { ?><li><a href="/object/<?php echo htmlentities(urlencode($engram->UUID())); ?>"><?php echo htmlentities($engram->Label()); ?></a></li><?php } ?></ul>
 <?php } ?>
-<?php if ($has_loot_sources) { ?>
-<h3 id="lootsources"><?php echo htmlentities($mod->Name()); ?> Loot Sources</h3>
+<?php if ($hasLootContainers) { ?>
+<h3 id="lootsources"><?php echo htmlentities($pack->Name()); ?> Loot Sources</h3>
 <ul class="object_list">
-	<?php foreach ($loot_sources as $loot_source) { ?><li><a href="/object/<?php echo urlencode($loot_source->ObjectID()); ?>"><?php echo htmlentities($loot_source->Label()); ?></a></li><?php } ?>
+	<?php foreach ($lootContainers as $lootContainer) { ?><li><a href="/object/<?php echo htmlentities(urlencode($lootContainer->UUID())); ?>"><?php echo htmlentities($lootContainer->Label()); ?></a></li><?php } ?>
 </ul>
 <?php } ?>
-<?php if ($has_creatures) { ?>
-<h3 id="creatures"><?php echo htmlentities($mod->Name()); ?> Creatures</h3>
+<?php if ($hasCreatures) { ?>
+<h3 id="creatures"><?php echo htmlentities($pack->Name()); ?> Creatures</h3>
 <ul class="object_list">
-	<?php foreach ($creatures as $creature) { ?><li><a href="/object/<?php echo urlencode($creature->ObjectID()); ?>"><?php echo htmlentities($creature->Label()); ?></a></li><?php } ?>
+	<?php foreach ($creatures as $creature) { ?><li><a href="/object/<?php echo htmlentities(urlencode($creature->UUID())); ?>"><?php echo htmlentities($creature->Label()); ?></a></li><?php } ?>
+</ul>
+<?php } ?>
+<?php if ($hasSpawnPoints) { ?>
+<h3 id="spawnpoints"><?php echo htmlentities($pack->Name()); ?> Spawn Points</h3>
+<ul class="object_list">
+	<?php foreach ($spawnPoints as $spawnPoint) { ?><li><a href="/object/<?php echo htmlentities(urlencode($spawnPoint->UUID())); ?>"><?php echo htmlentities($spawnPoint->Label()); ?></a></li><?php } ?>
 </ul>
 <?php } ?>
 <?php
 
-if ($has_config_options) {
-	echo '<h3 id="configoptions">' . htmlentities($mod->Name()) . ' Config Options</h3>';
+if ($hasConfigOptions) {
+	echo '<h3 id="configoptions">' . htmlentities($pack->Name()) . ' Config Options</h3>';
 	echo '<table class="generic">';
 	
 	$config_files = array();
-	foreach ($config_options as $option) {
+	foreach ($configOptions as $option) {
 		$file = $option->ConfigFileName();
 		if (array_key_exists($file, $config_files)) {
 			$headers = $config_files[$file];
@@ -90,6 +96,6 @@ if ($has_config_options) {
 	
 	echo '</table>';
 } ?>
-<?php if (!$has_something) { ?>
-<p><?php echo htmlentities($mod->Name()); ?> doesn't appear to provide anything to Beacon. It must be here for emotional support only.</p>
+<?php if (!$hasSomething) { ?>
+<p><?php echo htmlentities($pack->Name()); ?> doesn't appear to provide anything to Beacon. It must be here for emotional support only.</p>
 <?php } ?>

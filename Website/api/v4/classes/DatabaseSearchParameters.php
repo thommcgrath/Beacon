@@ -25,6 +25,16 @@ class DatabaseSearchParameters {
 			$this->values[] = $filters[$propertyName];
 		}
 	}
+	
+	public function AddValue(mixed $value): int {
+		$idx = array_search($value, $this->values);
+		if ($idx !== false) {
+			return $idx;
+		}
+		$this->values[] = $value;
+		$this->placeholder++;
+		return $this->placeholder;
+	}
 }
 
 ?>

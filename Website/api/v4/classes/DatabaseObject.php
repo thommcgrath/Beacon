@@ -102,6 +102,30 @@ abstract class DatabaseObject {
 		
 		static::BuildSearchParameters($params, $filters);
 			
+		foreach ($filters as $key => $value) {
+			if (str_contains($key, '|') === false) {
+				continue;
+			}
+			
+			$subkeys = explode('|', $key);
+			$subfilters = [];
+			foreach ($subkeys as $subkey) {
+				$subfilters[$subkey] = $value;
+			}
+			
+			$subparams = new DatabaseSearchParameters();
+			$subparams->placeholder = $params->placeholder;
+			
+			static::BuildSearchParameters($subparams, $subfilters);
+			
+			if (count($subparams->clauses) > 0) {
+				$params->clauses[] = '(' . implode(' OR ', $subparams->clauses) . ')';
+				$params->values = array_merge($params->values, $subparams->values);
+			}
+			
+			$params->placeholder = $subparams->placeholder;
+		}			
+			
 		$params->pageNum = max($params->pageNum, 1);
 		$params->pageSize = min($params->pageSize, 250);
 		
@@ -156,6 +180,7 @@ abstract class DatabaseObject {
 		}
 		
 		//echo "{$sql}\n";
+		//print_r($params->values);
 		$rows = $database->Query($sql, $params->values);
 		$members = static::FromRows($rows);
 		
@@ -165,7 +190,7 @@ abstract class DatabaseObject {
 			return [
 				'totalResults' => $totalRowCount,
 				'pageSize' => $params->pageSize,
-				'pages' => ceil($totalRowCount / $params->pageSize),
+				'pages' => intval(ceil($totalRowCount / $params->pageSize)),
 				'page' => $params->pageNum,
 				'results' => $members
 			];
