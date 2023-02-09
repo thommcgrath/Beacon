@@ -1435,6 +1435,41 @@ img.avatar {
 	display: block;
 }
 
+/* ! Pagination */
+
+.pagination-controls {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	margin-top: 20px;
+	flex-wrap: wrap;
+	
+	.pagination-cell {
+		//background-color: red;
+	}
+
+	.pagination-button {
+		display: block;
+		padding: 3px 6px;
+		border: 1px solid black;
+		border-radius: 6px;
+		text-align: center;
+		white-space: nowrap;
+	}
+	
+	.pagination-current {
+	}
+	
+	.pagination-placeholder {
+		display: block;
+	}
+	
+	.pagination-text,
+	.pagination-placeholder {
+		min-width: 50px;
+	}
+}
+
 @media (min-width: $breakpoint_mini) {
 	#header_logo {
 		height: 80px;

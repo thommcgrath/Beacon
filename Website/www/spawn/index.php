@@ -170,26 +170,34 @@ if ($pageCount > 1) {
 	
 	$pageLinks = [];
 	if ($lowestPage > 1) {
-		$pageLinks[] = '<a href="' . htmlentities(BuildPaginationLink(1)) . '">&laquo; First</a>';
+		$pageLinks[] = '<a href="' . htmlentities(BuildPaginationLink(1)) . '" class="pagination-button pagination-text">&laquo; First</a>';
+	} else {
+		$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 	}
 	if ($pageNum > 1) {
-		$pageLinks[] = '<a href="'. htmlentities(BuildPaginationLink($pageNum - 1)) . '">&lt;</a>';
+		$pageLinks[] = '<a href="'. htmlentities(BuildPaginationLink($pageNum - 1)) . '" class="pagination-button pagination-text">&lsaquo; Previous</a>';
+	} else {
+		$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 	}
 	for ($p = $lowestPage; $p <= $highestPage; $p++) {
 		if ($p === $pageNum) {
-			$pageLinks[] = $p;
+			$pageLinks[] = '<span class="pagination-button pagination-number pagination-current">' . $p . '</span>';
 		} else {
-			$pageLinks[] = '<a href="' . htmlentities(BuildPaginationLink($p)) . '">' . htmlentities($p) . '</a>';
+			$pageLinks[] = '<a href="' . htmlentities(BuildPaginationLink($p)) . '" class="pagination-button pagination-number">' . htmlentities($p) . '</a>';
 		}
 	}
 	if ($pageNum < $pageCount) {
-		$pageLinks[] = '<a href="'. htmlentities(BuildPaginationLink($pageNum + 1)) . '">&gt;</a>';
+		$pageLinks[] = '<a href="'. htmlentities(BuildPaginationLink($pageNum + 1)) . '" class="pagination-button pagination-text">Next &rsaquo;</a>';
+	} else {
+		$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 	}
 	if ($highestPage < $pageCount) {
-		$pageLinks[] = '<a href="' . htmlentities(BuildPaginationLink($pageCount)) . '">Last &raquo;</a>';
+		$pageLinks[] = '<a href="' . htmlentities(BuildPaginationLink($pageCount)) . '" class="pagination-button pagination-text">Last &raquo;</a>';
+	} else {
+		$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 	}
 	
-	echo '<p class="text-center">' . implode(' ', $pageLinks) . '</p>';
+	echo '<div class="pagination-controls"><div class="pagination-cell">' . implode('</div><div class="pagination-cell">', $pageLinks) . '</div></div>';
 }
 BeaconTemplate::SetTitle($title);
 

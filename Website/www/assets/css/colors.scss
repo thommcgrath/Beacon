@@ -619,6 +619,32 @@
 			color: $accent-text-color;	
 		}
 	}
+	
+	/* ! Pagination */
+	
+	.pagination-controls {
+		.pagination-current {
+			color: $accent-color;
+		}
+		
+		.pagination-button {
+			border-color: mix($foreground-color, $background-color, 5%);
+			background-color: mix($foreground-color, $background-color, 2%);
+			text-decoration: none;
+		}
+		
+		a.pagination-button:hover {
+			background-color: $link-color;
+			color: $accent-text-color;
+			border-color: $link-color;
+		}
+		
+		.pagination-current {
+			background-color: $accent-color;
+			color: $accent-text-color;
+			border-color: $accent-color;
+		}
+	}
 }
 
 @include setup-colors(#000000, #ffffff, #9c0fb0);
