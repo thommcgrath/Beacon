@@ -76,7 +76,7 @@ $rangeStart = min(1 + (($pageNum - 1) * $pageSize), $blueprintCount);
 $rangeEnd = min($rangeStart + ($pageSize - 1), $blueprintCount);
 
 $canonicalUrl = BeaconCommon::AbsoluteUrl(BuildPaginationLink($pageNum));
-BeaconTemplate::AddHeaderLine('<link href="' . htmlentities($canonicalUrl) . '" rel="canonical">');
+BeaconTemplate::AddHeaderLine('<link rel="canonical" href="' . htmlentities($canonicalUrl) . '">');
 
 ?><h1><?php echo htmlentities($title); ?><br><span class="subtitle">Up to date as of <?php echo '<time datetime="' . $lastDatabaseUpdate->format('c') . '">' . $lastDatabaseUpdate->format('F jS, Y') . ' at ' . $lastDatabaseUpdate->format('g:i A') . ' UTC</time>'; ?></span></h1>
 <?php if (is_null($pack) || $pack->IsOfficial() === true) { ?><div class="notice-block notice-info">
@@ -175,7 +175,9 @@ if ($pageCount > 1) {
 		$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 	}
 	if ($pageNum > 1) {
-		$pageLinks[] = '<a href="'. htmlentities(BuildPaginationLink($pageNum - 1)) . '" class="pagination-button pagination-text">&lsaquo; Previous</a>';
+		$prevUrl = BuildPaginationLink($pageNum - 1);
+		$pageLinks[] = '<a href="'. htmlentities($prevUrl) . '" class="pagination-button pagination-text">&lsaquo; Previous</a>';
+		BeaconTemplate::AddHeaderLine('<link rel="prev" href="' . htmlentities($prevUrl) . '">');
 	} else {
 		$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 	}
@@ -187,7 +189,9 @@ if ($pageCount > 1) {
 		}
 	}
 	if ($pageNum < $pageCount) {
-		$pageLinks[] = '<a href="'. htmlentities(BuildPaginationLink($pageNum + 1)) . '" class="pagination-button pagination-text">Next &rsaquo;</a>';
+		$nextUrl = BuildPaginationLink($pageNum + 1);
+		$pageLinks[] = '<a href="'. htmlentities($nextUrl) . '" class="pagination-button pagination-text">Next &rsaquo;</a>';
+		BeaconTemplate::AddHeaderLine('<link rel="next" href="' . htmlentities($nextUrl) . '">');
 	} else {
 		$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 	}
