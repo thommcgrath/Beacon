@@ -209,28 +209,6 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  // Var List As String = Ark.DataSource.Pool.Get(False).GetStringVariable("Player Levels")
-		  // If List.IsEmpty = False Then
-		  // Var Values() As String = List.Split(",")
-		  // For Each Value As String In Values
-		  // Self.mPlayerLevels.Add(UInt64.FromString(Value))
-		  // Next
-		  // End If
-		  // 
-		  // List = Ark.DataSource.Pool.Get(False).GetStringVariable("Dino Levels")
-		  // If List.IsEmpty = False Then
-		  // Var Values() As String = List.Split(",")
-		  // For Each Value As String In Values
-		  // Self.mDinoLevels.Add(UInt64.FromString(Value))
-		  // Next
-		  // End If
-		  
-		  Super.Constructor()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function DinoExperience(Index As Integer) As UInt64
 		  Return Self.mDinoLevels(Index)
 		End Function
