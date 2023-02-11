@@ -16,12 +16,12 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
 	exit;
 }
 
-if (empty($_POST['email'])) {
+$email = strtolower(trim($_POST['email'] ?? ''));
+if (empty($email) || BeaconEmail::IsEmailValid($email) === false) {
 	http_response_code(400);
 	echo json_encode(['error' => true, 'message' => 'Missing email parameter.'], JSON_PRETTY_PRINT);
 	exit;
 }
-$email = strtolower(trim($_POST['email']));
 $currency = 'USD';
 
 $ark_qty = (isset($_POST['ark']) && filter_var($_POST['ark'], FILTER_VALIDATE_BOOLEAN) === true) ? 1 : 0;
@@ -47,9 +47,9 @@ if (isset($_COOKIE['beacon_affiliate'])) {
 } else {
 	$client_reference_id = BeaconCommon::GenerateUUID();
 }
+
 $payment = [
 	'client_reference_id' => $client_reference_id,
-	'customer_email' => $email,
 	'payment_method_types' => [
 		'card',
 		'ideal',
@@ -117,10 +117,13 @@ try {
 	if (is_null($customers) === false && is_array($customers) && array_key_exists('data', $customers) && count($customers['data']) >= 1) {
 		$customer = $customers['data'][0];
 		$payment['customer'] = $customer['id'];
-		$payment['customer_update'] = ['address' => 'auto', 'name' => 'auto'];
-		unset($payment['customer_email']);
+	} else {
+		$customerId = $api->CreateCustomer($email);
+		$payment['customer'] = $customerId;
 	}
+	$payment['customer_update'] = ['address' => 'auto', 'name' => 'auto'];
 } catch (Exception $err) {
+	$payment['customer_email'] = $email;
 }
 
 $items = [
