@@ -65,12 +65,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      HelpSyncCloudFiles.Enabled = True
 		    End If
 		    
-		    If Keyboard.OptionKey Then
-		      HelpUpdateEngrams.Text = "Refresh Blueprints"
-		    Else
-		      HelpUpdateEngrams.Text = "Update Blueprints"
-		    End If
 		    HelpUpdateEngrams.Enabled = True
+		    HelpRefreshBlueprints.Enabled = True
 		  Else
 		    HelpSyncCloudFiles.Visible = False
 		    HelpUpdateEngrams.Visible = False
@@ -398,6 +394,14 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpRefreshBlueprints() As Boolean Handles HelpRefreshBlueprints.Action
+		  Self.SyncGamedata(False, True)
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpReleaseNotes() As Boolean Handles HelpReleaseNotes.Action
 		  Self.ShowReleaseNotes()
 		  Return True
@@ -421,11 +425,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function HelpUpdateEngrams() As Boolean Handles HelpUpdateEngrams.Action
-		  If Keyboard.OptionKey Then
-		    Self.SyncGamedata(False, True)
-		  Else
-		    Self.SyncGamedata(False, False)
-		  End If
+		  Self.SyncGamedata(False, False)
 		  Return True
 		End Function
 	#tag EndMenuHandler
