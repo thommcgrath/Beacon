@@ -8,6 +8,8 @@ http_response_code(500);
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+use BeaconAPI\v4\User;
+
 BeaconCommon::StartSession();
 
 if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
@@ -73,7 +75,7 @@ if ($ark_qty > 0 && BeaconShop::EmailOwns($email, BeaconShop::ARK_PRODUCT_ID)) {
 
 $user = null;
 try {
-	$user = BeaconUser::GetByEmail($email);
+	$user = User::Fetch($email);
 } catch (Exception $err) {
 }
 
