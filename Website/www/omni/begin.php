@@ -66,23 +66,14 @@ $payment = [
 	'line_items' => [],
 ];
 
+if ($ark_qty > 0 && BeaconShop::EmailOwns($email, BeaconShop::ARK_PRODUCT_ID)) {
+	echo json_encode(['error' => true, 'message' => 'User already owns Omni.'], JSON_PRETTY_PRINT);
+	exit;
+}
+
 $user = null;
 try {
 	$user = BeaconUser::GetByEmail($email);
-	if (is_null($user) === false) {
-		$payment['metadata']['Beacon User UUID'] = $user->UserID();
-		
-		if ($ark_qty > 0) {
-			$ark_license = $user->LicenseInfo(BeaconShop::ARK_PRODUCT_ID);
-			if (is_null($ark_license) === false) {
-				if ($ark_gift_qty === 0 && $ark2_qty === 0 && $ark2_gift_qty === 0 && $stw_qty === 0) {
-					echo json_encode(['error' => true, 'message' => 'User already owns Omni.'], JSON_PRETTY_PRINT);
-					exit;
-				}
-				$ark_qty = 0;
-			}
-		}
-	}
 } catch (Exception $err) {
 }
 

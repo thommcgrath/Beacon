@@ -179,6 +179,12 @@ abstract class BeaconShop {
 		
 		return $client_reference_id;
 	}
+	
+	public static function EmailOwns(string $email, string $productId): bool {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query("SELECT COUNT(license_id) AS license_count FROM public.licenses WHERE product_id = $1 AND purchase_id IN (SELECT purchase_id FROM public.purchases WHERE purchaser_email = uuid_for_email($2) AND refunded != TRUE);", $productId, $email);
+		return intval($rows->Field('license_count')) > 0;
+	}
 }
 
 ?>
