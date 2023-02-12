@@ -871,7 +871,7 @@ Inherits Ark.IntegrationEngine
 		  
 		  Self.Log("Waiting for authentication…")
 		  Self.Wait(Controller)
-		  If Controller.Cancelled Or IsNull(Dict.Value("Account")) Then
+		  If Controller.Cancelled Or Dict.HasKey("Account") = False Or IsNull(Dict.Value("Account")) Then
 		    Self.Cancel
 		    Return
 		  End If
