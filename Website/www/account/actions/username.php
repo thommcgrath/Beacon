@@ -4,13 +4,15 @@ define('ERR_USERNAME_TAKEN', 439);
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
+use BeaconAPI\v4\Session;
+
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-$session = BeaconSession::GetFromCookie();
+$session = Session::GetFromCookie();
 if (is_null($session)) {
 	http_response_code(400);
 	echo json_encode(array('message' => 'Unauthorized.'), JSON_PRETTY_PRINT);

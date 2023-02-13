@@ -1,17 +1,19 @@
 <?php
 
+use BeaconAPI\v4\Session;
+
 if (!BeaconTemplate::IsHTML()) {
 	echo $buffer;
 	exit;
 }
 
-$session = BeaconSession::GetFromCookie();
+$session = Session::GetFromCookie();
 if (is_null($session)) {
 	echo 'Unauthorized';
 	exit;
 }
 $session->Renew();
-$user = BeaconUser::GetByUserID($session->UserID());
+$user = $session->User();
 
 $description = BeaconTemplate::PageDescription();
 $sprites = BeaconCommon::AssetURI('sentinel-icons.svg');

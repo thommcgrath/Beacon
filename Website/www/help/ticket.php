@@ -11,6 +11,8 @@
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+use BeaconAPI\v4\User;
+
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -37,7 +39,7 @@ if (strlen($body) < 60) {
 	ReplyError('Please include a more detailed description of your issue.', 400);
 }
 
-if (BeaconUser::ValidateEmail($email) === false) {
+if (BeaconEmail::IsEmailValid($email) === false) {
 	ReplyError('Could not validate email address.', 400);
 }
 
@@ -56,11 +58,11 @@ $license_emails = [];
 $license_users = [];
 if ($has_expanded_parameters) {
 	$user_id = trim($_POST['user']);
-	$user_by_id = BeaconUser::GetByUserID($user_id);
-	if (is_null($user_by_id) === false && is_null($user_by_id->EmailID()) === false) {
+	$user_by_id = User::Fetch($user_id);
+	if (is_null($user_by_id) === false && is_null($user_by_id->EmailId()) === false) {
 		$users[] = $user_by_id;
-		$license_emails[] = $user_by_id->EmailID();
-		$license_users[$user_by_id->EmailID()] = $user_by_id;
+		$license_emails[] = $user_by_id->EmailId();
+		$license_users[$user_by_id->EmailId()] = $user_by_id;
 	}
 	$os = trim($_POST['os']);
 	$version = trim($_POST['version']);
@@ -84,8 +86,8 @@ if ($has_expanded_parameters) {
 		ReplyError('Invalid parameters.', 400);
 	}
 }
-if (count($users) === 0 || $users[0]->EmailID() !== $email_id) {
-	$user_by_email = BeaconUser::GetByEmailID($email_id);
+if (count($users) === 0 || $users[0]->EmailId() !== $email_id) {
+	$user_by_email = User::Fetch($email_id);
 	if (is_null($user_by_email) === false) {
 		$users[] = $user_by_email;
 		$license_emails[] = $email_id;

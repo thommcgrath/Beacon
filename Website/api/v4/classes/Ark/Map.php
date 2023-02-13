@@ -181,6 +181,14 @@ class Map extends DatabaseObject implements \JsonSerializable {
 		}
 		return $combined;
 	}
+	
+	public static function Names(array $maps): string {
+		$names = [];
+		foreach ($maps as $map) {
+			$names[] = $map->Label();
+		}
+		return BeaconCommon::ArrayToEnglish($names);
+	}
 }
 
 ?>

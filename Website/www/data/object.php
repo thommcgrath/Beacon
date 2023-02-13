@@ -2,6 +2,8 @@
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+use BeaconAPI\v4\Ark\{Blueprint, Creature, Engram, GenericObject, LootContainer, Map, SpawnPoint, Template};
+
 $object_id = null;
 $objects = [];
 
@@ -63,7 +65,7 @@ if (is_null($obj)) {
 BeaconTemplate::SetTitle($obj->Label());
 
 $properties = [
-	'Mod' => '[' . $obj->ModName() . '](/mods/' . urlencode($obj->ModID()) . ')'
+	'Mod' => '[' . $obj->ContentPackName() . '](/mods/' . urlencode($obj->ContentPackSteamId()) . ')'
 ];
 $tags = $obj->Tags();
 if (count($tags) > 0) {
@@ -74,26 +76,23 @@ if (count($tags) > 0) {
 	$properties['Tags'] = implode(', ', $links);
 }
 
-if ($obj instanceof \Ark\Blueprint) {
+if ($obj instanceof Blueprint) {
 	PrepareBlueprintTable($obj, $properties);
 }
 
-if ($obj instanceof \Ark\Creature) {
+if ($obj instanceof Creature) {
 	$type = 'Creature';
 	PrepareCreatureTable($obj, $properties);
-} elseif ($obj instanceof \Ark\Engram) {
+} elseif ($obj instanceof Engram) {
 	$type = 'Engram';
 	PrepareEngramTable($obj, $properties);
-} elseif ($obj instanceof \Ark\Diet) {
-	$type = 'Diet';
-	PrepareDietTable($obj, $properties);
-} elseif ($obj instanceof \Ark\LootSource) {
-	$type = 'Loot Source';
+} elseif ($obj instanceof LootContainer) {
+	$type = 'Loot Container';
 	PrepareLootSourceTable($obj, $properties);
-} elseif ($obj instanceof \Ark\Preset) {
-	$type = 'Preset';
+} elseif ($obj instanceof Template) {
+	$type = 'Template';
 	PreparePresetTable($obj, $properties);
-} elseif ($obj instanceof \Ark\SpawnPoint) {
+} elseif ($obj instanceof SpawnPoint) {
 	$type = 'Spawn Point';
 	PrepareSpawnPointTable($obj, $properties);
 }
@@ -101,7 +100,7 @@ if ($obj instanceof \Ark\Creature) {
 $parser = new Parsedown();
 
 echo '<h1><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . (is_null($obj->AlternateLabel()) ? '' : '<br><span class="subtitle">AKA ' . htmlentities($obj->AlternateLabel()) . '</span>') . '</h1>';
-if ($obj instanceof \Ark\LootSource && $obj->Experimental()) {
+if ($obj instanceof LootContainer && $obj->Experimental()) {
 	echo '<p class="notice-block notice-warning">This loot source is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
 }
 echo '<table id="object_details" class="generic">';
@@ -110,71 +109,65 @@ foreach ($properties as $key => $value) {
 }
 echo '</table>';
 
-function PrepareBlueprintTable(\Ark\Blueprint $blueprint, array &$properties) {
+function PrepareBlueprintTable(Blueprint $blueprint, array &$properties) {
 	$properties['Class'] = $blueprint->ClassString();
-	if ($blueprint instanceof \Ark\Engram) {
-		$spawn_codes = $blueprint->GenerateSpawnCodes(1, false);
-		if (isset($spawn_codes['gfi'])) {
-			$properties['GFI Spawn Code'] = '`' . $spawn_codes['gfi'] . '`';
-		}
-		if (isset($spawn_codes['index'])) {
-			$properties['Numeric Spawn Code'] = '`' . $spawn_codes['index'] . '`';
-		}
-		$properties['Spawn Code'] = '`' . $spawn_codes['full'] . '`';
-	} else {
-		$properties['Spawn Code'] = '`' . $blueprint->SpawnCode() . '`';
-	}
-	$properties['Map Availability'] = implode(', ', \Ark\Maps::Names($blueprint->Availability()));
 	
-	$related_ids = $blueprint->RelatedObjectIDs();
-	$related_items = [];
-	foreach ($related_ids as $id) {
-		$blueprint = \Ark\Blueprint::GetByObjectID($id);
+	$maps = Map::Search(['mask' => $blueprint->Availability()], true);
+	$properties['Map Availability'] = Map::Names($maps);
+	
+	$relatedIds = $blueprint->RelatedObjectIDs();
+	$relatedItems = [];
+	foreach ($relatedIds as $id) {
+		$blueprint = Blueprint::Fetch($id);
 		if (is_null($blueprint)) {
-			$obj = \Ark\GenericObject::GetByObjectID($id);
+			$obj = GenericObject::Fetch($id);
 			if (is_null($obj)) {
 				continue;
 			}
-			$related_items[] = MarkdownLinkToObject($obj);
+			$relatedItems[] = MarkdownLinkToObject($obj);
 		} else {
-			$related_items[] = MarkdownLinkToObject($blueprint);
+			$relatedItems[] = MarkdownLinkToObject($blueprint);
 		}
 	}
-	if (count($related_items) > 0) {
-		$properties['Related Objects'] = implode(', ', $related_items);
+	if (count($relatedItems) > 0) {
+		$properties['Related Objects'] = implode(', ', $relatedItems);
 	}
 }
 
-function PrepareCreatureTable(\Ark\Creature $creature, array &$properties) {
-	$incubation_time = $creature->IncubationTimeSeconds();
-	if (!is_null($incubation_time)) {
-		$properties['Incubation Time'] = BeaconCommon::SecondsToEnglish($incubation_time);
+function PrepareCreatureTable(Creature $creature, array &$properties) {
+	$incubationTime = $creature->IncubationTimeSeconds();
+	if (!is_null($incubationTime)) {
+		$properties['Incubation Time'] = BeaconCommon::SecondsToEnglish($incubationTime);
 	}
-	$mature_time = $creature->MatureTimeSeconds();
-	if (!is_null($mature_time)) {
-		$properties['Mature Time'] = BeaconCommon::SecondsToEnglish($mature_time);
+	$matureTime = $creature->MatureTimeSeconds();
+	if (!is_null($matureTime)) {
+		$properties['Mature Time'] = BeaconCommon::SecondsToEnglish($matureTime);
 	}
-	$min_mating_interval = $creature->MinMatingIntervalSeconds();
-	$max_mating_interval = $creature->MaxMatingIntervalSeconds();
-	if (is_null($min_mating_interval) == false && is_null($max_mating_interval) == false) {
-		$properties['Mating Cooldown'] = BeaconCommon::SecondsToEnglish($min_mating_interval, false, 3600) . ' to ' . BeaconCommon::SecondsToEnglish($max_mating_interval, false, 3600);
+	$minMatingInterval = $creature->MinMatingIntervalSeconds();
+	$maxMatingInterval = $creature->MaxMatingIntervalSeconds();
+	if (is_null($minMatingInterval) == false && is_null($maxMatingInterval) == false) {
+		$properties['Mating Cooldown'] = BeaconCommon::SecondsToEnglish($minMatingInterval, false, 3600) . ' to ' . BeaconCommon::SecondsToEnglish($maxMatingInterval, false, 3600);
 	}
+	
+	$properties['Spawn Code'] = '`' . $creature->SpawnCode() . '`';
 }
 
-function PrepareEngramTable(\Ark\Engram $engram, array &$properties) {
+function PrepareEngramTable(Engram $engram, array &$properties) {
 	if (is_null($engram->ItemID()) == false) {
 		$properties['Item ID'] = $engram->ItemID();
 	}
+	
+	$properties['Spawn Code'] = '`' . $engram->SpawnCode() . '`';
 	
 	if (is_null($engram->StackSize()) == false) {
 		$properties['Stack Size'] = $engram->StackSize();
 	}
 	
-	$properties['Blueprintable'] = $engram->CanBlueprint() ? 'Yes' : 'No';
-	$properties['Harvestable'] = $engram->Harvestable() ? 'Yes' : 'No';
+	$properties['Blueprintable'] = $engram->IsTagged('blueprintable') ? 'Yes' : 'No';
+	$properties['Harvestable'] = $engram->IsTagged('harvestable') ? 'Yes' : 'No';
 	
 	if (is_null($engram->EntryString()) == false) {
-		$properties['Unlock Code'] = '`' . $engram->UnlockCode() . '`';
+		$properties['Unlock Code'] = '`cheat unlockengram "Blueprint\'' . $engram->Path() . '\'"`';
 		$properties['Engram Specifier'] = $engram->EntryString();
 		
 		if (is_null($engram->RequiredPoints())) {
@@ -196,40 +189,23 @@ function PrepareEngramTable(\Ark\Engram $engram, array &$properties) {
 	}
 }
 
-function PrepareLootSourceTable(\Ark\LootSource $loot_source, array &$properties) {
-	$properties['Multipliers'] = sprintf('%F - %F', $loot_source->MultiplierMin(), $loot_source->MultiplierMax());
+function PrepareLootSourceTable(LootContainer $lootContainer, array &$properties) {
+	$properties['Multipliers'] = sprintf('%F - %F', $lootContainer->MultiplierMin(), $lootContainer->MultiplierMax());
+	$properties['Spawn Code'] = '`' . $lootContainer->SpawnCode() . '`';
 }
 
-function PrepareDietTable(\Ark\Diet $diet, array &$properties) {
-	$engram_ids = $diet->EngramIDs();
-	$engrams = [];
-	foreach ($engram_ids as $id) {
-		$engram = \Ark\Engram::GetByObjectID($id);
-		$engrams[] = MarkdownLinkToObject($engram);
-	}
-	$properties['Preferred Foods'] = implode(', ', $engrams);
-	
-	$creature_ids = $diet->CreatureIDs();
-	$creatures = [];
-	foreach ($creature_ids as $id) {
-		$creature = \Ark\Creature::GetByObjectID($id);
-		$creatures[] = MarkdownLinkToObject($creature);
-	}
-	$properties['Eaten By'] = implode(', ', $creatures);
+function PreparePresetTable(Template $preset, array &$properties) {
 }
 
-function PreparePresetTable(\Ark\Preset $preset, array &$properties) {
-}
-
-function PrepareSpawnPointTable(\Ark\SpawnPoint $spawn_point, array &$properties) {
-	$spawns = $spawn_point->Spawns();
-	$limits = $spawn_point->Limits();
+function PrepareSpawnPointTable(SpawnPoint $spawnPoint, array &$properties) {
+	$spawns = $spawnPoint->Spawns();
+	$limits = $spawnPoint->Limits();
 	if (is_null($limits)) {
 		$limits = [];
 	} else {
 		$temp = [];
 		foreach ($limits as $limit) {
-			$temp[$limit['creature']['UUID']] = $limit['max_percent'];
+			$temp[$limit['creatureId']] = $limit['maxPercentage'];
 		}
 		$limits = $temp;
 		unset($temp);
@@ -239,24 +215,24 @@ function PrepareSpawnPointTable(\Ark\SpawnPoint $spawn_point, array &$properties
 		return;
 	}
 	
-	$unique_creatures = [];
+	$uniqueCreatures = [];
 	foreach ($spawns as $set) {
 		$entries = $set['entries'];
 		foreach ($entries as $entry) {
-			$creature_id = $entry['creature']['UUID'];
-			if (in_array($creature_id, $unique_creatures)) {
+			$creatureId = $entry['creatureId'];
+			if (in_array($creatureId, $uniqueCreatures)) {
 				continue;
 			}
-			$unique_creatures[] = $creature_id;
+			$uniqueCreatures[] = $creatureId;
 		}
 	}
 	
 	$creatures = [];
-	foreach ($unique_creatures as $creature_id) {
-		$creature = \Ark\Creature::GetByObjectID($creature_id);
+	foreach ($uniqueCreatures as $creatureId) {
+		$creature = Creature::Fetch($creatureId);
 		$label = MarkdownLinkToObject($creature);
-		if (array_key_exists($creature_id, $limits)) {
-			$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creature_id] * 100, 0) . '%)';
+		if (array_key_exists($creatureId, $limits)) {
+			$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creatureId] * 100, 0) . '%)';
 		}
 		$creatures[] = $label;
 	}
@@ -264,60 +240,51 @@ function PrepareSpawnPointTable(\Ark\SpawnPoint $spawn_point, array &$properties
 	sort($creatures);
 	$properties['Spawns'] = implode(', ', $creatures);
 	
-	$populations = ['<table class="generic auto-width"><thead class="smaller"><tr><th class="min-width">Map</th><th class="text-right min-width low-priority">Num Nodes</th><th class="text-right min-width low-priority">Pop Per Node</th><th class="text-right min-width low-priority">Target Pop</th></thead>', '<tbody>'];
-	$population_data = $spawn_point->Populations();
-	foreach ($population_data as $map_id => $pop) {
-		$map = \Ark\Map::GetNamed($map_id)[0];
-		$node_count = $pop['instances'];
-		$target_pop = $pop['target_population'];
-		$avg_per_node = round($target_pop / $node_count);
-		$node_count = number_format($node_count);
-		$target_pop = number_format($target_pop);
-		$avg_per_node = number_format($avg_per_node);
-		$populations[] = "<tr><td><span class=\"nowrap\">{$map->Label()}</span><div class=\"row-details\">Nodes: {$node_count}, Pop Per Node {$avg_per_node}, Target Pop: {$target_pop}</div></td><td class=\"text-right low-priority\">{$node_count}</td><td class=\"text-right low-priority\">{$avg_per_node}</td><td class=\"text-right low-priority\">{$target_pop}</td></tr>";
+	$populationData = $spawnPoint->Populations();
+	if (count($populationData) > 0) {
+		$populations = ['<table class="generic auto-width"><thead class="smaller"><tr><th class="min-width">Map</th><th class="text-right min-width low-priority">Num Nodes</th><th class="text-right min-width low-priority">Pop Per Node</th><th class="text-right min-width low-priority">Target Pop</th></thead>', '<tbody>'];
+		foreach ($populationData as $map_id => $pop) {
+			$map = Map::Fetch($map_id);
+			$nodeCount = $pop['instances'];
+			$targetPop = $pop['targetPopulation'];
+			$avgPerNode = round($targetPop / $nodeCount);
+			$nodeCount = number_format($nodeCount);
+			$targetPop = number_format($targetPop);
+			$avgPerNode = number_format($avgPerNode);
+			$populations[] = "<tr><td><span class=\"nowrap\">{$map->Label()}</span><div class=\"row-details\">Nodes: {$nodeCount}, Pop Per Node {$avgPerNode}, Target Pop: {$targetPop}</div></td><td class=\"text-right low-priority\">{$nodeCount}</td><td class=\"text-right low-priority\">{$avgPerNode}</td><td class=\"text-right low-priority\">{$targetPop}</td></tr>";
+		}
+		$populations[] = '</tbody>';
+		$populations[] = '</table>';
+		$properties['Populations'] = implode("\n", $populations);
 	}
-	$populations[] = '</tbody>';
-	$populations[] = '</table>';
-	$properties['Populations'] = implode("\n", $populations);
 	
 	unset($properties['Spawn Code']);
 }
 
-function ExpandRecipe($parent, bool $as_array = false, int $level = 1, int $multiplier = 1) {
-	$recipe = $parent->Recipe();
+function ExpandRecipe(Engram $engram, bool $asArray = false, int $level = 1, int $multiplier = 1): null|string|array {
+	$recipe = $engram->Recipe();
 	if (is_null($recipe) || is_array($recipe) == false || $level > 6) {
 		return null;
 	}
 	
 	$lines = [];
 	foreach ($recipe as $ingredient) {
-		$object_id = $ingredient['engram']['UUID'];
+		$engramId = $ingredient['engramId'];
 		$quantity = $ingredient['quantity'] * $multiplier;
 		$exact = $ingredient['exact'];
 		
-		$object = \Ark\Engram::GetByObjectID($object_id);
+		$object = Engram::Fetch($engramId);
 		$lines[] = '- <span class="crafting_quantity">' . number_format($quantity) . 'x</span> ' . MarkdownLinkToObject($object);
-		
-		/*if ($object->IsTagged('harvestable') === false) {
-			$subcosts = ExpandRecipe($object, true, $level + 1, $quantity);
-			if (is_null($subcosts) === false) {
-				foreach ($subcosts as $subline) {
-					$lines[] = '  ' . $subline;
-				}
-			}
-		}*/
 	}
 	
-	if ($as_array) {
+	if ($asArray) {
 		return $lines;
 	}
 	return implode("\n", $lines);
 }
 
-function MarkdownLinkToObject(\Ark\Blueprint $obj) {
-	$path = $obj->ObjectID();
-	
-	return '[' . $obj->Label() . '](/object/' . $path . ')';
+function MarkdownLinkToObject(GenericObject $obj) {
+	return '[' . $obj->Label() . '](/object/' . urlencode($obj->UUID()) . ')';
 }
 
 ?>

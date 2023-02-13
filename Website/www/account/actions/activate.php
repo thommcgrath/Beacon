@@ -1,6 +1,9 @@
 <?php
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
+
+use BeaconAPI\v4\{Session, User};
+
 $output_type = BeaconCommon::BestResponseContentType(['application/json', 'text/html']);
 if (is_null($output_type)) {
 	$output_type = 'text/html';
@@ -12,7 +15,7 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) != 'POST') {
 	ExitWithError(400, 'Must use POST request');
 }
 
-$session = BeaconSession::GetFromCookie();
+$session = Session::GetFromCookie();
 if (is_null($session)) {
 	ExitWithError(403, 'Unauthorized');
 }
@@ -42,7 +45,7 @@ if ($info->file($_FILES['file']['tmp_name']) != 'application/json') {
 }
 
 $user = $session->User();
-$user_id = strtolower($user->UserID());
+$user_id = strtolower($user->UserId());
 
 $content = file_get_contents($_FILES['file']['tmp_name']);
 $json = json_decode($content, true);
@@ -60,8 +63,8 @@ $signing_data = $json['Device'];
 
 if ($user_id != $sent_user_id) {
 	// Potentially need to merge users
-	$other_user = BeaconUser::GetByUserID($sent_user_id);
-	if ($other_user instanceof BeaconUser) {
+	$other_user = User::Fetch($sent_user_id);
+	if ($other_user instanceof BeaconAPI\v4\User) {
 		// Definitely know the other user
 		if (!$other_user->CheckSignature($signing_data, $signature)) {
 			ExitWithError(400, 'Not authorized to merge user');

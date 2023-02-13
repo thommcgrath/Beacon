@@ -2,13 +2,15 @@
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-$session = BeaconSession::GetFromCookie();
+use BeaconAPI\v4\Session;
+
+$session = Session::GetFromCookie();
 if (is_null($session)) {
 	BeaconCommon::Redirect('/account/login/');
 	exit;
 }
 $session->Renew();
-$user = BeaconUser::GetByUserID($session->UserID());
+$session->User();
 
 BeaconTemplate::SetTemplate('sentinel');
 

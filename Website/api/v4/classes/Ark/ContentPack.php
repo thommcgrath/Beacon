@@ -11,8 +11,6 @@ class ContentPack extends DatabaseObject implements \JsonSerializable {
 	protected $name = '';
 	protected $isConfirmed = false;
 	protected $confirmationCode = '';
-	protected $pullUrl = null;
-	protected $lastPullHash = null;
 	protected $isConsoleSafe = false;
 	protected $isDefaultEnabled = false;
 	protected $minVersion = 0;
@@ -28,8 +26,6 @@ class ContentPack extends DatabaseObject implements \JsonSerializable {
 		$this->name = $row->Field('name');
 		$this->isConfirmed = filter_var($row->Field('confirmed'), FILTER_VALIDATE_BOOL);
 		$this->confirmationCode = $row->Field('confirmation_code');
-		$this->pullUrl = $row->Field('pull_url');
-		$this->lastPullHash = $row->Field('last_pull_hash');
 		$this->isConsoleSafe = filter_var($row->Field('console_safe'), FILTER_VALIDATE_BOOL);
 		$this->isDefaultEnabled = filter_var($row->Field('default_enabled'), FILTER_VALIDATE_BOOL);
 		$this->minVersion = intval($row->Field('min_version'));
@@ -47,8 +43,6 @@ class ContentPack extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('isConfirmed', ['columnName' => 'confirmed']),
 			new DatabaseObjectProperty('confirmationCode', ['columnName' => 'confirmation_code']),
-			new DatabaseObjectProperty('pullUrl', ['columnName' => 'pull_url', 'editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('lastPullHash', ['columnName' => 'last_pull_hash']),
 			new DatabaseObjectProperty('isConsoleSafe', ['columnName' => 'console_safe']),
 			new DatabaseObjectProperty('isDefaultEnabled', ['columnName' => 'default_enabled']),
 			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
@@ -95,16 +89,6 @@ class ContentPack extends DatabaseObject implements \JsonSerializable {
 			$parameters->values[] = $filters['contentPackId'];
 		}
 		
-		if (isset($filters['pullUrl'])) {
-			$pullUrl = filter_var($filters['pullUrl'], FILTER_VALIDATE_URL);
-			if ($pullUrl !== false) {
-				$parameters->clauses[] = $schema->Comparison('pullUrl', '=', $parameters->placeholder++);
-				$parameters->values[] = $pullUrl;
-			} else {
-				$parameters->clauses[] = $schema->Accessor('pullUrl') . ' IS NOT NULL';
-			}
-		}
-		
 		$parameters->allowAll = true;
 		$parameters->orderBy = $schema->Accessor('name');
 	}
@@ -148,14 +132,6 @@ class ContentPack extends DatabaseObject implements \JsonSerializable {
 	
 	public function ConfirmationCode(): string {
 		return $this->confirmationCode;
-	}
-	
-	public function PullURL(): ?string {
-		return $this->pullUrl;
-	}
-	
-	public function LastPullHash(): ?string {
-		return $this->lastPullHash;
 	}
 	
 	public function MinVersion(): int {
@@ -208,7 +184,6 @@ class ContentPack extends DatabaseObject implements \JsonSerializable {
 			'isIncludedInDeltas' => $this->isIncludedInDeltas,
 			'isOfficial' => $this->isOfficial,
 			'confirmationCode' => $this->confirmationCode,
-			'pullUrl' => $this->pullUrl,
 			'minVersion' => $this->minVersion,
 			'lastUpdate' => $this->lastUpdate
 		];

@@ -233,7 +233,7 @@ class Creature extends Blueprint {
 	}
 	
 	public function SpawnCode(): string {
-		return 'cheat spawndino "Blueprint\'' . $this->Path() . '\'" 1 1 1 30';
+		return 'cheat spawndino ' . $this->classString . ' 1 1 1 30';
 	}
 	
 	public function RelatedObjectIDs(): array {

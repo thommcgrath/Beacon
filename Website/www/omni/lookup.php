@@ -8,6 +8,8 @@ http_response_code(500);
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+use BeaconAPI\v4\User;
+
 $email = isset($_GET['email']) ? $_GET['email'] : '';
 $response = [
 	'error' => false,
@@ -33,7 +35,7 @@ function lookupEmail($email, &$response) {
 	// verification already.
 	$user = null;
 	try {
-		$user = BeaconUser::GetByEmail($email);
+		$user = User::Fetch($email);
 		if (is_null($user) === false) {
 			$response['verified'] = true;
 			$response['purchases'] = $user->Licenses();

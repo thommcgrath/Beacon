@@ -272,6 +272,10 @@ class LootContainer extends Blueprint {
 		$this->notes = $notes;
 	}
 	
+	public function SpawnCode(): string {
+		return 'cheat summon ' . $this->classString;
+	}
+	
 	/*public function ConsumeJSON(array $json) {
 		parent::ConsumeJSON($json);
 			

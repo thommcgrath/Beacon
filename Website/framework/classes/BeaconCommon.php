@@ -346,28 +346,25 @@ abstract class BeaconCommon {
 			$tablename = $results->Field('tablename');
 			switch ($tablename) {
 			case 'ark.creatures':
-				$obj = \Ark\Creature::GetByObjectID($id, $build_number);
-				break;
-			case 'ark.diets':
-				$obj = \Ark\Diet::GetByObjectID($id, $build_number);
+				$obj = BeaconAPI\v4\Ark\Creature::Fetch($id);
 				break;
 			case 'ark.engrams':
-				$obj = \Ark\Engram::GetByObjectID($id, $build_number);
+				$obj = BeaconAPI\v4\Ark\Engram::Fetch($id);
 				break;
 			case 'ark.loot_sources':
-				$obj = \Ark\LootSource::GetByObjectID($id, $build_number);
+				$obj = BeaconAPI\v4\Ark\LootContainer::Fetch($id);
 				break;
 			case 'ark.presets':
-				$obj = \Ark\Preset::GetByObjectID($id, $build_number);
+				$obj = BaeconAPI\v4\Ark\Template::Fetch($id);
 				break;
 			case 'ark.spawn_points':
-				$obj = \Ark\SpawnPoint::GetByObjectID($id, $build_number);
+				$obj = BeaconAPI\v4\Ark\SpawnPoint::Fetch($id);
 				break;
 			default:
 				$obj = null;
 				break;
 			}
-			if (!is_null($obj)) {
+			if (is_null($obj) === false && $obj->MinVersion() <= $build_number) {
 				$objects[] = $obj;
 			}
 			$results->MoveNext();
@@ -380,8 +377,8 @@ abstract class BeaconCommon {
 			return $objects[0];
 		} else {
 			foreach ($objects as $obj) {
-				if ($obj instanceof \Ark\Blueprint) {
-					BeaconCache::Set($obj->ModWorkshopID() . '|' . $obj->ClassString(), $obj, 3600);
+				if ($obj instanceof BeaconAPI\v4\Ark\Blueprint) {
+					BeaconCache::Set($obj->ContentPackSteamId() . '|' . $obj->ClassString(), $obj, 3600);
 				}
 			}
 			BeaconCache::Set($cache_key, $objects, 3600);

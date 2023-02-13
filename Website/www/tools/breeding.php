@@ -2,6 +2,8 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Ark Breeding Chart');
 
+use BeaconAPI\v4\Ark\{ContentPack, Creature};
+
 $msm = isset($_GET['msm']) ? floatval($_GET['msm']) : 1.0;
 $ipm = isset($_GET['ipm']) ? floatval($_GET['ipm']) : 1.0;
 $ism = isset($_GET['ism']) ? floatval($_GET['ism']) : 1.0;
@@ -67,7 +69,8 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 			$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM updates;');
 			$min_version = $results->Field('newest_build');
 			
-			$creatures = \Ark\Creature::GetAll($min_version);
+			$officialPacks = ContentPack::Search(['minVersion' => $min_version, 'isOfficial' => true], true);
+			$creatures = Creature::Search(['minVersion' => $min_version, 'contentPackId' => $officialPacks], true);
 			foreach ($creatures as $creature) {
 				if (is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
 					continue;

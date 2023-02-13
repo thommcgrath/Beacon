@@ -229,7 +229,7 @@ function CreateSpawnCode(Blueprint $blueprint): string {
 		return "cheat giveitem {$classString} 1 0 0";
 		break;
 	case 'creatures':
-		return "cheat spawndino {$classString} 1 1 30";
+		return "cheat spawndino {$classString} 1 1 1 30";
 		break;
 	case 'lootContainers':
 		return "cheat summon {$classString}";
