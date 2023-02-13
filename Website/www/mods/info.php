@@ -73,20 +73,9 @@ $rangeEnd = min($rangeStart + ($pageSize - 1), $resultCount);
 
 BeaconTemplate::SetTitle('Mod: ' . $pack->Name());
 BeaconTemplate::SetPageDescription('Beacon has built-in support for the Ark mod "' . $pack->Name() . '" which means its engrams are already part of Beacon\'s database so you can begin using them immediately.');
-//$engrams = Engram::Search($filters, true);
-//$lootContainers = LootContainer::Search($filters, true);
-//$creatures = Creature::Search($filters, true);
-//$configOptions = ConfigOption::Search($filters, true);
-//$spawnPoints = SpawnPoint::Search($filters, true);
-//$hasEngrams = count($engrams) > 0;
-//$hasLootContainers = count($lootContainers) > 0;
-//$hasCreatures = count($creatures) > 0;
-//$hasConfigOptions = false;//count($configOptions) > 0;
-//$hasSpawnPoints = count($spawnPoints) > 0;
-$hasSomething = true;//$hasEngrams || $hasLootContainers || $hasCreatures || $hasConfigOptions || $hasSpawnPoints;
 
 ?><h1><?php echo htmlentities($pack->Name()); ?></h1>
-<p>Beacon has built-in support for <a href="<?php echo htmlentities($pack->SteamUrl()); ?>"><?php echo htmlentities($pack->Name()); ?></a>. This means its engrams are already part of Beacon's database and you can begin using them immediately.</p>
+<p>Beacon has built-in support for <a href="<?php echo htmlentities($pack->SteamUrl()); ?>"><?php echo htmlentities($pack->Name()); ?></a>. This means its engrams are already part of Beacon's database and you can begin using them immediately. We also have a full list of <a href="/mods/<?php echo htmlentities($pack->SteamId()); ?>/spawncodes">spawn codes for <?php echo htmlentities($pack->Name()); ?></a>.</p>
 <p><form action="<?php echo htmlentities($baseUrl . '/' . $view); ?>" method="get"><input type="search" id="beacon-filter-field" placeholder="Search" autocomplete="off" name="search" value="<?php echo htmlentities($search); ?>"></form></p>
 <div class="page-panel" id="panel-blueprints">
 	<div class="page-panel-nav">
