@@ -91,7 +91,7 @@ echo '<p>Results ' . htmlentities(number_format($rangeStart)) . ' to ' . htmlent
 if (empty($_GET['search']) === false) {
 	echo ' containing &quot;' . htmlentities($_GET['search']) . '&quot;<br><a href="' . htmlentities($baseUrl) . '">Clear Search</a>';
 }
-echo '</p>'
+echo '</p>';
 
 ?><table id="spawntable" class="generic">
 	<thead>

@@ -218,12 +218,14 @@ class PagePanel {
 		const links = element.querySelectorAll('div.page-panel-nav a');
 		for (const link of links) {
 			const pageName = link.getAttribute('page');
-			this.pageMap[pageName].link = link;
-			
-			link.addEventListener('click', (ev) => {
-				ev.preventDefault();
-				this.switchPage(ev.target.getAttribute('page'));
-			});
+			if (this.pageMap[pageName]) {
+				this.pageMap[pageName].link = link;
+				
+				link.addEventListener('click', (ev) => {
+					ev.preventDefault();
+					this.switchPage(ev.target.getAttribute('page'));
+				});
+			}
 		}
 		
 		const ev = new Event('panelCreated');
