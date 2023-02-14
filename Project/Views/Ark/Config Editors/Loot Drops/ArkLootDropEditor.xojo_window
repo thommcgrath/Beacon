@@ -48,7 +48,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   120
+      Height          =   123
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -74,7 +74,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   140
+      Top             =   137
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -276,7 +276,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   23
+      Height          =   96
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -326,37 +326,6 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       Top             =   260
       Transparent     =   True
       UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
-   Begin ArkLootDropHintsContainer HintsContainer
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
-      Height          =   76
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Notes           =   ""
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   64
-      Transparent     =   True
-      UseFocusRing    =   False
       Visible         =   True
       Width           =   250
    End
@@ -560,28 +529,6 @@ End
 		    Next
 		  End If
 		  
-		  Var CommonNotes As String
-		  If Self.mContainers.LastIndex > -1 Then
-		    CommonNotes = Self.mContainers(0).Notes
-		    For I As Integer = 1 To Self.mContainers.LastIndex
-		      If Self.mContainers(I).Notes <> CommonNotes Then
-		        CommonNotes = ""
-		        Exit For I
-		      End If
-		    Next
-		  End If
-		  If CommonNotes = "" And Self.HintsContainer.Visible Then
-		    Self.HintsContainer.Visible = False
-		    Self.SetList.Top = Self.SettingsContainer.Top + Self.SettingsContainer.Height
-		    Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
-		  ElseIf CommonNotes <> "" And Not Self.HintsContainer.Visible Then
-		    Self.HintsContainer.Visible = True
-		    Self.HintsContainer.Top = Self.SettingsContainer.Top + Self.SettingsContainer.Height
-		    Self.SetList.Top = Self.HintsContainer.Top + Self.HintsContainer.Height
-		    Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
-		  End If
-		  Self.HintsContainer.Notes = CommonNotes
-		  
 		  Self.SettingsContainer.Containers = Self.mContainers
 		  
 		  Self.UpdateUI
@@ -668,7 +615,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function MaxSimulatorHeight() As Integer
-		  Return Self.Height - (Self.ConfigToolbar.Height + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200)
+		  Return Self.Height - (Self.ConfigToolbar.Height + Self.SettingsContainer.Height + 200)
 		End Function
 	#tag EndMethod
 
@@ -729,7 +676,6 @@ End
 		  End If
 		  
 		  Self.ConfigToolbar.Width = ListWidth
-		  Self.HintsContainer.Width = ListWidth
 		  Self.FadedSeparator1.Left = ListWidth
 		  Self.SetList.Width = ListWidth
 		  Self.Simulator.Width = ListWidth
@@ -1368,34 +1314,12 @@ End
 		Sub Resized()
 		  Var ListTop As Integer = Me.Top + Me.Height
 		  
-		  If Self.HintsContainer.Visible Then
-		    If Self.HintsContainer.Top = ListTop Then
-		      Return
-		    End If
-		    
-		    Self.HintsContainer.Top = ListTop
-		    Self.SetList.Top = Self.HintsContainer.Top + Self.HintsContainer.Height
-		    Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
-		  Else
-		    If Self.SetList.Top = ListTop Then
-		      Return
-		    End If
-		    
-		    Self.SetList.Top = ListTop
-		    Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
+		  If Self.SetList.Top = ListTop Then
+		    Return
 		  End If
 		  
-		  #if false
-		    If Self.HintsContainer.Visible And Self.HintsContainer.Top = ListTop Then
-		      Return
-		    ElseIf Not Self.HintsContainers.Visible And Self.SetList.Top = ListTop Then
-		      Return
-		    End If
-		    
-		    Var Diff As Integer = ListTop - Self.SetList.Top
-		    Self.SetList.Top = Self.SetList.Top + Diff
-		    Self.SetList.Height = Self.SetList.Height - Diff
-		  #endif
+		  Self.SetList.Top = ListTop
+		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
 		End Sub
 	#tag EndEvent
 	#tag Event

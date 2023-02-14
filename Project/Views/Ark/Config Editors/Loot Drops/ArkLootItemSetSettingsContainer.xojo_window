@@ -26,31 +26,6 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
    UseFocusRing    =   False
    Visible         =   True
    Width           =   300
-   Begin DisclosureTriangle DisclosureTriangle1
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Facing          =   0
-      Height          =   18
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   2
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   2
-      Transparent     =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   18
-   End
    Begin FadedSeparator BottomBorder
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -73,7 +48,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   14
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   153
@@ -81,41 +56,6 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       UseFocusRing    =   True
       Visible         =   True
       Width           =   300
-   End
-   Begin Label SettingsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   18
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Settings"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   2
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   219
    End
    Begin UITweaks.ResizedTextField NameField
       AcceptTabs      =   False
@@ -145,7 +85,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -180,10 +120,10 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Name:"
+      Text            =   "Item Set Name:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
@@ -215,10 +155,10 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Min Entries:"
+      Text            =   "Minimum Entries:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
@@ -250,10 +190,10 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Max Entries:"
+      Text            =   "Maximum Entries:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
@@ -285,7 +225,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Weight:"
@@ -299,39 +239,6 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Underline       =   False
       Visible         =   True
       Width           =   69
-   End
-   Begin CheckBox PreventDuplicatesCheck
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Prevent Duplicates"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   101
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   13
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   128
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   179
    End
    Begin RangeField MinEntriesField
       AcceptTabs      =   False
@@ -362,7 +269,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -406,7 +313,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -450,7 +357,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -480,7 +387,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   104
@@ -503,7 +410,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   80
@@ -526,13 +433,76 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   56
       Transparent     =   False
       Visible         =   True
       Width           =   13
+   End
+   Begin SwitchControl PreventDuplicatesCheck
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   101
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   128
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin Label PreventDuplicatesLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Prevent Duplicates:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   128
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   69
    End
 End
 #tag EndWindow
@@ -548,45 +518,54 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Collapse()
-		  Self.DisclosureTriangle1.Value = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub EditName()
 		  Self.NameField.SetFocus()
 		  Self.NameField.SelectAll()
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Expand()
-		  Self.DisclosureTriangle1.Value = True
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
-		  If Self.DisclosureTriangle1.Value Then
-		    Self.Height = Self.ExpandedHeight
-		  Else
-		    Self.Height = Self.CollapsedHeight
-		  End If
+		  Const Gap = 6
+		  Const RowHeight = 20
+		  Const ContainerHeight = (RowHeight * 5) + (Gap * 6) + 1
 		  
-		  Var Visible As Boolean = Self.DisclosureTriangle1.Value
-		  Self.MaxEntriesField.Visible = Visible
-		  Self.MaxEntriesLabel.Visible = Visible
-		  Self.MaxEntriesStepper.Visible = Visible
-		  Self.MinEntriesField.Visible = Visible
-		  Self.MinEntriesLabel.Visible = Visible
-		  Self.MinEntriesStepper.Visible = Visible
-		  Self.NameField.Visible = Visible
-		  Self.NameLabel.Visible = Visible
-		  Self.PreventDuplicatesCheck.Visible = Visible
-		  Self.WeightField.Visible = Visible
-		  Self.WeightLabel.Visible = Visible
-		  Self.WeightStepper.Visible = Visible
+		  BeaconUI.SizeToFit(Self.NameLabel, Self.MinEntriesLabel, Self.MaxEntriesLabel, Self.WeightLabel, Self.PreventDuplicatesLabel)
+		  
+		  Self.NameLabel.Left = Gap
+		  Self.NameLabel.Top = Gap
+		  Self.MinEntriesLabel.Left = Gap
+		  Self.MinEntriesLabel.Top = Self.NameLabel.Bottom + Gap
+		  Self.MaxEntriesLabel.Left = Gap
+		  Self.MaxEntriesLabel.Top = Self.MinEntriesLabel.Bottom + Gap
+		  Self.WeightLabel.Left = Gap
+		  Self.WeightLabel.Top = Self.MaxEntriesLabel.Bottom + Gap
+		  Self.PreventDuplicatesLabel.Left = Gap
+		  Self.PreventDuplicatesLabel.Top = Self.WeightLabel.Bottom + Gap
+		  
+		  Self.NameField.Left = Self.NameLabel.Right + Gap
+		  Self.NameField.Top = Self.NameLabel.Top
+		  Self.NameField.Width = Self.Width - (Self.NameField.Left + Gap)
+		  Self.MinEntriesField.Left = Self.MinEntriesLabel.Right + Gap
+		  Self.MinEntriesField.Top = Self.MinEntriesLabel.Top
+		  Self.MaxEntriesField.Left = Self.MaxEntriesLabel.Right + Gap
+		  Self.MaxEntriesField.Top = Self.MaxEntriesLabel.Top
+		  Self.WeightField.Left = Self.WeightLabel.Right + Gap
+		  Self.WeightField.Top = Self.WeightLabel.Top
+		  Self.PreventDuplicatesCheck.Left = Self.PreventDuplicatesLabel.Right + Gap
+		  Self.PreventDuplicatesCheck.Top = Self.PreventDuplicatesLabel.Top
+		  
+		  Self.MinEntriesStepper.Left = Self.MinEntriesField.Right + 2
+		  Self.MinEntriesStepper.Top = Self.MinEntriesField.Top
+		  Self.MaxEntriesStepper.Left = Self.MaxEntriesField.Right + 2
+		  Self.MaxEntriesStepper.Top = Self.MaxEntriesField.Top
+		  Self.WeightStepper.Left = Self.WeightField.Right + 2
+		  Self.WeightStepper.Top = Self.WeightField.Top
+		  
+		  Self.BottomBorder.Top = ContainerHeight - 1
+		  If Self.Height <> ContainerHeight Then
+		    Self.Height = ContainerHeight
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -617,14 +596,14 @@ End
 			    Self.MinEntriesField.DoubleValue = Value.MinNumItems
 			    Self.MaxEntriesField.DoubleValue = Value.MaxNumItems
 			    Self.WeightField.DoubleValue = Value.RawWeight
-			    Self.PreventDuplicatesCheck.Value = Value.ItemsRandomWithoutReplacement
+			    Self.PreventDuplicatesCheck.Value(False) = Value.ItemsRandomWithoutReplacement
 			  Else
 			    Self.mItemSetRef = Nil
 			    Self.NameField.Text = ""
 			    Self.MinEntriesField.Clear
 			    Self.MaxEntriesField.Clear
 			    Self.WeightField.Text = ""
-			    Self.PreventDuplicatesCheck.Value = False
+			    Self.PreventDuplicatesCheck.Value(False) = False
 			  End If
 			  Self.SetupUI()
 			  Self.mSettingUp = False
@@ -654,13 +633,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events DisclosureTriangle1
-	#tag Event
-		Sub Action()
-		  Self.SetupUI
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events NameField
 	#tag Event
 		Sub TextChange()
@@ -673,24 +645,6 @@ End
 		  End If
 		  
 		  Self.ItemSet.Label = Me.Text
-		  RaiseEvent SettingsChanged
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PreventDuplicatesCheck
-	#tag Event
-		Sub Action()
-		  If Self.mSettingUp Or Self.ItemSet = Nil Then
-		    Return
-		  End If
-		  
-		  If Self.ItemSet.ItemsRandomWithoutReplacement = Me.Value Then
-		    Return
-		  End If
-		  
-		  Self.ItemSet.ItemsRandomWithoutReplacement = Me.Value
-		  Self.MaxEntriesField.CheckValue
-		  Self.MinEntriesField.CheckValue
 		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
@@ -845,6 +799,24 @@ End
 		  End If
 		  
 		  Self.MinEntriesField.DoubleValue = Self.MinEntriesField.DoubleValue + 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PreventDuplicatesCheck
+	#tag Event
+		Sub Action()
+		  If Self.mSettingUp Or Self.ItemSet = Nil Then
+		    Return
+		  End If
+		  
+		  If Self.ItemSet.ItemsRandomWithoutReplacement = Me.Value Then
+		    Return
+		  End If
+		  
+		  Self.ItemSet.ItemsRandomWithoutReplacement = Me.Value
+		  Self.MaxEntriesField.CheckValue
+		  Self.MinEntriesField.CheckValue
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 #tag EndEvents
