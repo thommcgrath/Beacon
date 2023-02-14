@@ -228,7 +228,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Weight:"
+      Text            =   "Item Set Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
@@ -447,6 +447,8 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -458,6 +460,7 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   12

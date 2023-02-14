@@ -236,6 +236,8 @@ Begin ContainerControl ArkLootDropSettingsContainer
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -247,6 +249,7 @@ Begin ContainerControl ArkLootDropSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
@@ -264,6 +267,8 @@ Begin ContainerControl ArkLootDropSettingsContainer
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -275,6 +280,7 @@ Begin ContainerControl ArkLootDropSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   9
@@ -346,7 +352,7 @@ Begin ContainerControl ArkLootDropSettingsContainer
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Add Item Sets to Default"
+      Text            =   "Add Item Sets to Default:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -362,6 +368,8 @@ Begin ContainerControl ArkLootDropSettingsContainer
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -373,6 +381,7 @@ Begin ContainerControl ArkLootDropSettingsContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   10
