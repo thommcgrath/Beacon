@@ -174,8 +174,13 @@ Inherits Ark.ConfigGroup
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
-		  SaveData.Value("Player Levels") = Self.mPlayerLevels
-		  SaveData.Value("Dino Levels") = Self.mDinoLevels
+		  If Self.MatchesPlayerDefault = False Then
+		    SaveData.Value("Player Levels") = Self.mPlayerLevels
+		  End If
+		  
+		  If Self.MatchesDinoDefault = False Then
+		    SaveData.Value("Dino Levels") = Self.mDinoLevels
+		  End If
 		End Sub
 	#tag EndEvent
 
