@@ -521,6 +521,43 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SortValue() As String
+		  Const Formatter = "000000.000000"
+		  
+		  Var Candidates(9) As NullableDouble
+		  Candidates(0) = Self.mChance
+		  Candidates(1) = Self.mMinLevelOffset
+		  Candidates(2) = Self.mMinLevelMultiplier
+		  Candidates(3) = Self.mMaxLevelOffset
+		  Candidates(4) = Self.mMaxLevelMultiplier
+		  Candidates(5) = Self.mLevelOverride
+		  If (Self.mOffset Is Nil) = False Then
+		    Candidates(6) = Self.mOffset.X
+		    Candidates(7) = Self.mOffset.Y
+		    Candidates(8) = Self.mOffset.Z
+		  End If
+		  
+		  Var Values() As String = Array(Self.Label.Trim)
+		  For Each Candidate As NullableDouble In Candidates
+		    Var Formatted As String
+		    If Candidate Is Nil Then
+		      Formatted = Formatter
+		    Else
+		      Formatted = Candidate.DoubleValue.ToString(Locale.Raw, Formatter)
+		    End If
+		    If Formatted.BeginsWith("-") Then
+		      Formatted = "a" + Formatted.Middle(1)
+		    Else
+		      Formatted = "b" + Formatted
+		    End If
+		    Values.Add(Formatted)
+		  Next
+		  
+		  Return String.FromArray(Values, ":")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SpawnChance() As NullableDouble
 		  Return Self.mChance
 		End Function

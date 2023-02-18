@@ -1911,6 +1911,18 @@ End
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Var Entry1 As Ark.SpawnPointSetEntry = Me.RowTagAt(Row1)
+		  Var Entry2 As Ark.SpawnPointSetEntry = Me.RowTagAt(Row2)
+		  If Entry1 Is Nil Or Entry2 Is Nil Then
+		    Return False
+		  End If
+		  
+		  Result = Entry1.SortValue.Compare(Entry2.SortValue)
+		  Return True
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events ReplaceAddButton
 	#tag Event

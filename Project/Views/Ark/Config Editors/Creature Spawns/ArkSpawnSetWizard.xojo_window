@@ -765,10 +765,10 @@ End
 		    
 		    For PackNum As Integer = 1 To MaxPackSize
 		      Var Entry As New Ark.MutableSpawnPointSetEntry(Self.mSelectedCreature)
-		      If PackNum <= MinPackSize Then
+		      If PackNum > MaxPackSize - MinPackSize Then
 		        Entry.SpawnChance = 1.0
 		      Else
-		        Entry.SpawnChance = Randomizer.Number
+		        Entry.SpawnChance = PackNum / ((MaxPackSize - MinPackSize) + 1)
 		      End If
 		      
 		      Var Rad As Double = OffsetRadius * Sqrt(Randomizer.Number)
