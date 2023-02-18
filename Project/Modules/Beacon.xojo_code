@@ -1449,6 +1449,9 @@ Protected Module Beacon
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = Pi, Type = Double, Dynamic = False, Default = \"3.141592653589793", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = SecondsPerDay, Type = Double, Dynamic = False, Default = \"86400", Scope = Private
 	#tag EndConstant
 
