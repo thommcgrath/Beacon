@@ -216,7 +216,7 @@ Protected Class BlueprintImporter
 		  Next
 		  
 		  If (Progress Is Nil) = False Then
-		    Progress.Detail = "Assembling loot sources…"
+		    Progress.Detail = "Assembling loot drops…"
 		  End If
 		  For Each LootDict As Dictionary In LootDicts
 		    Try

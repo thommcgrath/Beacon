@@ -164,6 +164,8 @@ End
 		  Else
 		    Self.ShowAlert("Finished converting Custom Config Content", "Beacon found and setup the following guided editors: " + Language.EnglishOxfordList(CreatedEditorNames) + ".")
 		  End If
+		  
+		  Return True
 		End Function
 	#tag EndEvent
 

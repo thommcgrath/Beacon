@@ -37,13 +37,13 @@ while (!$results->EOF()) {
 <div id="index_body">
 	<div id="index_features">
 		<div class="feature">
-			<h2>Over <?php echo floor($official_source_count / 5) * 5; ?> loot sources and counting<br><span class="subtitle text-red">Beacon knows them all, so you can get going quicker</span></h2>
-			<p>Normal drops, cave crates, boss loot, beaver dams&hellip; whatever you want to change. Plus support for custom loot sources, such as those provided by mod maps or not officially supported by Ark. Plus, Beacon has support for an additional <?php echo $unofficial_source_count; ?> unofficial loot sources, such as the Orbital Supply Drop events and creature inventories.</p>
+			<h2>Over <?php echo floor($official_source_count / 5) * 5; ?> loot drops and counting<br><span class="subtitle text-red">Beacon knows them all, so you can get going quicker</span></h2>
+			<p>Normal drops, cave crates, boss loot, beaver dams&hellip; whatever you want to change. Plus support for custom loot drops, such as those provided by mod maps or not officially supported by Ark. Plus, Beacon has support for an additional <?php echo $unofficial_source_count; ?> unofficial loot drops, such as the Orbital Supply Drop events and creature inventories.</p>
 		</div>
 		<div class="feature">
 			<h2>No need to start from scratch<br><span class="subtitle text-green">Unless you want to, that's cool too</span></h2>
 			<p>Beacon has a library of community-maintained documents, both in-app and <a href="/browse/">on the web</a>, ready to be deployed to your own server.</p>
-			<p>Beacon also has a library of templates for smaller chunks of the loot config process. This makes it easy to include a curated selection of items in your drops without all the work of starting from scratch. Beacon calls these presets, and they are a real time saver.</p>
+			<p>Beacon also has a library of templates for smaller chunks of the loot config process. This makes it easy to include a curated selection of items in your drops without all the work of starting from scratch.</p>
 		</div>
 		<div class="feature">
 			<h2>Easiest, most reliable way to configure a server<br><span class="subtitle text-blue">Works directly with Nitrado servers</span></h2>
@@ -57,9 +57,9 @@ while (!$results->EOF()) {
 			<p>Config files contain server passwords. So Beacon encrypts those with your own 2048-bit RSA private key. FTP credentials or Nitrado access tokens? Yep, those too. That private key enables Beacon's cloud features too, yet you don't even need to setup an account! For users who choose to create an account, even your email address is stored as a one-way hash! Beacon and the Beacon API take special care to enable true privacy and user data protection.</p>
 		</div>
 		<div class="feature">
-			<h2>Plus mods and more<br><span class="subtitle text-yellow">Painlessly add engrams from any mod</span></h2>
+			<h2>Plus mods and more<br><span class="subtitle text-yellow">Painlessly add engrams, loot drops, creatures, and spawn points from any mod</span></h2>
 			<p>Users wanting to add mod items to their loot drops only need a list of the admin spawn codes. Give Beacon the link to the web page with the codes, or copy &amp; paste them, and Beacon can do the rest. No special formatting required, Beacon will scour the content for spawn codes.</p>
-			<p>Mod authors can also <a href="/help/registering_your_mod_with_beacon">add support for their mod</a> directly to Beacon. The items show up to all Beacon users automatically, and Beacon will also maintain a spawn codes page just for your mod. For example, <a href="/mods/731604991/spawncodes">here is the spawn codes for Structures Plus</a>. The engrams list can be updated at any time from within Beacon, or Beacon's API can pull the engrams list from your own server (or Steam page) every few hours.</p>
+			<p>Mod authors can also <a href="/help/registering_your_mod_with_beacon">add support for their mod</a> directly to Beacon. The items show up to all Beacon users automatically, and Beacon will also maintain a spawn codes page just for your mod. For example, <a href="/mods/1999447172/spawncodes">here is the spawn codes for Super Structures</a>. The engrams list can be updated at any time from within Beacon, or Beacon's API can pull the engrams list from your own server (or Steam page) every few hours.</p>
 		</div>
 	</div>
 	<div id="index_updates" class="separator-color text-lighter">

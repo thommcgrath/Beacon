@@ -22,7 +22,15 @@ Inherits Ark.ConfigGroup
 		  #Pragma Unused Profile
 		  
 		  Var Values() As Ark.ConfigValue
-		  If Self.mPlayerLevels.LastIndex > -1 Then
+		  
+		  Var MatchesPlayerDefault As Boolean = Self.MatchesPlayerDefault
+		  Var MatchesDinoDefault As Boolean = Self.MatchesDinoDefault
+		  
+		  If MatchesPlayerDefault And MatchesDinoDefault Then
+		    Return Values
+		  End If
+		  
+		  If MatchesPlayerDefault = False Then
 		    Var MaxXP As UInt64 = Self.PlayerMaxExperience
 		    
 		    // Index 0 is level 2!
@@ -39,13 +47,13 @@ Inherits Ark.ConfigGroup
 		    
 		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "LevelExperienceRampOverrides=(" + Chunks.Join(",") + ")", 0))
 		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideMaxExperiencePointsPlayer=" + MaxXP.ToString))
-		  ElseIf Self.mPlayerLevels.LastIndex = -1 And Self.mDinoLevels.LastIndex > -1 Then
+		  ElseIf MatchesPlayerDefault = True And MatchesDinoDefault = False Then
 		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "LevelExperienceRampOverrides=", 0))
 		  Else
 		    Return Values
 		  End If
 		  
-		  If Self.mDinoLevels.LastIndex > -1 Then
+		  If MatchesDinoDefault = False Then
 		    Var Chunks() As String
 		    Var MaxXP As UInt64 = Self.DinoMaxExperience
 		    
@@ -59,6 +67,7 @@ Inherits Ark.ConfigGroup
 		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "LevelExperienceRampOverrides=(" + Chunks.Join(",") + ")", 1))
 		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideMaxExperiencePointsDino=" + MaxXP.ToString))
 		  End If
+		  
 		  Return Values
 		End Function
 	#tag EndEvent
@@ -165,8 +174,13 @@ Inherits Ark.ConfigGroup
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused EncryptedData
 		  
-		  SaveData.Value("Player Levels") = Self.mPlayerLevels
-		  SaveData.Value("Dino Levels") = Self.mDinoLevels
+		  If Self.MatchesPlayerDefault = False Then
+		    SaveData.Value("Player Levels") = Self.mPlayerLevels
+		  End If
+		  
+		  If Self.MatchesDinoDefault = False Then
+		    SaveData.Value("Dino Levels") = Self.mDinoLevels
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -197,28 +211,6 @@ Inherits Ark.ConfigGroup
 		Function AscensionLevels() As Integer
 		  Return Ark.DataSource.Pool.Get(False).GetIntegerVariable("Ascension Levels")
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Var List As String = Ark.DataSource.Pool.Get(False).GetStringVariable("Player Levels")
-		  If List <> "" Then
-		    Var Values() As String = List.Split(",")
-		    For Each Value As String In Values
-		      Self.mPlayerLevels.Add(UInt64.FromString(Value))
-		    Next
-		  End If
-		  
-		  List = Ark.DataSource.Pool.Get(False).GetStringVariable("Dino Levels")
-		  If List <> "" Then
-		    Var Values() As String = List.Split(",")
-		    For Each Value As String In Values
-		      Self.mDinoLevels.Add(UInt64.FromString(Value))
-		    Next
-		  End If
-		  
-		  Super.Constructor()
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -372,6 +364,10 @@ Inherits Ark.ConfigGroup
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
+		  If Config.MatchesDefault Then
+		    // Don't bother importing a default config
+		    Return Nil
+		  end if
 		  Return Config
 		End Function
 	#tag EndMethod
@@ -394,6 +390,61 @@ Inherits Ark.ConfigGroup
 		    Levels.Add(XP)
 		  Next
 		  Return Levels
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesDefault() As Boolean
+		  Return Self.MatchesPlayerDefault() And Self.MatchesDinoDefault()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesDinoDefault() As Boolean
+		  If Self.mDinoLevels.Count = 0 Then
+		    Return True
+		  End If
+		  
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  
+		  Var DinoLevelCap As Integer = DataSource.GetIntegerVariable("Dino Level Cap")
+		  If Self.DinoLevelCap <> DinoLevelCap Then
+		    Return False
+		  End If
+		  
+		  Var DinoExperienceList As String = DataSource.GetStringVariable("Dino Default Experience")
+		  Var DinoLevels() As String = DinoExperienceList.Split(",")
+		  For I As Integer = 0 To DinoLevels.LastIndex
+		    Var Experience As UInt64 = UInt64.FromString(DinoLevels(I))
+		    If Self.DinoExperience(I) <> Experience Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesPlayerDefault() As Boolean
+		  If Self.mPlayerLevels.Count = 0 Then
+		    Return True
+		  End If
+		  
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  
+		  Var PlayerLevelData As Ark.PlayerLevelData = DataSource.OfficialPlayerLevelData
+		  If Self.PlayerLevelCap <> PlayerLevelData.MaxLevel Or Self.PlayerMaxExperience <> PlayerLevelData.ExperienceForLevel(PlayerLevelData.MaxLevel) Then
+		    Return False
+		  End If
+		  For Index As UInt64 = 0 To Self.mPlayerLevels.LastIndex
+		    Var Level As Integer = Index + 2
+		    If Self.mPlayerLevels(Index) <> PlayerLevelData.ExperienceForLevel(Level) Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 

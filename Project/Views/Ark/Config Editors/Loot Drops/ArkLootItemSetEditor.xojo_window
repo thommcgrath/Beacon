@@ -350,7 +350,6 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowSettings(FocusOnName As Boolean = False)
-		  Self.Settings.Expand()
 		  If FocusOnName Then
 		    Self.Settings.EditName()
 		  End If

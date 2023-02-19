@@ -10,7 +10,7 @@ Begin BeaconDialog ArkSpawnSetWizard
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   206
+   Height          =   266
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   206
@@ -85,7 +85,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   166
+      Top             =   226
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -117,7 +117,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   166
+      Top             =   226
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -156,7 +156,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       Underline       =   False
       Value           =   "Creature:"
       Visible         =   True
-      Width           =   100
+      Width           =   131
    End
    Begin UITweaks.ResizedPushButton SelectCreatureButton
       AllowAutoDeactivate=   True
@@ -172,7 +172,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   132
+      Left            =   163
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -203,7 +203,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   True
-      Left            =   230
+      Left            =   261
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -223,7 +223,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       Underline       =   False
       Value           =   "Not Selected"
       Visible         =   True
-      Width           =   250
+      Width           =   219
    End
    Begin RangeField RadiusField
       AllowAutoDeactivate=   True
@@ -245,7 +245,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   132
+      Left            =   163
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -265,7 +265,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "650"
+      Value           =   "3000"
       Visible         =   True
       Width           =   86
    End
@@ -302,7 +302,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       Underline       =   False
       Value           =   "Radius:"
       Visible         =   True
-      Width           =   100
+      Width           =   131
    End
    Begin Slider RadiusSlider
       AllowAutoDeactivate=   True
@@ -311,14 +311,14 @@ Begin BeaconDialog ArkSpawnSetWizard
       Height          =   23
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   230
+      Left            =   261
       LineStep        =   1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      MaximumValue    =   1000
+      MaximumValue    =   30000
       MinimumValue    =   0
       PageStep        =   50
       Scope           =   2
@@ -329,9 +329,9 @@ Begin BeaconDialog ArkSpawnSetWizard
       Tooltip         =   ""
       Top             =   92
       Transparent     =   False
-      Value           =   650
+      Value           =   3000
       Visible         =   True
-      Width           =   250
+      Width           =   219
    End
    Begin UITweaks.ResizedPopupMenu TemplateMenu
       AllowAutoDeactivate=   True
@@ -345,9 +345,9 @@ Begin BeaconDialog ArkSpawnSetWizard
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Average Spawn\nCommon Spawn\nRare Spawn\nSingle High Level Spawn"
+      InitialValue    =   "Average Spawn\nCommon Spawn (+50% of Average)\nRare Spawn (5% of Average)"
       Italic          =   False
-      Left            =   132
+      Left            =   163
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -363,7 +363,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   256
+      Width           =   317
    End
    Begin UITweaks.ResizedLabel TemplateLabel
       AllowAutoDeactivate=   True
@@ -398,7 +398,200 @@ Begin BeaconDialog ArkSpawnSetWizard
       Underline       =   False
       Value           =   "Template:"
       Visible         =   True
-      Width           =   100
+      Width           =   131
+   End
+   Begin UITweaks.ResizedLabel MinPackSizeLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Minimum Pack Size:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   131
+   End
+   Begin UITweaks.ResizedLabel MaxPackSizeLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Maximum Pack Size:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   192
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   131
+   End
+   Begin RangeField MinPackSizeField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      DoubleValue     =   0.0
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   163
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   86
+   End
+   Begin RangeField MaxPackSizeField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      DoubleValue     =   0.0
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   163
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1"
+      TextAlignment   =   2
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   192
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   86
+   End
+   Begin Label PackSizeRadiusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   56
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   True
+      Left            =   261
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   True
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Pack size is limited to 1 when radius is less than 300."
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      Width           =   219
    End
 End
 #tag EndWindow
@@ -407,10 +600,82 @@ End
 	#tag Event
 		Sub Open()
 		  Self.RadiusField.DoubleValue = Self.RadiusSlider.Value
+		  Self.MinPackSizeField.DoubleValue = 1
+		  Self.MaxPackSizeField.DoubleValue = 1
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function AverageSetWeight() As Double
+		  Var Points() As Ark.MutableSpawnPoint = Self.mOrganizer.Points
+		  If Points.Count = 0 Then
+		    Return 0.5
+		  End If
+		  
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var Sum As Double
+		  Var NumSets As Integer
+		  For Each Point As Ark.MutableSpawnPoint In Points
+		    If Point.Mode = Ark.SpawnPoint.ModeRemove Then
+		      Continue
+		    End If
+		    
+		    If Point.Mode = Ark.SpawnPoint.ModeAppend Then
+		      Var Official As Ark.SpawnPoint = DataSource.GetSpawnPointByUUID(Point.ObjectID)
+		      If (Official Is Nil) = False Then
+		        Var OfficialMutable As Ark.MutableSpawnPoint = Official.MutableVersion
+		        DataSource.LoadDefaults(OfficialMutable)
+		        For Each Set As Ark.SpawnPointSet In OfficialMutable
+		          Sum = Sum + Set.RawWeight
+		        Next
+		        NumSets = NumSets + OfficialMutable.Count
+		      End If
+		    End If
+		    
+		    For Each Set As Ark.SpawnPointSet In Point
+		      Sum = Sum + Set.RawWeight
+		    Next
+		    NumSets = NumSets + Point.Count
+		  Next
+		  
+		  If NumSets = 0 Then
+		    Return 0.5
+		  End If
+		  
+		  Return Sum / NumSets
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CheckRadius()
+		  Var Radius As Double = Self.RadiusField.DoubleValue
+		  If Radius < 300 Then
+		    Self.MinPackSizeField.DoubleValue = 1
+		    Self.MaxPackSizeField.DoubleValue = 1
+		    If Self.MinPackSizeField.Enabled = True Then
+		      Self.MinPackSizeField.Enabled = False
+		    End If
+		    If Self.MaxPackSizeField.Enabled = True Then
+		      Self.MaxPackSizeField.Enabled = False
+		    End If
+		    If Self.PackSizeRadiusLabel.Visible = False Then
+		      Self.PackSizeRadiusLabel.Visible = True
+		    End If
+		  Else
+		    If Self.MinPackSizeField.Enabled = False Then
+		      Self.MinPackSizeField.Enabled = True
+		    End If
+		    If Self.MaxPackSizeField.Enabled = False Then
+		      Self.MaxPackSizeField.Enabled = True
+		    End If
+		    If Self.PackSizeRadiusLabel.Visible = True Then
+		      Self.PackSizeRadiusLabel.Visible = False
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Organizer As Ark.SpawnSetOrganizer, Mods As Beacon.StringList)
@@ -458,9 +723,6 @@ End
 	#tag Constant, Name = TemplateCommon, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = TemplateHighLevel, Type = Double, Dynamic = False, Default = \"3", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = TemplateRare, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
@@ -482,57 +744,51 @@ End
 		  Var Limit As Double = 0.05
 		  Var OverrideLimit As Boolean = False
 		  
-		  If Radius = 0 Then
+		  Var MinPackSize As Integer = Self.MinPackSizeField.DoubleValue
+		  Var MaxPackSize As Integer = Self.MaxPackSizeField.DoubleValue
+		  If MinPackSize > MaxPackSize Then
+		    Var Temp As Integer = MinPackSize
+		    MinPackSize = MaxPackSize
+		    MaxPackSize = Temp
+		  End If
+		  
+		  If Radius = 0 Or (MinPackSize = 1 And MaxPackSize = 1) Then
 		    // We only need one entry and no parameters
 		    Entries.Add(New Ark.MutableSpawnPointSetEntry(Self.mSelectedCreature))
 		  Else
 		    // We'll create five entries to create a proper spread
-		    Const SpreadMultiplierHigh = 1.046153846
-		    Const SpreadMultiplierLow = 0.523076923
 		    
-		    Var Entry As Ark.MutableSpawnPointSetEntry
+		    Var Randomizer As Random = System.Random
+		    Randomizer.RandomizeSeed
+		    Radius = Radius / 2
+		    Var OffsetRadius As Double = Radius / 2 // For 1/4 of the original
 		    
-		    Entry = New Ark.MutableSpawnPointSetEntry(Self.mSelectedCreature)
-		    Entry.SpawnChance = 0.7
-		    Entries.Add(Entry)
-		    
-		    Entry = New Ark.MutableSpawnPointSetEntry(Self.mSelectedCreature)
-		    Entry.SpawnChance = 1.0
-		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierHigh), 0.0)
-		    Entries.Add(Entry)
-		    
-		    Entry = New Ark.MutableSpawnPointSetEntry(Self.mSelectedCreature)
-		    Entry.SpawnChance = 0.2
-		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierLow), 0.0)
-		    Entries.Add(Entry)
-		    
-		    Entry = New Ark.MutableSpawnPointSetEntry(Self.mSelectedCreature)
-		    Entry.SpawnChance = 0.25
-		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierLow) * -1, 0.0)
-		    Entries.Add(Entry)
-		    
-		    Entry = New Ark.MutableSpawnPointSetEntry(Self.mSelectedCreature)
-		    Entry.SpawnChance = 0.6
-		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierHigh) * -1, 0.0)
-		    Entries.Add(Entry)
+		    For PackNum As Integer = 1 To MaxPackSize
+		      Var Entry As New Ark.MutableSpawnPointSetEntry(Self.mSelectedCreature)
+		      If PackNum > MaxPackSize - MinPackSize Then
+		        Entry.SpawnChance = 1.0
+		      Else
+		        Entry.SpawnChance = PackNum / ((MaxPackSize - MinPackSize) + 1)
+		      End If
+		      
+		      Var Rad As Double = OffsetRadius * Sqrt(Randomizer.Number)
+		      Var Theta As Double = Randomizer.Number * 2 * Beacon.Pi
+		      Var OffsetX As Double = Rad * Cos(Theta)
+		      Var OffsetY As Double = Rad * Sin(Theta)
+		      Entry.Offset = New Beacon.Point3D(Round(OffsetX), Round(OffsetY), 0.0)
+		      
+		      Entries.Add(Entry)
+		    Next
 		  End If
 		  
 		  Select Case TemplateIdx
 		  Case Self.TemplateAverage
-		    Weight = 0.45
+		    Weight = Self.AverageSetWeight
 		  Case Self.TemplateCommon
-		    Weight = 0.8
+		    Weight = Self.AverageSetWeight * 1.50
 		    Limit = 0.1
 		  Case Self.TemplateRare
-		    Weight = 0.08
-		  Case Self.TemplateHighLevel
-		    Weight = 1000
-		    Limit = 0.00000001
-		    OverrideLimit = True
-		    
-		    For Each Entry As Ark.MutableSpawnPointSetEntry In Entries
-		      Entry.Append(New Ark.SpawnPointLevel(32.0, 38.999999, 0.0))
-		    Next
+		    Weight = Self.AverageSetWeight * 0.05
 		  End Select
 		  
 		  Var Set As Ark.MutableSpawnPointSet = Self.mOrganizer.Template
@@ -578,6 +834,7 @@ End
 		Sub ValueChanged()
 		  If Self.RadiusSlider.Value <> Me.DoubleValue Then
 		    Self.RadiusSlider.Value = Me.DoubleValue
+		    Self.CheckRadius()
 		  End If
 		End Sub
 	#tag EndEvent
@@ -593,7 +850,24 @@ End
 		Sub ValueChanged()
 		  If Self.RadiusField.DoubleValue <> Me.Value Then
 		    Self.RadiusField.DoubleValue = Me.Value
+		    Self.CheckRadius()
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MinPackSizeField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 1
+		  MaxValue = 1000000
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxPackSizeField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 1
+		  MaxValue = 1000000
 		End Sub
 	#tag EndEvent
 #tag EndEvents

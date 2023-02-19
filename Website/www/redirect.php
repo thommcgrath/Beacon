@@ -23,6 +23,12 @@ case 'nitradodash':
 case 'discord':
 	BeaconCommon::Redirect('https://discord.gg/NmMVv4b');
 	break;
+case 'newhelpticket':
+case 'refreshuser':
+case 'refreshengrams':
+case 'checkforupdate':
+	BeaconCommon::Redirect("beacon://action/{$destination}");
+	break;
 }
 
 ?>

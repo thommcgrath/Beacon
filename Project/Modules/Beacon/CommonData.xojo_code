@@ -748,11 +748,13 @@ Inherits Beacon.DataSource
 		  Var Socket As New URLConnection
 		  Socket.RequestHeader("User-Agent") = App.UserAgent
 		  Var Content As String
+		  #Pragma BreakOnExceptions False
 		  Try
 		    Content = Socket.SendSync("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Updating local news cache")
 		  End Try
+		  #Pragma BreakOnExceptions Default
 		  
 		  If Socket.HTTPStatusCode <> 200 Then
 		    Self.mUpdateNewsThread = Nil

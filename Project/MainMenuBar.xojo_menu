@@ -438,6 +438,14 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem HelpRefreshBlueprints
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Refresh Blueprints"
+         AutoEnabled = False
+         AutoEnable = False
+         Visible = True
+      End
       Begin MenuItem HelpSyncCloudFiles
          SpecialMenu = 0
          Index = -2147483648
