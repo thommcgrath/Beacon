@@ -38,7 +38,7 @@ $has_something = $has_engrams || $has_loot_sources || $has_creatures || $has_con
 	<?php foreach ($engrams as $engram) { ?><li><a href="/object/<?php echo urlencode($engram->ObjectID()); ?>"><?php echo htmlentities($engram->Label()); ?></a></li><?php } ?></ul>
 <?php } ?>
 <?php if ($has_loot_sources) { ?>
-<h3 id="lootsources"><?php echo htmlentities($mod->Name()); ?> Loot Sources</h3>
+<h3 id="lootsources"><?php echo htmlentities($mod->Name()); ?> Loot Drops</h3>
 <ul class="object_list">
 	<?php foreach ($loot_sources as $loot_source) { ?><li><a href="/object/<?php echo urlencode($loot_source->ObjectID()); ?>"><?php echo htmlentities($loot_source->Label()); ?></a></li><?php } ?>
 </ul>
