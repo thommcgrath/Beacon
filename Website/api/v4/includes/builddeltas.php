@@ -1,7 +1,7 @@
 <?php
 
 use BeaconAPI\v4\{Core, Template, TemplateSelector};
-use BeaconAPI\v4\Ark\{Color, ColorSet, ConfigOption, ContentPack, Creature, Engram, Event, GameVariable, LootContainer, LootContainerIcon, Map, SpawnPoint};
+use BeaconAPI\v4\Ark\{Color, ColorSet, ConfigOption, ContentPack, Creature, Engram, Event, GameVariable, LootDrop, LootDropIcon, Map, SpawnPoint};
 
 $root = "/v{$version}";
 if (BeaconCommon::InProduction() == false) {
@@ -150,8 +150,8 @@ function BuildFile(array $settings): void {
 			'configOptions' => ConfigOption::Search($filters, true),
 			'creatures' => Creature::Search($filters, true),
 			'engrams' => Engram::Search($filters, true),
-			'lootContainers' => LootContainer::Search($filters, true),
-			'lootContainerIcons' => LootContainerIcon::Search($filters, true),
+			'lootDrops' => LootDrop::Search($filters, true),
+			'lootDropIcons' => LootDropIcon::Search($filters, true),
 			'maps' => Map::Search($filters, true),
 			'spawnPoints' => SpawnPoint::Search($filters, true)
 		];

@@ -16,7 +16,7 @@ $group = $_GET['group'] ?? 'engrams';
 $groupHumanNames = [
 	'engrams' => 'Engrams',
 	'creatures' => 'Creatures',
-	'lootContainers' => 'Loot Containers',
+	'lootDrops' => 'Loot Drops',
 	'spawnPoints' => 'Spawn Points'
 ];
 

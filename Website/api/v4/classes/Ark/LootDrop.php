@@ -4,7 +4,7 @@ namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
-class LootContainer extends Blueprint {
+class LootDrop extends Blueprint {
 	protected $multiplierMin;
 	protected $multiplierMax;
 	protected $uiColor;
@@ -73,7 +73,7 @@ class LootContainer extends Blueprint {
 	}
 	
 	protected static function CustomVariablePrefix(): string {
-		return 'lootContainer';
+		return 'lootDrop';
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -187,7 +187,7 @@ class LootContainer extends Blueprint {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
-		unset($json['lootContainerGroup']);
+		unset($json['lootDropGroup']);
 		$json['multipliers'] = array(
 			'min' => $this->multiplierMin,
 			'max' => $this->multiplierMax

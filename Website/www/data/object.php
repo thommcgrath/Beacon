@@ -2,7 +2,7 @@
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
-use BeaconAPI\v4\Ark\{Blueprint, Creature, Engram, GenericObject, LootContainer, Map, SpawnPoint, Template};
+use BeaconAPI\v4\Ark\{Blueprint, Creature, Engram, GenericObject, LootDrop, Map, SpawnPoint, Template};
 
 $object_id = null;
 $objects = [];
@@ -86,9 +86,9 @@ if ($obj instanceof Creature) {
 } elseif ($obj instanceof Engram) {
 	$type = 'Engram';
 	PrepareEngramTable($obj, $properties);
-} elseif ($obj instanceof LootContainer) {
-	$type = 'Loot Container';
-	PrepareLootSourceTable($obj, $properties);
+} elseif ($obj instanceof LootDrop) {
+	$type = 'Loot Drop';
+	PrepareLootDropTable($obj, $properties);
 } elseif ($obj instanceof Template) {
 	$type = 'Template';
 	PreparePresetTable($obj, $properties);
@@ -100,8 +100,8 @@ if ($obj instanceof Creature) {
 $parser = new Parsedown();
 
 echo '<h1><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . (is_null($obj->AlternateLabel()) ? '' : '<br><span class="subtitle">AKA ' . htmlentities($obj->AlternateLabel()) . '</span>') . '</h1>';
-if ($obj instanceof LootContainer && $obj->Experimental()) {
-	echo '<p class="notice-block notice-warning">This loot source is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
+if ($obj instanceof LootDrop && $obj->Experimental()) {
+	echo '<p class="notice-block notice-warning">This loot drop is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
 }
 echo '<table id="object_details" class="generic">';
 foreach ($properties as $key => $value) {
@@ -189,9 +189,9 @@ function PrepareEngramTable(Engram $engram, array &$properties) {
 	}
 }
 
-function PrepareLootSourceTable(LootContainer $lootContainer, array &$properties) {
-	$properties['Multipliers'] = sprintf('%F - %F', $lootContainer->MultiplierMin(), $lootContainer->MultiplierMax());
-	$properties['Spawn Code'] = '`' . $lootContainer->SpawnCode() . '`';
+function PrepareLootDropTable(LootDrop $lootDrop, array &$properties) {
+	$properties['Multipliers'] = sprintf('%F - %F', $lootDrop->MultiplierMin(), $lootDrop->MultiplierMax());
+	$properties['Spawn Code'] = '`' . $lootDrop->SpawnCode() . '`';
 }
 
 function PreparePresetTable(Template $preset, array &$properties) {

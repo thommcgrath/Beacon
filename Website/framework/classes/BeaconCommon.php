@@ -352,7 +352,7 @@ abstract class BeaconCommon {
 				$obj = BeaconAPI\v4\Ark\Engram::Fetch($id);
 				break;
 			case 'ark.loot_sources':
-				$obj = BeaconAPI\v4\Ark\LootContainer::Fetch($id);
+				$obj = BeaconAPI\v4\Ark\LootDrop::Fetch($id);
 				break;
 			case 'ark.presets':
 				$obj = BaeconAPI\v4\Ark\Template::Fetch($id);

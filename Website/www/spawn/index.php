@@ -37,7 +37,7 @@ if ($results->RecordCount() == 1) {
 
 $filters = [
 	'minVersion' => $build,
-	'blueprintGroup' => 'engrams,creatures,lootContainers',
+	'blueprintGroup' => 'engrams,creatures,lootDrops',
 	'pageSize' => 50
 ];
 if (isset($_GET['page'])) {
@@ -231,7 +231,7 @@ function CreateSpawnCode(Blueprint $blueprint): string {
 	case 'creatures':
 		return "cheat spawndino {$classString} 1 1 1 30";
 		break;
-	case 'lootContainers':
+	case 'lootDrops':
 		return "cheat summon {$classString}";
 		break;
 	}

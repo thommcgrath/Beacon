@@ -4,7 +4,7 @@ namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
 use BeaconRecordSet;
 
-class LootContainerIcon extends GenericObject {
+class LootDropIcon extends GenericObject {
 	private $iconData;
 	
 	public function __construct(BeaconRecordSet $row) {
@@ -14,7 +14,7 @@ class LootContainerIcon extends GenericObject {
 	}
 	
 	protected static function CustomVariablePrefix(): string {
-		return 'lootContainerIcon';
+		return 'lootDropIcon';
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -35,7 +35,7 @@ class LootContainerIcon extends GenericObject {
 	
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
-		unset($json['lootContainerIconGroup']);
+		unset($json['lootDropIconGroup']);
 		$json['iconData'] = base64_encode($this->iconData);
 		return $json;
 	}
