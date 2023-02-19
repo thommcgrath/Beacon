@@ -88,7 +88,7 @@ if ($obj instanceof \Ark\Creature) {
 	$type = 'Diet';
 	PrepareDietTable($obj, $properties);
 } elseif ($obj instanceof \Ark\LootSource) {
-	$type = 'Loot Source';
+	$type = 'Loot Drop';
 	PrepareLootSourceTable($obj, $properties);
 } elseif ($obj instanceof \Ark\Preset) {
 	$type = 'Preset';
@@ -102,7 +102,7 @@ $parser = new Parsedown();
 
 echo '<h1><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . (is_null($obj->AlternateLabel()) ? '' : '<br><span class="subtitle">AKA ' . htmlentities($obj->AlternateLabel()) . '</span>') . '</h1>';
 if ($obj instanceof \Ark\LootSource && $obj->Experimental()) {
-	echo '<p class="notice-block notice-warning">This loot source is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
+	echo '<p class="notice-block notice-warning">This loot drop is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
 }
 echo '<table id="object_details" class="generic">';
 foreach ($properties as $key => $value) {
