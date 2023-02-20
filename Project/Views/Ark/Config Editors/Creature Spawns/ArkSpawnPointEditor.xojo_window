@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconContainer ArkSpawnPointEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin BeaconContainer ArkSpawnPointEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   664
    Index           =   -2147483648
@@ -33,7 +34,6 @@ Begin BeaconContainer ArkSpawnPointEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   664
       Index           =   -2147483648
@@ -57,7 +57,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       Visible         =   True
       Width           =   1
    End
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   664
@@ -72,6 +72,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -88,9 +89,8 @@ Begin BeaconContainer ArkSpawnPointEditor
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   664
          Index           =   -2147483648
@@ -119,7 +119,6 @@ Begin BeaconContainer ArkSpawnPointEditor
          Backdrop        =   0
          Caption         =   "No Selection"
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   643
          Index           =   -2147483648
@@ -152,7 +151,6 @@ Begin BeaconContainer ArkSpawnPointEditor
          Borders         =   1
          Caption         =   ""
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
          Index           =   -2147483648
@@ -186,7 +184,6 @@ Begin BeaconContainer ArkSpawnPointEditor
       Borders         =   3
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -219,7 +216,6 @@ Begin BeaconContainer ArkSpawnPointEditor
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
       Index           =   -2147483648
@@ -255,8 +251,6 @@ Begin BeaconContainer ArkSpawnPointEditor
       Bold            =   False
       ColumnCount     =   1
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -266,8 +260,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -314,8 +307,6 @@ Begin BeaconContainer ArkSpawnPointEditor
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   "*,75"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -325,8 +316,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -370,7 +360,6 @@ Begin BeaconContainer ArkSpawnPointEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -405,7 +394,6 @@ Begin BeaconContainer ArkSpawnPointEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -432,7 +420,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       Width           =   200
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -656,7 +644,7 @@ End
 		      Next
 		    Else
 		      For I As Integer = 0 To Self.LimitsList.RowCount - 1
-		        If Self.LimitsList.Selected(I) Then
+		        If Self.LimitsList.RowSelectedAt(I) Then
 		          SelectedCreatures.Add(Self.LimitsList.RowTagAt(I))
 		        End If
 		      Next
@@ -668,14 +656,14 @@ End
 		      Var Limit As Double = CombinedLimits.Value(UUID)
 		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(UUID)
 		      If (Creature Is Nil) Then
-		        Self.LimitsList.CellValueAt(RowIndex, 0) = "Unknown Creature"
+		        Self.LimitsList.CellTextAt(RowIndex, 0) = "Unknown Creature"
 		      Else
-		        Self.LimitsList.CellValueAt(RowIndex, 0) = Creature.Label
+		        Self.LimitsList.CellTextAt(RowIndex, 0) = Creature.Label
 		      End If
 		      
-		      Self.LimitsList.CellValueAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
+		      Self.LimitsList.CellTextAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
 		      Self.LimitsList.RowTagAt(RowIndex) = UUID
-		      Self.LimitsList.Selected(RowIndex) = SelectedCreatures.IndexOf(UUID) > -1
+		      Self.LimitsList.RowSelectedAt(RowIndex) = SelectedCreatures.IndexOf(UUID) > -1
 		    Next
 		  Else
 		    Self.LimitsList.RowCount = 0
@@ -727,7 +715,7 @@ End
 		    Var SelectedSets() As String
 		    If SelectSets = Nil Then
 		      For I As Integer = 0 To Self.SetsList.RowCount - 1
-		        If Self.SetsList.Selected(I) Then
+		        If Self.SetsList.RowSelectedAt(I) Then
 		          SelectedSets.Add(Ark.SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).Template.ID)
 		        End If
 		      Next
@@ -745,9 +733,9 @@ End
 		      Var Hash As String = CombinedSets.Key(RowIndex)
 		      Var Organizer As Ark.SpawnSetOrganizer = CombinedSets.Value(Hash)
 		      
-		      Self.SetsList.CellValueAt(RowIndex, 0) = Organizer.Label(ExtendedLabels)
+		      Self.SetsList.CellTextAt(RowIndex, 0) = Organizer.Label(ExtendedLabels)
 		      Self.SetsList.RowTagAt(RowIndex) = Organizer
-		      Self.SetsList.Selected(RowIndex) = Organizer.Matches(SelectedSets)
+		      Self.SetsList.RowSelectedAt(RowIndex) = Organizer.Matches(SelectedSets)
 		    Next
 		  Else
 		    Self.SetsList.RowCount = 0
@@ -832,7 +820,7 @@ End
 		  Var Organizer As Ark.SpawnSetOrganizer = Self.SetsList.RowTagAt(Self.SetsList.SelectedRowIndex)
 		  Organizer.Replicate()
 		  
-		  Self.SetsList.CellValueAt(Self.SetsList.SelectedRowIndex, 0) = Organizer.Label(Self.mSpawnPoints.LastIndex > 0)
+		  Self.SetsList.CellTextAt(Self.SetsList.SelectedRowIndex, 0) = Organizer.Label(Self.mSpawnPoints.LastIndex > 0)
 		  
 		  RaiseEvent Changed
 		End Sub
@@ -845,7 +833,7 @@ End
 #tag EndEvents
 #tag Events SetsList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.UpdateSetsStatus()
 		  
 		  If Me.SelectedRowCount = 1 Then
@@ -869,7 +857,7 @@ End
 		  Var Organizers() As Ark.SpawnSetOrganizer
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -906,7 +894,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Items() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -957,20 +945,20 @@ End
 #tag EndEvents
 #tag Events LimitsList
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
+		Sub Opening()
+		  Me.ColumnAlignmentAt(1) = DesktopListbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.UpdateLimitsStatus
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoublePressed()
 		  Var SelectedCreatures() As Ark.Creature
 		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
-		    If Self.LimitsList.Selected(I) Then
+		    If Self.LimitsList.RowSelectedAt(I) Then
 		      SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Self.LimitsList.RowTagAt(I).StringValue))
 		    End If
 		  Next
@@ -986,7 +974,7 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var Creatures() As Ark.Creature
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -1026,7 +1014,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Limits As New Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -1124,7 +1112,7 @@ End
 		  Case "EditButton"
 		    Var SelectedCreatures() As Ark.Creature
 		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
-		      If Self.LimitsList.Selected(I) Then
+		      If Self.LimitsList.RowSelectedAt(I) Then
 		        SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Self.LimitsList.RowTagAt(I).StringValue))
 		      End If
 		    Next
@@ -1133,7 +1121,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("LimitsTitle", "Limits"))
 		  Me.Append(OmniBarItem.CreateSeparator("LimitsTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Limit", IconToolbarAdd, "Define a new creature limit."))
@@ -1201,7 +1189,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("SetsTitle", "Spawn Sets"))
 		  Me.Append(OmniBarItem.CreateSeparator("SetsTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Set", IconToolbarAdd, "Create a new spawn set."))
@@ -1230,6 +1218,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1395,8 +1399,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1431,26 +1435,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

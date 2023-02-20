@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
    Type            =   8
    Visible         =   False
    Width           =   500
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,18 +47,20 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Progress"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Progress"
       Visible         =   True
       Width           =   460
    End
-   Begin ProgressBar Indicator
+   Begin DesktopProgressBar Indicator
+      Active          =   False
       AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
       Indeterminate   =   False
@@ -73,22 +73,24 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       LockRight       =   True
       LockTop         =   True
       MaximumValue    =   100
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Value           =   50.0
       Visible         =   True
       Width           =   460
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin Label DetailLabel
+   Begin DesktopLabel DetailLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -109,13 +111,13 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Detail"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
-      Value           =   "Detail"
       Visible         =   True
       Width           =   460
    End
@@ -161,11 +163,11 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.UpdateUI
 		End Sub
 	#tag EndEvent
@@ -281,36 +283,40 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowDelayed()
-		  Self.mShowLaterKey = CallLater.Schedule(1500, WeakAddressOf ShowNow)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowDelayed(Parent As Window)
-		  Self.mShowLaterKey = CallLater.Schedule(1500, WeakAddressOf ShowNowWithin, Parent)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowNow()
+		Sub Show(Parent As DesktopWindow = Nil)
 		  If Self.mShowLaterKey.IsEmpty = False Then
 		    CallLater.Cancel(Self.mShowLaterKey)
 		    Self.mShowLaterKey = ""
 		  End If
 		  
+		  Super.Show(parent)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowDelayed(Parent As DesktopWindow = Nil)
+		  If Self.mShowLaterKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mShowLaterKey)
+		    Self.mShowLaterKey = ""
+		  End If
+		  
+		  If Parent Is Nil Then
+		    Self.mShowLaterKey = CallLater.Schedule(1500, WeakAddressOf ShowNow)
+		  Else
+		    Self.mShowLaterKey = CallLater.Schedule(1500, WeakAddressOf ShowNowWithin, Parent)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowNow()
 		  Self.Show()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ShowNowWithin(Parent As Variant)
-		  If Self.mShowLaterKey.IsEmpty = False Then
-		    CallLater.Cancel(Self.mShowLaterKey)
-		    Self.mShowLaterKey = ""
-		  End If
-		  
-		  Self.ShowWithin(Parent)
+		  Self.Show(Parent)
 		End Sub
 	#tag EndMethod
 
@@ -380,7 +386,7 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelPressed = True
 		  Me.Enabled = False
 		End Sub
@@ -608,8 +614,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -624,7 +630,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

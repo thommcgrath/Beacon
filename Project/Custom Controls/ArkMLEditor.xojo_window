@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl ArkMLEditor
+#tag DesktopWindow
+Begin DesktopContainer ArkMLEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   300
    Index           =   -2147483648
@@ -34,8 +33,6 @@ Begin ContainerControl ArkMLEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -63,6 +60,7 @@ Begin ContainerControl ArkMLEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -71,7 +69,6 @@ Begin ContainerControl ArkMLEditor
       Underline       =   False
       UnicodeMode     =   0
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   564
    End
@@ -87,7 +84,6 @@ Begin ContainerControl ArkMLEditor
       BorderTop       =   False
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       Index           =   -2147483648
@@ -120,7 +116,6 @@ Begin ContainerControl ArkMLEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -151,7 +146,6 @@ Begin ContainerControl ArkMLEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -182,7 +176,6 @@ Begin ContainerControl ArkMLEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   298
       Index           =   -2147483648
@@ -213,7 +206,6 @@ Begin ContainerControl ArkMLEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   298
       Index           =   -2147483648
@@ -244,7 +236,6 @@ Begin ContainerControl ArkMLEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -269,11 +260,11 @@ Begin ContainerControl ArkMLEditor
       Width           =   564
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.Field.BackgroundColor = &c1B384B
 		  Self.Field.TextColor = &cFFFFFF
 		End Sub
@@ -313,7 +304,7 @@ End
 		  End If
 		  
 		  Self.Field.StyledText.TextColor(Self.Field.SelectionStart, Self.Field.SelectionLength) = UserColor
-		  RaiseEvent TextChange
+		  RaiseEvent TextChanged
 		End Sub
 	#tag EndMethod
 
@@ -332,7 +323,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event TextChange()
+		Event TextChanged()
 	#tag EndHook
 
 
@@ -424,7 +415,7 @@ End
 			  Self.ControlToolbar.PreviewButton.Toggled = Not Self.mRawMode
 			  Self.ControlToolbar.ShareButton.Enabled = Not Self.mRawMode
 			  
-			  RaiseEvent TextChange
+			  RaiseEvent TextChanged
 			End Set
 		#tag EndSetter
 		Protected RawMode As Boolean
@@ -464,24 +455,24 @@ End
 
 #tag Events Field
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSwitchingModes Then
 		    Return
 		  End If
 		  
-		  RaiseEvent TextChange
+		  RaiseEvent TextChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		Function ConstructContextualMenu(base As DesktopMenuItem, x As Integer, y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var CutItem As MenuItem = EditCut.Clone
-		  Var CopyItem As MenuItem = EditCopy.Clone
-		  Var PasteItem As MenuItem = EditPaste.Clone
-		  Var ClearItem As MenuItem = EditClear.Clone
-		  Var ColorItem As New MenuItem("Change Text Color…", "pickcolor")
+		  Var CutItem As DesktopMenuItem = EditCut.Clone
+		  Var CopyItem As DesktopMenuItem = EditCopy.Clone
+		  Var PasteItem As DesktopMenuItem = EditPaste.Clone
+		  Var ClearItem As DesktopMenuItem = EditClear.Clone
+		  Var ColorItem As New DesktopMenuItem("Change Text Color…", "pickcolor")
 		  
 		  Var HasSelection As Boolean = Me.SelectionLength > 0
 		  CutItem.Enabled = HasSelection
@@ -497,18 +488,18 @@ End
 		  Base.AddMenu(CopyItem)
 		  Base.AddMenu(PasteItem)
 		  Base.AddMenu(ClearItem)
-		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		  Base.AddMenu(ColorItem)
 		  Return True
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
-		  If HitItem Is Nil Or IsNull(HitItem.Tag) Or HitItem.Tag.Type <> Variant.TypeString Then
+		Function ContextualMenuItemSelected(selectedItem As DesktopMenuItem) As Boolean
+		  If SelectedItem Is Nil Or IsNull(SelectedItem.Tag) Or SelectedItem.Tag.Type <> Variant.TypeString Then
 		    Return True
 		  End If
 		  
-		  Select Case HitItem.Tag
+		  Select Case SelectedItem.Tag
 		  Case "pickcolor"
 		    Self.ChangeSelectionColor
 		    Return True
@@ -516,7 +507,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub SelChange()
+		Sub SelectionChanged()
 		  Self.ControlToolbar.ColorButton.Enabled = Me.SelectionLength > 0
 		End Sub
 	#tag EndEvent
@@ -557,7 +548,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var PreviewButton As New BeaconToolbarItem("PreviewButton", IconToolbarView, "Toggle preview mode")
 		  PreviewButton.Toggled = (Self.mRawMode = False)
 		  Me.RightItems.Append(PreviewButton)
@@ -572,6 +563,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -737,8 +736,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -773,26 +772,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

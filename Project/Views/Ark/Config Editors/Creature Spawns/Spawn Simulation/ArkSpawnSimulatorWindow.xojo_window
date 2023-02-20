@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconWindow ArkSpawnSimulatorWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -27,8 +27,6 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
    Begin UITweaks.ResizedLabel MapLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -62,8 +60,6 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
    Begin UITweaks.ResizedPopupMenu MapMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -99,7 +95,6 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -131,7 +126,6 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -155,7 +149,7 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
       Visible         =   True
       Width           =   1032
    End
-   Begin PagePanel Panels
+   Begin DesktopPagePanel Panels
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   491
@@ -170,6 +164,7 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   False
@@ -191,8 +186,6 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          Bold            =   False
          ColumnCount     =   1
          ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   26
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -202,8 +195,7 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   False
          HasHeader       =   False
          HasHorizontalScrollbar=   False
@@ -245,7 +237,6 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   491
          Index           =   -2147483648
@@ -269,11 +260,9 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          Visible         =   True
          Width           =   1
       End
-      Begin Label SpawnInstanceCountLabel
+      Begin DesktopLabel SpawnInstanceCountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -304,11 +293,9 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          Visible         =   True
          Width           =   130
       End
-      Begin Label SpawnInstanceCountField
+      Begin DesktopLabel SpawnInstanceCountField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -339,11 +326,9 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          Visible         =   True
          Width           =   73
       End
-      Begin Label SpawnAvgPopLabel
+      Begin DesktopLabel SpawnAvgPopLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -374,11 +359,9 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          Visible         =   True
          Width           =   214
       End
-      Begin Label SpawnAvgPopField
+      Begin DesktopLabel SpawnAvgPopField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -409,11 +392,9 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          Visible         =   True
          Width           =   73
       End
-      Begin Label SpawnTotalPopLabel
+      Begin DesktopLabel SpawnTotalPopLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -444,11 +425,9 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          Visible         =   True
          Width           =   100
       End
-      Begin Label SpawnTotalPopField
+      Begin DesktopLabel SpawnTotalPopField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -482,7 +461,6 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
    End
    Begin Thread SimulationThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -490,20 +468,20 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Activate()
+		Sub Activated()
 		  Self.RunSimulator()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MapLabel.SizeToFit
 		  Self.MapMenu.Left = Self.MapLabel.Left + Self.MapLabel.Width + 12
 		  Self.Resize()
@@ -554,7 +532,7 @@ End
 		  If (Self.mSelectedPoint Is Nil) = False Then
 		    Var Figures() As Ark.PopulationFigures = Ark.DataSource.Pool.Get(False).GetPopulationFigures(Self.mSelectedPoint)
 		    For Idx As Integer = Figures.FirstIndex To Figures.LastIndex
-		      If Figures(Idx).MapName = Self.MapMenu.SelectedRow Then
+		      If Figures(Idx).MapName = Self.MapMenu.SelectedRowValue Then
 		        PopFigures = Figures(Idx)
 		        Exit
 		      End If
@@ -672,7 +650,7 @@ End
 
 #tag Events MapMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Maps() As Ark.Map = Self.mProject.Maps
 		  If Maps.Count = 0 Then
 		    Return
@@ -683,15 +661,10 @@ End
 		  Me.SelectedRowIndex = 0
 		End Sub
 	#tag EndEvent
-	#tag Event
-		Sub Change()
-		  
-		End Sub
-	#tag EndEvent
 #tag EndEvents
 #tag Events ModeSelector
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  For Idx As Integer = 0 To Me.LastIndex
 		    If Me.Segment(Idx).Selected Then
 		      Self.FilterMode = Idx
@@ -701,14 +674,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Segment(0).Selected = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Panels
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.ModeSpawnPoints
 		    Self.UpdateSpawnPointView()
@@ -718,7 +691,7 @@ End
 #tag EndEvents
 #tag Events PointsList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  
 		End Sub
 	#tag EndEvent
@@ -870,8 +843,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -917,7 +890,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

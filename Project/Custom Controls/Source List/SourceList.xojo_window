@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl SourceList Implements AnimationKit.Scrollable
+#tag DesktopWindow
+Begin DesktopContainer SourceList Implements AnimationKit.Scrollable
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   598
    Index           =   -2147483648
@@ -33,7 +32,6 @@ Begin ContainerControl SourceList Implements AnimationKit.Scrollable
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   598
       Index           =   -2147483648
@@ -58,11 +56,11 @@ Begin ContainerControl SourceList Implements AnimationKit.Scrollable
       Width           =   410
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		Function ConstructContextualMenu(base As DesktopMenuItem, x As Integer, y As Integer) As Boolean
 		  #Pragma Unused Base
 		  #Pragma Unused X
 		  #Pragma Unused Y
@@ -71,14 +69,14 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
-		  #Pragma Unused HitItem
+		Function ContextualMenuItemSelected(selectedItem As DesktopMenuItem) As Boolean
+		  #Pragma Unused SelectedItem
 		  Return False
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mSelectedRowIndex = -1
 		  
 		  #if UseVibrancyView
@@ -98,7 +96,7 @@ End
 		    RootView.AddSubview(CanvasView)
 		  #endif
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
@@ -120,7 +118,7 @@ End
 		  For Each Item As SourceListItem In Items
 		    If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
 		      Self.mItems.Add(Item)
-		      Self.Content.Invalidate
+		      Self.Content.Refresh
 		    End If
 		  Next
 		End Sub
@@ -182,25 +180,8 @@ End
 		    End If
 		    
 		    Self.mItems.AddAt(Idx, Item)
-		    Self.Content.Invalidate
+		    Self.Content.Refresh
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Invalidate(Idx As Integer)
-		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastIndex Then
-		    Self.Content.Invalidate(False)
-		    Return
-		  End If
-		  
-		  Var ItemRect As Rect = Self.mItemRects(Idx)
-		  If ItemRect Is Nil Then
-		    Self.Content.Invalidate(False)
-		    Return
-		  End If
-		  
-		  Self.Content.Invalidate(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height, False)
 		End Sub
 	#tag EndMethod
 
@@ -216,7 +197,7 @@ End
 		Sub Item(Idx As Integer, Assigns Item As SourceListItem)
 		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Self.mItems(Idx) = Item
-		    Self.Invalidate(Idx)
+		    Self.Refresh(Idx)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -257,7 +238,7 @@ End
 		      Self.SelectedRowIndex = Self.SelectedRowIndex - 1
 		    End If
 		    
-		    Self.Content.Invalidate
+		    Self.Content.Refresh
 		  End If
 		End Sub
 	#tag EndMethod
@@ -266,7 +247,7 @@ End
 		Sub RemoveAllItems()
 		  Self.mItems.ResizeTo(-1)
 		  Self.SelectedRowIndex = -1
-		  Self.Content.Invalidate
+		  Self.Content.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -287,7 +268,7 @@ End
 		    // Can be done without a change event
 		    Self.mItems = Items
 		    Self.mSelectedRowIndex = NewRowIndex
-		    Self.Content.Invalidate
+		    Self.Content.Refresh
 		    Return
 		  End If
 		  
@@ -300,7 +281,7 @@ End
 		  
 		  Self.mItems = Items
 		  Self.mSelectedRowIndex = -1
-		  Self.Content.Invalidate
+		  Self.Content.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -412,17 +393,17 @@ End
 		  
 		  If Self.mMouseOverIndex <> OldIndex Then
 		    If OldIndex > -1 Then
-		      Self.Invalidate(OldIndex)
+		      Self.Refresh(OldIndex)
 		    End If
 		    If Self.mMouseOverIndex > -1 Then
-		      Self.Invalidate(Self.mMouseOverIndex)
+		      Self.Refresh(Self.mMouseOverIndex)
 		    End If
 		  End If
 		  
 		  If Self.mMouseOverIndex > -1 Then
 		    Var InsideDismissRect As Boolean = Self.InDismissRect(Point, Self.mMouseOverIndex)
 		    If InsideDismissRect <> Self.mInsideDismissRect Then
-		      Self.Invalidate(Self.mMouseOverIndex)
+		      Self.Refresh(Self.mMouseOverIndex)
 		    End If
 		    Self.mInsideDismissRect = InsideDismissRect
 		  Else
@@ -451,7 +432,7 @@ End
 		    Self.mSelectedRowIndex = Self.IndexOf(SelectedItem)
 		  End If
 		  
-		  Self.Content.Invalidate
+		  Self.Content.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -469,7 +450,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -553,11 +534,11 @@ End
 			    End If
 			    
 			    If Self.mSelectedRowIndex > -1 Then
-			      Self.Invalidate(Self.mSelectedRowIndex)
+			      Self.Refresh(Self.mSelectedRowIndex)
 			    End If
 			    Self.mSelectedRowIndex = Value
 			    RaiseEvent Change
-			    Self.Invalidate(Value)
+			    Self.Refresh(Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -573,13 +554,13 @@ End
 
 #tag Events Content
 	#tag Event
-		Sub Activate()
-		  Me.Invalidate
+		Sub Activated()
+		  Me.Refresh
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Deactivate()
-		  Me.Invalidate
+		Sub Deactivated()
+		  Me.Refresh
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -595,7 +576,7 @@ End
 		  Self.mMouseDownIndex = Self.mMouseOverIndex
 		  Self.mMouseDownInDismiss = Self.mInsideDismissRect
 		  Self.mWasContextualClick = IsContextualClick = True And Self.mMouseDownInDismiss = False
-		  Self.Invalidate(Self.mMouseDownIndex)
+		  Self.Refresh(Self.mMouseDownIndex)
 		  
 		  If Self.mWasContextualClick Then
 		    // Force the refresh now
@@ -665,11 +646,11 @@ End
 		  Self.mMouseDown = False
 		  Self.mMouseDownIndex = -1
 		  
-		  Me.Invalidate
+		  Me.Refresh
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  Var Rects() As Rect
 		  Rects.ResizeTo(Self.mItems.LastIndex)
 		  
@@ -774,6 +755,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -939,8 +928,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -975,26 +964,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

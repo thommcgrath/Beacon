@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ImporterWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -28,15 +28,16 @@ Begin BeaconDialog ImporterWindow
    Visible         =   False
    Width           =   400
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -46,24 +47,24 @@ Begin BeaconDialog ImporterWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin ProgressBar JobProgress
-      AutoDeactivate  =   True
+   Begin DesktopProgressBar JobProgress
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
       Indeterminate   =   False
       Index           =   -2147483648
       InitialParent   =   ""
@@ -73,25 +74,30 @@ Begin BeaconDialog ImporterWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Maximum         =   400
+      MaximumValue    =   100
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Value           =   0.0
       Visible         =   True
       Width           =   360
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -108,11 +114,9 @@ Begin BeaconDialog ImporterWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Importing from """""
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False
@@ -129,7 +133,7 @@ Begin BeaconDialog ImporterWindow
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag DelegateDeclaration, Flags = &h0
@@ -154,23 +158,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Show(ParentWindow As DesktopWindow)
+		  Self.ShowLaterTimer.RunMode = Timer.RunModes.Off
+		  Self.mParentWindow = Nil // mParentWindow is only needed for ShowDelayed, so this should be Nil
+		  Super.Show(ParentWindow)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ShowDelayed()
 		  Self.ShowLaterTimer.RunMode = Timer.RunModes.Single
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowDelayed(Parent as Window)
+		Sub ShowDelayed(Parent as DesktopWindow)
 		  Self.mParentWindow = Parent
 		  Self.ShowDelayed()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowWithin(ParentWindow As Window, Facing As Integer = -1)
-		  Self.ShowLaterTimer.RunMode = Timer.RunModes.Off
-		  Self.mParentWindow = Nil
-		  Super.ShowWithin(ParentWindow, Facing)
 		End Sub
 	#tag EndMethod
 
@@ -195,7 +199,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mParentWindow As Window
+		Private mParentWindow As DesktopWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -244,7 +248,7 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Beacon.SafeToInvoke(Self.mCancelAction) Then
 		    Self.mCancelAction.Invoke()
 		  End If
@@ -254,12 +258,8 @@ End
 #tag Events ShowLaterTimer
 	#tag Event
 		Sub Action()
-		  If Self.mParentWindow Is Nil Then
-		    Self.Show()
-		  Else
-		    Self.ShowWithin(Self.mParentWindow)
-		    Self.mParentWindow = Nil
-		  End If
+		  Self.Show(Self.mParentWindow)
+		  Self.mParentWindow = Nil
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -393,8 +393,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -457,7 +457,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

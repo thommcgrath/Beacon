@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkExportWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -28,15 +28,16 @@ Begin BeaconDialog ArkExportWindow
    Visible         =   True
    Width           =   848
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Finished"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -46,13 +47,12 @@ Begin BeaconDialog ArkExportWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   560
       Transparent     =   False
       Underline       =   False
@@ -77,7 +77,7 @@ Begin BeaconDialog ArkExportWindow
       Scope           =   2
       SelectionLength =   0
       ShowInfoBar     =   False
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   111
@@ -86,15 +86,14 @@ Begin BeaconDialog ArkExportWindow
       Width           =   597
    End
    Begin FadedSeparator TopSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   251
@@ -107,52 +106,51 @@ Begin BeaconDialog ArkExportWindow
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   597
    End
    Begin UITweaks.ResizedPopupMenu ProfileMenu
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
       Left            =   20
-      ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      SelectedRowIndex=   0
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   86
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   210
    End
-   Begin ProgressWheel RewritingSpinner
-      AutoDeactivate  =   True
+   Begin DesktopProgressWheel RewritingSpinner
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   16
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   20
@@ -161,23 +159,28 @@ Begin BeaconDialog ArkExportWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      PanelIndex      =   0
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   16
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   562
       Transparent     =   False
       Visible         =   False
       Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin Label RewritingStatusLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel RewritingStatusLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   16
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -190,15 +193,13 @@ Begin BeaconDialog ArkExportWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Building config…"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   562
       Transparent     =   False
       Underline       =   False
@@ -206,15 +207,14 @@ Begin BeaconDialog ArkExportWindow
       Width           =   182
    End
    Begin FadedSeparator LeftSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   600
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   250
@@ -227,26 +227,25 @@ Begin BeaconDialog ArkExportWindow
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   7
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   1
    End
    Begin Shelf Switcher
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
       Height          =   60
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       IsVertical      =   False
@@ -264,9 +263,9 @@ Begin BeaconDialog ArkExportWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   597
    End
@@ -279,7 +278,6 @@ Begin BeaconDialog ArkExportWindow
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
       Index           =   -2147483648
@@ -296,7 +294,7 @@ Begin BeaconDialog ArkExportWindow
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   14
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -312,7 +310,6 @@ Begin BeaconDialog ArkExportWindow
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -336,11 +333,9 @@ Begin BeaconDialog ArkExportWindow
       Visible         =   True
       Width           =   597
    End
-   Begin Label SettingsHeaderLabel
+   Begin DesktopLabel SettingsHeaderLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -358,24 +353,22 @@ Begin BeaconDialog ArkExportWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   16
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Export Settings"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Export Settings"
       Visible         =   True
       Width           =   210
    End
-   Begin Label ProfileLabel
+   Begin DesktopLabel ProfileLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -393,24 +386,22 @@ Begin BeaconDialog ArkExportWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   17
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Server:"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
-      Value           =   "Server:"
       Visible         =   True
       Width           =   210
    End
-   Begin Label MapLabel
+   Begin DesktopLabel MapLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -428,24 +419,22 @@ Begin BeaconDialog ArkExportWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   18
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Map:"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   126
       Transparent     =   False
       Underline       =   False
-      Value           =   "Map:"
       Visible         =   True
       Width           =   210
    End
    Begin UITweaks.ResizedPopupMenu MapMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -463,7 +452,7 @@ Begin BeaconDialog ArkExportWindow
       LockTop         =   True
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   19
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -473,11 +462,9 @@ Begin BeaconDialog ArkExportWindow
       Visible         =   True
       Width           =   210
    End
-   Begin Label ConfigSetsLabel
+   Begin DesktopLabel ConfigSetsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -495,16 +482,16 @@ Begin BeaconDialog ArkExportWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   20
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Config Sets:"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
       Transparent     =   False
       Underline       =   False
-      Value           =   "Config Sets:"
       Visible         =   True
       Width           =   210
    End
@@ -530,7 +517,7 @@ Begin BeaconDialog ArkExportWindow
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   21
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -543,8 +530,6 @@ Begin BeaconDialog ArkExportWindow
    Begin UITweaks.ResizedLabel ConfigSetsField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -562,25 +547,23 @@ Begin BeaconDialog ArkExportWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   22
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Base"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   218
       Transparent     =   False
       Underline       =   False
-      Value           =   "Base"
       Visible         =   True
       Width           =   210
    End
-   Begin CheckBox MapOverrideCheck
+   Begin DesktopCheckBox MapOverrideCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Override Server's Map"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -596,11 +579,11 @@ Begin BeaconDialog ArkExportWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   23
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   -128
+      Top             =   -49
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -608,12 +591,10 @@ Begin BeaconDialog ArkExportWindow
       VisualState     =   0
       Width           =   210
    End
-   Begin CheckBox ConfigSetsOverrideCheck
+   Begin DesktopCheckBox ConfigSetsOverrideCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Override Server's Config Sets"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -629,11 +610,11 @@ Begin BeaconDialog ArkExportWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   24
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   -96
+      Top             =   -81
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -643,7 +624,6 @@ Begin BeaconDialog ArkExportWindow
    End
    Begin Ark.Rewriter SharedRewriter
       DebugIdentifier =   ""
-      Enabled         =   True
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""
@@ -660,11 +640,11 @@ Begin BeaconDialog ArkExportWindow
       ThreadState     =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  Self.SharedRewriter.Cancel
 		End Sub
 	#tag EndEvent
@@ -914,7 +894,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Project As Ark.Project, ForceTrollMode As Boolean = False)
+		Shared Sub Present(Parent As DesktopWindow, Project As Ark.Project, ForceTrollMode As Boolean = False)
 		  Var Win As New ArkExportWindow
 		  Win.mProject = Project
 		  Win.mForceTrollMode = ForceTrollMode
@@ -963,7 +943,7 @@ End
 		  Win.UpdateConfigSetControls()
 		  
 		  Win.Setup()
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		End Sub
 	#tag EndMethod
 
@@ -1245,7 +1225,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close()
 		End Sub
 	#tag EndEvent
@@ -1274,14 +1254,16 @@ End
 #tag EndEvents
 #tag Events ProfileMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  Self.Setup()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
 		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
@@ -1291,7 +1273,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.RefreshContentArea()
 		  Self.CheckButtons()
 		End Sub
@@ -1299,7 +1281,7 @@ End
 #tag EndEvents
 #tag Events ExportToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateButton("SmartCopy", "Smart Copy", IconToolbarSmartCopy, "Uses your copied ini file to correctly copy the updated version."))
 		  Me.Append(OmniBarItem.CreateButton("SmartSave", "Smart Save", IconToolbarSmartSaveToDisk, "Allows you to select a file on your computer which Beacon will update with the latest changes."))
 		  Me.Append(OmniBarItem.CreateSeparator)
@@ -1326,14 +1308,16 @@ End
 #tag EndEvents
 #tag Events MapMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  Self.Setup()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigSetsButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mProject.ConfigSetStates = ArkConfigSetSelectorDialog.Present(Self, Self.mProject.ConfigSetStates)
 		  Self.UpdateConfigSetControls()
 		  Self.Setup()
@@ -1342,7 +1326,7 @@ End
 #tag EndEvents
 #tag Events MapOverrideCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.MapMenu.Enabled = Me.Value
 		  Self.Setup()
 		End Sub
@@ -1350,7 +1334,7 @@ End
 #tag EndEvents
 #tag Events ConfigSetsOverrideCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.ConfigSetsField.Enabled = Me.Value
 		  Self.ConfigSetsButton.Enabled = Me.Value
 		  Self.Setup()
@@ -1528,8 +1512,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1632,7 +1616,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

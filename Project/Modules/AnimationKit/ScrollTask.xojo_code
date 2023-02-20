@@ -76,21 +76,21 @@ Inherits AnimationKit.DeltaTask
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Constructor(Target As Listbox)
+		Sub Constructor(Target As DesktopListBox)
 		  Self.Retainer = New ListboxScrollDelegate(Target)
 		  Self.Constructor(Self.Retainer)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Constructor(Target As ScrollBar)
+		Sub Constructor(Target As DesktopScrollbar)
 		  Self.Retainer = New ScrollBarScrollDelegate(Target)
 		  Self.Constructor(Self.Retainer)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Constructor(Target As TextArea)
+		Sub Constructor(Target As DesktopTextArea)
 		  Self.Retainer = New TextAreaScrollDelegate(Target)
 		  Self.Constructor(Self.Retainer)
 		End Sub

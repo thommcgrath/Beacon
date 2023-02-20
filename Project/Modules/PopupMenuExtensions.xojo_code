@@ -1,21 +1,21 @@
 #tag Module
 Protected Module PopupMenuExtensions
 	#tag Method, Flags = &h0
-		Sub AddRow(Extends Menu As PopupMenu, Text As String, Tag As Variant)
+		Sub AddRow(Extends Menu As DesktopPopupMenu, Text As String, Tag As Variant)
 		  Menu.AddRow(Text)
 		  Menu.RowTagAt(Menu.RowCount - 1) = Tag
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddRowAt(Extends Menu As PopupMenu, Row As Integer, Text As String, Tag As Variant)
+		Sub AddRowAt(Extends Menu As DesktopPopupMenu, Row As Integer, Text As String, Tag As Variant)
 		  Menu.AddRowAt(Row, Text)
 		  Menu.RowTagAt(Row) = Tag
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SelectByCaption(Extends Menu As PopupMenu, Caption As String)
+		Sub SelectByCaption(Extends Menu As DesktopPopupMenu, Caption As String)
 		  For I As Integer = 0 To Menu.RowCount - 1
 		    If Menu.RowValueAt(I) = Caption Then
 		      Menu.SelectedRowIndex = I
@@ -27,7 +27,7 @@ Protected Module PopupMenuExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SelectByTag(Extends Menu As PopupMenu, Tag As Variant)
+		Sub SelectByTag(Extends Menu As DesktopPopupMenu, Tag As Variant)
 		  For I As Integer = 0 To Menu.RowCount - 1
 		    If Menu.RowTagAt(I) = Tag Then
 		      Menu.SelectedRowIndex = I
@@ -39,7 +39,7 @@ Protected Module PopupMenuExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Tag(Extends Menu As PopupMenu) As Variant
+		Function Tag(Extends Menu As DesktopPopupMenu) As Variant
 		  If Menu.SelectedRowIndex > -1 Then
 		    Return Menu.RowTagAt(Menu.SelectedRowIndex)
 		  End If

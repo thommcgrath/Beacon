@@ -2,6 +2,12 @@
 Protected Class DelayedSearchField
 Inherits UITweaks.ResizedSearchField
 	#tag Event
+		Sub FocusLost()
+		  Self.TriggerAfter(10)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function KeyDown(key As String) As Boolean
 		  If RaiseEvent KeyDown(Key) Then
 		    Return True
@@ -14,12 +20,6 @@ Inherits UITweaks.ResizedSearchField
 		    Return False
 		  End Select
 		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub LostFocus()
-		  Self.TriggerAfter(10)
-		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -100,6 +100,62 @@ Inherits UITweaks.ResizedSearchField
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="PanelIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_mIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_mInitialParent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_mName"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_mPanelIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Active"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabStop"
+			Visible=true
+			Group="Focus Control"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -197,14 +253,6 @@ Inherits UITweaks.ResizedSearchField
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TabStop"
-			Visible=true
-			Group="Position"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="AllowAutoDeactivate"
 			Visible=true
 			Group="Appearance"
@@ -242,7 +290,7 @@ Inherits UITweaks.ResizedSearchField
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -258,7 +306,7 @@ Inherits UITweaks.ResizedSearchField
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType=""
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ClearMenuItemValue"
@@ -266,7 +314,7 @@ Inherits UITweaks.ResizedSearchField
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaximumRecentItems"
@@ -274,7 +322,7 @@ Inherits UITweaks.ResizedSearchField
 			Group="Behavior"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
+			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RecentItemsValue"
@@ -282,7 +330,7 @@ Inherits UITweaks.ResizedSearchField
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Text"
@@ -290,7 +338,7 @@ Inherits UITweaks.ResizedSearchField
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DelayPeriod"
@@ -306,7 +354,7 @@ Inherits UITweaks.ResizedSearchField
 			Group="Initial State"
 			InitialValue="Search"
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabPanelIndex"
@@ -322,7 +370,7 @@ Inherits UITweaks.ResizedSearchField
 			Group=""
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

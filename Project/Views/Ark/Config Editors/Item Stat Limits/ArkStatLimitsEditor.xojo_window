@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkStatLimitsEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   516
    Index           =   -2147483648
@@ -26,12 +27,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
    Transparent     =   True
    Visible         =   True
    Width           =   999
-   Begin CheckBox StatCheckboxes
+   Begin DesktopCheckBox StatCheckboxes
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Generic Quality"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -59,12 +58,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       VisualState     =   0
       Width           =   142
    End
-   Begin CheckBox StatCheckboxes
+   Begin DesktopCheckBox StatCheckboxes
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Armor"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -92,12 +89,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       VisualState     =   0
       Width           =   142
    End
-   Begin CheckBox StatCheckboxes
+   Begin DesktopCheckBox StatCheckboxes
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Durability"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -125,12 +120,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       VisualState     =   0
       Width           =   142
    End
-   Begin CheckBox StatCheckboxes
+   Begin DesktopCheckBox StatCheckboxes
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Damage"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -158,12 +151,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       VisualState     =   0
       Width           =   142
    End
-   Begin CheckBox StatCheckboxes
+   Begin DesktopCheckBox StatCheckboxes
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Ammo"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -191,12 +182,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       VisualState     =   0
       Width           =   142
    End
-   Begin CheckBox StatCheckboxes
+   Begin DesktopCheckBox StatCheckboxes
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Hypothermal"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -224,12 +213,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       VisualState     =   0
       Width           =   142
    End
-   Begin CheckBox StatCheckboxes
+   Begin DesktopCheckBox StatCheckboxes
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Weight"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -257,12 +244,10 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       VisualState     =   0
       Width           =   142
    End
-   Begin CheckBox StatCheckboxes
+   Begin DesktopCheckBox StatCheckboxes
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Hyperthermal"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -297,8 +282,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -322,6 +305,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -329,7 +313,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   121
    End
@@ -340,8 +323,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -365,6 +346,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -372,7 +354,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   121
    End
@@ -383,8 +364,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -408,6 +387,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -415,7 +395,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   121
    End
@@ -426,8 +405,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -451,6 +428,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -458,7 +436,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   121
    End
@@ -469,8 +446,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -494,6 +469,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -501,7 +477,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   121
    End
@@ -512,8 +487,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -537,6 +510,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -544,7 +518,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   121
    End
@@ -555,8 +528,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -580,6 +551,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -587,7 +559,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   121
    End
@@ -598,8 +569,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -623,6 +592,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -630,7 +600,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   121
    End
@@ -646,8 +615,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Bold            =   False
       ColumnCount     =   9
       ColumnWidths    =   "*,75,75,75,0,75,75,0,0"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -657,8 +624,7 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   True
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -693,11 +659,9 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin Label CautionLabel
+   Begin DesktopLabel CautionLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -718,13 +682,13 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "The items shown here are examples. Stat limits will permanently affect all items in the game."
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   209
       Transparent     =   False
       Underline       =   False
-      Value           =   "The items shown here are examples. Stat limits will permanently affect all items in the game."
       Visible         =   True
       Width           =   959
    End
@@ -737,7 +701,6 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -764,11 +727,11 @@ Begin ArkConfigEditor ArkStatLimitsEditor
       Width           =   999
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MinimumWidth = 717
 		End Sub
 	#tag EndEvent
@@ -1128,14 +1091,14 @@ End
 		    End If
 		    
 		    Self.PreviewList.RowTagAt(I) = Dict
-		    Self.PreviewList.CellValueAt(I, Self.ColumnLabel) = Engram.Label
+		    Self.PreviewList.CellTextAt(I, Self.ColumnLabel) = Engram.Label
 		    
 		    For Stat As Integer = Ark.Configs.StatLimits.StatGenericQuality To Ark.Configs.StatLimits.StatHyperthermal
 		      Var Column As Integer = Self.StatToColumn(Stat)
 		      Var Value As NullableDouble = Config.Value(Stat)
 		      
 		      If Dict.HasKey(Stat) = False Or Value = Nil Then
-		        Self.PreviewList.CellValueAt(I, Column) = ""
+		        Self.PreviewList.CellTextAt(I, Column) = ""
 		        Continue
 		      End If
 		      
@@ -1149,7 +1112,7 @@ End
 		        CellValue = CellValue + "%"
 		      End If
 		      
-		      Self.PreviewList.CellValueAt(I, Column) = CellValue
+		      Self.PreviewList.CellTextAt(I, Column) = CellValue
 		    Next
 		  Next
 		End Sub
@@ -1193,11 +1156,11 @@ End
 
 #tag Events StatCheckboxes
 	#tag Event
-		Sub Action(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  Self.StatFields(Index).Enabled = Me.Value
 		  
 		  Var Column As Integer = Self.StatToColumn(Index)
-		  Self.PreviewList.ColumnTypeAt(Column) = If(Me.Value, Listbox.CellTypes.TextField, Listbox.CellTypes.Normal)
+		  Self.PreviewList.ColumnTypeAt(Column) = If(Me.Value, DesktopListbox.CellTypes.TextField, DesktopListbox.CellTypes.Normal)
 		  
 		  If Self.SettingUp Then
 		    Return
@@ -1218,14 +1181,14 @@ End
 		    End If
 		  End If
 		  Self.SettingUp = False
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events StatFields
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChanged(index as Integer)
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1236,22 +1199,22 @@ End
 		  End If
 		  
 		  Self.Config(True).Value(Index) = CDbl(StringValue)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateList
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PreviewList
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  For Column As Integer = Self.ColumnArmor To Self.ColumnWeight
-		    Me.ColumnAlignmentAt(Column) = Listbox.Alignments.Right
+		    Me.ColumnAlignmentAt(Column) = DesktopListbox.Alignments.Right
 		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Var CellValue As String = Me.CellValueAt(Row, Column).Trim
+		  Var CellValue As String = Me.CellTextAt(Row, Column).Trim
 		  If CellValue.EndsWith("%") Then
 		    CellValue = CellValue.Left(CellValue.Length - 1)
 		  End If
@@ -1280,19 +1243,35 @@ End
 		  Self.StatFields(Stat).Text = Value.PrettyText
 		  
 		  Self.SettingUp = False
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1506,8 +1485,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1542,26 +1521,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

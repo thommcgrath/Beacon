@@ -1,13 +1,13 @@
 #tag Menu
 Begin Menu DialogMenuBar
-   Begin MenuItem EditMenu
+   Begin DesktopMenuItem EditMenu
       SpecialMenu = 0
       Index = -2147483648
       Text = "&Edit"
       AutoEnabled = True
       AutoEnable = True
       Visible = True
-      Begin MenuItem EditUndo
+      Begin DesktopMenuItem EditUndo
          SpecialMenu = 0
          Index = -2147483648
          Text = "&Undo"
@@ -18,7 +18,7 @@ Begin Menu DialogMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditSeparator1
+      Begin DesktopMenuItem EditSeparator1
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -26,7 +26,7 @@ Begin Menu DialogMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditCut
+      Begin DesktopMenuItem EditCut
          SpecialMenu = 0
          Index = -2147483648
          Text = "Cu&t"
@@ -37,7 +37,7 @@ Begin Menu DialogMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditCopy
+      Begin DesktopMenuItem EditCopy
          SpecialMenu = 0
          Index = -2147483648
          Text = "&Copy"
@@ -48,7 +48,7 @@ Begin Menu DialogMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditPaste
+      Begin DesktopMenuItem EditPaste
          SpecialMenu = 0
          Index = -2147483648
          Text = "&Paste"
@@ -59,7 +59,7 @@ Begin Menu DialogMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditClear
+      Begin DesktopMenuItem EditClear
          SpecialMenu = 0
          Index = -2147483648
          Text = "#App.kEditClear"
@@ -67,7 +67,7 @@ Begin Menu DialogMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditSeparator2
+      Begin DesktopMenuItem EditSeparator2
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -75,7 +75,7 @@ Begin Menu DialogMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditSelectAll
+      Begin DesktopMenuItem EditSelectAll
          SpecialMenu = 0
          Index = -2147483648
          Text = "Select &All"

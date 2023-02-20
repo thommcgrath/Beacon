@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkLootEntryEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,13 +27,15 @@ Begin BeaconDialog ArkLootEntryEditor
    Title           =   "Set Entry"
    Visible         =   True
    Width           =   900
-   Begin GroupBox EngramsGroup
-      AutoDeactivate  =   True
+   Begin DesktopGroupBox EngramsGroup
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Possible Items"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   528
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -47,23 +49,21 @@ Begin BeaconDialog ArkLootEntryEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   380
-      Begin CheckBox SingleEntryCheckbox
-         AutoDeactivate  =   True
+      Begin DesktopCheckBox SingleEntryCheckbox
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Merge selections into one entry"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
          Italic          =   False
@@ -74,21 +74,20 @@ Begin BeaconDialog ArkLootEntryEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         State           =   0
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   476
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
+         VisualState     =   0
          Width           =   340
       End
       Begin DelayedSearchField FilterField
+         Active          =   False
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowRecentItems=   False
@@ -106,6 +105,7 @@ Begin BeaconDialog ArkLootEntryEditor
          LockRight       =   True
          LockTop         =   True
          MaximumRecentItems=   -1
+         PanelIndex      =   0
          RecentItemsValue=   "Recent Searches"
          Scope           =   2
          TabIndex        =   0
@@ -117,32 +117,39 @@ Begin BeaconDialog ArkLootEntryEditor
          Transparent     =   False
          Visible         =   True
          Width           =   263
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin BeaconListbox EngramList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   4
-         ColumnsResizable=   False
          ColumnWidths    =   "24,*,100,72"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   24
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   1
          Height          =   295
-         HelpTag         =   ""
-         Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
          InitialValue    =   " 	Name	Mod	Weight"
@@ -155,22 +162,16 @@ Begin BeaconDialog ArkLootEntryEditor
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   169
          Transparent     =   False
          TypeaheadColumn =   1
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
          Width           =   340
@@ -178,17 +179,16 @@ Begin BeaconDialog ArkLootEntryEditor
          _ScrollWidth    =   -1
       End
       Begin TagPicker Picker
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          Border          =   15
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          ExcludeTagCaption=   ""
          Height          =   67
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
          Left            =   40
@@ -204,12 +204,12 @@ Begin BeaconDialog ArkLootEntryEditor
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          Spec            =   ""
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   90
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   340
       End
@@ -235,7 +235,7 @@ Begin BeaconDialog ArkLootEntryEditor
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
@@ -245,12 +245,10 @@ Begin BeaconDialog ArkLootEntryEditor
          Visible         =   True
          Width           =   65
       End
-      Begin CheckBox SingleItemCheckbox
+      Begin DesktopCheckBox SingleItemCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Choose only one item"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -279,13 +277,15 @@ Begin BeaconDialog ArkLootEntryEditor
          Width           =   340
       End
    End
-   Begin GroupBox SettingsGroup
-      AutoDeactivate  =   True
+   Begin DesktopGroupBox SettingsGroup
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Quantity and Stats"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   311
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -299,26 +299,23 @@ Begin BeaconDialog ArkLootEntryEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   468
       Begin ArkLootEntryPropertiesEditor EntryPropertiesEditor1
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   275
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
@@ -331,20 +328,22 @@ Begin BeaconDialog ArkLootEntryEditor
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   46
          Transparent     =   True
-         UseFocusRing    =   False
          Visible         =   True
          Width           =   448
       End
    End
-   Begin GroupBox SimulationGroup
-      AutoDeactivate  =   True
+   Begin DesktopGroupBox SimulationGroup
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Simulation"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   205
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -358,24 +357,23 @@ Begin BeaconDialog ArkLootEntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   343
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   468
       Begin UITweaks.ResizedPushButton SimulateButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Refresh"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "SimulationGroup"
          Italic          =   False
@@ -385,13 +383,12 @@ Begin BeaconDialog ArkLootEntryEditor
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   508
          Transparent     =   False
          Underline       =   False
@@ -399,30 +396,33 @@ Begin BeaconDialog ArkLootEntryEditor
          Width           =   80
       End
       Begin BeaconListbox SimulatedResultsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   1
-         ColumnsResizable=   False
          ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   22
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   117
-         HelpTag         =   ""
-         Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "SimulationGroup"
          InitialValue    =   ""
@@ -435,22 +435,16 @@ Begin BeaconDialog ArkLootEntryEditor
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   0
-         ShowDropIndicator=   False
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   379
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
          Width           =   428
@@ -459,15 +453,16 @@ Begin BeaconDialog ArkLootEntryEditor
       End
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -477,13 +472,12 @@ Begin BeaconDialog ArkLootEntryEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   560
       Transparent     =   False
       Underline       =   False
@@ -491,15 +485,16 @@ Begin BeaconDialog ArkLootEntryEditor
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -509,13 +504,12 @@ Begin BeaconDialog ArkLootEntryEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   560
       Transparent     =   False
       Underline       =   False
@@ -523,11 +517,11 @@ Begin BeaconDialog ArkLootEntryEditor
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var PreferredSize As Size = Preferences.EntryEditorSize
 		  
 		  Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(Self.mMods, Ark.CategoryEngrams)
@@ -634,7 +628,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Sources() As Ark.LootItemSetEntry = Nil, Prefilter As String = "") As Ark.LootItemSetEntry()
+		Shared Function Present(Parent As DesktopWindow, Sources() As Ark.LootItemSetEntry = Nil, Prefilter As String = "") As Ark.LootItemSetEntry()
 		  Var TemplatePacksDict As Dictionary = Preferences.PresetsEnabledMods
 		  If TemplatePacksDict Is Nil Then
 		    TemplatePacksDict = New Dictionary
@@ -652,13 +646,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ContentPacks As Beacon.StringList, Sources() As Ark.LootItemSetEntry = Nil, Prefilter As String = "") As Ark.LootItemSetEntry()
+		Shared Function Present(Parent As DesktopWindow, ContentPacks As Beacon.StringList, Sources() As Ark.LootItemSetEntry = Nil, Prefilter As String = "") As Ark.LootItemSetEntry()
 		  Return Present(Parent, ContentPacks, False, Sources, Prefilter)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function Present(Parent As Window, ContentPacks As Beacon.StringList, WithModsButton As Boolean, Sources() As Ark.LootItemSetEntry, Prefilter As String) As Ark.LootItemSetEntry()
+		Private Shared Function Present(Parent As DesktopWindow, ContentPacks As Beacon.StringList, WithModsButton As Boolean, Sources() As Ark.LootItemSetEntry, Prefilter As String) As Ark.LootItemSetEntry()
 		  If Sources <> Nil And Sources.Count > 1 Then
 		    // Need to use the multi-edit window
 		    Return ArkLootEntryMultiEditor.Present(Parent, Sources)
@@ -685,7 +679,7 @@ End
 		  Win.EntryPropertiesEditor1.Setup(DefaultEntry) // This is ok to be nil
 		  
 		  Win.SetupUI(Prefilter)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Entries() As Ark.LootItemSetEntry = Win.mCreatedEntries
 		  Win.Close
@@ -866,7 +860,7 @@ End
 
 #tag Events SingleEntryCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.UpdateSelectionUI()
 		  Self.UpdateSimulation()
 		End Sub
@@ -889,10 +883,10 @@ End
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    If Checked Then
 		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = False Then
-		        Var WeightString As String = Me.CellValueAt(Row, Self.ColumnWeight)
+		        Var WeightString As String = Me.CellTextAt(Row, Self.ColumnWeight)
 		        If WeightString = "" Then
 		          WeightString = "50"
-		          Me.CellValueAt(Row, Self.ColumnWeight) = WeightString
+		          Me.CellTextAt(Row, Self.ColumnWeight) = WeightString
 		        End If
 		        
 		        Var Weight As Double = Abs(CDbl(WeightString)) / 100
@@ -910,7 +904,7 @@ End
 		    End If
 		  Case Self.ColumnWeight
 		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
-		      Var Weight As Double = Abs(CDbl(Me.CellValueAt(Row, Column))) / 100
+		      Var Weight As Double = Abs(CDbl(Me.CellTextAt(Row, Column))) / 100
 		      Self.mSelectedEngrams.Value(Engram.ObjectID) = New Ark.LootItemSetEntryOption(Engram, Weight)
 		    End If
 		  Else
@@ -919,15 +913,15 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(Self.ColumnWeight) = Listbox.CellTypes.TextField
-		  Me.ColumnAlignmentAt(Self.ColumnWeight) = Listbox.Alignments.Center
+		Sub Opening()
+		  Me.ColumnTypeAt(Self.ColumnIncluded) = DesktopListbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnWeight) = DesktopListbox.CellTypes.TextField
+		  Me.ColumnAlignmentAt(Self.ColumnWeight) = DesktopListbox.Alignments.Center
 		  Me.TypeaheadColumn = Self.ColumnLabel
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnIncluded
 		    If Me.CellCheckBoxValueAt(Row1, Column) = True And Me.CellCheckBoxValueAt(Row2, Column) = False Then
@@ -941,8 +935,8 @@ End
 		      Result = Engram1.Label.Compare(Engram2.Label, ComparisonOptions.CaseSensitive)
 		    End If
 		  Case Self.ColumnWeight
-		    Var Weight1 As Double = Val(Me.CellValueAt(Row1, Column))
-		    Var Weight2 As Double = Val(Me.CellValueAt(Row2, Column))
+		    Var Weight1 As Double = Val(Me.CellTextAt(Row1, Column))
+		    Var Weight2 As Double = Val(Me.CellTextAt(Row2, Column))
 		    If Weight1 > Weight2 Then
 		      Result = 1
 		    ElseIf Weight2 > Weight1 Then
@@ -991,7 +985,7 @@ End
 #tag EndEvents
 #tag Events ModsButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If (Self.mModSelectionController Is Nil) = False And Self.mModSelectionController.Visible Then
 		    Self.mModSelectionController.Dismiss(False)
 		    Self.mModSelectionController = Nil
@@ -1009,7 +1003,7 @@ End
 #tag EndEvents
 #tag Events SingleItemCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.UpdateSimulation()
 		End Sub
 	#tag EndEvent
@@ -1023,14 +1017,14 @@ End
 #tag EndEvents
 #tag Events SimulateButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.UpdateSimulation()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mSelectedEngrams.KeyCount = 0 Then
 		    Return
 		  End If
@@ -1092,7 +1086,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -1227,8 +1221,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1291,7 +1285,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

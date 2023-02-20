@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl CommonServerSettingsView
+#tag DesktopWindow
+Begin BeaconContainer CommonServerSettingsView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   532
    Index           =   -2147483648
@@ -29,8 +28,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel ServerNameLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -68,8 +65,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -107,8 +102,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel ConfigSetLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -126,7 +119,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Config Sets:"
@@ -142,8 +135,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel ConfigSetField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -161,7 +152,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Base"
@@ -196,7 +187,7 @@ Begin ContainerControl CommonServerSettingsView
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -209,8 +200,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel MessageOfTheDayLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -228,7 +217,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Message of the Day:"
@@ -248,9 +237,8 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   True
       Backdrop        =   0
       BackgroundColor =   &cFFFFFF00
-      DoubleBuffer    =   False
+      Composited      =   False
       Enabled         =   True
-      EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   145
       Index           =   -2147483648
@@ -264,7 +252,7 @@ Begin ContainerControl CommonServerSettingsView
       LockTop         =   True
       RTFData         =   ""
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -276,8 +264,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel MessageDurationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -295,7 +281,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Message Duration:"
@@ -315,8 +301,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -338,7 +322,7 @@ Begin ContainerControl CommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -355,8 +339,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel MessageDurationSuffixLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -374,7 +356,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Seconds"
@@ -394,8 +376,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -416,7 +396,7 @@ Begin ContainerControl CommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -437,8 +417,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -459,7 +437,7 @@ Begin ContainerControl CommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -480,8 +458,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -502,7 +478,7 @@ Begin ContainerControl CommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   18
+      TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -519,8 +495,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel AdminPasswordLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -538,7 +512,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Admin Password:"
@@ -558,7 +532,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -573,7 +546,7 @@ Begin ContainerControl CommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   11
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -585,8 +558,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel ServerPasswordLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -604,7 +575,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Password:"
@@ -620,8 +591,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel SpectatorPasswordLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -639,7 +608,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   16
+      TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Spectator Password:"
@@ -659,7 +628,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -674,7 +642,7 @@ Begin ContainerControl CommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   14
+      TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -690,7 +658,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -705,7 +672,7 @@ Begin ContainerControl CommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   17
+      TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -717,8 +684,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel MapLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -736,7 +701,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   19
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Build Config For:"
@@ -752,8 +717,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedPopupMenu MapMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -771,7 +734,7 @@ Begin ContainerControl CommonServerSettingsView
       LockTop         =   True
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   20
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -784,8 +747,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel MapHelp
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -803,7 +764,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   21
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Does not change the map"
@@ -823,7 +784,6 @@ Begin ContainerControl CommonServerSettingsView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -838,8 +798,7 @@ Begin ContainerControl CommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      SelectedColor   =   ""
-      TabIndex        =   22
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -851,8 +810,6 @@ Begin ContainerControl CommonServerSettingsView
    Begin UITweaks.ResizedLabel ColorLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -870,7 +827,7 @@ Begin ContainerControl CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   23
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Color:"
@@ -884,7 +841,7 @@ Begin ContainerControl CommonServerSettingsView
       Width           =   136
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -1084,7 +1041,7 @@ End
 
 #tag Events ServerNameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1092,13 +1049,13 @@ End
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.Name = Me.Text
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigSetChooseButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var MainProfile As Ark.ServerProfile = Self.Profile
 		  If MainProfile Is Nil Then
 		    Return
@@ -1110,13 +1067,13 @@ End
 		    Profile.ConfigSetStates = ChangedStates
 		  Next
 		  Self.UpdateConfigSetUI()
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MessageOfTheDayArea
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1124,7 +1081,7 @@ End
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.MessageOfTheDay = Ark.ArkML.FromRTF(Me.RTFData)
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1148,13 +1105,13 @@ End
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.MessageDuration = Me.DoubleValue
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AdminPasswordField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or Self.AdminPasswordSwitch.Value = False Then
 		    Return
 		  End If
@@ -1162,13 +1119,13 @@ End
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.AdminPassword = Me.Text
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPasswordField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or Self.ServerPasswordSwitch.Value = False Then
 		    Return
 		  End If
@@ -1176,13 +1133,13 @@ End
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.ServerPassword = Me.Text
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SpectatorPasswordField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or Self.SpectatorPasswordSwitch.Value = False Then
 		    Return
 		  End If
@@ -1190,13 +1147,13 @@ End
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.SpectatorPassword = Me.Text
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AdminPasswordSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.AdminPasswordField.Enabled = Me.Value
 		  
 		  If Self.mSettingUp Then
@@ -1210,13 +1167,13 @@ End
 		      Profile.AdminPassword = Nil
 		    End If
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPasswordSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ServerPasswordField.Enabled = Me.Value
 		  
 		  If Self.mSettingUp Then
@@ -1230,13 +1187,13 @@ End
 		      Profile.ServerPassword = Nil
 		    End If
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SpectatorPasswordSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SpectatorPasswordField.Enabled = Me.Value
 		  
 		  If Self.mSettingUp Then
@@ -1250,13 +1207,25 @@ End
 		      Profile.SpectatorPassword = Nil
 		    End If
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MapMenu
 	#tag Event
-		Sub Change()
+		Sub Opening()
+		  Me.AddRow("All Maps", Ark.Maps.UniversalMask)
+		  
+		  Var Maps() As Ark.Map = Ark.Maps.All
+		  For Each Map As Ark.Map In Maps
+		    Me.AddRow(Map.Name, Map.Mask)
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.SettingUp Or Self.mShowsMapMenu = False Then
 		    Return
 		  End If
@@ -1270,17 +1239,7 @@ End
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.Mask = Mask
 		  Next
-		  Self.Changed = Self.Modified
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.AddRow("All Maps", Ark.Maps.UniversalMask)
-		  
-		  Var Maps() As Ark.Map = Ark.Maps.All
-		  For Each Map As Ark.Map In Maps
-		    Me.AddRow(Map.Name, Map.Mask)
-		  Next
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1294,11 +1253,27 @@ End
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.ProfileColor = Me.SelectedColor
 		  Next
-		  Self.Changed = Self.Modified
+		  Self.Modified = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1448,8 +1423,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1508,14 +1483,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="InitialParent"
 		Visible=false
 		Group="Position"
@@ -1529,14 +1496,6 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

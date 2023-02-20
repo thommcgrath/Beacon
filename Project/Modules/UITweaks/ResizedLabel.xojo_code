@@ -1,8 +1,8 @@
 #tag Class
 Protected Class ResizedLabel
-Inherits Label
+Inherits DesktopLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If Self.TopDelta <> 0 Then
 		    Self.Top = Self.Top + Self.TopDelta
 		  End If
@@ -63,7 +63,8 @@ Inherits Label
 			Type="TextAlignments"
 			EditorType="Enum"
 			#tag EnumValues
-				"0 - Left"
+				"0 - Default"
+				"1 - Left"
 				"2 - Center"
 				"3 - Right"
 			#tag EndEnumValues
@@ -116,22 +117,6 @@ Inherits Label
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Enabled"
 			Visible=true
 			Group="Appearance"
@@ -153,14 +138,6 @@ Inherits Label
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -264,8 +241,8 @@ Inherits Label
 			Visible=true
 			Group="Appearance"
 			InitialValue="&h000000"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkSettingsListElement ArkSettingsListNumberElement
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkSettingsListElement ArkSettingsListNumberElement
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
+   DoubleBuffer    =   "True"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   62
    Index           =   -2147483648
@@ -26,11 +27,9 @@ Begin ArkSettingsListElement ArkSettingsListNumberElement
    Transparent     =   True
    Visible         =   True
    Width           =   300
-   Begin Label mDescriptionLabel
+   Begin DesktopLabel mDescriptionLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -61,11 +60,9 @@ Begin ArkSettingsListElement ArkSettingsListNumberElement
       Visible         =   True
       Width           =   260
    End
-   Begin Label mNameLabel
+   Begin DesktopLabel mNameLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -103,8 +100,6 @@ Begin ArkSettingsListElement ArkSettingsListNumberElement
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -147,7 +142,6 @@ Begin ArkSettingsListElement ArkSettingsListNumberElement
       Backdrop        =   0
       Clickable       =   True
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   16
       Icon            =   1389395967
@@ -174,7 +168,7 @@ Begin ArkSettingsListElement ArkSettingsListNumberElement
       Width           =   16
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -185,7 +179,7 @@ End
 
 
 	#tag Method, Flags = &h1
-		Protected Function DescriptionLabel() As Label
+		Protected Function DescriptionLabel() As DesktopLabel
 		  Return Self.mDescriptionLabel
 		End Function
 	#tag EndMethod
@@ -209,7 +203,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function NameLabel() As Label
+		Protected Function NameLabel() As DesktopLabel
 		  Return Self.mNameLabel
 		End Function
 	#tag EndMethod
@@ -273,7 +267,7 @@ End
 
 #tag Events mValueField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mBlockChanges Then
 		    Return
 		  End If
@@ -284,12 +278,20 @@ End
 #tag EndEvents
 #tag Events mDismissButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Delete()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ShowOfficialName"
 		Visible=false
@@ -471,8 +473,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -507,26 +509,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

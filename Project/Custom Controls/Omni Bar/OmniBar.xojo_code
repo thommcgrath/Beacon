@@ -3,14 +3,14 @@ Protected Class OmniBar
 Inherits ControlCanvas
 Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag Event
-		Sub Activate()
-		  Self.Invalidate
+		Sub Activated()
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Deactivate()
-		  Self.Invalidate
+		Sub Deactivated()
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
@@ -23,7 +23,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Self.mMouseOverIndex = Self.mMouseDownIndex
 		  Self.mMouseHeld = False
 		  Self.mUsedLongAction = False
-		  Self.Invalidate(Self.mMouseDownIndex)
+		  Self.Refresh(Self.mMouseDownIndex)
 		  
 		  App.HideTooltip
 		  CallLater.Cancel(Self.mHoverCallbackKey)
@@ -77,18 +77,18 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  If Self.mMouseOverIndex <> OldIndex Then
 		    If OldIndex > -1 Then
-		      Self.Invalidate(OldIndex)
+		      Self.Refresh(OldIndex)
 		    End If
 		    
 		    If Self.mMouseOverIndex > -1 Then
-		      Self.Invalidate(Self.mMouseOverIndex)
+		      Self.Refresh(Self.mMouseOverIndex)
 		    End If
 		  ElseIf Self.mMouseOverIndex > -1 Then
 		    // Mouse is dragging inside an item
 		    Var WasInsideAccessoryRect As Boolean = Self.mItems(Self.mMouseOverIndex).InsideAccessoryRegion(Self.mItemRects(Self.mMouseOverIndex), OldMousePoint)
 		    Var IsInsideAccessoryRect As Boolean = Self.mItems(Self.mMouseOverIndex).InsideAccessoryRegion(Self.mItemRects(Self.mMouseOverIndex), Self.mMousePoint)
 		    If IsInsideAccessoryRect <> WasInsideAccessoryRect Then
-		      Self.Invalidate(Self.mMouseOverIndex)
+		      Self.Refresh(Self.mMouseOverIndex)
 		    End If
 		  End If
 		  
@@ -126,12 +126,12 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Self.mMousePoint = Nil
 		  
 		  If Self.mMouseOverIndex <> -1 Then
-		    Self.Invalidate(Self.mMouseOverIndex)
+		    Self.Refresh(Self.mMouseOverIndex)
 		    Self.mMouseOverIndex = -1
 		  End If
 		  
 		  #if TargetMacOS
-		    Self.TrueWindow.NSWindowMBS.Movable = True
+		    Self.Window.NSWindowMBS.Movable = True
 		  #endif
 		End Sub
 	#tag EndEvent
@@ -149,10 +149,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  If Self.mMouseOverIndex <> OldIndex Then
 		    If OldIndex > -1 Then
-		      Self.Invalidate(OldIndex)
+		      Self.Refresh(OldIndex)
 		    End If
 		    If Self.mMouseOverIndex > -1 Then
-		      Self.Invalidate(Self.mMouseOverIndex)
+		      Self.Refresh(Self.mMouseOverIndex)
 		    End If
 		    
 		    App.HideTooltip
@@ -166,7 +166,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Var WasInsideAccessoryRect As Boolean = Self.mItems(Self.mMouseOverIndex).InsideAccessoryRegion(Self.mItemRects(Self.mMouseOverIndex), OldMousePoint)
 		    Var IsInsideAccessoryRect As Boolean = Self.mItems(Self.mMouseOverIndex).InsideAccessoryRegion(Self.mItemRects(Self.mMouseOverIndex), Self.mMousePoint)
 		    If IsInsideAccessoryRect <> WasInsideAccessoryRect Then
-		      Self.Invalidate(Self.mMouseOverIndex)
+		      Self.Refresh(Self.mMouseOverIndex)
 		    End If
 		  End If
 		  
@@ -183,7 +183,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  End If
 		  
 		  #if TargetMacOS
-		    Self.TrueWindow.NSWindowMBS.Movable = Self.mMouseOverIndex = -1
+		    Self.Window.NSWindowMBS.Movable = Self.mMouseOverIndex = -1
 		  #endif
 		End Sub
 	#tag EndEvent
@@ -254,12 +254,12 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Self.mMouseDownIndex = -1
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused SafeArea
 		  
 		  Var ColorProfile As OmniBarColorProfile
@@ -360,7 +360,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
 		      Item.AddObserver(Self, "MinorChange", "MajorChange")
 		      Self.mItems.Add(Item)
-		      Self.Invalidate
+		      Self.Refresh
 		    End If
 		  Next
 		End Sub
@@ -619,30 +619,8 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
 		    Item.AddObserver(Self, "MinorChange", "MajorChange")
 		    Self.mItems.AddAt(Index, Item)
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Invalidate(Idx As Integer)
-		  If Idx = Self.OverflowItemIndex And (Self.mOverflowRect Is Nil) = False Then
-		    Super.Invalidate(Self.mOverflowRect.Left, Self.mOverflowRect.Top, Self.mOverflowRect.Width, Self.mOverflowRect.Height)
-		    Return
-		  End If
-		  
-		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastIndex Then
-		    Super.Invalidate(False)
-		    Return
-		  End If
-		  
-		  Var ItemRect As Rect = Self.mItemRects(Idx)
-		  If ItemRect Is Nil Then
-		    Super.Invalidate(False)
-		    Return
-		  End If
-		  
-		  Super.Invalidate(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height, False)
 		End Sub
 	#tag EndMethod
 
@@ -659,7 +637,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  If (NewItem Is Nil) = False And Self.IndexOf(NewItem) = -1 Then
 		    NewItem.AddObserver(Self, "MinorChange", "MajorChange")
 		    Self.mItems(Idx) = NewItem
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndMethod
@@ -714,7 +692,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  Select Case Notification.Name
 		  Case App.Notification_AppearanceChanged
-		    Self.Invalidate()
+		    Self.Refresh()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -727,11 +705,11 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  #Pragma Unused NewValue
 		  
 		  If Key = "MajorChange" Then
-		    Self.Invalidate(False)
+		    Self.Refresh(False)
 		  ElseIf Key = "MinorChange" And Source IsA OmniBarItem Then
 		    Var Item As OmniBarItem = OmniBarItem(Source)
 		    Var Idx As Integer = Self.IndexOf(Item)
-		    Self.Invalidate(Idx)
+		    Self.Refresh(Idx)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -767,11 +745,33 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Refresh(Idx As Integer, Immediately As Boolean = False)
+		  If Idx = Self.OverflowItemIndex And (Self.mOverflowRect Is Nil) = False Then
+		    Super.Refresh(Self.mOverflowRect.Left, Self.mOverflowRect.Top, Self.mOverflowRect.Width, Self.mOverflowRect.Height, Immediately)
+		    Return
+		  End If
+		  
+		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastIndex Then
+		    Super.Refresh(Immediately)
+		    Return
+		  End If
+		  
+		  Var ItemRect As Rect = Self.mItemRects(Idx)
+		  If ItemRect Is Nil Then
+		    Super.Refresh(Immediately)
+		    Return
+		  End If
+		  
+		  Super.Refresh(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height, Immediately)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
 		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")
 		    Self.mItems.RemoveAt(Idx)
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndMethod
@@ -801,7 +801,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")
 		      Self.mItems.RemoveAt(Idx)
 		    Next
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndMethod
@@ -862,7 +862,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 			Set
 			  If Self.mAlignment <> Value Then
 			    Self.mAlignment = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -879,7 +879,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 			Set
 			  If Self.mBackgroundColor <> Value Then
 			    Self.mBackgroundColor = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -896,7 +896,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 			Set
 			  If Self.mLeftPadding <> Value Then
 			    Self.mLeftPadding = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -985,7 +985,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 			Set
 			  If Self.mRightPadding <> Value Then
 			    Self.mRightPadding = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -1273,22 +1273,6 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 			Group="Behavior"
 			InitialValue="-1"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

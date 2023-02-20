@@ -1,13 +1,18 @@
-#tag Window
+#tag DesktopWindow
 Begin ServerViewContainer NitradoServerView
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
+   AcceptFocus     =   "False"
+   AcceptTabs      =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
+   AutoDeactivate  =   "True"
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackColor    =   False
    Height          =   600
    HelpTag         =   ""
@@ -21,12 +26,13 @@ Begin ServerViewContainer NitradoServerView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
+   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   600
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   559
@@ -41,6 +47,7 @@ Begin ServerViewContainer NitradoServerView
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -51,15 +58,14 @@ Begin ServerViewContainer NitradoServerView
       Visible         =   True
       Width           =   600
       Begin FadedSeparator FadedSeparator1
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   10
@@ -72,23 +78,23 @@ Begin ServerViewContainer NitradoServerView
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   103
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   580
       End
       Begin UITweaks.ResizedLabel ServerStatusField
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -105,11 +111,9 @@ Begin ServerViewContainer NitradoServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Checking…"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
@@ -117,13 +121,13 @@ Begin ServerViewContainer NitradoServerView
          Width           =   438
       End
       Begin UITweaks.ResizedLabel ServerStatusLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -140,11 +144,9 @@ Begin ServerViewContainer NitradoServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Server Status:"
-         TextAlign       =   2
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
@@ -159,8 +161,6 @@ Begin ServerViewContainer NitradoServerView
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -208,9 +208,8 @@ Begin ServerViewContainer NitradoServerView
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   496
          Index           =   -2147483648
@@ -224,7 +223,7 @@ Begin ServerViewContainer NitradoServerView
          Scope           =   2
          SettingUp       =   False
          ShowsMapMenu    =   False
-         TabIndex        =   3
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
@@ -235,7 +234,6 @@ Begin ServerViewContainer NitradoServerView
       End
    End
    Begin Beacon.OAuth2Client Auth
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -250,7 +248,6 @@ Begin ServerViewContainer NitradoServerView
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -277,11 +274,11 @@ Begin ServerViewContainer NitradoServerView
       Width           =   600
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  Self.Auth.Cancel
 		End Sub
 	#tag EndEvent
@@ -296,7 +293,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
 		  If Account Is Nil Then
 		    Account = New Beacon.ExternalAccount(Self.mProfile.ExternalAccountUUID, Beacon.ExternalAccount.ProviderNitrado)
@@ -493,16 +490,16 @@ End
 
 #tag Events AdminNotesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Changed = Self.mProfile.Modified
+		  Self.Modified = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SettingsView
 	#tag Event
 		Sub ContentsChanged()
-		  Self.Changed = Me.Changed
+		  Self.Modified = Me.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -511,7 +508,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Profile = Self.mProfile
 		End Sub
 	#tag EndEvent
@@ -555,7 +552,7 @@ End
 #tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
 		  Me.Append(OmniBarItem.CreateSeparator)
@@ -620,6 +617,22 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
@@ -660,14 +673,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -696,8 +701,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -880,14 +885,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

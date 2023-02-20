@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl ArkEngramControlSettingsView
+#tag DesktopWindow
+Begin DesktopContainer ArkEngramControlSettingsView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   237
    Index           =   -2147483648
@@ -26,12 +25,10 @@ Begin ContainerControl ArkEngramControlSettingsView
    Transparent     =   True
    Visible         =   True
    Width           =   468
-   Begin CheckBox AutoUnlockCheck
+   Begin DesktopCheckBox AutoUnlockCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Automatically Unlock Engrams While Leveling"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -59,11 +56,9 @@ Begin ContainerControl ArkEngramControlSettingsView
       VisualState     =   0
       Width           =   448
    End
-   Begin Label AutoUnlockExplanationLabel
+   Begin DesktopLabel AutoUnlockExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -94,12 +89,10 @@ Begin ContainerControl ArkEngramControlSettingsView
       Visible         =   True
       Width           =   428
    End
-   Begin CheckBox DefaultDisabledCheck
+   Begin DesktopCheckBox DefaultDisabledCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Disable Engrams by Default"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -127,11 +120,9 @@ Begin ContainerControl ArkEngramControlSettingsView
       VisualState     =   0
       Width           =   448
    End
-   Begin Label DefaultDisabledExplanationLabel
+   Begin DesktopLabel DefaultDisabledExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -163,7 +154,7 @@ Begin ContainerControl ArkEngramControlSettingsView
       Width           =   428
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag ComputedProperty, Flags = &h0
@@ -199,19 +190,27 @@ End
 
 #tag Events AutoUnlockExplanationLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.TextColor = SystemColors.SecondaryLabelColor
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DefaultDisabledExplanationLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.TextColor = SystemColors.SecondaryLabelColor
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -377,8 +376,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -413,26 +412,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

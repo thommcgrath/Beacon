@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconPagedSubview DocumentsComponent
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin BeaconPagedSubview DocumentsComponent
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
+   DoubleBuffer    =   "True"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   570
    Index           =   -2147483648
@@ -35,7 +36,6 @@ Begin BeaconPagedSubview DocumentsComponent
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -61,7 +61,7 @@ Begin BeaconPagedSubview DocumentsComponent
       Visible         =   True
       Width           =   896
    End
-   Begin PagePanel Views
+   Begin DesktopPagePanel Views
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   532
@@ -76,6 +76,7 @@ Begin BeaconPagedSubview DocumentsComponent
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -92,9 +93,8 @@ Begin BeaconPagedSubview DocumentsComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
          Index           =   -2147483648
@@ -128,9 +128,8 @@ Begin BeaconPagedSubview DocumentsComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
          Index           =   -2147483648
@@ -164,9 +163,8 @@ Begin BeaconPagedSubview DocumentsComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
          Index           =   -2147483648
@@ -204,17 +202,17 @@ Begin BeaconPagedSubview DocumentsComponent
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function GetPagePanel() As PagePanel
+		Function GetPagePanel() As DesktopPagePanel
 		  Return Self.Views
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.AppendPage(Self.RecentDocumentsComponent1)
 		  Self.AppendPage(Self.CloudDocumentsComponent1)
 		  Self.AppendPage(Self.CommunityDocumentsComponent1)
@@ -286,10 +284,10 @@ End
 		  Self.DetachControllerEvents(Sender)
 		  
 		  Var View As DocumentEditorView = DocumentEditorView.Create(Sender)
-		  View.Changed = Sender.Project.Modified
+		  View.Modified = Sender.Project.Modified
 		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Hash)
 		  View.LinkedOmniBarItem.CanBeClosed = True
-		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Changed
+		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Modified
 		  
 		  Select Case Sender.URL.Scheme
 		  Case Beacon.ProjectURL.TypeCloud
@@ -687,7 +685,7 @@ End
 
 #tag Events Nav
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Recents As OmniBarItem = OmniBarItem.CreateTab("NavRecents", "Recents")
 		  Var Cloud As OmniBarItem = OmniBarItem.CreateTab("NavCloud", "Cloud")
 		  Var Community As OmniBarItem = OmniBarItem.CreateTab("NavCommunity", "Community")
@@ -730,7 +728,7 @@ End
 #tag EndEvents
 #tag Events Views
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Var CurrentPage As BeaconSubview = Self.CurrentPage
 		  Var CurrentItemName As String
 		  If (CurrentPage Is Nil) = False And (CurrentPage.LinkedOmniBarItem Is Nil) = False Then
@@ -805,6 +803,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -978,8 +992,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1046,14 +1060,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="InitialParent"
 		Visible=false
 		Group="Position"
@@ -1067,14 +1073,6 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

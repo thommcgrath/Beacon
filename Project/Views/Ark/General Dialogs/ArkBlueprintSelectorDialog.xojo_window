@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkBlueprintSelectorDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,14 +27,14 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
    Title           =   "Select Object"
    Visible         =   True
    Width           =   600
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -51,11 +51,9 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Select an Object"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -63,30 +61,33 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       Width           =   560
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   True
       ColumnCount     =   2
-      ColumnsResizable=   False
       ColumnWidths    =   "*,200"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   254
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Name	Mod"
@@ -99,22 +100,16 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   165
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
       VisibleRowCount =   0
       Width           =   560
@@ -122,15 +117,16 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Select"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -140,13 +136,12 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   431
       Transparent     =   False
       Underline       =   False
@@ -154,15 +149,16 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -172,13 +168,12 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   431
       Transparent     =   False
       Underline       =   False
@@ -186,30 +181,33 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       Width           =   80
    End
    Begin BeaconListbox SelectedList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   True
       ColumnCount     =   1
-      ColumnsResizable=   False
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   254
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Selected Objects"
@@ -222,22 +220,16 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   165
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
       VisibleRowCount =   0
       Width           =   200
@@ -245,15 +237,16 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedPushButton AddToSelectionsButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   ">>"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -263,13 +256,12 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   266
       Transparent     =   False
       Underline       =   False
@@ -277,15 +269,16 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       Width           =   40
    End
    Begin UITweaks.ResizedPushButton RemoveFromSelectionsButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "<<"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -295,13 +288,12 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   298
       Transparent     =   False
       Underline       =   False
@@ -309,17 +301,16 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       Width           =   40
    End
    Begin TagPicker Picker
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Border          =   15
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       ExcludeTagCaption=   ""
       Height          =   67
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   20
@@ -338,18 +329,16 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   86
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   560
    End
-   Begin CheckBox WithDefaultsCheck
+   Begin DesktopCheckBox WithDefaultsCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Load Official Values When Available"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -378,9 +367,11 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       Width           =   376
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
+      AllowTabStop    =   True
       ClearMenuItemValue=   "Clear"
       DelayPeriod     =   250
       Enabled         =   True
@@ -395,24 +386,28 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Visible         =   True
       Width           =   560
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(Self.mMods, Self.mCategory)
 		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
 		  Self.UpdateFilter()
@@ -457,11 +452,11 @@ End
 		  Case ArkBlueprintSelectorDialog.SelectModes.Single
 		    // Good news, it's already setup
 		  Case ArkBlueprintSelectorDialog.SelectModes.ImpliedMultiple
-		    Self.List.RowSelectionType = Listbox.RowSelectionTypes.Multiple
+		    Self.List.RowSelectionType = DesktopListbox.RowSelectionTypes.Multiple
 		  Case ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple
 		    Self.Width = Self.Width + 150
 		    Self.List.ColumnWidths = "*,150"
-		    Self.List.RowSelectionType = Listbox.RowSelectionTypes.Multiple
+		    Self.List.RowSelectionType = DesktopListbox.RowSelectionTypes.Multiple
 		    Self.List.Width = Self.List.Width - (24 + Self.SelectedList.Width + Self.AddToSelectionsButton.Width)
 		    Self.AddToSelectionsButton.Left = Self.List.Left + Self.List.Width + 12
 		    Self.RemoveFromSelectionsButton.Left = Self.AddToSelectionsButton.Left
@@ -479,11 +474,11 @@ End
 		  
 		  If Self.List.SelectedRowCount > 1 Then
 		    For I As Integer = Self.List.RowCount - 1 DownTo 0
-		      If Not Self.List.Selected(I) Then
+		      If Not Self.List.RowSelectedAt(I) Then
 		        Continue
 		      End If
 		      
-		      Self.SelectedList.AddRow(Self.List.CellValueAt(I, 0))
+		      Self.SelectedList.AddRow(Self.List.CellTextAt(I, 0))
 		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
 		      If Self.mSelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple Then
 		        Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(I)).ObjectID)
@@ -491,7 +486,7 @@ End
 		      End If
 		    Next
 		  ElseIf Self.List.SelectedRowCount = 1 Then
-		    Self.SelectedList.AddRow(Self.List.CellValueAt(Self.List.SelectedRowIndex, 0))
+		    Self.SelectedList.AddRow(Self.List.CellTextAt(Self.List.SelectedRowIndex, 0))
 		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    If Self.mSelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple Then
 		      Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).ObjectID)
@@ -504,14 +499,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Ark.Creature, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes) As Ark.Creature()
+		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As Ark.Creature, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes) As Ark.Creature()
 		  Var WithDefaults As Boolean
 		  Return Present(Parent, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Ark.Creature, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Ark.Creature()
+		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As Ark.Creature, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Ark.Creature()
 		  Var ExcludeBlueprints() As Ark.Blueprint
 		  For Each Creature As Ark.Creature In Exclude
 		    ExcludeBlueprints.Add(Creature)
@@ -529,14 +524,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Ark.Engram, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes) As Ark.Engram()
+		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As Ark.Engram, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes) As Ark.Engram()
 		  Var WithDefaults As Boolean
 		  Return Present(Parent, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Ark.Engram, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Ark.Engram()
+		Shared Function Present(Parent As DesktopWindow, Subgroup As String, Exclude() As Ark.Engram, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Ark.Engram()
 		  Var ExcludeBlueprints() As Ark.Blueprint
 		  For Each Engram As Ark.Engram In Exclude
 		    ExcludeBlueprints.Add(Engram)
@@ -554,14 +549,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Ark.Blueprint, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes) As Ark.Blueprint()
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As Ark.Blueprint, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes) As Ark.Blueprint()
 		  Var WithDefaults As Boolean
 		  Return Present(Parent, Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Ark.Blueprint, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Ark.Blueprint()
+		Shared Function Present(Parent As DesktopWindow, Category As String, Subgroup As String, Exclude() As Ark.Blueprint, ContentPacks As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Ark.Blueprint()
 		  Var Blueprints() As Ark.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints
@@ -572,7 +567,7 @@ End
 		  End If
 		  
 		  Var Win As New ArkBlueprintSelectorDialog(Category, Subgroup, Exclude, ContentPacks, SelectMode, WithDefaults)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  If Win.mCancelled Then
 		    Win.Close
 		    Return Blueprints
@@ -602,7 +597,7 @@ End
 		Private Sub UnmakeSelection()
 		  Var Selections() As String
 		  For I As Integer = Self.SelectedList.RowCount - 1 DownTo 0
-		    If Not Self.SelectedList.Selected(I) Then
+		    If Not Self.SelectedList.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -620,7 +615,7 @@ End
 		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    Var Blueprint As Ark.Blueprint = Self.List.RowTagAt(I)
-		    Self.List.Selected(I) = Selections.IndexOf(Blueprint.ObjectID) > -1
+		    Self.List.RowSelectedAt(I) = Selections.IndexOf(Blueprint.ObjectID) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
 		  Self.List.SelectionChangeBlocked = False
@@ -688,7 +683,7 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Self.mSelectMode <> ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple Then
 		    Self.MakeSelection()
 		  End If
@@ -697,7 +692,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoublePressed()
 		  Self.MakeSelection()
 		  
 		  If Self.mSelectMode <> ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple Then
@@ -709,7 +704,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub
@@ -717,7 +712,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide()
 		End Sub
@@ -725,7 +720,7 @@ End
 #tag EndEvents
 #tag Events SelectedList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.RemoveFromSelectionsButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
@@ -735,7 +730,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoublePressed()
 		  Self.UnmakeSelection
 		End Sub
 	#tag EndEvent
@@ -749,14 +744,14 @@ End
 #tag EndEvents
 #tag Events AddToSelectionsButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.MakeSelection()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RemoveFromSelectionsButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.UnmakeSelection()
 		End Sub
 	#tag EndEvent
@@ -928,8 +923,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1032,7 +1027,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

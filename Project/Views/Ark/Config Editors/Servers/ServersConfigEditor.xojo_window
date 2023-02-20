@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ServersConfigEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ServersConfigEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   506
    Index           =   -2147483648
@@ -27,31 +28,34 @@ Begin ArkConfigEditor ServersConfigEditor
    Visible         =   True
    Width           =   856
    Begin ServersListbox ServerList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   1
-      ColumnsResizable=   False
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   40
       DefaultSortColumn=   0
       DefaultSortDirection=   1
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
       Filter          =   ""
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   424
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -64,22 +68,16 @@ Begin ArkConfigEditor ServersConfigEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   82
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   299
@@ -87,15 +85,14 @@ Begin ArkConfigEditor ServersConfigEditor
       _ScrollWidth    =   -1
    End
    Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   506
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   299
@@ -111,9 +108,9 @@ Begin ArkConfigEditor ServersConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   1
    End
@@ -126,7 +123,6 @@ Begin ArkConfigEditor ServersConfigEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -143,7 +139,7 @@ Begin ArkConfigEditor ServersConfigEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -153,6 +149,7 @@ Begin ArkConfigEditor ServersConfigEditor
       Width           =   299
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -170,9 +167,10 @@ Begin ArkConfigEditor ServersConfigEditor
       LockRight       =   False
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -181,6 +179,10 @@ Begin ArkConfigEditor ServersConfigEditor
       Transparent     =   False
       Visible         =   True
       Width           =   280
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -189,7 +191,6 @@ Begin ArkConfigEditor ServersConfigEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -204,7 +205,7 @@ Begin ArkConfigEditor ServersConfigEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -214,7 +215,7 @@ Begin ArkConfigEditor ServersConfigEditor
       Width           =   299
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -227,7 +228,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ServerList.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -284,7 +285,7 @@ End
 		    If Self.Project.ServerProfile(Idx).ProfileID <> CurrentProfileID And Self.Project.ServerProfile(Idx) IsA Ark.ServerProfile Then
 		      Ark.ServerProfile(Self.Project.ServerProfile(Idx)).MessageOfTheDay = Message.Clone
 		      Ark.ServerProfile(Self.Project.ServerProfile(Idx)).MessageDuration = Duration
-		      Self.Changed = Self.Changed Or Self.Project.Modified
+		      Self.Modified = Self.Modified Or Self.Project.Modified
 		    End If
 		  Next
 		  
@@ -487,7 +488,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
-		  Self.Changed = Sender.Changed
+		  Self.Modified = Sender.Modified
 		  Self.ServerList.UpdateList()
 		End Sub
 	#tag EndMethod
@@ -562,7 +563,7 @@ End
 
 #tag Events ServerList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Select Case Me.SelectedRowCount
 		  Case 0
 		    Self.CurrentProfileID = ""
@@ -598,7 +599,7 @@ End
 		    Var Profiles() As Ark.ServerProfile
 		    Var Parts() As String
 		    For Idx As Integer = 0 To Me.LastRowIndex
-		      If Not Me.Selected(Idx) Then
+		      If Not Me.RowSelectedAt(Idx) Then
 		        Continue
 		      End If
 		      
@@ -639,7 +640,7 @@ End
 		  End If
 		  
 		  For I As Integer = Me.LastRowIndex DownTo 0
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      Var Profile As Ark.ServerProfile = Me.RowTagAt(I)
 		      If Self.mViews.HasKey(Profile.ProfileID) Then
 		        If Self.CurrentProfileID = Profile.ProfileID Then
@@ -651,7 +652,7 @@ End
 		        Self.mViews.Remove(Profile.ProfileID)
 		      End If
 		      Self.Project.RemoveServerProfile(Profile)
-		      Self.Changed = True
+		      Self.Modified = True
 		      Me.RemoveRowAt(I)
 		    End If
 		  Next
@@ -660,7 +661,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -678,7 +679,7 @@ End
 		  Var NitradoProfiles() As Ark.NitradoServerProfile
 		  Var LocalProfiles() As Ark.LocalServerProfile
 		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Idx) = False Then
+		    If Me.RowSelectedAt(Idx) = False Then
 		      Continue
 		    End If
 		    Var Profile As Ark.ServerProfile = Me.RowTagAt(Idx)
@@ -724,7 +725,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
 		  Select Case HitItem.Text
 		  Case "Show Config Backups"
 		    Var Folder As FolderItem = HitItem.Tag
@@ -771,7 +772,7 @@ End
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddServerButton", "New Server", IconToolbarAdd, "Add a new simple server."))
@@ -823,6 +824,22 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
@@ -863,14 +880,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -899,8 +908,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1083,14 +1092,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

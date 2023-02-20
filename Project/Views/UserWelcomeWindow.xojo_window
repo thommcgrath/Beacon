@@ -1,37 +1,33 @@
-#tag Window
-Begin Window UserWelcomeWindow
-   BackColor       =   &cFFFFFF00
+#tag DesktopWindow
+Begin DesktopWindow UserWelcomeWindow
    Backdrop        =   0
-   CloseButton     =   False
+   BackgroundColor =   &cFFFFFF00
    Composite       =   True
-   Frame           =   1
+   DefaultLocation =   2
    FullScreen      =   False
-   FullScreenButton=   False
-   HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   360
    ImplicitInstance=   False
-   LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   False
-   MaxWidth        =   32000
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   360
-   MinimizeButton  =   False
-   MinWidth        =   640
-   Placement       =   2
-   Resizable       =   "True"
+   MinimumHeight   =   360
+   MinimumWidth    =   640
    Resizeable      =   False
-   SystemUIVisible =   "True"
    Title           =   "Welcome to Beacon"
+   Type            =   1
    Visible         =   True
    Width           =   640
-   Begin PagePanel PagePanel1
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel PagePanel1
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   360
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   216
@@ -43,22 +39,24 @@ Begin Window UserWelcomeWindow
       PanelCount      =   5
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   424
-      Begin Label PrivacyMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel PrivacyMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -75,25 +73,23 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Welcome to Beacon"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   384
       End
-      Begin Label PrivacyExplanationLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel PrivacyExplanationLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   36
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -110,11 +106,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Beacon stores fully anonymous user data to provide community project sharing and cloud storage features."
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -122,13 +116,13 @@ Begin Window UserWelcomeWindow
          Width           =   384
       End
       Begin LinkLabel PrivacyPolicyLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -146,11 +140,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "See how Beacon manages your data…"
-         TextAlign       =   1
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   100
          Transparent     =   False
          Underline       =   True
@@ -159,15 +151,16 @@ Begin Window UserWelcomeWindow
          Width           =   384
       End
       Begin UITweaks.ResizedPushButton ContinueAnonymousButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Continue"
          Default         =   True
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -177,13 +170,12 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   160
          Transparent     =   False
          Underline       =   False
@@ -191,15 +183,16 @@ Begin Window UserWelcomeWindow
          Width           =   261
       End
       Begin UITweaks.ResizedPushButton ContinueAuthenticatedButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Login With Email"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -209,13 +202,12 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   192
          Transparent     =   False
          Underline       =   False
@@ -223,15 +215,16 @@ Begin Window UserWelcomeWindow
          Width           =   261
       End
       Begin UITweaks.ResizedPushButton DisableOnlineButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Disable Cloud && Community Features"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -241,13 +234,12 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   224
          Transparent     =   False
          Underline       =   False
@@ -255,15 +247,16 @@ Begin Window UserWelcomeWindow
          Width           =   261
       End
       Begin UITweaks.ResizedPushButton QuitButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Quit"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -273,13 +266,12 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   256
          Transparent     =   False
          Underline       =   False
@@ -287,15 +279,16 @@ Begin Window UserWelcomeWindow
          Width           =   261
       End
       Begin UITweaks.ResizedPushButton LoginActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Login"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -305,13 +298,12 @@ Begin Window UserWelcomeWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -319,15 +311,16 @@ Begin Window UserWelcomeWindow
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton LoginCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -337,27 +330,26 @@ Begin Window UserWelcomeWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
-      Begin Label LoginMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel LoginMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -374,25 +366,23 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Login With Your Beacon Account"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   384
       End
-      Begin Label LoginExplanationLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel LoginExplanationLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   36
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -409,11 +399,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Using your Beacon account, you can sync files, engrams, creatures, and templates between computers."
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -421,31 +409,30 @@ Begin Window UserWelcomeWindow
          Width           =   384
       End
       Begin UITweaks.ResizedTextField LoginEmailField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   "raptorpounce@usebeacon.app"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   "raptorpounce@usebeacon.app"
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
          Left            =   352
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -453,25 +440,24 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   136
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   268
       End
       Begin UITweaks.ResizedLabel LoginEmailLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -488,11 +474,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "E-Mail Address:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   136
          Transparent     =   False
          Underline       =   False
@@ -500,31 +484,30 @@ Begin Window UserWelcomeWindow
          Width           =   104
       End
       Begin UITweaks.ResizedTextField LoginPasswordField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
          Left            =   352
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   True
          ReadOnly        =   False
          Scope           =   2
@@ -532,25 +515,24 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   169
+         Tooltip         =   ""
+         Top             =   170
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   268
       End
       Begin UITweaks.ResizedLabel LoginPasswordLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -567,25 +549,23 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Password:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   169
+         Tooltip         =   ""
+         Top             =   170
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   104
       End
-      Begin Label ConfirmMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel ConfirmMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -602,25 +582,23 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Enter Your E-Mail Address"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   384
       End
-      Begin Label ConfirmExplanationLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel ConfirmExplanationLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   36
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -637,11 +615,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "After entering your E-Mail address, you will be sent a message to confirm you own the address."
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -649,15 +625,16 @@ Begin Window UserWelcomeWindow
          Width           =   384
       End
       Begin UITweaks.ResizedPushButton ConfirmActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Send Confirmation"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -667,13 +644,12 @@ Begin Window UserWelcomeWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   7
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -681,15 +657,16 @@ Begin Window UserWelcomeWindow
          Width           =   142
       End
       Begin UITweaks.ResizedPushButton ConfirmCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -699,13 +676,12 @@ Begin Window UserWelcomeWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   6
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -713,31 +689,30 @@ Begin Window UserWelcomeWindow
          Width           =   80
       End
       Begin UITweaks.ResizedTextField ConfirmAddressField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   "aggressivedodo@usebeacon.app"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   "aggressivedodo@usebeacon.app"
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
          Left            =   352
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -745,25 +720,24 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   136
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   268
       End
       Begin UITweaks.ResizedLabel ConfirmAddressLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -780,11 +754,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "E-Mail Address:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   136
          Transparent     =   False
          Underline       =   False
@@ -792,31 +764,30 @@ Begin Window UserWelcomeWindow
          Width           =   104
       End
       Begin UITweaks.ResizedTextField ConfirmCodeField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
          Left            =   352
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
@@ -824,25 +795,24 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   170
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   False
          Width           =   114
       End
       Begin UITweaks.ResizedLabel ConfirmCodeLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -859,22 +829,21 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Code:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   170
          Transparent     =   False
          Underline       =   False
          Visible         =   False
          Width           =   104
       End
-      Begin ProgressWheel ConfirmSpinner
-         AutoDeactivate  =   True
+      Begin DesktopProgressWheel ConfirmSpinner
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   236
@@ -883,23 +852,28 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   8
          TabPanelIndex   =   3
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label ConfirmStatusLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel ConfirmStatusLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   16
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -916,25 +890,23 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Sending Code…"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Underline       =   False
          Visible         =   False
          Width           =   110
       End
-      Begin Label IdentityMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel IdentityMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -951,25 +923,23 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Create Your Profile"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   384
       End
-      Begin Label IdentityExplanationLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel IdentityExplanationLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   90
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -986,11 +956,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Time to choose a username and password. Your username can be anything you wish. Your password must be at least 8 characters long, but there are no other wacky requirements. This password will protect your account's private key, so the longer, the better."
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -998,31 +966,30 @@ Begin Window UserWelcomeWindow
          Width           =   384
       End
       Begin UITweaks.ResizedTextField IdentityUsernameField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
          Left            =   353
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -1030,25 +997,24 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   154
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   267
       End
       Begin LinkLabel IdentityRandomNameButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1066,11 +1032,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Pick a random name"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   180
          Transparent     =   False
          Underline       =   True
@@ -1079,31 +1043,30 @@ Begin Window UserWelcomeWindow
          Width           =   267
       End
       Begin UITweaks.ResizedTextField IdentityPasswordField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
          Left            =   353
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   True
          ReadOnly        =   False
          Scope           =   2
@@ -1111,43 +1074,41 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   212
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   267
       End
       Begin UITweaks.ResizedTextField IdentityPasswordConfirmField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
          Left            =   353
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   True
          ReadOnly        =   False
          Scope           =   2
@@ -1155,25 +1116,24 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   246
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   267
       End
       Begin UITweaks.ResizedLabel IdentityUsernameLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1190,11 +1150,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Username:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   154
          Transparent     =   True
          Underline       =   False
@@ -1202,13 +1160,13 @@ Begin Window UserWelcomeWindow
          Width           =   105
       End
       Begin UITweaks.ResizedLabel IdentityPasswordLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1225,11 +1183,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Password:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   212
          Transparent     =   True
          Underline       =   False
@@ -1237,13 +1193,13 @@ Begin Window UserWelcomeWindow
          Width           =   105
       End
       Begin UITweaks.ResizedLabel IdentityPasswordConfirmLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1260,26 +1216,24 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Password Again:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   246
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   105
       End
-      Begin CheckBox IdentityRevealCheckbox
-         AutoDeactivate  =   True
+      Begin DesktopCheckBox IdentityRevealCheckbox
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Reveal Password"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1290,30 +1244,29 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   0
          TabIndex        =   9
          TabPanelIndex   =   4
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   280
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
+         VisualState     =   0
          Width           =   267
       End
       Begin UITweaks.ResizedPushButton IdentityActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Create Account"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1323,13 +1276,12 @@ Begin Window UserWelcomeWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   11
          TabPanelIndex   =   4
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -1337,15 +1289,16 @@ Begin Window UserWelcomeWindow
          Width           =   123
       End
       Begin UITweaks.ResizedPushButton IdentityCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1355,24 +1308,24 @@ Begin Window UserWelcomeWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   10
          TabPanelIndex   =   4
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
-      Begin ProgressWheel IdentitySpinner
-         AutoDeactivate  =   True
+      Begin DesktopProgressWheel IdentitySpinner
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   236
@@ -1381,23 +1334,28 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   12
          TabPanelIndex   =   4
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label IdentityStatusLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel IdentityStatusLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   16
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1414,11 +1372,9 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Creating account…"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Underline       =   False
@@ -1426,13 +1382,13 @@ Begin Window UserWelcomeWindow
          Width           =   129
       End
       Begin LinkLabel LoginSignupButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1450,23 +1406,22 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Create or Recover Account"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   267
+         Tooltip         =   ""
+         Top             =   268
          Transparent     =   False
          Underline       =   True
          URL             =   ""
          Visible         =   True
          Width           =   268
       End
-      Begin ProgressWheel LoginSpinner
-         AutoDeactivate  =   True
+      Begin DesktopProgressWheel LoginSpinner
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   236
@@ -1475,23 +1430,28 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   11
          TabPanelIndex   =   2
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label LoginStatusLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel LoginStatusLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   16
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1508,19 +1468,19 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Logging in…"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Underline       =   False
          Visible         =   False
          Width           =   172
       End
-      Begin ProgressWheel WelcomePageSpinner
+      Begin DesktopProgressWheel WelcomePageSpinner
+         Active          =   False
          AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
          Index           =   -2147483648
@@ -1531,21 +1491,23 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   7
          TabPanelIndex   =   1
-         TabStop         =   True
          Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label OTPMessageLabel
+      Begin DesktopLabel OTPMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1576,11 +1538,9 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   384
       End
-      Begin Label OTPExplanationLabel
+      Begin DesktopLabel OTPExplanationLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1611,15 +1571,13 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   384
       End
-      Begin TextField OTPCodeField
+      Begin DesktopTextField OTPCodeField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1719,8 +1677,10 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   103
       End
-      Begin ProgressWheel OTPSpinner
+      Begin DesktopProgressWheel OTPSpinner
+         Active          =   False
          AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
          Index           =   -2147483648
@@ -1731,21 +1691,23 @@ Begin Window UserWelcomeWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   7
          TabPanelIndex   =   5
-         TabStop         =   True
          Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label OTPStatusLabel
+      Begin DesktopLabel OTPStatusLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "SmallSystem"
          FontSize        =   0.0
@@ -1783,7 +1745,6 @@ Begin Window UserWelcomeWindow
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   20
          Index           =   -2147483648
@@ -1807,11 +1768,9 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   40
       End
-      Begin Label OTPRememberLabel
+      Begin DesktopLabel OTPRememberLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1842,12 +1801,10 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   103
       End
-      Begin CheckBox LoginSavePasswordCheckbox
+      Begin DesktopCheckBox LoginSavePasswordCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Login Automatically"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1863,27 +1820,27 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   1
          TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   203
+         Top             =   204
          Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
+         VisualState     =   1
          Width           =   268
       End
-      Begin CheckBox LoginRevealCheckbox
-         AutoDeactivate  =   True
+      Begin DesktopCheckBox LoginRevealCheckbox
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Reveal Password"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -1894,24 +1851,21 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   0
          TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   235
+         Tooltip         =   ""
+         Top             =   236
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
+         VisualState     =   0
          Width           =   268
       End
    End
    Begin URLConnection ConfirmCodeCreationSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1920,7 +1874,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection CheckForConfirmationSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1929,7 +1882,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection VerifyConfirmationCodeSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1938,7 +1890,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection IdentitySuggestionSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1947,7 +1898,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection SubmitIdentitySocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1956,22 +1906,20 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection LoginSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin Canvas SidebarCanvas
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Begin DesktopCanvas SidebarCanvas
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   360
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -1984,18 +1932,18 @@ Begin Window UserWelcomeWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   216
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  RemoveHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
 		  If App.IdentityManager.CurrentIdentity Is Nil Then
@@ -2007,7 +1955,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  #if TargetMacOS
 		    Self.NSWindowMBS.styleMask = Self.NSWindowMBS.styleMask Or NSWindowMBS.NSFullSizeContentViewWindowMask
 		    Self.NSWindowMBS.titlebarAppearsTransparent = True
@@ -2404,7 +2352,7 @@ End
 
 #tag Events PagePanel1
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageLogin
 		    Self.LoginRevealCheckbox.Value = False
@@ -2424,12 +2372,12 @@ End
 #tag EndEvents
 #tag Events PrivacyPolicyLabel
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  System.GotoURL(Beacon.WebURL("/help/about_user_privacy"))
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.SizeToFit
 		  Me.Left = Self.PagePanel1.Left + ((Self.PagePanel1.Width - Me.Width) / 2)
 		End Sub
@@ -2437,35 +2385,35 @@ End
 #tag EndEvents
 #tag Events ContinueAnonymousButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.HandleAnonymous()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ContinueAuthenticatedButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DisableOnlineButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.HandleDisableOnline()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events QuitButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Quit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LoginActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetLoginStatus("Logging in…")
 		  Self.Login()
 		End Sub
@@ -2473,7 +2421,7 @@ End
 #tag EndEvents
 #tag Events LoginCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetLoginStatus("")
 		  Self.LoginSocket.Disconnect()
 		  
@@ -2487,19 +2435,19 @@ End
 #tag EndEvents
 #tag Events LoginEmailField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckLoginButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LoginPasswordField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckLoginButton()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub GotFocus()
+		Sub FocusLost()
 		  If Me.Text.IsEmpty Then
 		    Try
 		      Me.Text = PasswordStorage.RetrievePassword(Self.LoginEmailField.Text.Trim)
@@ -2511,7 +2459,7 @@ End
 #tag EndEvents
 #tag Events ConfirmActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mConfirmedAddress = Self.ConfirmAddressField.Text.Trim And Self.mConfirmedCode <> "" Then
 		    Self.PagePanel1.SelectedPanelIndex = Self.PageIdentity
 		    Return
@@ -2560,7 +2508,7 @@ End
 #tag EndEvents
 #tag Events ConfirmCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
 		  Self.ResetConfirmUI()
 		  Self.ConfirmCodeCreationSocket.Disconnect()
@@ -2575,28 +2523,28 @@ End
 #tag EndEvents
 #tag Events ConfirmAddressField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckConfirmButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfirmCodeField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckConfirmButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityUsernameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityRandomNameButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.IdentitySuggestionSocket.Send("GET", Beacon.WebURL("/account/login/suggest"))
 		  Me.Enabled = False
 		End Sub
@@ -2604,21 +2552,21 @@ End
 #tag EndEvents
 #tag Events IdentityPasswordField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityPasswordConfirmField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityRevealCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.IdentityPasswordField.Password = Not Me.Value
 		  Self.IdentityPasswordConfirmField.Password = Not Me.Value
 		End Sub
@@ -2626,14 +2574,14 @@ End
 #tag EndEvents
 #tag Events IdentityActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SubmitIdentity(False)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ResetConfirmUI()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageConfirm
 		  Self.SubmitIdentitySocket.Disconnect()
@@ -2644,7 +2592,7 @@ End
 #tag EndEvents
 #tag Events LoginSignupButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.ConfirmAddressField.Text.Trim = "" Then
 		    Self.ConfirmAddressField.Text = Self.LoginEmailField.Text.Trim
 		  End If
@@ -2654,14 +2602,14 @@ End
 #tag EndEvents
 #tag Events OTPCodeField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckOTPButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events OTPCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.OTPCodeField.Text = ""
 		  Self.SetOTPStatus("")
 		  Self.LoginSocket.Disconnect()
@@ -2671,7 +2619,7 @@ End
 #tag EndEvents
 #tag Events OTPActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetOTPStatus("Logging in…")
 		  Self.Login(Self.OTPCodeField.Text.Trim, Self.OTPRememberCheck.Value)
 		End Sub
@@ -2679,7 +2627,7 @@ End
 #tag EndEvents
 #tag Events OTPRememberLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.SizeToFit
 		  
 		  Var RememberWidth As Integer = Self.OTPRememberCheck.Width + 12 + Me.Width
@@ -2690,14 +2638,14 @@ End
 #tag EndEvents
 #tag Events LoginSavePasswordCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.LoginPasswordField.Password = Not Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LoginRevealCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.LoginPasswordField.Password = Not Me.Value
 		End Sub
 	#tag EndEvent
@@ -2968,7 +2916,7 @@ End
 #tag EndEvents
 #tag Events SidebarCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As Rect)
 		  #Pragma Unused Areas
 		  
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
@@ -3114,8 +3062,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -3178,7 +3126,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

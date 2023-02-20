@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog BlueprintMultiEditor
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -25,17 +25,16 @@ Begin BeaconDialog BlueprintMultiEditor
    Visible         =   True
    Width           =   640
    Begin TagPicker Picker
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Border          =   15
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       ExcludeTagCaption=   "Remove ""%%Tag%%"" From All Blueprints"
       Height          =   100
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   152
@@ -54,20 +53,20 @@ Begin BeaconDialog BlueprintMultiEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   468
    End
    Begin UITweaks.ResizedLabel MapLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -84,11 +83,9 @@ Begin BeaconDialog BlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Map Availability:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   164
       Transparent     =   False
       Underline       =   False
@@ -96,13 +93,13 @@ Begin BeaconDialog BlueprintMultiEditor
       Width           =   120
    End
    Begin UITweaks.ResizedLabel PickerLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -119,25 +116,23 @@ Begin BeaconDialog BlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Tags:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   120
    End
-   Begin Label PickerHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel PickerHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   74
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -154,11 +149,9 @@ Begin BeaconDialog BlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Selected tags will be added to all, crossed out tags will be removed from all."
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   78
       Transparent     =   False
       Underline       =   False
@@ -172,11 +165,10 @@ Begin BeaconDialog BlueprintMultiEditor
       AllowTabs       =   True
       Backdrop        =   0
       BackgroundColor =   &cFFFFFF00
+      Composited      =   False
       DesiredHeight   =   0
       DesiredWidth    =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   188
       Index           =   -2147483648
@@ -198,11 +190,9 @@ Begin BeaconDialog BlueprintMultiEditor
       Visible         =   True
       Width           =   380
    End
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -223,13 +213,13 @@ Begin BeaconDialog BlueprintMultiEditor
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Edit Blueprints"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Edit Blueprints"
       Visible         =   True
       Width           =   600
    End
@@ -298,11 +288,11 @@ Begin BeaconDialog BlueprintMultiEditor
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.Picker.ClearSelections()
 		  Self.Picker.Tags = Ark.DataSource.Pool.Get(False).GetTags(New Beacon.StringList)
 		  
@@ -377,13 +367,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Blueprints() As Ark.Blueprint) As Ark.Blueprint()
+		Shared Function Present(Parent As DesktopWindow, Blueprints() As Ark.Blueprint) As Ark.Blueprint()
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
 		  Var Win As New BlueprintMultiEditor(Blueprints)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprints() As Ark.Blueprint
 		  If Not Win.mCancelled Then
@@ -462,7 +452,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.Save() Then
 		    Self.mCancelled = False
 		    Self.Hide
@@ -472,7 +462,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -624,7 +614,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -640,8 +630,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

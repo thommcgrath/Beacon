@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ModDiscoveryDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,7 +24,7 @@ Begin BeaconDialog ModDiscoveryDialog
    Type            =   0
    Visible         =   True
    Width           =   600
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   234
@@ -39,13 +39,14 @@ Begin BeaconDialog ModDiscoveryDialog
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   False
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -112,11 +113,9 @@ Begin BeaconDialog ModDiscoveryDialog
          Visible         =   True
          Width           =   80
       End
-      Begin Label IntroMessageLabel
+      Begin DesktopLabel IntroMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -154,8 +153,6 @@ Begin BeaconDialog ModDiscoveryDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -167,7 +164,7 @@ Begin BeaconDialog ModDiscoveryDialog
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   132
+         Left            =   147
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -189,13 +186,11 @@ Begin BeaconDialog ModDiscoveryDialog
          Underline       =   False
          ValidationMask  =   ""
          Visible         =   True
-         Width           =   356
+         Width           =   341
       End
       Begin UITweaks.ResizedLabel IntroArkPathLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -224,7 +219,7 @@ Begin BeaconDialog ModDiscoveryDialog
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   100
+         Width           =   115
       End
       Begin UITweaks.ResizedPushButton IntroArkPathButton
          AllowAutoDeactivate=   True
@@ -258,11 +253,9 @@ Begin BeaconDialog ModDiscoveryDialog
          Visible         =   True
          Width           =   80
       End
-      Begin Label IntroExplanationLabel
+      Begin DesktopLabel IntroExplanationLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -293,11 +286,9 @@ Begin BeaconDialog ModDiscoveryDialog
          Visible         =   True
          Width           =   560
       End
-      Begin Label IntroSteamLabel
+      Begin DesktopLabel IntroSteamLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -335,8 +326,6 @@ Begin BeaconDialog ModDiscoveryDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -348,7 +337,7 @@ Begin BeaconDialog ModDiscoveryDialog
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   132
+         Left            =   147
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -370,13 +359,11 @@ Begin BeaconDialog ModDiscoveryDialog
          Underline       =   False
          ValidationMask  =   ""
          Visible         =   True
-         Width           =   448
+         Width           =   433
       End
       Begin UITweaks.ResizedLabel IntroModsLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -401,11 +388,11 @@ Begin BeaconDialog ModDiscoveryDialog
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   152
+         Top             =   151
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   100
+         Width           =   115
       End
       Begin UITweaks.ResizedPushButton FinishedActionButton
          AllowAutoDeactivate=   True
@@ -439,11 +426,9 @@ Begin BeaconDialog ModDiscoveryDialog
          Visible         =   True
          Width           =   80
       End
-      Begin Label WorkingStatus
+      Begin DesktopLabel WorkingStatus
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -474,8 +459,10 @@ Begin BeaconDialog ModDiscoveryDialog
          Visible         =   True
          Width           =   560
       End
-      Begin ProgressBar WorkingIndicator
+      Begin DesktopProgressBar WorkingIndicator
+         Active          =   False
          AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   20
          Indeterminate   =   True
@@ -488,22 +475,24 @@ Begin BeaconDialog ModDiscoveryDialog
          LockRight       =   True
          LockTop         =   True
          MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   False
          Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
          Width           =   560
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label FinishedMessageLabel
+      Begin DesktopLabel FinishedMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -534,11 +523,9 @@ Begin BeaconDialog ModDiscoveryDialog
          Visible         =   True
          Width           =   560
       End
-      Begin Label FinishedExplanationLabel
+      Begin DesktopLabel FinishedExplanationLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -569,11 +556,9 @@ Begin BeaconDialog ModDiscoveryDialog
          Visible         =   True
          Width           =   560
       End
-      Begin Label WorkingInstructionsLabel
+      Begin DesktopLabel WorkingInstructionsLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -604,11 +589,9 @@ Begin BeaconDialog ModDiscoveryDialog
          Visible         =   True
          Width           =   560
       End
-      Begin Label IntroDisclaimerLabel
+      Begin DesktopLabel IntroDisclaimerLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "SmallSystem"
          FontSize        =   0.0
@@ -642,7 +625,6 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin Thread RunThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -656,7 +638,6 @@ Begin BeaconDialog ModDiscoveryDialog
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
-      Enabled         =   True
       ExecuteMode     =   2
       ExitCode        =   0
       Index           =   -2147483648
@@ -679,7 +660,6 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin TCPSocket RunSocket
       Address         =   "127.0.0.1"
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -687,11 +667,11 @@ Begin BeaconDialog ModDiscoveryDialog
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.IntroArkPathField.Text = Preferences.ArkSteamPath
 		  
 		  Self.IntroSteamLabel.TextColor = SystemColors.SystemRedColor
@@ -954,7 +934,7 @@ End
 
 #tag Events IntroActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var ArkFolder As FolderItem
 		  Try
 		    ArkFolder = New FolderItem(Self.IntroArkPathField.Text, FolderItem.PathModes.Native)
@@ -1017,14 +997,14 @@ End
 #tag EndEvents
 #tag Events IntroCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IntroArkPathButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var InitialFolder As FolderItem
 		  Try
 		    InitialFolder = New FolderItem(Self.IntroArkPathField.Text, FolderItem.PathModes.Native)
@@ -1045,7 +1025,7 @@ End
 #tag EndEvents
 #tag Events FinishedActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
@@ -1498,8 +1478,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1610,7 +1590,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

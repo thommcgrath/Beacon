@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkDiscoveryView ArkFTPDiscoveryView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   310
    Index           =   -2147483648
@@ -26,11 +27,10 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin PagePanel ViewPanel
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel ViewPanel
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   310
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -42,396 +42,24 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   17
+      SelectedPanelIndex=   0
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ServerModeLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Mode:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   238
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedPopupMenu ServerModeMenu
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         InitialValue    =   "Autodetect\nFTP\nFTP with TLS\nSFTP"
-         Italic          =   False
-         Left            =   158
-         ListIndex       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   238
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   142
-      End
-      Begin Label ExplanationLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   38
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Beacon will securely send this information to the Beacon API server, which will perform the FTP work. The server will not store or log FTP information in any way."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   52
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin Label ServerMessageLabel
-         AutoDeactivate  =   True
-         Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Server Settings"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   20
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin UITweaks.ResizedLabel ServerHostLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Host:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   102
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedTextField ServerHostField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   158
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   102
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   422
-      End
-      Begin UITweaks.ResizedLabel ServerPortLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   6
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Port:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   136
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedTextField ServerPortField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   158
-         LimitText       =   5
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   "#####"
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "21"
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   136
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   101
-      End
-      Begin UITweaks.ResizedLabel ServerUserLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Username:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   170
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedTextField ServerUserField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   158
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   170
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   422
-      End
-      Begin UITweaks.ResizedLabel ServerPassLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -447,12 +75,364 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabIndex        =   10
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Password:"
-         TextAlign       =   2
+         Text            =   "Mode:"
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
+         Top             =   238
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   126
+      End
+      Begin UITweaks.ResizedPopupMenu ServerModeMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         InitialValue    =   "Autodetect\nFTP\nFTP with TLS\nSFTP"
+         Italic          =   False
+         Left            =   158
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   11
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   238
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   142
+      End
+      Begin DesktopLabel ExplanationLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   38
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Beacon will securely send this information to the Beacon API server, which will perform the FTP work. The server will not store or log FTP information in any way."
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   52
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin DesktopLabel ServerMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   True
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Server Settings"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin UITweaks.ResizedLabel ServerHostLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Host:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   102
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   126
+      End
+      Begin UITweaks.ResizedTextField ServerHostField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   158
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   102
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   422
+      End
+      Begin UITweaks.ResizedLabel ServerPortLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Port:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   136
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   126
+      End
+      Begin UITweaks.ResizedTextField ServerPortField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   158
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "21"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   136
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   101
+      End
+      Begin UITweaks.ResizedLabel ServerUserLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Username:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   170
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   126
+      End
+      Begin UITweaks.ResizedTextField ServerUserField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   158
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   170
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   422
+      End
+      Begin UITweaks.ResizedLabel ServerPassLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   8
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Password:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
          Top             =   204
          Transparent     =   True
          Underline       =   False
@@ -460,57 +440,55 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Width           =   126
       End
       Begin UITweaks.ResizedTextField ServerPassField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
          Left            =   158
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   True
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   204
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   422
       End
-      Begin Label DiscoveringMessage
-         AutoDeactivate  =   True
+      Begin DesktopLabel DiscoveringMessage
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -527,22 +505,21 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Connecting to Server…"
-         TextAlign       =   1
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   129
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   560
       End
-      Begin ProgressBar DiscoveringProgress
-         AutoDeactivate  =   True
+      Begin DesktopProgressBar DiscoveringProgress
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   20
-         HelpTag         =   ""
          Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
@@ -552,25 +529,30 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Maximum         =   0
+         MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   161
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
          Width           =   560
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label BrowseMessage
-         AutoDeactivate  =   True
+      Begin DesktopLabel BrowseMessage
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -587,11 +569,9 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Please locate your Game.ini file"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -599,15 +579,16 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton BrowseActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -617,13 +598,12 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   7
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   270
          Transparent     =   False
          Underline       =   False
@@ -631,15 +611,16 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton BrowseCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -649,13 +630,12 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   6
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   270
          Transparent     =   False
          Underline       =   False
@@ -663,18 +643,17 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Width           =   80
       End
       Begin ColumnBrowser Browser
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          CurrentPath     =   ""
-         DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   204
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   21
@@ -684,20 +663,21 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   53
          Transparent     =   True
-         UseFocusRing    =   False
          Visible         =   True
          Width           =   558
       End
-      Begin ProgressWheel BrowseSpinner
-         AutoDeactivate  =   True
+      Begin DesktopProgressWheel BrowseSpinner
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -706,25 +686,31 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
+         PanelIndex      =   0
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   8
          TabPanelIndex   =   3
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   274
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin UITweaks.ResizedPushButton ServerCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -734,13 +720,12 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   12
+         TabIndex        =   13
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   270
          Transparent     =   False
          Underline       =   False
@@ -748,15 +733,16 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton ServerActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -766,13 +752,12 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   14
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   270
          Transparent     =   False
          Underline       =   False
@@ -780,15 +765,14 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Width           =   80
       End
       Begin FadedSeparator BrowseBorders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
-         HelpTag         =   ""
          Index           =   0
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -801,25 +785,24 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   3
+         TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   560
       End
       Begin FadedSeparator BrowseBorders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
-         HelpTag         =   ""
          Index           =   1
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -832,25 +815,24 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   4
+         TabIndex        =   5
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   257
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   560
       End
       Begin FadedSeparator BrowseBorders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   204
-         HelpTag         =   ""
          Index           =   2
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -863,25 +845,24 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   5
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   53
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   1
       End
       Begin FadedSeparator BrowseBorders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   204
-         HelpTag         =   ""
          Index           =   3
          InitialParent   =   "ViewPanel"
          Left            =   579
@@ -894,21 +875,19 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   6
+         TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   53
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   1
       End
-      Begin CheckBox VerifyCertificateCheck
+      Begin DesktopCheckBox VerifyCertificateCheck
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Verify Certificate (TLS Only)"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -924,8 +903,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         State           =   1
-         TabIndex        =   14
+         TabIndex        =   12
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
@@ -934,6 +912,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Underline       =   False
          Value           =   True
          Visible         =   True
+         VisualState     =   0
          Width           =   268
       End
    End
@@ -956,7 +935,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -966,7 +945,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  RaiseEvent Open
 		  Self.SwapButtons()
 		End Sub
@@ -1110,7 +1089,7 @@ End
 
 #tag Events ViewPanel
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  If Me.SelectedPanelIndex = Self.PageDiscovering Then
 		    Self.StatusWatcher.RunMode = Timer.RunModes.Multiple
 		  Else
@@ -1121,7 +1100,9 @@ End
 #tag EndEvents
 #tag Events ServerModeMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  Self.VerifyCertificateCheck.Visible = Me.SelectedRowIndex = 0 Or Me.SelectedRowIndex = 2
 		  Self.VerifyCertificateCheck.Caption = If(Me.SelectedRowIndex = 0, "Verify Certificate (TLS Only)", "Verify Certificate")
 		  
@@ -1131,40 +1112,40 @@ End
 #tag EndEvents
 #tag Events ServerHostField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub LostFocus()
+		Sub FocusLost()
 		  Self.CheckHostForPort()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPortField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerUserField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPassField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events BrowseActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var GameIniPath As String = Self.Browser.CurrentPath
 		  Var Components() As String = GameIniPath.Split("/")
 		  If Components.LastIndex <= 2 Then
@@ -1186,7 +1167,7 @@ End
 #tag EndEvents
 #tag Events BrowseCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		End Sub
 	#tag EndEvent
@@ -1215,7 +1196,7 @@ End
 #tag EndEvents
 #tag Events ServerCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
 		  
 		  Self.ShouldCancel()
@@ -1224,7 +1205,7 @@ End
 #tag EndEvents
 #tag Events ServerActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CheckHostForPort()
 		  
 		  Self.mProfile = New Ark.FTPServerProfile()
@@ -1331,19 +1312,19 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1375,8 +1356,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1399,14 +1380,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

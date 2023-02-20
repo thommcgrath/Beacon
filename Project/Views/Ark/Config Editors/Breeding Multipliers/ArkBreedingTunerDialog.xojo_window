@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkBreedingTunerDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,14 +27,14 @@ Begin BeaconDialog ArkBreedingTunerDialog
    Title           =   "Auto Compute Imprinting Multiplier"
    Visible         =   True
    Width           =   600
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -51,25 +51,23 @@ Begin BeaconDialog ArkBreedingTunerDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Auto Compute Imprinting Multiplier"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   560
    End
-   Begin Label ExplanationLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel ExplanationLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   36
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -86,11 +84,9 @@ Begin BeaconDialog ArkBreedingTunerDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Choose the creatures that are important for hitting 100% imprint, and Beacon will compute the best imprint period multiplier."
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -98,15 +94,16 @@ Begin BeaconDialog ArkBreedingTunerDialog
       Width           =   560
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -116,13 +113,12 @@ Begin BeaconDialog ArkBreedingTunerDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   360
       Transparent     =   False
       Underline       =   False
@@ -130,15 +126,16 @@ Begin BeaconDialog ArkBreedingTunerDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -148,13 +145,12 @@ Begin BeaconDialog ArkBreedingTunerDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   360
       Transparent     =   False
       Underline       =   False
@@ -162,30 +158,33 @@ Begin BeaconDialog ArkBreedingTunerDialog
       Width           =   80
    End
    Begin BeaconListbox CreaturesList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   True
       ColumnCount     =   2
-      ColumnsResizable=   False
       ColumnWidths    =   "22,*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   216
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -198,22 +197,16 @@ Begin BeaconDialog ArkBreedingTunerDialog
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
       VisibleRowCount =   0
       Width           =   560
@@ -221,15 +214,16 @@ Begin BeaconDialog ArkBreedingTunerDialog
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedPushButton MajorCreaturesButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Major Creatures"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -239,13 +233,12 @@ Begin BeaconDialog ArkBreedingTunerDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
@@ -253,15 +246,16 @@ Begin BeaconDialog ArkBreedingTunerDialog
       Width           =   129
    End
    Begin UITweaks.ResizedPushButton AllCreaturesButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "All Creatures"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -271,13 +265,12 @@ Begin BeaconDialog ArkBreedingTunerDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
@@ -285,15 +278,16 @@ Begin BeaconDialog ArkBreedingTunerDialog
       Width           =   129
    End
    Begin UITweaks.ResizedPushButton ClearCreaturesButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Clear Creatures"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -303,13 +297,12 @@ Begin BeaconDialog ArkBreedingTunerDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
@@ -317,12 +310,12 @@ Begin BeaconDialog ArkBreedingTunerDialog
       Width           =   129
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
-		  Self.CreaturesList.ColumnTypeAt(Self.ColumnChecked) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Self.CreaturesList.ColumnTypeAt(Self.ColumnChecked) = DesktopListbox.CellTypes.CheckBox
 		  
 		  For Each Creature As Ark.Creature In Self.mCreatures
 		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
@@ -384,13 +377,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, BaselineRates As Dictionary, MatureSpeedMultiplier As Double, ImprintAmountMultiplier As Double, Creatures() As Ark.Creature) As Double
+		Shared Function Present(Parent As DesktopWindow, BaselineRates As Dictionary, MatureSpeedMultiplier As Double, ImprintAmountMultiplier As Double, Creatures() As Ark.Creature) As Double
 		  If Parent = Nil Then
 		    Return 0
 		  End If
 		  
 		  Var Win As New ArkBreedingTunerDialog(BaselineRates, MatureSpeedMultiplier, ImprintAmountMultiplier, Creatures)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  Var Multiplier As Double = Win.mChosenMultiplier
 		  Win.Close
 		  
@@ -439,7 +432,7 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mChosenMultiplier = 0
 		  Self.Hide
 		End Sub
@@ -447,7 +440,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Const Threshold = 0.90
 		  
 		  Var Creatures() As Ark.Creature
@@ -499,21 +492,21 @@ End
 #tag EndEvents
 #tag Events MajorCreaturesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CheckCreatures(Ark.DataSource.Pool.Get(False).GetStringVariable("Major Imprint Creatures"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AllCreaturesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CheckCreatures("*")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ClearCreaturesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CheckCreatures("")
 		End Sub
 	#tag EndEvent
@@ -648,8 +641,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -752,7 +745,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

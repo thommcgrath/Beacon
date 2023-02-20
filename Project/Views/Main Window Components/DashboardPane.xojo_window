@@ -1,13 +1,18 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
+   AcceptFocus     =   "False"
+   AcceptTabs      =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
+   AutoDeactivate  =   "True"
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackColor    =   False
    Height          =   556
    HelpTag         =   ""
@@ -21,21 +26,23 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
+   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   808
    Begin UITweaks.ResizedPushButton NewFileButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "New Project…"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -45,13 +52,12 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   243
       Transparent     =   False
       Underline       =   False
@@ -59,15 +65,16 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Width           =   120
    End
    Begin UITweaks.ResizedPushButton OpenFileButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Open Project…"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -77,27 +84,26 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   243
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   120
    End
-   Begin Label VersionLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel VersionLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -114,25 +120,23 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Version X"
-      TextAlign       =   1
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   307
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   350
    End
-   Begin Label CopyrightLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel CopyrightLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -149,25 +153,23 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "© 2016-?1 The ZAZ Studios, All Rights Reserved."
-      TextAlign       =   1
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   516
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   768
    End
-   Begin Label SyncLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel SyncLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -184,11 +186,9 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Engrams Updated Y"
-      TextAlign       =   1
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   329
       Transparent     =   True
       Underline       =   False
@@ -196,15 +196,14 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Width           =   350
    End
    Begin ControlCanvas TitleCanvas
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   86
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   279
@@ -220,20 +219,20 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   137
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   250
    End
    Begin LinkLabel WebsiteLink
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -251,11 +250,9 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "https://usebeacon.app/"
-      TextAlign       =   1
+      TextAlignment   =   2
       TextColor       =   &c0000FF00
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   275
       Transparent     =   True
       Underline       =   True
@@ -263,8 +260,10 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   350
    End
-   Begin ProgressBar EngramImportIndicator
+   Begin DesktopProgressBar EngramImportIndicator
+      Active          =   False
       AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
       Indeterminate   =   True
@@ -277,29 +276,33 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       MaximumValue    =   100
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   11
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   351
       Transparent     =   False
       Value           =   0.0
       Visible         =   False
       Width           =   350
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ViewTitle = "Home"
 		  
 		  Self.mMainGroup = New ControlGroup(TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink, EngramImportIndicator)
@@ -360,7 +363,7 @@ End
 		  Case DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped
 		    Self.UpdateEngramStatus()
 		  Case IdentityManager.Notification_IdentityChanged
-		    Self.TitleCanvas.Invalidate
+		    Self.TitleCanvas.Refresh
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -408,28 +411,28 @@ End
 
 #tag Events NewFileButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  RaiseEvent NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events OpenFileButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  App.ShowOpenDocument(Self.TrueWindow)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events VersionLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Text = "Version " + App.BuildVersion
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CopyrightLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var BuildDate As DateTime = App.BuildDateTime
 		  Var Year As Integer = BuildDate.Year
 		  Me.Text = Language.ReplacePlaceholders(Me.Text, Year.ToString(Locale.Raw, "0000"))
@@ -438,7 +441,7 @@ End
 #tag EndEvents
 #tag Events TitleCanvas
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
 		  #Pragma Unused SafeArea
@@ -455,17 +458,33 @@ End
 #tag EndEvents
 #tag Events WebsiteLink
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Text = Beacon.WebURL()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  System.GotoURL(Me.Text)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -507,14 +526,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -543,8 +554,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -584,14 +595,6 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

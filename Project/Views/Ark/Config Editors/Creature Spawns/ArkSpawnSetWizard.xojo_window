@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkSpawnSetWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkSpawnSetWizard
    Type            =   8
    Visible         =   True
    Width           =   500
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,13 +47,13 @@ Begin BeaconDialog ArkSpawnSetWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Spawn Set Creation Wizard"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Spawn Set Creation Wizard"
       Visible         =   True
       Width           =   560
    End
@@ -126,8 +124,6 @@ Begin BeaconDialog ArkSpawnSetWizard
    Begin UITweaks.ResizedLabel CreatureLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -148,13 +144,13 @@ Begin BeaconDialog ArkSpawnSetWizard
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Creature:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
-      Value           =   "Creature:"
       Visible         =   True
       Width           =   131
    End
@@ -193,8 +189,6 @@ Begin BeaconDialog ArkSpawnSetWizard
    Begin UITweaks.ResizedLabel CreatureNameField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -215,13 +209,13 @@ Begin BeaconDialog ArkSpawnSetWizard
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Not Selected"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
-      Value           =   "Not Selected"
       Visible         =   True
       Width           =   219
    End
@@ -232,8 +226,6 @@ Begin BeaconDialog ArkSpawnSetWizard
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -258,6 +250,7 @@ Begin BeaconDialog ArkSpawnSetWizard
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -265,15 +258,12 @@ Begin BeaconDialog ArkSpawnSetWizard
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "3000"
       Visible         =   True
       Width           =   86
    End
    Begin UITweaks.ResizedLabel RadiusLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -294,17 +284,17 @@ Begin BeaconDialog ArkSpawnSetWizard
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Radius:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   92
       Transparent     =   False
       Underline       =   False
-      Value           =   "Radius:"
       Visible         =   True
       Width           =   131
    End
-   Begin Slider RadiusSlider
+   Begin DesktopSlider RadiusSlider
       AllowAutoDeactivate=   True
       AllowLiveScrolling=   True
       Enabled         =   True
@@ -336,8 +326,6 @@ Begin BeaconDialog ArkSpawnSetWizard
    Begin UITweaks.ResizedPopupMenu TemplateMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -368,8 +356,6 @@ Begin BeaconDialog ArkSpawnSetWizard
    Begin UITweaks.ResizedLabel TemplateLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -390,21 +376,19 @@ Begin BeaconDialog ArkSpawnSetWizard
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Template:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   126
       Transparent     =   False
       Underline       =   False
-      Value           =   "Template:"
       Visible         =   True
       Width           =   131
    End
    Begin UITweaks.ResizedLabel MinPackSizeLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -438,8 +422,6 @@ Begin BeaconDialog ArkSpawnSetWizard
    Begin UITweaks.ResizedLabel MaxPackSizeLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -477,8 +459,6 @@ Begin BeaconDialog ArkSpawnSetWizard
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -521,8 +501,6 @@ Begin BeaconDialog ArkSpawnSetWizard
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -558,11 +536,9 @@ Begin BeaconDialog ArkSpawnSetWizard
       Visible         =   True
       Width           =   86
    End
-   Begin Label PackSizeRadiusLabel
+   Begin DesktopLabel PackSizeRadiusLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -594,11 +570,11 @@ Begin BeaconDialog ArkSpawnSetWizard
       Width           =   219
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.RadiusField.DoubleValue = Self.RadiusSlider.Value
 		  Self.MinPackSizeField.DoubleValue = 1
 		  Self.MaxPackSizeField.DoubleValue = 1
@@ -686,13 +662,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Organizer As Ark.SpawnSetOrganizer, Mods As Beacon.StringList) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Organizer As Ark.SpawnSetOrganizer, Mods As Beacon.StringList) As Boolean
 		  If Parent = Nil Or Organizer = Nil Then
 		    Return False
 		  End If
 		  
 		  Var Win As New ArkSpawnSetWizard(Organizer, Mods)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
 		  Return Not Cancelled
@@ -731,7 +707,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mSelectedCreature = Nil Then
 		    Self.ShowAlert("Please select a creature", "Use the ""Choose…"" button to select a target creature if you wish to continue.")
 		    Return
@@ -808,7 +784,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -816,7 +792,7 @@ End
 #tag EndEvents
 #tag Events SelectCreatureButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Exclude() As Ark.Creature
 		  Var Creatures() As Ark.Creature = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.Single)
 		  If Creatures = Nil Or Creatures.LastIndex <> 0 Then
@@ -985,8 +961,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1097,7 +1073,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

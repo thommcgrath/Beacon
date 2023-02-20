@@ -51,7 +51,7 @@ Implements ObservationKit.Observer
 		  
 		  Page.AddObserver(Self, "ViewID")
 		  
-		  Var Panel As PagePanel = Self.ViewsPanel
+		  Var Panel As DesktopPagePanel = Self.ViewsPanel
 		  If (Panel Is Nil) = False And Panel.PanelCount < Self.mPages.Count Then
 		    // Embed it
 		    Panel.AddPanel
@@ -166,7 +166,7 @@ Implements ObservationKit.Observer
 		    NewPage.SwitchedTo(Nil)
 		  End If
 		  
-		  Var Panel As PagePanel = Self.ViewsPanel
+		  Var Panel As DesktopPagePanel = Self.ViewsPanel
 		  If (Panel Is Nil) = False Then
 		    Panel.SelectedPanelIndex = NewPageIdx
 		  End If
@@ -231,7 +231,7 @@ Implements ObservationKit.Observer
 		Function ModifiedPages() As BeaconSubview()
 		  Var Pages() As BeaconSubview
 		  For Each Page As BeaconSubview In Self.mPages
-		    If Page.Changed Then
+		    If Page.Modified Then
 		      Pages.Add(Page)
 		    End If
 		  Next
@@ -308,7 +308,7 @@ Implements ObservationKit.Observer
 		  RemoveHandler Self.mPages(Idx).WantsFrontmost, AddressOf View_WantsFrontmost
 		  Self.mPages.RemoveAt(Idx)
 		  
-		  Var Panel As PagePanel = Self.ViewsPanel
+		  Var Panel As DesktopPagePanel = Self.ViewsPanel
 		  If (Panel Is Nil) = False Then
 		    Panel.RemovePanelAt(Idx)
 		  End If
@@ -337,7 +337,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ViewsPanel() As PagePanel
+		Private Function ViewsPanel() As DesktopPagePanel
 		  Return RaiseEvent GetPagePanel
 		End Function
 	#tag EndMethod
@@ -361,7 +361,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event GetPagePanel() As PagePanel
+		Event GetPagePanel() As DesktopPagePanel
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -395,6 +395,22 @@ Implements ObservationKit.Observer
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Modified"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Composited"
+			Visible=true
+			Group="Window Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -552,8 +568,8 @@ Implements ObservationKit.Observer
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBackgroundColor"
@@ -633,22 +649,6 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			InitialValue="300"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

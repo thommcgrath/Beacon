@@ -8,7 +8,7 @@ Inherits ControlCanvas
 		    Self.mPressedCell = Cell
 		    Self.mHoverCell = Cell
 		    Self.mOriginCell = Cell
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		  Return True
 		End Function
@@ -23,7 +23,7 @@ Inherits ControlCanvas
 		  If Self.mPressedCell <> Cell Or Self.mHoverCell <> Cell Then
 		    Self.mPressedCell = Cell
 		    Self.mHoverCell = Cell
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
@@ -31,14 +31,14 @@ Inherits ControlCanvas
 	#tag Event
 		Sub MouseEnter()
 		  Self.mHoverCell = -1
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub MouseExit()
 		  Self.mHoverCell = -1
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
@@ -47,7 +47,7 @@ Inherits ControlCanvas
 		  Var Cell As Integer = Self.IndexAtXY(X, Y)
 		  If Self.mHoverCell <> Cell Then
 		    Self.mHoverCell = Cell
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
@@ -65,12 +65,12 @@ Inherits ControlCanvas
 		  Self.mPressedCell = -1
 		  Self.mOriginCell = -1
 		  Self.mHoverCell = Cell
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
 		  #Pragma Unused SafeArea
@@ -224,7 +224,7 @@ Inherits ControlCanvas
 			Set
 			  If Self.mSelectedColor <> Value Then
 			    Self.mSelectedColor = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -458,22 +458,6 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

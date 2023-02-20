@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkSetupTransferrableElementDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
    Type            =   8
    Visible         =   True
    Width           =   600
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -59,11 +57,9 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
       Visible         =   True
       Width           =   560
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -129,8 +125,6 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
    Begin UITweaks.ResizedLabel IntermediateLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -161,7 +155,7 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
       Visible         =   True
       Width           =   159
    End
-   Begin RadioButton CraftIntoShardsRadio
+   Begin DesktopRadioButton CraftIntoShardsRadio
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Intermediate crafts into 100 shards"
@@ -191,7 +185,7 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
       Visible         =   True
       Width           =   389
    End
-   Begin RadioButton CraftIntoElementRadio
+   Begin DesktopRadioButton CraftIntoElementRadio
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Intermediate crafts into 1 element"
@@ -221,11 +215,9 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
       Visible         =   True
       Width           =   389
    End
-   Begin Label IntermediateField
+   Begin DesktopLabel IntermediateField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -321,7 +313,7 @@ Begin BeaconDialog ArkSetupTransferrableElementDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
@@ -334,13 +326,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Config As Ark.Configs.CraftingCosts, ContentPacks As Beacon.StringList) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Config As Ark.Configs.CraftingCosts, ContentPacks As Beacon.StringList) As Boolean
 		  If Parent Is Nil Then
 		    Return False
 		  End If
 		  
 		  Var Win As New ArkSetupTransferrableElementDialog(Config, ContentPacks)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
 		  Return Not Cancelled
@@ -369,7 +361,7 @@ End
 
 #tag Events ChooseIntermediateButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Exclude() As Ark.Engram
 		  Var Engrams() As Ark.Engram = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.Single)
 		  If Engrams <> Nil And Engrams.Count = 1 Then
@@ -381,7 +373,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Element As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("904af0d9-ec92-447b-bcaa-d1a8bf1ab3cf")
 		  
 		  Var IntermediateCost As New Ark.MutableCraftingCost(Self.mIntermediate, False)
@@ -407,7 +399,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -527,8 +519,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -639,7 +631,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

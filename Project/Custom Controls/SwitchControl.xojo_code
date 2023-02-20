@@ -2,21 +2,21 @@
 Protected Class SwitchControl
 Inherits ControlCanvas
 	#tag Event
-		Sub Activate()
-		  RaiseEvent Activate
-		  Self.Invalidate
+		Sub Activated()
+		  RaiseEvent Activated
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Deactivate()
-		  RaiseEvent Deactivate
-		  Self.Invalidate
+		Sub Deactivated()
+		  RaiseEvent Deactivated
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Function KeyDown(Key As String) As Boolean
+		Function KeyDown(key As String) As Boolean
 		  If RaiseEvent KeyDown(Key) Then
 		    Return True
 		  End If
@@ -42,7 +42,7 @@ Inherits ControlCanvas
 		  Self.mMouseDownPoint = New Point(X, Y)
 		  Self.mDragEligible = ThumbRect.Contains(Self.mMouseDownPoint)
 		  Self.mDragStarted = False
-		  Self.Invalidate
+		  Self.Refresh
 		  
 		  If (Self.mValueChangeAnimation Is Nil) = False Then
 		    Self.mValueChangeAnimation.Cancel
@@ -103,7 +103,7 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused SafeArea
 		  
@@ -205,10 +205,10 @@ Inherits ControlCanvas
 		  Select Case Identifier
 		  Case "AnimationState"
 		    Self.mAnimationState = Value
-		    Self.Invalidate
+		    Self.Refresh
 		  Case "PressedOpacity"
 		    Self.mPressedOpacity = Value
-		    Self.Invalidate
+		    Self.Refresh
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -235,37 +235,37 @@ Inherits ControlCanvas
 		  Var ThumbRange As Integer = ThumbMaxX - ThumbMinX
 		  
 		  Self.mAnimationState = Max(Min((NewRect.Left - ThumbMinX) / ThumbRange, 1.0), 0.0)
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Value() As Boolean
-		  Return Self.VisualState = Checkbox.VisualStates.Checked
+		  Return Self.VisualState = DesktopCheckbox.VisualStates.Checked
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Value(Animated As Boolean = True, Assigns Value As Boolean)
 		  If Value Then
-		    Self.VisualState(Animated) = Checkbox.VisualStates.Checked
+		    Self.VisualState(Animated) = DesktopCheckbox.VisualStates.Checked
 		  Else
-		    Self.VisualState(Animated) = Checkbox.VisualStates.Unchecked
+		    Self.VisualState(Animated) = DesktopCheckbox.VisualStates.Unchecked
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function VisualState() As Checkbox.VisualStates
+		Function VisualState() As DesktopCheckbox.VisualStates
 		  Return Self.mVisualState
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub VisualState(Animated As Boolean = True, Assigns Value As Checkbox.VisualStates)
+		Sub VisualState(Animated As Boolean = True, Assigns Value As DesktopCheckBox.VisualStates)
 		  If Self.mVisualState <> Value Then
 		    Self.mVisualState = Value
-		    RaiseEvent Action
+		    RaiseEvent Pressed
 		  End If
 		  
 		  If (Self.mValueChangeAnimation Is Nil) = False Then
@@ -275,11 +275,11 @@ Inherits ControlCanvas
 		  
 		  Var TargetState As Double
 		  Select Case Self.mVisualState
-		  Case Checkbox.VisualStates.Checked
+		  Case DesktopCheckbox.VisualStates.Checked
 		    TargetState = 1.0
-		  Case Checkbox.VisualStates.Indeterminate
+		  Case DesktopCheckbox.VisualStates.Indeterminate
 		    TargetState = 0.5
-		  Case Checkbox.VisualStates.Unchecked
+		  Case DesktopCheckbox.VisualStates.Unchecked
 		    TargetState = 0.0
 		  End Select
 		  
@@ -300,19 +300,19 @@ Inherits ControlCanvas
 
 
 	#tag Hook, Flags = &h0
-		Event Action()
+		Event Activated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Activate()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Deactivate()
+		Event Deactivated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event KeyDown(Key As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Pressed()
 	#tag EndHook
 
 
@@ -345,7 +345,7 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mVisualState As Checkbox.VisualStates
+		Private mVisualState As DesktopCheckbox.VisualStates
 	#tag EndProperty
 
 
@@ -560,22 +560,6 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

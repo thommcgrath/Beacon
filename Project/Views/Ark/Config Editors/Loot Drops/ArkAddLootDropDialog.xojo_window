@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkAddLootDropDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,11 +27,10 @@ Begin BeaconDialog ArkAddLootDropDialog
    Title           =   "Add Loot Drop"
    Visible         =   True
    Width           =   550
-   Begin PagePanel Panel
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel Panel
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   400
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -43,24 +42,27 @@ Begin BeaconDialog ArkAddLootDropDialog
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -70,13 +72,12 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -84,15 +85,16 @@ Begin BeaconDialog ArkAddLootDropDialog
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton SelectionCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -102,27 +104,26 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
-      Begin Label SelectionMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel SelectionMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -139,11 +140,9 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Add Loot Drop"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -151,15 +150,16 @@ Begin BeaconDialog ArkAddLootDropDialog
          Width           =   249
       End
       Begin UITweaks.ResizedPushButton CustomizeActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Done"
          Default         =   True
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -169,13 +169,12 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   11
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -183,15 +182,16 @@ Begin BeaconDialog ArkAddLootDropDialog
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton CustomizeCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Back"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -201,27 +201,26 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
-      Begin Label CustomizeMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel CustomizeMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -238,11 +237,9 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Customize Loot Drop"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -250,31 +247,30 @@ Begin BeaconDialog ArkAddLootDropDialog
          Width           =   510
       End
       Begin UITweaks.ResizedTextField CustomizeMinSetsField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
          Left            =   136
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   "###"
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -282,25 +278,24 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   54
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel CustomizeMinSetsLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -317,11 +312,9 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Min Item Sets:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   54
          Transparent     =   True
          Underline       =   False
@@ -329,31 +322,30 @@ Begin BeaconDialog ArkAddLootDropDialog
          Width           =   104
       End
       Begin UITweaks.ResizedTextField CustomizeMaxSetsField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
          Left            =   136
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   "###"
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -361,25 +353,24 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   88
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel CustomizeMaxSetsLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -396,26 +387,24 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Max Item Sets:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   88
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   104
       End
-      Begin CheckBox CustomizePreventDuplicatesCheck
-         AutoDeactivate  =   True
+      Begin DesktopCheckBox CustomizePreventDuplicatesCheck
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Prevent Duplicates"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -426,28 +415,26 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   0
          TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   122
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
+         VisualState     =   0
          Width           =   394
       End
-      Begin Label CustomizeTemplatesLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel CustomizeTemplatesLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -460,30 +447,28 @@ Begin BeaconDialog ArkAddLootDropDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   6
+         TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Templates:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   186
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   104
       End
-      Begin CheckBox CustomizeReconfigureCheckbox
-         AutoDeactivate  =   True
+      Begin DesktopCheckBox CustomizeReconfigureCheckbox
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Rebuild Existing Item Sets"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   "When enabled, the existing item sets will be emptied and refilled according to their original template."
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -494,29 +479,27 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         State           =   0
-         TabIndex        =   8
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   328
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
+         VisualState     =   0
          Width           =   394
       End
-      Begin CheckBox SelectionExperimentalCheck
-         AutoDeactivate  =   True
+      Begin DesktopCheckBox SelectionExperimentalCheck
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Show Experimental Loot Drops"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -527,21 +510,20 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         State           =   0
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   328
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
+         VisualState     =   0
          Width           =   326
       End
       Begin DelayedSearchField FilterField
+         Active          =   False
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowRecentItems=   False
@@ -559,6 +541,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockRight       =   True
          LockTop         =   True
          MaximumRecentItems=   -1
+         PanelIndex      =   0
          RecentItemsValue=   "Recent Searches"
          Scope           =   2
          TabIndex        =   1
@@ -570,32 +553,39 @@ Begin BeaconDialog ArkAddLootDropDialog
          Transparent     =   False
          Visible         =   True
          Width           =   249
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin BeaconListbox SourceList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   2
-         ColumnsResizable=   False
          ColumnWidths    =   "50,*"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   "#BeaconListbox.DoubleLineRowHeight"
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   0
          Height          =   230
-         HelpTag         =   ""
-         Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
          InitialValue    =   " 	Label	Kind	Package"
@@ -608,22 +598,16 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   1
-         ShowDropIndicator=   False
          TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   54
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
          Width           =   510
@@ -631,30 +615,33 @@ Begin BeaconDialog ArkAddLootDropDialog
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox CustomizeTemplatesList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   2
-         ColumnsResizable=   False
          ColumnWidths    =   "22,*"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   22
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   1
          Height          =   130
-         HelpTag         =   ""
-         Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
          InitialValue    =   ""
@@ -667,34 +654,26 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   7
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   186
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
          Width           =   394
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin CheckBox CustomizeAppendItemSetsCheck
+      Begin DesktopCheckBox CustomizeAppendItemSetsCheck
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Add Item Sets to Default"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -710,7 +689,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -722,12 +701,10 @@ Begin BeaconDialog ArkAddLootDropDialog
          VisualState     =   0
          Width           =   394
       End
-      Begin CheckBox LoadDefaultsCheckbox
+      Begin DesktopCheckBox LoadDefaultsCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Load Default Contents When Available"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -743,7 +720,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
@@ -757,11 +734,11 @@ Begin BeaconDialog ArkAddLootDropDialog
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If Self.mShowAsDuplicate Then
 		    Self.SelectionMessageLabel.Text = "Duplicate Loot Drop"
 		    Self.LoadDefaultsCheckbox.Visible = False
@@ -819,7 +796,7 @@ End
 		  
 		  Var Selections() As String
 		  For I As Integer = 0 To Self.SourceList.RowCount - 1
-		    If Not Self.SourceList.Selected(I) Then
+		    If Not Self.SourceList.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -844,7 +821,7 @@ End
 		    End If
 		    Self.SourceList.AddRow("", RowText)
 		    Self.SourceList.RowTagAt(Self.SourceList.LastAddedRowIndex) = Container
-		    Self.SourceList.Selected(Self.SourceList.LastAddedRowIndex) = Selections.IndexOf(Container.Path) > -1
+		    Self.SourceList.RowSelectedAt(Self.SourceList.LastAddedRowIndex) = Selections.IndexOf(Container.Path) > -1
 		  Next
 		  Self.SourceList.Sort
 		  Self.SourceList.ScrollPosition = ScrollPosition
@@ -860,7 +837,7 @@ End
 		  Self.mDestinations.ResizeTo(-1)
 		  
 		  For I As Integer = 0 To Self.SourceList.RowCount - 1
-		    If Not Self.SourceList.Selected(I) Then
+		    If Not Self.SourceList.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -907,7 +884,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Config As Ark.Configs.LootDrops, Mask As UInt64, ContentPacks As Beacon.StringList, Source As Ark.LootContainer = Nil, ShowAsDuplicate As Boolean = False) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Config As Ark.Configs.LootDrops, Mask As UInt64, ContentPacks As Beacon.StringList, Source As Ark.LootContainer = Nil, ShowAsDuplicate As Boolean = False) As Boolean
 		  If Parent Is Nil Or Config Is Nil Then
 		    Return False
 		  End If
@@ -921,7 +898,7 @@ End
 		  
 		  ShowAsDuplicate = ShowAsDuplicate And (Source Is Nil) = False
 		  Var Win As New ArkAddLootDropDialog(Config, Mask, ContentPacks, Source, ShowAsDuplicate)
-		  Win.ShowModalWithin(Parent)
+		  Win.ShowModal(Parent)
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -983,7 +960,7 @@ End
 		        HasUsedTemplates = True
 		        Self.CustomizeTemplatesList.CellCheckBoxValueAt(I, 0) = True
 		        If Set.Label <> Template.Label Then
-		          Self.CustomizeTemplatesList.CellValueAt(I, 1) = Set.Label + " (" + Template.Label + ")"
+		          Self.CustomizeTemplatesList.CellTextAt(I, 1) = Set.Label + " (" + Template.Label + ")"
 		        End If
 		        If Not Scrolled Then
 		          Self.CustomizeTemplatesList.ScrollPosition = I
@@ -1052,14 +1029,14 @@ End
 
 #tag Events SelectionActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ChooseSelectedLootSources()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -1067,7 +1044,7 @@ End
 #tag EndEvents
 #tag Events CustomizeActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Text))
 		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Text))
 		  Var PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
@@ -1136,7 +1113,7 @@ End
 #tag EndEvents
 #tag Events CustomizeCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Me.Caption = "Cancel" Then
 		    Self.mCancelled = True
 		    Self.Hide
@@ -1149,7 +1126,7 @@ End
 #tag EndEvents
 #tag Events SelectionExperimentalCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Preferences.ShowExperimentalLootSources = Me.Value Then
 		    Return
 		  End If
@@ -1168,12 +1145,12 @@ End
 #tag EndEvents
 #tag Events SourceList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  SelectionActionButton.Enabled = Me.SelectedRowIndex > -1
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		Sub PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused BackgroundColor
 		  #Pragma Unused IsHighlighted
 		  #Pragma Unused TextColor
@@ -1184,7 +1161,7 @@ End
 		  
 		  Var Container As Ark.LootContainer = Me.RowTagAt(Row)
 		  Var Icon As Picture
-		  If Me.Selected(Row) And IsHighlighted Then
+		  If Me.RowSelectedAt(Row) And IsHighlighted Then
 		    Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, TextColor, BackgroundColor)
 		  Else
 		    Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, BackgroundColor)
@@ -1194,7 +1171,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column <> 0 Then
 		    Return False
 		  End If
@@ -1212,27 +1189,27 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
-		  Self.ChooseSelectedLootSources()
+		Sub Opening()
+		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.TypeaheadColumn = 1
+		Sub DoublePressed()
+		  Self.ChooseSelectedLootSources()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CustomizeTemplatesList
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LoadDefaultsCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Var Caption As String = If(Me.Value, "Done", "Next")
 		  If Self.SelectionActionButton.Caption <> Caption Then
 		    Self.SelectionActionButton.Caption = Caption
@@ -1370,8 +1347,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1434,7 +1411,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

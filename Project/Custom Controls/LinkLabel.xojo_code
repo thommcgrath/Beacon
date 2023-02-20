@@ -1,8 +1,8 @@
 #tag Class
 Protected Class LinkLabel
-Inherits Label
+Inherits DesktopLabel
 	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		Function MouseDown(x As Integer, y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -14,7 +14,7 @@ Inherits Label
 	#tag EndEvent
 
 	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
+		Sub MouseDrag(x As Integer, y As Integer)
 		  If X >= 0 And X <= Self.Width And Y >= 0 And Y <= Self.Height Then
 		    Self.TextColor = SystemColors.SystemRedColor
 		    #if BeaconUI.CursorsEnabled
@@ -38,28 +38,28 @@ Inherits Label
 	#tag EndEvent
 
 	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
+		Sub MouseUp(x As Integer, y As Integer)
 		  If X >= 0 And X <= Self.Width And Y >= 0 And Y <= Self.Height Then
-		    RaiseEvent Action
+		    RaiseEvent Pressed
 		    Self.TextColor = SystemColors.LinkColor
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ShowAsLink = Self.ShowAsLink
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
 
 	#tag Hook, Flags = &h0
-		Event Action()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Pressed()
 	#tag EndHook
 
 
@@ -127,7 +127,8 @@ Inherits Label
 			Type="TextAlignments"
 			EditorType="Enum"
 			#tag EnumValues
-				"0 - Left"
+				"0 - Default"
+				"1 - Left"
 				"2 - Center"
 				"3 - Right"
 			#tag EndEnumValues
@@ -201,14 +202,6 @@ Inherits Label
 			Group="Position"
 			InitialValue="20"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -312,8 +305,8 @@ Inherits Label
 			Visible=false
 			Group="Appearance"
 			InitialValue=""
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"
@@ -353,22 +346,6 @@ Inherits Label
 			Group="Font"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

@@ -437,7 +437,7 @@ Inherits Ark.ConfigGroup
 		  If Self.PlayerLevelCap <> PlayerLevelData.MaxLevel Or Self.PlayerMaxExperience <> PlayerLevelData.ExperienceForLevel(PlayerLevelData.MaxLevel) Then
 		    Return False
 		  End If
-		  For Index As UInt64 = 0 To Self.mPlayerLevels.LastIndex
+		  For Index As Integer = 0 To Self.mPlayerLevels.LastIndex
 		    Var Level As Integer = Index + 2
 		    If Self.mPlayerLevels(Index) <> PlayerLevelData.ExperienceForLevel(Level) Then
 		      Return False

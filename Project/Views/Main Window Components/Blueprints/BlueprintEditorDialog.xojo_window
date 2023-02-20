@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog BlueprintEditorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,7 +24,7 @@ Begin BeaconDialog BlueprintEditorDialog
    Type            =   8
    Visible         =   True
    Width           =   540
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   405
@@ -39,13 +39,14 @@ Begin BeaconDialog BlueprintEditorDialog
       PanelCount      =   6
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -55,11 +56,10 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
+         Composited      =   False
          DesiredHeight   =   0
          DesiredWidth    =   0
-         DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   243
          Index           =   -2147483648
@@ -82,31 +82,30 @@ Begin BeaconDialog BlueprintEditorDialog
          Width           =   380
       End
       Begin UITweaks.ResizedTextField TagsField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   152
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -114,43 +113,41 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   158
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   368
       End
       Begin UITweaks.ResizedTextField NameField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   152
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -158,43 +155,40 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   124
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   368
       End
       Begin UITweaks.ResizedPopupMenu TypeMenu
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   "Engram\nCreature\nSpawn Point\nLoot Drop"
          Italic          =   False
          Left            =   152
-         ListIndex       =   -1
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
+         SelectedRowIndex=   0
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   58
          Transparent     =   False
          Underline       =   False
@@ -202,31 +196,30 @@ Begin BeaconDialog BlueprintEditorDialog
          Width           =   159
       End
       Begin UITweaks.ResizedTextField PathField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   152
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -234,25 +227,24 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   90
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   368
       End
       Begin UITweaks.ResizedLabel TagsLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -269,11 +261,9 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Tags:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   158
          Transparent     =   False
          Underline       =   False
@@ -281,13 +271,13 @@ Begin BeaconDialog BlueprintEditorDialog
          Width           =   120
       End
       Begin UITweaks.ResizedLabel MapLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -304,11 +294,9 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Map Availability:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   192
          Transparent     =   False
          Underline       =   False
@@ -316,13 +304,13 @@ Begin BeaconDialog BlueprintEditorDialog
          Width           =   120
       End
       Begin UITweaks.ResizedLabel NameLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -339,11 +327,9 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Name:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   124
          Transparent     =   False
          Underline       =   False
@@ -351,13 +337,13 @@ Begin BeaconDialog BlueprintEditorDialog
          Width           =   120
       End
       Begin UITweaks.ResizedLabel PathLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -374,11 +360,9 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Blueprint Path:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   90
          Transparent     =   False
          Underline       =   False
@@ -386,13 +370,13 @@ Begin BeaconDialog BlueprintEditorDialog
          Width           =   120
       End
       Begin UITweaks.ResizedLabel TypeLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -409,11 +393,9 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Type:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   58
          Transparent     =   False
          Underline       =   False
@@ -427,8 +409,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -453,6 +433,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -460,7 +441,6 @@ Begin BeaconDialog BlueprintEditorDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   324
       End
@@ -471,8 +451,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -497,6 +475,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   3
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -504,7 +483,6 @@ Begin BeaconDialog BlueprintEditorDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
@@ -515,8 +493,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -541,6 +517,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -548,7 +525,6 @@ Begin BeaconDialog BlueprintEditorDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
@@ -559,8 +535,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -585,6 +559,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -592,7 +567,6 @@ Begin BeaconDialog BlueprintEditorDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
@@ -663,8 +637,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedLabel EngramEntryStringLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -685,21 +657,19 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Entry String:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   58
          Transparent     =   False
          Underline       =   False
-         Value           =   "Entry String:"
          Visible         =   True
          Width           =   164
       End
       Begin UITweaks.ResizedLabel EngramPlayerLevelLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -720,21 +690,19 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Unlockable At Level:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
-         Value           =   "Unlockable At Level:"
          Visible         =   True
          Width           =   164
       End
       Begin UITweaks.ResizedLabel EngramRequiredPointsLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -755,21 +723,19 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Required Engram Points:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   126
          Transparent     =   False
          Underline       =   False
-         Value           =   "Required Engram Points:"
          Visible         =   True
          Width           =   164
       End
       Begin UITweaks.ResizedLabel EngramStackSizeLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -790,21 +756,19 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Stack Size:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   160
          Transparent     =   False
          Underline       =   False
-         Value           =   "Stack Size:"
          Visible         =   True
          Width           =   164
       End
       Begin UITweaks.ResizedLabel EngramCraftingCostLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -825,13 +789,13 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Crafting Recipe:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   194
          Transparent     =   False
          Underline       =   False
-         Value           =   "Crafting Recipe:"
          Visible         =   True
          Width           =   164
       End
@@ -874,8 +838,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -900,6 +862,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -907,15 +870,12 @@ Begin BeaconDialog BlueprintEditorDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   212
       End
       Begin UITweaks.ResizedLabel CreatureIncubationTimeLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -936,13 +896,13 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         Text            =   "Incubation Time:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   58
          Transparent     =   False
          Underline       =   False
-         Value           =   "Incubation Time:"
          Visible         =   True
          Width           =   131
       End
@@ -953,8 +913,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -979,6 +937,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -986,15 +945,12 @@ Begin BeaconDialog BlueprintEditorDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   212
       End
       Begin UITweaks.ResizedLabel CreatureMatureTimeLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1015,13 +971,13 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
+         Text            =   "Mature Time:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
-         Value           =   "Mature Time:"
          Visible         =   True
          Width           =   131
       End
@@ -1032,8 +988,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1058,6 +1012,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   5
          TabPanelIndex   =   3
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1065,15 +1020,12 @@ Begin BeaconDialog BlueprintEditorDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   212
       End
       Begin UITweaks.ResizedLabel CreatureIntervalMinTimeLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1094,13 +1046,13 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
+         Text            =   "Mating Interval Min:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   126
          Transparent     =   False
          Underline       =   False
-         Value           =   "Mating Interval Min:"
          Visible         =   True
          Width           =   131
       End
@@ -1111,8 +1063,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1137,6 +1087,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   7
          TabPanelIndex   =   3
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1144,15 +1095,12 @@ Begin BeaconDialog BlueprintEditorDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   212
       End
       Begin UITweaks.ResizedLabel CreatureIntervalMaxTimeLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1173,13 +1121,13 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   6
          TabPanelIndex   =   3
          TabStop         =   True
+         Text            =   "Mating Interval Max:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   160
          Transparent     =   False
          Underline       =   False
-         Value           =   "Mating Interval Max:"
          Visible         =   True
          Width           =   131
       End
@@ -1291,8 +1239,6 @@ Begin BeaconDialog BlueprintEditorDialog
          Bold            =   False
          ColumnCount     =   3
          ColumnWidths    =   "*,75,75"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   -1
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -1302,8 +1248,7 @@ Begin BeaconDialog BlueprintEditorDialog
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -1350,8 +1295,6 @@ Begin BeaconDialog BlueprintEditorDialog
          Bold            =   False
          ColumnCount     =   6
          ColumnWidths    =   "*,70,70,70,70,70"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   -1
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -1361,8 +1304,7 @@ Begin BeaconDialog BlueprintEditorDialog
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -1404,9 +1346,8 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   405
          Index           =   -2147483648
@@ -1434,8 +1375,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -1479,8 +1418,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -1520,8 +1457,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedPopupMenu LootIconColorMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1552,8 +1487,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedPopupMenu LootIconMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1581,12 +1514,10 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   155
       End
-      Begin CheckBox LootExperimentalCheckbox
+      Begin DesktopCheckBox LootExperimentalCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Experimental"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1617,8 +1548,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedLabel LootMinMultiplierLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1652,8 +1581,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedLabel LootMaxMultiplierLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1687,8 +1614,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedLabel LootIconColorLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1722,8 +1647,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedLabel LootIconLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1761,9 +1684,8 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   405
          Index           =   -2147483648
@@ -1791,8 +1713,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -1815,7 +1735,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   10
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "1"
@@ -1829,7 +1749,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   80
       End
-      Begin TextArea LootNotesArea
+      Begin DesktopTextArea LootNotesArea
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   True
@@ -1837,8 +1757,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1864,7 +1782,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Multiline       =   True
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   12
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   ""
@@ -1882,8 +1800,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedLabel LootRequiredItemSetsLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1901,7 +1817,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   11
+         TabIndex        =   9
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "Minimum Item Sets:"
@@ -1917,8 +1833,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedLabel LootNotesLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1936,7 +1850,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   12
+         TabIndex        =   11
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "Notes:"
@@ -1956,8 +1870,6 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -1980,7 +1892,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   14
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "0"
@@ -1997,8 +1909,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Begin UITweaks.ResizedLabel LootSortLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2016,7 +1926,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   14
+         TabIndex        =   13
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "Sort Order:"
@@ -2071,7 +1981,6 @@ Begin BeaconDialog BlueprintEditorDialog
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -2168,7 +2077,6 @@ Begin BeaconDialog BlueprintEditorDialog
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -2193,11 +2101,11 @@ Begin BeaconDialog BlueprintEditorDialog
       Width           =   540
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  If (Self.mOriginalBlueprint Is Nil) = False Then
@@ -2409,7 +2317,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Blueprint As Ark.Blueprint) As Ark.Blueprint
+		Shared Function Present(Parent As DesktopWindow, Blueprint As Ark.Blueprint) As Ark.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -2421,7 +2329,7 @@ End
 		  End If
 		  
 		  Var Win As New BlueprintEditorDialog(Blueprint)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As Ark.Blueprint
 		  If Not Win.mCancelled Then
@@ -2433,13 +2341,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ModUUID As String, ModName As String) As Ark.Blueprint
+		Shared Function Present(Parent As DesktopWindow, ModUUID As String, ModName As String) As Ark.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
 		  Var Win As New BlueprintEditorDialog(ModUUID, ModName)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As Ark.Blueprint
 		  If Not Win.mCancelled Then
@@ -2570,23 +2478,23 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowStatInRow(Row As Integer, Values As Ark.CreatureStatValue)
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnLabel) = Values.Stat.Label
+		  Self.CreatureStatsList.CellTextAt(Row, Self.CreatureStatColumnLabel) = Values.Stat.Label
 		  Self.CreatureStatsList.RowTagAt(Row) = Values
 		  
 		  Var BaseValue As Double = Values.BaseValue
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnBase) = If(BaseValue <> Ark.Creature.MissingStatValue, BaseValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellTextAt(Row, Self.CreatureStatColumnBase) = If(BaseValue <> Ark.Creature.MissingStatValue, BaseValue.PrettyText(True), "")
 		  
 		  Var WildValue As Double = Values.WildMultiplier
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnWild) = If(WildValue <> Ark.Creature.MissingStatValue, WildValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellTextAt(Row, Self.CreatureStatColumnWild) = If(WildValue <> Ark.Creature.MissingStatValue, WildValue.PrettyText(True), "")
 		  
 		  Var TamedValue As Double = Values.TamedMultiplier
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnTamed) = If(TamedValue <> Ark.Creature.MissingStatValue, TamedValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellTextAt(Row, Self.CreatureStatColumnTamed) = If(TamedValue <> Ark.Creature.MissingStatValue, TamedValue.PrettyText(True), "")
 		  
 		  Var AddValue As Double = Values.AddMultiplier
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnAdd) = If(AddValue <> Ark.Creature.MissingStatValue, AddValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellTextAt(Row, Self.CreatureStatColumnAdd) = If(AddValue <> Ark.Creature.MissingStatValue, AddValue.PrettyText(True), "")
 		  
 		  Var AffinityValue As Double = Values.AffinityMultiplier
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnAffinity) = If(AffinityValue <> Ark.Creature.MissingStatValue, AffinityValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellTextAt(Row, Self.CreatureStatColumnAffinity) = If(AffinityValue <> Ark.Creature.MissingStatValue, AffinityValue.PrettyText(True), "")
 		End Sub
 	#tag EndMethod
 
@@ -2911,14 +2819,14 @@ End
 #tag EndEvents
 #tag Events TagsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Me.Text.Trim = "" Then
 		    Self.Title = "New Blueprint"
 		  Else
@@ -2930,7 +2838,9 @@ End
 #tag EndEvents
 #tag Events TypeMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  For Idx As Integer = Self.PageSelector.LastIndex DownTo 1
 		    Self.PageSelector.Remove(Idx)
 		  Next
@@ -2979,42 +2889,42 @@ End
 #tag EndEvents
 #tag Events PathField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramEntryStringField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramPlayerLevelField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramRequiredPointsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramStackSizeField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramAddIngredient
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Engrams() As Ark.Engram
 		  For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
 		    Engrams.Add(Ark.CraftingCostIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
@@ -3041,7 +2951,7 @@ End
 #tag EndEvents
 #tag Events EngramEditIngredientButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.EngramCraftingCostList.CanEdit Then
 		    Self.EngramCraftingCostList.DoEdit
 		  End If
@@ -3050,7 +2960,7 @@ End
 #tag EndEvents
 #tag Events EngramRemoveIngredientButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.EngramCraftingCostList.CanDelete Then
 		    Self.EngramCraftingCostList.DoClear
 		  End If
@@ -3059,35 +2969,35 @@ End
 #tag EndEvents
 #tag Events CreatureIncubationTimeField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreatureMatureTimeField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreatureIntervalMinTimeField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreatureIntervalMaxTimeField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreatureAddStatButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var UsedStats As UInt16
 		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
 		    Var Values As Ark.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
@@ -3108,21 +3018,21 @@ End
 #tag EndEvents
 #tag Events CreatureEditStatButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CreatureStatsList.DoEdit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreatureDeleteStatButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CreatureStatsList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramCraftingCostList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.EngramRemoveIngredientButton.Enabled = Me.CanDelete
 		  Self.EngramEditIngredientButton.Enabled = Me.CanEdit
 		End Sub
@@ -3152,7 +3062,7 @@ End
 		  
 		  If Warn Then
 		    For Row As Integer = 0 To Me.LastRowIndex
-		      If Me.Selected(Row) Then
+		      If Me.RowSelectedAt(Row) Then
 		        Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Row)
 		        Labels.Add(Ingredient.Engram.Label)
 		      End If
@@ -3164,18 +3074,18 @@ End
 		  End If
 		  
 		  For Row As Integer = Me.LastRowIndex DownTo 0
-		    If Me.Selected(Row) Then
+		    If Me.RowSelectedAt(Row) Then
 		      Me.RemoveRowAt(Row)
 		    End If
 		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
-		  Me.ColumnTypeAt(1) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(2) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnAlignmentAt(1) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(2) = DesktopListbox.Alignments.Center
+		  Me.ColumnTypeAt(1) = DesktopListbox.CellTypes.TextField
+		  Me.ColumnTypeAt(2) = DesktopListbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -3184,16 +3094,16 @@ End
 		  
 		  Select Case Column
 		  Case 1
-		    Var Value As String = Me.CellValueAt(Row, Column)
+		    Var Value As String = Me.CellTextAt(Row, Column)
 		    Var Quantity As Integer = Round(CDbl(Value))
 		    If IsNumeric(Value) = False Or Quantity <= 0 Then
 		      System.Beep
-		      Me.CellValueAt(Row, Column) = Ingredient.Quantity.ToString(Locale.Current, ",##0")
+		      Me.CellTextAt(Row, Column) = Ingredient.Quantity.ToString(Locale.Current, ",##0")
 		      Return
 		    End If
 		    
 		    Me.RowTagAt(Row) = New Ark.CraftingCostIngredient(Ingredient.Engram, Quantity, Ingredient.RequireExact)
-		    Me.CellValueAt(Row, Column) = Quantity.ToString(Locale.Current, ",##0")
+		    Me.CellTextAt(Row, Column) = Quantity.ToString(Locale.Current, ",##0")
 		  Case 2
 		    Me.RowTagAt(Row) = New Ark.CraftingCostIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  End Select
@@ -3202,16 +3112,16 @@ End
 #tag EndEvents
 #tag Events CreatureStatsList
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(Self.CreatureStatColumnBase) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(Self.CreatureStatColumnWild) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(Self.CreatureStatColumnTamed) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(Self.CreatureStatColumnAdd) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(Self.CreatureStatColumnAffinity) = Listbox.Alignments.Right
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnBase) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnWild) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnTamed) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnAdd) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnAffinity) = DesktopListbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Var Values1 As Ark.CreatureStatValue = Me.RowTagAt(Row1)
 		  Var Values2 As Ark.CreatureStatValue = Me.RowTagAt(Row2)
 		  
@@ -3246,7 +3156,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.CreatureEditStatButton.Enabled = Me.CanEdit
 		  Self.CreatureDeleteStatButton.Enabled = Me.CanDelete
 		End Sub
@@ -3275,7 +3185,7 @@ End
 		  #Pragma Unused Warn
 		  
 		  For Row As Integer = Me.LastRowIndex DownTo 0
-		    If Me.Selected(Row) Then
+		    If Me.RowSelectedAt(Row) Then
 		      Me.RemoveRowAt(Row)
 		    End If
 		  Next
@@ -3286,7 +3196,7 @@ End
 #tag EndEvents
 #tag Events SpawnPointEditor1
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Points(0) As Ark.SpawnPoint
 		  Points(0) = New Ark.MutableSpawnPoint(Ark.UnknownBlueprintPath("SpawnPoints", "BlueprintEditor_C"), "8cdcd17e-b246-4973-a694-98e0dee33e25")
 		  Me.SpawnPoints = Points
@@ -3331,7 +3241,7 @@ End
 #tag EndEvents
 #tag Events LootIconColorMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var LootColors() As Pair = Ark.LootColors
 		  For Each LootColor As Pair In LootColors
 		    Me.AddRow(LootColor.Left.StringValue, LootColor.Right.StringValue)
@@ -3340,14 +3250,16 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LootIconMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Icons() As Ark.LootContainerIcon = Ark.DataSource.Pool.Get(False).GetLootContainerIcons
 		  If Icons.Count = 0 Then
 		    Me.AddRow("Generic", "3a1f5d12-0b50-4761-9f89-277492dc00e0")
@@ -3363,14 +3275,16 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LootExperimentalCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
@@ -3382,7 +3296,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Drops(0) As Ark.LootContainer
 		  Drops(0) = New Ark.MutableLootContainer(Ark.UnknownBlueprintPath("LootContainers", "BlueprintEditor_C"), "8e25c4be-d496-4c94-b1bc-d4bef54834ad")
 		  Me.Containers = Drops
@@ -3409,7 +3323,7 @@ End
 #tag EndEvents
 #tag Events LootNotesArea
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
@@ -3429,14 +3343,14 @@ End
 #tag EndEvents
 #tag Events LootSortSuggestButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.LootSortField.DoubleValue = Self.SuggestLootSortValue(Self.NameField.Text.Trim)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PageSelector
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var CommonItem As OmniBarItem = OmniBarItem.CreateTab("PageCommon", "Common")
 		  CommonItem.Toggled = True
 		  Me.Append(CommonItem)
@@ -3469,7 +3383,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.Save() Then
 		    Self.mCancelled = False
 		    Self.Hide
@@ -3479,7 +3393,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -3631,7 +3545,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -3647,8 +3561,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog SelectModPrefixDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog SelectModPrefixDialog
    Type            =   8
    Visible         =   True
    Width           =   500
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -59,11 +57,9 @@ Begin BeaconDialog SelectModPrefixDialog
       Visible         =   True
       Width           =   460
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -106,8 +102,6 @@ Begin BeaconDialog SelectModPrefixDialog
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   "26,*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -117,8 +111,7 @@ Begin BeaconDialog SelectModPrefixDialog
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   True
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -218,7 +211,7 @@ Begin BeaconDialog SelectModPrefixDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -229,14 +222,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Importer As Ark.BlueprintImporter) As String()
+		Shared Function Present(Parent As DesktopWindow, Importer As Ark.BlueprintImporter) As String()
 		  Var ChosenTags() As String
 		  If Parent Is Nil Then
 		    Return ChosenTags
 		  End If
 		  
 		  Var Win As New SelectModPrefixDialog(Importer)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  ChosenTags = Win.mChosenTags
 		  Return ChosenTags
 		End Function
@@ -256,8 +249,8 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		  
 		  Var Tags() As String = Self.mImporter.ModTags
 		  For Each Tag As String In Tags
@@ -272,7 +265,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.CellCheckBoxValueAt(Idx, 0) = False Then
 		      Continue
@@ -287,7 +280,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -406,8 +399,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -518,7 +511,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

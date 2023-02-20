@@ -1,8 +1,8 @@
 #tag Class
 Protected Class ArkDiscoveryView
-Inherits ContainerControl
+Inherits DesktopContainer
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  RaiseEvent Close
 		  Self.mClosed = True
 		End Sub
@@ -151,19 +151,19 @@ Inherits ContainerControl
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Composited"
+			Visible=true
+			Group="Window Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -195,8 +195,8 @@ Inherits ContainerControl
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBackgroundColor"
@@ -219,14 +219,6 @@ Inherits ContainerControl
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

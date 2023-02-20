@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog SharingDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -25,7 +25,7 @@ Begin BeaconDialog SharingDialog
    Title           =   "Project Sharing"
    Visible         =   True
    Width           =   600
-   Begin GroupBox WriteAccessGroup
+   Begin DesktopGroupBox WriteAccessGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Write Access"
@@ -54,15 +54,16 @@ Begin BeaconDialog SharingDialog
       Visible         =   True
       Width           =   560
       Begin UITweaks.ResizedPushButton AddUserButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Add User"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "WriteAccessGroup"
          Italic          =   False
@@ -72,24 +73,21 @@ Begin BeaconDialog SharingDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   538
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   90
       End
-      Begin Label WriteAccessLabel
+      Begin DesktopLabel WriteAccessLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -110,18 +108,20 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Users listed here will be able to make changes to this project and deploy changes to servers. Only the project owner may add or remove users."
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   336
          Transparent     =   False
          Underline       =   False
-         Value           =   "Users listed here will be able to make changes to this project and deploy changes to servers. Only the project owner may add or remove users."
          Visible         =   True
          Width           =   520
       End
-      Begin ProgressWheel UsernameLookupSpinner
+      Begin DesktopProgressWheel UsernameLookupSpinner
+         Active          =   False
          AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
          Index           =   -2147483648
@@ -132,41 +132,48 @@ Begin BeaconDialog SharingDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   0
-         TabStop         =   True
          Tooltip         =   ""
          Top             =   542
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin BeaconListbox UserList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   2
-         ColumnsResizable=   False
          ColumnWidths    =   "*,312"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   26
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   130
-         HelpTag         =   ""
-         Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "WriteAccessGroup"
          InitialValue    =   "Username	Identifier"
@@ -179,22 +186,16 @@ Begin BeaconDialog SharingDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   0
-         ShowDropIndicator=   False
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   388
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
          Width           =   520
@@ -202,14 +203,14 @@ Begin BeaconDialog SharingDialog
          _ScrollWidth    =   -1
       End
    End
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -225,28 +226,27 @@ Begin BeaconDialog SharingDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlign       =   0
+      Text            =   "Project Sharing"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Project Sharing"
       Visible         =   True
       Width           =   560
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Done"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -256,20 +256,19 @@ Begin BeaconDialog SharingDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   590
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin GroupBox ReadOnlyGroup
+   Begin DesktopGroupBox ReadOnlyGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Read-Only Access"
@@ -297,14 +296,14 @@ Begin BeaconDialog SharingDialog
       Underline       =   False
       Visible         =   True
       Width           =   560
-      Begin Label DownloadLinkLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel DownloadLinkLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ReadOnlyGroup"
          Italic          =   False
@@ -320,28 +319,27 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlign       =   0
+         Text            =   "https://api.usebeacon.app/v1/document"
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   88
          Transparent     =   False
          Underline       =   False
-         Value           =   "https://api.usebeacon.app/v1/document"
          Visible         =   True
          Width           =   428
       End
       Begin ReactionButton CopyLinkButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Copy"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ReadOnlyGroup"
          Italic          =   False
@@ -351,13 +349,12 @@ Begin BeaconDialog SharingDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   88
          Transparent     =   False
          Underline       =   False
@@ -365,7 +362,7 @@ Begin BeaconDialog SharingDialog
          Width           =   80
       End
    End
-   Begin GroupBox CommunityAccessGroup
+   Begin DesktopGroupBox CommunityAccessGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Community Sharing"
@@ -393,11 +390,9 @@ Begin BeaconDialog SharingDialog
       Underline       =   False
       Visible         =   True
       Width           =   560
-      Begin Label CommunityAccessLabel
+      Begin DesktopLabel CommunityAccessLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -418,21 +413,19 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Projects shared with the community will be available for download from the Beacon website and the Community section of the Projects tab. Community members will have read-only access, unless listed below."
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   176
          Transparent     =   False
          Underline       =   False
-         Value           =   "Projects shared with the community will be available for download from the Beacon website and the Community section of the Projects tab. Community members will have read-only access, unless listed below."
          Visible         =   True
          Width           =   520
       End
-      Begin Label CommunityStatusLabel
+      Begin DesktopLabel CommunityStatusLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -453,21 +446,19 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Current Status:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   248
          Transparent     =   False
          Underline       =   False
-         Value           =   "Current Status:"
          Visible         =   True
          Width           =   100
       End
-      Begin Label CommunityStatusField
+      Begin DesktopLabel CommunityStatusField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -488,13 +479,13 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Checking…"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   248
          Transparent     =   False
          Underline       =   False
-         Value           =   "Checking…"
          Visible         =   True
          Width           =   316
       End
@@ -541,14 +532,13 @@ Begin BeaconDialog SharingDialog
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -559,13 +549,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Project As Beacon.Project)
+		Shared Sub Present(Parent As DesktopWindow, Project As Beacon.Project)
 		  If Parent = Nil Then
 		    Return
 		  End If
 		  
 		  Var Win As New SharingDialog(Project)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  If Win.mUsersChanged Then
 		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your project.", "Adding or removing a user updates the encryption keys inside your project, so it is necessary to save the project before newly authorized users are able to access it.")
@@ -642,9 +632,9 @@ End
 		    Next
 		    
 		    For I As Integer = 0 To Self.UserList.RowCount - 1
-		      Var UserID As String = Self.UserList.CellValueAt(I, 1)
+		      Var UserID As String = Self.UserList.CellTextAt(I, 1)
 		      If Usernames.HasKey(UserID) Then
-		        Self.UserList.CellValueAt(I, 0) = Usernames.Value(UserID).StringValue
+		        Self.UserList.CellTextAt(I, 0) = Usernames.Value(UserID).StringValue
 		      End If
 		    Next
 		  Catch Err As RuntimeException
@@ -669,7 +659,7 @@ End
 
 #tag Events AddUserButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var UserID, Username, PublicKey As String
 		  If ShareWithUserDialog.Present(Self, UserID, Username, PublicKey) Then
 		    If Self.mProject.HasUser(UserID) = False Then
@@ -686,7 +676,7 @@ End
 #tag EndEvents
 #tag Events UserList
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Users() As String = Self.mProject.GetUsers()
 		  Users.Sort
 		  
@@ -710,8 +700,8 @@ End
 		  End If
 		  
 		  For I As Integer = Me.RowCount - 1 DownTo 0
-		    If Me.Selected(I) Then
-		      Self.mProject.RemoveUser(Me.CellValueAt(I, 1))
+		    If Me.RowSelectedAt(I) Then
+		      Self.mProject.RemoveUser(Me.CellTextAt(I, 1))
 		      Me.RemoveRowAt(I)
 		      Self.mUsersChanged = True
 		    End If
@@ -726,21 +716,21 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DownloadLinkLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Text = BeaconAPI.URL("project/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CopyLinkButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Board As New Clipboard
 		  Board.Text = Self.DownloadLinkLabel.Text
 		  
@@ -751,7 +741,7 @@ End
 #tag EndEvents
 #tag Events CommunityShareButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var DesiredStatus As String
 		  If Me.Caption = "Share" Then
 		    Var Description As String = Self.mProject.Description.Trim
@@ -918,8 +908,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1030,7 +1020,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

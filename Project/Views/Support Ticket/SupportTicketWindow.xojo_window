@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconWindow SupportTicketWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,7 +24,7 @@ Begin BeaconWindow SupportTicketWindow
    Type            =   0
    Visible         =   True
    Width           =   800
-   Begin GroupBox DisclosureGroup
+   Begin DesktopGroupBox DisclosureGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   ""
@@ -52,11 +52,9 @@ Begin BeaconWindow SupportTicketWindow
       Underline       =   False
       Visible         =   True
       Width           =   760
-      Begin Label DisclosureLabel
+      Begin DesktopLabel DisclosureLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -77,22 +75,20 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "For diagnostic purposes, this support ticket will include Beacon's recent log files, the selected Beacon project, and any backed up ini files."
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   454
          Transparent     =   False
          Underline       =   False
-         Value           =   "For diagnostic purposes, this support ticket will include Beacon's recent log files, the selected Beacon project, and any backed up ini files."
          Visible         =   True
          Width           =   720
       End
-      Begin CheckBox AgreeCheckbox
+      Begin DesktopCheckBox AgreeCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "I agree"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -187,7 +183,6 @@ Begin BeaconWindow SupportTicketWindow
    End
    Begin Thread SubmitThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -206,7 +201,7 @@ Begin BeaconWindow SupportTicketWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin GroupBox AttachmentsGroup
+   Begin DesktopGroupBox AttachmentsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Attachments (Optional)"
@@ -246,8 +241,6 @@ Begin BeaconWindow SupportTicketWindow
          Bold            =   False
          ColumnCount     =   1
          ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   26
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -257,8 +250,7 @@ Begin BeaconWindow SupportTicketWindow
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   False
          HasHorizontalScrollbar=   False
@@ -326,7 +318,7 @@ Begin BeaconWindow SupportTicketWindow
          Width           =   90
       End
    End
-   Begin GroupBox DetailsGroup
+   Begin DesktopGroupBox DetailsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Details"
@@ -357,8 +349,6 @@ Begin BeaconWindow SupportTicketWindow
       Begin UITweaks.ResizedLabel HostLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -379,13 +369,13 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Hosting Provider:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   156
          Transparent     =   False
          Underline       =   False
-         Value           =   "Hosting Provider:"
          Visible         =   True
          Width           =   116
       End
@@ -396,8 +386,6 @@ Begin BeaconWindow SupportTicketWindow
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -422,6 +410,7 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -429,15 +418,12 @@ Begin BeaconWindow SupportTicketWindow
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   261
       End
       Begin UITweaks.ResizedLabel PlatformLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -458,21 +444,19 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Platform:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   124
          Transparent     =   False
          Underline       =   False
-         Value           =   "Platform:"
          Visible         =   True
          Width           =   116
       End
       Begin UITweaks.ResizedPopupMenu PlatformMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -503,8 +487,6 @@ Begin BeaconWindow SupportTicketWindow
       Begin UITweaks.ResizedLabel NameLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -525,13 +507,13 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Name:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   56
          Transparent     =   False
          Underline       =   False
-         Value           =   "Name:"
          Visible         =   True
          Width           =   116
       End
@@ -542,8 +524,6 @@ Begin BeaconWindow SupportTicketWindow
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -568,6 +548,7 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -575,15 +556,12 @@ Begin BeaconWindow SupportTicketWindow
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   261
       End
       Begin UITweaks.ResizedLabel EmailLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -604,13 +582,13 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "E-Mail Address:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   90
          Transparent     =   False
          Underline       =   False
-         Value           =   "E-Mail Address:"
          Visible         =   True
          Width           =   116
       End
@@ -621,8 +599,6 @@ Begin BeaconWindow SupportTicketWindow
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -647,6 +623,7 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -654,15 +631,12 @@ Begin BeaconWindow SupportTicketWindow
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   261
       End
       Begin UITweaks.ResizedPopupMenu DocumentMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -693,8 +667,6 @@ Begin BeaconWindow SupportTicketWindow
       Begin UITweaks.ResizedLabel DocumentLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -715,18 +687,18 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Project:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   190
          Transparent     =   False
          Underline       =   False
-         Value           =   "Project:"
          Visible         =   True
          Width           =   116
       End
    End
-   Begin GroupBox BodyGroup
+   Begin DesktopGroupBox BodyGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Please describe your issue with as much detail as possible."
@@ -754,7 +726,7 @@ Begin BeaconWindow SupportTicketWindow
       Underline       =   False
       Visible         =   True
       Width           =   760
-      Begin TextArea BodyField
+      Begin DesktopTextArea BodyField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   True
@@ -762,8 +734,6 @@ Begin BeaconWindow SupportTicketWindow
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -792,6 +762,7 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -800,23 +771,22 @@ Begin BeaconWindow SupportTicketWindow
          Underline       =   False
          UnicodeMode     =   0
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   720
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Activate()
+		Sub Activated()
 		  Self.RefreshDocumentMenu()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
@@ -857,7 +827,7 @@ End
 		    
 		    Self.AttachmentsList.AddRow(File.Name)
 		    Self.AttachmentsList.RowTagAt(Self.AttachmentsList.LastAddedRowIndex) = File
-		    Self.AttachmentsList.Selected(Self.AttachmentsList.LastAddedRowIndex) = True
+		    Self.AttachmentsList.RowSelectedAt(Self.AttachmentsList.LastAddedRowIndex) = True
 		  Next File
 		  Self.AttachmentsList.Sort
 		  
@@ -1055,7 +1025,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Name As String = Self.NameField.Text.Trim
 		  If Name.IsEmpty Then
 		    Self.ShowAlert("Please provide some sort of name", "It might not seem like much, but a name can help solve certain problems, especially if the problem is related to a purchase.")
@@ -1099,7 +1069,7 @@ End
 		  
 		  Self.mProgress = New ProgressWindow
 		  Self.mProgress.Message = "Creating ticket…"
-		  Self.mProgress.ShowWithin(Self)
+		  Self.mProgress.Show(Self)
 		  
 		  Self.mTicketBody = Body
 		  Self.mTicketDocument = Document
@@ -1125,7 +1095,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.Changed And Not Self.ShowConfirm("Are you sure you want to discard this ticket?", "You have made changes that will be lost if you close the window now.", "Discard", "Cancel") Then
 		    Return
 		  End If
@@ -1325,7 +1295,7 @@ End
 		  #Pragma Unused Warn
 		  
 		  For RowIdx As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(RowIdx) = False Then
+		    If Me.RowSelectedAt(RowIdx) = False Then
 		      Continue
 		    End If
 		    
@@ -1339,7 +1309,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DropObject(obj As DragItem, action As Integer)
+		Sub DropObject(obj As DragItem, action As DragItem.Types)
 		  #Pragma Unused Action
 		  
 		  Var Files() As FolderItem
@@ -1352,14 +1322,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.AcceptFileDrop("")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AddAttachmentButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Dialog As New OpenFileDialog
 		  Dialog.AllowMultipleSelections = True
 		  
@@ -1377,18 +1347,20 @@ End
 #tag EndEvents
 #tag Events HostField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.Opened Then
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PlatformMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.Opened Then
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		  
 		  If Me.SelectedRowIndex = Self.PlatformXbox And Self.HostField.Text.IsEmpty Then
@@ -1399,36 +1371,38 @@ End
 #tag EndEvents
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.Opened Then
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EmailField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.Opened Then
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DocumentMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.Opened Then
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events BodyField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.Opened Then
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1580,8 +1554,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1627,7 +1601,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkStatMultipliersEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   631
    Index           =   -2147483648
@@ -26,7 +27,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
    Transparent     =   True
    Visible         =   True
    Width           =   1122
-   Begin PagePanel PagePanel1
+   Begin DesktopPagePanel PagePanel1
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   590
@@ -41,20 +42,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   2
+      SelectedPanelIndex=   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   1122
       Begin UITweaks.ResizedLabel PlayerBaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -75,21 +75,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   53
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "100"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   433
          Transparent     =   False
          Underline       =   False
-         Value           =   "100"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerBaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -110,21 +108,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   48
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "100"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   399
          Transparent     =   False
          Underline       =   False
-         Value           =   "100"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerBaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -145,21 +141,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   43
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "100"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   362
          Transparent     =   False
          Underline       =   False
-         Value           =   "100"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerBaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -180,21 +174,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   38
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "100"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   331
          Transparent     =   False
          Underline       =   False
-         Value           =   "100"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelMultiplierLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -215,21 +207,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   15
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "1"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   161
          Transparent     =   False
          Underline       =   False
-         Value           =   "1"
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -250,13 +240,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   56
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   433
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -267,14 +257,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   11
@@ -293,6 +281,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   55
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -300,15 +289,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -329,21 +315,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   54
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   433
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -364,13 +348,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   51
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   399
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -381,14 +365,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   10
@@ -407,6 +389,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   50
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -414,15 +397,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -443,21 +423,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   49
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   399
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -478,13 +456,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   46
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   365
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -495,14 +473,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   9
@@ -521,6 +497,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   45
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -528,15 +505,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -557,21 +531,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   44
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   365
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -592,13 +564,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   41
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   331
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -609,14 +581,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   8
@@ -635,6 +605,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   40
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -642,15 +613,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -671,21 +639,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   39
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   331
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -706,13 +672,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   36
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   297
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -723,14 +689,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   7
@@ -749,6 +713,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   35
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -756,15 +721,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -785,21 +747,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   34
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   297
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -820,13 +780,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   31
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   263
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -837,14 +797,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   5
@@ -863,6 +821,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   30
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -870,15 +829,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -899,21 +855,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   29
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   263
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -934,13 +888,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   26
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   229
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -951,14 +905,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   4
@@ -977,6 +929,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   25
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -984,15 +937,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1013,21 +963,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   24
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   229
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1048,13 +996,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   21
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   195
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -1065,14 +1013,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   3
@@ -1091,6 +1037,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   20
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1098,15 +1045,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1127,21 +1071,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   19
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   195
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1162,21 +1104,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   16
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   161
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1197,21 +1137,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   14
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   161
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1232,13 +1170,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   11
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   127
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -1249,14 +1187,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   1
@@ -1275,6 +1211,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   10
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1282,15 +1219,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1311,21 +1245,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   127
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1346,13 +1278,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "= 10"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   93
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 10"
          Visible         =   True
          Width           =   130
       End
@@ -1363,14 +1295,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   0
@@ -1389,6 +1319,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1396,15 +1327,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel PlayerPerLevelAmountLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1425,21 +1353,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "10 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   93
          Transparent     =   False
          Underline       =   False
-         Value           =   "10 x"
          Visible         =   True
          Width           =   50
       End
-      Begin Label PlayerPerLevelColumnLabel
+      Begin DesktopLabel PlayerPerLevelColumnLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1460,21 +1386,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Per Level"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
-         Value           =   "Per Level"
          Visible         =   True
          Width           =   185
       End
-      Begin Label PlayerBaseColumnLabel
+      Begin DesktopLabel PlayerBaseColumnLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1495,21 +1419,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Base Value"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
-         Value           =   "Base Value"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1530,21 +1452,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   52
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Crafting:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   433
          Transparent     =   False
          Underline       =   False
-         Value           =   "Crafting:"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1565,21 +1485,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   47
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Fortitude:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   399
          Transparent     =   False
          Underline       =   False
-         Value           =   "Fortitude:"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1600,21 +1518,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   42
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Speed:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   365
          Transparent     =   False
          Underline       =   False
-         Value           =   "Speed:"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1635,21 +1551,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   37
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Melee:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   331
          Transparent     =   False
          Underline       =   False
-         Value           =   "Melee:"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1670,13 +1584,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   32
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Weight:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   297
          Transparent     =   False
          Underline       =   False
-         Value           =   "Weight:"
          Visible         =   True
          Width           =   100
       End
@@ -1687,14 +1601,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   7
@@ -1713,6 +1625,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   33
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1720,15 +1633,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1749,13 +1659,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   27
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Water:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   263
          Transparent     =   False
          Underline       =   False
-         Value           =   "Water:"
          Visible         =   True
          Width           =   100
       End
@@ -1766,14 +1676,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   5
@@ -1792,6 +1700,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   28
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1799,15 +1708,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1828,13 +1734,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   22
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Food:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   229
          Transparent     =   False
          Underline       =   False
-         Value           =   "Food:"
          Visible         =   True
          Width           =   100
       End
@@ -1845,14 +1751,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   4
@@ -1871,6 +1775,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   23
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1878,15 +1783,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1907,13 +1809,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   17
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Oxygen:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   195
          Transparent     =   False
          Underline       =   False
-         Value           =   "Oxygen:"
          Visible         =   True
          Width           =   100
       End
@@ -1924,14 +1826,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   3
@@ -1950,6 +1850,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   18
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1957,15 +1858,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1986,13 +1884,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   12
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Torpor:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   161
          Transparent     =   False
          Underline       =   False
-         Value           =   "Torpor:"
          Visible         =   True
          Width           =   100
       End
@@ -2003,14 +1901,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   2
@@ -2029,6 +1925,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   13
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -2036,15 +1933,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2065,13 +1959,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Stamina:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   127
          Transparent     =   False
          Underline       =   False
-         Value           =   "Stamina:"
          Visible         =   True
          Width           =   100
       End
@@ -2082,14 +1976,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   1
@@ -2108,6 +2000,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   8
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -2115,15 +2008,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedLabel PlayerStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2144,13 +2034,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Health:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   93
          Transparent     =   False
          Underline       =   False
-         Value           =   "Health:"
          Visible         =   True
          Width           =   100
       End
@@ -2161,14 +2051,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   0
@@ -2187,6 +2075,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -2194,15 +2083,12 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedPopupMenu CreatureMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2233,8 +2119,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel CreatureLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2255,21 +2139,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Preview with Creature:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
-         Value           =   "Preview with Creature:"
          Visible         =   True
          Width           =   148
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2290,21 +2172,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Health:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   137
          Transparent     =   False
          Underline       =   False
-         Value           =   "Health:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2325,21 +2205,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Stamina:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   171
          Transparent     =   False
          Underline       =   False
-         Value           =   "Stamina:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2360,21 +2238,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Torpor:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   205
          Transparent     =   False
          Underline       =   False
-         Value           =   "Torpor:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2395,21 +2271,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Oxygen:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   239
          Transparent     =   False
          Underline       =   False
-         Value           =   "Oxygen:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2430,21 +2304,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Food:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   273
          Transparent     =   False
          Underline       =   False
-         Value           =   "Food:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2462,24 +2334,22 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   11
+         TabIndex        =   13
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Weight:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   375
          Transparent     =   False
          Underline       =   False
-         Value           =   "Weight:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2497,24 +2367,22 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   12
+         TabIndex        =   14
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Damage:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   409
          Transparent     =   False
          Underline       =   False
-         Value           =   "Damage:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2532,16 +2400,16 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   13
+         TabIndex        =   15
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Speed:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   443
          Transparent     =   False
          Underline       =   False
-         Value           =   "Speed:"
          Visible         =   True
          Width           =   78
       End
@@ -2553,9 +2421,8 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
          Caption         =   "Wild Per-Level"
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   464
          Index           =   -2147483648
@@ -2584,9 +2451,8 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
          Caption         =   "Tamed Per-Level"
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   464
          Index           =   -2147483648
@@ -2615,9 +2481,8 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
          Caption         =   "Taming Reward"
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   464
          Index           =   -2147483648
@@ -2646,9 +2511,8 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
          Caption         =   "Max Effectiveness Reward"
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   464
          Index           =   -2147483648
@@ -2672,8 +2536,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2691,24 +2553,22 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   14
+         TabIndex        =   11
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Water:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   307
          Transparent     =   False
          Underline       =   False
-         Value           =   "Water:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2726,24 +2586,22 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   15
+         TabIndex        =   12
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Temp:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   341
          Transparent     =   False
          Underline       =   False
-         Value           =   "Temp:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2764,21 +2622,19 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   16
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Fortitude:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   477
          Transparent     =   False
          Underline       =   False
-         Value           =   "Fortitude:"
          Visible         =   True
          Width           =   78
       End
       Begin UITweaks.ResizedLabel CreatureStatLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2799,13 +2655,13 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TabIndex        =   17
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Crafting:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   511
          Transparent     =   False
          Underline       =   False
-         Value           =   "Crafting:"
          Visible         =   True
          Width           =   78
       End
@@ -2816,8 +2672,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2839,7 +2693,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "5"
@@ -2860,8 +2714,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2883,7 +2735,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   6
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "5"
@@ -2904,8 +2756,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2915,314 +2765,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Height          =   22
          Hint            =   ""
          Index           =   2
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   207
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "0"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   161
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField MutagenTamedField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   3
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   207
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "0"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   195
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField MutagenTamedField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   4
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   207
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "0"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   229
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField MutagenTamedField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   5
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   207
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "0"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   263
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField MutagenTamedField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   6
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   207
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "0"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   297
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField MutagenTamedField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   7
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   207
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "5"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   331
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField MutagenTamedField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   8
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   207
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   8
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "5"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   365
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField MutagenTamedField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   9
          InitialParent   =   "PagePanel1"
          Italic          =   False
          Left            =   207
@@ -3242,6 +2784,300 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
+         Top             =   161
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MutagenTamedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   3
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   207
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   12
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   195
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MutagenTamedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   4
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   207
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   15
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   229
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MutagenTamedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   5
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   207
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   18
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   263
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MutagenTamedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   6
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   207
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   21
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   297
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MutagenTamedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   7
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   207
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   24
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "5"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   331
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MutagenTamedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   8
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   207
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   27
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "5"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   365
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MutagenTamedField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   9
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   207
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   30
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
          Top             =   399
          Transparent     =   False
          Underline       =   False
@@ -3256,8 +3092,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3279,7 +3113,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   33
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3300,8 +3134,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3323,7 +3155,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   36
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3344,8 +3176,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3367,7 +3197,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   12
+         TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "1"
@@ -3388,8 +3218,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3411,7 +3239,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   7
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "1"
@@ -3432,8 +3260,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3455,7 +3281,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   14
+         TabIndex        =   10
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3476,8 +3302,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3499,7 +3323,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   15
+         TabIndex        =   13
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3520,8 +3344,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3564,8 +3386,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3587,7 +3407,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   17
+         TabIndex        =   19
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3608,8 +3428,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3631,7 +3449,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   18
+         TabIndex        =   22
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3652,8 +3470,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3675,7 +3491,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   19
+         TabIndex        =   25
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "1"
@@ -3696,8 +3512,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3719,7 +3533,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   20
+         TabIndex        =   28
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "1"
@@ -3740,8 +3554,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3763,7 +3575,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   21
+         TabIndex        =   31
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3784,8 +3596,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3807,7 +3617,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   22
+         TabIndex        =   34
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3828,8 +3638,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3851,7 +3659,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   23
+         TabIndex        =   37
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "0"
@@ -3868,8 +3676,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3887,7 +3693,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   24
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Health:"
@@ -3903,8 +3709,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3922,7 +3726,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   25
+         TabIndex        =   5
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Stamina / Charge Capacity:"
@@ -3938,8 +3742,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3957,7 +3759,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   26
+         TabIndex        =   8
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Torpor:"
@@ -3973,8 +3775,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -3992,7 +3792,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   27
+         TabIndex        =   11
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Oxygen / Charge Regen:"
@@ -4008,8 +3808,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4027,7 +3825,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   28
+         TabIndex        =   14
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Food:"
@@ -4043,8 +3841,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4062,7 +3858,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   29
+         TabIndex        =   17
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Water:"
@@ -4078,8 +3874,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4097,7 +3891,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   30
+         TabIndex        =   20
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Temperature:"
@@ -4113,8 +3907,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4132,7 +3924,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   31
+         TabIndex        =   23
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Weight:"
@@ -4148,8 +3940,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4167,7 +3957,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   32
+         TabIndex        =   26
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Damage / Charge Range:"
@@ -4183,8 +3973,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4202,7 +3990,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   33
+         TabIndex        =   29
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Speed / Nursing:"
@@ -4218,8 +4006,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4237,7 +4023,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   34
+         TabIndex        =   32
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Fortitude:"
@@ -4253,8 +4039,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Begin UITweaks.ResizedLabel MutagenLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4285,11 +4069,9 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Visible         =   True
          Width           =   175
       End
-      Begin Label MutagenTamedLabel
+      Begin DesktopLabel MutagenTamedLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4307,7 +4089,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   36
+         TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Tamed"
@@ -4320,11 +4102,9 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Visible         =   True
          Width           =   80
       End
-      Begin Label MutagenBredLabel
+      Begin DesktopLabel MutagenBredLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -4342,7 +4122,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   37
+         TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Bred"
@@ -4365,7 +4145,6 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -4382,7 +4161,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -4392,11 +4171,11 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
       Width           =   1122
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MinimumWidth = 1122
 		  Self.MinimumHeight = 495
 		End Sub
@@ -4465,7 +4244,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCreatureMenu()
-		  Var Menu As PopupMenu = Self.CreatureMenu
+		  Var Menu As DesktopPopupMenu = Self.CreatureMenu
 		  Var SelectedIndex As Integer = Menu.SelectedRowIndex
 		  Var SelectedCreature As Ark.Creature
 		  If SelectedIndex > -1 Then
@@ -4510,10 +4289,10 @@ End
 		  
 		  Var TopPos As Integer = 137
 		  Var Stats() As Ark.Stat = Ark.Stats.All
-		  Var StatLabels() As Label
+		  Var StatLabels() As DesktopLabel
 		  For Each Stat As Ark.Stat In Stats
 		    Var Visible As Boolean = (Creature.StatsMask And Stat.Mask) = Stat.Mask
-		    Var StatLabel As Label = CreatureStatLabel(Stat.Index)
+		    Var StatLabel As DesktopLabel = CreatureStatLabel(Stat.Index)
 		    If StatLabel Is Nil Then
 		      Continue
 		    End If
@@ -4547,7 +4326,7 @@ End
 		Private Sub UpdatePlayerUI(OnlyStatIndex As Integer = -1)
 		  Var Stats() As Ark.Stat = Ark.Stats.All
 		  Var Config As Ark.Configs.StatMultipliers = Self.Config(False)
-		  Var Focus As RectControl = Self.Focus
+		  Var Focus As DesktopUIControl = Self.Focus
 		  If Self.SettingUp Then
 		    Focus = Nil
 		  End If
@@ -4556,12 +4335,12 @@ End
 		      Continue
 		    End If
 		    
-		    Var BaseField As TextField = PlayerBaseField(Stat.Index)
-		    Var BaseLabel As Label = PlayerBaseLabel(Stat.Index)
-		    Var PerLevelAmountLabel As Label = PlayerPerLevelAmountLabel(Stat.Index)
-		    Var PerLevelMultiplierField As TextField = PlayerPerLevelMultiplierField(Stat.Index)
-		    Var PerLevelMultiplierLabel As Label = PlayerPerLevelMultiplierLabel(Stat.Index)
-		    Var PerLevelComputedLabel As Label = PlayerPerLevelComputedLabel(Stat.Index)
+		    Var BaseField As DesktopTextField = PlayerBaseField(Stat.Index)
+		    Var BaseLabel As DesktopLabel = PlayerBaseLabel(Stat.Index)
+		    Var PerLevelAmountLabel As DesktopLabel = PlayerPerLevelAmountLabel(Stat.Index)
+		    Var PerLevelMultiplierField As DesktopTextField = PlayerPerLevelMultiplierField(Stat.Index)
+		    Var PerLevelMultiplierLabel As DesktopLabel = PlayerPerLevelMultiplierLabel(Stat.Index)
+		    Var PerLevelComputedLabel As DesktopLabel = PlayerPerLevelComputedLabel(Stat.Index)
 		    
 		    If BaseField <> Nil And Focus <> BaseField Then
 		      Var BaseAmount As Double = Stat.PlayerBase
@@ -4590,7 +4369,7 @@ End
 		    End If
 		  Next
 		  
-		  Var StatLabels(), PerLevelLabels() As Label
+		  Var StatLabels(), PerLevelLabels() As DesktopLabel
 		  For Each Stat As Ark.Stat In Stats
 		    StatLabels.Add(Self.PlayerStatLabel(Stat.Index))
 		    PerLevelLabels.Add(Self.PlayerPerLevelAmountLabel(Stat.Index))
@@ -4656,7 +4435,7 @@ End
 
 #tag Events PagePanel1
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageCreatureStats
 		    Self.ConfigToolbar.Item("CreaturesButton").Toggled = True
@@ -4676,7 +4455,7 @@ End
 #tag EndEvents
 #tag Events PlayerPerLevelMultiplierField
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChanged(index as Integer)
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
@@ -4689,7 +4468,7 @@ End
 		  Self.SettingUp = True
 		  Var Multiplier As Double = CDbl(Me.Text)
 		  Self.Config(True).PlayerPerLevelMultiplier(Stat) = Multiplier
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		  Self.UpdatePlayerUI(Index)
 		End Sub
@@ -4697,7 +4476,7 @@ End
 #tag EndEvents
 #tag Events PlayerBaseField
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChanged(index as Integer)
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
@@ -4711,14 +4490,16 @@ End
 		  Var DesiredBase As Double = CDbl(Me.Text)
 		  Var Multiplier As Double = DesiredBase / Stat.PlayerBase
 		  Self.Config(True).PlayerBaseMultiplier(Stat) = Multiplier
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreatureMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -4733,7 +4514,7 @@ End
 	#tag Event
 		Sub MultiplierUpdated(StatIndex As Integer, Value As Double)
 		  Self.Config(True).WildPerLevelMultiplier(Ark.Stats.WithIndex(StatIndex)) = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCreatureStats(StatIndex)
 		End Sub
 	#tag EndEvent
@@ -4742,7 +4523,7 @@ End
 	#tag Event
 		Sub MultiplierUpdated(StatIndex As Integer, Value As Double)
 		  Self.Config(True).TamedPerLevelMultiplier(Ark.Stats.WithIndex(StatIndex)) = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCreatureStats(StatIndex)
 		End Sub
 	#tag EndEvent
@@ -4751,7 +4532,7 @@ End
 	#tag Event
 		Sub MultiplierUpdated(StatIndex As Integer, Value As Double)
 		  Self.Config(True).TamedAddMultiplier(Ark.Stats.WithIndex(StatIndex)) = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCreatureStats(StatIndex)
 		End Sub
 	#tag EndEvent
@@ -4760,14 +4541,14 @@ End
 	#tag Event
 		Sub MultiplierUpdated(StatIndex As Integer, Value As Double)
 		  Self.Config(True).TamedAffinityMultiplier(Ark.Stats.WithIndex(StatIndex)) = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCreatureStats(StatIndex)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MutagenTamedField
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChanged(index as Integer)
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
@@ -4780,14 +4561,14 @@ End
 		  Self.SettingUp = True
 		  Var Multiplier As Integer = Round(CDbl(Me.Text))
 		  Self.Config(True).MutagenTamedLevels(Stat) = Multiplier
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MutagenBredField
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChanged(index as Integer)
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
@@ -4800,14 +4581,14 @@ End
 		  Self.SettingUp = True
 		  Var Multiplier As Integer = Round(CDbl(Me.Text))
 		  Self.Config(True).MutagenBredLevels(Stat) = Multiplier
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  
@@ -4837,6 +4618,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -5050,8 +4847,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -5086,26 +4883,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl ArkCreatureStatContainer
+#tag DesktopWindow
+Begin DesktopContainer ArkCreatureStatContainer
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   464
    Index           =   -2147483648
@@ -26,7 +25,7 @@ Begin ContainerControl ArkCreatureStatContainer
    Transparent     =   True
    Visible         =   True
    Width           =   251
-   Begin GroupBox Group
+   Begin DesktopGroupBox Group
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Caption"
@@ -61,14 +60,12 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   0
@@ -87,6 +84,7 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -94,15 +92,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -123,21 +118,19 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   42
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -158,13 +151,13 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   42
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
@@ -175,14 +168,12 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   1
@@ -201,6 +192,7 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -208,15 +200,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -237,21 +226,19 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   76
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -272,13 +259,13 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   76
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
@@ -289,14 +276,12 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   2
@@ -315,6 +300,7 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -322,15 +308,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -351,21 +334,19 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   110
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -386,13 +367,13 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   110
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
@@ -403,14 +384,12 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   3
@@ -429,6 +408,7 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -436,15 +416,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -465,21 +442,19 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   144
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -500,13 +475,13 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   144
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
@@ -517,14 +492,12 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   4
@@ -543,6 +516,7 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -550,15 +524,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -579,21 +550,19 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   178
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -614,13 +583,13 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   178
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
@@ -631,245 +600,15 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   7
-         InitialParent   =   "Group"
-         Italic          =   False
-         Left            =   95
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   16
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   280
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Value           =   ""
-         Visible         =   True
-         Width           =   60
-      End
-      Begin UITweaks.ResizedLabel BaseLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   7
-         InitialParent   =   "Group"
-         Italic          =   False
-         Left            =   26
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   15
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   280
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "40 x"
-         Visible         =   True
-         Width           =   57
-      End
-      Begin UITweaks.ResizedLabel ComputedLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   7
-         InitialParent   =   "Group"
-         Italic          =   False
-         Left            =   167
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   17
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   280
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "= 40"
-         Visible         =   True
-         Width           =   58
-      End
-      Begin UITweaks.ResizedTextField MultiplierField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         Height          =   22
-         Hint            =   ""
-         Index           =   8
-         InitialParent   =   "Group"
-         Italic          =   False
-         Left            =   95
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   19
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   314
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Value           =   ""
-         Visible         =   True
-         Width           =   60
-      End
-      Begin UITweaks.ResizedLabel BaseLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   8
-         InitialParent   =   "Group"
-         Italic          =   False
-         Left            =   26
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   18
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   314
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "40 x"
-         Visible         =   True
-         Width           =   57
-      End
-      Begin UITweaks.ResizedLabel ComputedLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   8
-         InitialParent   =   "Group"
-         Italic          =   False
-         Left            =   167
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   20
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   314
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "= 40"
-         Visible         =   True
-         Width           =   58
-      End
-      Begin UITweaks.ResizedTextField MultiplierField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         Height          =   22
-         Hint            =   ""
-         Index           =   9
          InitialParent   =   "Group"
          Italic          =   False
          Left            =   95
@@ -885,28 +624,26 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   22
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   348
+         Top             =   280
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Height          =   22
-         Index           =   9
+         Index           =   7
          InitialParent   =   "Group"
          Italic          =   False
          Left            =   26
@@ -921,27 +658,25 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   21
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   348
+         Top             =   280
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
          Height          =   22
-         Index           =   9
+         Index           =   7
          InitialParent   =   "Group"
          Italic          =   False
          Left            =   167
@@ -956,50 +691,15 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   23
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   348
+         Top             =   280
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
-      End
-      Begin UITweaks.ResizedLabel BaseLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   5
-         InitialParent   =   "Group"
-         Italic          =   False
-         Left            =   26
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   24
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   212
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "40 x"
-         Visible         =   True
-         Width           =   57
       End
       Begin UITweaks.ResizedTextField MultiplierField
          AllowAutoDeactivate=   True
@@ -1008,8 +708,6 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1018,7 +716,7 @@ Begin ContainerControl ArkCreatureStatContainer
          HasBorder       =   True
          Height          =   22
          Hint            =   ""
-         Index           =   5
+         Index           =   8
          InitialParent   =   "Group"
          Italic          =   False
          Left            =   95
@@ -1034,6 +732,256 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   25
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   314
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   60
+      End
+      Begin UITweaks.ResizedLabel BaseLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   8
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   24
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "40 x"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   314
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   57
+      End
+      Begin UITweaks.ResizedLabel ComputedLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   8
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   167
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   26
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "= 40"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   314
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   58
+      End
+      Begin UITweaks.ResizedTextField MultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   9
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   95
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   28
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   348
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   60
+      End
+      Begin UITweaks.ResizedLabel BaseLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   9
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   27
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "40 x"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   348
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   57
+      End
+      Begin UITweaks.ResizedLabel ComputedLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   9
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   167
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   29
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "= 40"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   348
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   58
+      End
+      Begin UITweaks.ResizedLabel BaseLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   5
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   15
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "40 x"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   212
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   57
+      End
+      Begin UITweaks.ResizedTextField MultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   5
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   95
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   16
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1041,15 +989,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1067,24 +1012,22 @@ Begin ContainerControl ArkCreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   26
+         TabIndex        =   17
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   212
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1102,16 +1045,16 @@ Begin ContainerControl ArkCreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   27
+         TabIndex        =   18
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   246
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
@@ -1122,8 +1065,6 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1145,9 +1086,10 @@ Begin ContainerControl ArkCreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   28
+         TabIndex        =   19
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1155,15 +1097,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1181,24 +1120,22 @@ Begin ContainerControl ArkCreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   29
+         TabIndex        =   20
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   246
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1219,13 +1156,13 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   30
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   382
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
@@ -1236,8 +1173,6 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1262,6 +1197,7 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   31
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1269,15 +1205,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1298,21 +1231,19 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   32
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   382
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
       Begin UITweaks.ResizedLabel BaseLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1333,13 +1264,13 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   33
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "40 x"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
-         Value           =   "40 x"
          Visible         =   True
          Width           =   57
       End
@@ -1350,8 +1281,6 @@ Begin ContainerControl ArkCreatureStatContainer
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1376,6 +1305,7 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   34
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1383,15 +1313,12 @@ Begin ContainerControl ArkCreatureStatContainer
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel ComputedLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1412,19 +1339,19 @@ Begin ContainerControl ArkCreatureStatContainer
          TabIndex        =   35
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "= 40"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
-         Value           =   "= 40"
          Visible         =   True
          Width           =   58
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -1458,7 +1385,7 @@ End
 		  Const NormalFieldWidth = 50
 		  
 		  Var Stats() As Ark.Stat = Ark.Stats.All
-		  Var BaseLabels(), ComputedLabels() As Label
+		  Var BaseLabels(), ComputedLabels() As DesktopLabel
 		  For Each Stat As Ark.Stat In Stats
 		    BaseLabels.Add(Self.BaseLabel(Stat.Index))
 		    ComputedLabels.Add(Self.ComputedLabel(Stat.Index))
@@ -1530,7 +1457,7 @@ End
 		  
 		  Self.mSettingUp = True
 		  Var Stats() As Ark.Stat = Ark.Stats.All
-		  Var Focus As RectControl = Self.Focus
+		  Var Focus As DesktopUIControl = Self.Focus
 		  If IncludeFocusControl Then
 		    Focus = Nil
 		  End If
@@ -1603,9 +1530,9 @@ End
 		      End If
 		    End If
 		    
-		    Var StatBaseLabel As Label = BaseLabel(Stat.Index)
-		    Var StatMultiplierField As TextField = MultiplierField(Stat.Index)
-		    Var StatComputedLabel As Label = ComputedLabel(Stat.Index)
+		    Var StatBaseLabel As DesktopLabel = BaseLabel(Stat.Index)
+		    Var StatMultiplierField As DesktopTextField = MultiplierField(Stat.Index)
+		    Var StatComputedLabel As DesktopLabel = ComputedLabel(Stat.Index)
 		    
 		    If StatBaseLabel <> Nil Then
 		      If Stat.IsPercentage Then
@@ -1668,7 +1595,7 @@ End
 
 #tag Events MultiplierField
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChanged(index as Integer)
 		  If Self.mSettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
@@ -1679,6 +1606,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1828,8 +1763,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1880,14 +1815,6 @@ End
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="InitialParent"
 		Visible=false
 		Group="Position"
@@ -1901,14 +1828,6 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

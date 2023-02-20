@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkDiscoveryView ArkGSADiscoveryView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   402
    Index           =   -2147483648
@@ -26,7 +27,7 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
    Transparent     =   True
    Visible         =   True
    Width           =   576
-   Begin PagePanel Views
+   Begin DesktopPagePanel Views
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   402
@@ -41,20 +42,19 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   576
-      Begin Label UserTokenMessage
+      Begin DesktopLabel UserTokenMessage
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -85,11 +85,9 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
          Visible         =   True
          Width           =   536
       End
-      Begin Label UserTokenExplanation
+      Begin DesktopLabel UserTokenExplanation
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -160,8 +158,6 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -273,8 +269,6 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -313,8 +307,6 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       Begin UITweaks.ResizedLabel UserTokenNameLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -345,8 +337,10 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
          Visible         =   True
          Width           =   117
       End
-      Begin ProgressBar ListingIndicator
+      Begin DesktopProgressBar ListingIndicator
+         Active          =   False
          AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   20
          Indeterminate   =   True
@@ -359,22 +353,24 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
          LockRight       =   True
          LockTop         =   True
          MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Tooltip         =   ""
          Top             =   207
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
          Width           =   536
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label ListingMessage
+      Begin DesktopLabel ListingMessage
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -405,11 +401,9 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
          Visible         =   True
          Width           =   536
       End
-      Begin Label TemplatesMessage
+      Begin DesktopLabel TemplatesMessage
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -548,8 +542,6 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
          Bold            =   False
          ColumnCount     =   2
          ColumnWidths    =   "26,*"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -559,8 +551,7 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -629,7 +620,7 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -661,7 +652,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  RaiseEvent Open
 		End Sub
@@ -805,7 +796,7 @@ End
 
 #tag Events Views
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageUserToken
 		    Self.DesiredHeight = 400
@@ -819,21 +810,21 @@ End
 #tag EndEvents
 #tag Events UserTokenDashboardButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  System.GotoURL(Beacon.WebURL("/gsatoken"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events UserTokenArea
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckUserTokenActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events UserTokenActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Account As New Beacon.ExternalAccount(v4UUID.Create, Self.UserTokenNameField.Text.Trim, Beacon.ExternalAccount.ProviderGameServerApp, Self.UserTokenArea.Text.Trim, "", New DateTime(2999, 12, 31, 0, 0, 0, 0, New TimeZone(0)))
 		  Self.mAccounts.Add(Account)
 		  Self.ListTemplatesForAccount(Account)
@@ -844,7 +835,7 @@ End
 #tag EndEvents
 #tag Events UserTokenCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.TemplatesList.RowCount = 0 Then
 		    Self.ShouldCancel()
 		  ElseIf Self.mPendingEngines.Count > 0 Then
@@ -857,28 +848,28 @@ End
 #tag EndEvents
 #tag Events UserTokenNameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckUserTokenActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events TemplatesLinkAdditionalButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.StartNewAccount()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events TemplatesCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events TemplatesActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Data() As Beacon.DiscoveredData
 		  For Idx As Integer = 0 To Self.TemplatesList.LastRowIndex
 		    If Not Self.TemplatesList.CellCheckBoxValueAt(Idx, 0) Then
@@ -894,8 +885,8 @@ End
 #tag EndEvents
 #tag Events TemplatesList
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
@@ -910,7 +901,7 @@ End
 #tag EndEvents
 #tag Events ListingCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If (Self.mActiveEngine Is Nil) = False Then
 		    RemoveHandler Self.mActiveEngine.Discovered, WeakAddressOf Engine_Discovered
 		    Self.mActiveEngine.Cancel
@@ -922,6 +913,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1087,8 +1086,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1123,26 +1122,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

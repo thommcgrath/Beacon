@@ -29,7 +29,7 @@ Implements NotificationKit.Receiver
 		Sub SelectionChanged(updated as Integer)
 		  #Pragma Unused Updated
 		  
-		  RaiseEvent SelChange
+		  RaiseEvent SelectionChanged
 		End Sub
 	#tag EndEvent
 
@@ -41,7 +41,7 @@ Implements NotificationKit.Receiver
 		  #Pragma Unused Length
 		  #Pragma Unused Line
 		  
-		  RaiseEvent TextChange
+		  RaiseEvent TextChanged
 		  
 		  If LinesAdded > 0 Then
 		    Self.UpdateLineNumbersGutter()
@@ -147,7 +147,7 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event SelChange()
+		Event SelectionChanged()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -159,7 +159,7 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TextChange()
+		Event TextChanged()
 	#tag EndHook
 
 

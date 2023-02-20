@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog RegisterModDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,7 +27,7 @@ Begin BeaconDialog RegisterModDialog
    Title           =   "Register Mod"
    Visible         =   True
    Width           =   520
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   252
@@ -42,6 +42,7 @@ Begin BeaconDialog RegisterModDialog
       PanelCount      =   4
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -51,14 +52,14 @@ Begin BeaconDialog RegisterModDialog
       Value           =   1
       Visible         =   True
       Width           =   520
-      Begin Label IntroMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel IntroMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -75,22 +76,18 @@ Begin BeaconDialog RegisterModDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Register Mod"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   480
       End
-      Begin Label IntroExplanationLabel
+      Begin DesktopLabel IntroExplanationLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -121,7 +118,7 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   480
       End
-      Begin RadioButton IntroAuthorRadio
+      Begin DesktopRadioButton IntroAuthorRadio
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "I am a mod author who wants to add my mod to Beacon."
@@ -151,7 +148,7 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   480
       End
-      Begin RadioButton IntroUserRadio
+      Begin DesktopRadioButton IntroUserRadio
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "I am a server admin who wants to add mod items to Beacon."
@@ -245,11 +242,9 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   80
       End
-      Begin Label DetailMessageLabel
+      Begin DesktopLabel DetailMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -280,11 +275,12 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   480
       End
-      Begin ProgressWheel DetailSpinner
-         AutoDeactivate  =   True
+      Begin DesktopProgressWheel DetailSpinner
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   20
@@ -293,25 +289,31 @@ Begin BeaconDialog RegisterModDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   2
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   214
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin UITweaks.ResizedPushButton DetailCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -321,13 +323,12 @@ Begin BeaconDialog RegisterModDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   212
          Transparent     =   False
          Underline       =   False
@@ -335,15 +336,16 @@ Begin BeaconDialog RegisterModDialog
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton DetailActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -353,13 +355,12 @@ Begin BeaconDialog RegisterModDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   212
          Transparent     =   False
          Underline       =   False
@@ -367,31 +368,30 @@ Begin BeaconDialog RegisterModDialog
          Width           =   80
       End
       Begin UITweaks.ResizedTextField DetailModIDField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   "Workshop ID or URL"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   20
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -399,25 +399,24 @@ Begin BeaconDialog RegisterModDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   170
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   480
       End
-      Begin Label DetailExplanationLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel DetailExplanationLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   106
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -434,11 +433,9 @@ Begin BeaconDialog RegisterModDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "You can register your mod with Beacon so your engrams and creatures can be available to all Beacon users. You'll even be given a page on Beacon's website with your engram spawn codes and other blueprint details. To get started, enter the Steam workshop id or the url to your mod. You will be given a code to temporarily add to your mod's Steam page so your ownership of the mod can be confirmed."
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   True
          Underline       =   False
@@ -509,11 +506,9 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   80
       End
-      Begin Label ConfirmMessageLabel
+      Begin DesktopLabel ConfirmMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -544,11 +539,9 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   480
       End
-      Begin Label ConfirmExplanationLabel
+      Begin DesktopLabel ConfirmExplanationLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -586,8 +579,6 @@ Begin BeaconDialog RegisterModDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -623,8 +614,10 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   388
       End
-      Begin ProgressWheel ConfirmSpinner
+      Begin DesktopProgressWheel ConfirmSpinner
+         Active          =   False
          AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
          Index           =   -2147483648
@@ -635,15 +628,19 @@ Begin BeaconDialog RegisterModDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   3
-         TabStop         =   True
          Tooltip         =   ""
          Top             =   214
          Transparent     =   False
          Visible         =   False
          Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin ReactionButton ConfirmCopyButton
          AllowAutoDeactivate=   True
@@ -677,11 +674,9 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   80
       End
-      Begin Label NameMessageLabel
+      Begin DesktopLabel NameMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -712,11 +707,9 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   480
       End
-      Begin Label NameExplanationLabel
+      Begin DesktopLabel NameExplanationLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -754,8 +747,6 @@ Begin BeaconDialog RegisterModDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -855,12 +846,10 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   80
       End
-      Begin CheckBox NameShowInstructionsCheck
+      Begin DesktopCheckBox NameShowInstructionsCheck
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Show me instructions when finished"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -876,7 +865,6 @@ Begin BeaconDialog RegisterModDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   1
          TabIndex        =   5
          TabPanelIndex   =   4
          TabStop         =   True
@@ -886,6 +874,7 @@ Begin BeaconDialog RegisterModDialog
          Underline       =   False
          Value           =   True
          Visible         =   True
+         VisualState     =   0
          Width           =   296
       End
       Begin UITweaks.ResizedTextField NameWorkshopField
@@ -895,8 +884,6 @@ Begin BeaconDialog RegisterModDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -935,8 +922,6 @@ Begin BeaconDialog RegisterModDialog
       Begin UITweaks.ResizedLabel NameWorkshopLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -970,8 +955,6 @@ Begin BeaconDialog RegisterModDialog
       Begin UITweaks.ResizedLabel NameWorkshopOptionalLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1004,14 +987,12 @@ Begin BeaconDialog RegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1019,7 +1000,6 @@ Begin BeaconDialog RegisterModDialog
    End
    Begin Thread RegisterModThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1027,14 +1007,14 @@ Begin BeaconDialog RegisterModDialog
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If (Self.mModInfo Is Nil) = False Then
 		    Self.ShowConfirmation()
 		  Else
@@ -1103,14 +1083,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ModInfo As BeaconAPI.WorkshopMod = Nil) As String
+		Shared Function Present(Parent As DesktopWindow, ModInfo As BeaconAPI.WorkshopMod = Nil) As String
 		  If Parent Is Nil Then
 		    Return ""
 		  End If
 		  
 		  Var Win As New RegisterModDialog(ModInfo)
 		  Win.SwapButtons()
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  Var ModUUID As String = Win.mModUUID
 		  Win.Close
 		  Return ModUUID
@@ -1183,7 +1163,7 @@ End
 
 #tag Events Pages
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Var TargetHeight As Integer
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageIntro
@@ -1207,7 +1187,7 @@ End
 #tag EndEvents
 #tag Events IntroActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.IntroAuthorRadio.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageDetail
 		  ElseIf Self.IntroUserRadio.Value Then
@@ -1220,7 +1200,7 @@ End
 #tag EndEvents
 #tag Events IntroCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mModUUID = ""
 		  Self.Hide
 		End Sub
@@ -1228,14 +1208,14 @@ End
 #tag EndEvents
 #tag Events DetailCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Pages.SelectedPanelIndex = 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DetailActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var ModID As String = Self.DetailModIDField.Text.Trim
 		  If ModID.Left(4) = "http" Then
 		    Var Regex As New Regex
@@ -1262,21 +1242,21 @@ End
 #tag EndEvents
 #tag Events DetailModIDField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.DetailActionButton.Enabled = Me.Text.Trim <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfirmCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfirmActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Request As New BeaconAPI.Request(Self.mModInfo.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.ConfirmSocket.Start(Request)
@@ -1285,7 +1265,7 @@ End
 #tag EndEvents
 #tag Events ConfirmCopyButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var C As New Clipboard
 		  C.Text = Self.ConfirmCodeField.Text
 		  
@@ -1296,7 +1276,7 @@ End
 #tag EndEvents
 #tag Events NameActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var ModName As String = Self.NameInputField.Text.Trim
 		  If ModName.IsEmpty Then
 		    Self.ShowAlert("Your mod should have a name", "It doesn't really make sense not to have one, does it?")
@@ -1320,7 +1300,7 @@ End
 #tag EndEvents
 #tag Events NameCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Pages.SelectedPanelIndex = 0
 		End Sub
 	#tag EndEvent
@@ -1510,8 +1490,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1574,7 +1554,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

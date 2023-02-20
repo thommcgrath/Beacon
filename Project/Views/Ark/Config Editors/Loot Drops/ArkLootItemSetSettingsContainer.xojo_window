@@ -1,16 +1,15 @@
-#tag Window
-Begin ContainerControl ArkLootItemSetSettingsContainer
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+#tag DesktopWindow
+Begin DesktopContainer ArkLootItemSetSettingsContainer
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
-   DoubleBuffer    =   False
+   BackgroundColor =   &cFFFFFF00
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   154
-   HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -21,21 +20,20 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   300
    Begin FadedSeparator BottomBorder
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -51,37 +49,36 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   153
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   300
    End
    Begin UITweaks.ResizedTextField NameField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   101
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -89,25 +86,24 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   179
    End
-   Begin Label NameLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel NameLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -124,25 +120,23 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Item Set Name:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   69
    End
-   Begin Label MinEntriesLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MinEntriesLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -159,25 +153,23 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Minimum Entries:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   69
    End
-   Begin Label MaxEntriesLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MaxEntriesLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -194,25 +186,23 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Maximum Entries:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   69
    End
-   Begin Label WeightLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel WeightLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -229,11 +219,9 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Item Set Weight:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   104
       Transparent     =   False
       Underline       =   False
@@ -241,31 +229,30 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Width           =   69
    End
    Begin RangeField MinEntriesField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   101
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -273,43 +260,41 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   82
    End
    Begin RangeField MaxEntriesField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   101
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -317,43 +302,41 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   82
    End
    Begin RangeField WeightField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   101
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -361,23 +344,23 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   104
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   82
    End
-   Begin UpDownArrows WeightStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
+   Begin DesktopUpDownArrows WeightStepper
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   183
@@ -386,21 +369,27 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   104
       Transparent     =   False
       Visible         =   True
       Width           =   13
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin UpDownArrows MaxEntriesStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
+   Begin DesktopUpDownArrows MaxEntriesStepper
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   183
@@ -409,21 +398,27 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Visible         =   True
       Width           =   13
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin UpDownArrows MinEntriesStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
+   Begin DesktopUpDownArrows MinEntriesStepper
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   183
@@ -432,14 +427,19 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Visible         =   True
       Width           =   13
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin SwitchControl PreventDuplicatesCheck
       AllowAutoDeactivate=   True
@@ -448,7 +448,6 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -472,11 +471,9 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Visible         =   True
       Width           =   40
    End
-   Begin Label PreventDuplicatesLabel
+   Begin DesktopLabel PreventDuplicatesLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -508,11 +505,11 @@ Begin ContainerControl ArkLootItemSetSettingsContainer
       Width           =   69
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  RaiseEvent Open
 		  Self.SetupUI()
 		  Self.mSettingUp = False
@@ -638,7 +635,7 @@ End
 
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -747,7 +744,7 @@ End
 #tag EndEvents
 #tag Events WeightStepper
 	#tag Event
-		Sub Down()
+		Sub DownPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -756,7 +753,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
+		Sub UpPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -767,7 +764,7 @@ End
 #tag EndEvents
 #tag Events MaxEntriesStepper
 	#tag Event
-		Sub Down()
+		Sub DownPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -776,7 +773,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
+		Sub UpPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -787,7 +784,7 @@ End
 #tag EndEvents
 #tag Events MinEntriesStepper
 	#tag Event
-		Sub Down()
+		Sub DownPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -796,7 +793,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
+		Sub UpPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -807,7 +804,7 @@ End
 #tag EndEvents
 #tag Events PreventDuplicatesCheck
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -825,19 +822,19 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -869,8 +866,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1037,14 +1034,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

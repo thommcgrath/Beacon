@@ -11,8 +11,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
-		  RaiseEvent Close
+		Sub Closing()
+		  RaiseEvent Closing
 		  
 		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
 		  
@@ -31,14 +31,14 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
 		  
 		  If (Self.Project Is Nil) = False Then
 		    Self.Project.AddObserver(Self, "Title")
 		  End If
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
@@ -200,7 +200,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteSuccess(Sender As Beacon.ProjectController)
 		  If Not Self.Closed Then
-		    Self.Changed = (Sender.Project Is Nil) = False And Sender.Project.Modified
+		    Self.Modified = (Sender.Project Is Nil) = False And Sender.Project.Modified
 		    Self.ViewTitle = Sender.Name
 		    Self.Progress = BeaconSubview.ProgressNone
 		    If (Self.LinkedOmniBarItem Is Nil) = False And (Self.LinkedOmniBarItem.Name <> Self.mController.URL.Hash) Then
@@ -246,7 +246,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  Select Case Key
 		  Case "Title"
 		    Self.ViewTitle = Self.mController.Name
-		    Self.Changed = True
+		    Self.Modified = True
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -331,7 +331,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Close()
+		Event Closing()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -343,7 +343,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -377,6 +377,22 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Modified"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Composited"
+			Visible=true
+			Group="Window Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -526,8 +542,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBackgroundColor"
@@ -607,22 +623,6 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 			Group="Behavior"
 			InitialValue=""
 			Type="Picture"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

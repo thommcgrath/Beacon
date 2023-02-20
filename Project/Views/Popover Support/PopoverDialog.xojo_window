@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog PopoverDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -89,11 +89,11 @@ Begin BeaconDialog PopoverDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons
 		End Sub
 	#tag EndEvent
@@ -108,11 +108,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Embed(Container As ContainerControl, PaddingX As Integer, PaddingY As Integer) As RectControl
+		Function Embed(Container As DesktopContainer, PaddingX As Integer, PaddingY As Integer) As DesktopUIControl
 		  Container.EmbedWithin(Self, PaddingX, PaddingY, Container.Width, Container.Height)
 		  Self.Width = Container.Width + (PaddingX * 2)
 		  Self.Height = Container.Height + (PaddingY * 2) + 40
-		  Return RectControl(Self.Control(Self.ControlCount - 1))
+		  Return DesktopUIControl(Self.ControlAt(Self.ControlCount - 1))
 		End Function
 	#tag EndMethod
 
@@ -126,7 +126,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If (Self.mController Is Nil) = False And (Self.mController.Value Is Nil) = False And (Self.mController.Value IsA PopoverController) Then
 		    PopoverController(Self.mController.Value).Dismiss(False)
 		  Else
@@ -137,7 +137,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If (Self.mController Is Nil) = False And (Self.mController.Value Is Nil) = False And (Self.mController.Value IsA PopoverController) Then
 		    PopoverController(Self.mController.Value).Dismiss(True)
 		  Else
@@ -260,8 +260,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -372,7 +372,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

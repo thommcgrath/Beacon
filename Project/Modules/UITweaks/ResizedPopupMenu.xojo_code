@@ -1,8 +1,8 @@
 #tag Class
 Protected Class ResizedPopupMenu
-Inherits PopupMenu
+Inherits DesktopPopupMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If Self.TopDelta <> 0 Then
 		    Self.Top = Self.Top + Self.TopDelta
 		  End If
@@ -14,13 +14,13 @@ Inherits PopupMenu
 		    Self.Top = Self.Top + 1
 		  End If
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
@@ -107,22 +107,6 @@ Inherits PopupMenu
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Enabled"
 			Visible=true
 			Group="Appearance"
@@ -144,14 +128,6 @@ Inherits PopupMenu
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

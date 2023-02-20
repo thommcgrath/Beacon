@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin TemplateEditorView ArkLootTemplateEditorView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin TemplateEditorView ArkLootTemplateEditorView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   556
    Index           =   -2147483648
@@ -26,11 +27,10 @@ Begin TemplateEditorView ArkLootTemplateEditorView
    Transparent     =   True
    Visible         =   True
    Width           =   740
-   Begin PagePanel Pages
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel Pages
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   515
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -42,22 +42,24 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   3
+      SelectedPanelIndex=   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   740
-      Begin Label LockExplanationLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel LockExplanationLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -74,23 +76,22 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Checking the box next to a quantity, quality, or blueprint chance will allow the values to be adjusted by modifiers."
-         TextAlign       =   1
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   516
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   700
       End
-      Begin UpDownArrows MaxItemsStepper
-         AcceptFocus     =   False
-         AutoDeactivate  =   True
+      Begin DesktopUpDownArrows MaxItemsStepper
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   23
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   192
@@ -99,21 +100,27 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   9
          TabPanelIndex   =   1
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   163
          Transparent     =   False
          Visible         =   True
          Width           =   13
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin UpDownArrows MinItemsStepper
-         AcceptFocus     =   False
-         AutoDeactivate  =   True
+      Begin DesktopUpDownArrows MinItemsStepper
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   23
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   192
@@ -122,41 +129,45 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   6
          TabPanelIndex   =   1
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   129
          Transparent     =   False
          Visible         =   True
          Width           =   13
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin UITweaks.ResizedTextField MaxItemsField
-         AcceptTabs      =   False
-         Alignment       =   2
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   132
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -164,25 +175,24 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   2
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   163
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel MaxItemsLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -199,11 +209,9 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Max Items:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   163
          Transparent     =   True
          Underline       =   False
@@ -211,31 +219,30 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          Width           =   100
       End
       Begin UITweaks.ResizedTextField MinItemsField
-         AcceptTabs      =   False
-         Alignment       =   2
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   132
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -243,25 +250,24 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   2
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   129
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel MinItemsLabels
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -278,25 +284,23 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Min Items:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   129
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   100
       End
-      Begin Label GroupingLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel GroupingLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -313,25 +317,23 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Grouping:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   95
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   100
       End
-      Begin Label NameLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel NameLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -348,11 +350,9 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Name:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   61
          Transparent     =   True
          Underline       =   False
@@ -360,31 +360,30 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          Width           =   100
       End
       Begin UITweaks.ResizedTextField GroupingField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   132
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -392,43 +391,41 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   95
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   588
       End
       Begin UITweaks.ResizedTextField NameField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   132
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -436,27 +433,27 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   588
       End
       Begin UITweaks.ResizedPushButton AddModifierButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Add Modifier"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -466,13 +463,12 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
@@ -480,15 +476,16 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          Width           =   114
       End
       Begin UITweaks.ResizedPushButton EditModifierButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Edit"
          Default         =   False
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -498,13 +495,12 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
@@ -512,15 +508,16 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton DeleteModifierButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Delete"
          Default         =   False
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -530,13 +527,12 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
@@ -544,30 +540,33 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          Width           =   80
       End
       Begin BeaconListbox ContentsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   5
-         ColumnsResizable=   False
          ColumnWidths    =   "30,*,100,120,100"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   22
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   "#ColumnDescription"
          Height          =   401
-         HelpTag         =   ""
-         Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   " 	Engram	Quantity	Quality	Blueprint %"
@@ -580,22 +579,16 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   1
-         ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   103
          Transparent     =   True
          TypeaheadColumn =   1
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
          Width           =   700
@@ -603,30 +596,33 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox ModifiersList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   5
-         ColumnsResizable=   False
          ColumnWidths    =   "40%,15%,15%,15%,15%"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   -1
+         DefaultRowHeight=   22
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   435
-         HelpTag         =   ""
-         Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   "Group	Min Quality Change	Max Quality Change	Quantity Multiplier	Blueprint % Multiplier"
@@ -639,22 +635,16 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   1
-         ShowDropIndicator=   False
          TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   101
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
          Width           =   700
@@ -669,7 +659,6 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   22
          Index           =   -2147483648
@@ -685,7 +674,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   3
+         TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -704,7 +693,6 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -721,7 +709,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -731,12 +719,12 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       Width           =   740
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
 		Sub EnableMenuItems()
-		  If Self.Changed Then
+		  If Self.Modified Then
 		    FileSave.Enabled = True
 		    If Self.mSaveFile <> Nil Then
 		      FileSaveAs.Enabled = True
@@ -749,7 +737,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MapSelector.LockChangeEvent
 		  Self.MapSelector.RemoveAll
 		  Var AllMaps() As Ark.Map = Ark.Maps.All
@@ -858,14 +846,14 @@ End
 		  End If
 		  
 		  For I As Integer = Self.ContentsList.RowCount - 1 DownTo 0
-		    If Not Self.ContentsList.Selected(I) Then
+		    If Not Self.ContentsList.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    Var Entry As Ark.LootTemplateEntry = Self.ContentsList.RowTagAt(I)
 		    Var Idx As Integer = Self.mTemplate.IndexOf(Entry)
 		    If Idx > -1 Then
 		      Self.mTemplate.RemoveAt(Idx)  
-		      Self.Changed = True
+		      Self.Modified = True
 		    End If
 		    Self.ContentsList.RemoveRowAt(I)
 		  Next
@@ -877,7 +865,7 @@ End
 		Private Sub EditSelectedEntries()
 		  Var Entries() As Ark.LootItemSetEntry
 		  For I As Integer = 0 To ContentsList.RowCount - 1
-		    If Not ContentsList.Selected(I) Then
+		    If Not ContentsList.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -926,7 +914,7 @@ End
 		  Next
 		  
 		  ContentsList.Sort
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -975,24 +963,24 @@ End
 		  Next
 		  
 		  If MapsValid = 0 Then
-		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.VisualStates.Unchecked
+		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = DesktopCheckbox.VisualStates.Unchecked
 		  ElseIf MapsInvalid = 0 Then
-		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.VisualStates.Checked
+		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = DesktopCheckbox.VisualStates.Checked
 		  Else
-		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.VisualStates.Indeterminate
+		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = DesktopCheckbox.VisualStates.Indeterminate
 		  End If
 		  
 		  Self.ContentsList.RowTagAt(Index) = Entry.MutableVersion
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnDescription) = Entry.Label
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Entry.MinQuality.Label, Entry.MinQuality.Label(False) + "-" + Entry.MaxQuality.Label(False))
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint.ToString(Locale.Current, "0%"), "N/A")
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnDescription) = Entry.Label
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Entry.MinQuality.Label, Entry.MinQuality.Label(False) + "-" + Entry.MaxQuality.Label(False))
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint.ToString(Locale.Current, "0%"), "N/A")
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultipliers
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuality) = Entry.RespectQualityOffsets
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnBlueprint) = Entry.RespectBlueprintChanceMultipliers
 		  
 		  If SelectIt Then
-		    Self.ContentsList.Selected(Index) = True
+		    Self.ContentsList.RowSelectedAt(Index) = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1023,7 +1011,7 @@ End
 		  
 		  Self.ViewID = Self.mTemplate.UUID
 		  
-		  Self.Changed = False
+		  Self.Modified = False
 		  NotificationKit.Post("Template Saved", Self.mTemplate)
 		  
 		  Self.Progress = BeaconSubview.ProgressNone
@@ -1038,7 +1026,7 @@ End
 		Private Function SelectedEntries() As Ark.MutableLootTemplateEntry()
 		  Var Entries() As Ark.MutableLootTemplateEntry
 		  For I As Integer = Self.ContentsList.RowCount - 1 DownTo 0
-		    If Self.ContentsList.Selected(I) Then
+		    If Self.ContentsList.RowSelectedAt(I) Then
 		      Entries.Add(Self.ContentsList.RowTagAt(I))
 		    End If
 		  Next
@@ -1058,7 +1046,7 @@ End
 		    Var Item As New Ark.LootTemplateEntry(Entry)
 		    Self.PutEntryInRow(Item, -1, Maps, True)
 		    Self.mTemplate.Add(Item)
-		    Self.Changed = True
+		    Self.Modified = True
 		  Next
 		  Self.ContentsList.Sort
 		  Self.Pages.SelectedPanelIndex = Self.PageContents
@@ -1075,14 +1063,14 @@ End
 		  End If
 		  If ArkLootTemplateModifierEditor.Present(Self, Self.mTemplate, EditID) Then
 		    Self.UpdateUI
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateMinAndMaxFields()
-		  Var Focus As RectControl = Self.Window.Focus
+		  Var Focus As DesktopUIControl = Self.Window.Focus
 		  
 		  If Focus <> Self.MinItemsField Then
 		    Self.MinItemsField.Text = Self.mTemplate.MinEntriesSelected.ToString(Locale.Current, "0")
@@ -1102,7 +1090,7 @@ End
 		  End If
 		  Self.ViewTitle = Self.Title
 		  Self.mUpdating = True
-		  Self.Changed = False
+		  Self.Modified = False
 		  
 		  Var Mask As UInt64 = Preferences.LastPresetMapFilter
 		  Var AllMaps() As Ark.Map = Ark.Maps.All
@@ -1113,7 +1101,7 @@ End
 		  Var Maps() As Ark.Map = Self.FilteredMaps()
 		  Var SelectedEntries() As String
 		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
-		    If Self.ContentsList.Selected(I) Then
+		    If Self.ContentsList.RowSelectedAt(I) Then
 		      Var Entry As Ark.MutableLootTemplateEntry = Self.ContentsList.RowTagAt(I)
 		      SelectedEntries.Add(Entry.UUID)
 		    End If
@@ -1179,7 +1167,7 @@ End
 		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As FolderItem)
 		  #Pragma Unused Sender
 		  
-		  Self.Changed = False
+		  Self.Modified = False
 		  NotificationKit.Post("Template Saved", Self.mTemplate)
 		  
 		  Self.Progress = BeaconSubview.ProgressNone
@@ -1241,7 +1229,7 @@ End
 
 #tag Events Pages
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Var GeneralTab As OmniBarItem = Self.TemplateToolbar.Item("GeneralTab")
 		  If (GeneralTab Is Nil) = False Then
 		    GeneralTab.Toggled = Me.SelectedPanelIndex = Self.PageSettings
@@ -1261,13 +1249,13 @@ End
 #tag EndEvents
 #tag Events MaxItemsStepper
 	#tag Event
-		Sub Down()
+		Sub DownPressed()
 		  Var NewValue As Integer = CDbl(Self.MaxItemsField.Text) - 1
 		  Self.MaxItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
+		Sub UpPressed()
 		  Var NewValue As Integer = CDbl(Self.MaxItemsField.Text) + 1
 		  Self.MaxItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
@@ -1275,13 +1263,13 @@ End
 #tag EndEvents
 #tag Events MinItemsStepper
 	#tag Event
-		Sub Down()
+		Sub DownPressed()
 		  Var NewValue As Integer = CDbl(Self.MinItemsField.Text) - 1
 		  Self.MinItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
+		Sub UpPressed()
 		  Var NewValue As Integer = CDbl(Self.MinItemsField.Text) + 1
 		  Self.MinItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
@@ -1289,7 +1277,7 @@ End
 #tag EndEvents
 #tag Events MaxItemsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1297,7 +1285,7 @@ End
 		  Var Value As Integer = Max(CDbl(Me.Text), 1)
 		  If Self.mTemplate.MaxEntriesSelected <> Value Then
 		    Self.mTemplate.MaxEntriesSelected = Value
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
@@ -1306,14 +1294,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub LostFocus()
+		Sub FocusLost()
 		  Me.Text = Self.mTemplate.MaxEntriesSelected.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1321,7 +1309,7 @@ End
 		  Var Value As Integer = Max(CDbl(Me.Text), 1)
 		  If Self.mTemplate.MinEntriesSelected <> Value Then
 		    Self.mTemplate.MinEntriesSelected = Value
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
@@ -1330,14 +1318,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub LostFocus()
+		Sub FocusLost()
 		  Me.Text = Self.mTemplate.MinEntriesSelected.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events GroupingField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1345,14 +1333,14 @@ End
 		  Var Value As String = Me.Text.Trim
 		  If Value <> "" And Self.mTemplate.Grouping.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mTemplate.Grouping = Value
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1360,39 +1348,39 @@ End
 		  Var Value As String = Me.Text.Trim
 		  If Value <> "" And Self.mTemplate.Label.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mTemplate.Label = Value
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AddModifierButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShowModifierEditor(False)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EditModifierButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShowModifierEditor(True)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DeleteModifierButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ModifiersList.DoClear()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ContentsList
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(Self.ColumnQuantity) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(Self.ColumnQuality) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(Self.ColumnBlueprint) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnTypeAt(Self.ColumnIncluded) = DesktopListbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnQuantity) = DesktopListbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnQuality) = DesktopListbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnBlueprint) = DesktopListbox.CellTypes.CheckBox
 		  Me.TypeaheadColumn = Self.ColumnDescription
 		End Sub
 	#tag EndEvent
@@ -1404,18 +1392,18 @@ End
 		  
 		  Select Case Column
 		  Case Self.ColumnIncluded
-		    Var State As Checkbox.VisualStates = Me.CellCheckBoxStateAt(Row, Column)
-		    If State = Checkbox.VisualStates.Indeterminate Then
+		    Var State As DesktopCheckbox.VisualStates = Me.CellCheckBoxStateAt(Row, Column)
+		    If State = DesktopCheckbox.VisualStates.Indeterminate Then
 		      Return
 		    End If
 		    
 		    Var Entry As Ark.MutableLootTemplateEntry = Me.RowTagAt(Row)
 		    Var Maps() As Ark.Map = Self.FilteredMaps
 		    For Each Map As Ark.Map In Maps
-		      If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
-		        Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
+		      If Entry.ValidForMap(Map) <> (State = DesktopCheckbox.VisualStates.Checked) Then
+		        Entry.ValidForMap(Map) = (State = DesktopCheckbox.VisualStates.Checked)
 		        Self.mTemplate.Add(Entry)
-		        Self.Changed = True
+		        Self.Modified = True
 		      End If
 		    Next
 		    Return
@@ -1425,7 +1413,7 @@ End
 		    If Entry.RespectQuantityMultipliers <> Checked Then
 		      Entry.RespectQuantityMultipliers = Checked
 		      Self.mTemplate.Add(Entry)
-		      Self.Changed = True
+		      Self.Modified = True
 		    End If
 		  Case Self.ColumnQuality
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
@@ -1433,7 +1421,7 @@ End
 		    If Entry.RespectQualityOffsets <> Checked Then
 		      Entry.RespectQualityOffsets = Checked
 		      Self.mTemplate.Add(Entry)
-		      Self.Changed = True
+		      Self.Modified = True
 		    End If
 		  Case Self.ColumnBlueprint
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
@@ -1441,13 +1429,13 @@ End
 		    If Entry.RespectBlueprintChanceMultipliers <> Checked Then
 		      Entry.RespectBlueprintChanceMultipliers = Checked
 		      Self.mTemplate.Add(Entry)
-		      Self.Changed = True
+		      Self.Modified = True
 		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -1469,12 +1457,12 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
 		    Var Entries() As Ark.LootTemplateEntry
 		    For Idx As Integer = 0 To Me.LastRowIndex
-		      If Me.Selected(Idx) = False Then
+		      If Me.RowSelectedAt(Idx) = False Then
 		        Continue
 		      End If
 		      
@@ -1493,11 +1481,11 @@ End
 		    
 		    Me.Sort
 		    Me.EnsureSelectionIsVisible()
-		    Self.Changed = True
+		    Self.Modified = True
 		  Case "matchavailability"
 		    Var Changed As Boolean
 		    For Idx As Integer = 0 To Me.LastRowIndex
-		      If Me.Selected(Idx) = False Then
+		      If Me.RowSelectedAt(Idx) = False Then
 		        Continue
 		      End If
 		      
@@ -1516,7 +1504,7 @@ End
 		    If Changed Then
 		      Me.Sort
 		      Me.EnsureSelectionIsVisible()
-		      Self.Changed = True
+		      Self.Modified = True
 		    End If
 		  Else
 		    Return False
@@ -1541,7 +1529,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var EditEntriesButton As OmniBarItem = Self.TemplateToolbar.Item("EditEntriesButton")
 		  If (EditEntriesButton Is Nil) = False Then
 		    EditEntriesButton.Enabled = Me.CanEdit()
@@ -1549,7 +1537,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoublePressed()
 		  Self.EditSelectedEntries()
 		End Sub
 	#tag EndEvent
@@ -1566,7 +1554,7 @@ End
 #tag EndEvents
 #tag Events ModifiersList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  EditModifierButton.Enabled = Me.SelectedRowCount = 1
 		  DeleteModifierButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
@@ -1593,14 +1581,14 @@ End
 		  End If
 		  
 		  For I As Integer = Self.ModifiersList.RowCount - 1 DownTo 0
-		    If Not Self.ModifiersList.Selected(I) Then
+		    If Not Self.ModifiersList.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
 		    Var ModifierID As String = Self.ModifiersList.RowTagAt(I)
 		    Self.mTemplate.ClearSelector(ModifierID)
 		    Self.ModifiersList.RemoveRowAt(I)
-		    Self.Changed = True
+		    Self.Modified = True
 		  Next
 		End Sub
 	#tag EndEvent
@@ -1608,7 +1596,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Modifiers As New Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -1654,21 +1642,21 @@ End
 		    Next
 		    
 		    Self.UpdateUI()
-		    Self.Changed = True
+		    Self.Modified = True
 		  Catch Err As RuntimeException
 		    Return
 		  End Try
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoublePressed()
 		  Self.ShowModifierEditor(True)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MapSelector
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  If Self.mUpdating = True Then
 		    Return
 		  End If
@@ -1680,7 +1668,7 @@ End
 		  
 		  For I As Integer = ContentsList.RowCount - 1 DownTo 0
 		    Var Entry As Ark.LootTemplateEntry = ContentsList.RowTagAt(I)
-		    Self.PutEntryInRow(Entry, I, Maps, ContentsList.Selected(I))
+		    Self.PutEntryInRow(Entry, I, Maps, ContentsList.RowSelectedAt(I))
 		  Next
 		  
 		  Self.mUpdating = False
@@ -1689,7 +1677,7 @@ End
 #tag EndEvents
 #tag Events TemplateToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("GeneralTab", "General"))
 		  Me.Append(OmniBarItem.CreateTab("ContentsTab", "Contents"))
 		  Me.Append(OmniBarItem.CreateTab("ModifiersTab", "Modifiers"))
@@ -1720,6 +1708,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1761,14 +1765,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -1797,8 +1793,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1838,14 +1834,6 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

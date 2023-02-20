@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ConfigSetManagerWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -100,8 +100,6 @@ Begin BeaconDialog ConfigSetManagerWindow
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   "*,100"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -111,8 +109,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   True
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -147,11 +144,9 @@ Begin BeaconDialog ConfigSetManagerWindow
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -172,21 +167,19 @@ Begin BeaconDialog ConfigSetManagerWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Manage Config Sets"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Manage Config Sets"
       Visible         =   True
       Width           =   560
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -207,13 +200,13 @@ Begin BeaconDialog ConfigSetManagerWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Config Sets allow admins to manage multiple groups of configuration changes that can be blended together at export or deploy."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "Config Sets allow admins to manage multiple groups of configuration changes that can be blended together at export or deploy."
       Visible         =   True
       Width           =   560
    End
@@ -314,7 +307,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -326,13 +319,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Beacon.Project) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Project As Beacon.Project) As Boolean
 		  If Parent Is Nil Then
 		    Return False
 		  End If
 		  
 		  Var Win As New ConfigSetManagerWindow(Project)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
 		  Return Not Cancelled
@@ -357,7 +350,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  // Do the work here
 		  
 		  // Delete sets here
@@ -367,7 +360,7 @@ End
 		  
 		  // Rename or add sets
 		  For Idx As Integer = 0 To Self.SetList.LastRowIndex
-		    Var SetName As String = Self.SetList.CellValueAt(Idx, 0)
+		    Var SetName As String = Self.SetList.CellTextAt(Idx, 0)
 		    Var OriginalName As String = Self.SetList.RowTagAt(Idx)
 		    
 		    If OriginalName.IsEmpty = False Then
@@ -389,7 +382,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -397,19 +390,19 @@ End
 #tag EndEvents
 #tag Events SetList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.EditButton.Enabled = Me.CanEdit
 		  Self.DeleteButton.Enabled = Me.CanDelete
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount = 1 And Me.CellValueAt(Me.SelectedRowIndex, 0) <> Beacon.Project.BaseConfigSetName
+		  Return Me.SelectedRowCount = 1 And Me.CellTextAt(Me.SelectedRowIndex, 0) <> Beacon.Project.BaseConfigSetName
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1 And Me.CellValueAt(Me.SelectedRowIndex, 0) <> Beacon.Project.BaseConfigSetName
+		  Return Me.SelectedRowCount = 1 And Me.CellTextAt(Me.SelectedRowIndex, 0) <> Beacon.Project.BaseConfigSetName
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -417,7 +410,7 @@ End
 		  Var SetIsUsed As Boolean = Me.CellTagAt(Me.SelectedRowIndex, 1).IntegerValue > 0
 		  
 		  If SetIsUsed And Warn Then
-		    Var Sets() As String = Array(Me.CellValueAt(Me.SelectedRowIndex, 0))
+		    Var Sets() As String = Array(Me.CellTextAt(Me.SelectedRowIndex, 0))
 		    If BeaconUI.ShowDeleteConfirmation(Sets, "config set", "config sets") = False Then
 		      Return
 		    End If
@@ -432,13 +425,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
-		  Me.CellTagAt(Me.SelectedRowIndex, 0) = Me.CellValueAt(Me.SelectedRowIndex, 0)
+		  Me.CellTagAt(Me.SelectedRowIndex, 0) = Me.CellTextAt(Me.SelectedRowIndex, 0)
 		  Me.EditCellAt(Me.SelectedRowIndex, 0)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
+		Sub Opening()
+		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.TextField
 		  
 		  Var Counts As New Dictionary
 		  Var ProfileBound As Integer = Self.mProject.ServerProfileCount - 1
@@ -462,7 +455,7 @@ End
 		    Me.RowTagAt(Me.LastAddedRowIndex) = SetName
 		    
 		    If SetName = Beacon.Project.BaseConfigSetName Then
-		      Me.CellTypeAt(Me.LastAddedRowIndex, 0) = Listbox.CellTypes.Normal
+		      Me.CellTypeAt(Me.LastAddedRowIndex, 0) = DesktopListbox.CellTypes.Normal
 		    End If
 		  Next
 		  Me.Sort
@@ -473,13 +466,13 @@ End
 		  #Pragma Unused Row
 		  #Pragma Unused Column
 		  
-		  Var NewValue As String = Me.CellValueAt(Row, Column)
+		  Var NewValue As String = Me.CellTextAt(Row, Column)
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Idx = Row Then
 		      Continue
 		    End If
 		    
-		    If Me.CellValueAt(Idx, 0) = NewValue Then
+		    If Me.CellTextAt(Idx, 0) = NewValue Then
 		      // Duplicate!
 		      Var Original As String = Me.CellTagAt(Row, 0)
 		      If Original.IsEmpty Then
@@ -489,7 +482,7 @@ End
 		        End If
 		      End If
 		      System.Beep
-		      Me.CellValueAt(Row, Column) = Original
+		      Me.CellTextAt(Row, Column) = Original
 		      Return
 		    End If
 		  Next
@@ -501,7 +494,7 @@ End
 #tag EndEvents
 #tag Events NewButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetList.AddRow("New Config Set", "0 Servers")
 		  Self.SetList.CellTagAt(Self.SetList.LastAddedRowIndex, 1) = 0
 		  Self.SetList.SelectedRowIndex = Self.SetList.LastAddedRowIndex
@@ -512,14 +505,14 @@ End
 #tag EndEvents
 #tag Events EditButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetList.DoEdit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DeleteButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetList.DoClear
 		End Sub
 	#tag EndEvent
@@ -638,8 +631,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -750,7 +743,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

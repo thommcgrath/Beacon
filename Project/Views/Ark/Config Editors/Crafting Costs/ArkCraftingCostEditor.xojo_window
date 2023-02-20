@@ -1,13 +1,18 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconContainer ArkCraftingCostEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
+   AcceptFocus     =   "False"
+   AcceptTabs      =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
+   AutoDeactivate  =   "True"
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackColor    =   False
    Height          =   300
    HelpTag         =   ""
@@ -21,36 +26,40 @@ Begin BeaconContainer ArkCraftingCostEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
+   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   350
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   3
-      ColumnsResizable=   False
       ColumnWidths    =   "*,90,135"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   238
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Resource	Quantity	Prevent Substitutions"
@@ -63,22 +72,16 @@ Begin BeaconContainer ArkCraftingCostEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   350
@@ -86,17 +89,16 @@ Begin BeaconContainer ArkCraftingCostEditor
       _ScrollWidth    =   -1
    End
    Begin StatusBar Status
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -112,9 +114,9 @@ Begin BeaconContainer ArkCraftingCostEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   279
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   350
    End
@@ -127,7 +129,6 @@ Begin BeaconContainer ArkCraftingCostEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -154,7 +155,7 @@ Begin BeaconContainer ArkCraftingCostEditor
       Width           =   350
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -176,7 +177,7 @@ End
 		  Next
 		  
 		  Self.UpdateList()
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -185,7 +186,7 @@ End
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Var Selected() As String
 		  For Idx As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.Selected(Idx) Then
+		    If Self.List.RowSelectedAt(Idx) Then
 		      Var Ingredient As Ark.CraftingCostIngredient = Self.List.RowTagAt(Idx)
 		      Selected.Add(Ingredient.Reference.ObjectID)
 		    End If
@@ -196,7 +197,7 @@ End
 		    Var Ingredient As Ark.CraftingCostIngredient = Self.mTarget.Ingredient(Idx)
 		    Self.List.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Raw, ",##0"))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Ingredient.RequireExact
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Ingredient
 		  Next
 		  Self.List.Sort
@@ -278,10 +279,10 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(Self.ColumnQuantity) = Listbox.Alignments.Right
-		  Me.ColumnTypeAt(Self.ColumnQuantity) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(Self.ColumnRequireExact) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnQuantity) = DesktopListbox.Alignments.Right
+		  Me.ColumnTypeAt(Self.ColumnQuantity) = DesktopListbox.CellTypes.TextField
+		  Me.ColumnTypeAt(Self.ColumnRequireExact) = DesktopListbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -305,7 +306,7 @@ End
 		  Var Names() As String
 		  Var Bound As Integer = Me.RowCount - 1
 		  For Idx As Integer = 0 To Bound
-		    If Me.Selected(Idx) = False Then
+		    If Me.RowSelectedAt(Idx) = False Then
 		      Continue
 		    End If
 		    
@@ -320,7 +321,7 @@ End
 		  
 		  For Each Ingredient As Ark.CraftingCostIngredient In RowsToDelete
 		    Self.mTarget.Remove(Ingredient)
-		    Self.Changed = True
+		    Self.Modified = True
 		  Next
 		  Self.UpdateList()
 		End Sub
@@ -329,7 +330,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Dicts() As Dictionary
 		  For Idx As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(Idx) Then
+		    If Not Me.RowSelectedAt(Idx) Then
 		      Continue
 		    End If
 		    
@@ -364,14 +365,14 @@ End
 		    Next
 		    
 		    Self.UpdateList()
-		    Self.Changed = True
+		    Self.Modified = True
 		  Catch Err As RuntimeException
 		    Return
 		  End Try
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -380,7 +381,7 @@ End
 		  Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Row)
 		  Select Case Column
 		  Case Self.ColumnQuantity
-		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Max(Val(Me.CellValueAt(Row, Column)), 1), Ingredient.RequireExact)
+		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Max(Val(Me.CellTextAt(Row, Column)), 1), Ingredient.RequireExact)
 		  Case Self.ColumnRequireExact
 		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  Else
@@ -389,7 +390,7 @@ End
 		  
 		  Self.mTarget.Add(Ingredient)
 		  Me.RowTagAt(Row) = Ingredient
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -405,7 +406,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("IngredientsTitle", "Ingredients"))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AddResourceButton", "Add Ingredient", IconToolbarAdd, "Add ingredients to this engram."))
@@ -414,19 +415,27 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -458,8 +467,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -626,14 +635,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

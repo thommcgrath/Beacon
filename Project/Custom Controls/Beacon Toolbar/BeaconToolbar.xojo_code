@@ -3,16 +3,16 @@ Protected Class BeaconToolbar
 Inherits ControlCanvas
 Implements ObservationKit.Observer
 	#tag Event
-		Sub Activate()
-		  RaiseEvent Activate
-		  Self.Invalidate
+		Sub Activated()
+		  RaiseEvent Activated
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Deactivate()
-		  RaiseEvent Deactivate
-		  Self.Invalidate
+		Sub Deactivated()
+		  RaiseEvent Deactivated
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
@@ -94,7 +94,7 @@ Implements ObservationKit.Observer
 		      If Rect.Contains(New Xojo.Point(X, Y)) Then
 		        If Self.mPressedName <> Item.Name Then
 		          Self.mPressedName = Item.Name
-		          Self.Invalidate
+		          Self.Refresh
 		        End If
 		        If Not Self.mMouseHeld Then
 		          Self.mHoldTimer.Reset
@@ -103,7 +103,7 @@ Implements ObservationKit.Observer
 		      Else
 		        If Self.mPressedName <> "" Then
 		          Self.mPressedName = ""
-		          Self.Invalidate
+		          Self.Refresh
 		        End If
 		        Self.mHoldTimer.Reset
 		        Self.mHoldTimer.RunMode = Timer.RunModes.Off
@@ -166,21 +166,21 @@ Implements ObservationKit.Observer
 		    End If
 		    Self.mPressedName = ""
 		    Self.mMouseDownName = ""
-		    Self.Invalidate
+		    Self.Refresh
 		    Return
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.Transparent = True
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
 		  #Pragma Unused SafeArea
@@ -371,7 +371,7 @@ Implements ObservationKit.Observer
 		  #Pragma Unused OldValue
 		  #Pragma Unused NewValue
 		  
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -388,9 +388,9 @@ Implements ObservationKit.Observer
 		  
 		  Var Highlighted As Boolean = True
 		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
-		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
-		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
-		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
+		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Ptr) As Boolean
+		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Ptr) As Boolean
+		    Highlighted = IsKeyWindow(Self.Window.Handle) Or IsMainWindow(Self.Window.Handle)
 		  #endif
 		  
 		  Var MainRect As New Xojo.Rect(0, 0, G.Width, G.Height)
@@ -540,7 +540,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Activate()
+		Event Activated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -548,7 +548,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Deactivate()
+		Event Deactivated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -556,7 +556,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -593,7 +593,7 @@ Implements ObservationKit.Observer
 			  
 			  If Self.mBorders <> Borders Then
 			    Self.mBorders = Borders
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -617,7 +617,7 @@ Implements ObservationKit.Observer
 			  
 			  If Self.mBorders <> Borders Then
 			    Self.mBorders = Borders
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -641,7 +641,7 @@ Implements ObservationKit.Observer
 			  
 			  If Self.mBorders <> Borders Then
 			    Self.mBorders = Borders
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -665,7 +665,7 @@ Implements ObservationKit.Observer
 			  
 			  If Self.mBorders <> Borders Then
 			    Self.mBorders = Borders
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -682,7 +682,7 @@ Implements ObservationKit.Observer
 			Set
 			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -788,7 +788,7 @@ Implements ObservationKit.Observer
 			Set
 			  If Self.mResizerStyle <> Value Then
 			    Self.mResizerStyle = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -805,7 +805,7 @@ Implements ObservationKit.Observer
 			Set
 			  If Self.mResizerEnabled <> Value Then
 			    Self.mResizerEnabled = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -1087,22 +1087,6 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

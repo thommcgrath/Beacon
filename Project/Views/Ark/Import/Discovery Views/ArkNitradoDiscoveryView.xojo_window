@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkDiscoveryView ArkNitradoDiscoveryView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   400
    Index           =   -2147483648
@@ -26,11 +27,10 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin PagePanel PagePanel1
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel PagePanel1
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   400
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -42,24 +42,27 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton FindingCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -69,27 +72,26 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
-      Begin Label FindingLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel FindingLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -106,22 +108,21 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Finding Servers…"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   162
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   560
       End
-      Begin ProgressBar FindingProgress
-         AutoDeactivate  =   True
+      Begin DesktopProgressBar FindingProgress
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   20
-         HelpTag         =   ""
          Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -131,25 +132,30 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Maximum         =   0
+         MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   194
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
          Width           =   560
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label ListMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel ListMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -166,11 +172,9 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Select Servers"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -178,15 +182,16 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton ListCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -196,13 +201,12 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -210,15 +214,16 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton ListActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
@@ -228,13 +233,12 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -263,7 +267,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -273,11 +277,9 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Visible         =   True
          Width           =   160
       End
-      Begin Label FindingStatus
+      Begin DesktopLabel FindingStatus
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "SmallSystem"
          FontSize        =   0.0
@@ -295,44 +297,47 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   3
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Connecting…"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   218
          Transparent     =   False
          Underline       =   False
-         Value           =   "Connecting…"
          Visible         =   True
          Width           =   560
       End
       Begin BeaconListbox List
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   3
-         ColumnsResizable=   False
          ColumnWidths    =   "26,*,200"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   296
-         HelpTag         =   ""
-         Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          InitialValue    =   " 	Name	Address"
@@ -345,22 +350,16 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   0
-         ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
          Width           =   560
@@ -369,7 +368,6 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
       End
    End
    Begin Beacon.OAuth2Client AuthClient
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -385,7 +383,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -414,7 +412,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  RaiseEvent Open
 		  Self.CheckActionEnabled
@@ -617,28 +615,28 @@ End
 
 #tag Events PagePanel1
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Self.StatusWatchTimer.RunMode = If(Me.SelectedPanelIndex = 0, Timer.RunModes.Multiple, Timer.RunModes.Off)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events FindingCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ListCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ListActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Data() As Beacon.DiscoveredData
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
@@ -653,7 +651,7 @@ End
 #tag EndEvents
 #tag Events NewAuthButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.AuthClient.Busy THen
 		    Self.ShowAlert("Wait for the current Nitrado authentication to finish first.", "Beacon can only support one Nitrado authentication at a time.")
 		    Return
@@ -665,8 +663,8 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
@@ -797,19 +795,19 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -841,8 +839,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -865,14 +863,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ResizedSearchField
-Inherits SearchField
+Inherits DesktopSearchField
 	#tag Event
 		Sub Opening()
 		  If Self.TopDelta <> 0 Then
@@ -31,6 +31,62 @@ Inherits SearchField
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="PanelIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_mIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_mInitialParent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_mName"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_mPanelIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Active"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabStop"
+			Visible=true
+			Group="Focus Control"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -136,14 +192,6 @@ Inherits SearchField
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TabStop"
-			Visible=true
-			Group="Position"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="AllowAutoDeactivate"
 			Visible=true
 			Group="Appearance"
@@ -181,7 +229,7 @@ Inherits SearchField
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -197,7 +245,7 @@ Inherits SearchField
 			Group="Initial State"
 			InitialValue="Search"
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowRecentItems"
@@ -205,7 +253,7 @@ Inherits SearchField
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType=""
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ClearMenuItemValue"
@@ -213,7 +261,7 @@ Inherits SearchField
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaximumRecentItems"
@@ -221,7 +269,7 @@ Inherits SearchField
 			Group="Behavior"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
+			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RecentItemsValue"
@@ -229,7 +277,7 @@ Inherits SearchField
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
@@ -237,7 +285,7 @@ Inherits SearchField
 			Group=""
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Text"
@@ -245,7 +293,7 @@ Inherits SearchField
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType="String"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

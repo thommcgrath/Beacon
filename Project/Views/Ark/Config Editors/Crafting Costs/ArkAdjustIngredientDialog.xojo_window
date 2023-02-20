@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkAdjustIngredientDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    Type            =   8
    Visible         =   True
    Width           =   600
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -94,8 +92,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    Begin UITweaks.ResizedLabel TargetField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -129,8 +125,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    Begin UITweaks.ResizedLabel TargetLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -164,8 +158,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    Begin UITweaks.ResizedLabel ReplacementLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -231,8 +223,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    Begin UITweaks.ResizedLabel ReplacementField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -270,8 +260,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -309,8 +297,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    Begin UITweaks.ResizedLabel ReplacementMultiplierLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -341,11 +327,9 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Visible         =   True
       Width           =   161
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -376,12 +360,10 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Visible         =   True
       Width           =   560
    End
-   Begin CheckBox NeverRemoveCheckbox
+   Begin DesktopCheckBox NeverRemoveCheckbox
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Never remove ingredients"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -475,7 +457,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    End
    Begin Thread ProcessorThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -486,7 +467,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       ThreadState     =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -498,9 +479,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Ark.Project) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project) As Boolean
 		  Var Win As New ArkAdjustIngredientDialog(Project)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
 		  Return Not Cancelled
@@ -541,7 +522,7 @@ End
 
 #tag Events TargetChooseButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Exclude() As Ark.Engram
 		  Var Engrams() As Ark.Engram = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mProject.ContentPacks, ArkBlueprintSelectorDialog.SelectModes.Single)
 		  If (Engrams Is Nil) = False And Engrams.Count = 1 Then
@@ -554,7 +535,7 @@ End
 #tag EndEvents
 #tag Events ReplacementChooseButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Exclude() As Ark.Engram
 		  Var Engrams() As Ark.Engram = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mProject.ContentPacks, ArkBlueprintSelectorDialog.SelectModes.Single)
 		  If (Engrams Is Nil) = False And Engrams.Count = 1 Then
@@ -567,7 +548,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mTarget Is Nil Or Self.mReplacement Is Nil Then
 		    Self.ShowAlert("Select both a target and replacement ingredient.", "It's ok to select the same ingredient for both if you just want to change quantity.")
 		    Return
@@ -594,14 +575,14 @@ End
 		  Self.CancelButton.Enabled = False
 		  
 		  Self.mProgress = New ProgressWindow("Processing crafting costs…", "Getting started…")
-		  Self.mProgress.ShowWithin(Self)
+		  Self.mProgress.Show(Self)
 		  Self.ProcessorThread.Start
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -837,8 +818,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -949,7 +930,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

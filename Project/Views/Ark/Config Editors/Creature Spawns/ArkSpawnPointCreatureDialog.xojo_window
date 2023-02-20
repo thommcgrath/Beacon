@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkSpawnPointCreatureDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
    Type            =   8
    Visible         =   True
    Width           =   524
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,13 +47,13 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Creature Entry"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Creature Entry"
       Visible         =   True
       Width           =   484
    End
@@ -94,8 +92,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
    Begin UITweaks.ResizedLabel CreatureLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -116,21 +112,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Creature:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "Creature:"
       Visible         =   True
       Width           =   128
    End
    Begin UITweaks.ResizedLabel CreatureNameLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -151,13 +145,13 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Not Selected"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "Not Selected"
       Visible         =   True
       Width           =   246
    End
@@ -168,8 +162,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -194,6 +186,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -201,7 +194,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   80
    End
@@ -212,8 +204,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -238,6 +228,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -245,7 +236,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   80
    End
@@ -256,8 +246,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -282,6 +270,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -289,15 +278,12 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel OffsetLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -318,13 +304,13 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Offset (X, Y, Z):"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
-      Value           =   "Offset (X, Y, Z):"
       Visible         =   True
       Width           =   128
    End
@@ -335,8 +321,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -361,6 +345,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -368,15 +353,12 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel SpawnChanceLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -397,13 +379,13 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Spawn Chance:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   118
       Transparent     =   False
       Underline       =   False
-      Value           =   "Spawn Chance:"
       Visible         =   True
       Width           =   128
    End
@@ -471,11 +453,9 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       Visible         =   True
       Width           =   80
    End
-   Begin Label OptionalLabel
+   Begin DesktopLabel OptionalLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -496,17 +476,17 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "All fields optional"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   446
       Transparent     =   False
       Underline       =   False
-      Value           =   "All fields optional"
       Visible         =   True
       Width           =   300
    End
-   Begin GroupBox GroupBox1
+   Begin DesktopGroupBox GroupBox1
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Wild Levels"
@@ -534,11 +514,9 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       Underline       =   False
       Visible         =   True
       Width           =   332
-      Begin Label Label1
+      Begin DesktopLabel Label1
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -559,21 +537,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Or"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   254
          Transparent     =   False
          Underline       =   False
-         Value           =   "Or"
          Visible         =   True
          Width           =   172
       End
       Begin UITweaks.ResizedLabel EffectiveLevelLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -594,21 +570,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Level Range:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
          Transparent     =   False
          Underline       =   False
-         Value           =   "Level Range:"
          Visible         =   True
          Width           =   108
       End
-      Begin Label EffectiveMaxLevelField
+      Begin DesktopLabel EffectiveMaxLevelField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -629,21 +603,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "30"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
          Transparent     =   False
          Underline       =   False
-         Value           =   "30"
          Visible         =   True
          Width           =   80
       End
-      Begin Label EffectiveMinLevelField
+      Begin DesktopLabel EffectiveMinLevelField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -664,21 +636,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "1"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
          Transparent     =   False
          Underline       =   False
-         Value           =   "1"
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel LevelMultiplierLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -699,21 +669,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Level Multiplier:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
-         Value           =   "Level Multiplier:"
          Visible         =   True
          Width           =   108
       End
       Begin UITweaks.ResizedLabel LevelOffsetLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -734,21 +702,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Level Offset:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   286
          Transparent     =   False
          Underline       =   False
-         Value           =   "Level Offset:"
          Visible         =   True
          Width           =   108
       End
       Begin UITweaks.ResizedLabel LevelRangeLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -769,13 +735,13 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Override Range:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   220
          Transparent     =   False
          Underline       =   False
-         Value           =   "Override Range:"
          Visible         =   True
          Width           =   108
       End
@@ -786,8 +752,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -813,6 +777,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -820,7 +785,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
@@ -831,8 +795,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -858,6 +820,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -865,7 +828,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
@@ -876,8 +838,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -903,6 +863,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -910,7 +871,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
@@ -921,8 +881,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -948,6 +906,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -955,7 +914,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
@@ -966,8 +924,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -993,6 +949,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1000,7 +957,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
@@ -1011,8 +967,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -1038,6 +992,7 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1045,15 +1000,12 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
-      Begin Label MaxLabel
+      Begin DesktopLabel MaxLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1074,21 +1026,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Max"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   188
          Transparent     =   False
          Underline       =   False
-         Value           =   "Max"
          Visible         =   True
          Width           =   80
       End
-      Begin Label MinLabel
+      Begin DesktopLabel MinLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1109,21 +1059,19 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Min"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   188
          Transparent     =   False
          Underline       =   False
-         Value           =   "Min"
          Visible         =   True
          Width           =   80
       End
-      Begin Label Label2
+      Begin DesktopLabel Label2
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1144,13 +1092,13 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "="
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   354
          Transparent     =   False
          Underline       =   False
-         Value           =   "="
          Visible         =   True
          Width           =   172
       End
@@ -1158,8 +1106,6 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
    Begin UITweaks.ResizedLabel SpawnChancePercentLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1191,11 +1137,11 @@ Begin BeaconDialog ArkSpawnPointCreatureDialog
       Width           =   20
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  If Self.mTargetCreature <> Nil Then
@@ -1341,7 +1287,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Ark.Project, Set As Ark.SpawnPointSet, Entry As Ark.MutableSpawnPointSetEntry = Nil) As Ark.MutableSpawnPointSetEntry
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, Set As Ark.SpawnPointSet, Entry As Ark.MutableSpawnPointSetEntry = Nil) As Ark.MutableSpawnPointSetEntry
 		  Var Entries() As Ark.MutableSpawnPointSetEntry
 		  If Entry <> Nil Then
 		    Entries.Add(Entry)
@@ -1357,7 +1303,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Ark.Project, Set As Ark.SpawnPointSet, Entries() As Ark.MutableSpawnPointSetEntry) As Ark.MutableSpawnPointSetEntry()
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, Set As Ark.SpawnPointSet, Entries() As Ark.MutableSpawnPointSetEntry) As Ark.MutableSpawnPointSetEntry()
 		  Var NewEntries() As Ark.MutableSpawnPointSetEntry
 		  
 		  If Parent = Nil Then
@@ -1365,7 +1311,7 @@ End
 		  End If
 		  
 		  Var Win As New ArkSpawnPointCreatureDialog(Project, Entries, Set.LevelOffsetBeforeMultiplier)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  If Win.mCancelled Then
 		    Win.Close
 		    Return NewEntries
@@ -1454,7 +1400,7 @@ End
 
 #tag Events CreatureChooseButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Exclude() As Ark.Creature
 		  Var Creatures() As Ark.Creature = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.Single)
 		  If Creatures = Nil Or Creatures.LastIndex <> 0 Then
@@ -1533,7 +1479,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.Focus IsA RangeField And RangeField(Self.Focus).Validate = False Then
 		    Return
 		  End If
@@ -1674,7 +1620,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -1992,8 +1938,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -2104,7 +2050,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

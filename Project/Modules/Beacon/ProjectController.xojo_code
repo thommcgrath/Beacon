@@ -351,7 +351,7 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  If FileContent.Size >= 8 And (FileContent.UInt64Value(0) = Beacon.Project.BinaryFormatBEBOM Or FileContent.UInt64Value(0) = Beacon.Project.BinaryFormatLEBOM) Then
+		  If FileContent.Size >= 8 And (FileContent.UInt64Value(0) = CType(Beacon.Project.BinaryFormatBEBOM, UInt64) Or FileContent.UInt64Value(0) = CType(Beacon.Project.BinaryFormatLEBOM, UInt64)) Then
 		    // New binary project format
 		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Project format is newer than this version of Beacon understands")
 		    Return

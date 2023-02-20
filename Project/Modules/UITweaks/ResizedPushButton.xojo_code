@@ -1,8 +1,8 @@
 #tag Class
 Protected Class ResizedPushButton
-Inherits PushButton
+Inherits DesktopButton
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If Self.TopDelta <> 0 Then
 		    Self.Top = Self.Top + Self.TopDelta
 		  End If
@@ -160,14 +160,6 @@ Inherits PushButton
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

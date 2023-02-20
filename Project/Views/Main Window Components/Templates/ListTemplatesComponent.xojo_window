@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   438
    Index           =   -2147483648
@@ -38,8 +39,6 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   "*,200"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -49,8 +48,7 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       FontName        =   "SmallSystem"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -94,7 +92,6 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -121,11 +118,11 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       Width           =   576
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub DropObject(obj As DragItem, action As Integer)
+		Sub DropObject(obj As DragItem, action As DragItem.Types)
 		  #Pragma Unused action
 		  
 		  Var AddedTemplates() As Beacon.Template
@@ -159,7 +156,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.AcceptFileDrop(BeaconFileTypes.BeaconPreset)
 		  Self.ViewTitle = "Templates"
 		  RaiseEvent Open
@@ -193,7 +190,7 @@ End
 		  
 		  Var Clones() As Beacon.Template
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.Selected(Idx) = False Then
+		    If Self.List.RowSelectedAt(Idx) = False Then
 		      Continue
 		    End If
 		    
@@ -236,7 +233,7 @@ End
 		  
 		  Var TemplatesToDelete() As Beacon.Template
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.Selected(Idx) Then
+		    If Self.List.RowSelectedAt(Idx) Then
 		      Var Template As Beacon.Template = Self.List.RowTagAt(Idx)
 		      If Self.CloseTemplate(Template) Then
 		        TemplatesToDelete.Add(Template)
@@ -295,7 +292,7 @@ End
 		  End If
 		  
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    If Not Self.List.Selected(Idx) Then
+		    If Not Self.List.RowSelectedAt(Idx) Then
 		      Continue
 		    End If
 		    
@@ -353,7 +350,7 @@ End
 		  
 		  If SelectTemplates.Count = 0 Then
 		    For Idx As Integer = 0 To Self.List.LastRowIndex
-		      If Self.List.Selected(Idx) Then
+		      If Self.List.RowSelectedAt(Idx) Then
 		        SelectTemplates.Add(Self.List.RowTagAt(Idx))
 		      End If
 		    Next Idx
@@ -367,20 +364,20 @@ End
 		  
 		  Self.List.RowCount = TemplateCount
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    Self.List.CellValueAt(Idx, 0) = Templates(Idx).Label
+		    Self.List.CellTextAt(Idx, 0) = Templates(Idx).Label
 		    
 		    Var CustomTemplate As Boolean = CommonData.IsTemplateCustom(Templates(Idx))
 		    Var OfficialTemplate As Boolean = CommonData.IsTemplateOfficial(Templates(Idx))
 		    If OfficialTemplate And CustomTemplate Then
-		      Self.List.CellValueAt(Idx, 1) = "Customized Built-In"
+		      Self.List.CellTextAt(Idx, 1) = "Customized Built-In"
 		    ElseIf OfficialTemplate Then
-		      Self.List.CellValueAt(Idx, 1) = "Built-In"
+		      Self.List.CellTextAt(Idx, 1) = "Built-In"
 		    Else
-		      Self.List.CellValueAt(Idx, 1) = "Custom"
+		      Self.List.CellTextAt(Idx, 1) = "Custom"
 		    End If
 		    
 		    Self.List.RowTagAt(Idx) = Templates(Idx)
-		    Self.List.Selected(Idx) = SelectUUIDs.IndexOf(Templates(Idx).UUID) > -1
+		    Self.List.RowSelectedAt(Idx) = SelectUUIDs.IndexOf(Templates(Idx).UUID) > -1
 		  Next Idx
 		  
 		  Self.List.Sort
@@ -398,7 +395,7 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If (Self.TemplatesToolbar.Item("CloneTemplate") Is Nil) = False Then
 		    Self.TemplatesToolbar.Item("CloneTemplate").Enabled = Me.SelectedRowCount > 0
 		  End If
@@ -411,14 +408,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
+		Sub Opening()
+		  Me.ColumnAlignmentAt(1) = DesktopListbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
 		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Not Me.Selected(Idx) Then
+		    If Not Me.RowSelectedAt(Idx) Then
 		      Continue
 		    End If
 		    
@@ -436,7 +433,7 @@ End
 		  Var CommonData As Beacon.CommonData = Beacon.CommonData.Pool.Get(False)
 		  Var DeleteCount, RevertCount, DisallowCount As Integer
 		  For I As Integer = Me.RowCount - 1 DownTo 0
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -503,7 +500,7 @@ End
 #tag EndEvents
 #tag Events TemplatesToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateButton("NewTemplate", "New Template", IconToolbarAdd, "Create a new template."))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EditTemplate", "Edit Template", IconToolbarEdit, "Edit the selected template.", Self.List.SelectedRowCount = 1))
@@ -529,6 +526,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -742,8 +755,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -778,26 +791,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

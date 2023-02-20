@@ -332,7 +332,7 @@ Protected Module DedicatedServer
 		  For Each MapName As String In MapNames
 		    WriteUnrealString(Stream, MapName)
 		  Next
-		  Stream.WriteUint32(4280483635)
+		  Stream.WriteUInt32(CType(4280483635, UInt32))
 		  Stream.WriteInt32(2)
 		  If MetaInfo.HasKey("ModType") Then
 		    Stream.WriteUInt8(1)

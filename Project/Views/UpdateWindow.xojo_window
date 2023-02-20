@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,11 +27,10 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
    Title           =   "Beacon Updates"
    Visible         =   True
    Width           =   600
-   Begin PagePanel ViewPanel
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel ViewPanel
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   132
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -43,22 +42,24 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   600
-      Begin Label CheckMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel CheckMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -75,22 +76,21 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Check for Beacon updates…"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   560
       End
-      Begin ProgressBar CheckProgress
-         AutoDeactivate  =   True
+      Begin DesktopProgressBar CheckProgress
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   20
-         HelpTag         =   ""
          Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
@@ -100,27 +100,33 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Maximum         =   0
+         MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
          Width           =   560
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin UITweaks.ResizedPushButton CheckCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -130,27 +136,26 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   84
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
-      Begin Label ResultsMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel ResultsMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -167,11 +172,9 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "A new version of Beacon is available!"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -179,15 +182,16 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          Width           =   484
       End
       Begin UITweaks.ResizedPushButton ResultsActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Download"
          Default         =   True
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -197,13 +201,12 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
@@ -211,15 +214,16 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          Width           =   90
       End
       Begin UITweaks.ResizedPushButton ResultsCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -229,27 +233,26 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   90
       End
-      Begin Label DownloadMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel DownloadMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -266,22 +269,21 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Downloading update…"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   560
       End
-      Begin ProgressBar DownloadProgressBar
-         AutoDeactivate  =   True
+      Begin DesktopProgressBar DownloadProgressBar
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   20
-         HelpTag         =   ""
          Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
@@ -291,27 +293,33 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Maximum         =   0
+         MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
          Width           =   560
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
       Begin UITweaks.ResizedPushButton DownloadCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -321,13 +329,12 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   84
          Transparent     =   False
          Underline       =   False
@@ -335,15 +342,16 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton ResultsNotesButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Release Notes"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -353,27 +361,26 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   120
       End
-      Begin Label ResultsExplanationLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel ResultsExplanationLabel
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -390,11 +397,9 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "After downloading, the update will install only when you're ready."
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -402,15 +407,14 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          Width           =   484
       End
       Begin ControlCanvas ResultsIconCanvas
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   64
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -426,17 +430,15 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   64
       End
-      Begin Label DownloadStatusLabel
+      Begin DesktopLabel DownloadStatusLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -478,11 +480,11 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, UpdatesKit.Notification_Error, UpdatesKit.Notification_NoUpdates, UpdatesKit.Notification_UpdateAvailable, UpdatesKit.Notification_UpdateDownloaded, UpdatesKit.Notification_DownloadError, UpdatesKit.Notification_DownloadStarted)
 		  
 		  Self.mInstance = Nil
@@ -490,7 +492,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  NotificationKit.Watch(Self, UpdatesKit.Notification_Error, UpdatesKit.Notification_NoUpdates, UpdatesKit.Notification_UpdateAvailable, UpdatesKit.Notification_UpdateDownloaded, UpdatesKit.Notification_DownloadError, UpdatesKit.Notification_DownloadStarted)
 		  
 		  If UpdatesKit.IsDownloading Then
@@ -705,7 +707,7 @@ End
 
 #tag Events ViewPanel
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.ViewCheck
 		    Self.Height = Self.HeightCheck
@@ -724,7 +726,7 @@ End
 #tag EndEvents
 #tag Events CheckCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  UpdatesKit.Cancel
 		  If UpdatesKit.AvailableUpdateRequired Then
 		    Quit
@@ -736,7 +738,7 @@ End
 #tag EndEvents
 #tag Events ResultsActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  #if TargetMacOS
 		    Var Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = "Beacon.dmg"
@@ -757,7 +759,7 @@ End
 #tag EndEvents
 #tag Events ResultsCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If UpdatesKit.AvailableUpdateRequired Then
 		    Quit
 		  Else
@@ -768,7 +770,7 @@ End
 #tag EndEvents
 #tag Events DownloadCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  UpdatesKit.Cancel
 		  If UpdatesKit.AvailableUpdateRequired Then
 		    Quit
@@ -780,14 +782,14 @@ End
 #tag EndEvents
 #tag Events ResultsNotesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  System.GotoURL(Self.mNotesURL)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ResultsIconCanvas
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused areas
 		  #Pragma Unused Highlighted
 		  #Pragma Unused SafeArea
@@ -944,8 +946,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1008,7 +1010,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

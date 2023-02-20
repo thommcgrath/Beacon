@@ -1,5 +1,5 @@
-#tag Window
-Begin Window ArkAIGeneratorDialog
+#tag DesktopWindow
+Begin BeaconDialog ArkAIGeneratorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -24,11 +24,9 @@ Begin Window ArkAIGeneratorDialog
    Type            =   8
    Visible         =   True
    Width           =   500
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -59,11 +57,9 @@ Begin Window ArkAIGeneratorDialog
       Visible         =   True
       Width           =   460
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -101,8 +97,6 @@ Begin Window ArkAIGeneratorDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -202,17 +196,17 @@ Begin Window ArkAIGeneratorDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As String
+		Shared Function Present(Parent As DesktopWindow) As String
 		  If Parent Is Nil Then
 		    Return ""
 		  End If
 		  
 		  Var Win As New ArkAIGeneratorDialog
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  Var Result As String
 		  If Win.mCancelled = False Then
 		    Result = Win.PhraseField.Text.Trim
@@ -232,14 +226,14 @@ End
 
 #tag Events PhraseField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.ActionButton.Enabled = (Me.Text.Trim.IsEmpty = False)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -247,7 +241,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -463,8 +457,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -479,7 +473,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

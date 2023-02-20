@@ -1,6 +1,6 @@
 #tag Class
 Protected Class App
-Inherits Application
+Inherits DesktopApplication
 Implements NotificationKit.Receiver,Beacon.Application
 	#tag Event
 		Sub AppearanceChanged()
@@ -9,7 +9,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
+		Function AppleEventReceived(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
+		  If eventClass = "GURL" And eventID = "GURL" Then
+		    Var URL As String = theEvent.StringParam("----")
+		    Return Self.HandleURL(URL)
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub Closing()
 		  Try
 		    Self.UninstallTemporaryFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
 		  Catch Err As RuntimeException
@@ -50,7 +61,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub DocumentOpened(item As FolderItem)
+		  Self.OpenFile(Item, False)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MenuBarSelected()
 		  FileNew.Enabled = True
 		  FileNewPreset.Enabled = True
 		  FileOpen.Enabled = True
@@ -75,7 +92,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Var Counter As Integer = 1
 		  For I As Integer = 0 To WindowCount - 1
-		    Var Win As Window = Window(I)
+		    Var Win As DesktopWindow = Self.WindowAt(I)
 		    If Win IsA BeaconWindow Then
 		      BeaconWindow(Win).UpdateWindowMenu()
 		      Counter = Counter + 1
@@ -85,18 +102,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndEvent
 
 	#tag Event
-		Function HandleAppleEvent(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
-		  If eventClass = "GURL" And eventID = "GURL" Then
-		    Var URL As String = theEvent.StringParam("----")
-		    Return Self.HandleURL(URL)
-		  Else
-		    Return False
-		  End If
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mLogManager = New LogManager
 		  
 		  #if Not DebugBuild
@@ -230,12 +236,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.AllowAutoQuit = True
 		  
 		  Tests.RunTests()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub OpenDocument(item As FolderItem)
-		  Self.OpenFile(Item, False)
 		End Sub
 	#tag EndEvent
 
@@ -680,8 +680,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      System.GotoURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
 		    Case "showapibuilder"
 		      APIBuilderWindow.Show()
-		    Case "shownewsletterprompt"
-		      SubscribeDialog.Present()
 		    Case "checkforupdate"
 		      Self.CheckForUpdates()
 		    Case "checkforengrams"
@@ -837,7 +835,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ImportIdentityFile(File As FolderItem, ParentWindow As Window = Nil)
+		Sub ImportIdentityFile(File As FolderItem, ParentWindow As DesktopWindow = Nil)
 		  If ParentWindow = Nil Then
 		    ParentWindow = MainWindow
 		  End If
@@ -1198,7 +1196,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mOpenRecent_ClearMenu(Sender As MenuItem) As Boolean
+		Private Function mOpenRecent_ClearMenu(Sender As DesktopMenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
 		  Var Projects() As Beacon.ProjectURL
@@ -1208,7 +1206,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
+		Private Function mOpenRecent_OpenFile(Sender As DesktopMenuItem) As Boolean
 		  If (Self.mMainWindow Is Nil) = False Then
 		    Var Project As Beacon.ProjectURL = Sender.Tag
 		    Self.mMainWindow.Documents.OpenDocument(Project)
@@ -1366,21 +1364,21 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Var Projects() As Beacon.ProjectURL = Preferences.RecentDocuments
 		  For Each Project As Beacon.ProjectURL In Projects
-		    Var Item As New MenuItem(Project.Name)
+		    Var Item As New DesktopMenuItem(Project.Name)
 		    Item.Tag = Project
 		    Item.Enabled = True
-		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
+		    AddHandler Item.MenuItemSelected, WeakAddressOf mOpenRecent_OpenFile
 		    FileOpenRecent.AddMenu(Item)
 		  Next
 		  If Projects.LastIndex > -1 Then
-		    FileOpenRecent.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    FileOpenRecent.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
-		    Var Item As New MenuItem("Clear Menu")
+		    Var Item As New DesktopMenuItem("Clear Menu")
 		    Item.Enabled = True
-		    AddHandler Item.Action, WeakAddressOf mOpenRecent_ClearMenu
+		    AddHandler Item.MenuItemSelected, WeakAddressOf mOpenRecent_ClearMenu
 		    FileOpenRecent.AddMenu(Item)
 		  Else
-		    Var Item As New MenuItem("No Items")
+		    Var Item As New DesktopMenuItem("No Items")
 		    Item.Enabled = False
 		    FileOpenRecent.AddMenu(Item)
 		  End If
@@ -1437,7 +1435,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowOpenDocument(Parent As Window = Nil)
+		Sub ShowOpenDocument(Parent As DesktopWindow = Nil)
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
 		  
@@ -1643,6 +1641,150 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoQuit"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowHiDPI"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BugVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Copyright"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Description"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastWindowIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MajorVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinorVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="NonReleaseVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RegionCode"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StageCode"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Version"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="string"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_CurrentEventTime"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

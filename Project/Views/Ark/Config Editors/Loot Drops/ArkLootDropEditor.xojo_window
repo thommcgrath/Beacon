@@ -1,13 +1,18 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
+   AcceptFocus     =   "False"
+   AcceptTabs      =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
+   AutoDeactivate  =   "True"
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackColor    =   False
    Height          =   464
    HelpTag         =   ""
@@ -21,36 +26,40 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
+   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   598
    Begin BeaconListbox SetList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   1
-      ColumnsResizable=   False
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   123
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -63,33 +72,26 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   137
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin PagePanel Panel
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel Panel
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   464
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   251
@@ -101,26 +103,27 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   347
       Begin ArkLootItemSetEditor Editor
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   False
-         EraseBackground =   True
-         HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   464
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -133,23 +136,22 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   False
          Visible         =   True
          Width           =   347
       End
       Begin LogoFillCanvas LogoFillCanvas1
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   443
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -165,24 +167,23 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   347
       End
       Begin StatusBar NoSelectionStatusBar
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -198,23 +199,22 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   443
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   347
       End
    End
    Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   464
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   250
@@ -230,24 +230,23 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   1
    End
    Begin ArkLootSimulatorView Simulator
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      BackgroundColor =   &cFFFFFF
+      Composited      =   False
       Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   183
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -260,24 +259,23 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   281
       Transparent     =   True
-      UseFocusRing    =   False
       Visible         =   True
       Width           =   250
    End
    Begin ArkLootDropSettingsContainer SettingsContainer
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      BackgroundColor =   &cFFFFFF
+      Composited      =   False
       Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   96
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -287,27 +285,26 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   True
-      UseFocusRing    =   False
       Visible         =   True
       Width           =   250
    End
    Begin StatusBar StatusBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -320,12 +317,12 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   7
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   260
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   250
    End
@@ -338,7 +335,6 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -355,7 +351,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   9
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -365,12 +361,12 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       Width           =   250
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open()
+		Sub Opening()
+		  RaiseEvent Opening()
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -428,7 +424,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub BuildPresetMenu(Parent As MenuItem)
+		Private Sub BuildPresetMenu(Parent As DesktopMenuItem)
 		  Var Presets() As Ark.LootTemplate = Ark.DataSource.Pool.Get(False).GetLootTemplates
 		  Var Groups As New Dictionary
 		  Var GroupNames() As String
@@ -450,8 +446,8 @@ End
 		    Parent.RemoveMenuAt(I)
 		  Next
 		  
-		  Var EmptySetItem As New MenuItem("New Empty Set", Nil)
-		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
+		  Var EmptySetItem As New DesktopMenuItem("New Empty Set", Nil)
+		  AddHandler EmptySetItem.MenuItemSelected, WeakAddressOf Self.HandlePresetMenu
 		  Parent.AddMenu(EmptySetItem)
 		  
 		  Var HasTarget As Boolean = Self.mContainers.LastIndex > -1
@@ -472,16 +468,16 @@ End
 		    
 		    Names.SortWith(Items)
 		    
-		    Parent.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Parent.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    
-		    Var Header As New MenuItem(Group)
+		    Var Header As New DesktopMenuItem(Group)
 		    Header.Enabled = False
 		    Parent.AddMenu(Header)
 		    
 		    For Each Preset As Ark.LootTemplate In Items
-		      Var PresetItem As New MenuItem(Preset.Label, Preset)
+		      Var PresetItem As New DesktopMenuItem(Preset.Label, Preset)
 		      PresetItem.Enabled = HasTarget
-		      AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
+		      AddHandler PresetItem.MenuItemSelected, WeakAddressOf Self.HandlePresetMenu
 		      Parent.AddMenu(PresetItem)
 		    Next
 		  Next
@@ -564,7 +560,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function HandlePresetMenu(Sender As MenuItem) As Boolean
+		Private Function HandlePresetMenu(Sender As DesktopMenuItem) As Boolean
 		  Var SelectedPreset As Ark.LootTemplate = Sender.Tag
 		  
 		  Var Mask As UInt64 = Self.Project.MapMask
@@ -806,7 +802,7 @@ End
 		    Var SelectedSets() As String
 		    If SelectSets = Nil Then
 		      For I As Integer = 0 To Self.SetList.RowCount - 1
-		        If Self.SetList.Selected(I) Then
+		        If Self.SetList.RowSelectedAt(I) Then
 		          SelectedSets.Add(Ark.LootItemSetOrganizer(Self.SetList.RowTagAt(I)).Template.UUID)
 		        End If
 		      Next
@@ -824,9 +820,9 @@ End
 		      Var Hash As String = CombinedSets.Key(RowIndex)
 		      Var Organizer As Ark.LootItemSetOrganizer = CombinedSets.Value(Hash)
 		      
-		      Self.SetList.CellValueAt(RowIndex, 0) = Organizer.Label(ExtendedLabels)
+		      Self.SetList.CellTextAt(RowIndex, 0) = Organizer.Label(ExtendedLabels)
 		      Self.SetList.RowTagAt(RowIndex) = Organizer
-		      Self.SetList.Selected(RowIndex) = Organizer.Matches(SelectedSets)
+		      Self.SetList.RowSelectedAt(RowIndex) = Organizer.Matches(SelectedSets)
 		    Next
 		  Else
 		    Self.SetList.RowCount = 0
@@ -859,7 +855,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -921,7 +917,7 @@ End
 
 #tag Events SetList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Self.mSorting = True Then
 		    Return
 		  End If
@@ -954,7 +950,7 @@ End
 		  Var Organizers() As Ark.LootItemSetOrganizer
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -981,7 +977,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -1069,7 +1065,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
 		  Var Targets() As Ark.LootItemSetOrganizer
 		  If Me.SelectedRowCount = 0 Then
 		    Var Idx As Integer = Me.RowFromXY(X, Y)
@@ -1079,7 +1075,7 @@ End
 		    Targets.Add(Me.RowTagAt(Idx))
 		  Else
 		    For I As Integer = 0 To Me.RowCount - 1
-		      If Me.Selected(I) Then
+		      If Me.RowSelectedAt(I) Then
 		        Targets.Add(Me.RowTagAt(I))
 		      End If
 		    Next
@@ -1098,7 +1094,7 @@ End
 		    Preset = Ark.DataSource.Pool.Get(False).GetLootTemplateByUUID(Organizer.Template.TemplateUUID)
 		  Next
 		  
-		  Var CreateItem As New MenuItem("Create Template…", Targets)
+		  Var CreateItem As New DesktopMenuItem("Create Template…", Targets)
 		  CreateItem.Name = "createpreset"
 		  CreateItem.Enabled = Targets.LastIndex = 0
 		  If Preset <> Nil And CreateItem.Enabled Then
@@ -1106,7 +1102,7 @@ End
 		  End If
 		  Base.AddMenu(CreateItem)
 		  
-		  Var ReconfigureItem As New MenuItem("Rebuild From Template", Targets)
+		  Var ReconfigureItem As New DesktopMenuItem("Rebuild From Template", Targets)
 		  ReconfigureItem.Name = "reconfigure"
 		  ReconfigureItem.Enabled = Preset <> Nil
 		  If ReconfigureItem.Enabled Then
@@ -1119,14 +1115,14 @@ End
 		  Base.AddMenu(ReconfigureItem)
 		  
 		  If Keyboard.OptionKey Then
-		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
-		    Var CopyJSONItem As New MenuItem("Copy JSON", Targets)
+		    Var CopyJSONItem As New DesktopMenuItem("Copy JSON", Targets)
 		    CopyJSONItem.Name = "copyjson"
 		    CopyJSONItem.Enabled = True
 		    Base.AddMenu(CopyJSONItem)
 		    
-		    Var CopyConfigItem As New MenuItem("Copy Config Part", Targets)
+		    Var CopyConfigItem As New DesktopMenuItem("Copy Config Part", Targets)
 		    CopyConfigItem.Name = "copyconfig"
 		    CopyConfigItem.Enabled = True
 		    Base.AddMenu(CopyConfigItem)
@@ -1136,7 +1132,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
 		  If HitItem = Nil Then
 		    Return False
 		  End If
@@ -1273,7 +1269,7 @@ End
 		  
 		  Var Organizer As Ark.LootItemSetOrganizer = Self.SetList.RowTagAt(Self.SetList.SelectedRowIndex)
 		  Organizer.Replicate()
-		  Self.SetList.CellValueAt(Self.SetList.SelectedRowIndex, 0) = Organizer.Template.Label
+		  Self.SetList.CellTextAt(Self.SetList.SelectedRowIndex, 0) = Organizer.Template.Label
 		  
 		  Self.mSorting = True
 		  SetList.Sort
@@ -1334,7 +1330,7 @@ End
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("Title", "Item Sets"))
 		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddSetButton", "New Item Set", IconToolbarAddMenu, "Add a new empty item set. Hold to add a template from a menu."))
@@ -1404,19 +1400,27 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1448,8 +1452,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1472,14 +1476,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class MapCheckBox
-Inherits CheckBox
+Inherits DesktopCheckBox
 	#tag Property, Flags = &h0
 		Mask As UInt64
 	#tag EndProperty
@@ -242,30 +242,6 @@ Inherits CheckBox
 				"1 - Checked"
 				"2 - Indeterminate"
 			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
-			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Mask"

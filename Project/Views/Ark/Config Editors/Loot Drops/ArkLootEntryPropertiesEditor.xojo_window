@@ -1,13 +1,18 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconContainer ArkLootEntryPropertiesEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
+   AcceptFocus     =   "False"
+   AcceptTabs      =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
+   AutoDeactivate  =   "True"
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackColor    =   False
    Height          =   275
    HelpTag         =   ""
@@ -21,20 +26,21 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
+   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   498
-   Begin CheckBox EditChanceCheck
-      AutoDeactivate  =   True
+   Begin DesktopCheckBox EditChanceCheck
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   23
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -45,29 +51,27 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   0
       Width           =   58
    End
-   Begin CheckBox EditMaxQualityCheck
-      AutoDeactivate  =   True
+   Begin DesktopCheckBox EditMaxQualityCheck
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -78,29 +82,27 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   110
       Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   0
       Width           =   58
    End
-   Begin CheckBox EditMinQualityCheck
-      AutoDeactivate  =   True
+   Begin DesktopCheckBox EditMinQualityCheck
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -111,29 +113,27 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   78
       Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   0
       Width           =   58
    End
-   Begin CheckBox EditMaxQuantityCheck
-      AutoDeactivate  =   True
+   Begin DesktopCheckBox EditMaxQuantityCheck
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -144,29 +144,27 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   44
       Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   0
       Width           =   58
    End
-   Begin CheckBox EditMinQuantityCheck
-      AutoDeactivate  =   True
+   Begin DesktopCheckBox EditMinQuantityCheck
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -177,28 +175,26 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   0
       Width           =   58
    End
    Begin UITweaks.ResizedLabel ChancePercentLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -215,11 +211,9 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "%"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   True
       Underline       =   False
@@ -227,31 +221,30 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Width           =   37
    End
    Begin UITweaks.ResizedTextField ChanceField
-      AcceptTabs      =   False
-      Alignment       =   3
-      AutoDeactivate  =   False
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
       Left            =   325
-      LimitText       =   3
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Mask            =   "99#"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -259,54 +252,53 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "25"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   53
    End
-   Begin Slider ChanceSlider
-      AutoDeactivate  =   True
+   Begin DesktopSlider ChanceSlider
+      AllowAutoDeactivate=   True
+      AllowLiveScrolling=   True
       Enabled         =   True
       Height          =   23
-      HelpTag         =   "Items with a higher weight will be selected more frequently than items with a smaller weight. Two items with the same weight will be selected at the same frequency."
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   174
       LineStep        =   5
-      LiveScroll      =   True
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Maximum         =   100
-      Minimum         =   0
+      MaximumValue    =   100
+      MinimumValue    =   0
       PageStep        =   25
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TickStyle       =   0
+      TickMarkStyle   =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   False
       Value           =   25
       Visible         =   True
       Width           =   139
    End
-   Begin Label ChanceLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel ChanceLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   23
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -323,11 +315,9 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Chance To Be Blueprint:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   True
       Underline       =   False
@@ -335,45 +325,43 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Width           =   152
    End
    Begin UITweaks.ResizedPopupMenu QualityMenus
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   1
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
       Left            =   174
-      ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   110
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   244
    End
-   Begin Label MaxQualityLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MaxQualityLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -390,11 +378,9 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Quality:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   110
       Transparent     =   True
       Underline       =   False
@@ -402,45 +388,43 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Width           =   152
    End
    Begin UITweaks.ResizedPopupMenu QualityMenus
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   0
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
       Left            =   174
-      ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   78
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   244
    End
-   Begin Label MinQualityLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MinQualityLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -457,11 +441,9 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Quality:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   78
       Transparent     =   True
       Underline       =   False
@@ -469,31 +451,30 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Width           =   152
    End
    Begin UITweaks.ResizedTextField MaxQuantityField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
       Left            =   174
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -501,25 +482,24 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   44
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   80
    End
-   Begin Label MaxQuantityLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MaxQuantityLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -536,11 +516,9 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Quantity:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   44
       Transparent     =   True
       Underline       =   False
@@ -548,31 +526,30 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Width           =   152
    End
    Begin UITweaks.ResizedTextField MinQuantityField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
       Left            =   174
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -580,25 +557,24 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   80
    End
-   Begin Label MinQuantityLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MinQuantityLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -615,25 +591,23 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Quantity:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   152
    End
-   Begin Label WeightLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel WeightLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   23
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -650,40 +624,38 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Weight:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   152
    End
-   Begin Slider WeightSlider
-      AutoDeactivate  =   True
+   Begin DesktopSlider WeightSlider
+      AllowAutoDeactivate=   True
+      AllowLiveScrolling=   True
       Enabled         =   True
       Height          =   23
-      HelpTag         =   "Items with a higher weight will be selected more frequently than items with a smaller weight. Two items with the same weight will be selected at the same frequency."
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   174
       LineStep        =   5
-      LiveScroll      =   True
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Maximum         =   1000
-      Minimum         =   1
+      MaximumValue    =   100
+      MinimumValue    =   0
       PageStep        =   25
       Scope           =   2
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
-      TickStyle       =   0
+      TickMarkStyle   =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Value           =   250
@@ -691,31 +663,30 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Width           =   139
    End
    Begin RangeField WeightField
-      AcceptTabs      =   False
-      Alignment       =   3
-      AutoDeactivate  =   False
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   325
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -723,25 +694,24 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "250"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   53
    End
    Begin UITweaks.ResizedLabel WeightPercentLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -758,26 +728,24 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   37
    End
-   Begin CheckBox EditWeightCheck
-      AutoDeactivate  =   True
+   Begin DesktopCheckBox EditWeightCheck
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   23
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -788,26 +756,22 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
       TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   0
       Width           =   58
    End
-   Begin CheckBox EditStatClampMultiplierCheck
+   Begin DesktopCheckBox EditStatClampMultiplierCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -823,8 +787,7 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
-      TabIndex        =   22
+      TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -833,13 +796,12 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   0
       Width           =   58
    End
-   Begin Label StatClampMultiplierLabel
+   Begin DesktopLabel StatClampMultiplierLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -857,7 +819,7 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   23
+      TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Stat Limits Multiplier:"
@@ -877,8 +839,6 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -900,7 +860,7 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   24
+      TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -914,12 +874,10 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Visible         =   True
       Width           =   80
    End
-   Begin CheckBox PreventGrindingCheck
+   Begin DesktopCheckBox PreventGrindingCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Prevent Grinding"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -935,7 +893,6 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
       TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   True
@@ -945,14 +902,13 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   0
       Width           =   244
    End
-   Begin CheckBox EditPreventGrindingCheck
+   Begin DesktopCheckBox EditPreventGrindingCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -968,7 +924,6 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
       TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   True
@@ -978,10 +933,11 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   0
       Width           =   58
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
@@ -1060,13 +1016,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function MaxQualityMenu() As PopupMenu
+		Private Function MaxQualityMenu() As DesktopPopupMenu
 		  Return Self.QualityMenus(1)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function MinQualityMenu() As PopupMenu
+		Private Function MinQualityMenu() As DesktopPopupMenu
 		  Return Self.QualityMenus(0)
 		End Function
 	#tag EndMethod
@@ -1204,18 +1160,7 @@ End
 
 #tag Events ChanceField
 	#tag Event
-		Sub LostFocus()
-		  Me.Text = ChanceSlider.Value.ToString(Locale.Current, ",##0")
-		  ChanceSlider.Enabled = True
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub GotFocus()
-		  ChanceSlider.Enabled = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.Focus = Me Then
 		    Var MyValue As Integer
 		    Try
@@ -1224,6 +1169,17 @@ End
 		    End Try
 		    Self.ChanceSlider.Value = Max(Min(MyValue, ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub FocusLost()
+		  Me.Text = Self.ChanceSlider.Value.ToString(Locale.Current, ",##0")
+		  Self.ChanceSlider.Enabled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub FocusReceived()
+		  Self.ChanceSlider.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1243,7 +1199,9 @@ End
 #tag EndEvents
 #tag Events QualityMenus
 	#tag Event
-		Sub Change(index as Integer)
+		Sub SelectionChanged(index as Integer, item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Not Self.mIgnoreChanges Then
 		    Select Case Index
 		    Case 0 // Min
@@ -1256,7 +1214,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open(index as Integer)
+		Sub Opening(index as Integer)
 		  Me.RemoveAllRows()
 		  
 		  Var Qualities() As Ark.Quality = Ark.Qualities.All
@@ -1270,7 +1228,7 @@ End
 #tag EndEvents
 #tag Events MaxQuantityField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditMaxQuantityCheck.Value = True
 		    RaiseEvent Changed
@@ -1280,7 +1238,7 @@ End
 #tag EndEvents
 #tag Events MinQuantityField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditMinQuantityCheck.Value = True
 		    RaiseEvent Changed
@@ -1299,12 +1257,12 @@ End
 #tag EndEvents
 #tag Events WeightField
 	#tag Event
-		Sub LostFocus()
+		Sub FocusLost()
 		  WeightSlider.Enabled = True
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub GotFocus()
+		Sub FocusReceived()
 		  WeightSlider.Enabled = False
 		End Sub
 	#tag EndEvent
@@ -1323,7 +1281,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mIgnoreChanges = False Then
 		    Self.EditWeightCheck.Value = True
 		    RaiseEvent Changed
@@ -1339,7 +1297,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditStatClampMultiplierCheck.Value = True
 		    RaiseEvent Changed
@@ -1349,7 +1307,7 @@ End
 #tag EndEvents
 #tag Events PreventGrindingCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditPreventGrindingCheck.Value = True
 		    RaiseEvent Changed
@@ -1359,19 +1317,27 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1403,8 +1369,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1427,14 +1393,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

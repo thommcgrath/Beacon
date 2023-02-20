@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconPagedSubview TemplatesComponent
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin BeaconPagedSubview TemplatesComponent
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   300
    Index           =   -2147483648
@@ -35,7 +36,6 @@ Begin BeaconPagedSubview TemplatesComponent
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -61,7 +61,7 @@ Begin BeaconPagedSubview TemplatesComponent
       Visible         =   True
       Width           =   300
    End
-   Begin PagePanel Views
+   Begin DesktopPagePanel Views
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   262
@@ -76,13 +76,14 @@ Begin BeaconPagedSubview TemplatesComponent
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   300
       Begin ListTemplatesComponent PresetsList
@@ -92,9 +93,8 @@ Begin BeaconPagedSubview TemplatesComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   262
          Index           =   -2147483648
@@ -128,9 +128,8 @@ Begin BeaconPagedSubview TemplatesComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   262
          Index           =   -2147483648
@@ -159,17 +158,17 @@ Begin BeaconPagedSubview TemplatesComponent
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function GetPagePanel() As PagePanel
+		Function GetPagePanel() As DesktopPagePanel
 		  Return Self.Views
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.AppendPage(Self.PresetsList)
 		  Self.AppendPage(Self.ModifiersList)
 		End Sub
@@ -327,7 +326,7 @@ End
 		  End If
 		  Self.ShowView(View)
 		  If DefaultModified Then
-		    View.Changed = True
+		    View.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -366,7 +365,7 @@ End
 		  End If
 		  Self.ShowView(View)
 		  If DefaultModified Then
-		    View.Changed = True
+		    View.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -385,7 +384,7 @@ End
 
 #tag Events Nav
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var ListItem As OmniBarItem = OmniBarItem.CreateTab("PresetList", "Templates")
 		  ListItem.Toggled = True
 		  Self.PresetsList.LinkedOmniBarItem = ListItem
@@ -425,7 +424,7 @@ End
 #tag EndEvents
 #tag Events Views
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Var CurrentPage As BeaconSubview = Self.CurrentPage
 		  Var CurrentItemName As String
 		  If (CurrentPage Is Nil) = False And (CurrentPage.LinkedOmniBarItem Is Nil) = False Then
@@ -455,6 +454,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -668,8 +683,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -704,26 +719,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

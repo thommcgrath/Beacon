@@ -1,6 +1,6 @@
 #tag Class
 Protected Class BeaconListbox
-Inherits Listbox
+Inherits DesktopListBox
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
 		  If Self.mCellActionCascading Then
@@ -12,7 +12,7 @@ Inherits Listbox
 		  RaiseEvent BulkColumnChangeStarted(Column)
 		  RaiseEvent CellAction(Row, Column)
 		  
-		  If Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox And (TargetMacOS And Keyboard.AsyncCommandKey) Or (Not TargetMacOS And Keyboard.AsyncControlKey) Then
+		  If Self.CellTypeAt(Row, Column) = DesktopListbox.CellTypes.CheckBox And (TargetMacOS And Keyboard.AsyncCommandKey) Or (Not TargetMacOS And Keyboard.AsyncControlKey) Then
 		    Var DesiredValue As Boolean = Self.CellCheckBoxValueAt(Row, Column)
 		    For Idx As Integer = Self.LastRowIndex DownTo 0
 		      If Idx <> Row And Self.CellCheckBoxValueAt(Idx, Column) <> DesiredValue Then
@@ -28,22 +28,238 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
-		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
+		Function ConstructContextualMenu(base As DesktopMenuItem, x As Integer, y As Integer) As Boolean
+		  Var Board As New Clipboard
+		  Var CanEdit As Boolean = RaiseEvent CanEdit()
+		  Var CanCopy As Boolean = RaiseEvent CanCopy()
+		  Var CanDelete As Boolean = RaiseEvent CanDelete()
+		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
+		  
+		  Var EditItem As New DesktopMenuItem(Self.mEditCaption, "edit")
+		  EditItem.Enabled = CanEdit
+		  Base.AddMenu(EditItem)
+		  
+		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  
+		  Var CutItem As New DesktopMenuItem("Cut", "cut")
+		  CutItem.Shortcut = "X"
+		  CutItem.Enabled = CanCopy And CanDelete
+		  Base.AddMenu(CutItem)
+		  
+		  Var CopyItem As New DesktopMenuItem("Copy", "copy")
+		  CopyItem.Shortcut = "C"
+		  CopyItem.Enabled = CanCopy
+		  Base.AddMenu(CopyItem)
+		  
+		  Var PasteItem As New DesktopMenuItem("Paste", "paste")
+		  PasteItem.Shortcut = "V"
+		  PasteItem.Enabled = CanPaste
+		  Base.AddMenu(PasteItem)
+		  
+		  Var DeleteItem As New DesktopMenuItem("Delete", "clear")
+		  DeleteItem.Enabled = CanDelete
+		  Base.AddMenu(DeleteItem)
+		  
+		  Call ConstructContextualMenu(Base, X, Y)
+		  
+		  Var Bound As Integer = Base.Count - 1
+		  For I As Integer = 0 To Bound
+		    If Base.MenuAt(I) = DeleteItem And I < Bound Then
+		      Base.AddMenuAt(I + 1, New MenuItem(MenuItem.TextSeparator))
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function ContextualMenuItemSelected(selectedItem As DesktopMenuItem) As Boolean
+		  If SelectedItem.Tag <> Nil And SelectedItem.Tag.Type = Variant.TypeString Then
+		    Select Case SelectedItem.Tag
+		    Case "edit"
+		      Self.DoEdit()
+		      Return True
+		    Case "cut"
+		      Self.DoCut()
+		      Return True
+		    Case "copy"
+		      Self.DoCopy()
+		      Return True
+		    Case "paste"
+		      Self.DoPaste()
+		      Return True
+		    Case "clear"
+		      Self.DoClear()
+		      Return True
+		    End Select
+		  End If
+		  
+		  Return ContextualMenuItemSelected(SelectedItem)
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub DoublePressed()
+		  If Self.SelectedRowCount <> Self.mLastChangeCount Or Self.SelectedRowIndex <> Self.mLastChangeIndex Then
+		    // Rapidly changing rows, act as regular click
+		    Self.HandleChange()
+		    Return
+		  End If
+		  
+		  If IsEventImplemented("DoublePressed") Then
+		    RaiseEvent DoublePressed
+		  Else
+		    If Self.CanEdit Then
+		      Self.DoEdit
+		    End If
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function HeaderPressed(column as Integer) As Boolean
+		  If RaiseEvent HeaderPressed(Column) Then
+		    Return True
+		  End If
+		  
+		  If Self.mOpened = False Or Self.PreferencesKey.IsEmpty Then
+		    Return False
+		  End If
+		  
+		  Preferences.ListSortColumn(Self.PreferencesKey) = Column
+		  Preferences.ListSortDirection(Self.PreferencesKey) = Self.ColumnSortDirectionAt(Column)
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function KeyDown(key As String) As Boolean
+		  Self.mForwardKeyUp = False
+		  
+		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And Self.CanDelete() Then
+		    Self.DoClear()
+		    Return True
+		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
+		    Self.DoEdit()
+		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(30) Then // Up Arrow
+		    Var MinIndex As Integer = Self.MinSelectedRow()
+		    If MinIndex > 0 Then
+		      If Self.RowSelectionType = DesktopListbox.RowSelectionTypes.Multiple And Keyboard.ShiftKey Then
+		        Self.RowSelectedAt(MinIndex - 1) = True
+		      Else
+		        Self.SelectedRowIndex = MinIndex - 1
+		      End
+		    Else
+		      System.Beep
+		    End If
+		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(31) Then // Down Arrow
+		    Var MaxIndex As Integer = Self.MaxSelectedRow()
+		    If MaxIndex < Self.LastRowIndex Then
+		      If Self.RowSelectionType = DesktopListbox.RowSelectionTypes.Multiple And Keyboard.ShiftKey Then
+		        Self.RowSelectedAt(MaxIndex + 1) = True
+		      Else
+		        Self.SelectedRowIndex = MaxIndex + 1
+		      End
+		    Else
+		      System.Beep
+		    End If
+		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(9) Then // Tab
+		    Return False
+		  ElseIf RaiseEvent KeyDown(Key) Then
+		    Self.mForwardKeyUp = True
+		  Else
+		    Self.mTypeaheadBuffer = Self.mTypeaheadBuffer + Key
+		    If Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off Then
+		      Self.mTypeaheadTimer.RunMode = Timer.RunModes.Single
+		    End If
+		    Self.mTypeaheadTimer.Reset
+		    Self.mTypeaheadTimer.Period = 1000
+		    
+		    If Not RaiseEvent Typeahead(Self.mTypeaheadBuffer) Then
+		      For Idx As Integer = 0 To Self.LastRowIndex
+		        If Self.CellTextAt(Idx, Self.TypeaheadColumn).BeginsWith(Self.mTypeaheadBuffer) Then
+		          Self.SelectedRowIndex = Idx
+		          Self.EnsureSelectionIsVisible()
+		          Exit
+		        End If
+		      Next
+		    End If
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub KeyUp(key As String)
+		  If Self.mForwardKeyUp Then
+		    RaiseEvent KeyUp(Key)
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MenuBarSelected()
+		  If Self.Window = Nil Or Self.Window.Focus <> Self Then
+		    Return
+		  End If
+		  
+		  Var Board As New Clipboard
+		  Var CanCopy As Boolean = RaiseEvent CanCopy()
+		  Var CanDelete As Boolean = RaiseEvent CanDelete()
+		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
+		  
+		  EditCopy.Enabled = CanCopy
+		  EditCut.Enabled = CanCopy And CanDelete
+		  EditClear.Enabled = CanDelete
+		  EditPaste.Enabled = CanPaste
+		  
+		  RaiseEvent EnableMenuItems
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Opening()
+		  Self.FontName = "SmallSystem"
+		  Self.DefaultRowHeight = Max(26, Self.DefaultRowHeight)
+		  
+		  If Not Self.PreferencesKey.IsEmpty Then
+		    Var Column As Integer = Preferences.ListSortColumn(Self.PreferencesKey, Self.DefaultSortColumn)
+		    Var Direction As DesktopListbox.SortDirections = Preferences.ListSortDirection(Self.PreferencesKey, CType(Self.DefaultSortDirection, DesktopListbox.SortDirections))
+		    Self.SortingColumn = Column
+		    Self.HeadingIndex = Column
+		    Self.ColumnSortDirectionAt(Column) = Direction
+		  End If
+		  
+		  RaiseEvent Opening
+		  
+		  Self.Transparent = False
+		  
+		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
+		  Self.mOpened = True
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function PaintCellBackground(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
 		  Const InsetAmount = 10
 		  Const CornerRadius = 8
 		  
-		  Var ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
+		  Var ColumnWidth As Integer = Self.ColumnAttributesAt(Column).WidthActual
 		  Var RowHeight As Integer = Self.DefaultRowHeight
 		  
 		  Var RowInvalid, RowSelected, NextRowSelected, PreviousRowSelected As Boolean
 		  If Row < Self.RowCount Then
 		    RowInvalid = RowIsInvalid(Row)
-		    RowSelected = Self.Selected(Row)
+		    RowSelected = Self.RowSelectedAt(Row)
 		    If RowSelected Then
-		      PreviousRowSelected = Row > 0 And Row <= Self.LastRowIndex And Self.Selected(Row - 1)
-		      NextRowSelected = Row >= 0 And Row < Self.LastRowIndex And Self.Selected(Row + 1)
+		      PreviousRowSelected = Row > 0 And Row <= Self.LastRowIndex And Self.RowSelectedAt(Row - 1)
+		      NextRowSelected = Row >= 0 And Row < Self.LastRowIndex And Self.RowSelectedAt(Row + 1)
 		    End If
 		  End If
 		  
@@ -104,7 +320,7 @@ Inherits Listbox
 		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		  End If
 		  
-		  Call CellBackgroundPaint(Clip, Row, Column, BackgroundColor, TextColor, IsHighlighted)
+		  Call PaintCellBackground(Clip, Row, Column, BackgroundColor, TextColor, IsHighlighted)
 		  
 		  If Row >= Self.RowCount Then
 		    Return True
@@ -115,7 +331,7 @@ Inherits Listbox
 		  Const CellPadding = 4
 		  Const LineSpacing = 6
 		  
-		  Var Contents As String = Me.CellValueAt(Row, Column).ReplaceLineEndings(EndOfLine)
+		  Var Contents As String = Me.CellTextAt(Row, Column).ReplaceLineEndings(EndOfLine)
 		  Var Lines() As String = Contents.Split(EndOfLine)
 		  Var MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
 		  
@@ -123,7 +339,7 @@ Inherits Listbox
 		    Return True
 		  End If
 		  
-		  Var IsChecked As Boolean = Self.ColumnTypeAt(Column) = Listbox.CellTypes.CheckBox Or Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox
+		  Var IsChecked As Boolean = Self.ColumnTypeAt(Column) = DesktopListbox.CellTypes.CheckBox Or Self.CellTypeAt(Row, Column) = DesktopListbox.CellTypes.CheckBox
 		  If IsChecked Then
 		    MaxDrawWidth = MaxDrawWidth - 20
 		  End If
@@ -145,16 +361,16 @@ Inherits Listbox
 		    Var LineWidth As Integer = Min(Ceiling(Clip.TextWidth(Lines(I))), MaxDrawWidth)
 		    
 		    Var DrawLeft As Integer
-		    Var Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)
-		    If Align = Listbox.Alignments.Default Then
+		    Var Align As DesktopListbox.Alignments = Self.CellAlignmentAt(Row, Column)
+		    If Align = DesktopListbox.Alignments.Default Then
 		      Align = Self.ColumnAlignmentAt(Column)
 		    End If
 		    Select Case Align
-		    Case Listbox.Alignments.Left, Listbox.Alignments.Default
+		    Case DesktopListbox.Alignments.Left, DesktopListbox.Alignments.Default
 		      DrawLeft = CellPadding + If(IsChecked, 20, 0)
-		    Case Listbox.Alignments.Center
+		    Case DesktopListbox.Alignments.Center
 		      DrawLeft = CellPadding + If(IsChecked, 20, 0) + ((MaxDrawWidth - LineWidth) / 2)
-		    Case Listbox.Alignments.Right, Listbox.Alignments.Decimal
+		    Case DesktopListbox.Alignments.Right, DesktopListbox.Alignments.Decimal
 		      DrawLeft = Clip.Width - (LineWidth + CellPadding)
 		    End Select
 		    
@@ -163,7 +379,7 @@ Inherits Listbox
 		    Var LineColor As Color = If(I = 0, TextColor, SecondaryTextColor)
 		    
 		    Clip.DrawingColor = LineColor
-		    If Not CellTextPaint(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
+		    If Not PaintCellText(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
 		      Clip.DrawText(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
 		    End If
 		    
@@ -180,7 +396,7 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
-		Function CellTextPaint(g As Graphics, row As Integer, column As Integer, x as Integer, y as Integer) As Boolean
+		Function PaintCellText(g as Graphics, row as Integer, column as Integer, x as Integer, y as Integer) As Boolean
 		  #Pragma Unused G
 		  #Pragma Unused Row
 		  #Pragma Unused Column
@@ -192,224 +408,8 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.HandleChange()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
-		  Var Board As New Clipboard
-		  Var CanEdit As Boolean = RaiseEvent CanEdit()
-		  Var CanCopy As Boolean = RaiseEvent CanCopy()
-		  Var CanDelete As Boolean = RaiseEvent CanDelete()
-		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
-		  
-		  Var EditItem As New MenuItem(Self.mEditCaption, "edit")
-		  EditItem.Enabled = CanEdit
-		  Base.AddMenu(EditItem)
-		  
-		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		  
-		  Var CutItem As New MenuItem("Cut", "cut")
-		  CutItem.Shortcut = "X"
-		  CutItem.Enabled = CanCopy And CanDelete
-		  Base.AddMenu(CutItem)
-		  
-		  Var CopyItem As New MenuItem("Copy", "copy")
-		  CopyItem.Shortcut = "C"
-		  CopyItem.Enabled = CanCopy
-		  Base.AddMenu(CopyItem)
-		  
-		  Var PasteItem As New MenuItem("Paste", "paste")
-		  PasteItem.Shortcut = "V"
-		  PasteItem.Enabled = CanPaste
-		  Base.AddMenu(PasteItem)
-		  
-		  Var DeleteItem As New MenuItem("Delete", "clear")
-		  DeleteItem.Enabled = CanDelete
-		  Base.AddMenu(DeleteItem)
-		  
-		  Call ConstructContextualMenu(Base, X, Y)
-		  
-		  Var Bound As Integer = Base.Count - 1
-		  For I As Integer = 0 To Bound
-		    If Base.MenuAt(I) = DeleteItem And I < Bound Then
-		      Base.AddMenuAt(I + 1, New MenuItem(MenuItem.TextSeparator))
-		    End If
-		  Next
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
-		  If HitItem.Tag <> Nil And HitItem.Tag.Type = Variant.TypeString Then
-		    Select Case HitItem.Tag
-		    Case "edit"
-		      Self.DoEdit()
-		      Return True
-		    Case "cut"
-		      Self.DoCut()
-		      Return True
-		    Case "copy"
-		      Self.DoCopy()
-		      Return True
-		    Case "paste"
-		      Self.DoPaste()
-		      Return True
-		    Case "clear"
-		      Self.DoClear()
-		      Return True
-		    End Select
-		  End If
-		  
-		  Return ContextualMenuAction(HitItem)
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub DoubleClick()
-		  If Self.SelectedRowCount <> Self.mLastChangeCount Or Self.SelectedRowIndex <> Self.mLastChangeIndex Then
-		    // Rapidly changing rows, act as regular click
-		    Self.HandleChange()
-		    Return
-		  End If
-		  
-		  If IsEventImplemented("DoubleClick") Then
-		    RaiseEvent DoubleClick
-		  Else
-		    If Self.CanEdit Then
-		      Self.DoEdit
-		    End If
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub EnableMenuItems()
-		  If Self.Window = Nil Or Self.Window.Focus <> Self Then
-		    Return
-		  End If
-		  
-		  Var Board As New Clipboard
-		  Var CanCopy As Boolean = RaiseEvent CanCopy()
-		  Var CanDelete As Boolean = RaiseEvent CanDelete()
-		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
-		  
-		  EditCopy.Enabled = CanCopy
-		  EditCut.Enabled = CanCopy And CanDelete
-		  EditClear.Enabled = CanDelete
-		  EditPaste.Enabled = CanPaste
-		  
-		  RaiseEvent EnableMenuItems
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Function HeaderPressed(column as Integer) As Boolean
-		  If RaiseEvent HeaderPressed(Column) Then
-		    Return True
-		  End If
-		  
-		  If Self.mOpened = False Or Self.PreferencesKey.IsEmpty Then
-		    Return False
-		  End If
-		  
-		  Preferences.ListSortColumn(Self.PreferencesKey) = Column
-		  Preferences.ListSortDirection(Self.PreferencesKey) = Self.ColumnSortDirectionAt(Column)
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Function KeyDown(Key As String) As Boolean
-		  Self.mForwardKeyUp = False
-		  
-		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And Self.CanDelete() Then
-		    Self.DoClear()
-		    Return True
-		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
-		    Self.DoEdit()
-		    Return True
-		  ElseIf Key = Encodings.UTF8.Chr(30) Then // Up Arrow
-		    Var MinIndex As Integer = Self.MinSelectedRow()
-		    If MinIndex > 0 Then
-		      If Self.RowSelectionType = Listbox.RowSelectionTypes.Multiple And Keyboard.ShiftKey Then
-		        Self.Selected(MinIndex - 1) = True
-		      Else
-		        Self.SelectedRowIndex = MinIndex - 1
-		      End
-		    Else
-		      System.Beep
-		    End If
-		    Return True
-		  ElseIf Key = Encodings.UTF8.Chr(31) Then // Down Arrow
-		    Var MaxIndex As Integer = Self.MaxSelectedRow()
-		    If MaxIndex < Self.LastRowIndex Then
-		      If Self.RowSelectionType = Listbox.RowSelectionTypes.Multiple And Keyboard.ShiftKey Then
-		        Self.Selected(MaxIndex + 1) = True
-		      Else
-		        Self.SelectedRowIndex = MaxIndex + 1
-		      End
-		    Else
-		      System.Beep
-		    End If
-		    Return True
-		  ElseIf Key = Encodings.UTF8.Chr(9) Then // Tab
-		    Return False
-		  ElseIf RaiseEvent KeyDown(Key) Then
-		    Self.mForwardKeyUp = True
-		  Else
-		    Self.mTypeaheadBuffer = Self.mTypeaheadBuffer + Key
-		    If Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off Then
-		      Self.mTypeaheadTimer.RunMode = Timer.RunModes.Single
-		    End If
-		    Self.mTypeaheadTimer.Reset
-		    Self.mTypeaheadTimer.Period = 1000
-		    
-		    If Not RaiseEvent Typeahead(Self.mTypeaheadBuffer) Then
-		      For Idx As Integer = 0 To Self.LastRowIndex
-		        If Self.CellValueAt(Idx, Self.TypeaheadColumn).BeginsWith(Self.mTypeaheadBuffer) Then
-		          Self.SelectedRowIndex = Idx
-		          Self.EnsureSelectionIsVisible()
-		          Exit
-		        End If
-		      Next
-		    End If
-		  End If
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub KeyUp(Key As String)
-		  If Self.mForwardKeyUp Then
-		    RaiseEvent KeyUp(Key)
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Open()
-		  Self.FontName = "SmallSystem"
-		  Self.DefaultRowHeight = Max(26, Self.DefaultRowHeight)
-		  
-		  If Not Self.PreferencesKey.IsEmpty Then
-		    Var Column As Integer = Preferences.ListSortColumn(Self.PreferencesKey, Self.DefaultSortColumn)
-		    Var Direction As Listbox.SortDirections = Preferences.ListSortDirection(Self.PreferencesKey, CType(Self.DefaultSortDirection, Listbox.SortDirections))
-		    Self.SortingColumn = Column
-		    Self.HeadingIndex = Column
-		    Self.ColumnSortDirectionAt(Column) = Direction
-		  End If
-		  
-		  RaiseEvent Open
-		  
-		  Self.Transparent = False
-		  
-		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
-		  Self.mOpened = True
 		End Sub
 	#tag EndEvent
 
@@ -545,7 +545,7 @@ Inherits Listbox
 		  Var Row As Integer = Self.SelectedRowIndex
 		  Var Editable As Integer = -1
 		  For Column As Integer = 0 To Self.LastColumnIndex
-		    If Self.CellTypeAt(Row, Column) = Listbox.CellTypes.TextField Then
+		    If Self.CellTypeAt(Row, Column) = DesktopListbox.CellTypes.TextField Then
 		      If Editable = -1 Then
 		        Editable = Column
 		      Else
@@ -571,7 +571,7 @@ Inherits Listbox
 		  Var AtLeastOneVisible As Boolean
 		  
 		  For I As Integer = 0 To Self.RowCount - 1
-		    If Self.Selected(I) Then
+		    If Self.RowSelectedAt(I) Then
 		      AtLeastOneVisible = AtLeastOneVisible Or (I >= VisibleStart And I <= VisibleEnd)
 		    End If
 		  Next
@@ -599,7 +599,7 @@ Inherits Listbox
 	#tag Method, Flags = &h21
 		Private Sub HandleChange()
 		  If Self.mBlockSelectionChangeCount <= 0 Then
-		    RaiseEvent Change
+		    RaiseEvent SelectionChanged
 		  Else
 		    Self.mFireChangeWhenUnlocked = True
 		  End If
@@ -613,9 +613,9 @@ Inherits Listbox
 		Private Function Highlighted() As Boolean
 		  If Self.Enabled Then
 		    #if TargetCocoa
-		      Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
-		      Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
-		      Return IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
+		      Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Ptr) As Boolean
+		      Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Ptr) As Boolean
+		      Return IsKeyWindow(Self.Window.Handle) Or IsMainWindow(Self.Window.Handle)
 		    #else
 		      Return True
 		    #endif
@@ -635,12 +635,12 @@ Inherits Listbox
 		    Return -1
 		  End If
 		  
-		  If Self.RowSelectionType = Listbox.RowSelectionTypes.Single Then
+		  If Self.RowSelectionType = DesktopListbox.RowSelectionTypes.Single Then
 		    Return Self.SelectedRowIndex
 		  End If
 		  
 		  For Idx As Integer = Self.LastRowIndex DownTo 0
-		    If Self.Selected(Idx) Then
+		    If Self.RowSelectedAt(Idx) Then
 		      Return Idx
 		    End If
 		  Next
@@ -653,12 +653,12 @@ Inherits Listbox
 		    Return -1
 		  End If
 		  
-		  If Self.RowSelectionType = Listbox.RowSelectionTypes.Single Then
+		  If Self.RowSelectionType = DesktopListbox.RowSelectionTypes.Single Then
 		    Return Self.SelectedRowIndex
 		  End If
 		  
 		  For Idx As Integer = 0 To Self.LastRowIndex
-		    If Self.Selected(Idx) Then
+		    If Self.RowSelectedAt(Idx) Then
 		      Return Idx
 		    End If
 		  Next
@@ -709,7 +709,7 @@ Inherits Listbox
 	#tag Method, Flags = &h21
 		Private Sub PostOpenInvalidate()
 		  Self.ScrollPosition = Self.ScrollPosition
-		  Self.Invalidate()
+		  Self.Refresh()
 		End Sub
 	#tag EndMethod
 
@@ -786,7 +786,7 @@ Inherits Listbox
 		  
 		  If Self.mBlockSelectionChangeCount = 0 And Self.mFireChangeWhenUnlocked Then
 		    If FireChangeEvent Then
-		      RaiseEvent Change
+		      RaiseEvent SelectionChanged
 		    End If
 		    Self.mFireChangeWhenUnlocked = False
 		  End If
@@ -823,27 +823,15 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		Event ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event CellTextPaint(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		Event ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Change()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ContextualMenuAction(HitItem As MenuItem) As Boolean
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event DoubleClick()
+		Event DoublePressed()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -867,7 +855,15 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -888,6 +884,10 @@ Inherits Listbox
 
 	#tag Hook, Flags = &h0
 		Event RowIsInvalid(Row As Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event SelectionChanged()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -1087,6 +1087,20 @@ Inherits Listbox
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="GridLineStyle"
+			Visible=true
+			Group="Appearance"
+			InitialValue="0"
+			Type="GridLineStyles"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Horizontal"
+				"2 - Vertical"
+				"3 - Both"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -1215,38 +1229,6 @@ Inherits Listbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="GridLinesHorizontalStyle"
-			Visible=true
-			Group="Appearance"
-			InitialValue="0"
-			Type="Borders"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - None"
-				"2 - ThinDotted"
-				"3 - ThinSolid"
-				"4 - ThickSolid"
-				"5 - DoubleThinSolid"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GridLinesVerticalStyle"
-			Visible=true
-			Group="Appearance"
-			InitialValue="0"
-			Type="Borders"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - None"
-				"2 - ThinDotted"
-				"3 - ThinSolid"
-				"4 - ThickSolid"
-				"5 - DoubleThinSolid"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="HasHeader"
 			Visible=true
 			Group="Appearance"
@@ -1349,22 +1331,6 @@ Inherits Listbox
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowAutoHideScrollbars"
@@ -1540,14 +1506,6 @@ Inherits Listbox
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

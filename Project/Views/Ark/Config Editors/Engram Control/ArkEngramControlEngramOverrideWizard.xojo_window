@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkEngramControlEngramOverrideWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
    Type            =   8
    Visible         =   True
    Width           =   475
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,13 +47,13 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Set Engram Properties"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Set Engram Properties"
       Visible         =   True
       Width           =   435
    End
@@ -130,8 +128,6 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -155,6 +151,7 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -162,15 +159,12 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   308
    End
    Begin UITweaks.ResizedLabel EntryStringLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -191,17 +185,17 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Entry String:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
-      Value           =   "Entry String:"
       Visible         =   True
       Width           =   115
    End
-   Begin RadioButton EnabledRadio
+   Begin DesktopRadioButton EnabledRadio
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Enabled"
@@ -231,7 +225,7 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       Visible         =   True
       Width           =   100
    End
-   Begin RadioButton DisabledRadio
+   Begin DesktopRadioButton DisabledRadio
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Disabled"
@@ -261,12 +255,10 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       Visible         =   True
       Width           =   104
    End
-   Begin CheckBox AutoUnlockCheck
+   Begin DesktopCheckBox AutoUnlockCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Automatically Unlocks"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -301,8 +293,6 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -326,6 +316,7 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -333,15 +324,12 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   100
    End
    Begin UITweaks.ResizedLabel RequiredLevelLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -362,13 +350,13 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Required Level:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
       Transparent     =   False
       Underline       =   False
-      Value           =   "Required Level:"
       Visible         =   True
       Width           =   115
    End
@@ -379,8 +367,6 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -404,6 +390,7 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -411,15 +398,12 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   100
    End
    Begin UITweaks.ResizedLabel RequiredPointsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -440,22 +424,20 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Required Points:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
       Transparent     =   False
       Underline       =   False
-      Value           =   "Required Points:"
       Visible         =   True
       Width           =   115
    End
-   Begin CheckBox RemovePrereqCheck
+   Begin DesktopCheckBox RemovePrereqCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Remove Prerequisites"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -483,12 +465,10 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       VisualState     =   0
       Width           =   216
    End
-   Begin CheckBox HiddenEditCheck
+   Begin DesktopCheckBox HiddenEditCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -516,12 +496,10 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       VisualState     =   0
       Width           =   80
    End
-   Begin CheckBox AutoUnlockEditCheck
+   Begin DesktopCheckBox AutoUnlockEditCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -549,12 +527,10 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       VisualState     =   0
       Width           =   80
    End
-   Begin CheckBox LevelEditCheck
+   Begin DesktopCheckBox LevelEditCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -582,12 +558,10 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       VisualState     =   0
       Width           =   80
    End
-   Begin CheckBox PointsEditCheck
+   Begin DesktopCheckBox PointsEditCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -615,12 +589,10 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       VisualState     =   0
       Width           =   80
    End
-   Begin CheckBox PrereqEditCheck
+   Begin DesktopCheckBox PrereqEditCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -649,11 +621,11 @@ Begin BeaconDialog ArkEngramControlEngramOverrideWizard
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.CheckEnabled()
 		  Self.UpdateUI()
 		  Self.SwapButtons()
@@ -795,14 +767,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Ark.Project, Engrams() As Ark.Engram) As Ark.Engram()
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, Engrams() As Ark.Engram) As Ark.Engram()
 		  Var Edited() As Ark.Engram
 		  If Parent = Nil Then
 		    Return Edited
 		  End If
 		  
 		  Var Win As New ArkEngramControlEngramOverrideWizard(Project, Engrams)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
 		  If Not Cancelled Then
@@ -893,7 +865,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Engrams() As Ark.Engram
 		  If Self.mEngrams.LastIndex = -1 Then
 		    If Not Self.EntryStringField.Text.EndsWith("_C") Then
@@ -1046,7 +1018,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -1054,7 +1026,7 @@ End
 #tag EndEvents
 #tag Events EnabledRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Not Self.mSettingUp Then
 		    Self.HiddenEditCheck.Value = True
 		  End If
@@ -1064,7 +1036,7 @@ End
 #tag EndEvents
 #tag Events DisabledRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Not Self.mSettingUp Then
 		    Self.HiddenEditCheck.Value = True
 		  End If
@@ -1074,7 +1046,7 @@ End
 #tag EndEvents
 #tag Events AutoUnlockCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.RequiredLevelLabel.Text = "Auto Unlocks At:"
 		  Else
@@ -1089,7 +1061,7 @@ End
 #tag EndEvents
 #tag Events RequiredLevelField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mSettingUp Then
 		    Self.LevelEditCheck.Value = True
 		  End If
@@ -1098,7 +1070,7 @@ End
 #tag EndEvents
 #tag Events RequiredPointsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mSettingUp Then
 		    Self.PointsEditCheck.Value = True
 		  End If
@@ -1107,7 +1079,7 @@ End
 #tag EndEvents
 #tag Events RemovePrereqCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Not Self.mSettingUp Then
 		    Self.PrereqEditCheck.Value = True
 		  End If
@@ -1228,8 +1200,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1340,7 +1312,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

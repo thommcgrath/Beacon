@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkSpoilTimersEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   535
    Index           =   -2147483648
@@ -35,7 +36,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -61,7 +61,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
       Visible         =   True
       Width           =   969
    End
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   494
@@ -76,16 +76,17 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   969
-      Begin GroupBox DecayPreviewGroup
+      Begin DesktopGroupBox DecayPreviewGroup
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Times"
@@ -125,8 +126,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Bold            =   False
             ColumnCount     =   5
             ColumnWidths    =   ""
-            DataField       =   ""
-            DataSource      =   ""
             DefaultRowHeight=   -1
             DefaultSortColumn=   0
             DefaultSortDirection=   0
@@ -136,8 +135,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             FontName        =   "System"
             FontSize        =   0.0
             FontUnit        =   0
-            GridLinesHorizontalStyle=   0
-            GridLinesVerticalStyle=   0
+            GridLineStyle   =   0
             HasBorder       =   True
             HasHeader       =   True
             HasHorizontalScrollbar=   False
@@ -172,11 +170,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             _ScrollOffset   =   0
             _ScrollWidth    =   -1
          End
-         Begin Label DestroyWarningLabel
+         Begin DesktopLabel DestroyWarningLabel
             AllowAutoDeactivate=   True
             Bold            =   True
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "SmallSystem"
             FontSize        =   0.0
@@ -215,7 +211,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Backdrop        =   0
             Clickable       =   False
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   16
             Icon            =   52676607
@@ -242,7 +237,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Width           =   16
          End
       End
-      Begin GroupBox DecayGroup
+      Begin DesktopGroupBox DecayGroup
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Decay"
@@ -273,8 +268,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Begin UITweaks.ResizedLabel PvEDinoDecayMultiplierLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -308,8 +301,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Begin UITweaks.ResizedLabel PvEStructureDecayMultiplierLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -347,7 +338,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -378,7 +368,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -402,11 +391,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   40
          End
-         Begin Label PvEStructureDecayLabel
+         Begin DesktopLabel PvEStructureDecayLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -437,11 +424,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   254
          End
-         Begin Label PvEDinoDecayLabel
+         Begin DesktopLabel PvEDinoDecayLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -472,11 +457,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   254
          End
-         Begin Label PvEDecayLabel
+         Begin DesktopLabel PvEDecayLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -514,7 +497,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -545,7 +527,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -569,11 +550,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   40
          End
-         Begin Label PvPDecayLabel
+         Begin DesktopLabel PvPDecayLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -611,8 +590,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             BackgroundColor =   &cFFFFFF00
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -655,8 +632,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             BackgroundColor =   &cFFFFFF00
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -699,8 +674,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             BackgroundColor =   &cFFFFFF00
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -739,8 +712,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Begin UITweaks.ResizedLabel CropDecaySpeedMultiplierLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -778,7 +749,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -809,7 +779,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -840,8 +809,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             BackgroundColor =   &cFFFFFF00
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -880,8 +847,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Begin UITweaks.ResizedLabel FastDecayPeriodLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -912,11 +877,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   254
          End
-         Begin Label FastDecayUnsnappedCoreStructuresLabel
+         Begin DesktopLabel FastDecayUnsnappedCoreStructuresLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -947,11 +910,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   254
          End
-         Begin Label OnlyDecayUnsnappedCoreStructuresLabel
+         Begin DesktopLabel OnlyDecayUnsnappedCoreStructuresLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -982,8 +943,10 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   254
          End
-         Begin Separator Separator1
+         Begin DesktopSeparator Separator1
+            Active          =   False
             AllowAutoDeactivate=   True
+            AllowTabStop    =   True
             Enabled         =   True
             Height          =   4
             Index           =   -2147483648
@@ -994,15 +957,19 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             LockLeft        =   True
             LockRight       =   True
             LockTop         =   True
+            PanelIndex      =   0
             Scope           =   2
             TabIndex        =   8
             TabPanelIndex   =   1
-            TabStop         =   True
             Tooltip         =   ""
             Top             =   201
             Transparent     =   False
             Visible         =   True
             Width           =   358
+            _mIndex         =   0
+            _mInitialParent =   ""
+            _mName          =   ""
+            _mPanelIndex    =   0
          End
       End
       Begin UITweaks.ResizedTextField SpoilTimeMultiplierField
@@ -1012,8 +979,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1049,11 +1014,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Visible         =   True
          Width           =   92
       End
-      Begin Label SpoilTimeMultiplierLabel
+      Begin DesktopLabel SpoilTimeMultiplierLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1096,8 +1059,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Bold            =   False
          ColumnCount     =   1
          ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   -1
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -1107,8 +1068,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -1150,8 +1110,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1194,8 +1152,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1231,11 +1187,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Visible         =   True
          Width           =   92
       End
-      Begin Label CorpseDecomposeMultiplierLabel
+      Begin DesktopLabel CorpseDecomposeMultiplierLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1266,11 +1220,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Visible         =   True
          Width           =   249
       End
-      Begin Label ItemDecomposeMultiplierLabel
+      Begin DesktopLabel ItemDecomposeMultiplierLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1308,8 +1260,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1352,8 +1302,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1389,11 +1337,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Visible         =   True
          Width           =   92
       End
-      Begin Label ClampSpoilTimesLabel
+      Begin DesktopLabel ClampSpoilTimesLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1431,7 +1377,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   20
          Index           =   -2147483648
@@ -1455,7 +1400,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Visible         =   True
          Width           =   40
       End
-      Begin GroupBox AutoDestroyGroup
+      Begin DesktopGroupBox AutoDestroyGroup
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Auto Destroy"
@@ -1490,8 +1435,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             BackgroundColor =   &cFFFFFF00
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -1530,8 +1473,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
          Begin UITweaks.ResizedLabel AutoDestroyPeriodMultiplierLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -1562,11 +1503,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   227
          End
-         Begin Label AutoDestroyStructuresLabel
+         Begin DesktopLabel AutoDestroyStructuresLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -1597,11 +1536,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   227
          End
-         Begin Label OnlyDestroyCoreStructuresLabel
+         Begin DesktopLabel OnlyDestroyCoreStructuresLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -1632,11 +1569,9 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Visible         =   True
             Width           =   227
          End
-         Begin Label AutoDestroyDinosLabel
+         Begin DesktopLabel AutoDestroyDinosLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
             Enabled         =   True
             FontName        =   "System"
             FontSize        =   0.0
@@ -1674,7 +1609,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -1705,7 +1639,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -1736,7 +1669,6 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             AllowTabs       =   False
             Backdrop        =   0
             ContentHeight   =   0
-            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -1763,11 +1695,11 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mScorchedSpoilMultiplier = Ark.DataSource.Pool.Get(False).GetDoubleVariable("Scorched Spoil Multiplier", 0.9)
 		  Self.mDecayPeriods = New Dictionary
 		  Self.mSpoilMultipliers = New Dictionary
@@ -1803,7 +1735,7 @@ End
 		  For Each Entry As DictionaryEntry In Self.mSpoilMultipliers
 		    Var HeaderName As String = Entry.Key
 		    Self.SpoilTimesList.HeaderAt(ColumnIndex) = HeaderName
-		    Self.SpoilTimesList.ColumnAt(ColumnIndex).WidthExpression = "100"
+		    Self.SpoilTimesList.ColumnAttributesAt(ColumnIndex).WidthExpression = "100"
 		    ColumnIndex = ColumnIndex + 1
 		  Next
 		End Sub
@@ -1880,8 +1812,8 @@ End
 		Private Sub UpdateDecayFigures()
 		  Var SelectedKeys() As String
 		  For Idx As Integer = 0 To Self.DecayPreviewList.LastRowIndex
-		    If Self.DecayPreviewList.Selected(Idx) Then
-		      SelectedKeys.Add(Self.DecayPreviewList.CellValueAt(Idx, 0))
+		    If Self.DecayPreviewList.RowSelectedAt(Idx) Then
+		      SelectedKeys.Add(Self.DecayPreviewList.CellTextAt(Idx, 0))
 		    End If
 		  Next
 		  
@@ -1945,7 +1877,7 @@ End
 		    
 		    Self.DecayPreviewList.AddRow(Key, PvEDecayString, PvEDestroyString, PvPDecayString, PvPDestroyString)
 		    Var RowIdx As Integer = Self.DecayPreviewList.LastAddedRowIndex
-		    Self.DecayPreviewList.Selected(RowIdx) = SelectedKeys.IndexOf(Key) > -1
+		    Self.DecayPreviewList.RowSelectedAt(RowIdx) = SelectedKeys.IndexOf(Key) > -1
 		    
 		    Self.DecayPreviewList.CellTagAt(RowIdx, 1) = PvEDecayPeriod
 		    Self.DecayPreviewList.CellTagAt(RowIdx, 2) = PvEDestroyPeriod
@@ -1982,8 +1914,8 @@ End
 		  
 		  Var SelectedNames() As String
 		  For Idx As Integer = 0 To List.LastRowIndex
-		    If List.Selected(Idx) Then
-		      SelectedNames.Add(List.CellValueAt(Idx, 0))
+		    If List.RowSelectedAt(Idx) Then
+		      SelectedNames.Add(List.CellTextAt(Idx, 0))
 		    End If
 		  Next
 		  
@@ -2002,9 +1934,9 @@ End
 		      Var Multiplier As Double = Self.mSpoilMultipliers.Value(Keys(Idx))
 		      Var ColumnIndex As Integer = Idx + 1
 		      
-		      List.CellValueAt(RowIndex, ColumnIndex) = Beacon.SecondsToString(BasePeriod * Multiplier)
+		      List.CellTextAt(RowIndex, ColumnIndex) = Beacon.SecondsToString(BasePeriod * Multiplier)
 		      List.CellTagAt(RowIndex, ColumnIndex) = BasePeriod * Multiplier
-		      List.Selected(List.LastAddedRowIndex) = SelectedNames.IndexOf(Name) > -1
+		      List.RowSelectedAt(List.LastAddedRowIndex) = SelectedNames.IndexOf(Name) > -1
 		    Next
 		  Next
 		  
@@ -2093,7 +2025,7 @@ End
 
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateTab("DecayButton", "Decay"))
@@ -2117,7 +2049,7 @@ End
 #tag EndEvents
 #tag Events Pages
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Var DecayButton As OmniBarItem = Self.ConfigToolbar.Item("DecayButton")
 		  If (DecayButton Is Nil) = False Then
 		    DecayButton.Toggled = (Me.SelectedPanelIndex = Self.PageDecay)
@@ -2132,7 +2064,7 @@ End
 #tag EndEvents
 #tag Events DecayPreviewList
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = 0 Then
 		    Return False
 		  End If
@@ -2158,7 +2090,7 @@ End
 #tag EndEvents
 #tag Events PvEStructureDecaySwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2166,7 +2098,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.DisableStructureDecayPvE = Not Me.Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2174,7 +2106,7 @@ End
 #tag EndEvents
 #tag Events PvEDinoDecaySwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2182,7 +2114,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.DisableDinoDecayPvE = Not Me.Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2190,7 +2122,7 @@ End
 #tag EndEvents
 #tag Events PvPDinoDecaySwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2205,7 +2137,7 @@ End
 		  End If
 		  Self.PvEDinoDecaySwitch.Enabled = Not Me.Value
 		  
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2213,7 +2145,7 @@ End
 #tag EndEvents
 #tag Events PvPStructureDecaySwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2228,7 +2160,7 @@ End
 		  End If
 		  Self.PvEStructureDecaySwitch.Enabled = Not Me.Value
 		  
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2236,7 +2168,7 @@ End
 #tag EndEvents
 #tag Events PvEStructureDecayMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2249,7 +2181,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.PvEStructureDecayPeriodMultiplier = Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2257,7 +2189,7 @@ End
 #tag EndEvents
 #tag Events PvEDinoDecayMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2270,7 +2202,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.PvEDinoDecayPeriodMultiplier = Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2278,7 +2210,7 @@ End
 #tag EndEvents
 #tag Events CropDecaySpeedMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2291,14 +2223,14 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.CropDecaySpeedMultiplier = Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events FastDecayUnsnappedCoreStructuresSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2306,14 +2238,14 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.FastDecayUnsnappedCoreStructures = Me.Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events OnlyDecayUnsnappedCoreStructuresSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2321,14 +2253,14 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.OnlyDecayUnsnappedCoreStructures = Me.Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events FastDecayPeriodField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2341,14 +2273,14 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.FastDecayInterval = Interval.TotalSeconds
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SpoilTimeMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2361,7 +2293,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.GlobalSpoilingTimeMultiplier = Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateSpoilFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2369,7 +2301,7 @@ End
 #tag EndEvents
 #tag Events SpoilTimesList
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = 0 Then
 		    Return False
 		  End If
@@ -2395,7 +2327,7 @@ End
 #tag EndEvents
 #tag Events CorpseDecomposeMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
@@ -2413,7 +2345,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.GlobalCorpseDecompositionTimeMultiplier = Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateSpoilFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2421,7 +2353,7 @@ End
 #tag EndEvents
 #tag Events ItemDecomposeMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
@@ -2439,7 +2371,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.GlobalItemDecompositionTimeMultiplier = Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateSpoilFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2447,7 +2379,7 @@ End
 #tag EndEvents
 #tag Events CorpseDecomposePreviewField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or (Self.Focus <> Me) Then
 		    Return
 		  End If
@@ -2467,7 +2399,7 @@ End
 #tag EndEvents
 #tag Events ItemDecomposePreviewField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or (Self.Focus <> Me) Then
 		    Return
 		  End If
@@ -2487,7 +2419,7 @@ End
 #tag EndEvents
 #tag Events ClampSpoilTimesSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2495,14 +2427,14 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.ClampItemSpoilingTimes = Me.Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AutoDestroyPeriodMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2515,7 +2447,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.AutoDestroyOldStructuresMultiplier = Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2523,7 +2455,7 @@ End
 #tag EndEvents
 #tag Events AutoDestroyStructuresSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2531,7 +2463,7 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.AutoDestroyStructures = Me.Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
@@ -2539,7 +2471,7 @@ End
 #tag EndEvents
 #tag Events OnlyDestroyCoreStructuresSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2547,14 +2479,14 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.OnlyAutoDestroyCoreStructures = Me.Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AutoDestroyDinosSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2562,13 +2494,29 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.SpoilTimers = Self.Config(True)
 		  Config.AutoDestroyDecayedDinos = Me.Value
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -2782,8 +2730,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -2818,26 +2766,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

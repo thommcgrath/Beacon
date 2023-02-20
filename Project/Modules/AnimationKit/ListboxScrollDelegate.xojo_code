@@ -9,7 +9,7 @@ Implements AnimationKit.Scrollable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Listbox)
+		Sub Constructor(Source As DesktopListBox)
 		  Self.TargetRef = New WeakRef(Source)
 		End Sub
 	#tag EndMethod

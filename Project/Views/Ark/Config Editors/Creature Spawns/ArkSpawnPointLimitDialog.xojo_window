@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkSpawnPointLimitDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
    Type            =   8
    Visible         =   True
    Width           =   600
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,21 +47,19 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Creature Spawn Limit"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Creature Spawn Limit"
       Visible         =   True
       Width           =   560
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -84,13 +80,13 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Here you can set the maximum percentage of a spawn point's total population that can be used by a specific creature. Every spawn point instance has a different total population count, though a common maximum is 40. A creature will be allowed to spawn if it percentage of the total population is below the defined limit. See the help page using the button below for usage examples."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "Here you can set the maximum percentage of a spawn point's total population that can be used by a specific creature. Every spawn point instance has a different total population count, though a common maximum is 40. A creature will be allowed to spawn if it percentage of the total population is below the defined limit. See the help page using the button below for usage examples."
       Visible         =   True
       Width           =   560
    End
@@ -129,8 +125,6 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
    Begin UITweaks.ResizedPopupMenu CreatureMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -140,7 +134,7 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
-      Left            =   141
+      Left            =   170
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -165,8 +159,6 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -177,7 +169,7 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   141
+      Left            =   170
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -190,6 +182,7 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -197,15 +190,12 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   100
    End
    Begin UITweaks.ResizedLabel CreatureLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -226,21 +216,19 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Creature:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
       Transparent     =   False
       Underline       =   False
-      Value           =   "Creature:"
       Visible         =   True
-      Width           =   109
+      Width           =   138
    End
    Begin UITweaks.ResizedLabel PercentageLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -261,15 +249,15 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Maximum Percentage:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   186
       Transparent     =   False
       Underline       =   False
-      Value           =   "Max Percentage:"
       Visible         =   True
-      Width           =   109
+      Width           =   138
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
@@ -336,11 +324,11 @@ Begin BeaconDialog ArkSpawnPointLimitDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -411,13 +399,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Ark.Creature, DefinedCreatures() As Ark.Creature, CreaturesInSpawnPoint() As Ark.Creature) As NullableDouble
+		Shared Function Present(Parent As DesktopWindow, Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Ark.Creature, DefinedCreatures() As Ark.Creature, CreaturesInSpawnPoint() As Ark.Creature) As NullableDouble
 		  If Parent = Nil Then
 		    Return Nil
 		  End If
 		  
 		  Var Dialog As New ArkSpawnPointLimitDialog(Mods, Limit, SelectedCreatures, DefinedCreatures, CreaturesInSpawnPoint)
-		  Dialog.ShowModalWithin(Parent.TrueWindow)
+		  Dialog.ShowModal(Parent)
 		  If Dialog.mLimit <> Nil And Dialog.mSelectedCreature <> Nil Then
 		    SelectedCreatures.ResizeTo(0)
 		    SelectedCreatures(0) = Dialog.mSelectedCreature
@@ -452,7 +440,7 @@ End
 
 #tag Events HelpButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Title, Body, HelpURL As String
 		  Call Ark.DataSource.Pool.Get(False).GetConfigHelp(Ark.Configs.NameSpawnPoints, Title, Body, HelpURL)
 		  System.GotoURL(HelpURL)
@@ -461,7 +449,7 @@ End
 #tag EndEvents
 #tag Events CreatureMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If Self.mDisableSelection Then
 		    Me.AddRow("Multiple Selection")
 		    Me.SelectedRowIndex = 0
@@ -497,7 +485,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.CreatureMenu.Enabled And Self.CreatureMenu.SelectedRowIndex = -1 Then
 		    Self.ShowAlert("Select a creature to limit", "You cannot limit nothing.")
 		    Return
@@ -530,7 +518,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mLimit = Nil
 		  Self.Hide
 		End Sub
@@ -650,8 +638,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -762,7 +750,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkEngramControlWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkEngramControlWizard
    Type            =   8
    Visible         =   True
    Width           =   508
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,21 +47,19 @@ Begin BeaconDialog ArkEngramControlWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Engram Control Quick Setup Wizard"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Engram Control Quick Setup Wizard"
       Visible         =   True
       Width           =   468
    End
    Begin UITweaks.ResizedPopupMenu TemplateMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -94,8 +90,6 @@ Begin BeaconDialog ArkEngramControlWizard
    Begin UITweaks.ResizedLabel TemplateLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -116,13 +110,13 @@ Begin BeaconDialog ArkEngramControlWizard
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Design:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
-      Value           =   "Design:"
       Visible         =   True
       Width           =   54
    End
@@ -197,8 +191,6 @@ Begin BeaconDialog ArkEngramControlWizard
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -223,6 +215,7 @@ Begin BeaconDialog ArkEngramControlWizard
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "135"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -230,13 +223,11 @@ Begin BeaconDialog ArkEngramControlWizard
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "135"
       Visible         =   False
       Width           =   80
    End
    Begin Thread WorkThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3
@@ -247,11 +238,11 @@ Begin BeaconDialog ArkEngramControlWizard
       ThreadState     =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -285,7 +276,7 @@ End
 		    Self.mProgressShown = True
 		    
 		    If Thread.Current = Nil Then
-		      Self.mProgress.ShowWithin(Self)
+		      Self.mProgress.Show(Self)
 		    Else
 		      Var Dict As New Dictionary
 		      Dict.Value("Action") = "ShowProgress"
@@ -299,13 +290,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Ark.Project) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project) As Boolean
 		  If Parent = Nil Then
 		    Return False
 		  End If
 		  
 		  Var Win As New ArkEngramControlWizard(Project)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -381,14 +372,16 @@ End
 
 #tag Events TemplateMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  Self.TekLevelField.Visible = Me.SelectedRowIndex = Self.IndexUnlockTek Or Me.SelectedRowIndex = Self.IndexMakeEverythingAvailableAtLevel
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mDesign = Self.TemplateMenu.SelectedRowIndex
 		  Self.mLevel = Round(Self.TekLevelField.DoubleValue)
 		  Self.mStartTime = System.Microseconds
@@ -403,7 +396,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -625,7 +618,7 @@ End
 		      Self.Hide
 		      Return
 		    Case "ShowProgress"
-		      Self.mProgress.ShowWithin(Self)
+		      Self.mProgress.Show(Self)
 		    Case "Cancel"
 		      If Self.mProgressShown Then
 		        Self.mProgress.Close
@@ -849,8 +842,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -865,7 +858,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

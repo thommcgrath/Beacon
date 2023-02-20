@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkSpawnPointReplacementsDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
    Type            =   8
    Visible         =   True
    Width           =   660
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,21 +47,19 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Replacing Creatures"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Replacing Creatures"
       Visible         =   True
       Width           =   620
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -84,13 +80,13 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Ark allows choosing a different creature to spawn whenever the target creature is chosen from this spawn set. This is most commonly used for adding Alpha creatures wherever the normal variant could spawn. With a replacement defined, the target creature will always be replaced, so if you want the target creature to still spawn, you must include it as an option here. For example, if choosing to replace Raptors with Alpha Raptors will always spawn Alpha Raptors unless you also include Raptor in the replacement creature list."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "Ark allows choosing a different creature to spawn whenever the target creature is chosen from this spawn set. This is most commonly used for adding Alpha creatures wherever the normal variant could spawn. With a replacement defined, the target creature will always be replaced, so if you want the target creature to still spawn, you must include it as an option here. For example, if choosing to replace Raptors with Alpha Raptors will always spawn Alpha Raptors unless you also include Raptor in the replacement creature list."
       Visible         =   True
       Width           =   620
    End
@@ -129,8 +125,6 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
    Begin UITweaks.ResizedLabel TargetCreatureLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -151,21 +145,19 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Target Creature:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   174
       Transparent     =   False
       Underline       =   False
-      Value           =   "Target Creature:"
       Visible         =   True
       Width           =   107
    End
    Begin UITweaks.ResizedLabel TargetCreatureField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -186,17 +178,17 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Not Selected"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   174
       Transparent     =   False
       Underline       =   False
-      Value           =   "Not Selected"
       Visible         =   True
       Width           =   403
    End
-   Begin GroupBox ReplacementsGroup
+   Begin DesktopGroupBox ReplacementsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Replacement Creatures"
@@ -300,8 +292,6 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
          Bold            =   False
          ColumnCount     =   2
          ColumnWidths    =   "100,*"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   -1
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -311,8 +301,7 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -413,11 +402,11 @@ Begin BeaconDialog ArkSpawnPointReplacementsDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  If Self.mTargetCreature <> Nil Then
@@ -435,8 +424,8 @@ End
 		    Next
 		  End If
 		  
-		  Self.ReplacementsList.ColumnAlignmentAt(Self.ColumnWeight) = Listbox.Alignments.Right
-		  Self.ReplacementsList.ColumnTypeAt(Self.ColumnWeight) = Listbox.CellTypes.TextField
+		  Self.ReplacementsList.ColumnAlignmentAt(Self.ColumnWeight) = DesktopListbox.Alignments.Right
+		  Self.ReplacementsList.ColumnTypeAt(Self.ColumnWeight) = DesktopListbox.CellTypes.TextField
 		  Self.ReplacementsList.SortingColumn = Self.ColumnCreature
 		  Self.ReplacementsList.Sort
 		End Sub
@@ -466,7 +455,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Mods As Beacon.StringList, SpawnSet As Ark.MutableSpawnPointSet, TargetCreature As Ark.Creature = Nil) As Ark.Creature
+		Shared Function Present(Parent As DesktopWindow, Mods As Beacon.StringList, SpawnSet As Ark.MutableSpawnPointSet, TargetCreature As Ark.Creature = Nil) As Ark.Creature
 		  If Parent = Nil Then
 		    Return Nil
 		  End If
@@ -474,7 +463,7 @@ End
 		  Parent = Parent.TrueWindow
 		  
 		  Var Win As New ArkSpawnPointReplacementsDialog(Mods, SpawnSet, TargetCreature)
-		  Win.ShowModalWithin(Parent)
+		  Win.ShowModal(Parent)
 		  
 		  If Win.mCancelled Then
 		    Win.Close
@@ -521,7 +510,7 @@ End
 
 #tag Events TargetCreatureButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Creatures() As Ark.Creature = ArkBlueprintSelectorDialog.Present(Self, "", Self.mDefinedCreatures, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.Single)
 		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
 		    Self.mTargetCreature = Creatures(0)
@@ -533,7 +522,7 @@ End
 #tag EndEvents
 #tag Events ReplacementAddButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Exclude() As Ark.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
 		  Var Creatures() As Ark.Creature = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mMods, ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple)
 		  Self.ReplacementsList.SelectionChangeBlocked = True
@@ -548,7 +537,7 @@ End
 #tag EndEvents
 #tag Events ReplacementDeleteButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ReplacementsList.DoClear
 		End Sub
 	#tag EndEvent
@@ -564,7 +553,7 @@ End
 		  Var Creatures() As Ark.Creature
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -587,14 +576,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.ReplacementDeleteButton.Enabled = Me.CanDelete
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mTargetCreature = Nil Then
 		    Self.ShowAlert("Please select a target creature", "Use the ""Choose…"" button to select a target creature if you wish to continue.")
 		    Return
@@ -603,7 +592,7 @@ End
 		  Var Replacements As New Dictionary
 		  For I As Integer = 0 To Self.ReplacementsList.RowCount - 1
 		    Var Creature As Ark.Creature = Self.ReplacementsList.RowTagAt(I)
-		    Var WeightString As String = Self.ReplacementsList.CellValueAt(I, Self.ColumnWeight)
+		    Var WeightString As String = Self.ReplacementsList.CellTextAt(I, Self.ColumnWeight)
 		    If IsNumeric(WeightString) = False Then
 		      Self.ShowAlert("The weight value """ + WeightString + """ for " + Creature.Label + " is not a number.", "Please use only numbers for weight values.")
 		      Return
@@ -630,7 +619,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -750,8 +739,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -862,7 +851,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

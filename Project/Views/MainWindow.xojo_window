@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -36,7 +36,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -62,7 +61,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Visible         =   True
       Width           =   1420
    End
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   782
@@ -77,6 +76,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       PanelCount      =   5
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -87,17 +87,16 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Visible         =   True
       Width           =   1420
       Begin DashboardPane DashboardPane1
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   782
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          IsFrontmost     =   False
@@ -114,9 +113,9 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   38
          Transparent     =   True
-         UseFocusRing    =   False
          ViewIcon        =   0
          ViewTitle       =   "Home"
          Visible         =   True
@@ -129,9 +128,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -165,9 +163,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   True
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -201,9 +198,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -237,7 +233,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   782
          Index           =   -2147483648
@@ -268,9 +263,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -304,9 +298,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -335,11 +328,11 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function CancelClose(appQuitting as Boolean) As Boolean
+		Function CancelClosing(appQuitting As Boolean) As Boolean
 		  Const AllowClose = False
 		  Const BlockClose = True
 		  
@@ -365,7 +358,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable)
 		  #if TargetMacOS
 		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
@@ -374,7 +367,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuBarSelected()
 		  Var Component As BeaconSubview = Self.CurrentComponent
 		  If (Component Is Nil) = False Then
 		    Component.EnableMenuItems()
@@ -392,7 +385,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Frame As Rect = Self.Bounds
 		  Var XDelta As Integer = Frame.Width - Self.Width
 		  Var YDelta As Integer = Frame.Height - Self.Height
@@ -697,7 +690,7 @@ End
 		  Select Case Key
 		  Case "ViewTitle", "ViewIcon"
 		    If (Self.NavBar Is Nil) = False Then
-		      Self.NavBar.Invalidate
+		      Self.NavBar.Refresh
 		    End If
 		  End Select
 		End Sub
@@ -967,7 +960,7 @@ End
 
 #tag Events NavBar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Home As OmniBarItem = OmniBarItem.CreateTab("NavHome", "Home")
 		  Home.Toggled = True
 		  Self.DashboardPane1.LinkedOmniBarItem = Home
@@ -1195,8 +1188,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1259,7 +1252,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

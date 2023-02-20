@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkBreedingMultipliersEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   608
    Index           =   -2147483648
@@ -27,30 +28,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
    Visible         =   True
    Width           =   800
    Begin UITweaks.ResizedTextField MatureSpeedField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -58,25 +58,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel MatureSpeedLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -93,11 +92,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Mature Speed Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -105,30 +102,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin UITweaks.ResizedTextField IncubationSpeedField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -136,25 +132,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel IncubationSpeedLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -171,11 +166,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Incubation Speed Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
@@ -183,30 +176,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin UITweaks.ResizedTextField EggLayPeriodField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -214,25 +206,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel EggLayPeriodLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -249,11 +240,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Egg Lay Period Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
@@ -261,30 +250,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin UITweaks.ResizedTextField FoodConsumptionField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -292,25 +280,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel FoodConsumptionLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -327,11 +314,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Baby Food Consumption Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
@@ -339,30 +324,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintPeriodField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -370,25 +354,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintPeriodLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -405,11 +388,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Period Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -417,30 +398,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintStatScaleField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -448,25 +428,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintStatScaleLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -483,11 +462,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Stat Scale Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
@@ -495,30 +472,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintGracePeriodField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -526,25 +502,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintGracePeriodLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -561,11 +536,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Grace Period Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
@@ -573,30 +546,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintLossSpeedField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -604,25 +576,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintLossSpeedLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -639,11 +610,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Loss Speed Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
@@ -651,30 +620,33 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin BeaconListbox CreaturesList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   True
       ColumnCount     =   7
-      ColumnsResizable=   False
       ColumnWidths    =   "6*,5*,5*,5*,3*,3*,3*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   69
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Creature	Incubation Time	Mature Time	Mating Cooldown	Imprints	% Per Imprint	Max Imprint %"
@@ -687,22 +659,16 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
       TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   False
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   519
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
       VisibleRowCount =   0
       Width           =   760
@@ -710,31 +676,30 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       _ScrollWidth    =   -1
    End
    Begin IntervalField ImprintPeriodPreviewField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
       Left            =   621
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -742,25 +707,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintPeriodPreviewLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -777,25 +741,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Period:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   231
    End
-   Begin Label MatureSpeedHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel MatureSpeedHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -812,25 +774,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 matures faster"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   87
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label IncubationSpeedHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel IncubationSpeedHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -847,25 +807,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 incubates faster"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   151
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label EggLayPeriodHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel EggLayPeriodHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -882,25 +840,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Less than 1.0 produces more eggs"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   215
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label FoodConsumptionHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel FoodConsumptionHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -917,25 +873,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 eats more often"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   279
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label ImprintPeriodHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel ImprintPeriodHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -952,25 +906,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Less than 1.0 imprints more frequently"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   87
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label ImprintStatScaleHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel ImprintStatScaleHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -987,25 +939,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 increases imprinting stat bonuses"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   215
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label ImprintGracePeriodHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel ImprintGracePeriodHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1022,25 +972,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 increases time before decay"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   279
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label ImprintLossSpeedHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel ImprintLossSpeedHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1057,11 +1005,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Less than 1.0 reduces imprint decay"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   343
       Transparent     =   False
       Underline       =   False
@@ -1069,30 +1015,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   346
    End
    Begin UITweaks.ResizedTextField MatingSpeedField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -1100,25 +1045,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel MatingSpeedLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1135,11 +1079,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Mating Speed Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
@@ -1147,30 +1089,29 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
    Begin UITweaks.ResizedTextField MatingIntervalField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -1178,25 +1119,24 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   381
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel MatingIntervalLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1213,25 +1153,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Mating Interval Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   381
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   231
    End
-   Begin Label MatingSpeedHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel MatingSpeedHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1248,25 +1186,23 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 mates faster"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   343
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label MatingIntervalHelp
-      AutoDeactivate  =   True
+   Begin DesktopLabel MatingIntervalHelp
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1283,11 +1219,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Less than 1.0 mates more often"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   407
       Transparent     =   False
       Underline       =   False
@@ -1297,8 +1231,6 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
    Begin UITweaks.ResizedLabel ImprintAmountLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1319,13 +1251,13 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabIndex        =   33
       TabPanelIndex   =   0
       TabStop         =   False
+      Text            =   "Imprint Amount Multiplier:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   381
       Transparent     =   False
       Underline       =   False
-      Value           =   "Imprint Amount Multiplier:"
       Visible         =   True
       Width           =   231
    End
@@ -1336,8 +1268,6 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1361,6 +1291,7 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabIndex        =   42
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "1.0"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -1368,15 +1299,12 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
-   Begin Label ImprintAmountHelp
+   Begin DesktopLabel ImprintAmountHelp
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -1397,21 +1325,19 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabIndex        =   34
       TabPanelIndex   =   0
       TabStop         =   False
+      Text            =   "Greater than 1.0 imprints more per cuddle"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   407
       Transparent     =   False
       Underline       =   False
-      Value           =   "Greater than 1.0 imprints more per cuddle"
       Visible         =   True
       Width           =   346
    End
-   Begin Label ImprintPeriodPreviewHelp
+   Begin DesktopLabel ImprintPeriodPreviewHelp
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -1432,13 +1358,13 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   False
+      Text            =   "The amount of real time between imprint events"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   151
       Transparent     =   False
       Underline       =   False
-      Value           =   "The amount of real time between imprint events"
       Visible         =   True
       Width           =   346
    End
@@ -1451,7 +1377,6 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -1484,7 +1409,6 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -1515,7 +1439,6 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -1539,11 +1462,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Visible         =   True
       Width           =   40
    End
-   Begin Label DisableImprintDinoBuffHelp
+   Begin DesktopLabel DisableImprintDinoBuffHelp
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -1577,8 +1498,6 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
    Begin UITweaks.ResizedLabel DisableImprintDinoBuffLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1609,11 +1528,9 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Visible         =   True
       Width           =   231
    End
-   Begin Label AllowAnyoneBabyImprintCuddleHelp
+   Begin DesktopLabel AllowAnyoneBabyImprintCuddleHelp
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -1647,8 +1564,6 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
    Begin UITweaks.ResizedLabel AllowAnyoneBabyImprintCuddleLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1680,11 +1595,11 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       Width           =   231
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.UpdateBaselineRates()
 		  
 		  Self.mFieldGroups.Add(New ControlGroup(MatureSpeedLabel, MatureSpeedField, MatureSpeedHelp))
@@ -1732,13 +1647,13 @@ End
 		  If (Config.AllowAnyoneBabyImprintCuddle Is Nil) = False Then
 		    Self.AllowAnyoneBabyImprintCuddleSwitch.Value(False) = Config.AllowAnyoneBabyImprintCuddle
 		  Else
-		    Self.AllowAnyoneBabyImprintCuddleSwitch.VisualState(False) = Checkbox.VisualStates.Indeterminate
+		    Self.AllowAnyoneBabyImprintCuddleSwitch.VisualState(False) = DesktopCheckbox.VisualStates.Indeterminate
 		  End If
 		  
 		  If (Config.DisableImprintDinoBuff Is Nil) = False Then
 		    Self.DisableImprintDinoBuffSwitch.Value(False) = Config.DisableImprintDinoBuff
 		  Else
-		    Self.DisableImprintDinoBuffSwitch.VisualState(False) = Checkbox.VisualStates.Indeterminate
+		    Self.DisableImprintDinoBuffSwitch.VisualState(False) = DesktopCheckbox.VisualStates.Indeterminate
 		  End If
 		  
 		  Self.UpdateStats()
@@ -1802,12 +1717,12 @@ End
 		        FieldWidth = ColumnWidth - (LabelWidth + 12)
 		      End If
 		      
-		      Var GroupLabel As Label = Label(Self.mFieldGroups(GroupIdx).Member(0))
-		      Var GroupField As RectControl = Self.mFieldGroups(GroupIdx).Member(1)
-		      Var GroupHelp As Label = Label(Self.mFieldGroups(GroupIdx).Member(2))
+		      Var GroupLabel As DesktopLabel = DesktopLabel(Self.mFieldGroups(GroupIdx).Member(0))
+		      Var GroupField As DesktopUIControl = Self.mFieldGroups(GroupIdx).Member(1)
+		      Var GroupHelp As DesktopLabel = DesktopLabel(Self.mFieldGroups(GroupIdx).Member(2))
 		      GroupLabel.Width = LabelWidth
 		      GroupField.Left = GroupLabel.Left + GroupLabel.Width + 12
-		      If GroupField IsA TextField Then
+		      If GroupField IsA DesktopTextField Then
 		        GroupField.Width = FieldWidth
 		      ElseIf GroupField IsA SwitchControl Then
 		        GroupField.Width = 40
@@ -1980,7 +1895,7 @@ End
 
 #tag Events MatureSpeedField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1992,7 +1907,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).BabyMatureSpeedMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
@@ -2000,7 +1915,7 @@ End
 #tag EndEvents
 #tag Events IncubationSpeedField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2012,7 +1927,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).EggHatchSpeedMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
@@ -2020,7 +1935,7 @@ End
 #tag EndEvents
 #tag Events EggLayPeriodField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2032,14 +1947,14 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).LayEggIntervalMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events FoodConsumptionField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2051,14 +1966,14 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).BabyFoodConsumptionSpeedMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ImprintPeriodField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2070,7 +1985,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).BabyCuddleIntervalMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
@@ -2078,7 +1993,7 @@ End
 #tag EndEvents
 #tag Events ImprintStatScaleField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2090,14 +2005,14 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).BabyImprintingStatScaleMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ImprintGracePeriodField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2109,14 +2024,14 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).BabyCuddleGracePeriodMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ImprintLossSpeedField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2128,14 +2043,14 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).BabyCuddleLoseImprintQualitySpeedMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreaturesList
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
 		    Var Period1 As UInt64 = Me.CellTagAt(Row1, Column)
 		    Var Period2 As UInt64 = Me.CellTagAt(Row2, Column)
@@ -2166,7 +2081,7 @@ End
 #tag EndEvents
 #tag Events ImprintPeriodPreviewField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
@@ -2184,7 +2099,7 @@ End
 		  If Self.Focus <> Self.ImprintPeriodField Then
 		    Self.ImprintPeriodField.Text = Multiplier.ToString(Locale.Current, "0.0#####")
 		  End If
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
@@ -2192,7 +2107,7 @@ End
 #tag EndEvents
 #tag Events MatingSpeedField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2204,14 +2119,14 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).MatingSpeedMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MatingIntervalField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2223,7 +2138,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).MatingIntervalMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		  Self.UpdateStats
 		End Sub
@@ -2231,7 +2146,7 @@ End
 #tag EndEvents
 #tag Events ImprintAmountField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2243,7 +2158,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).BabyImprintAmountMultiplier = Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
@@ -2251,7 +2166,7 @@ End
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AutoTuneButton", "Auto Imprint", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
@@ -2331,33 +2246,49 @@ End
 #tag EndEvents
 #tag Events AllowAnyoneBabyImprintCuddleSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).AllowAnyoneBabyImprintCuddle = Me.Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DisableImprintDinoBuffSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DisableImprintDinoBuff = Me.Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -2399,14 +2330,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -2435,8 +2358,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -2619,14 +2542,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

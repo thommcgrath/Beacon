@@ -100,21 +100,21 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub ListSortDirection(Key As String, Assigns Direction As Listbox.SortDirections)
+		Sub ListSortDirection(Key As String, Assigns Direction As DesktopListBox.SortDirections)
 		  Init
 		  mManager.IntegerValue(Key + " Sort Direction") = CType(Direction, Integer)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ListSortDirection(Key As String, Default As Listbox.SortDirections) As Listbox.SortDirections
+		Function ListSortDirection(Key As String, Default As DesktopListBox.SortDirections) As DesktopListbox.SortDirections
 		  Init
-		  Return CType(mManager.IntegerValue(Key + " Sort Direction", CType(Default, Integer)), Listbox.SortDirections)
+		  Return CType(mManager.IntegerValue(Key + " Sort Direction", CType(Default, Integer)), DesktopListbox.SortDirections)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub LoadWindowPosition(Extends Win As Window)
+		Sub LoadWindowPosition(Extends Win As DesktopWindow)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
 		  Init
@@ -274,7 +274,7 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub SaveWindowPosition(Extends Win As Window)
+		Sub SaveWindowPosition(Extends Win As DesktopWindow)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
 		  Init

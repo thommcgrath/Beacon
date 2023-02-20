@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkLootContainerSelectorEditorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
    Type            =   8
    Visible         =   True
    Width           =   600
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -135,8 +133,6 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
       Bold            =   False
       ColumnCount     =   1
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -146,8 +142,7 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   True
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -185,8 +180,6 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
    Begin UITweaks.ResizedLabel SyntaxLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -225,8 +218,6 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -266,11 +257,9 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
       Visible         =   True
       Width           =   248
    End
-   Begin Label CodeLabel
+   Begin DesktopLabel CodeLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -340,8 +329,6 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -379,8 +366,6 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
    Begin UITweaks.ResizedLabel NameLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -414,8 +399,6 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
    Begin UITweaks.ResizedPopupMenu SyntaxMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -444,11 +427,11 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
       Width           =   248
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var PreferredSize As Size = Preferences.PresetSelectorEditorSize
 		  Self.Width = Max(PreferredSize.Width, Self.MinimumWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
@@ -511,7 +494,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, TemplateSelector As Beacon.TemplateSelector = Nil) As Beacon.TemplateSelector
+		Shared Function Present(Parent As DesktopWindow, TemplateSelector As Beacon.TemplateSelector = Nil) As Beacon.TemplateSelector
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -522,7 +505,7 @@ End
 		  End If
 		  
 		  Var Win As New ArkLootContainerSelectorEditorDialog(TemplateSelector)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  If Win.mCancelled Then
 		    Win.Close
 		    Return Nil
@@ -597,7 +580,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var TemplateSelector As Beacon.TemplateSelector = Self.CreateTemplateSelector()
 		  
 		  If Not Self.RunTest(False, TemplateSelector) Then
@@ -612,7 +595,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -620,7 +603,7 @@ End
 #tag EndEvents
 #tag Events TestButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Call Self.RunTest(False)
 		End Sub
 	#tag EndEvent
@@ -739,8 +722,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -851,7 +834,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

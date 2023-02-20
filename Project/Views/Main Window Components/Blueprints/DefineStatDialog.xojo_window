@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog DefineStatDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -27,8 +27,6 @@ Begin BeaconDialog DefineStatDialog
    Begin UITweaks.ResizedPopupMenu StatMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -63,8 +61,6 @@ Begin BeaconDialog DefineStatDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -88,6 +84,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -95,7 +92,6 @@ Begin BeaconDialog DefineStatDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   145
    End
@@ -106,8 +102,6 @@ Begin BeaconDialog DefineStatDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -131,6 +125,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -138,7 +133,6 @@ Begin BeaconDialog DefineStatDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   145
    End
@@ -149,8 +143,6 @@ Begin BeaconDialog DefineStatDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -174,6 +166,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -181,7 +174,6 @@ Begin BeaconDialog DefineStatDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   145
    End
@@ -192,8 +184,6 @@ Begin BeaconDialog DefineStatDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -217,6 +207,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -224,7 +215,6 @@ Begin BeaconDialog DefineStatDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   145
    End
@@ -235,8 +225,6 @@ Begin BeaconDialog DefineStatDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -260,6 +248,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -267,15 +256,12 @@ Begin BeaconDialog DefineStatDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   145
    End
    Begin UITweaks.ResizedLabel StatLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -296,21 +282,19 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Stat:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   21
       Transparent     =   False
       Underline       =   False
-      Value           =   "Stat:"
       Visible         =   True
       Width           =   203
    End
    Begin UITweaks.ResizedLabel BaseLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -331,21 +315,19 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Base Value:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   53
       Transparent     =   False
       Underline       =   False
-      Value           =   "Base Value:"
       Visible         =   True
       Width           =   203
    End
    Begin UITweaks.ResizedLabel WildLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -366,21 +348,19 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Wild Per-Level:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   87
       Transparent     =   False
       Underline       =   False
-      Value           =   "Wild Per-Level:"
       Visible         =   True
       Width           =   203
    End
    Begin UITweaks.ResizedLabel TamedLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -401,21 +381,19 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Tamed Per-Level:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
       Transparent     =   False
       Underline       =   False
-      Value           =   "Tamed Per-Level:"
       Visible         =   True
       Width           =   203
    End
    Begin UITweaks.ResizedLabel AddLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -436,21 +414,19 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Taming Reward (Add):"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
       Transparent     =   False
       Underline       =   False
-      Value           =   "Taming Reward (Add):"
       Visible         =   True
       Width           =   203
    End
    Begin UITweaks.ResizedLabel AffinityLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -471,13 +447,13 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Effectiveness Reward (Affinity):"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   188
       Transparent     =   False
       Underline       =   False
-      Value           =   "Effectiveness Reward (Affinity):"
       Visible         =   True
       Width           =   203
    End
@@ -546,11 +522,11 @@ Begin BeaconDialog DefineStatDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Stats() As Ark.Stat = Ark.Stats.All
 		  For Each Stat As Ark.Stat In Stats
 		    If (Self.mUsedStats And Stat.Mask) = Stat.Mask And (Self.mValues Is Nil Or Self.mValues.Stat <> Stat) Then
@@ -588,13 +564,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, UsedStats As UInt16, Values As Ark.CreatureStatValue = Nil) As Ark.CreatureStatValue
+		Shared Function Present(Parent As DesktopWindow, UsedStats As UInt16, Values As Ark.CreatureStatValue = Nil) As Ark.CreatureStatValue
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
 		  Var Win As New DefineStatDialog(UsedStats, Values)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  If Win.mCancelled Then
 		    Win.Close
 		    Return Nil
@@ -623,14 +599,14 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.StatMenu.SelectedRowIndex = -1 Then
 		    Self.ShowAlert("Don't forget to select a stat", "Use the menu at the top of the window to choose a stat.")
 		    Return
 		  End If
 		  
-		  Var Fields() As TextField = Array(Self.BaseField, Self.WildField, Self.TamedField, Self.AddField, Self.AffinityField)
-		  For Each Field As TextField In Fields
+		  Var Fields() As DesktopTextField = Array(Self.BaseField, Self.WildField, Self.TamedField, Self.AddField, Self.AffinityField)
+		  For Each Field As DesktopTextField In Fields
 		    Var Value As String = Field.Text.Trim
 		    If IsNumeric(Value) = False Then
 		      Var FieldLabel As String
@@ -663,7 +639,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -783,8 +759,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -895,7 +871,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
