@@ -62,6 +62,9 @@ Core::RegisterRoutes(
 		'/now' => [
 			'GET' => 'now'
 		],
+		'/oauth/{provider}' => [
+			'GET' => 'oauth'
+		],
 		'/projects' => [
 			'GET' => 'projects/list',
 			'POST' => 'projects/create',
@@ -85,36 +88,8 @@ Core::RegisterRoutes(
 		'/projects/{projectId}/versions/{versionId}' => [
 			'GET' => 'projects/get'
 		],
-		'/sentinel/oauth/{provider}' => [
-			'GET' => 'sentinel/oauth'
-		],
-		'/sentinel/players' => [
-			'GET' => 'sentinel/players/list'
-		],
-		'/sentinel/playerNote' => [
-			'GET' => 'sentinel/playerNotes/list',
-			'POST' => 'sentinel/playerNotes/create'
-		],
-		'/sentinel/services' => [
-			'POST' => 'sentinel/services/create',
-			'GET' => 'sentinel/services/list'
-		],
-		'/sentinel/services/{serviceId}' => [
-			'POST' => 'sentinel/services/edit',
-			'GET' => 'sentinel/services/get',
-			'DELETE' => 'sentinel/services/delete'
-		],
 		'/sentinel/services/{serviceId}/logs' => [
 			'GET' => 'sentinel/service/logs'
-		],
-		'/sentinel/serviceGroups' => [
-			'POST' => 'sentinel/serviceGroups/create',
-			'GET' => 'sentinel/serviceGroups/list'
-		],
-		'/sentinel/serviceGroups/{serviceGroupId}' => [
-			'POST' => 'sentinel/serviceGroups/edit',
-			'GET' => 'sentinel/serviceGroups/get',
-			'DELETE' => 'sentinel/serviceGroups/delete'
 		],
 		'/sentinel/serviceGroups/{serviceGroupId}/members' => [
 			'GET' => 'sentinel/serviceGroups/members/list',
@@ -172,6 +147,10 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootDrop', 'ark/lootDrop
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\LootDropIcon', 'ark/lootDropIcons', 'lootDropIconId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Map', 'ark/maps', 'mapId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\SpawnPoint', 'ark/spawnPoints', 'spawnPointId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/players', 'playerId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroup', 'sentinel/serviceGroups', 'serviceGroupId');
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 
