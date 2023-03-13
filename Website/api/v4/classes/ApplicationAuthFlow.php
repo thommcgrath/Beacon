@@ -14,6 +14,8 @@ class ApplicationAuthFlow extends DatabaseObject {
 	protected $userId = null;
 	protected $user = null;
 	protected $expired = null;
+	protected $codeVerifierHash = null;
+	protected $codeVerifierMethod = null;
 	
 	public function __construct(BeaconRecordSet $row) {
 		$this->flowId = $row->Field('flow_id');
@@ -24,6 +26,8 @@ class ApplicationAuthFlow extends DatabaseObject {
 		$this->codeHash = $row->Field('code_hash');
 		$this->userId = $row->Field('user_id');
 		$this->expired = $row->Field('expiration');
+		$this->codeVerifierHash = $row->Field('verifier_hash');
+		$this->codeVerifierMethod = $row->Field('verifier_hash_algorithm');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -35,7 +39,9 @@ class ApplicationAuthFlow extends DatabaseObject {
 			new DatabaseObjectProperty('state'),
 			new DatabaseObjectProperty('codeHash', ['columnName' => 'code_hash']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
-			new DatabaseObjectProperty('expired', ['columnName' => 'expiration', 'accessor' => "(%%TABLE%%.%%COLUMN%% < CURRENT_TIMESTAMP)::BOOLEAN"])
+			new DatabaseObjectProperty('expired', ['columnName' => 'expiration', 'accessor' => "(%%TABLE%%.%%COLUMN%% < CURRENT_TIMESTAMP)::BOOLEAN"]),
+			new DatabaseObjectProperty('codeVerifierHash', ['columnName' => 'verifier_hash']),
+			new DatabaseObjectProperty('codeVerifierMethod', ['columnName' => 'verifier_hash_algorithm'])
 		]);
 	}
 	
@@ -54,7 +60,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return $flow;
 	}
 	
-	public static function Create(Application $app, array $scopes, string $callback, string $state): static {
+	public static function Create(Application $app, array $scopes, string $callback, string $state, string $codeVerifierHash, string $codeVerifierMethod): static {
 		if ($app->CallbackAllowed($callback) === false) {
 			throw new Exception('Redirect uri is not whitelisted');
 		}
@@ -67,10 +73,17 @@ class ApplicationAuthFlow extends DatabaseObject {
 		}
 		sort($scopes);
 		
+		if ($codeVerifierMethod !== 'S256') {
+			throw new Exception('Unsupported code verifier has method');
+		}
+		if (strlen($codeVerifierHash) !== 43) {
+			throw new Exception('Verifier hash should be 43 base64url characters.');
+		}
+		
 		$flowId = BeaconCommon::GenerateUUID();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.application_auth_flows (flow_id, application_id, scopes, callback, state) VALUES ($1, $2, $3, $4, $5);", $flowId, $app->ApplicationId(), implode(' ', $scopes), $callback, $state);
+		$database->Query("INSERT INTO public.application_auth_flows (flow_id, application_id, scopes, callback, state, verifier_hash, verifier_hash_algorithm) VALUES ($1, $2, $3, $4, $5, $6, $7);", $flowId, $app->ApplicationId(), implode(' ', $scopes), $callback, $state, $codeVerifierHash, $codeVerifierMethod);
 		$database->Commit();
 		return static::Fetch($flowId);
 	}
@@ -155,13 +168,25 @@ class ApplicationAuthFlow extends DatabaseObject {
 		]);
 	}
 	
-	public static function Redeem(string $applicationId, string $applicationSecret, string $redirectUri, string $code): Session {
+	public static function Redeem(string $applicationId, ?string $applicationSecret, string $redirectUri, string $code, string $codeVerifier): Session {
+		if (is_null($applicationSecret)) {
+			$app = Application::Fetch($applicationId);
+			if (!$app) {
+				throw new Exception('Invalid client');
+			}
+			$applicationSecret = $app->Secret();
+		}
+		
 		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $redirectUri, $code);
 		$flows = static::Search(['codeHash' => $codeHash], true);
 		if (count($flows) !== 1) {
 			throw new Exception('Authorization flow not found');
 		}
 		$flow = $flows[0];
+		
+		if ($flow->CheckCodeVerifier($codeVerifier) !== true) {
+			throw new Exception('Invalid code verifier');
+		}
 		
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -173,6 +198,20 @@ class ApplicationAuthFlow extends DatabaseObject {
 	
 	protected static function PrepareCodeHash(string $applicationId, string $applicationSecret, string $redirectUri, string $code): string {
 		return base64_encode(hash('sha3-512', "{$applicationId}.{$applicationSecret}.{$redirectUri}.{$code}", true));
+	}
+	
+	protected function CheckCodeVerifier(string $codeVerifier): bool {
+		switch ($this->codeVerifierMethod) {
+		case 'S256':
+			$base64 = base64_encode(hash('sha256', $codeVerifier, true));
+			if ($base64 === false) {
+				return false;
+			}
+			return $this->codeVerifierHash === str_replace(['+', '/', '='], ['-', '_', ''], $base64);
+			break;
+		default:
+			return false;
+		}
 	}
 }
 
