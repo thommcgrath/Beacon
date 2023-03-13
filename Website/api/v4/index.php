@@ -43,10 +43,6 @@ Core::RegisterRoutes(
 		'/deltas/{version}' => [
 			'GET' => 'deltas'
 		],
-		'/emailVerification/{email}' => [
-			'GET' => 'emailVerification/get',
-			'PUT' => 'emailVerification/create'
-		],
 		'/files' => [
 			'GET' => 'file'
 		],
@@ -95,9 +91,6 @@ Core::RegisterRoutes(
 			'GET' => 'sentinel/serviceGroups/members/list',
 			'POST' => 'sentinel/serviceGroups/members/edit'
 		],
-		'/sessions' => [
-			'POST' => 'sessions/create'
-		],
 		'/sessions/{sessionId}' => [
 			'GET' => 'sessions/get',
 			'DELETE' => 'sessions/delete'
@@ -119,8 +112,7 @@ Core::RegisterRoutes(
 		],
 		'/users/{userId}' => [
 			'GET' => 'users/get',
-			'PATCH' => 'users/edit',
-			'PUT' => 'users/create'
+			'PATCH' => 'users/edit'
 		],
 		'/users/{userId}/merge' => [
 			'POST' => 'users/merge'

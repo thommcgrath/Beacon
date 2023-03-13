@@ -5,7 +5,6 @@ use BeaconCache, BeaconCommon, BeaconLogin, BeaconRateLimits, DateTime, Exceptio
 
 class Core {
 	const kAuthSchemeBearer = 'Bearer';
-	const kAuthSchemeDigest = 'Digest';
 	const kAuthSchemeNone = 'None';
 	
 	const kUnauthorized = 0;
@@ -152,13 +151,6 @@ class Core {
 				Application::kScopeCommon
 			];
 			break;
-		case self::kAuthSchemeDigest:
-			$supportedScopes = [
-				Application::kScopePasswordAuth,
-				Application::kScopeUsersCreate
-			];
-			$requiredScopes = [];
-			break;
 		}
 		
 		$disallowedScopes = array_diff($requestedScopes, $supportedScopes);
@@ -192,21 +184,6 @@ class Core {
 					break;
 				}
 				
-				break;
-			case self::kAuthSchemeDigest:
-				// Used for requests like POST /emailVerification/{emailAddress} that are not performed on behalf of a user.
-				$cacheKey = hash('sha1', BeaconCommon::RemoteAddr(false));
-				$authStatus = static::AuthenticateWithDigest($cacheKey, $realm, $requestedScopes);
-				if ($authStatus === self::kAuthorized) {
-					return;
-				}
-				
-				$nonce = BeaconCommon::GenerateUUID();
-				BeaconCache::Set($cacheKey, $nonce, 120);
-				
-				$authParams[] = 'qop="auth"';
-				$authParams[] = 'nonce="' . $nonce . '"';
-				$authParams[] = 'opaque="' . md5($realm) . '"';
 				break;
 			case self::kAuthSchemeNone:
 				return;
@@ -262,61 +239,6 @@ class Core {
 		
 		$session->Renew();
 		static::$session = $session;
-		return self::kAuthorized;
-	}
-	
-	protected static function AuthenticateWithDigest(string $cacheKey, string $realm, array $requestedScopes): int {
-		$header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-		$scheme = strtok($header, ' ');
-		
-		if ($scheme !== self::kAuthSchemeDigest) {
-			$nonce = BeaconCommon::GenerateUUID();
-			BeaconCache::Set($cacheKey, $nonce, 120);
-			return self::kUnauthorized;
-		}
-		
-		$keys = ['nonce', 'nc', 'cnonce', 'qop', 'username', 'uri', 'response'];
-		preg_match_all('@(' . implode('|', $keys) . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', $header, $matches, PREG_SET_ORDER);
-		$values = [];
-		foreach ($matches as $match) {
-			$values[$match[1]] = $match[3] ? $match[3] : $match[4];
-		}
-		
-		if (BeaconCommon::HasAllKeys($values, ...$keys) === false) {
-			return self::kUnauthorized;
-		}
-		
-		$username = $values['username'];
-		if (BeaconCommon::IsUUID($username) === false) {
-			return self::kUnauthorized;
-		}
-		
-		$uri = $values['uri'];
-		$nc = $values['nc'];
-		$cnonce = $values['cnonce'];
-		$qop = $values['qop'];
-		$method = $_SERVER['REQUEST_METHOD'];
-		
-		$app = Application::Fetch($username);
-		if (is_null($app)) {
-			return self::kUnauthorized;
-		} else if ($app->HasScopes($requestedScopes) === false) {
-			return self::kAuthErrorRestrictedScope;
-		}
-		$clientSecret = $app->Secret();
-		
-		$nonce = BeaconCache::Get($cacheKey) ?? '';
-		$hash1 = md5("{$username}:{$realm}:{$clientSecret}");
-		$hash2 = md5("{$method}:{$uri}");
-		$validResponse = md5("{$hash1}:{$nonce}:{$nc}:{$cnonce}:{$qop}:{$hash2}");
-		
-		if ($values['response'] !== $validResponse) {
-			echo "invalid response\n";
-			return self::kUnauthorized;
-		}
-		
-		BeaconCache::Remove($cacheKey);
-		static::$application = $app;
 		return self::kAuthorized;
 	}
 	

@@ -14,7 +14,6 @@ class Application extends DatabaseObject implements JsonSerializable {
 	protected $callbacks = [];
 	protected $rateLimit = 50;
 	
-	const kScopePasswordAuth = 'password_auth';
 	const kScopeCommon = 'common';
 	const kScopeAppsCreate = 'apps:create';
 	const kScopeAppsRead = 'apps:read';
@@ -35,7 +34,6 @@ class Application extends DatabaseObject implements JsonSerializable {
 	
 	public static function ValidScopes(): array {
 		return [
-			self::kScopePasswordAuth,
 			self::kScopeCommon,
 			self::kScopeAppsCreate,
 			self::kScopeAppsRead,
@@ -58,7 +56,6 @@ class Application extends DatabaseObject implements JsonSerializable {
 	
 	public static function RestrictedScopes(): array {
 		return [
-			self::kScopePasswordAuth,
 			self::kScopeUsersCreate,
 			self::kScopeUsersUpdate,
 			self::kScopeUsersDelete,
