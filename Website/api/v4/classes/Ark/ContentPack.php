@@ -65,7 +65,7 @@ class ContentPack extends DatabaseObject implements \JsonSerializable {
 		return null;
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$table = $schema->table();
 		

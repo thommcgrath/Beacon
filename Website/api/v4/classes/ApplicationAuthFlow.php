@@ -45,7 +45,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		]);
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->AddFromFilter($schema, $filters, 'userId');
 		$parameters->AddFromFilter($schema, $filters, 'applicationId');
@@ -60,7 +60,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return $flow;
 	}
 	
-	public static function Create(Application $app, array $scopes, string $callback, string $state, string $codeVerifierHash, string $codeVerifierMethod): static {
+	public static function Create(Application $app, array $scopes, string $callback, string $state, ?string $codeVerifierHash, ?string $codeVerifierMethod): static {
 		if ($app->CallbackAllowed($callback) === false) {
 			throw new Exception('Redirect uri is not whitelisted');
 		}
@@ -73,11 +73,13 @@ class ApplicationAuthFlow extends DatabaseObject {
 		}
 		sort($scopes);
 		
-		if ($codeVerifierMethod !== 'S256') {
-			throw new Exception('Unsupported code verifier has method');
-		}
-		if (strlen($codeVerifierHash) !== 43) {
-			throw new Exception('Verifier hash should be 43 base64url characters.');
+		if (is_null($codeVerifierHash) === false || is_null($codeVerifierMethod) === false) {
+			if (is_null($codeVerifierMethod) || $codeVerifierMethod !== 'S256') {
+				throw new Exception('Unsupported code verifier has method');
+			}
+			if (is_null($codeVerifierHash) || strlen($codeVerifierHash) !== 43) {
+				throw new Exception('Verifier hash should be 43 base64url characters.');
+			}
 		}
 		
 		$flowId = BeaconCommon::GenerateUUID();
@@ -135,7 +137,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 	}
 	
 	public function NewChallenge(string $deviceId, User $user, int $expiration): string {
-		$challengeSecret = $this->Application()->Secret();
+		$challengeSecret = $this->Application()->Secret() ?? '';
 		$challengeRaw = $deviceId . $expiration . $challengeSecret . $this->flowId . $user->UserId();
 		return base64_encode(hash('sha3-512', $challengeRaw, true));
 	}
@@ -169,12 +171,15 @@ class ApplicationAuthFlow extends DatabaseObject {
 	}
 	
 	public static function Redeem(string $applicationId, ?string $applicationSecret, string $redirectUri, string $code, string $codeVerifier): Session {
-		if (is_null($applicationSecret)) {
-			$app = Application::Fetch($applicationId);
-			if (!$app) {
-				throw new Exception('Invalid client');
-			}
-			$applicationSecret = $app->Secret();
+		$app = Application::Fetch($applicationId);
+		if (is_null($app)) {
+			throw new Exception('Invalid client');
+		}
+		if (is_null($applicationSecret) && $app->IsConfidential()) {
+			throw new Exception('Invalid client');
+		} else if (is_null($applicationSecret) === false && $app->IsConfidential() === false) {
+			// Ignore a secret if provided
+			$applicationSecret = null;
 		}
 		
 		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $redirectUri, $code);
@@ -196,8 +201,11 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return $session;
 	}
 	
-	protected static function PrepareCodeHash(string $applicationId, string $applicationSecret, string $redirectUri, string $code): string {
-		return base64_encode(hash('sha3-512', "{$applicationId}.{$applicationSecret}.{$redirectUri}.{$code}", true));
+	protected static function PrepareCodeHash(string $applicationId, ?string $applicationSecret, string $redirectUri, string $code): string {
+		if (is_null($applicationSecret) === false) {
+			$applicationId = "{$applicationId}.{$applicationSecret}";
+		}
+		return base64_encode(hash('sha3-512', "{$applicationId}.{$redirectUri}.{$code}", true));
 	}
 	
 	protected function CheckCodeVerifier(string $codeVerifier): bool {

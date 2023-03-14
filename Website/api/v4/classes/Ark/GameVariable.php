@@ -21,7 +21,7 @@ class GameVariable extends DatabaseObject implements \JsonSerializable {
 		]);
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Accessor('key');
 		$parameters->allowAll = true;

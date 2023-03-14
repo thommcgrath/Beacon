@@ -11,7 +11,7 @@ if (isset($_REQUEST['code'])) {
 }
 
 BeaconCommon::StartSession();
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 $is_logged_in = is_null($session) === false;
 
 header('Cache-Control: no-cache');

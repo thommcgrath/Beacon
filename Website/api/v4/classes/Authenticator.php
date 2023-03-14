@@ -33,7 +33,7 @@ class Authenticator extends MutableDatabaseObject implements \JsonSerializable {
 		]);
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		
 		if (isset($filters['userId']) === false) {

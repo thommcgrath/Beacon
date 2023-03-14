@@ -15,7 +15,7 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) != 'POST') {
 	ExitWithError(400, 'Must use POST request');
 }
 
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	ExitWithError(403, 'Unauthorized');
 }

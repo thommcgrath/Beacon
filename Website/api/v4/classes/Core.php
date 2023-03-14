@@ -237,7 +237,6 @@ class Core {
 			return self::kAuthErrorRestrictedScope;
 		}
 		
-		$session->Renew();
 		static::$session = $session;
 		return self::kAuthorized;
 	}

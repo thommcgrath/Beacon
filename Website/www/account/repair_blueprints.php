@@ -5,12 +5,11 @@ header('Cache-Control: no-cache');
 
 use BeaconAPI\v4\Session;
 
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	BeaconCommon::Redirect('/account/login/?return=/account/repair_blueprints');
 	exit;
 }
-$session->Renew();
 
 $user = $session->User();
 $user_id = $user->UserId();

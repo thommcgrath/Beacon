@@ -12,7 +12,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	http_response_code(400);
 	echo json_encode(array('message' => 'Unauthorized.'), JSON_PRETTY_PRINT);

@@ -16,14 +16,14 @@ if (isset($_GET['session_id'])) {
 	$session_id = $_GET['session_id'];
 	$session = Session::Fetch($session_id);
 	if (is_null($session) === false) {
-		$session->SendCookie($temporary);
+		BeaconCommon::SetSession($session, !$temporary);
 	}
 } else {
-	$session = Session::GetFromCookie();
+	$session = BeaconCommon::GetSession();
 	if (is_null($session) === false) {
+		BeaconCommon::SetSession(null, false);
 		$session->Delete();
 	}
-	Session::RemoveCookie();
 }
 
 BeaconCommon::Redirect($return_uri);

@@ -32,8 +32,8 @@ class Blueprint extends GenericObject {
 		return $schema;
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
-		parent::BuildSearchParameters($parameters, $filters);
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
+		parent::BuildSearchParameters($parameters, $filters, $isNested);
 			
 		$schema = static::DatabaseSchema();
 		//$parameters->AddFromFilter($schema, $filters, 'path');

@@ -31,7 +31,7 @@ class Template extends DatabaseObject implements \JsonSerializable {
 		]);
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Table() . '.label';
 		$parameters->AddFromFilter($schema, $filters, 'game_id');

@@ -11,7 +11,7 @@ class BeaconLogin {
 		$params['apiDomain'] = BeaconCommon::APIDomain();
 		$params['deviceId'] = $deviceId;
 		
-		$session = Session::GetFromCookie();
+		$session = BeaconCommon::GetSession();
 		$flowId = $params['flowId'] ?? null;
 		$flow = null;
 		$params['challengeExpiration'] = time() + 300;

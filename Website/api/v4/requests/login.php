@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, ApplicationAuthFlow, Response, Core};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, Core, Response, Session};
 
 $requiredScopes = [];
 $authScheme = Core::kAuthSchemeNone;
@@ -27,14 +27,14 @@ function handleRequest(array $context): Response {
 			return Response::NewJsonError('Invalid client id', null, 400);
 		}
 		
-		$redirect_uri = $_GET['redirect_uri'];
-		$scopes = explode(' ', $_GET['scope']);
-		$state = $_GET['state'];
-		$codeVerifierHash = $_GET['code_challenge'];
-		$codeVerifierMethod = $_GET['code_challenge_method'];
-		
 		$flow = null;
 		try {
+			$redirect_uri = $_GET['redirect_uri'];
+			$scopes = explode(' ', $_GET['scope']);
+			$state = $_GET['state'];
+			$codeVerifierHash = $_GET['code_challenge'];
+			$codeVerifierMethod = $_GET['code_challenge_method'];
+			
 			$flow = ApplicationAuthFlow::Create($application, $scopes, $redirect_uri, $state, $codeVerifierHash, $codeVerifierMethod);
 		} catch (Exception $err) {
 		}
@@ -45,16 +45,60 @@ function handleRequest(array $context): Response {
 		$loginUrl = BeaconCommon::AbsoluteUrl('/account/login?flow_id=' . urlencode($flow->FlowId()));
 		return Response::NewRedirect($loginUrl);
 	case 'POST /login':
-		$obj = Core::BodyAsJson();
-		if ($obj['grant_type'] !== 'authorization_code') {
+		if (Core::IsJsonContentType()) {
+			$obj = Core::BodyAsJson();
+		} else {
+			$obj = $_POST;
+		}
+		$grantType = $obj['grant_type'] ?? null;
+		$clientId = $obj['client_id'] ?? null;
+		$clientSecret = $obj['client_secret'] ?? null;	
+		
+		if (is_null($grantType)) {
 			return Response::NewJsonError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
 		}
-		$session = ApplicationAuthFlow::Redeem($obj['client_id'] ?? '', $obj['client_secret'] ?? null, $obj['redirect_uri'] ?? '', $obj['code'] ?? '', $obj['code_verifier'] ?? '');
-		if (is_null($session)) {
-			return Response::NewJsonError('Invalid code', ['code' => 'INVALID_CODE'], 400);
+		
+		switch ($grantType) {
+		case 'authorization_code':
+			$code = $obj['code'] ?? null;
+			$redirectUri = $obj['redirect_uri'] ?? null;
+			$codeVerifier = $obj['code_verifier'] ?? null;
+			
+			if (is_null($grantType) || is_null($code) || is_null($clientId) || is_null($redirectUri)) {
+				return Response::NewJsonError('Missing parameters', ['code' => 'INVALID_GRANT'], 400);
+			}
+			
+			$session = ApplicationAuthFlow::Redeem($clientId, $clientSecret, $redirectUri, $code, $codeVerifier);
+			if (is_null($session)) {
+				return Response::NewJsonError('Invalid code', ['code' => 'INVALID_CODE'], 400);
+			}
+			Core::SetSession($session);
+			return Response::NewJson($session->OAuthResponse(), 201);
+		case 'refresh_token':
+			$refreshToken = $obj['refresh_token'] ?? null;
+			$scopes = explode(' ', $obj['scope']) ?? null;
+			$session = Session::Fetch($refreshToken);
+			if (is_null($session) || $session->IsRefreshTokenExpired()) {
+				return Response::NewJsonError('Unauthorized', ['code' => 'EXPIRED'], 403);
+			}
+			$app = $session->Application();
+			if (is_null($scopes) === false) {
+				if ($session->HasScopes($scopes) === false) {
+					return Response::NewJsonError('Invalid scopes', ['code' => 'INVALID_SCOPES'], 400);
+				}
+			} else {
+				$scopes = $session->Scopes();
+			}
+			if ($app->IsConfidential() && (is_null($clientId) || is_null($clientSecret) || $app->ApplicationId() !== $clientId || $app->Secret() !== $clientSecret)) {
+				return Response::NewJsonError('Invalid client', ['code' => 'INVALID_CLIENT'], 400);
+			}
+			$newSession = $session->Renew(true);
+			Core::SetSession($newSession);
+			return Response::NewJson($newSession->OAuthResponse(), 201);
+			break;
+		default:
+			return Response::NewJsonError('Invalid grant type', ['code' => 'INVALID_GRANT'], 400);
 		}
-		Core::SetSession($session);
-		return Response::NewJson($session, 201);
 	default:
 		return Response::NewJsonError('Unknown route', null, 500);
 	}

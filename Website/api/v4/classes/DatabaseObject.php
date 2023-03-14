@@ -14,7 +14,7 @@ abstract class DatabaseObject {
 	
 	abstract protected function __construct(BeaconRecordSet $row);
 	abstract public static function BuildDatabaseSchema(): DatabaseSchema;
-	abstract protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void;
+	abstract protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void;
 		
 	public static function DatabaseSchema(): DatabaseSchema {
 		$calledClass = get_called_class();
@@ -100,7 +100,7 @@ abstract class DatabaseObject {
 			}
 		}
 		
-		static::BuildSearchParameters($params, $filters);
+		static::BuildSearchParameters($params, $filters, false);
 			
 		foreach ($filters as $key => $value) {
 			if (str_contains($key, '|') === false) {
@@ -116,7 +116,7 @@ abstract class DatabaseObject {
 			$subparams = new DatabaseSearchParameters();
 			$subparams->placeholder = $params->placeholder;
 			
-			static::BuildSearchParameters($subparams, $subfilters);
+			static::BuildSearchParameters($subparams, $subfilters, true);
 			
 			if (count($subparams->clauses) > 0) {
 				$params->clauses[] = '(' . implode(' OR ', $subparams->clauses) . ')';

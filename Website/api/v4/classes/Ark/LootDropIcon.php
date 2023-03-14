@@ -26,8 +26,8 @@ class LootDropIcon extends GenericObject {
 		return $schema;
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
-		parent::BuildSearchParameters($parameters, $filters);
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
+		parent::BuildSearchParameters($parameters, $filters, $isNested);
 		
 		$parameters->allowAll = true;
 		$parameters->orderBy = 'label';

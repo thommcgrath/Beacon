@@ -6,7 +6,7 @@ use BeaconAPI\v4\Session;
 
 header('Content-Type: image/svg+xml');
 
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	return;
 }

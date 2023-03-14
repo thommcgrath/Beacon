@@ -7,12 +7,11 @@ if (!BeaconTemplate::IsHTML()) {
 	exit;
 }
 
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	echo 'Unauthorized';
 	exit;
 }
-$session->Renew();
 $user = $session->User();
 
 $description = BeaconTemplate::PageDescription();

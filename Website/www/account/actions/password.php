@@ -10,7 +10,7 @@ require(dirname(__FILE__, 4) . '/framework/loader.php');
 
 use BeaconAPI\v4\{Response, Session, User, UserGenerator};
 
-$activeSession = Session::GetFromCookie();
+$activeSession = BeaconCommon::GetSession();
 if (is_null($activeSession)) {
 	Response::NewJsonError('Unauthorized', null, 401)->Flush();
 	exit;

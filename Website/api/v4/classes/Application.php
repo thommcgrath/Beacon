@@ -4,15 +4,15 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
 
 class Application extends DatabaseObject implements JsonSerializable {
-	protected $applicationId = null;
-	protected $userId = null;
-	protected $secret = null;
-	protected $name = null;
-	protected $website = null;
-	protected $iconFilename = null;
-	protected $scopes = [];
-	protected $callbacks = [];
-	protected $rateLimit = 50;
+	protected string $applicationId = '';
+	protected string $userId = '';
+	protected ?string $secret = null;
+	protected string $name = '';
+	protected string $website = '';
+	protected string $iconFilename = '';
+	protected array $scopes = [];
+	protected array $callbacks = [];
+	protected int $rateLimit = 50;
 	
 	const kScopeCommon = 'common';
 	const kScopeAppsCreate = 'apps:create';
@@ -72,7 +72,9 @@ class Application extends DatabaseObject implements JsonSerializable {
 	public function __construct(BeaconRecordSet $row) {
 		$this->applicationId = $row->Field('application_id');
 		$this->userId = $row->Field('user_id');
-		$this->secret = BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('App Secret Encryption Key'), base64_decode($row->Field('secret')));
+		if (is_null($row->Field('secret')) === false) {
+			$this->secret = BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), base64_decode($row->Field('secret')));
+		}
 		$this->name = $row->Field('name');
 		$this->website = $row->Field('website');
 		$this->iconFilename = $row->Field('icon_filename');
@@ -95,20 +97,25 @@ class Application extends DatabaseObject implements JsonSerializable {
 		]);
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters): void {
+	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 		$parameters->AddFromFilter($schema, $filters, 'userId');
 		$parameters->orderBy = $schema->Accessor('name');
 	}
 	
-	public static function Create(array $properties): static {
+	public static function Create(array $properties, bool $generateSecret = true): static {
 		if (BeaconCommon::HasAllKeys($properties, 'name', 'website', 'scopes', 'callbacks', 'userId') === false) {
 			throw new Exception('Missing required properties');
 		}
 		
 		$applicationId = BeaconCommon::GenerateUUID();
-		$secret = BeaconCommon::GenerateUUID();
-		$secretEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('App Secret Encryption Key'), $secret));
+		if ($generateSecret) {
+			$secret = BeaconCommon::GenerateUUID();
+			$secretEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), $secret));
+		} else {
+			$secret = null;
+			$secretEncrypted = null;
+		}
 		$scopes = $properties['scopes'];
 		$callbacks = $properties['callbacks'];
 		$name = $properties['name'];
@@ -187,8 +194,14 @@ class Application extends DatabaseObject implements JsonSerializable {
 		}
 		
 		if (isset($properties['secret']) && $properties['secret'] !== $this->secret) {
-			$secret = BeaconCommon::GenerateUUID();
-			$secretEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('App Secret Encryption Key'), $secret));
+			if (is_null($properties['secret'])) {
+				$secret = null;
+				$secretEncrypted = null;
+			} else {
+				// Including any non-null value will generate a new secret. Don't accept the provided secret.
+				$secret = BeaconCommon::GenerateUUID();
+				$secretEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), $secret));
+			}
 			$assignments[] = 'secret = $' . $placeholder++;
 			$values[] = $secretEncrypted;
 		}
@@ -292,7 +305,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return $this->userId;
 	}
 	
-	public function Secret(): string {
+	public function Secret(): ?string {
 		return $this->secret;
 	}
 	
@@ -370,6 +383,10 @@ class Application extends DatabaseObject implements JsonSerializable {
 	
 	public function RequestLimitPerMinute(): int {
 		return $this->rateLimit;
+	}
+	
+	public function IsConfidential(): bool {
+		return is_null($this->secret) === false;
 	}
 	
 	public function jsonSerialize(): mixed {

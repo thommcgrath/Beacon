@@ -4,7 +4,7 @@ require(dirname(__FILE__, 4) . '/framework/loader.php');
 
 use BeaconAPI\v4\Session;
 
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	http_response_code(400);
 	echo json_encode(['message' => 'Unauthorized.'], JSON_PRETTY_PRINT);

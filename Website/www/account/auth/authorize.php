@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 use BeaconAPI\v4\{Application, ApplicationAuthFlow, Response, Core, Session, User};
 
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	Response::NewJsonError('Unauthorized', ['code' => 'NO_LOGIN'], 401)->Flush();
 	exit;

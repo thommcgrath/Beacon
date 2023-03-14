@@ -81,13 +81,13 @@ foreach ($sessions as $session) {
 		$deviceInfo .= '<div class="session-app-agent">' . $agentString . '</div>';
 	}
 	
-	$expires = $session->Expiration();
-	$expiration_html = 'Expires <time datetime="' . $expires->format('c') . '">' . $expires->format('F jS, Y') . ' at ' . $expires->format('g:i:s A') . ' UTC</time>';
+	$expires = $session->RefreshTokenExpiration();
+	$expiration_html = 'Expires <time datetime="' . date('c', $expires) . '">' . date('F jS, Y', $expires) . ' at ' . date('g:i:s A', $expires) . ' UTC</time>';
 	
 	if ($current_session->SessionHash() === $session->SessionHash()) {
 		$revoke_html = '<span class="self text-lighter">This is your active session</span>';
 	} else {
-		$revoke_html = '<a href="#" sessionHash="' . htmlentities($session->SessionHash()) . '" class="revokeLink">Revoke</a>';
+		$revoke_html = '<a href="#" sessionHash="' . htmlentities($session->AccessToken()) . '" class="revokeLink">Revoke</a>';
 	}
 	
 	$actions = [$flag_html, $revoke_html, 'Address: ' . $address_html];

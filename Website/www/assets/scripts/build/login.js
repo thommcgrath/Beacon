@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           var obj = JSON.parse(response.body);
           var url = loginParams.redeemUrl;
-          url = url.replace('{{session_id}}', encodeURIComponent(obj.sessionId));
+          url = url.replace('{{session_id}}', encodeURIComponent(obj.accessToken));
           if (loginParams.flowId) {
             url = url.replace('{{return_uri}}', encodeURIComponent(window.location.href));
           } else {

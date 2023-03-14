@@ -5,7 +5,7 @@ header('Cache-Control: no-cache');
 
 use BeaconAPI\v4\{Session, User};
 
-$session = Session::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	BeaconTemplate::StartScript();
 	?><script>
@@ -14,7 +14,6 @@ if (is_null($session)) {
 	BeaconTemplate::FinishScript();
 	exit;
 }
-$session->Renew();
 
 $user = $session->User();
 BeaconTemplate::SetTitle('Account: ' . $user->Username());
@@ -23,7 +22,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 BeaconTemplate::StartScript(); ?>
 <script>
 const deviceId = <?php echo json_encode(BeaconCommon::DeviceId()); ?>;
-const sessionId = <?php echo json_encode($session->SessionId()); ?>;
+const sessionId = <?php echo json_encode($session->AccessToken()); ?>;
 const apiDomain = <?php echo json_encode(BeaconCommon::APIDomain()); ?>;
 </script><?php
 BeaconTemplate::FinishScript();
