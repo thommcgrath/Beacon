@@ -10,6 +10,7 @@ abstract class BeaconTemplate {
 	protected static $use_photoswipe = false;
 	protected static $current_modal = null;
 	protected static $modals = [];
+	protected static $extra_vars = [];
 	
 	protected static function CacheKey(): string {
 		return md5($_SERVER['REQUEST_URI']);
@@ -243,6 +244,18 @@ abstract class BeaconTemplate {
 			</div>
 		</div>
 <?php
+	}
+	
+	public static function SetVar(string $var_name, mixed $value): void {
+		static::$extra_vars[$var_name] = $value;
+	}
+	
+	public static function GetVar(string $var_name): mixed {
+		if (array_key_exists($var_name, static::$extra_vars)) {
+			return static::$extra_vars[$var_name];
+		} else {
+			return null;
+		}
 	}
 }
 

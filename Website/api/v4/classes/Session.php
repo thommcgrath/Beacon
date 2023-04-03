@@ -278,8 +278,8 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		return [
 			'accessToken' => $this->accessToken,
 			'refreshToken' => $this->refreshToken,
-			'accessTokenExpiration' => date('Y-m-d H:i:sO', $this->accessTokenExpiration),
-			'refreshTokenExpiration' => date('Y-m-d H:i:sO', $this->refreshTokenExpiration),
+			'accessTokenExpiration' => $this->accessTokenExpiration,
+			'refreshTokenExpiration' => $this->refreshTokenExpiration,
 			'userId' => $this->userId,
 			'application' => [
 				'id' => $this->applicationId,
@@ -298,10 +298,10 @@ class Session extends DatabaseObject implements \JsonSerializable {
 			'token_type' => 'Bearer',
 			'access_token' => $this->accessToken,
 			'refresh_token' => $this->refreshToken,
-			'access_token_expiration' => date('Y-m-d H:i:sO', $this->accessTokenExpiration),
-			'refresh_token_expiration' => date('Y-m-d H:i:sO', $this->refreshTokenExpiration),
+			'access_token_expiration' => $this->accessTokenExpiration,
+			'refresh_token_expiration' => $this->refreshTokenExpiration,
 			'expires_in' => $this->accessTokenExpiration - time(),
-			'refresh_expires_in' => $this->refreshTokenExpiration - time(),
+			'refresh_token_expires_in' => $this->refreshTokenExpiration - time(),
 			'scope' => implode(' ', $this->scopes)
 		];
 	}
