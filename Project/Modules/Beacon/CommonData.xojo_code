@@ -502,7 +502,7 @@ Inherits Beacon.DataSource
 		    Return Self.mSelectorCache.Value(NullUUID + ":" + SelectorUUID)
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, user_id, game_id, label, language, code FROM template_selectors WHERE object_id = :object_id AND (user_id = :user_id OR user_id = '" + NullUUID + "');")
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, user_id, game_id, label, language, code FROM template_selectors WHERE object_id = :object_id AND (user_id = :user_id OR user_id = :null_uuid);", SelectorUUID, UserId, NullUUID)
 		  If Rows.RowCount = 0 Then
 		    Return Nil
 		  End If

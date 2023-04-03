@@ -180,8 +180,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Var MinQualityModifiers() As Integer
 		  Var MaxQualityModifiers() As Integer
 		  Var BlueprintMultipliers() As Double
+		  Var CommonData As Beacon.CommonData
+		  If ActiveModifiers.Count > 0 Then
+		    CommonData = Beacon.CommonData.Pool.Get(False)
+		  End If
 		  For Each LootSelectorUUID As String In ActiveModifiers
-		    Var TemplateSelector As Beacon.TemplateSelector = Beacon.CommonData.Pool.Get(False).GetTemplateSelectorByUUID(LootSelectorUUID)
+		    Var TemplateSelector As Beacon.TemplateSelector = CommonData.GetTemplateSelectorByUUID(LootSelectorUUID)
 		    If TemplateSelector Is Nil Then
 		      Continue
 		    End If
