@@ -4,11 +4,11 @@ description: >-
   Guides for Beacon, a server manager for Ark: Survival Evolved
 baseurl: "/"
 url: "https://help.usebeacon.app"
-twitter_username: usebeaconhq
 github_username:  thommcgrath
 logo: "/images/beacon-header-color.svg"
 
-remote_theme: just-the-docs/just-the-docs
+theme: just-the-docs
+color_scheme: beacon-light
 plugins:
   - jekyll-feed
   

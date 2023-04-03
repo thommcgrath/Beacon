@@ -1,11 +1,11 @@
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
   if (event.matches) {
-      jtd.setTheme('dark');
+      jtd.setTheme('beacon-dark');
   } else {
-      jtd.setTheme('light');
+      jtd.setTheme('beacon-light');
   }
 });
 
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    jtd.setTheme('dark');
+    jtd.setTheme('beacon-dark');
 }
