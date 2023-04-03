@@ -2269,7 +2269,7 @@ End
 		    Var Creatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures("", Self.Project.ContentPacks)
 		    Var Interval As Double = ArkBreedingTunerDialog.Present(Self, Self.mBaselineRates, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
 		    If Interval > 0 Then
-		      Self.ImprintPeriodField.Text = Interval.PrettyText
+		      Self.ImprintPeriodField.Text = Interval.PrettyText(True)
 		      Self.UpdateStats
 		    End If
 		  Case "ShareLinkButton"
