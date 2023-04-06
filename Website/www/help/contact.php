@@ -2,7 +2,7 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Submit Ticket');
 BeaconTemplate::SetPageDescription('Submit a new support request');
-BeaconTemplate::AddScript('/assets/scripts/contact.js');
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('contact.js'));
 
 $current_timestamp = time();
 $psk = BeaconCommon::GetGlobal('Support Ticket Key');
