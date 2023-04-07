@@ -23,16 +23,17 @@ if ($body_class === 'purple') {
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<?php if (!empty($description)) { ?><meta name="description" content="<?php echo htmlentities($description); ?>">
-		<?php } ?><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
-		<link rel="manifest" href="/assets/favicon/manifest.json">
-		<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#9c0fb0">
-		<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
+		<?php } ?><link rel="icon" type="image/png" sizes="32x32" href="<?php echo BeaconCommon::AssetURI('favicon-32x32.png'); ?>">
+		<link rel="icon" type="image/png" sizes="16x16" href="<?php echo BeaconCommon::AssetURI('favicon-16x16.png'); ?>">
+		<link rel="manifest" href="<?php echo BeaconCommon::AssetURI('manifest.json'); ?>">
+		<link rel="mask-icon" href="<?php echo BeaconCommon::AssetURI('safari-pinned-tab.svg'); ?>" color="#9c0fb0">
+		<link rel="shortcut icon" href="<?php echo BeaconCommon::AssetURI('favicon.ico'); ?>">
+		<link rel="apple-touch-icon" href="<?php echo BeaconCommon::AssetURI('apple-touch-icon.png'); ?>">
 		<link rel="alternate" type="application/json" title="Beacon Developer Blog" href="/blog/json.php">
 		<link rel="alternate" type="application/rss+xml" title="Beacon Developer Blog" href="/blog/rss.php">
 		<meta name="apple-mobile-web-app-title" content="Beacon">
 		<meta name="application-name" content="Beacon">
-		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
+		<meta name="msapplication-config" content="<?php echo BeaconCommon::AssetURI('browserconfig.xml'); ?>">
 		<?php
 		foreach ($theme_colors as $media => $color) {
 			if (empty($media)) {

@@ -116,12 +116,17 @@ abstract class BeaconCommon {
 		case 'svg':
 		case 'png':
 		case 'gif':
-			$folders = ['images'];
+		case 'ico':
+			$folders = ['images', 'favicon'];
 			break;
 		case 'ttf':
 		case 'otf':
 		case 'woff2':
-			$folder = ['fonts'];
+			$folders = ['fonts'];
+			break;
+		case 'json':
+		case 'xml':
+			$folders = ['favicon'];
 			break;
 		}
 		
