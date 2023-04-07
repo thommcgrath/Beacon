@@ -85,19 +85,22 @@ if (count($pages) === 0) {
 	exit;
 }
 
+$nonce = base64_encode(random_bytes(12));
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{$nonce}'");
+
 ?><!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Welcome to Beacon</title>
-		<script>
+		<script nonce="<?php echo $nonce; ?>">
 		var original_version = <?php echo json_encode($original_version); ?>;
 		var current_version = <?php echo json_encode($current_version); ?>;
 		</script>
 		<script src="index.js"></script>
 		<link href="/assets/css/normalize.css" rel="stylesheet">
-		<link href="https://use.typekit.net/paa2qqa.css" rel="stylesheet">
+		<link href="/assets/css/fonts.css" rel="stylesheet">
 		<link href="index.css" rel="stylesheet">
 	</head>
 	<body>
