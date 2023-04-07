@@ -31,9 +31,9 @@ while (!$results->EOF()) {
 
 ?>
 <div id="nitrado_container">
-	<a href="https://www.nitrado-aff.com/5LMHK7/D42TT/"><img id="nitrado_logo" class="white-on-dark" src="/assets/images/spacer.png" alt="Get your server from Nitrado"></a>
+	<a href="https://www.nitrado-aff.com/5LMHK7/D42TT/"><img id="nitrado_logo" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('spacer.png'); ?>" alt="Get your server from Nitrado"></a>
 </div>
-<div id="hero_container"><img id="hero" src="/assets/images/spacer.png" alt="Beacon main window"></div>
+<div id="hero_container"><img id="hero" src="<?php echo BeaconCommon::AssetURI('spacer.png'); ?>" alt="Beacon main window"></div>
 <div id="index_body">
 	<div id="index_features">
 		<div class="feature">

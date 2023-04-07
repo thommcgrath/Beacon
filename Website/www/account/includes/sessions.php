@@ -2,7 +2,7 @@
 
 $sessions = BeaconSession::GetForUser($user);
 
-BeaconTemplate::AddStyleSheet('/assets/css/flags.css');
+BeaconTemplate::AddStyleSheet(BeaconCommon::AssetURI('flags.css'));
 
 echo '<div class="visual-group">';
 echo '<h3>Active Sessions</h3>';

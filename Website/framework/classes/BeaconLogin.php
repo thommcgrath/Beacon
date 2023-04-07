@@ -22,7 +22,7 @@ class BeaconLogin {
 		
 		?>
 <div id="page_loading">
-	<p class="text-center"><img id="loading_spinner" src="/assets/images/spinner.svg" class="white-on-dark" width="64"></p>
+	<p class="text-center"><img id="loading_spinner" src="<?php echo BeaconCommon::AssetURI('spinner.svg'); ?>" class="white-on-dark" width="64"></p>
 </div>
 <div id="page_login">
 	<form id="login_form_intro" action="check" method="post">

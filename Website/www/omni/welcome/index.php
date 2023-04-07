@@ -90,7 +90,7 @@ BeaconTemplate::FinishScript();
 
 ?><h1 class="text-center">Thanks for purchasing Beacon Omni!</h1>
 <div id="checking_container" class="welcome_content">
-	<p><img src="/assets/images/spinner.svg" width="64" height="64" id="checking_spinner"></p>
+	<p><img src="<?php echo BeaconCommon::AssetURI('spinner.svg'); ?>" width="64" height="64" id="checking_spinner"></p>
 	<p><span id="checking_text">Checking purchase status&hellip;</span><span id="checking_subtext"></span></p>
 </div>
 <div id="purchase_confirmed" class="welcome_content">

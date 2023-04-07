@@ -7,7 +7,7 @@ $login_only = isset($_GET['login_only']) ? (strtolower($_GET['login_only']) == '
 
 ?>
 <div id="branding_section">
-	<img id="branding_logo" src="/assets/images/beacon-color.svg" width="128">
+	<img id="branding_logo" src="<?php echo BeaconCommon::AssetURI('beacon-color.svg'); ?>" width="128">
 	<h1 id="branding_title">Welcome to Beacon</h1>
 </div>
 <?php if (!$login_only) { ?>
