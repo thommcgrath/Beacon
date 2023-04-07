@@ -96,7 +96,7 @@ if (count($pages) === 0) {
 		var current_version = <?php echo json_encode($current_version); ?>;
 		</script>
 		<script src="index.js"></script>
-		<link href="<?php echo BeaconCommon::AssetURI('normalize.css'); ?>" rel="stylesheet">
+		<link href="/assets/css/normalize.css" rel="stylesheet">
 		<link href="https://use.typekit.net/paa2qqa.css" rel="stylesheet">
 		<link href="index.css" rel="stylesheet">
 	</head>
