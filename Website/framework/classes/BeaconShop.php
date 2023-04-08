@@ -157,14 +157,14 @@ abstract class BeaconShop {
 		$api = new BeaconStripeAPI($api_secret, '2022-08-01');
 		$database = BeaconCommon::Database();
 			
-		$results = $database->Query('SELECT code, usd_conversion_rate FROM public.currencies;');
+		$results = $database->Query('SELECT code, usd_conversion_rate FROM public.currencies ORDER BY code;');
 		$rates = [];
 		while (!$results->EOF()) {
 			$rates[$results->Field('code')] = $results->Field('usd_conversion_rate');
 			$results->MoveNext();
 		}
 		
-		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products;');
+		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products ORDER BY product_name;');
 		while (!$products->EOF()) {
 			$product_id = $products->Field('product_id');
 			$product_name = $products->Field('product_name');
@@ -179,30 +179,47 @@ abstract class BeaconShop {
 			
 			$product_code = $product['id'];
 			$default_price = $product['default_price'];
+			$product_prices = $api->GetProductPrices($product_code);
+			
+			$prices = [];
 			foreach ($rates as $currency => $rate) {
+				$prices[$currency] = [];
+			}
+			foreach ($product_prices as $price) {
+				$prices[strtoupper($price['currency'])][] = $price;
+			}
+			
+			foreach ($rates as $currency => $rate) {
+				echo "Syncing {$product_name} {$currency}\n";
+				
 				// The price should be an even multiple, plus 1% for conversion fees
 				$converted_price = ceil(($retail_price * ($currency === 'USD' ? 1.0 : 1.01) * $rate) / $round_to) * $round_to;
 				$converted_price_stripe = $converted_price * 100;
-				$prices = $api->GetProductPrices($product_code, $currency);
+				
 				$active_price_id = null;
-				foreach ($prices as $price) {
+				foreach ($prices[$currency] as $price) {
 					$price_id = $price['id'];
 					$should_be_active = $price['unit_amount'] == $converted_price_stripe && $price['tax_behavior'] === 'exclusive';
 					if ($should_be_active) {
 						$active_price_id = $price_id;
 					}
 					if ($should_be_active == true && $price['active'] == false) {
+						echo "Enabling price {$price['unit_amount']} {$currency}…\n";
 						$api->EditPrice($price_id, ['active' => 'true']);
 					} else if ($should_be_active == false && $price['active'] == true) {
+						echo "Disabling price {$price['unit_amount']} {$currency}…\n";
 						$api->EditPrice($price_id, ['active' => 'false']);
 					}
 				}
 				if (is_null($active_price_id)) {
 					// Create a new price
+					echo "Creating price for {$converted_price_stripe} {$currency}…\n";
 					$active_price_id = $api->CreatePrice($product_code, $currency, $converted_price_stripe);
+					echo "Created price {$active_price_id}\n";
 				}
 				
 				if ($currency === 'USD' && $active_price_id !== $default_price) {
+					echo "Setting default price…\n";
 					$api->EditProduct($product_code, ['default_price' => $active_price_id]);
 				}
 				
@@ -213,6 +230,8 @@ abstract class BeaconShop {
 			
 			$products->MoveNext();
 		}
+		
+		echo "Finished\n";
 	}
 }
 

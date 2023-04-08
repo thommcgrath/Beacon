@@ -104,8 +104,15 @@ class BeaconStripeAPI {
 		}
 	}
 	
-	public function GetProductPrices(string $product_code, string $currency): ?array {
-		$results = $this->GetURL('https://api.stripe.com/v1/prices/search?query=' . urlencode("product:'$product_code' AND currency:'$currency'"));
+	public function GetProductPrices(string $product_code, ?string $currency = null): ?array {
+		$query = "product:'{$product_code}'";
+		if (is_null($currency) === false) {
+			$query .= " AND currency:'{$currency}'";
+		}
+		$results = $this->GetURL('https://api.stripe.com/v1/prices/search?query=' . urlencode($query) . '&limit=100');
+		if ($results['has_more'] == true) {
+			echo "Partial results\n";
+		}
 		return $results['data'];
 	}
 	
