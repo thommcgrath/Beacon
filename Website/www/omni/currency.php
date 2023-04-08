@@ -23,7 +23,7 @@ if (isset($_SESSION['store_currency_options']) === false) {
 }
 
 $currency = strtoupper($_GET['currency']);
-if (in_array($currency, $_SESSION['store_currency_options']) === false) {
+if (array_key_exists($currency, $_SESSION['store_currency_options']) === false) {
 	$currency = $_SESSION['store_default_currency'];
 }
 

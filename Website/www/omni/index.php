@@ -4,18 +4,53 @@ define('KEY_ARK', 'ark');
 define('KEY_ARK_GIFT', 'ark_gift');
 define('KEY_ARK2', 'ark2');
 define('KEY_ARK2_GIFT', 'ark2_gift');
+define('KEY_ARKSA', 'arksa');
+define('KEY_ARKSA_GIFT', 'arksa_gift');
 define('KEY_STW', 'stw');
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 BeaconCommon::StartSession();
-
+	
 $database = BeaconCommon::Database();
+	
+if (isset($_SESSION['store_currency_options']) === false) {
+	$stripe_api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'), '2022-08-01');
+	$country = BeaconCommon::RemoteCountry();
+	if ($country === 'XX') {
+		$country = 'US';
+	}
+	$countries = [$country];
+	if ($country !== 'US') {
+		$countries[] = 'US';
+	}
+	
+	foreach ($countries as $country) {
+		$cache_key = 'country:' . $country;
+		$spec = BeaconCache::Get($cache_key);
+		if (is_null($spec)) {
+			$spec = $stripe_api->GetCountrySpec($country);
+			if (is_null($spec) === false) {
+				BeaconCache::Set($cache_key, $spec);
+				break;
+			}
+		}
+	}
+	
+	$results = $database->Query('SELECT code, name FROM public.currencies WHERE code = ANY($1) ORDER BY name;', '{' . implode(',', $spec['supported_payment_currencies']) . '}');
+	$supported_currencies = [];
+	while (!$results->EOF()) {
+		$supported_currencies[$results->Field('code')] = $results->Field('name');
+		$results->MoveNext();
+	}
+	$_SESSION['store_currency_options'] = $supported_currencies;
+	$_SESSION['store_default_currency'] = strtoupper($spec['default_currency']);
+	$_SESSION['store_currency'] = $_SESSION['store_default_currency'];
+}
+
 $stable_version = BeaconCommon::NewestVersionForStage(3);
-$currency = 'USD';
-$decimal_character = '.';
-$thousands_character = ',';
-$currency_symbol = '$';
+$currency = $_SESSION['store_currency'];
+$supported_currencies = $_SESSION['store_currency_options'];
 
 $results = $database->Query('SELECT products.product_id, product_prices.currency, product_prices.price FROM products INNER JOIN product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currency);
 $product_details = [];
@@ -37,6 +72,12 @@ while (!$results->EOF()) {
 	case BeaconShop::STW_ID:
 		$key = KEY_STW;
 		break;
+	case BeaconShop::ARKSA_PRODUCT_ID:
+		$key = KEY_ARKSA;
+		break;
+	case BeaconShop::ARKSA_GIFT_ID:
+		$key = KEY_ARKSA_GIFT;
+		break;
 	}
 	if (empty($key)) {
 		$results->MoveNext();
@@ -45,7 +86,6 @@ while (!$results->EOF()) {
 	
 	$product_details[$key] = [
 		'price' => floatval($results->Field('price')),
-		'price_formatted' => $currency_symbol . number_format($results->Field('price'), 2, $decimal_character, $thousands_character) . ' ' . $currency,
 	];
 	
 	$results->MoveNext();
@@ -57,21 +97,24 @@ if (isset($product_details[KEY_ARK]) === false) {
 }
 
 $ark2_enabled = isset($product_details[KEY_ARK2]);
+$arksa_enabled = isset($product_details[KEY_ARKSA]);
+
+BeaconTemplate::LoadGlobalize();
 
 BeaconTemplate::StartScript();
 ?>
 <script>
 const currencyCode = <?php echo json_encode($currency); ?>;
-const currencySymbol = <?php echo json_encode($currency_symbol); ?>;
-const decimalCharacter = <?php echo json_encode($decimal_character); ?>;
-const thousandsCharacter = <?php echo json_encode($thousands_character); ?>;
 const arkPrice = <?php echo json_encode($product_details[KEY_ARK]['price']); ?>;
 const arkGiftPrice = <?php echo json_encode($product_details[KEY_ARK_GIFT]['price']); ?>;
 const stwPrice = <?php echo json_encode($product_details[KEY_STW]['price']); ?>;
 const ark2Price = <?php echo json_encode($product_details[KEY_ARK2]['price'] ?? 0); ?>;
 const ark2GiftPrice = <?php echo json_encode($product_details[KEY_ARK2_GIFT]['price'] ?? 0); ?>;
+const arkSAPrice = <?php echo json_encode($product_details[KEY_ARKSA]['price'] ?? 0); ?>;
+const arkSAGiftPrice = <?php echo json_encode($product_details[KEY_ARKSA_GIFT]['price'] ?? 0); ?>;
 const arkProductId = <?php echo json_encode(BeaconShop::ARK_PRODUCT_ID); ?>;
 const ark2ProductId = <?php echo json_encode(BeaconShop::ARK2_PRODUCT_ID); ?>;
+const arkSAProductId = <?php echo json_encode(BeaconShop::ARKSA_PRODUCT_ID); ?>;
 </script>
 <?php
 BeaconTemplate::FinishScript();
@@ -222,12 +265,25 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 		<tr>
 			<td>Beacon Omni for Ark 2 + 1 year of updates<br><span class="smaller text-lighter">Purchase a copy of Beacon Omni for Ark 2 for your account. This includes a year of software updates.<span id="ark2-activelicense" class="hidden"> Since your account already has an active update plan, your plan's expiration date will be extended for an additional year.</span></span></td>
 			<td class="quantity_column"><div id="ark2_checkbox_frame"><label class="checkbox"><input type="checkbox" name="ark2" id="ark2_checkbox" checked><span></span></label></div></td>
-			<td class="price_column"><?php echo htmlentities($product_details[KEY_ARK2]['price_formatted']); ?></td>
+			<td class="price_column" beacon-price="<?php echo htmlentities($product_details[KEY_ARK2]['price']); ?>">...</td>
 		</tr>
 		<tr>
-			<td>Beacon Omni For Ark 2 + 1 year of upates (Gift Code)<br><span class="smaller text-lighter">Same option as above, except you will be sent a gift code that can be given away however you'd like.</span></td>
+			<td>Beacon Omni For Ark 2 + 1 year of updates (Gift Code)<br><span class="smaller text-lighter">Same option as above, except you will be sent a gift code that can be given away however you'd like.</span></td>
 			<td class="quantity_column"><input class="text-center" type="number" value="0" id="ark2_gift_quantity_field" min="0" max="10"></td>
-			<td class="price_column"><?php echo htmlentities($product_details[KEY_ARK2_GIFT]['price_formatted']); ?>
+			<td class="price_column" beacon-price="<?php echo htmlentities($product_details[KEY_ARK2_GIFT]['price']); ?>">...</td>
+		</tr><?php } ?>
+		<?php if ($arksa_enabled) { ?><tr class="header">
+			<td colspan="3">Beacon Omni for Ark: Survival Ascended</td>
+		</tr>
+		<tr>
+			<td>Beacon Omni for Ark: Survival Ascended + 1 year of updates<br><span class="smaller text-lighter">Purchase a copy of Beacon Omni for Ark: Survival Ascended for your account. This includes a year of software updates.<span id="arksa-activelicense" class="hidden"> Since your account already has an active update plan, your plan's expiration will be extended by an additional year.</span><span id="arksa-upgrade" class="hidden"> Because your account already owns Beacon Omni for Ark: Survival Evolved, your price is 50% off.</span></span></td>
+			<td class="quantity_column"><input class="text-center" type="number" value="0" id="arksa_quantity_field" min="0" max="10"></td>
+			<td class="price_column" beacon-price="<?php echo htmlentities($product_details[KEY_ARKSA]['price']); ?>">...</td>
+		</tr>
+		<tr>
+			<td>Beacon Omni For Ark: Survival Ascended + 1 year of updates (Gift Code)<br><span class="smaller text-lighter">Same option as above, except you will be sent a gift code that can be given away however you'd like.</span></td>
+			<td class="quantity_column"><input class="text-center" type="number" value="0" id="arksa_gift_quantity_field" min="0" max="10"></td>
+			<td class="price_column" beacon-price="<?php echo htmlentities($product_details[KEY_ARKSA_GIFT]['price']); ?>">...</td>
 		</tr><?php } ?>
 		<tr class="header">
 			<td colspan="3">Beacon Omni for Ark: Survival Evolved</td>
@@ -235,12 +291,12 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 		<tr>
 			<td>Beacon Omni for Ark: Survival Evolved<br><span class="smaller text-lighter">Purchase a copy of Beacon Omni for Ark: Survival Evolved for your account. All software updates are included for life.</span></td>
 			<td class="quantity_column"><div id="ark_checkbox_frame"><label class="checkbox"><input type="checkbox" name="ark" id="ark_checkbox" <?php if ($ark2_enabled === false) { ?>checked<?php } ?>><span></span></label></div><span id="ark_owned_caption" class="hidden">Owned</span></td>
-			<td class="price_column"><?php echo htmlentities($product_details[KEY_ARK]['price_formatted']); ?></td>
+			<td class="price_column" beacon-price="<?php echo htmlentities($product_details[KEY_ARK]['price']); ?>">...</td>
 		</tr>
 		<tr>
 			<td>Beacon Omni for Ark: Survival Evolved (Gift Code)<br><span class="smaller text-lighter">Same option as above, except you will be sent a gift code that can be given away however you'd like.</span></td>
 			<td class="quantity_column"><input class="text-center" type="number" value="0" id="ark_gift_quantity_field" min="0" max="10"></td>
-			<td class="price_column"><?php echo htmlentities($product_details[KEY_ARK_GIFT]['price_formatted']); ?>
+			<td class="price_column" beacon-price="<?php echo htmlentities($product_details[KEY_ARK_GIFT]['price']); ?>">...</td>
 		</tr>
 		<tr class="header">
 			<td colspan="3">Other Stuff</td>
@@ -248,20 +304,24 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 		<tr>
 			<td>Beacon Share The Wealth<br><span class="smaller text-lighter">Think of this like a tip jar. Beacon Share The Wealth is an optional purchase that allows you to show further financial support by gifting copies of Beacon Omni to <em>random</em> users at a reduced cost. <a href="stw">Learn More</a></span></td>
 			<td class="quantity_column"><input class="text-center" type="number" value="0" id="stw_quantity_field" min="0" max="10"></td>
-			<td class="price_column"><?php echo htmlentities($product_details[KEY_STW]['price_formatted']); ?>
+			<td class="price_column" beacon-price="<?php echo htmlentities($product_details[KEY_STW]['price']); ?>">...</td>
 		</tr>
 		<tr>
 			<td colspan="2" class="text-right">Total</td>
-			<td class="price_column" id="total_field"><?php echo htmlentities($product_details[KEY_ARK]['price_formatted']); ?></td>
+			<td class="price_column" id="total_field">...</td>
 		</tr>
 		<tr>
 			<td colspan="3" class="text-center">
 				<div id="checkout_button_cell"><button class="default" id="stripe_checkout_button">Checkout</button></div>
 				<div id="checkout_methods_cell" class="<?php echo strtolower($currency); ?>"><?php
 				
+				$payment_methods = [
+					 'universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
+					 'eur' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
+				 ];
 				$payment_labels = [
-					//'apple' => 'Apple Pay',
-					//'google' => 'Google Pay',
+					'apple' => 'Apple Pay',
+					'google' => 'Google Pay',
 					'mastercard' => 'Mastercard',
 					'visa' => 'Visa',
 					'amex' => 'American Express',
@@ -274,12 +334,25 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 					'ideal' => 'iDEAL',
 					'p24' => 'Przelewy24'
 				];
-				foreach ($payment_labels as $method_code => $label) {
-					echo '<img src="' . BeaconCommon::AssetURI('paymethod_' . $method_code . '.svg') . '" class="universal" title="' . htmlentities($label) . '" alt="' . htmlentities($label) . '">';
+				
+				foreach ($payment_methods as $class => $method_codes) {
+					foreach ($method_codes as $method_code) {
+						$label = $payment_labels[$method_code];
+						echo '<img src="' . BeaconCommon::AssetURI('paymethod_' . $method_code . '.svg') . '" class="universal" title="' . htmlentities($label) . '" alt="' . htmlentities($label) . '">';
+					}
 				}
 				
 				?></div>
-				<p class="smaller">If necessary the price will be converted into AUD, CAD, EUR, GBP, JPY, MXN, or SGD at checkout.</p>
+				<?php
+					 if (count($_SESSION['store_currency_options']) > 1) {
+						 echo '<div id="checkout_currency_cell">';
+						 echo 'Currency: <div class="select"><span></span><select id="currency-menu">';
+						 foreach ($_SESSION['store_currency_options'] as $currency_code => $currency_name) {
+							 echo '<option value="' . htmlentities($currency_code) . '"' . ($currency_code === $currency ? ' selected' : '') . '>' . htmlentities($currency_name) . '</option>';
+						 }
+						 echo '</select></div></div>';
+					 }
+				 ?>
 				<p class="smaller"><a href="/help/refund_policy">Beacon Refund Policy</a></p>
 			</td>
 		</tr>

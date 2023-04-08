@@ -131,6 +131,8 @@ function ShowPurchases() {
 		return;
 	}
 	
+	BeaconTemplate::LoadGlobalize();
+	
 	echo '<div id="section-licenses" class="visual-group">';
 	echo '<h3>All Purchases</h3>';
 	echo '<table class="generic"><thead><tr><th class="w-60">Purchase Date</th><th class="w-20">Total</th><th class="low-priority w-20">Actions</th></thead>';
@@ -149,13 +151,12 @@ function ShowPurchases() {
 		
 		$total = $purchases->Field('total_paid');
 		$currency = $purchases->Field('currency');
-		$total_formatted = BeaconShop::FormatPrice($total, $currency);
 			
 		if ($refunded) {
 			$purchase_time_str = '<span class="redacted text-red">' . $purchase_time_str . '</span> Refunded';
 		}
 		
-		echo '<tr><td class="w-60">' . $purchase_time_str . '<div class="row-details"><span class="detail">Actions: ' . $actions_html . '</span></div></td><td class="w-20 text-right nowrap">' . htmlentities($total_formatted) . '</td><td class="low-priority w-20 text-center">' . $actions_html . '</td>';
+		echo '<tr><td class="w-60">' . $purchase_time_str . '<div class="row-details"><span class="detail">Actions: ' . $actions_html . '</span></div></td><td class="w-20 text-right nowrap formatted-price" beacon-currency="' . htmlentities($currency) . '">' . htmlentities($total) . '</td><td class="low-priority w-20 text-center">' . $actions_html . '</td>';
 		
 		$purchases->MoveNext();
 	}

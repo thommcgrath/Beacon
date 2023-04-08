@@ -95,6 +95,20 @@ class BeaconStripeAPI {
 		return $this->GetURL('https://api.stripe.com/v1/customers?email=' . urlencode($customer_email));
 	}
 	
+	public function GetProductByUUID(string $product_id): ?array {
+		$results = $this->GetURL('https://api.stripe.com/v1/products/search?query=' . urlencode("metadata['beacon-uuid']:'{$product_id}'"));
+		if (count($results['data']) > 0) {
+			return $results['data'][0];
+		} else {
+			return null;
+		}
+	}
+	
+	public function GetProductPrices(string $product_code, string $currency): ?array {
+		$results = $this->GetURL('https://api.stripe.com/v1/prices/search?query=' . urlencode("product:'$product_code' AND currency:'$currency'"));
+		return $results['data'];
+	}
+	
 	public function GetBillingLocality(string $intent_id): ?string {
 		$intent = $this->GetPaymentIntent($intent_id);
 		if (is_null($intent)) {
@@ -255,6 +269,29 @@ class BeaconStripeAPI {
 		$response = $this->PostURL('https://api.stripe.com/v1/prices/' . $price_id, ['active' => 'false']);
 		
 		return $new_price_id;
+	}
+	
+	public function CreatePrice(string $product_code, string $currency, int $amount): string|bool {
+		$response = $this->PostURL('https://api.stripe.com/v1/prices', [
+			'unit_amount' => $amount,
+			'currency' => $currency,
+			'product' => $product_code,
+			'tax_behavior' => 'exclusive'
+		]);
+		
+		if (is_null($response)) {
+			return false;
+		}
+		
+		return $response['id'];
+	}
+	
+	public function EditPrice(string $price_id, array $changes): ?array {
+		return $this->PostURL('https://api.stripe.com/v1/prices/' . $price_id, $changes);
+	}
+	
+	public function EditProduct(string $product_code, array $changes): ?array {
+		return $this->PostURL('https://api.stripe.com/v1/products/' . $product_code, $changes);
 	}
 }
 

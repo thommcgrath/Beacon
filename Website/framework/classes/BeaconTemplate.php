@@ -10,6 +10,7 @@ abstract class BeaconTemplate {
 	protected static $use_photoswipe = false;
 	protected static $current_modal = null;
 	protected static $modals = [];
+	protected static $globalize_loaded = false;
 	
 	protected static function CacheKey(): string {
 		return md5($_SERVER['REQUEST_URI']);
@@ -243,6 +244,28 @@ abstract class BeaconTemplate {
 			</div>
 		</div>
 <?php
+	}
+	
+	public static function LoadGlobalize() {
+		if (static::$globalize_loaded === true) {
+			return;
+		}
+		static::$globalize_loaded = true;
+		
+		$assets = [
+			'cldr.js',
+			'cldr/event.js',
+			'cldr/supplemental.js',
+			'globalize.js',
+			'globalize/number.js',
+			'globalize/plural.js',
+			'globalize/currency.js',
+			'currency.js'
+		];
+		
+		foreach ($assets as $asset) {
+			static::AddScript(BeaconCommon::AssetURI($asset));
+		}
 	}
 }
 

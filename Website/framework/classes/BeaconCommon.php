@@ -99,8 +99,9 @@ abstract class BeaconCommon {
 	}
 	
 	public static function AssetURI(string $asset_filename): string {
-		$filename = pathinfo($asset_filename, PATHINFO_FILENAME);
 		$extension = pathinfo($asset_filename, PATHINFO_EXTENSION);
+		$filename = substr($asset_filename, 0, (strlen($extension) + 1) * -1);
+		
 		$public_extension = $extension;
 		$folders = [$extension];
 		$in_production = null;

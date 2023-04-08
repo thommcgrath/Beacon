@@ -1,6 +1,6 @@
 "use strict";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('GlobalizeLoaded', () => {
   var _ref, _sessionStorage$getIt, _sessionStorage, _localStorage;
   var pageLanding = document.getElementById('page_landing');
   var pageCart = document.getElementById('page_cart');
@@ -12,20 +12,38 @@ document.addEventListener('DOMContentLoaded', () => {
   var ark2GiftQuantityField = document.getElementById('ark2_gift_quantity_field');
   var ark2Checkbox = document.getElementById('ark2_checkbox');
   var ark2ActiveLicenseCaption = document.getElementById('ark2-activelicense');
+  var arkSAGiftQuantityField = document.getElementById('arksa_gift_quantity_field');
+  var arkSAQuantityField = document.getElementById('arksa_quantity_field');
+  var arkSAActiveLicenseCaption = document.getElementById('arksa-activelicense');
+  var arkSAUpgradeCaption = document.getElementById('arksa-upgrade');
   var buyButton = document.getElementById('buy-button');
   var cartBackButton = document.getElementById('cart_back_button');
   var stripeCheckoutButton = document.getElementById('stripe_checkout_button');
   var emailField = document.getElementById('checkout_email_field');
   var totalField = document.getElementById('total_field');
-  var requiredPageElements = [pageLanding, pageCart, stwQuantityField, arkGiftQuantityField, arkCheckbox, arkCheckboxFrame, arkOwnedCaption, buyButton, cartBackButton, stripeCheckoutButton, emailField, totalField];
+  var currencyMenu = document.getElementById('currency-menu');
+  var requiredPageElements = [pageLanding, pageCart, stwQuantityField, arkGiftQuantityField, arkCheckbox, arkCheckboxFrame, arkOwnedCaption, buyButton, cartBackButton, stripeCheckoutButton, emailField, totalField, currencyMenu];
   if (requiredPageElements.includes(null)) {
     console.log('Missing page elements');
     return false;
   }
+  var setViewMode = () => {
+    window.scrollTo(window.scrollX, 0);
+    if (window.location.hash === '#checkout') {
+      pageLanding.classList.add('hidden');
+      pageCart.classList.remove('hidden');
+    } else {
+      pageLanding.classList.remove('hidden');
+      pageCart.classList.add('hidden');
+    }
+  };
+  var globalize = Globalize('en');
+  var currencyFormatter = globalize.currencyFormatter(currencyCode);
   var status = {
     checkingEmail: false,
     ownsArk: false,
-    ownsArk2: false
+    ownsArk2: false,
+    ownsArkSA: false
   };
   var updateTotal = () => {
     var includeArk = status.ownsArk === false && arkCheckbox.checked;
@@ -52,28 +70,26 @@ document.addEventListener('DOMContentLoaded', () => {
         total += ark2Price;
       }
     }
-    var formattedTotal = formatCurrency(total);
-    totalField.innerHTML = "".concat(currencySymbol).concat(formattedTotal, " ").concat(currencyCode);
+    if (arkSAQuantityField && arkSAGiftQuantityField && arkSAActiveLicenseCaption && arkSAUpgradeCaption) {
+      var arkSAQuantity = Math.max(Math.min(arkSAQuantityField.value, 10), 0);
+      var arkSAGiftQuantity = Math.max(Math.min(arkSAGiftQuantityField.value, 10), 0);
+      if (arkSAQuantityField.value != arkSAQuantity) {
+        arkSAQuantityField.value = arkSAQuantity;
+      }
+      if (arkSAGiftQuantityField.value != arkSAGiftQuantity) {
+        arkSAGiftQuantityField.value = arkSAGiftQuantity;
+      }
+      var firstYearPrice = status.ownsArk || status.ownsArkSA ? arkSAPrice / 2 : arkSAPrice;
+      var additionalYearPrice = arkSAPrice / 2;
+      var firstYear = Math.min(Math.max(arkSAQuantity, 0), 1);
+      var additionalYears = Math.max(arkSAQuantity - 1, 0);
+      total += firstYearPrice * firstYear + additionalYearPrice * additionalYears + arkSAGiftQuantity * arkSAGiftPrice;
+    }
+    totalField.innerHTML = formatCurrency(total);
     stripeCheckoutButton.disabled = total == 0 || status.checkingEmail || validateEmail(emailField.value) == false;
   };
   var formatCurrency = amount => {
-    var adjustedAmount = Math.round(amount * 100).toString();
-    if (adjustedAmount.length < 3) {
-      adjustedAmount = '000'.substr(adjustedAmount.length) + adjustedAmount;
-    }
-    var decimals = adjustedAmount.substr(adjustedAmount.length - 2, 2);
-    var whole = adjustedAmount.substr(0, adjustedAmount.length - 2);
-    return whole + decimalCharacter + decimals;
-  };
-  var setViewMode = () => {
-    window.scrollTo(window.scrollX, 0);
-    if (window.location.hash === '#checkout') {
-      pageLanding.classList.add('hidden');
-      pageCart.classList.remove('hidden');
-    } else {
-      pageLanding.classList.remove('hidden');
-      pageCart.classList.add('hidden');
-    }
+    return currencyFormatter(amount);
   };
   var updateCheckoutComponents = () => {
     if (status.ownsArk) {
@@ -135,6 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
       processPurchases([]);
     }
   };
+  var formatPrices = () => {
+    var prices = document.querySelectorAll('td.price_column');
+    prices.forEach(cell => {
+      var price = parseFloat(cell.getAttribute('beacon-price'));
+      cell.innerText = formatCurrency(price);
+    });
+  };
+  formatPrices();
   updateCheckoutComponents();
   setViewMode();
   buyButton.addEventListener('click', ev => {
@@ -147,20 +171,17 @@ document.addEventListener('DOMContentLoaded', () => {
     dispatchEvent(new PopStateEvent('popstate', {}));
     ev.preventDefault();
   });
-  stwQuantityField.addEventListener('input', ev => {
-    updateTotal();
-  });
-  arkGiftQuantityField.addEventListener('input', ev => {
-    updateTotal();
-  });
+  var quantityFields = [stwQuantityField, arkGiftQuantityField, ark2GiftQuantityField, arkSAQuantityField, arkSAGiftQuantityField];
+  for (var quantityField of quantityFields) {
+    if (quantityField) {
+      quantityField.addEventListener('input', ev => {
+        updateTotal();
+      });
+    }
+  }
   arkCheckbox.addEventListener('change', ev => {
     updateTotal();
   });
-  if (ark2GiftQuantityField) {
-    ark2GiftQuantityField.addEventListener('input', ev => {
-      updateTotal();
-    });
-  }
   if (ark2Checkbox) {
     ark2Checkbox.addEventListener('change', ev => {
       updateTotal();
@@ -219,6 +240,16 @@ document.addEventListener('DOMContentLoaded', () => {
     emailField.value = email;
     lookupEmail(email);
   }
+  currencyMenu.addEventListener('change', ev => {
+    var params = new URLSearchParams();
+    params.append('currency', ev.target.value);
+    BeaconWebRequest.get("/omni/currency?".concat(params.toString())).then(response => {
+      location.reload();
+    }).catch(error => {
+      BeaconDialog.show('Sorry, there was a problem setting the currency.', error.body);
+    });
+    return false;
+  });
   var currencyLinks = document.querySelectorAll('.currency-button');
   for (var link of currencyLinks) {
     link.addEventListener('click', ev => {

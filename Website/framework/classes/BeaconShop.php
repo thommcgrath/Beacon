@@ -5,6 +5,8 @@ abstract class BeaconShop {
 	const ARK_GIFT_ID = '2207d5c1-4411-4854-b26f-bc4b48aa33bf';
 	const ARK2_PRODUCT_ID = '02206d4b-e3b2-40d8-a9b9-627fed0744b0';
 	const ARK2_GIFT_ID = '61653d69-2ccc-4f29-857a-7e44f1010d57';
+	const ARKSA_PRODUCT_ID = '86140896-a825-4010-a215-c8f1b9c4688e';
+	const ARKSA_GIFT_ID = 'ec1ac54a-85fb-40a2-9982-08b4fe629c75';
 	const STW_ID = 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015';
 	
 	public static function IssuePurchases(string $purchase_id): void {
@@ -24,6 +26,7 @@ abstract class BeaconShop {
 			switch ($product_id) {
 			case self::ARK_PRODUCT_ID:
 			case self::ARK2_PRODUCT_ID:
+			case self::ARKSA_PRODUCT_ID:
 				if (is_null($update_seconds)) {
 					$database->Query('INSERT INTO licenses (purchase_id, product_id) VALUES ($1, $2);', $purchase_id, $product_id);
 				} else {
@@ -34,15 +37,11 @@ abstract class BeaconShop {
 				$database->Query('DELETE FROM stw_applicants WHERE email_id = $1 AND desired_product = $2 AND generated_purchase_id IS NULL;', $email_id, $product_id);
 				break;
 			case self::ARK_GIFT_ID:
-				for ($i = 1; $i <= $quantity; $i++) {
-					$code = \BeaconCommon::CreateGiftCode();
-					$database->Query('INSERT INTO gift_codes (code, source_purchase_id, product_id) VALUES ($1, $2, $3);', $code, $purchase_id, self::ARK_PRODUCT_ID);
-				}
-				break;
 			case self::ARK2_GIFT_ID:
+			case self::ARKSA_GIFT_ID:
 				for ($i = 1; $i <= $quantity; $i++) {
 					$code = \BeaconCommon::CreateGiftCode();
-					$database->Query('INSERT INTO gift_codes (code, source_purchase_id, product_id) VALUES ($1, $2, $3);', $code, $purchase_id, self::ARK2_PRODUCT_ID);
+					$database->Query('INSERT INTO gift_codes (code, source_purchase_id, product_id) VALUES ($1, $2, $3);', $code, $purchase_id, $product_id);
 				}
 				break;
 			case self::STW_ID:
@@ -99,33 +98,6 @@ abstract class BeaconShop {
 		return true;
 	}
 	
-	public static function FormatPrice(float $price, string $currency, bool $with_suffix = true): string {
-		$decimal_character = '.';
-		$decimal_places = 2;
-		$thousands_character = ',';
-		$currency_symbol = '$';
-		$symbol_first = true;
-		
-		switch ($currency) {
-		case 'EUR':
-			$decimal_character = ',';
-			$thousands_character = '.';
-			$currency_symbol = '€';
-			break;
-		case 'GBP':
-			$currency_symbol = '£';
-			break;
-		case 'JPY':
-			$decimal_character = '';
-			$decimal_places = 0;
-			$thousands_character = '';
-			$currency_symbol = '¥';
-			break;
-		}
-		
-		return ($symbol_first === true ? $currency_symbol : '') . number_format($price, $decimal_places, $decimal_character, $thousands_character) . ($symbol_first === false ? $currency_symbol : '') . ($with_suffix ?  ' ' . $currency : '');
-	}
-	
 	public static function CreateGiftPurchase(string $email, string $product_id, int $quantity, string $notes, bool $process = false): string {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -178,6 +150,69 @@ abstract class BeaconShop {
 		}
 		
 		return $client_reference_id;
+	}
+	
+	public static function SyncWithStripe(): void {
+		$api_secret = BeaconCommon::GetGlobal('Stripe_Secret_Key');
+		$api = new BeaconStripeAPI($api_secret, '2022-08-01');
+		$database = BeaconCommon::Database();
+			
+		$results = $database->Query('SELECT code, usd_conversion_rate FROM public.currencies;');
+		$rates = [];
+		while (!$results->EOF()) {
+			$rates[$results->Field('code')] = $results->Field('usd_conversion_rate');
+			$results->MoveNext();
+		}
+		
+		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products;');
+		while (!$products->EOF()) {
+			$product_id = $products->Field('product_id');
+			$product_name = $products->Field('product_name');
+			$retail_price = $products->Field('retail_price');
+			$round_to = $products->Field('round_to');
+			
+			$product = $api->GetProductByUUID($product_id);
+			if (is_null($product)) {
+				$products->MoveNext();
+				continue;
+			}
+			
+			$product_code = $product['id'];
+			$default_price = $product['default_price'];
+			foreach ($rates as $currency => $rate) {
+				// The price should be an even multiple, plus 1% for conversion fees
+				$converted_price = ceil(($retail_price * ($currency === 'USD' ? 1.0 : 1.01) * $rate) / $round_to) * $round_to;
+				$converted_price_stripe = $converted_price * 100;
+				$prices = $api->GetProductPrices($product_code, $currency);
+				$active_price_id = null;
+				foreach ($prices as $price) {
+					$price_id = $price['id'];
+					$should_be_active = $price['unit_amount'] == $converted_price_stripe && $price['tax_behavior'] === 'exclusive';
+					if ($should_be_active) {
+						$active_price_id = $price_id;
+					}
+					if ($should_be_active == true && $price['active'] == false) {
+						$api->EditPrice($price_id, ['active' => 'true']);
+					} else if ($should_be_active == false && $price['active'] == true) {
+						$api->EditPrice($price_id, ['active' => 'false']);
+					}
+				}
+				if (is_null($active_price_id)) {
+					// Create a new price
+					$active_price_id = $api->CreatePrice($product_code, $currency, $converted_price_stripe);
+				}
+				
+				if ($currency === 'USD' && $active_price_id !== $default_price) {
+					$api->EditProduct($product_code, ['default_price' => $active_price_id]);
+				}
+				
+				$database->BeginTransaction();
+				$database->Query('INSERT INTO public.product_prices (price_id, product_id, currency, price) VALUES ($1, $2, $3, $4) ON CONFLICT (product_id, currency) DO UPDATE SET price_id = EXCLUDED.price_id, price = EXCLUDED.price WHERE product_prices.price_id != EXCLUDED.price_id;', $active_price_id, $product_id, $currency, $converted_price);
+				$database->Commit();
+			}
+			
+			$products->MoveNext();
+		}
 	}
 }
 

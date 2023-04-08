@@ -19,13 +19,20 @@ if ($purchase->RecordCount() === 0) {
 }
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
+BeaconTemplate::LoadGlobalize();
+
+BeaconTemplate::StartScript();
+?><script>
+BeaconCurrency.currencyCode = <?php echo json_encode($purchase->Field('currency')); ?>;
+</script><?php
+BeaconTemplate::FinishScript();
 
 $purchase_seconds = intval($purchase->Field('purchase_date'));
 $purchase_currency = $purchase->Field('currency');
-$purchase_subtotal = BeaconShop::FormatPrice($purchase->Field('subtotal'), $purchase_currency, false);
-$purchase_discount = BeaconShop::FormatPrice($purchase->Field('discount'), $purchase_currency, false);
-$purchase_tax = BeaconShop::FormatPrice($purchase->Field('tax'), $purchase_currency, false);
-$purchase_total = BeaconShop::FormatPrice($purchase->Field('total_paid'), $purchase_currency, false);
+$purchase_subtotal = $purchase->Field('subtotal');
+$purchase_discount = $purchase->Field('discount');
+$purchase_tax = $purchase->Field('tax');
+$purchase_total = $purchase->Field('total_paid');
 $purchase_refunded = $purchase->Field('refunded');
 $purchase_notes = $purchase->Field('notes');
 
@@ -49,23 +56,19 @@ while ($items->EOF() === false) {
 		$product_name = $quantity . ' x ' . $product_name;
 	}
 	$currency = $items->Field('currency');
-	$unit_price = BeaconShop::FormatPrice($items->Field('unit_price'), $currency, false);
-	$discount = BeaconShop::FormatPrice($items->Field('discount'), $currency, false);
-	$total = BeaconShop::FormatPrice($items->Field('line_total_less_tax'), $currency, false);
+	$unit_price = $items->Field('unit_price');
+	$discount = $items->Field('discount');
+	$total = $items->Field('line_total_less_tax');
 	
-	echo '<tr><td>' . htmlentities($product_name) . '</td><td class="text-right">' . htmlforprice($unit_price, $currency) . '</td><td class="text-right">' . htmlforprice($discount, $currency) . '</td><td class="text-right">' . htmlforprice($total, $currency) . '</td></tr>';
+	echo '<tr><td>' . htmlentities($product_name) . '</td><td class="text-right formatted-price">' . htmlentities($unit_price) . '</td><td class="text-right formatted-price">' . htmlentities($discount) . '</td><td class="text-right formatted-price">' . htmlentities($total) . '</td></tr>';
 	
 	$items->MoveNext();
 }
 echo '<thead><tr><th class="w-40">&nbsp;</th><th class="w-20">&nbsp;</th><th class="w-20">&nbsp;</th><th class="w-20">Total</th></tr></thead>';
-echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td class="bold text-right">Subtotal</td><td class="text-right">' . htmlforprice($purchase_subtotal, $purchase_currency) . '</td></tr>';
-echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td class="bold text-right">Discount</td><td class="text-right">' . htmlforprice($purchase_discount, $purchase_currency) . '</td></tr>';
-echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td class="bold text-right">Tax</td><td class="text-right">' . htmlforprice($purchase_tax, $purchase_currency) . '</td></tr>';
-echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td class="bold text-right">Total</td><td class="bold text-right">' . htmlforprice($purchase_total, $purchase_currency) . '</td></tr>';
+echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td class="bold text-right">Subtotal</td><td class="text-right formatted-price">' . htmlentities($purchase_subtotal) . '</td></tr>';
+echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td class="bold text-right">Discount</td><td class="text-right formatted-price">' . htmlentities($purchase_discount) . '</td></tr>';
+echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td class="bold text-right">Tax</td><td class="text-right formatted-price">' . htmlentities($purchase_tax) . '</td></tr>';
+echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td class="bold text-right">Total</td><td class="bold text-right formatted-price">' . htmlentities($purchase_total) . '</td></tr>';
 echo '</table>';
-
-function htmlforprice(string $price, string $currency) {
-	return htmlentities($price) . '<span class="desktop-only">&nbsp;' . htmlentities($currency) . '</span>';
-}
 
 ?>

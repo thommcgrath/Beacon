@@ -1,6 +1,6 @@
 "use strict";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('GlobalizeLoaded', () => {
 	const pageLanding = document.getElementById('page_landing');
 	const pageCart = document.getElementById('page_cart');
 	const stwQuantityField = document.getElementById('stw_quantity_field');
@@ -11,21 +11,41 @@ document.addEventListener('DOMContentLoaded', () => {
 	const ark2GiftQuantityField = document.getElementById('ark2_gift_quantity_field');
 	const ark2Checkbox = document.getElementById('ark2_checkbox');
 	const ark2ActiveLicenseCaption = document.getElementById('ark2-activelicense');
+	const arkSAGiftQuantityField = document.getElementById('arksa_gift_quantity_field');
+	const arkSAQuantityField = document.getElementById('arksa_quantity_field');
+	const arkSAActiveLicenseCaption = document.getElementById('arksa-activelicense');
+	const arkSAUpgradeCaption = document.getElementById('arksa-upgrade');
 	const buyButton = document.getElementById('buy-button');
 	const cartBackButton = document.getElementById('cart_back_button');
 	const stripeCheckoutButton = document.getElementById('stripe_checkout_button');
 	const emailField = document.getElementById('checkout_email_field');
 	const totalField = document.getElementById('total_field');
-	const requiredPageElements = [pageLanding, pageCart, stwQuantityField, arkGiftQuantityField, arkCheckbox, arkCheckboxFrame, arkOwnedCaption, buyButton, cartBackButton, stripeCheckoutButton, emailField, totalField];
+	const currencyMenu = document.getElementById('currency-menu');
+	const requiredPageElements = [pageLanding, pageCart, stwQuantityField, arkGiftQuantityField, arkCheckbox, arkCheckboxFrame, arkOwnedCaption, buyButton, cartBackButton, stripeCheckoutButton, emailField, totalField, currencyMenu];
 	if (requiredPageElements.includes(null)) {
 		console.log('Missing page elements');
 		return false;
 	}
 	
+	const setViewMode = () => {
+		window.scrollTo(window.scrollX, 0);
+		if (window.location.hash === '#checkout') {
+			pageLanding.classList.add('hidden');
+			pageCart.classList.remove('hidden');
+		} else {
+			pageLanding.classList.remove('hidden');
+			pageCart.classList.add('hidden');
+		}
+	};
+	
+	const globalize = Globalize('en');
+	const currencyFormatter = globalize.currencyFormatter(currencyCode);
+	
 	const status = {
 		checkingEmail: false,
 		ownsArk: false,
-		ownsArk2: false
+		ownsArk2: false,
+		ownsArkSA: false
 	}
 	
 	const updateTotal = () => {
@@ -59,30 +79,31 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 		
-		const formattedTotal = formatCurrency(total);
-		totalField.innerHTML = `${currencySymbol}${formattedTotal} ${currencyCode}`;
+		if (arkSAQuantityField && arkSAGiftQuantityField && arkSAActiveLicenseCaption && arkSAUpgradeCaption) {
+			const arkSAQuantity = Math.max(Math.min(arkSAQuantityField.value, 10), 0);
+			const arkSAGiftQuantity = Math.max(Math.min(arkSAGiftQuantityField.value, 10), 0);
+			
+			if (arkSAQuantityField.value != arkSAQuantity) {
+				arkSAQuantityField.value = arkSAQuantity;
+			}
+			if (arkSAGiftQuantityField.value != arkSAGiftQuantity) {
+				arkSAGiftQuantityField.value = arkSAGiftQuantity;
+			}
+			
+			const firstYearPrice = (status.ownsArk || status.ownsArkSA) ? (arkSAPrice / 2) : arkSAPrice;
+			const additionalYearPrice = arkSAPrice / 2;
+			const firstYear = Math.min(Math.max(arkSAQuantity, 0), 1);
+			const additionalYears = Math.max(arkSAQuantity - 1, 0);
+			
+			total += (firstYearPrice * firstYear) + (additionalYearPrice * additionalYears) + (arkSAGiftQuantity * arkSAGiftPrice);
+		}
+		
+		totalField.innerHTML = formatCurrency(total);
 		stripeCheckoutButton.disabled = (total == 0) || status.checkingEmail || validateEmail(emailField.value) == false;
 	};
 	
 	const formatCurrency = (amount) => {
-		let adjustedAmount = Math.round(amount * 100).toString();
-		if (adjustedAmount.length < 3) {
-			adjustedAmount = '000'.substr(adjustedAmount.length) + adjustedAmount;
-		}
-		const decimals = adjustedAmount.substr(adjustedAmount.length - 2, 2);
-		const whole = adjustedAmount.substr(0, adjustedAmount.length - 2);
-		return whole + decimalCharacter + decimals;
-	};
-	
-	const setViewMode = () => {
-		window.scrollTo(window.scrollX, 0);
-		if (window.location.hash === '#checkout') {
-			pageLanding.classList.add('hidden');
-			pageCart.classList.remove('hidden');
-		} else {
-			pageLanding.classList.remove('hidden');
-			pageCart.classList.add('hidden');
-		}
+		return currencyFormatter(amount);
 	};
 	
 	const updateCheckoutComponents = () => {
@@ -151,6 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	};
 	
+	const formatPrices = () => {
+		const prices = document.querySelectorAll('td.price_column');
+		prices.forEach((cell) => {
+			const price = parseFloat(cell.getAttribute('beacon-price'));
+			cell.innerText = formatCurrency(price);
+		});
+	};
+	
+	formatPrices();
 	updateCheckoutComponents();
 	setViewMode();
 	
@@ -166,23 +196,24 @@ document.addEventListener('DOMContentLoaded', () => {
 		ev.preventDefault();
 	});
 	
-	stwQuantityField.addEventListener('input', (ev) => {
-		updateTotal();
-	});
-	
-	arkGiftQuantityField.addEventListener('input', (ev) => {
-		updateTotal();
-	});
+	const quantityFields = [
+		stwQuantityField,
+		arkGiftQuantityField,
+		ark2GiftQuantityField,
+		arkSAQuantityField,
+		arkSAGiftQuantityField
+	];
+	for (const quantityField of quantityFields) {
+		if (quantityField) {
+			quantityField.addEventListener('input', (ev) => {
+				updateTotal();
+			});
+		}
+	}
 	
 	arkCheckbox.addEventListener('change', (ev) => {
 		updateTotal();
 	});
-	
-	if (ark2GiftQuantityField) {
-		ark2GiftQuantityField.addEventListener('input', (ev) => {
-			updateTotal();
-		});
-	}
 	
 	if (ark2Checkbox) {
 		ark2Checkbox.addEventListener('change', (ev) => {
@@ -250,6 +281,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		emailField.value = email;
 		lookupEmail(email);
 	}
+	
+	currencyMenu.addEventListener('change', (ev) => {
+		const params = new URLSearchParams();
+		params.append('currency', ev.target.value);
+		BeaconWebRequest.get(`/omni/currency?${params.toString()}`).then((response) => {
+			location.reload();
+		}).catch((error) => {
+			BeaconDialog.show('Sorry, there was a problem setting the currency.', error.body);
+		});
+		
+		return false;
+	});
 	
 	const currencyLinks = document.querySelectorAll('.currency-button');
 	for (const link of currencyLinks) {

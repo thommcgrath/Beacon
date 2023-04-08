@@ -22,73 +22,17 @@ if (isset($_SESSION['STW_PUBLIC_KEY'])) {
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT product_id FROM products WHERE product_id = $1;', BeaconShop::ARK2_PRODUCT_ID);
 $ark2_enabled = $results->RecordCount() === 1;
+$arksa_enabled = true;
+$choice_enabled = $ark2_enabled || $arksa_enabled;
+
+BeaconTemplate::StartScript();
+?><script>
+const stwPublicKey = <?php echo json_encode($public_key); ?>
+</script><?php
+BeaconTemplate::FinishScript();
 
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('jsencrypt.min.js'));
-
-BeaconTemplate::StartScript(); ?>
-<script>
-"use strict";
-
-document.addEventListener('DOMContentLoaded', () => {
-	const stwForm = document.getElementById('stw_form');
-	const emailField = document.getElementById('stw_email_field');
-	const joinButton = document.getElementById('stw_join_button');
-	const arkRadio = document.getElementById('ark_radio');
-	const ark2Radio = document.getElementById('ark2_radio');
-	const stwContainer = document.getElementById('stw_container');
-	if (!(stwForm && emailField && joinButton && arkRadio && stwContainer)) {
-		console.log('Missing page elements');
-		return;
-	}
-	
-	stwForm.addEventListener('submit', (ev) => {
-		const encrypt = new JSEncrypt();
-		encrypt.setPublicKey(<?php echo json_encode($public_key); ?>);
-		
-		const encrypted = encrypt.encrypt(emailField.value);
-		joinButton.disabled = true;
-		
-		const productId = (ark2Radio && ark2Radio.checked) ? ark2Radio.value : arkRadio.value;
-		const fields = new URLSearchParams();
-		fields.append('email', encrypted);
-		fields.append('product_id', productId);
-		
-		BeaconWebRequest.post('submit', fields).then((response) => {
-			try {
-				const obj = JSON.parse(response.body);
-				stwContainer.innerText = `Ok, ${obj.email} is now on the list! If selected, you will receive an email with instructions.`;
-			} catch (e) {
-				console.log(e);
-			}
-		}).catch((error) => {
-			switch (error.status) {
-			case 404:
-				BeaconDialog.show('Unable to submit the email address', 'The receiver script was not found.');
-				break;
-			case 400:
-				try {
-					const obj = JSON.parse(error.body);
-					BeaconDialog.show('Sorry, that didn\'t work.', obj.error);
-				} catch (e) {
-					console.log(e);
-					BeaconDialog.show('Sorry, that didn\'t work.', 'There was a javascript error.');
-				}
-				break;
-			default:
-				BeaconDialog.show('Unable to submit the email address', `Sorry, there was a ${error.status} error: ${error.body}`);
-				break;
-			}
-			joinButton.disabled = false;
-		});
-		
-		ev.preventDefault();
-		return true;
-	});
-});
-
-</script>
-<?php
-BeaconTemplate::FinishScript();
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('stw.js'));
 
 ?><h1>Beacon's <em>Share The Wealth</em> Program</h1>
 <p>Beacon's <em>Share The Wealth</em> program is an option for users who want to show additional support for Beacon, while also providing licenses to other users.</p>
@@ -98,13 +42,14 @@ BeaconTemplate::FinishScript();
 <p>If you'd like to be a potential recipient of a free Beacon Omni license under the <em>Share The Wealth</em> program, all you need to do is add your email address.</p>
 <div id="stw_container" class="text-center inset-note">
 	<form action="#" method="post" id="stw_form">
-		<?php if ($ark2_enabled) { ?>
+		<?php if ($ark2_enabled || $arksa_enabled) { ?>
 		<p class="bold">Product</p>
 		<ul class="no-markings">
-			<li><label for="ark2_radio" class="radio"><input type="radio" name="product_id" value="<?php echo BeaconShop::ARK2_PRODUCT_ID; ?>" id="ark2_radio" checked><span></span>Beacon Omni for Ark 2</label></li>
+			<?php if ($ark2_enabled) { ?><li><label for="ark2_radio" class="radio"><input type="radio" name="product_id" value="<?php echo BeaconShop::ARK2_PRODUCT_ID; ?>" id="ark2_radio" checked><span></span>Beacon Omni for Ark 2</label></li><?php } ?>
+			<?php if ($arksa_enabled) { ?><li><label for="arksa_radio" class="radio"><input type="radio" name="product_id" value="<?php echo BeaconShop::ARKSA_PRODUCT_ID; ?>" id="arksa_radio" checked><span></span>Beacon Omni for Ark: Survival Ascended</label></li><?php } ?>
 			<li><label for="ark_radio" class="radio"><input type="radio" name="product_id" value="<?php echo BeaconShop::ARK_PRODUCT_ID; ?>" id="ark_radio"><span></span>Beacon Omni for Ark: Survival Evolved</label></li>
 		</ul>
-		<?php } ?><p><?php if ($ark2_enabled === false) { ?><input type="hidden" name="product_id" value="<?php echo htmlentities(BeaconShop::ARK_PRODUCT_ID); ?>" id="ark_radio"><?php } ?><input type="email" placeholder="E-Mail Address" id="stw_email_field" name="email"></p>
+		<?php } ?><p><?php if ($choice_enabled === false) { ?><input type="hidden" name="product_id" value="<?php echo htmlentities(BeaconShop::ARK_PRODUCT_ID); ?>" id="ark_radio"><?php } ?><input type="email" placeholder="E-Mail Address" id="stw_email_field" name="email"></p>
 		<p><input type="submit" value="Join the Program" id="stw_join_button"></p>
 	</form>
 </div>
