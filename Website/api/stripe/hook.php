@@ -28,7 +28,7 @@ if (BeaconCommon::InProduction()) {
 	$signed_payload = $time . '.' . $body;
 	$computed_signature = hash_hmac('sha256', $signed_payload, $endpoint_secret);
 	if ($computed_signature != $expected_signature) {
-		echo "Invalid signature, expected $expected_signature but computed $computed_signature";
+		echo "Invalid signature";
 		exit;
 	}
 }
