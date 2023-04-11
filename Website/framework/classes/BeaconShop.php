@@ -3,10 +3,15 @@
 abstract class BeaconShop {
 	const ARK_PRODUCT_ID = '972f9fc5-ad64-4f9c-940d-47062e705cc5';
 	const ARK_GIFT_ID = '2207d5c1-4411-4854-b26f-bc4b48aa33bf';
+	
 	const ARK2_PRODUCT_ID = '02206d4b-e3b2-40d8-a9b9-627fed0744b0';
 	const ARK2_GIFT_ID = '61653d69-2ccc-4f29-857a-7e44f1010d57';
+	
 	const ARKSA_PRODUCT_ID = '86140896-a825-4010-a215-c8f1b9c4688e';
 	const ARKSA_GIFT_ID = 'ec1ac54a-85fb-40a2-9982-08b4fe629c75';
+	const ARKSA_UPGRADE_ID = '673f3018-4ad7-4556-a2c6-0da8548a4b04';
+	const ARKSA_RENEWAL_ID = '8e93c8e1-01f6-4be5-a0a7-856704d96291';
+	
 	const STW_ID = 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015';
 	
 	public static function IssuePurchases(string $purchase_id): void {

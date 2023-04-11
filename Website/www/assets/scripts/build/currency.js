@@ -42,18 +42,21 @@ class BeaconCurrency {
       if (_classStaticPrivateFieldSpecGet(this, BeaconCurrency, _currencyCode) && !_classStaticPrivateFieldSpecGet(this, BeaconCurrency, _defaultFormatter)) {
         _classStaticPrivateFieldSpecSet(this, BeaconCurrency, _defaultFormatter, this.getFormatter(_classStaticPrivateFieldSpecGet(this, BeaconCurrency, _currencyCode)));
       }
-      var prices = document.querySelectorAll('.formatted-price');
-      prices.forEach(elem => {
-        var _elem$getAttribute;
-        var price = parseFloat((_elem$getAttribute = elem.getAttribute('beacon-price')) !== null && _elem$getAttribute !== void 0 ? _elem$getAttribute : elem.innerText);
-        var currency = elem.getAttribute('beacon-currency');
-        if (currency) {
-          elem.innerText = BeaconCurrency.getFormatter(currency)(price);
-        } else {
-          elem.innerText = BeaconCurrency.defaultFormatter(price);
-        }
-      });
+      this.formatPrices();
       document.dispatchEvent(new Event('GlobalizeLoaded'));
+    });
+  }
+  static formatPrices() {
+    var prices = document.querySelectorAll('.formatted-price');
+    prices.forEach(elem => {
+      var _elem$getAttribute;
+      var price = parseFloat((_elem$getAttribute = elem.getAttribute('beacon-price')) !== null && _elem$getAttribute !== void 0 ? _elem$getAttribute : elem.innerText);
+      var currency = elem.getAttribute('beacon-currency');
+      if (currency) {
+        elem.innerText = BeaconCurrency.getFormatter(currency)(price);
+      } else {
+        elem.innerText = BeaconCurrency.defaultFormatter(price);
+      }
     });
   }
 }
@@ -67,7 +70,7 @@ var _formatters = {
 };
 var _currencyCode = {
   writable: true,
-  value: null
+  value: 'USD'
 };
 var _defaultFormatter = {
   writable: true,

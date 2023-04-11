@@ -3,7 +3,7 @@
 class BeaconCurrency {
 	static #globalize = null;
 	static #formatters = {};
-	static #currencyCode = null;
+	static #currencyCode = 'USD';
 	static #defaultFormatter = null;
 	
 	static get currencyCode() {
@@ -54,18 +54,23 @@ class BeaconCurrency {
 				this.#defaultFormatter = this.getFormatter(this.#currencyCode);
 			}
 			
-			const prices = document.querySelectorAll('.formatted-price');
-			prices.forEach((elem) => {
-				const price = parseFloat(elem.getAttribute('beacon-price') ?? elem.innerText);
-				const currency = elem.getAttribute('beacon-currency');
-				if (currency) {
-					elem.innerText = BeaconCurrency.getFormatter(currency)(price);
-				} else {
-					elem.innerText = BeaconCurrency.defaultFormatter(price);
-				}
-			});
+			
+			this.formatPrices();
 			
 			document.dispatchEvent(new Event('GlobalizeLoaded'));
+		});
+	}
+	
+	static formatPrices() {
+		const prices = document.querySelectorAll('.formatted-price');
+		prices.forEach((elem) => {
+			const price = parseFloat(elem.getAttribute('beacon-price') ?? elem.innerText);
+			const currency = elem.getAttribute('beacon-currency');
+			if (currency) {
+				elem.innerText = BeaconCurrency.getFormatter(currency)(price);
+			} else {
+				elem.innerText = BeaconCurrency.defaultFormatter(price);
+			}
 		});
 	}
 }

@@ -13,9 +13,18 @@ if ($has_authenticators) {
 	<h3>Change Password</h3>
 	<p class="notice-block notice-warning"><strong>Important</strong>: Do not give any user access to your Beacon account for any reason. The only way to forcefully remove somebody from your account is to replace your private key. See below for why you don't want to do this. To safely share access to one or more of your Beacon documents, please follow <a href="/help/sharing_beacon_documents">these instructions</a>.</p>
 	<form id="change_password_form" action="" method="post">
-		<p><input type="password" id="password_current_field" placeholder="Current Password"></p>
-		<p><input type="password" id="password_initial_field" placeholder="New Password" minlength="8"></p>
-		<p><input type="password" id="password_confirm_field" placeholder="Confirm New Password" minlength="8"></p>
+		<div class="floating-label">
+			<input type="password" class="text-field" id="password_current_field" placeholder="Current Password">
+			<label for="password_current_field">Current Password</label>
+		</div>
+		<div class="floating-label">
+			<input type="password" class="text-field" id="password_initial_field" placeholder="New Password" minlength="8">
+			<label for="password_initial_field">New Password</label>
+		</div>
+		<div class="floating-label">
+			<input type="password" class="text-field" id="password_confirm_field" placeholder="Confirm New Password" minlength="8">
+			<label for="password_confirm_field">Confirm New Password</label>
+		</div>
 		<div class="subsection">
 			<p><label class="checkbox"><input type="checkbox" id="password_regenerate_check" value="true"><span></span>Replace private key</label></p>
 			<p class="text-red bold uppercase text-center">Read this carefully!</p>
@@ -70,8 +79,14 @@ if ($has_authenticators) {
 	<div id="add-authenticator-content-left"><img id="add-authenticator-qrcode" src=""></img></div>
 	<div id="add-authenticator-content-right">
 		<p>Scan this code with your authenticator app, then enter the code it generates.</p>
-		<p><label for="add-authenticator-code-field">Verification Code</label><br><input type="text" id="add-authenticator-code-field" placeholder="Verification Code"></p>
-		<p><label for="add-authenticator-nickname-field">Nickname</label><br><input type="text" id="add-authenticator-nickname-field" placeholder="Nickname" value="Google Authenticator"></p>
+		<div class="floating-label">
+			<input type="text" class="text-field" id="add-authenticator-code-field" placeholder="Verification Code">
+			<label for="add-authenticator-code-field">Verification Code</label>
+		</div>
+		<div class="floating-label">
+			<input type="text" class="text-field" id="add-authenticator-nickname-field" placeholder="Nickname" value="Google Authenticator">
+			<label for="add-authenticator-nickname-field">Nickname</label>
+		</div>
 	</div>
 </div>
 <div class="button-bar">

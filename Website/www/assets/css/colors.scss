@@ -67,6 +67,10 @@
 	$tag-grey-text: contrasting-color($tag-grey-fill, #ffffff);
 	$tag-blue-fill: contrasting-color($background-color, #1d4397);
 	$tag-blue-text: contrasting-color($tag-blue-fill, #ffffff);
+	$button-primary-color: $accent-color;
+	$button-primary-text-color: $accent-text-color;
+	$button-secondary-color: mix($foreground-color, $background-color, 55%);
+	$button-secondary-text-color: contrasting-color($button-secondary-color, $foreground-color);
 	
 	body {
 		color: $foreground-color;
@@ -219,13 +223,15 @@
 	
 	input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], input[type="number"], textarea {
 		border-color: rgba($foreground-color, 0.3);
-		background-color: rgba(#ffffff, 0.1);
+		background-color: $background-color;
 		color: $foreground-color;
 		
 		&:focus {
-			border-color: rgba(#000000, 0.6);
+			border-color: #86b7fe;
 			background-color: #ffffff;
 			color: #000000;
+			outline: 0;
+			box-shadow: 0 0 0 0.25rem rgba(13, 110,  253, 0.25);
 			
 			&::placeholder {
 				color: rgba(#000000, 0.6);
@@ -238,6 +244,14 @@
 		
 		&.invalid {
 			border-color: $text-red;
+		}
+	}
+	
+	.floating-label {
+		& > input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], input[type="number"], textarea {
+			&::placeholder {
+				color: transparent;
+			}
 		}
 	}
 	
@@ -258,47 +272,52 @@
 	}
 	
 	button, input[type="button"], input[type="submit"], input[type="reset"], a.button {
-		background-color: $background-color;
-		color: $accent-color;
-		border-color: $accent-color;
+		background-color: $button-secondary-color;
+		color: $button-secondary-text-color;
 		
 		&:enabled {
 			&:active {
-				background-color: $pressed-accent-color;
-				border-color: $pressed-accent-color;
-				color: $pressed-accent-text-color;
+				$pressed-text-color: mix($button-secondary-text-color, #000000, 50%);
+				
+				background-color: mix($button-secondary-color, #000000, 50%);
+				color: $pressed-text-color;
 				
 				.spinner:after {
-					border-color: $pressed-accent-text-color transparent $pressed-accent-text-color transparent;
+					border-color: $pressed-text-color transparent $pressed-text-color transparent;
 				}
 			}
 		}
 	}
 	
 	a.button:active {
-		background-color: $pressed-accent-color;
-		border-color: $pressed-accent-color;
-		color: $pressed-accent-text-color;
+		$pressed-text-color: mix($button-secondary-text-color, #000000, 50%);
+		
+		background-color: mix($button-secondary-color, #000000, 50%);
+		color: $pressed-text-color;
 		
 		.spinner:after {
-			border-color: $pressed-accent-text-color transparent $pressed-accent-text-color transparent;
+			border-color: $pressed-text-color transparent $pressed-text-color transparent;
 		}
 	}
 	
-	input[type="submit"]:enabled, button.default:enabled {
-		background-color: $accent-color;
-		color: $accent-text-color;
+	input[type="submit"], button.default {
+		background-color: $button-primary-color;
+		color: $button-primary-text-color;
 		
 		.spinner:after {
-			border-color: $accent-text-color transparent $accent-text-color transparent;
+			border-color: $button-primary-text-color transparent $button-primary-text-color transparent;
 		}
 		
-		&:active {
-			background-color: $pressed-accent-color;
-			color: $pressed-accent-text-color;
-			
-			.spinner:after {
-				border-color: $pressed-accent-text-color transparent $pressed-accent-text-color transparent;
+		&:enabled {
+			&:active {
+				$pressed-text-color: mix($button-primary-text-color, #000000, 50%);
+				
+				background-color: mix($button-primary-color, #000000, 50%);
+				color: $pressed-text-color;
+				
+				.spinner:after {
+					border-color: $pressed-text-color transparent $pressed-text-color transparent;
+				}
 			}
 		}
 	}
