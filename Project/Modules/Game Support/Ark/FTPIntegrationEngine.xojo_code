@@ -410,7 +410,7 @@ Inherits Ark.IntegrationEngine
 		    Var Lines() As String = Content.Trim.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
 		    
 		    Var Parser As New RegEx
-		    Parser.SearchPattern = "^(.{10})\s+(\d+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(.{12})\s(.+)$"
+		    Parser.SearchPattern = "^(.{10})\s+(\d+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(.{11,12})\s(.+)$"
 		    
 		    Var Files() As Beacon.FTPFileListing
 		    Var Names() As String
