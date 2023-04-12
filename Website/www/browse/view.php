@@ -30,7 +30,7 @@ if (array_key_exists('map_filter', $_GET)) {
 }
 
 BeaconTemplate::SetTitle($document->Name());
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('generator.scss'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/generator.css'));
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 
 $author_id = $document->UserID();

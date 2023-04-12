@@ -22,7 +22,7 @@ if ($results->RecordCount() != 1) {
 $official_cuddle_period = $results->Field('value');
 $computed_cuddle_period = $official_cuddle_period * $ipm;
 
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/breeding.css'));
 
 ?><div id="breeding-stats">
 	<div id="breeding-stats-msm" class="breeding-stats-column">

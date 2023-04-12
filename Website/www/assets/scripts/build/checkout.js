@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var arkSAFullPrice = Products.ArkSA.Base.Price;
     var arkSAEffectivePrice = Products.ArkSA.Base.Price;
     var arkSAYears = Math.min(Math.max(parseInt(wizard.game.arkSADurationField.value) || 1, 1), 10);
-    wizard.game.arkSADurationSuffixField.innerText = arkSAYears === 1 ? 'year' : 'years';
+    wizard.game.arkSADurationSuffixField.innerText = arkSAYears === 1 ? 'Year' : 'Years';
     if (parseInt(wizard.game.arkSADurationField.value) !== arkSAYears) {
       wizard.game.arkSADurationField.value = arkSAYears;
     }

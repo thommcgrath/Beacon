@@ -2,7 +2,12 @@
   "actions" : {
     "build" : {
       "enabled" : true,
-      "script" : "export NODE_PATH=\"\/opt\/homebrew\/lib\/node_modules\"\nbabel www\/assets\/scripts\/src -d www\/assets\/scripts\/build"
+      "script" : "export NODE_PATH=\"\/opt\/homebrew\/lib\/node_modules\"\nbabel www\/assets\/scripts\/src -d www\/assets\/scripts\/build\nsass --style compressed --no-source-map www\/assets\/css\/src:www\/assets\/css\/build"
+    },
+    "run" : {
+      "enabled" : true,
+      "script" : "export NODE_PATH=\"\/opt\/homebrew\/lib\/node_modules\"\nbabel --watch www\/assets\/scripts\/src -d www\/assets\/scripts\/build &\nsass --watch --style compressed --no-source-map www\/assets\/css\/src:www\/assets\/css\/build"
     }
-  }
+  },
+  "openLogOnRun" : "fail"
 }

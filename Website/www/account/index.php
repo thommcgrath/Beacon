@@ -16,7 +16,7 @@ $session->Renew();
 
 $user = BeaconUser::GetByUserID($session->UserID());
 BeaconTemplate::SetTitle('Account: ' . $user->Username());
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/account.css'));
 
 BeaconTemplate::StartScript(); ?>
 <script>

@@ -8,6 +8,21 @@ if (!BeaconTemplate::IsHTML()) {
 $description = BeaconTemplate::PageDescription();
 	
 $body_class = BeaconTemplate::BodyClass();
+
+$css_folder = dirname(__FILE__, 3) . '/www/assets/css/';
+if ($body_class === '') {
+	$theme = 'beacon';
+} else {
+	$theme = $body_class;
+}
+$theme_files = [];
+if (file_exists($css_folder . "build/theme-{$theme}.css")) {
+	$theme_files[''] = "build/theme-{$theme}.css";
+}
+if (file_exists($css_folder . "build/theme-{$theme}-dark.css")) {
+	$theme_files['(prefers-color-scheme: dark)'] = "build/theme-{$theme}-dark.css";
+}
+
 $theme_colors = [];
 if ($body_class === 'purple') {
 	$theme_colors[''] = '#9c0fb0';
@@ -17,7 +32,7 @@ if ($body_class === 'purple') {
 }
 
 ?><!DOCTYPE html>
-<html lang="en"<?php if ($body_class !== '') { echo ' class="' . $body_class . '"'; } ?>>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,8 +57,14 @@ if ($body_class === 'purple') {
 				echo "<meta name=\"theme-color\" media=\"{$media}\" content=\"{$color}\">\n\t\t";
 			}
 		}
+		foreach ($theme_files as $media => $asset) {
+			if (empty($media)) {
+				echo '<link href="' . BeaconCommon::AssetURI($asset) . '" rel="stylesheet" type="text/css">';
+			} else {
+				echo '<link href="' . BeaconCommon::AssetURI($asset) . '" media="' . $media . '" rel="stylesheet" type="text/css">';
+			}
+		}
 		?><meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
-		<link href="<?php echo BeaconCommon::AssetURI('default.scss'); ?>" rel="stylesheet" type="text/css">
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
 		<script src="<?php echo BeaconCommon::AssetURI('default.js'); ?>"></script>
 		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>

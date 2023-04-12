@@ -18,7 +18,7 @@ if ($purchase->RecordCount() === 0) {
 	BeaconCommon::Redirect('/account/#omni');
 }
 
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/account.css'));
 BeaconTemplate::LoadGlobalize();
 
 BeaconTemplate::StartScript();

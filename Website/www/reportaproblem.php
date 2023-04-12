@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('reportaproblem.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/reportaproblem.css'));
 
 header('Cache-Control: no-cache');
 

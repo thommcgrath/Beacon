@@ -6,7 +6,7 @@ class BeaconLogin {
 	public $session_consumer_uri = '';
 	
 	public function Show(): void {
-		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('login.scss'));
+		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/login.css'));
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
 		
 		BeaconTemplate::StartScript();

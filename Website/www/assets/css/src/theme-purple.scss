@@ -1,0 +1,9 @@
+@use "theme" as * with (
+	$foreground-color: #ffffff,
+	$background-color: #9c0fb0,
+	$accent-color: #ffffff
+);
+
+#header_logo, .white-on-dark {
+	filter: brightness(0) invert(1);
+}

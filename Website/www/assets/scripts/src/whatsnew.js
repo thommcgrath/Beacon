@@ -1,5 +1,3 @@
-// macOS 10.11 cannot use ES6
-
 document.addEventListener('DOMContentLoaded', function() {
 	var main_wrapper = document.getElementById('main_wrapper');
 	var navigator = document.getElementById('navigator');

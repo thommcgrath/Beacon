@@ -16,7 +16,7 @@ header('Cache-Control: no-cache');
 
 $database = BeaconCommon::Database();
 
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/account.css'));
 	
 $process_step = 'start';
 if (isset($_REQUEST['process'])) {
