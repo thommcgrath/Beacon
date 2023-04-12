@@ -165,7 +165,10 @@ if (count($map_names) >= 3) {
 			<form action="generate" method="get">
 				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->ProjectID()); ?>">
 				<input type="hidden" name="difficulty_value" value="" id="create_difficulty_value">
-				<p class="text-center"><label class="radio"><input type="radio" name="mode" value="inline" id="create_inline_check" checked><span></span>Show new Game.ini in browser</label><br><label class="radio"><input type="radio" name="mode" value="download" id="create_download_check"><span></span>Download new Game.ini</label></p>
+				<p class="text-center">
+					<div class="input-radio"><input type="radio" name="mode" value="inline" id="create_inline_check" checked><label for="create_inline_check">Show new Game.ini in browser</label></div>
+					<div class="input-radio"><input type="radio" name="mode" value="download" id="create_download_check"><label for="create_download_check">Download new Game.ini</label></div>
+				</p>
 				<p class="text-center"><input type="submit" value="Generate"></p>
 			</form>
 		</div>
