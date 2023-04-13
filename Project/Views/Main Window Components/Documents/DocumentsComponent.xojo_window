@@ -264,6 +264,22 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function CheckGameDatabase(GameID As String) As Boolean
+		  Var DataSource As Beacon.DataSource = App.DataSourceForGame(GameID)
+		  If DataSource Is Nil Or DataSource.HasContent = False Then
+		    Var GameName As String = Language.GameName(GameID)
+		    BeaconUI.ShowAlert("Game database is not ready", "Sit tight a few moments while Beacon prepares its database for " + GameName + ".")
+		    
+		    App.SyncGamedata(False, False)
+		    
+		    Return False
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Controller_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project)
 		  #Pragma Unused Project
 		  
@@ -496,6 +512,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewDocument(GameID As String)
+		  If Self.CheckGameDatabase(GameID) = False Then
+		    Return
+		  End If
+		  
 		  Var Project As Beacon.Project = Beacon.Project.CreateForGameID(GameID)
 		  
 		  Static NewDocumentNumber As Integer = 1
@@ -509,6 +529,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub OpenController(Controller As Beacon.ProjectController, AddToRecents As Boolean = True)
+		  If Self.CheckGameDatabase(Controller.GameID) = False Then
+		    Return
+		  End If
+		  
 		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
 		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)

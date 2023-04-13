@@ -135,6 +135,7 @@ End
 	#tag Event
 		Sub Close()
 		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped)
+		  mInstance = Nil
 		End Sub
 	#tag EndEvent
 
@@ -201,15 +202,21 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub SyncAndShowIfNecessary(ForceRefresh As Boolean)
-		  Var Win As New EngramsUpdateWindow(ForceRefresh)
 		  // Do not show it, the timer will do that
-		  #Pragma Unused Win
+		  
+		  If mInstance Is Nil Then
+		    mInstance = New EngramsUpdateWindow(ForceRefresh)
+		  End If
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
 		Private mForceRefresh As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mInstance As EngramsUpdateWindow
 	#tag EndProperty
 
 

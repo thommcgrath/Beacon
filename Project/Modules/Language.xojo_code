@@ -98,6 +98,17 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function GameName(GameID As String) As String
+		  Select Case GameID
+		  Case Ark.Identifier
+		    Return "Ark: Survival Evolved"
+		  Else
+		    Return GameID
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(Config As Ark.ConfigGroup) As String
 		  Return Language.LabelForConfig(Config.InternalName)
 		End Function
