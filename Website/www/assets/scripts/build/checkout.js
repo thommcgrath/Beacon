@@ -10,6 +10,10 @@ function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { 
 function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
 function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
 function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+var StatusOwns = 'owns'; // User has a license for the item
+var StatusBuying = 'buying'; // The user is buying it in this cart item
+var StatusInCart = 'in-cart'; // The user has it in their cart elsewhere
+var StatusNone = 'none';
 var validateEmail = email => {
   var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).trim().toLowerCase());
@@ -48,6 +52,15 @@ class BeaconCartItem {
   set isGift(newValue) {
     _classPrivateFieldSet(this, _isGift, newValue);
   }
+  get productIds() {
+    return Object.keys(_classPrivateFieldGet(this, _products));
+  }
+  get count() {
+    return Object.keys(_classPrivateFieldGet(this, _products)).length;
+  }
+  reset() {
+    _classPrivateFieldSet(this, _products, {});
+  }
   add(productId, quantity) {
     this.setQuantity(productId, this.getQuantity(productId) + quantity);
   }
@@ -61,10 +74,7 @@ class BeaconCartItem {
   setQuantity(productId, quantity) {
     if (quantity <= 0) {
       if (_classPrivateFieldGet(this, _products).hasOwnProperty(productId)) {
-        _classPrivateFieldSet(this, _products, _classPrivateFieldGet(this, _products).filter(_ref => {
-          var [key, value] = _ref;
-          return key !== productId;
-        }));
+        delete _classPrivateFieldGet(this, _products)[productId];
       }
     } else {
       _classPrivateFieldGet(this, _products)[productId] = quantity;
@@ -76,6 +86,14 @@ class BeaconCartItem {
       products: _classPrivateFieldGet(this, _products),
       isGift: _classPrivateFieldGet(this, _isGift)
     };
+  }
+  get hasArk() {
+    var _Products, _Products$Ark, _Products$Ark$Base;
+    return this.getQuantity((_Products = Products) === null || _Products === void 0 ? void 0 : (_Products$Ark = _Products.Ark) === null || _Products$Ark === void 0 ? void 0 : (_Products$Ark$Base = _Products$Ark.Base) === null || _Products$Ark$Base === void 0 ? void 0 : _Products$Ark$Base.ProductId) > 0;
+  }
+  get hasArkSA() {
+    var _Products2, _Products2$ArkSA, _Products2$ArkSA$Base, _Products3, _Products3$ArkSA, _Products3$ArkSA$Upgr;
+    return this.getQuantity((_Products2 = Products) === null || _Products2 === void 0 ? void 0 : (_Products2$ArkSA = _Products2.ArkSA) === null || _Products2$ArkSA === void 0 ? void 0 : (_Products2$ArkSA$Base = _Products2$ArkSA.Base) === null || _Products2$ArkSA$Base === void 0 ? void 0 : _Products2$ArkSA$Base.ProductId) > 0 || this.getQuantity((_Products3 = Products) === null || _Products3 === void 0 ? void 0 : (_Products3$ArkSA = _Products3.ArkSA) === null || _Products3$ArkSA === void 0 ? void 0 : (_Products3$ArkSA$Upgr = _Products3$ArkSA.Upgrade) === null || _Products3$ArkSA$Upgr === void 0 ? void 0 : _Products3$ArkSA$Upgr.ProductId) > 0;
   }
 }
 var _items = /*#__PURE__*/new WeakMap();
@@ -106,17 +124,35 @@ class BeaconCart {
       try {
         var parsed = JSON.parse(saved);
         _classPrivateFieldSet(this, _email, parsed.email);
-        _classPrivateFieldSet(this, _items, parsed.items.map(savedItem => new BeaconCartItem(savedItem)));
+        _classPrivateFieldSet(this, _items, parsed.items.reduce((items, savedItem) => {
+          var cartItem = new BeaconCartItem(savedItem);
+          if (cartItem.count > 0) {
+            items.push(cartItem);
+          }
+          return items;
+        }, []));
         _classPrivateFieldSet(this, _licenses, parsed.licenses);
       } catch (e) {
         console.log('Failed to load saved cart');
       }
     }
   }
+  reset() {
+    _classPrivateFieldSet(this, _items, []);
+    _classPrivateFieldSet(this, _email, null);
+    _classPrivateFieldSet(this, _emailVerified, false);
+    _classPrivateFieldSet(this, _licenses, []);
+    this.save();
+  }
   toJSON() {
     return {
       email: _classPrivateFieldGet(this, _email),
-      items: _classPrivateFieldGet(this, _items),
+      items: _classPrivateFieldGet(this, _items).reduce((items, cartItem) => {
+        if (cartItem.count > 0) {
+          items.push(cartItem);
+        }
+        return items;
+      }, []),
       licenses: _classPrivateFieldGet(this, _licenses)
     };
   }
@@ -184,7 +220,12 @@ class BeaconCart {
     return [..._classPrivateFieldGet(this, _items)];
   }
   get count() {
-    return _classPrivateFieldGet(this, _items).length;
+    return _classPrivateFieldGet(this, _items).reduce((bundles, cartItem) => {
+      if (cartItem.count > 0) {
+        bundles++;
+      }
+      return bundles;
+    }, 0);
   }
   findLicense(productId) {
     for (var license of _classPrivateFieldGet(this, _licenses)) {
@@ -201,6 +242,14 @@ class BeaconCart {
     return this.findLicense(Products.ArkSA.Base.ProductId);
   }
   get ark2License() {
+    return null;
+  }
+  get personalCartItem() {
+    for (var cartItem of _classPrivateFieldGet(this, _items)) {
+      if (cartItem.isGift === false) {
+        return cartItem;
+      }
+    }
     return null;
   }
 }
@@ -223,10 +272,11 @@ class ViewManager {
     return _classPrivateFieldGet(this, _history).slice(-1);
   }
   back() {
+    var animated = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     if (_classPrivateFieldGet(this, _history).length <= 1) {
       return false;
     }
-    this.switchView(_classPrivateFieldGet(this, _history)[_classPrivateFieldGet(this, _history).length - 2]);
+    this.switchView(_classPrivateFieldGet(this, _history)[_classPrivateFieldGet(this, _history).length - 2], animated);
     _classPrivateFieldSet(this, _history, _classPrivateFieldGet(this, _history).slice(0, _classPrivateFieldGet(this, _history).length - 2));
     return true;
   }
@@ -238,7 +288,7 @@ class ViewManager {
   }
   switchView(newView) {
     var animated = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-    if (this.currentView === newView) {
+    if (this.currentView == newView) {
       return;
     }
     if (_classPrivateFieldGet(this, _timeout)) {
@@ -260,12 +310,14 @@ class ViewManager {
       }, 150));
     } else {
       currentElement.classList.add('hidden');
+      currentElement.classList.add('invisible');
       newElement.classList.remove('invisible');
       newElement.classList.remove('hidden');
     }
   }
 }
-var viewManager = new ViewManager('checkout-wizard-start');
+var wizardViewManager = new ViewManager('checkout-wizard-start');
+var storeViewManager = new ViewManager('page-landing');
 var formatCurrency = amount => {
   var formatter = BeaconCurrency.defaultFormatter;
   if (formatter) {
@@ -274,9 +326,13 @@ var formatCurrency = amount => {
     return amount;
   }
 };
+var updateCart = () => {};
 document.addEventListener('DOMContentLoaded', () => {
   var buyButton = document.getElementById('buy-button');
+  var landingButton = document.getElementById('cart-back-button');
+  var cartContainer = document.getElementById('storefront-cart');
   var wizard = {
+    editCartItem: null,
     start: {
       cancelButton: document.getElementById('checkout-wizard-start-cancel'),
       actionButton: document.getElementById('checkout-wizard-start-action')
@@ -302,11 +358,45 @@ document.addEventListener('DOMContentLoaded', () => {
       arkSADurationSuffixField: document.getElementById('checkout-wizard-game-arksa-duration-suffix-field')
     }
   };
-  var updateGamesList = () => {
+  var cartElements = {
+    emailField: document.getElementById('storefront-cart-header-email-field'),
+    changeEmailButton: document.getElementById('storefront-cart-header-email-button')
+  };
+  var getGameStatus = () => {
+    var gameStatus = {
+      Ark: StatusNone,
+      ArkSA: StatusNone
+    };
+    var personalCartItem = cart.personalCartItem;
+    var isEditing = Boolean(wizard.editCartItem);
     var isGift = wizard.game.giftCheck.checked;
-    var ownsArk = isGift === false && cart.arkLicense;
-    var ownsArkSA = isGift === false && cart.arkSALicense;
-    var buyingArk = cart.hasProduct(Products.Ark.Base.ProductId, false);
+    if (isGift) {
+      gameStatus.Ark = wizard.game.arkCheck.disabled == false && wizard.game.arkCheck.checked ? StatusBuying : StatusNone;
+      gameStatus.ArkSA = wizard.game.arkSACheck.disabled == false && wizard.game.arkSACheck.checked ? StatusBuying : StatusNone;
+    } else {
+      if (cart.arkLicense) {
+        gameStatus.Ark = StatusOwns;
+      } else if (wizard.game.arkCheck.disabled == false && wizard.game.arkCheck.checked) {
+        gameStatus.Ark = StatusBuying;
+      } else if (personalCartItem && (isEditing === false || personalCartItem.id !== wizard.editCartItem.id) && personalCartItem.hasArk) {
+        gameStatus.Ark = StatusInCart;
+      } else {
+        gameStatus.Ark = StatusNone;
+      }
+      if (cart.arkSALicense) {
+        gameStatus.ArkSA = StatusOwns;
+      } else if (wizard.game.arkSACheck.disabled == false && wizard.game.arkSACheck.checked) {
+        gameStatus.ArkSA = StatusBuying;
+      } else if (personalCartItem && (isEditing === false || personalCartItem.id !== wizard.editCartItem.id) && personalCartItem.hasArkSA) {
+        gameStatus.ArkSA = StatusInCart;
+      } else {
+        gameStatus.ArkSA = StatusNone;
+      }
+    }
+    return gameStatus;
+  };
+  var updateGamesList = () => {
+    var gameStatus = getGameStatus();
     var arkSAFullPrice = Products.ArkSA.Base.Price;
     var arkSAEffectivePrice = Products.ArkSA.Base.Price;
     var arkSAYears = Math.min(Math.max(parseInt(wizard.game.arkSADurationField.value) || 1, 1), 10);
@@ -315,15 +405,20 @@ document.addEventListener('DOMContentLoaded', () => {
       wizard.game.arkSADurationField.value = arkSAYears;
     }
     var arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
-    if (ownsArkSA) {
+    if (gameStatus.ArkSA === StatusOwns) {
       // Show as renewal
       var license = ark.arkSALicense;
       arkSAFullPrice = Products.ArkSA.Renewal.Price * arkSAYears;
       arkSAEffectivePrice = arkSAFullPrice;
-    } else if (ownsArk || buyingArk || wizard.game.arkCheck.checked) {
+    } else if (gameStatus.ArkSA === StatusInCart) {
+      // Show as renewal
+      arkSAFullPrice = Products.ArkSA.Renewal.Price * arkSAYears;
+      arkSAEffectivePrice = arkSAFullPrice;
+      wizard.game.arkSAStatusField.innerText = "Additional renewal years for ".concat(Products.ArkSA.Base.Name, " in your cart.");
+    } else if (gameStatus.Ark !== StatusNone) {
       // Show as upgrade
       var discount = Math.round((Products.ArkSA.Base.Price - Products.ArkSA.Upgrade.Price) / Products.ArkSA.Base.Price * 100);
-      var discountLanguage = ownsArk ? 'because you own' : 'when bundled with';
+      var discountLanguage = gameStatus.Ark === StatusOwns ? 'because you own' : 'when bundled with';
       arkSAFullPrice = Products.ArkSA.Base.Price + Products.ArkSA.Renewal.Price * arkSAAdditionalYears;
       arkSAEffectivePrice = Products.ArkSA.Upgrade.Price + Products.ArkSA.Renewal.Price * arkSAAdditionalYears;
       wizard.game.arkSAStatusField.innerText = "".concat(discount, "% off first year ").concat(discountLanguage, " ").concat(Products.Ark.Base.Name, ". Additional years cost ").concat(formatCurrency(Products.ArkSA.Renewal.Price), " each.");
@@ -342,12 +437,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     wizard.game.arkSAPriceField.innerText = formatCurrency(arkSAFullPrice);
     wizard.game.arkSAUpgradePriceField.innerText = formatCurrency(arkSAEffectivePrice);
-    if (ownsArk) {
+    if (gameStatus.Ark === StatusOwns) {
       wizard.game.arkStatusField.innerText = "You already own ".concat(Products.Ark.Base.Name, ".");
       wizard.game.arkCheck.disabled = true;
       wizard.game.arkCheck.checked = false;
       wizard.game.arkPriceField.classList.add('hidden');
-    } else if (buyingArk) {
+    } else if (gameStatus.Ark === StatusInCart) {
       wizard.game.arkStatusField.innerText = "".concat(Products.Ark.Base.Name, " is already in your cart.");
       wizard.game.arkCheck.disabled = true;
       wizard.game.arkCheck.checked = false;
@@ -364,34 +459,233 @@ document.addEventListener('DOMContentLoaded', () => {
     if (wizard.game.arkSACheck.disabled === false && wizard.game.arkSACheck.checked === true) {
       total = total + arkSAEffectivePrice;
     }
+    var addToCart = wizard.editCartItem ? 'Edit' : 'Add to Cart';
     if (total > 0) {
       wizard.game.actionButton.disabled = false;
-      wizard.game.actionButton.innerText = "Add to Cart: ".concat(formatCurrency(total));
+      wizard.game.actionButton.innerText = "".concat(addToCart, ": ").concat(formatCurrency(total));
     } else {
       wizard.game.actionButton.disabled = true;
-      wizard.game.actionButton.innerText = 'Add to Cart';
+      wizard.game.actionButton.innerText = addToCart;
     }
   };
-  buyButton.addEventListener('click', ev => {
+  var goToCart = () => {
+    history.pushState({}, '', '/omni/#checkout');
+    dispatchEvent(new PopStateEvent('popstate', {}));
+  };
+  var goToLanding = () => {
+    history.pushState({}, '', '/omni/');
+    dispatchEvent(new PopStateEvent('popstate', {}));
+  };
+  var createProductRow = (cartItem, productId) => {
+    var quantity = cartItem.getQuantity(productId);
+    if (quantity <= 0) {
+      return null;
+    }
+    var name = ProductIds[productId].Name;
+    var price = ProductIds[productId].Price;
+    var nameCell = document.createElement('div');
+    nameCell.appendChild(document.createTextNode("".concat(quantity, " x ").concat(name)));
+    var priceCell = document.createElement('div');
+    priceCell.classList.add('formatted-price');
+    priceCell.appendChild(document.createTextNode(price * quantity));
+    var row = document.createElement('div');
+    row.classList.add('bundle-product');
+    row.appendChild(nameCell);
+    row.appendChild(priceCell);
+    return row;
+  };
+  var createCartItemRow = cartItem => {
+    var productIds = cartItem.productIds;
+    if (productIds.length <= 0) {
+      return null;
+    }
+    var row = document.createElement('div');
+    row.classList.add('bundle');
+    productIds.forEach(productId => {
+      var productRow = createProductRow(cartItem, productId);
+      if (productRow) {
+        row.appendChild(productRow);
+      }
+    });
+    var giftCell = document.createElement('div');
+    if (cartItem.isGift) {
+      row.classList.add('gift');
+      giftCell.classList.add('gift');
+      if (productIds.length > 1) {
+        giftCell.appendChild(document.createTextNode('These products are a gift. You will receive a gift code for them.'));
+      } else {
+        giftCell.appendChild(document.createTextNode('This product is a gift. You will receive a gift code for it.'));
+      }
+    }
+    var editButton = document.createElement('button');
+    editButton.appendChild(document.createTextNode('Edit'));
+    editButton.classList.add('small');
+    editButton.addEventListener('click', ev => {
+      ev.preventDefault();
+      showWizard(cartItem);
+    });
+    var removeButton = document.createElement('button');
+    removeButton.appendChild(document.createTextNode('Remove'));
+    removeButton.classList.add('red');
+    removeButton.classList.add('small');
+    removeButton.addEventListener('click', ev => {
+      ev.preventDefault();
+      cart.remove(cartItem);
+      updateCart();
+    });
+    var actionButtons = document.createElement('div');
+    actionButtons.classList.add('button-group');
+    actionButtons.appendChild(editButton);
+    actionButtons.appendChild(removeButton);
+    var actionsCell = document.createElement('div');
+    actionsCell.appendChild(actionButtons);
+    var actionsRow = document.createElement('div');
+    actionsRow.classList.add('actions');
+    actionsRow.classList.add('double-group');
+    actionsRow.appendChild(giftCell);
+    actionsRow.appendChild(actionsCell);
+    row.appendChild(actionsRow);
+    return row;
+  };
+  updateCart = () => {
+    if (cart.count > 0) {
+      cartElements.emailField.innerText = cart.email;
+      cartElements.changeEmailButton.classList.remove('hidden');
+      cartContainer.innerText = '';
+      cartContainer.classList.remove('empty');
+      var items = cart.items;
+      items.forEach(cartItem => {
+        var bundleRow = createCartItemRow(cartItem);
+        if (bundleRow) {
+          cartContainer.appendChild(bundleRow);
+        }
+      });
+      var buttonGroup = document.createElement('div');
+      buttonGroup.classList.add('button-group');
+      cartElements.buyMoreButton = document.createElement('button');
+      cartElements.buyMoreButton.addEventListener('click', ev => {
+        showWizard();
+      });
+      cartElements.buyMoreButton.appendChild(document.createTextNode('Add More'));
+      cartElements.checkoutButton = document.createElement('button');
+      cartElements.checkoutButton.addEventListener('click', ev => {
+        console.log('Checkout');
+      });
+      cartElements.checkoutButton.classList.add('default');
+      cartElements.checkoutButton.appendChild(document.createTextNode('Checkout'));
+      buttonGroup.appendChild(cartElements.buyMoreButton);
+      buttonGroup.appendChild(cartElements.checkoutButton);
+      var currencyCell = document.createElement('div');
+      currencyCell.appendChild(document.createTextNode('Currency Menu'));
+      var buttonsCell = document.createElement('div');
+      buttonsCell.appendChild(buttonGroup);
+      var footer = document.createElement('div');
+      footer.classList.add('storefront-cart-footer');
+      footer.classList.add('double-group');
+      footer.appendChild(currencyCell);
+      footer.appendChild(buttonsCell);
+      cartContainer.appendChild(footer);
+    } else {
+      cartElements.emailField.innerText = '';
+      cartElements.changeEmailButton.classList.add('hidden');
+      cartElements.checkoutButton = null;
+      cartContainer.innerText = '';
+      cartContainer.classList.add('empty');
+      cartContainer.appendChild(document.createElement('div'));
+      var middleCell = document.createElement('div');
+      var firstParagraph = document.createElement('p');
+      firstParagraph.appendChild(document.createTextNode('Your cart is empty.'));
+      middleCell.appendChild(firstParagraph);
+      cartElements.buyMoreButton = document.createElement('button');
+      cartElements.buyMoreButton.addEventListener('click', ev => {
+        showWizard();
+      });
+      cartElements.buyMoreButton.classList.add('default');
+      cartElements.buyMoreButton.appendChild(document.createTextNode('Buy Omni'));
+      var secondParagraph = document.createElement('p');
+      secondParagraph.appendChild(cartElements.buyMoreButton);
+      middleCell.appendChild(secondParagraph);
+      cartContainer.appendChild(middleCell);
+      cartContainer.appendChild(document.createElement("div"));
+    }
+    BeaconCurrency.formatPrices();
+  };
+  updateCart();
+  var setViewMode = function () {
+    var animated = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    window.scrollTo(window.scrollX, 0);
+    if (window.location.hash === '#checkout') {
+      storeViewManager.switchView('page-cart', animated);
+    } else {
+      storeViewManager.back(animated);
+    }
+  };
+  if (cart.count > 0) {
+    buyButton.innerText = 'Go to Cart';
+  }
+  var showWizard = function () {
+    var editCartItem = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    wizard.editCartItem = editCartItem;
+    wizard.game.arkCheck.checked = (editCartItem === null || editCartItem === void 0 ? void 0 : editCartItem.getQuantity(Products.Ark.Base.ProductId)) > 0 || false;
+    wizard.game.arkSACheck.checked = (editCartItem === null || editCartItem === void 0 ? void 0 : editCartItem.getQuantity(Products.ArkSA.Base.ProductId)) > 0 || (editCartItem === null || editCartItem === void 0 ? void 0 : editCartItem.getQuantity(Products.ArkSA.Upgrade.ProductId)) > 0 || false;
+    if (editCartItem) {
+      wizard.game.giftCheck.checked = editCartItem.isGift;
+      wizard.game.giftCheck.disabled = true;
+    } else {
+      wizard.game.giftCheck.checked = false;
+      wizard.game.giftCheck.disabled = false;
+    }
+    if (editCartItem) {
+      wizard.game.arkSADurationField.value = editCartItem.getQuantity(Products.ArkSA.Base.ProductId) + editCartItem.getQuantity(Products.ArkSA.Upgrade.ProductId) + editCartItem.getQuantity(Products.ArkSA.Renewal.ProductId);
+    } else {
+      wizard.game.arkSADurationField.value = '1';
+    }
     if (cart.count > 0) {
       wizard.game.cancelButton.innerText = 'Cancel';
       updateGamesList();
-      viewManager.switchView('checkout-wizard-game', false);
-      viewManager.clearHistory();
+      wizardViewManager.switchView('checkout-wizard-game', false);
+      wizardViewManager.clearHistory();
+    } else {
+      wizard.game.cancelButton.innerText = 'Back';
+      wizardViewManager.switchView('checkout-wizard-start', false);
+      wizardViewManager.clearHistory();
+    }
+    if (cart.email) {
+      wizard.email.emailField.value = cart.email;
+    } else {
+      var _ref, _sessionStorage$getIt, _sessionStorage, _localStorage;
+      wizard.email.emailField.value = (_ref = (_sessionStorage$getIt = (_sessionStorage = sessionStorage) === null || _sessionStorage === void 0 ? void 0 : _sessionStorage.getItem('email')) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : (_localStorage = localStorage) === null || _localStorage === void 0 ? void 0 : _localStorage.getItem('email')) !== null && _ref !== void 0 ? _ref : '';
     }
     BeaconDialog.showModal('checkout-wizard');
+  };
+  buyButton.addEventListener('click', ev => {
     ev.preventDefault();
+    if (cart.count > 0) {
+      goToCart();
+      return;
+    }
+    showWizard();
+  });
+  landingButton.addEventListener('click', ev => {
+    goToLanding();
+  });
+  cartElements.changeEmailButton.addEventListener('click', ev => {
+    BeaconDialog.confirm('Changing the email address will clear your cart.', 'Just a heads up, because the contents of your cart rely on your email address, changing the address will start a new cart.', 'Ok', 'Nevermind').then(() => {
+      cart.reset();
+      updateCart();
+      showWizard();
+    });
   });
   wizard.start.cancelButton.addEventListener('click', ev => {
     BeaconDialog.hideModal();
     ev.preventDefault();
   });
   wizard.start.actionButton.addEventListener('click', ev => {
-    viewManager.switchView('checkout-wizard-email');
+    wizardViewManager.switchView('checkout-wizard-email');
     ev.preventDefault();
   });
   wizard.email.cancelButton.addEventListener('click', ev => {
-    viewManager.back();
+    wizardViewManager.back();
     ev.preventDefault();
   });
   wizard.email.actionButton.addEventListener('click', ev => {
@@ -399,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
     wizard.email.errorField.classList.add('hidden');
     cart.setEmail(wizard.email.emailField.value).then(email => {
       updateGamesList();
-      viewManager.switchView('checkout-wizard-game');
+      wizardViewManager.switchView('checkout-wizard-game');
     }).catch(reason => {
       wizard.email.errorField.innerText = reason;
       wizard.email.errorField.classList.remove('hidden');
@@ -410,41 +704,50 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   wizard.game.cancelButton.addEventListener('click', ev => {
     ev.preventDefault();
-    viewManager.back() || BeaconDialog.hideModal();
+    wizardViewManager.back() || BeaconDialog.hideModal();
   });
   wizard.game.actionButton.addEventListener('click', ev => {
     ev.preventDefault();
     var isGift = wizard.game.giftCheck.checked;
-    var includeArk = wizard.game.arkCheck.disabled === false && wizard.game.arkCheck.checked;
-    var includeArkSA = wizard.game.arkSACheck.disabled === false && wizard.game.arkSACheck.checked;
-    var ownsArk = isGift === false && cart.arkLicense;
-    var ownsArkSA = isGift === false && cart.arkSALicense;
-    if (includeArk === false && includeArkSA === false) {
+    var gameStatus = getGameStatus();
+    if (gameStatus.Ark !== StatusBuying && gameStatus.ArkSA !== StatusBuying) {
       return;
     }
-    var lineItem = new BeaconCartItem();
-    lineItem.isGift = isGift;
-    if (includeArk) {
-      lineItem.add(Products.Ark.Base.ProductId, 1);
+    var arkSAYears = parseInt(wizard.game.arkSADurationField.value) || 1;
+    var lineItem;
+    if (wizard.editCartItem) {
+      lineItem = wizard.editCartItem;
+    } else if (!isGift && cart.personalCartItem) {
+      lineItem = cart.personalCartItem;
+      arkSAYears += lineItem.getQuantity(Products.ArkSA.Base.ProductId) + lineItem.getQuantity(Products.ArkSA.Upgrade.ProductId) + lineItem.getQuantity(Products.ArkSA.Renewal.ProductId);
     }
-    if (includeArkSA) {
-      var arkSAYears = Math.min(Math.max(parseInt(wizard.game.arkSADurationField.value) || 1, 1), 10);
-      var arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
-      if (ownsArkSA) {
-        lineItem.add(Products.ArkSA.Renewal.ProductId, 1);
-      } else if (ownsArk) {
-        lineItem.add(Products.ArkSA.Upgrade.ProductId, 1);
+    if (!lineItem) {
+      lineItem = new BeaconCartItem();
+      lineItem.isGift = isGift;
+      cart.add(lineItem);
+    }
+    lineItem.reset();
+    arkSAYears = Math.min(Math.max(arkSAYears, 1), 10);
+    var arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
+    if (gameStatus.Ark === StatusBuying || gameStatus.Ark === StatusInCart) {
+      lineItem.setQuantity(Products.Ark.Base.ProductId, 1);
+    }
+    if (gameStatus.ArkSA !== StatusNone) {
+      if (gameStatus.ArkSA === StatusOwns) {
+        lineItem.setQuantity(Products.ArkSA.Renewal.ProductId, 1);
+      } else if (gameStatus.Ark !== StatusNone) {
+        lineItem.setQuantity(Products.ArkSA.Upgrade.ProductId, 1);
       } else {
-        lineItem.add(Products.ArkSA.Base.ProductId, 1);
+        lineItem.setQuantity(Products.ArkSA.Base.ProductId, 1);
       }
       if (arkSAAdditionalYears > 0) {
-        lineItem.add(Products.ArkSA.Renewal.ProductId, arkSAAdditionalYears);
+        lineItem.setQuantity(Products.ArkSA.Renewal.ProductId, arkSAAdditionalYears);
       }
     }
-    cart.add(lineItem);
+    cart.save();
+    updateCart();
     BeaconDialog.hideModal();
-    history.pushState({}, '', '/omni/#cart');
-    dispatchEvent(new PopStateEvent('popstate', {}));
+    goToCart();
   });
   wizard.game.giftCheck.addEventListener('change', ev => {
     updateGamesList();
@@ -458,116 +761,119 @@ document.addEventListener('DOMContentLoaded', () => {
   wizard.game.arkSADurationField.addEventListener('input', ev => {
     updateGamesList();
   });
-  if (cart.email) {
-    wizard.email.emailField.value = cart.email;
-  } else {
-    var _ref2, _sessionStorage$getIt, _sessionStorage, _localStorage;
-    wizard.email.emailField.value = (_ref2 = (_sessionStorage$getIt = (_sessionStorage = sessionStorage) === null || _sessionStorage === void 0 ? void 0 : _sessionStorage.getItem('email')) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : (_localStorage = localStorage) === null || _localStorage === void 0 ? void 0 : _localStorage.getItem('email')) !== null && _ref2 !== void 0 ? _ref2 : '';
-  }
+  window.addEventListener('popstate', ev => {
+    setViewMode(true);
+  });
+  setViewMode(false);
 });
 document.addEventListener('GlobalizeLoaded', () => {
-  var pageLanding = document.getElementById('page_landing');
-  var pageCart = document.getElementById('page_cart');
-  var stwQuantityField = document.getElementById('stw_quantity_field');
-  var arkGiftQuantityField = document.getElementById('ark_gift_quantity_field');
-  var arkCheckbox = document.getElementById('ark_checkbox');
-  var arkCheckboxFrame = document.getElementById('ark_checkbox_frame');
-  var arkOwnedCaption = document.getElementById('ark_owned_caption');
-  var ark2GiftQuantityField = document.getElementById('ark2_gift_quantity_field');
-  var ark2Checkbox = document.getElementById('ark2_checkbox');
-  var ark2ActiveLicenseCaption = document.getElementById('ark2-activelicense');
-  var arkSAGiftQuantityField = document.getElementById('arksa_gift_quantity_field');
-  var arkSAQuantityField = document.getElementById('arksa_quantity_field');
-  var arkSAActiveLicenseCaption = document.getElementById('arksa-activelicense');
-  var arkSAUpgradeCaption = document.getElementById('arksa-upgrade');
-  var cartBackButton = document.getElementById('cart_back_button');
-  var stripeCheckoutButton = document.getElementById('stripe_checkout_button');
-  var emailField = document.getElementById('checkout_email_field');
-  var totalField = document.getElementById('total_field');
-  var currencyMenu = document.getElementById('currency-menu');
-  var requiredPageElements = [pageLanding, pageCart, stwQuantityField, arkGiftQuantityField, arkCheckbox, arkCheckboxFrame, arkOwnedCaption, cartBackButton, stripeCheckoutButton, emailField, totalField, currencyMenu];
-  if (requiredPageElements.includes(null)) {
-    console.log('Missing page elements');
-    return false;
-  }
-  var setViewMode = () => {
-    window.scrollTo(window.scrollX, 0);
-    if (window.location.hash === '#checkout') {
-      pageLanding.classList.add('hidden');
-      pageCart.classList.remove('hidden');
-    } else {
-      pageLanding.classList.remove('hidden');
-      pageCart.classList.add('hidden');
-    }
-  };
-  var status = {
-    checkingEmail: false,
-    ownsArk: false,
-    ownsArk2: false,
-    ownsArkSA: false
-  };
-  var updateTotal = () => {
-    var includeArk = cart.arkLicense !== null && arkCheckbox.checked;
-    var stwQuantity = Math.max(Math.min(stwQuantityField.value, 10), 0);
-    var arkGiftQuantity = Math.max(Math.min(arkGiftQuantityField.value, 10), 0);
-    if (stwQuantityField.value != stwQuantity) {
-      stwQuantityField.value = stwQuantity;
-    }
-    if (arkGiftQuantityField.value != arkGiftQuantity) {
-      arkGiftQuantityField.value = arkGiftQuantity;
-    }
-    var total = stwPrice * stwQuantity + arkGiftPrice * arkGiftQuantity;
-    if (includeArk) {
-      total += arkPrice;
-    }
-    if (ark2GiftQuantityField && ark2Checkbox && ark2ActiveLicenseCaption) {
-      var includeArk2 = ark2Checkbox.checked;
-      var ark2GiftQuantity = Math.max(Math.min(ark2GiftQuantityField.value, 10), 0);
-      if (ark2GiftQuantityField.value != ark2GiftQuantity) {
-        ark2GiftQuantityField.value = ark2GiftQuantity;
-      }
-      total += ark2GiftPrice * ark2GiftQuantity;
-      if (includeArk2) {
-        total += ark2Price;
-      }
-    }
-    if (arkSAQuantityField && arkSAGiftQuantityField && arkSAActiveLicenseCaption && arkSAUpgradeCaption) {
-      var arkSAQuantity = Math.max(Math.min(arkSAQuantityField.value, 10), 0);
-      var arkSAGiftQuantity = Math.max(Math.min(arkSAGiftQuantityField.value, 10), 0);
-      if (arkSAQuantityField.value != arkSAQuantity) {
-        arkSAQuantityField.value = arkSAQuantity;
-      }
-      if (arkSAGiftQuantityField.value != arkSAGiftQuantity) {
-        arkSAGiftQuantityField.value = arkSAGiftQuantity;
-      }
-      var firstYearPrice = cart.arkLicense || cart.arkSALicense ? arkSAPrice / 2 : arkSAPrice;
-      var additionalYearPrice = arkSAPrice / 2;
-      var firstYear = Math.min(Math.max(arkSAQuantity, 0), 1);
-      var additionalYears = Math.max(arkSAQuantity - 1, 0);
-      total += firstYearPrice * firstYear + additionalYearPrice * additionalYears + arkSAGiftQuantity * arkSAGiftPrice;
-    }
-    totalField.innerHTML = formatCurrency(total);
-    stripeCheckoutButton.disabled = total == 0 || cart.checkingEmail || validateEmail(emailField.value) == false;
-  };
-  var updateCheckoutComponents = () => {
-    if (cart.arkLicense) {
-      arkCheckboxFrame.classList.add('hidden');
-      arkOwnedCaption.classList.remove('hidden');
-    } else {
-      arkCheckboxFrame.classList.remove('hidden');
-      arkOwnedCaption.classList.add('hidden');
-    }
-    if (ark2ActiveLicenseCaption) {
-      if (cart.ark2License) {
-        ark2ActiveLicenseCaption.classList.remove('hidden');
-      } else {
-        ark2ActiveLicenseCaption.classList.add('hidden');
-      }
-    }
-    updateTotal();
-  };
+  updateCart();
 
-  /*const lookupEmail = (email) => {
+  /*const pageLanding = document.getElementById('page-landing');
+  const pageCart = document.getElementById('page-cart');
+  const stwQuantityField = document.getElementById('stw_quantity_field');
+  const arkGiftQuantityField = document.getElementById('ark_gift_quantity_field');
+  const arkCheckbox = document.getElementById('ark_checkbox');
+  const arkCheckboxFrame = document.getElementById('ark_checkbox_frame');
+  const arkOwnedCaption = document.getElementById('ark_owned_caption');
+  const ark2GiftQuantityField = document.getElementById('ark2_gift_quantity_field');
+  const ark2Checkbox = document.getElementById('ark2_checkbox');
+  const ark2ActiveLicenseCaption = document.getElementById('ark2-activelicense');
+  const arkSAGiftQuantityField = document.getElementById('arksa_gift_quantity_field');
+  const arkSAQuantityField = document.getElementById('arksa_quantity_field');
+  const arkSAActiveLicenseCaption = document.getElementById('arksa-activelicense');
+  const arkSAUpgradeCaption = document.getElementById('arksa-upgrade');
+  const cartBackButton = document.getElementById('cart_back_button');
+  const stripeCheckoutButton = document.getElementById('stripe_checkout_button');
+  const emailField = document.getElementById('checkout_email_field');
+  const totalField = document.getElementById('total_field');
+  const currencyMenu = document.getElementById('currency-menu');
+  const requiredPageElements = [pageLanding, pageCart, stwQuantityField, arkGiftQuantityField, arkCheckbox, arkCheckboxFrame, arkOwnedCaption, cartBackButton, stripeCheckoutButton, emailField, totalField, currencyMenu];
+  if (requiredPageElements.includes(null)) {
+  	console.log('Missing page elements');
+  	return false;
+  }
+  
+  const status = {
+  	checkingEmail: false,
+  	ownsArk: false,
+  	ownsArk2: false,
+  	ownsArkSA: false
+  }
+  
+  const updateTotal = () => {
+  	const includeArk = cart.arkLicense !== null && arkCheckbox.checked;
+  	const stwQuantity = Math.max(Math.min(stwQuantityField.value, 10), 0);
+  	const arkGiftQuantity = Math.max(Math.min(arkGiftQuantityField.value, 10), 0);
+  	
+  	if (stwQuantityField.value != stwQuantity) {
+  		stwQuantityField.value = stwQuantity;
+  	}
+  	if (arkGiftQuantityField.value != arkGiftQuantity) {
+  		arkGiftQuantityField.value = arkGiftQuantity;
+  	}
+  	
+  	let total = (stwPrice * stwQuantity) + (arkGiftPrice * arkGiftQuantity);
+  	if (includeArk) {
+  		total += arkPrice;
+  	}
+  	
+  	if (ark2GiftQuantityField && ark2Checkbox && ark2ActiveLicenseCaption) {
+  		const includeArk2 = ark2Checkbox.checked;
+  		const ark2GiftQuantity = Math.max(Math.min(ark2GiftQuantityField.value, 10), 0);
+  		
+  		if (ark2GiftQuantityField.value != ark2GiftQuantity) {
+  			ark2GiftQuantityField.value = ark2GiftQuantity;
+  		}
+  		
+  		total += (ark2GiftPrice * ark2GiftQuantity);
+  		if (includeArk2) {
+  			total += ark2Price;
+  		}
+  	}
+  	
+  	if (arkSAQuantityField && arkSAGiftQuantityField && arkSAActiveLicenseCaption && arkSAUpgradeCaption) {
+  		const arkSAQuantity = Math.max(Math.min(arkSAQuantityField.value, 10), 0);
+  		const arkSAGiftQuantity = Math.max(Math.min(arkSAGiftQuantityField.value, 10), 0);
+  		
+  		if (arkSAQuantityField.value != arkSAQuantity) {
+  			arkSAQuantityField.value = arkSAQuantity;
+  		}
+  		if (arkSAGiftQuantityField.value != arkSAGiftQuantity) {
+  			arkSAGiftQuantityField.value = arkSAGiftQuantity;
+  		}
+  		
+  		const firstYearPrice = (cart.arkLicense || cart.arkSALicense) ? (arkSAPrice / 2) : arkSAPrice;
+  		const additionalYearPrice = arkSAPrice / 2;
+  		const firstYear = Math.min(Math.max(arkSAQuantity, 0), 1);
+  		const additionalYears = Math.max(arkSAQuantity - 1, 0);
+  		
+  		total += (firstYearPrice * firstYear) + (additionalYearPrice * additionalYears) + (arkSAGiftQuantity * arkSAGiftPrice);
+  	}
+  	
+  	totalField.innerHTML = formatCurrency(total);
+  	stripeCheckoutButton.disabled = (total == 0) || cart.checkingEmail || validateEmail(emailField.value) == false;
+  };
+  
+  const updateCheckoutComponents = () => {
+  	if (cart.arkLicense) {
+  		arkCheckboxFrame.classList.add('hidden');
+  		arkOwnedCaption.classList.remove('hidden');
+  	} else {
+  		arkCheckboxFrame.classList.remove('hidden');
+  		arkOwnedCaption.classList.add('hidden');
+  	}
+  	if (ark2ActiveLicenseCaption) {
+  		if (cart.ark2License) {
+  			ark2ActiveLicenseCaption.classList.remove('hidden');
+  		} else {
+  			ark2ActiveLicenseCaption.classList.add('hidden');
+  		}
+  	}
+  	updateTotal();
+  };
+  
+  const lookupEmail = (email) => {
   	const processPurchases = (purchases) => {
   		status.ownsArk = false;
   		status.ownsArk2 = false;
@@ -608,112 +914,132 @@ document.addEventListener('GlobalizeLoaded', () => {
   		status.checkingEmail = false;
   		processPurchases([]);
   	}
-  };*/
-
-  var formatPrices = () => {
-    var prices = document.querySelectorAll('td.price_column');
-    prices.forEach(cell => {
-      var price = parseFloat(cell.getAttribute('beacon-price'));
-      cell.innerText = formatCurrency(price);
-    });
   };
+  
+  const formatPrices = () => {
+  	const prices = document.querySelectorAll('td.price_column');
+  	prices.forEach((cell) => {
+  		const price = parseFloat(cell.getAttribute('beacon-price'));
+  		cell.innerText = formatCurrency(price);
+  	});
+  };
+  
   formatPrices();
   updateCheckoutComponents();
-  setViewMode();
-  cartBackButton.addEventListener('click', ev => {
-    history.pushState({}, '', '/omni/');
-    dispatchEvent(new PopStateEvent('popstate', {}));
-    ev.preventDefault();
+  setViewMode(false);
+  
+  cartBackButton.addEventListener('click', (ev) => {
+  	history.pushState({}, '', '/omni/');
+  	dispatchEvent(new PopStateEvent('popstate', {}));
+  	ev.preventDefault();
   });
-  var quantityFields = [stwQuantityField, arkGiftQuantityField, ark2GiftQuantityField, arkSAQuantityField, arkSAGiftQuantityField];
-  for (var quantityField of quantityFields) {
-    if (quantityField) {
-      quantityField.addEventListener('input', ev => {
-        updateTotal();
-      });
-    }
+  
+  const quantityFields = [
+  	stwQuantityField,
+  	arkGiftQuantityField,
+  	ark2GiftQuantityField,
+  	arkSAQuantityField,
+  	arkSAGiftQuantityField
+  ];
+  for (const quantityField of quantityFields) {
+  	if (quantityField) {
+  		quantityField.addEventListener('input', (ev) => {
+  			updateTotal();
+  		});
+  	}
   }
-  arkCheckbox.addEventListener('change', ev => {
-    updateTotal();
+  
+  arkCheckbox.addEventListener('change', (ev) => {
+  	updateTotal();
   });
+  
   if (ark2Checkbox) {
-    ark2Checkbox.addEventListener('change', ev => {
-      updateTotal();
-    });
+  	ark2Checkbox.addEventListener('change', (ev) => {
+  		updateTotal();
+  	});
   }
-  stripeCheckoutButton.addEventListener('click', ev => {
-    ev.target.disabled = true;
-    var includeArk = cart.arkLicense !== null && arkCheckbox.checked;
-    var stwQuantity = Math.max(Math.min(stwQuantityField.value, 10), 0);
-    var arkGiftQuantity = Math.max(Math.min(arkGiftQuantityField.value, 10), 0);
-    var includeArk2 = ark2Checkbox && ark2Checkbox.checked;
-    var ark2GiftQuantity = ark2GiftQuantityField && Math.max(Math.min(ark2GiftQuantityField.value, 10), 0);
-    var params = new URLSearchParams();
-    params.append('email', cart.email);
-    params.append('ark', includeArk);
-    params.append('ark2', includeArk2);
-    params.append('ark_gift', arkGiftQuantity);
-    params.append('ark2_gift', ark2GiftQuantity);
-    params.append('stw', stwQuantity);
-    BeaconWebRequest.post('/omni/begin', params).then(response => {
-      try {
-        var obj = JSON.parse(response.body);
-        if (sessionStorage) {
-          sessionStorage.setItem('client_reference_id', obj.client_reference_id);
-        }
-        window.location.href = obj.url;
-      } catch (e) {
-        console.log(e);
-        BeaconDialog.Show('There was an error starting the checkout process.', e.message);
-      }
-    }).catch(error => {
-      var message = error.body;
-      try {
-        var obj = JSON.parse(message);
-        if (obj.message) {
-          message = obj.message;
-        }
-      } catch (e) {
-        console.log(e);
-      }
-      BeaconDialog.show('There was an error starting the checkout process.', message);
-      ev.target.disabled = false;
-    });
+  
+  stripeCheckoutButton.addEventListener('click', (ev) => {
+  	ev.target.disabled = true;
+  	
+  	const includeArk = cart.arkLicense !== null && arkCheckbox.checked;
+  	const stwQuantity = Math.max(Math.min(stwQuantityField.value, 10), 0);
+  	const arkGiftQuantity = Math.max(Math.min(arkGiftQuantityField.value, 10), 0);
+  	const includeArk2 = ark2Checkbox && ark2Checkbox.checked;
+  	const ark2GiftQuantity = ark2GiftQuantityField && Math.max(Math.min(ark2GiftQuantityField.value, 10), 0);
+  	
+  	const params = new URLSearchParams();
+  	params.append('email', cart.email);
+  	params.append('ark', includeArk);
+  	params.append('ark2', includeArk2);
+  	params.append('ark_gift', arkGiftQuantity);
+  	params.append('ark2_gift', ark2GiftQuantity);
+  	params.append('stw', stwQuantity);
+  	
+  	BeaconWebRequest.post('/omni/begin', params).then((response) => {
+  		try {
+  			const obj = JSON.parse(response.body);
+  			if (sessionStorage) {
+  				sessionStorage.setItem('client_reference_id', obj.client_reference_id);
+  			}
+  			
+  			window.location.href = obj.url;
+  		} catch (e) {
+  			console.log(e);
+  			BeaconDialog.Show('There was an error starting the checkout process.', e.message);
+  		}
+  	}).catch((error) => {
+  		let message = error.body;
+  		try {
+  			const obj = JSON.parse(message);
+  			if (obj.message) {
+  				message = obj.message;
+  			}
+  		} catch (e) {
+  			console.log(e);
+  		}
+  		BeaconDialog.show('There was an error starting the checkout process.', message);
+  		ev.target.disabled = false;
+  	});
   });
-  emailField.addEventListener('input', ev => {
-    if (emailField.timer) {
-      clearTimeout(emailField.timer);
-    }
-    emailField.timer = setTimeout(() => {
-      updateCheckoutComponents();
-    }, 250);
+  
+  emailField.addEventListener('input', (ev) => {
+  	if (emailField.timer) {
+  		clearTimeout(emailField.timer);
+  	}
+  	
+  	emailField.timer = setTimeout(() => {
+  		updateCheckoutComponents();
+  	}, 250);
   });
-  currencyMenu.addEventListener('change', ev => {
-    var params = new URLSearchParams();
-    params.append('currency', ev.target.value);
-    BeaconWebRequest.get("/omni/currency?".concat(params.toString())).then(response => {
-      location.reload();
-    }).catch(error => {
-      BeaconDialog.show('Sorry, there was a problem setting the currency.', error.body);
-    });
-    return false;
+  
+  currencyMenu.addEventListener('change', (ev) => {
+  	const params = new URLSearchParams();
+  	params.append('currency', ev.target.value);
+  	BeaconWebRequest.get(`/omni/currency?${params.toString()}`).then((response) => {
+  		location.reload();
+  	}).catch((error) => {
+  		BeaconDialog.show('Sorry, there was a problem setting the currency.', error.body);
+  	});
+  	
+  	return false;
   });
-  var currencyLinks = document.querySelectorAll('.currency-button');
-  for (var link of currencyLinks) {
-    link.addEventListener('click', ev => {
-      ev.preventDefault();
-      var linkCurrency = ev.target.getAttribute('currency');
-      var params = new URLSearchParams();
-      params.append('currency', linkCurrency);
-      BeaconWebRequest.get("/omni/currency?".concat(params.toString())).then(response => {
-        location.reload();
-      }).catch(error => {
-        BeaconDialog.show('Sorry, there was a problem setting the currency.', error.body);
-      });
-      return false;
-    });
-  }
-  window.addEventListener('popstate', ev => {
-    setViewMode();
-  });
+  
+  const currencyLinks = document.querySelectorAll('.currency-button');
+  for (const link of currencyLinks) {
+  	link.addEventListener('click', (ev) => {
+  		ev.preventDefault();
+  		
+  		const linkCurrency = ev.target.getAttribute('currency');
+  		const params = new URLSearchParams();
+  		params.append('currency', linkCurrency);
+  		BeaconWebRequest.get(`/omni/currency?${params.toString()}`).then((response) => {
+  			location.reload();
+  		}).catch((error) => {
+  			BeaconDialog.show('Sorry, there was a problem setting the currency.', error.body);
+  		});
+  		
+  		return false;
+  	});
+  }*/
 });

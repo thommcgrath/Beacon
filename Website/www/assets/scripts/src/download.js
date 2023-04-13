@@ -81,6 +81,7 @@ const buildDownloadsTable = async () => {
 		childDownload.classList.add('button');
 		let childButton = document.createElement('a');
 		childButton.classList.add('button');
+		childButton.classList.add('default');
 		childButton.href = url;
 		childButton.innerText = buttonCaption;
 		childButton.setAttribute('rel', 'nofollow');

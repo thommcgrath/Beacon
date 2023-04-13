@@ -78,6 +78,7 @@ var buildDownloadsTable = /*#__PURE__*/function () {
       childDownload.classList.add('button');
       var childButton = document.createElement('a');
       childButton.classList.add('button');
+      childButton.classList.add('default');
       childButton.href = url;
       childButton.innerText = buttonCaption;
       childButton.setAttribute('rel', 'nofollow');

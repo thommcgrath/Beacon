@@ -1,5 +1,10 @@
 "use strict";
 
+const StatusOwns = 'owns'; // User has a license for the item
+const StatusBuying = 'buying'; // The user is buying it in this cart item
+const StatusInCart = 'in-cart'; // The user has it in their cart elsewhere
+const StatusNone = 'none';
+
 const validateEmail = (email) => {
 	const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return re.test(String(email).trim().toLowerCase());
@@ -32,6 +37,18 @@ class BeaconCartItem {
 		this.#isGift = newValue;
 	}
 	
+	get productIds() {
+		return Object.keys(this.#products);
+	}
+	
+	get count() {
+		return Object.keys(this.#products).length;
+	}
+	
+	reset() {
+		this.#products = {};
+	}
+	
 	add(productId, quantity) {
 		this.setQuantity(productId, this.getQuantity(productId) + quantity);
 	}
@@ -47,7 +64,7 @@ class BeaconCartItem {
 	setQuantity(productId, quantity) {
 		if (quantity <= 0) {
 			if (this.#products.hasOwnProperty(productId)) {
-				this.#products = this.#products.filter(([key, value]) => key !== productId);
+				delete this.#products[productId];
 			}
 		} else {
 			this.#products[productId] = quantity;
@@ -60,6 +77,14 @@ class BeaconCartItem {
 			products: this.#products,
 			isGift: this.#isGift
 		};
+	}
+	
+	get hasArk() {
+		return this.getQuantity(Products?.Ark?.Base?.ProductId) > 0;
+	}
+	
+	get hasArkSA() {
+		return this.getQuantity(Products?.ArkSA?.Base?.ProductId) > 0 || this.getQuantity(Products?.ArkSA?.Upgrade?.ProductId) > 0;
 	}
 }
 
@@ -76,7 +101,13 @@ class BeaconCart {
 			try {
 				const parsed = JSON.parse(saved);
 				this.#email = parsed.email;
-				this.#items = parsed.items.map((savedItem) => new BeaconCartItem(savedItem));
+				this.#items = parsed.items.reduce((items, savedItem) => {
+					const cartItem = new BeaconCartItem(savedItem);
+					if (cartItem.count > 0) {
+						items.push(cartItem);
+					}
+					return items;
+				}, []);
 				this.#licenses = parsed.licenses;
 			} catch (e) {
 				console.log('Failed to load saved cart');
@@ -84,10 +115,23 @@ class BeaconCart {
 		}
 	}
 	
+	reset() {
+		this.#items = [];
+		this.#email = null;
+		this.#emailVerified = false;
+		this.#licenses = [];
+		this.save();
+	}
+	
 	toJSON() {
 		return {
 			email: this.#email,
-			items: this.#items,
+			items: this.#items.reduce((items, cartItem) => {
+				if (cartItem.count > 0) {
+					items.push(cartItem);
+				}
+				return items
+			}, []),
 			licenses: this.#licenses
 		};
 	}
@@ -168,7 +212,12 @@ class BeaconCart {
 	}
 	
 	get count() {
-		return this.#items.length;
+		return this.#items.reduce((bundles, cartItem) => {
+			if (cartItem.count > 0) {
+				bundles++;
+			}
+			return bundles;
+		}, 0);
 	}
 	
 	findLicense(productId) {
@@ -191,6 +240,15 @@ class BeaconCart {
 	get ark2License() {
 		return null;
 	}
+	
+	get personalCartItem() {
+		for (const cartItem of this.#items) {
+			if (cartItem.isGift === false) {
+				return cartItem;
+			}
+		}
+		return null;
+	}
 }
 const cart = BeaconCart.load();
 
@@ -206,12 +264,12 @@ class ViewManager {
 		return this.#history.slice(-1);
 	}
 	
-	back() {
+	back(animated = true) {
 		if (this.#history.length <= 1) {
 			return false;
 		}
 		
-		this.switchView(this.#history[this.#history.length - 2]);
+		this.switchView(this.#history[this.#history.length - 2], animated);
 		this.#history = this.#history.slice(0, this.#history.length - 2);
 		return true;
 	}
@@ -225,7 +283,7 @@ class ViewManager {
 	}
 	
 	switchView(newView, animated = true) {
-		if (this.currentView === newView) {
+		if (this.currentView == newView) {
 			return;
 		}
 		
@@ -250,12 +308,14 @@ class ViewManager {
 			}, 150);
 		} else {
 			currentElement.classList.add('hidden');
+			currentElement.classList.add('invisible');
 			newElement.classList.remove('invisible');
 			newElement.classList.remove('hidden');
 		}
 	}
 }
-const viewManager = new ViewManager('checkout-wizard-start');
+const wizardViewManager = new ViewManager('checkout-wizard-start');
+const storeViewManager = new ViewManager('page-landing');
 
 const formatCurrency = (amount) => {
 	const formatter = BeaconCurrency.defaultFormatter;
@@ -266,9 +326,14 @@ const formatCurrency = (amount) => {
 	}
 };
 
+let updateCart = () => {};
+
 document.addEventListener('DOMContentLoaded', () => {
 	const buyButton = document.getElementById('buy-button');
+	const landingButton = document.getElementById('cart-back-button');
+	const cartContainer = document.getElementById('storefront-cart');
 	const wizard = {
+		editCartItem: null,
 		start: {
 			cancelButton: document.getElementById('checkout-wizard-start-cancel'),
 			actionButton: document.getElementById('checkout-wizard-start-action')
@@ -294,12 +359,50 @@ document.addEventListener('DOMContentLoaded', () => {
 			arkSADurationSuffixField: document.getElementById('checkout-wizard-game-arksa-duration-suffix-field')
 		}
 	};
+	const cartElements = {
+		emailField: document.getElementById('storefront-cart-header-email-field'),
+		changeEmailButton: document.getElementById('storefront-cart-header-email-button')
+	};
+	
+	const getGameStatus = () => {
+		const gameStatus = {
+			Ark: StatusNone,
+			ArkSA: StatusNone
+		};
+		
+		const personalCartItem = cart.personalCartItem;
+		const isEditing = Boolean(wizard.editCartItem);
+		const isGift = wizard.game.giftCheck.checked;
+		if (isGift) {
+			gameStatus.Ark = wizard.game.arkCheck.disabled == false && wizard.game.arkCheck.checked ? StatusBuying : StatusNone;
+			gameStatus.ArkSA = wizard.game.arkSACheck.disabled == false && wizard.game.arkSACheck.checked ? StatusBuying : StatusNone;
+		} else {
+			if (cart.arkLicense) {
+				gameStatus.Ark = StatusOwns;
+			} else if (wizard.game.arkCheck.disabled == false && wizard.game.arkCheck.checked) {
+				gameStatus.Ark = StatusBuying;
+			} else if (personalCartItem && (isEditing === false || personalCartItem.id !== wizard.editCartItem.id) && personalCartItem.hasArk) {
+				gameStatus.Ark = StatusInCart;
+			} else {
+				gameStatus.Ark = StatusNone;
+			}
+			
+			if (cart.arkSALicense) {
+				gameStatus.ArkSA = StatusOwns;
+			} else if (wizard.game.arkSACheck.disabled == false && wizard.game.arkSACheck.checked) {
+				gameStatus.ArkSA = StatusBuying;
+			} else if (personalCartItem && (isEditing === false || personalCartItem.id !== wizard.editCartItem.id) && personalCartItem.hasArkSA) {
+				gameStatus.ArkSA = StatusInCart;
+			} else {
+				gameStatus.ArkSA = StatusNone;
+			}
+		}
+		
+		return gameStatus;
+	};
 	
 	const updateGamesList = () => {
-		const isGift = wizard.game.giftCheck.checked;
-		const ownsArk = (isGift === false && cart.arkLicense);
-		const ownsArkSA = (isGift === false && cart.arkSALicense);
-		const buyingArk = cart.hasProduct(Products.Ark.Base.ProductId, false);
+		const gameStatus = getGameStatus();
 		
 		let arkSAFullPrice = Products.ArkSA.Base.Price;
 		let arkSAEffectivePrice = Products.ArkSA.Base.Price;
@@ -311,16 +414,21 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		const arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
 		
-		if (ownsArkSA) {
+		if (gameStatus.ArkSA === StatusOwns) {
 			// Show as renewal
 			const license = ark.arkSALicense;
 			
 			arkSAFullPrice = Products.ArkSA.Renewal.Price * arkSAYears;
 			arkSAEffectivePrice = arkSAFullPrice;
-		} else if (ownsArk || buyingArk || wizard.game.arkCheck.checked) {
+		} else if (gameStatus.ArkSA === StatusInCart) {
+			// Show as renewal
+			arkSAFullPrice = Products.ArkSA.Renewal.Price * arkSAYears;
+			arkSAEffectivePrice = arkSAFullPrice;
+			wizard.game.arkSAStatusField.innerText = `Additional renewal years for ${Products.ArkSA.Base.Name} in your cart.`;
+		} else if (gameStatus.Ark !== StatusNone) {
 			// Show as upgrade
 			const discount = Math.round(((Products.ArkSA.Base.Price - Products.ArkSA.Upgrade.Price) / Products.ArkSA.Base.Price) * 100);
-			const discountLanguage = ownsArk ? 'because you own' : 'when bundled with';
+			const discountLanguage = gameStatus.Ark === StatusOwns ? 'because you own' : 'when bundled with';
 			
 			arkSAFullPrice = Products.ArkSA.Base.Price + (Products.ArkSA.Renewal.Price * arkSAAdditionalYears);
 			arkSAEffectivePrice = Products.ArkSA.Upgrade.Price + (Products.ArkSA.Renewal.Price * arkSAAdditionalYears);
@@ -345,12 +453,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		wizard.game.arkSAPriceField.innerText = formatCurrency(arkSAFullPrice);
 		wizard.game.arkSAUpgradePriceField.innerText = formatCurrency(arkSAEffectivePrice);
 		
-		if (ownsArk) {
+		if (gameStatus.Ark === StatusOwns) {
 			wizard.game.arkStatusField.innerText = `You already own ${Products.Ark.Base.Name}.`;
 			wizard.game.arkCheck.disabled = true;
 			wizard.game.arkCheck.checked = false;
 			wizard.game.arkPriceField.classList.add('hidden');
-		} else if (buyingArk) {
+		} else if (gameStatus.Ark === StatusInCart) {
 			wizard.game.arkStatusField.innerText = `${Products.Ark.Base.Name} is already in your cart.`;
 			wizard.game.arkCheck.disabled = true;
 			wizard.game.arkCheck.checked = false;
@@ -368,24 +476,268 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (wizard.game.arkSACheck.disabled === false && wizard.game.arkSACheck.checked === true) {
 			total = total + arkSAEffectivePrice;
 		}
+		
+		const addToCart = (wizard.editCartItem) ? 'Edit' : 'Add to Cart';
 		if (total > 0) {
 			wizard.game.actionButton.disabled = false;
-			wizard.game.actionButton.innerText = `Add to Cart: ${formatCurrency(total)}`;
+			wizard.game.actionButton.innerText = `${addToCart}: ${formatCurrency(total)}`;
 		} else {
 			wizard.game.actionButton.disabled = true;
-			wizard.game.actionButton.innerText = 'Add to Cart';
+			wizard.game.actionButton.innerText = addToCart;
 		}
 	};
 	
-	buyButton.addEventListener('click', (ev) => {
+	const goToCart = () => {
+		history.pushState({}, '', '/omni/#checkout');
+		dispatchEvent(new PopStateEvent('popstate', {}));
+	};
+	
+	const goToLanding = () => {
+		history.pushState({}, '', '/omni/');
+		dispatchEvent(new PopStateEvent('popstate', {}));
+	}
+	
+	const createProductRow = (cartItem, productId) => {
+		const quantity = cartItem.getQuantity(productId);
+		if (quantity <= 0) {
+			return null;
+		}
+		
+		const name = ProductIds[productId].Name;
+		const price = ProductIds[productId].Price;
+		
+		const nameCell = document.createElement('div');
+		nameCell.appendChild(document.createTextNode(`${quantity} x ${name}`));
+		
+		const priceCell = document.createElement('div');
+		priceCell.classList.add('formatted-price');
+		priceCell.appendChild(document.createTextNode(price * quantity));
+		
+		const row = document.createElement('div');
+		row.classList.add('bundle-product');
+		row.appendChild(nameCell);
+		row.appendChild(priceCell);
+		
+		return row;
+	};
+	
+	const createCartItemRow = (cartItem) => {
+		const productIds = cartItem.productIds;
+		if (productIds.length <= 0) {
+			return null;
+		}
+		
+		const row = document.createElement('div');
+		row.classList.add('bundle');
+		productIds.forEach((productId) => {
+			const productRow = createProductRow(cartItem, productId);
+			if (productRow) {
+				row.appendChild(productRow);
+			}
+		});
+		
+		const giftCell = document.createElement('div');
+		if (cartItem.isGift) {
+			row.classList.add('gift');
+			
+			giftCell.classList.add('gift');
+			if (productIds.length > 1) {
+				giftCell.appendChild(document.createTextNode('These products are a gift. You will receive a gift code for them.'));
+			} else {
+				giftCell.appendChild(document.createTextNode('This product is a gift. You will receive a gift code for it.'));
+			}
+		}
+		
+		const editButton = document.createElement('button');
+		editButton.appendChild(document.createTextNode('Edit'));
+		editButton.classList.add('small');
+		editButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			showWizard(cartItem);
+		});
+		
+		const removeButton = document.createElement('button');
+		removeButton.appendChild(document.createTextNode('Remove'));
+		removeButton.classList.add('red');
+		removeButton.classList.add('small');
+		removeButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			cart.remove(cartItem);
+			updateCart();
+		});
+		
+		const actionButtons = document.createElement('div');
+		actionButtons.classList.add('button-group');
+		actionButtons.appendChild(editButton);
+		actionButtons.appendChild(removeButton);
+		
+		const actionsCell = document.createElement('div');
+		actionsCell.appendChild(actionButtons);
+		
+		const actionsRow = document.createElement('div');
+		actionsRow.classList.add('actions');
+		actionsRow.classList.add('double-group');
+		actionsRow.appendChild(giftCell);
+		actionsRow.appendChild(actionsCell);
+		
+		row.appendChild(actionsRow);
+		
+		return row;
+	};
+	
+	updateCart = () => {
+		if (cart.count > 0) {
+			cartElements.emailField.innerText = cart.email;
+			cartElements.changeEmailButton.classList.remove('hidden');
+			cartContainer.innerText = '';
+			cartContainer.classList.remove('empty');
+			
+			const items = cart.items;
+			items.forEach((cartItem) => {
+				const bundleRow = createCartItemRow(cartItem);
+				if (bundleRow) {
+					cartContainer.appendChild(bundleRow);
+				}
+			});
+			
+			const buttonGroup = document.createElement('div');
+			buttonGroup.classList.add('button-group');
+			
+			cartElements.buyMoreButton = document.createElement('button');
+			cartElements.buyMoreButton.addEventListener('click', (ev) => {
+				showWizard();
+			});
+			cartElements.buyMoreButton.appendChild(document.createTextNode('Add More'));
+			
+			cartElements.checkoutButton = document.createElement('button');
+			cartElements.checkoutButton.addEventListener('click', (ev) => {
+				console.log('Checkout');
+			});
+			cartElements.checkoutButton.classList.add('default');
+			cartElements.checkoutButton.appendChild(document.createTextNode('Checkout'));
+			
+			buttonGroup.appendChild(cartElements.buyMoreButton);
+			buttonGroup.appendChild(cartElements.checkoutButton);
+			
+			const currencyCell = document.createElement('div');
+			currencyCell.appendChild(document.createTextNode('Currency Menu'));
+			
+			const buttonsCell = document.createElement('div');
+			buttonsCell.appendChild(buttonGroup);
+			
+			const footer = document.createElement('div');
+			footer.classList.add('storefront-cart-footer');
+			footer.classList.add('double-group');
+			footer.appendChild(currencyCell);
+			footer.appendChild(buttonsCell);
+			
+			cartContainer.appendChild(footer);
+		} else {
+			cartElements.emailField.innerText = '';
+			cartElements.changeEmailButton.classList.add('hidden');
+			cartElements.checkoutButton = null;
+			cartContainer.innerText = '';
+			cartContainer.classList.add('empty');
+			
+			cartContainer.appendChild(document.createElement('div'));
+			
+			const middleCell = document.createElement('div');
+			const firstParagraph = document.createElement('p');
+			firstParagraph.appendChild(document.createTextNode('Your cart is empty.'));
+			middleCell.appendChild(firstParagraph);
+			
+			cartElements.buyMoreButton = document.createElement('button');
+			cartElements.buyMoreButton.addEventListener('click', (ev) => {
+				showWizard();
+			});
+			cartElements.buyMoreButton.classList.add('default');
+			cartElements.buyMoreButton.appendChild(document.createTextNode('Buy Omni'));
+			const secondParagraph = document.createElement('p');
+			secondParagraph.appendChild(cartElements.buyMoreButton);
+			middleCell.appendChild(secondParagraph);
+			
+			cartContainer.appendChild(middleCell);
+			
+			cartContainer.appendChild(document.createElement("div"));
+		}
+		
+		BeaconCurrency.formatPrices();
+	};
+	updateCart();
+	
+	const setViewMode = (animated = true) => {
+		window.scrollTo(window.scrollX, 0);
+		if (window.location.hash === '#checkout') {
+			storeViewManager.switchView('page-cart', animated);
+		} else {
+			storeViewManager.back(animated);
+		}
+	};
+	
+	if (cart.count > 0) {
+		buyButton.innerText = 'Go to Cart';
+	}
+	
+	const showWizard = (editCartItem = null) => {
+		wizard.editCartItem = editCartItem;
+		wizard.game.arkCheck.checked = editCartItem?.getQuantity(Products.Ark.Base.ProductId) > 0 || false;
+		wizard.game.arkSACheck.checked = editCartItem?.getQuantity(Products.ArkSA.Base.ProductId) > 0 || editCartItem?.getQuantity(Products.ArkSA.Upgrade.ProductId) > 0 || false;
+		
+		if (editCartItem) {
+			wizard.game.giftCheck.checked = editCartItem.isGift;
+			wizard.game.giftCheck.disabled = true;
+		} else {
+			wizard.game.giftCheck.checked = false;
+			wizard.game.giftCheck.disabled = false;
+		}
+		
+		if (editCartItem) {
+			wizard.game.arkSADurationField.value = editCartItem.getQuantity(Products.ArkSA.Base.ProductId) + editCartItem.getQuantity(Products.ArkSA.Upgrade.ProductId) + editCartItem.getQuantity(Products.ArkSA.Renewal.ProductId);
+		} else {
+			wizard.game.arkSADurationField.value = '1';
+		}
+		
 		if (cart.count > 0) {
 			wizard.game.cancelButton.innerText = 'Cancel';
 			updateGamesList();
-			viewManager.switchView('checkout-wizard-game', false);
-			viewManager.clearHistory();
+			wizardViewManager.switchView('checkout-wizard-game', false);
+			wizardViewManager.clearHistory();
+		} else {
+			wizard.game.cancelButton.innerText = 'Back';
+			wizardViewManager.switchView('checkout-wizard-start', false);
+			wizardViewManager.clearHistory();
 		}
+		
+		if (cart.email) {
+			wizard.email.emailField.value = cart.email;
+		} else {
+			wizard.email.emailField.value = sessionStorage?.getItem('email') ?? localStorage?.getItem('email') ?? '';
+		}
+		
 		BeaconDialog.showModal('checkout-wizard');
+	};
+	
+	buyButton.addEventListener('click', (ev) => {
 		ev.preventDefault();
+		
+		if (cart.count > 0) {
+			goToCart();
+			return;
+		}
+		
+		showWizard();
+	});
+	
+	landingButton.addEventListener('click', (ev) => {
+		goToLanding();
+	});
+	
+	cartElements.changeEmailButton.addEventListener('click', (ev) => {
+		BeaconDialog.confirm('Changing the email address will clear your cart.', 'Just a heads up, because the contents of your cart rely on your email address, changing the address will start a new cart.', 'Ok', 'Nevermind').then(() => {
+			cart.reset();
+			updateCart();
+			showWizard();
+		});
 	});
 	
 	wizard.start.cancelButton.addEventListener('click', (ev) => {
@@ -394,12 +746,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 	
 	wizard.start.actionButton.addEventListener('click', (ev) => {
-		viewManager.switchView('checkout-wizard-email');
+		wizardViewManager.switchView('checkout-wizard-email');
 		ev.preventDefault();
 	});
 	
 	wizard.email.cancelButton.addEventListener('click', (ev) => {
-		viewManager.back();
+		wizardViewManager.back();
 		ev.preventDefault();
 	});
 	
@@ -409,7 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		
 		cart.setEmail(wizard.email.emailField.value).then((email) => {
 			updateGamesList();
-			viewManager.switchView('checkout-wizard-game');
+			wizardViewManager.switchView('checkout-wizard-game');
 		}).catch((reason) => {
 			wizard.email.errorField.innerText = reason;
 			wizard.email.errorField.classList.remove('hidden');
@@ -421,50 +773,60 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 	wizard.game.cancelButton.addEventListener('click', (ev) => {
 		ev.preventDefault();
-		viewManager.back() || BeaconDialog.hideModal();
+		wizardViewManager.back() || BeaconDialog.hideModal();
 	});
 	
 	wizard.game.actionButton.addEventListener('click', (ev) => {
 		ev.preventDefault();
 		
 		const isGift = wizard.game.giftCheck.checked;
-		const includeArk = wizard.game.arkCheck.disabled === false && wizard.game.arkCheck.checked;
-		const includeArkSA = wizard.game.arkSACheck.disabled === false && wizard.game.arkSACheck.checked;
-		const ownsArk = (isGift === false && cart.arkLicense);
-		const ownsArkSA = (isGift === false && cart.arkSALicense);
+		const gameStatus = getGameStatus();
 		
-		if (includeArk === false && includeArkSA === false) {
+		if (gameStatus.Ark !== StatusBuying && gameStatus.ArkSA !== StatusBuying) {
 			return;
 		}
 		
-		const lineItem = new BeaconCartItem();
-		lineItem.isGift = isGift;
+		let arkSAYears = parseInt(wizard.game.arkSADurationField.value) || 1;
 		
-		if (includeArk) {
-			lineItem.add(Products.Ark.Base.ProductId, 1);
+		let lineItem;
+		if (wizard.editCartItem) {
+			lineItem = wizard.editCartItem;
+		} else if (!isGift && cart.personalCartItem) {
+			lineItem = cart.personalCartItem;
+			arkSAYears += lineItem.getQuantity(Products.ArkSA.Base.ProductId) + lineItem.getQuantity(Products.ArkSA.Upgrade.ProductId) + lineItem.getQuantity(Products.ArkSA.Renewal.ProductId);
+		}
+		if (!lineItem) {
+			lineItem = new BeaconCartItem();
+			lineItem.isGift = isGift;
+			cart.add(lineItem);
+		}
+		lineItem.reset();
+		
+		arkSAYears = Math.min(Math.max(arkSAYears, 1), 10);
+		const arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
+		
+		if (gameStatus.Ark === StatusBuying || gameStatus.Ark === StatusInCart) {
+			lineItem.setQuantity(Products.Ark.Base.ProductId, 1);
 		}
 		
-		if (includeArkSA) {
-			const arkSAYears = Math.min(Math.max(parseInt(wizard.game.arkSADurationField.value) || 1, 1), 10);
-			const arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
-			
-			if (ownsArkSA) {
-				lineItem.add(Products.ArkSA.Renewal.ProductId, 1);
-			} else if (ownsArk) {
-				lineItem.add(Products.ArkSA.Upgrade.ProductId, 1);
+		if (gameStatus.ArkSA !== StatusNone) {
+			if (gameStatus.ArkSA === StatusOwns) {
+				lineItem.setQuantity(Products.ArkSA.Renewal.ProductId, 1);
+			} else if (gameStatus.Ark !== StatusNone) {
+				lineItem.setQuantity(Products.ArkSA.Upgrade.ProductId, 1);
 			} else {
-				lineItem.add(Products.ArkSA.Base.ProductId, 1);
+				lineItem.setQuantity(Products.ArkSA.Base.ProductId, 1);
 			}
 			if (arkSAAdditionalYears > 0) {
-				lineItem.add(Products.ArkSA.Renewal.ProductId, arkSAAdditionalYears);
+				lineItem.setQuantity(Products.ArkSA.Renewal.ProductId, arkSAAdditionalYears);
 			}
 		}
 		
-		cart.add(lineItem);
+		cart.save();
+		updateCart();
 		
 		BeaconDialog.hideModal();
-		history.pushState({}, '', '/omni/#cart');
-		dispatchEvent(new PopStateEvent('popstate', {}));
+		goToCart();
 	});
 	
 	wizard.game.giftCheck.addEventListener('change', (ev) => {
@@ -483,16 +845,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		updateGamesList();
 	});
 	
-	if (cart.email) {
-		wizard.email.emailField.value = cart.email;
-	} else {
-		wizard.email.emailField.value = sessionStorage?.getItem('email') ?? localStorage?.getItem('email') ?? '';
-	}
+	window.addEventListener('popstate', (ev) => {
+		setViewMode(true);
+	});
+	setViewMode(false);
 });
 
 document.addEventListener('GlobalizeLoaded', () => {
-	const pageLanding = document.getElementById('page_landing');
-	const pageCart = document.getElementById('page_cart');
+	updateCart();
+	
+	/*const pageLanding = document.getElementById('page-landing');
+	const pageCart = document.getElementById('page-cart');
 	const stwQuantityField = document.getElementById('stw_quantity_field');
 	const arkGiftQuantityField = document.getElementById('ark_gift_quantity_field');
 	const arkCheckbox = document.getElementById('ark_checkbox');
@@ -515,17 +878,6 @@ document.addEventListener('GlobalizeLoaded', () => {
 		console.log('Missing page elements');
 		return false;
 	}
-	
-	const setViewMode = () => {
-		window.scrollTo(window.scrollX, 0);
-		if (window.location.hash === '#checkout') {
-			pageLanding.classList.add('hidden');
-			pageCart.classList.remove('hidden');
-		} else {
-			pageLanding.classList.remove('hidden');
-			pageCart.classList.add('hidden');
-		}
-	};
 	
 	const status = {
 		checkingEmail: false,
@@ -606,7 +958,7 @@ document.addEventListener('GlobalizeLoaded', () => {
 		updateTotal();
 	};
 	
-	/*const lookupEmail = (email) => {
+	const lookupEmail = (email) => {
 		const processPurchases = (purchases) => {
 			status.ownsArk = false;
 			status.ownsArk2 = false;
@@ -647,7 +999,7 @@ document.addEventListener('GlobalizeLoaded', () => {
 			status.checkingEmail = false;
 			processPurchases([]);
 		}
-	};*/
+	};
 	
 	const formatPrices = () => {
 		const prices = document.querySelectorAll('td.price_column');
@@ -659,7 +1011,7 @@ document.addEventListener('GlobalizeLoaded', () => {
 	
 	formatPrices();
 	updateCheckoutComponents();
-	setViewMode();
+	setViewMode(false);
 	
 	cartBackButton.addEventListener('click', (ev) => {
 		history.pushState({}, '', '/omni/');
@@ -774,9 +1126,5 @@ document.addEventListener('GlobalizeLoaded', () => {
 			
 			return false;
 		});
-	}
-	
-	window.addEventListener('popstate', (ev) => {
-		setViewMode();
-	});
+	}*/
 });

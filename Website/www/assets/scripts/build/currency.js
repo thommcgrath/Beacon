@@ -52,10 +52,9 @@ class BeaconCurrency {
       var _elem$getAttribute;
       var price = parseFloat((_elem$getAttribute = elem.getAttribute('beacon-price')) !== null && _elem$getAttribute !== void 0 ? _elem$getAttribute : elem.innerText);
       var currency = elem.getAttribute('beacon-currency');
-      if (currency) {
-        elem.innerText = BeaconCurrency.getFormatter(currency)(price);
-      } else {
-        elem.innerText = BeaconCurrency.defaultFormatter(price);
+      var formatter = currency ? BeaconCurrency.getFormatter(currency) : BeaconCurrency.defaultFormatter;
+      if (formatter) {
+        elem.innerText = formatter(price);
       }
     });
   }

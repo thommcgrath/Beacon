@@ -31,6 +31,7 @@ $input-margin-lg: $input-margin * 1.25;
 
 $page_margins: 20px;
 $max_content_width: 1200px;
+$disabled-opacity: 0.4;
 
 $breakpoint_mini: 400px;
 $breakpoint_mobile: 635px;
@@ -231,8 +232,10 @@ $tag-blue-fill: contrasting-color($background-color, #1d4397);
 $tag-blue-text: contrasting-color($tag-blue-fill, #ffffff);
 $button-primary-color: $accent-color;
 $button-primary-text-color: $accent-text-color;
-$button-secondary-color: color.mix($foreground-color, $background-color, 55%);
-$button-secondary-text-color: contrasting-color($button-secondary-color, $foreground-color);
+$button-secondary-color: color.mix($foreground-color, $background-color, 7%);
+$button-secondary-text-color: $foreground-color;
+
+$input-border-color: color.mix($foreground-color, $background-color, 30%);
 
 body {
 	font-family: 'Inter', sans-serif;
@@ -464,7 +467,7 @@ a {
 	opacity: 0;
 }
 
-div.wizard {
+div.wizard, #storefront {
 	& > div {
 		webkit-transition-property: opacity;
 		-o-transition-property: opacity;
@@ -508,6 +511,64 @@ div.medium_section {
 	flex-wrap: wrap;
 }
 
+.button-group {
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 1rem;
+	
+	* {
+		margin: 0px;
+	}
+}
+
+.double-group {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 1rem;
+	
+	div {
+		margin: 0px;
+		
+		&:nth-child(1) {
+			flex: 1 1 auto;
+			text-align: left;
+		}
+		
+		&:nth-child(2) {
+			flex: 1 1 auto;
+			text-align: right;
+		}
+	}
+}
+
+.tripe-group {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 1rem;
+	
+	div {
+		margin: 0px;
+		
+		&:nth-child(1) {
+			flex: 0 1 auto;
+			text-align: left;
+		}
+		
+		&:nth-child(2) {
+			flex: 1 1 auto;
+			text-align: center;
+		}
+		
+		&:nth-child(3) {
+			flex: 0 1 auto;
+			text-align: right;
+		}
+	}
+}
+
 h1 {
 	font-size: 17pt;
 }
@@ -533,11 +594,11 @@ h1, h2, h3 {
 
 .user-suffix {
 	font-weight: 300;
-	color: mix($foreground-color, $background-color, 50%);
+	color: color.mix($foreground-color, $background-color, 50%);
 }
 
 .text-lighter {
-	color: mix($foreground-color, $background-color, 50%);
+	color: color.mix($foreground-color, $background-color, 50%);
 }
 
 span.object_type {
@@ -565,9 +626,9 @@ blockquote {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-right: 10px;
-	$blockquote-color: mix($foreground-color, $background-color, 3%);
-	border-left-color: mix($foreground-color, $blockquote-color, 30%);
-	color: mix($foreground-color, $blockquote-color, 80%);
+	$blockquote-color: color.mix($foreground-color, $background-color, 3%);
+	border-left-color: color.mix($foreground-color, $blockquote-color, 30%);
+	color: color.mix($foreground-color, $blockquote-color, 80%);
 	background-color: $blockquote-color;
 	
 	p:first-child {
@@ -583,7 +644,7 @@ div.visual-group {
 	padding: 20px;
 	border-radius: 10px;
 	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
-	background-color: mix($foreground-color, $background-color, 5%);
+	background-color: color.mix($foreground-color, $background-color, 5%);
 	
 	h1, h2, h3 {
 		margin-bottom: 20px;
@@ -604,7 +665,7 @@ table.generic {
 	
 	tbody {
 		& > tr:nth-child(even) {
-			background-color: mix($background-color, $accent-color, 96%);
+			background-color: color.mix($background-color, $accent-color, 96%);
 		}
 		
 		& > tr:nth-child(odd) {
@@ -663,7 +724,7 @@ table.generic {
 		padding-top: 2pt;
 		word-break: break-word;
 		border-color: $separator-color;
-		color: mix($foreground-color, $background-color, 50%);
+		color: color.mix($foreground-color, $background-color, 50%);
 		
 		span.detail {
 			margin: 4pt;
@@ -910,6 +971,29 @@ table.generic {
 
 /* !Buttons */
 
+@mixin button-colors($button-color, $button-text-color) {
+	$contrasted-button-color: contrasting-color($background-color, $button-color);
+	$contrasted-text-color: contrasting-color($contrasted-button-color, $button-text-color);
+	
+	background-color: $contrasted-button-color;
+	color: $contrasted-text-color;
+	
+	.spinner:after {
+		border-color: $contrasted-text-color transparent $contrasted-text-color transparent;
+	}
+	
+	&:not(:disabled):active {
+		$pressed-text-color: color.mix($contrasted-text-color, #000000, 50%);
+		
+		background-color: color.mix($contrasted-button-color, #000000, 50%);
+		color: $pressed-text-color;
+		
+		.spinner:after {
+			border-color: $pressed-text-color transparent $pressed-text-color transparent;
+		}
+	}
+}
+
 button, input[type="button"], input[type="submit"], input[type="reset"], a.button {
 	-webkit-appearance: none;
 	appearance: none;
@@ -920,7 +1004,7 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 	display: inline-block;
 	font-family: inherit;
 	font-size: $input-font-size;
-	padding: 0.375rem 0.75rem;
+	padding: $input-padding-y $input-padding-x;
 	text-align: center;
 	text-decoration: none;
 	-webkit-transition-duration: $animation-timing;
@@ -934,9 +1018,19 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 	transition-timing-function: ease-out;
 	vertical-align: middle;
 	white-space: nowrap;
-	line-height: 1.5rem;
-	background-color: $button-secondary-color;
-	color: $button-secondary-text-color;
+	line-height: 1.5;
+	
+	&.small {
+		padding: $input-padding-y-sm $input-padding-x-sm;
+		font-size: $input-font-size-sm;
+		border-radius: $border-radius-sm;
+	}
+	
+	&.large {
+		padding: $input-padding-y-lg $input-padding-x-lg;
+		font-size: $input-font-size-lg;
+		border-radius: $border-radius-lg;
+	}
 	
 	+button, +input[type="button"], +input[type="submit"], +input[type="reset"], +a.button {
 		margin-left: 12px;
@@ -944,7 +1038,25 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 	
 	&:disabled {
 		cursor: default;
-		opacity: 0.65;
+		opacity: $disabled-opacity;
+	}
+	
+	@include button-colors(#5c636a, #ffffff);
+	
+	&.blue {
+		@include button-colors(#0d6efd, #ffffff);
+	}
+	
+	&.green {
+		@include button-colors(#157347, #ffffff);
+	}
+	
+	&.red {
+		@include button-colors(#bb2d3b, #ffffff);
+	}
+	
+	&.yellow {
+		@include button-colors(#ffc107, #ffffff);
 	}
 	
 	.spinner {
@@ -962,35 +1074,8 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 	}
 }
 
-button:enabled:active, input[type="button"]:enabled:active, input[type="submit"]:enabled:active, input[type="reset"]:enabled:active, a.button:active {
-	$pressed-text-color: mix($button-secondary-text-color, #000000, 50%);
-	
-	background-color: mix($button-secondary-color, #000000, 50%);
-	color: $pressed-text-color;
-	
-	.spinner:after {
-		border-color: $pressed-text-color transparent $pressed-text-color transparent;
-	}
-}
-
-input[type="submit"], button.default {
-	background-color: $button-primary-color;
-	color: $button-primary-text-color;
-	
-	.spinner:after {
-		border-color: $button-primary-text-color transparent $button-primary-text-color transparent;
-	}
-	
-	&:enabled:active {
-		$pressed-text-color: mix($button-primary-text-color, #000000, 50%);
-		
-		background-color: mix($button-primary-color, #000000, 50%);
-		color: $pressed-text-color;
-		
-		.spinner:after {
-			border-color: $pressed-text-color transparent $pressed-text-color transparent;
-		}
-	}
+input[type="submit"], button.default, a.button.default {
+	@include button-colors($button-primary-color, $button-primary-text-color);
 }
 
 /* !Fields */
@@ -999,8 +1084,7 @@ input[type="submit"], button.default {
 	-webkit-appearance: none;
 	appearance: none;
 	border-radius: $border-radius;
-	border-width: 1px;
-	border-style: solid;
+	border: 1px solid $input-border-color;
 	box-sizing: border-box;
 	font-family: inherit;
 	font-size: $input-font-size;
@@ -1026,7 +1110,6 @@ input[type="submit"], button.default {
 		color: rgba($foreground-color, 0.4);
 	}
 	
-	border-color: rgba($foreground-color, 0.3);
 	background-color: $background-color;
 	color: $foreground-color;
 	
@@ -1127,10 +1210,10 @@ input[type="submit"], button.default {
 	line-height: 1.5rem;
 	text-align: center;
 	white-space: nowrap;
-	border-width: 1px;
-	border-style: solid;
+	border: 1px solid $input-border-color;
 	box-sizing: border-box;
 	@include border-radius($border-radius);
+	background-color: color.mix($foreground-color, $background-color, 3%);
 }
 
 .input-group-sm {
@@ -1170,7 +1253,7 @@ input[type="submit"], button.default {
 	label {
 		padding-left: 6px;
 		line-height: 1.6em;
-		color: mix($foreground-color, $background-color, 70%);
+		color: color.mix($foreground-color, $background-color, 70%);
 	}
 }
 
@@ -1245,7 +1328,7 @@ label.checkbox {
 	}
 	
 	:disabled + span {
-		opacity: 0.5;
+		opacity: $disabled-opacity;
 	}
 }
 
@@ -1782,7 +1865,7 @@ div.results {
 			border-bottom-width: 1px;
 			border-bottom-style: solid;
 			padding-bottom: 0.3em;
-			border-color: mix($separator-color, $background-color, 30%);
+			border-color: color.mix($separator-color, $background-color, 30%);
 		}
 		
 		h1, h2, h3, h4, h5, h6 {
@@ -1825,10 +1908,10 @@ div.results {
 			padding: 15px;
 			margin-top: 20px;
 			font-weight: 300;
-			$bg: mix($foreground-color, $background-color, 2%);
+			$bg: color.mix($foreground-color, $background-color, 2%);
 			background-color: $bg;
 			text-shadow: 0px 1px 0px $background-color;
-			border-top-color: mix($separator-color, $bg, 35%);
+			border-top-color: color.mix($separator-color, $bg, 35%);
 		}
 	}
 	
@@ -1850,7 +1933,7 @@ div.results {
 			margin-bottom: 20px;
 			font-size: 11pt;
 			font-weight: 600;
-			color: mix($foreground-color, $background-color, 50%);
+			color: color.mix($foreground-color, $background-color, 50%);
 		}
 		
 		p {
@@ -1884,14 +1967,14 @@ div.results {
 					border-left-color: $accent-color;
 					
 					&::before {
-						color: mix($foreground-color, $background-color, 30%);
+						color: color.mix($foreground-color, $background-color, 30%);
 					}
 				}
 				
 				&+li {
 					border-top-width: 1px;
 					border-top-style: solid;
-					border-top-color: mix($separator-color, $background-color, 30%);
+					border-top-color: color.mix($separator-color, $background-color, 30%);
 				}
 				
 				&:first-child {
@@ -1942,21 +2025,21 @@ ul.no-markings, ol.no-markings {
 	padding: 16px;
 	
 	&.notice-warning {
-		border-color: mix($text-red, $background-color, 35%);
+		border-color: color.mix($text-red, $background-color, 35%);
 		color: $text-red;
-		background-color: mix($text-red, $background-color, 3%);
+		background-color: color.mix($text-red, $background-color, 3%);
 	}
 	
 	&.notice-caution {
-		border-color: mix($text-yellow, $background-color, 35%);
+		border-color: color.mix($text-yellow, $background-color, 35%);
 		color: $text-yellow;
-		background-color: mix($text-yellow, $background-color, 3%);
+		background-color: color.mix($text-yellow, $background-color, 3%);
 	}
 	
 	&.notice-info {
-		border-color: mix($text-blue, $background-color, 35%);
+		border-color: color.mix($text-blue, $background-color, 35%);
 		color: $text-blue;
-		background-color: mix($text-blue, $background-color, 3%);
+		background-color: color.mix($text-blue, $background-color, 3%);
 	}
 }
 
@@ -2222,16 +2305,134 @@ div.comment-block {
 /* !Code Generator */
 
 #mode_tabs div.selected, #mode_view, #mode_customizations {
-	background-color: mix($foreground-color, $background-color, 10%);
+	background-color: color.mix($foreground-color, $background-color, 10%);
 }
 
 #mode_tabs_new, #mode_tabs_paste, #mode_tabs_upload {
-	background-color: mix($foreground-color, $background-color, 5%);
+	background-color: color.mix($foreground-color, $background-color, 5%);
 }
 
 #browse_results div.properties-text {
 	color: rgba($foreground-color, 0.5);
 	border-color: rgba($foreground-color, 0.1);
+}
+
+/* !Store */
+
+#storefront {
+	$cart-width: 800px;
+	
+	#storefront-cart-header {
+		display: flex;
+		align-items: center;
+		border-bottom: 1px solid $separator-color;
+		padding-bottom: 1rem;
+		box-sizing: border-box;
+		max-width: $cart-width;
+		margin-left: auto;
+		margin-right: auto;
+		
+		div:nth-child(1) {
+			text-align: left;
+			flex: 0 1 auto;
+		}
+		
+		div:nth-child(2) {
+			text-align: right;
+			margin-left: 1rem;
+			margin-right: 1rem;
+			flex: 1 1 auto;
+		}
+		
+		div:nth-child(3) {
+			text-align: right;
+			flex: 0 1 auto;
+		}
+	}
+	
+	#storefront-cart {
+		max-width: $cart-width;
+		box-sizing: border-box;
+		margin-left: auto;
+		margin-right: auto;
+		
+		&.empty {
+			display: flex;
+			flex-direction: column;
+			min-height: 300px;
+			
+			div:nth-child(1) {
+				flex: 1 1 30%;
+			}
+			
+			div:nth-child(2) {
+				flex: 0 0 auto;
+				text-align: center;
+			}
+			
+			div:nth-child(3) {
+				flex: 1 1 70%;
+			}
+		}
+		
+		.storefront-cart-footer {
+			text-align: right;
+			padding-top: 1rem;
+			border-top: 1px solid $separator-color;
+			margin-top: 1rem;
+		}
+		
+		.bundle {
+			$gift-color: #87ceeb;
+			$gift-background-color: color.mix($gift-color, $background-color, 10%);
+			$gift-text-color: contrasting-color($gift-background-color, mix($gift-color, $foreground-color, 50%));
+			$gift-notice-color: contrasting-color($gift-background-color, $gift-color);
+			
+			border: 1px solid $separator-color;
+			border-radius: 0.25rem;
+			margin: 1rem;
+			padding: 1rem;
+			
+			&.gift {
+				border-color: $gift-color;
+				background-color: $gift-background-color;
+				color: $gift-text-color;
+			}
+			
+			.bundle-product {
+				display: flex;
+				align-items: center;
+				
+				div:nth-child(1) {
+					flex: 1 1 auto;
+				}
+				
+				div:nth-child(2) {
+					flex: 0 0 20%;
+					text-align: right;
+				}
+				
+				a.remove {
+					font-size: 0.75em;
+					margin-left: 2em;
+				}
+			}
+			
+			& > div:not(:last-child) {
+				margin-bottom: 0.25rem;
+			}
+			
+			.gift {
+				font-size: 0.75em;
+				font-weight: 600;
+				color: $gift-notice-color;
+			}
+			
+			.actions {
+				margin-top: 1rem;
+			}
+		}
+	}
 }
 
 @media (min-width: $breakpoint_desktop) {

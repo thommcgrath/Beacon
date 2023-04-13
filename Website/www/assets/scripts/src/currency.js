@@ -66,10 +66,9 @@ class BeaconCurrency {
 		prices.forEach((elem) => {
 			const price = parseFloat(elem.getAttribute('beacon-price') ?? elem.innerText);
 			const currency = elem.getAttribute('beacon-currency');
-			if (currency) {
-				elem.innerText = BeaconCurrency.getFormatter(currency)(price);
-			} else {
-				elem.innerText = BeaconCurrency.defaultFormatter(price);
+			const formatter = currency ? BeaconCurrency.getFormatter(currency) : BeaconCurrency.defaultFormatter;
+			if (formatter) {
+				elem.innerText = formatter(price);
 			}
 		});
 	}
