@@ -38,7 +38,7 @@ class BeaconCurrency {
 		];
 		const dataPromises = [];
 		for (const dataFile of dataFiles) {
-			dataPromises.push(BeaconWebRequest.get(`/assets/scripts/thirdparty/cldr/${dataFile}`).then((response) => {
+			dataPromises.push(BeaconWebRequest.get(`/assets/scripts/cldr/${dataFile}`).then((response) => {
 				try {
 					Globalize.load(JSON.parse(response.body));
 				} catch (loadErr) {
