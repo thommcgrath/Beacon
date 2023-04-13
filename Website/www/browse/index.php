@@ -1,7 +1,7 @@
 <?php
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Browse Projects');
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/generator.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('generator.css'));
 
 $search_keys = array(
 	'public' => true

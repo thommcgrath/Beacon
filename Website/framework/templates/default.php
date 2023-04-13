@@ -16,11 +16,11 @@ if ($body_class === '') {
 	$theme = $body_class;
 }
 $theme_files = [];
-if (file_exists($css_folder . "build/theme-{$theme}.css")) {
-	$theme_files[''] = "build/theme-{$theme}.css";
+if (file_exists($css_folder . "theme-{$theme}.css")) {
+	$theme_files[''] = "theme-{$theme}.css";
 }
-if (file_exists($css_folder . "build/theme-{$theme}-dark.css")) {
-	$theme_files['(prefers-color-scheme: dark)'] = "build/theme-{$theme}-dark.css";
+if (file_exists($css_folder . "theme-{$theme}-dark.css")) {
+	$theme_files['(prefers-color-scheme: dark)'] = "theme-{$theme}-dark.css";
 }
 
 $theme_colors = [];

@@ -106,13 +106,11 @@ abstract class BeaconCommon {
 		$folders = [$extension];
 		$in_production = null;
 		switch ($extension) {
-		case 'scss':
-			$public_extension = 'css';
+		case 'css':
 			$folders = ['css'];
 			break;
 		case 'js':
-			$in_production = static::InProduction();
-			$folders = ['scripts/build', 'scripts/thirdparty'];
+			$folders = ['scripts'];
 			break;
 		case 'svg':
 		case 'png':

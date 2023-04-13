@@ -99,7 +99,7 @@ const arkSAProductId = Products.ArkSA?.Base?.ProductId ?? '';
 <?php
 BeaconTemplate::FinishScript();
 
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/omni.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 
 ?>

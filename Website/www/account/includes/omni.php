@@ -11,7 +11,7 @@ if (!$has_purchased) {
 	return;
 }
 
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/omni.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 
 BeaconTemplate::StartScript(); ?>
 <script>

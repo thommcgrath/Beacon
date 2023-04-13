@@ -3,7 +3,7 @@
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
 BeaconTemplate::SetTitle('Thanks for purchasing!');
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/omni.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 BeaconTemplate::StartScript(); ?>
 <script>
 "use strict";

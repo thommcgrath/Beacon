@@ -8,7 +8,7 @@ if (isset($_GET['slug']) == false) {
 	exit;
 }
 
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/help.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('help.css'));
 
 $slug = $_GET['slug'];
 $database = BeaconCommon::Database();

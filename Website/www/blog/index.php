@@ -59,7 +59,7 @@ if (is_null($article_data)) {
 
 BeaconTemplate::SetTitle($article_data['title']);
 BeaconTemplate::SetPageDescription($article_data['preview']);
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/blog.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('blog.css'));
 
 $results = $database->Query('SELECT article_id, article_slug, subject FROM blog_articles WHERE publish_date < CURRENT_TIMESTAMP ORDER BY publish_date DESC LIMIT 10;');
 

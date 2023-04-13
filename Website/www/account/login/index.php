@@ -143,7 +143,7 @@ if (is_null($session) == false) {
 	}
 }
 
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('build/account.css'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
 ?>
 <div id="login_container">

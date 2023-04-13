@@ -5,8 +5,8 @@
 		<title>Welcome to Beacon</title>
 		<meta name="viewport" content="width=400">
 		<script type="text/javascript" nonce="<?php echo $_SERVER['CSP_NONCE']; ?>">var login_only = <?php echo (empty($_GET['login_only']) == false && boolval($_GET['login_only']) == true) ? 'true' : 'false'; ?>;</script>
-		<link href="<?php echo BeaconCommon::AssetURI('build/theme-beacon.css'); ?>" rel="stylesheet" type="text/css">
-		<link href="<?php echo BeaconCommon::AssetURI('build/welcome.css'); ?>" rel="stylesheet" media="all" type="text/css">
+		<link href="<?php echo BeaconCommon::AssetURI('theme-beacon.css'); ?>" rel="stylesheet" type="text/css">
+		<link href="<?php echo BeaconCommon::AssetURI('welcome.css'); ?>" rel="stylesheet" media="all" type="text/css">
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
 		<?php
 		$header_lines = BeaconTemplate::ExtraHeaderLines();
