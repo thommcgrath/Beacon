@@ -13,6 +13,7 @@ $border-radius: 0.25rem;
 $border-radius-sm: 0.2rem;
 $border-radius-lg: 0.3rem;
 $font-size: 1rem;
+$font-weight: 400;
 
 $input-padding-y: 0.375rem;
 $input-padding-x: 0.75rem;
@@ -45,7 +46,7 @@ $enable-rounded: true;
 
 @mixin source-code-pro() {
 	font-family: 'Source Code Pro', monospace;
-	font-weight: 400;
+	font-weight: $font-weight;;
 	font-style: normal;
 }
 
@@ -239,7 +240,7 @@ $input-border-color: color.mix($foreground-color, $background-color, 30%);
 
 body {
 	font-family: 'Inter', sans-serif;
-	font-weight: 400;
+	font-weight: $font-weight;;
 	font-style: normal;
 	font-size: 11pt;
 	color: $foreground-color;
@@ -671,7 +672,7 @@ table.generic {
 		
 		td, th {
 			text-align: left;
-			font-weight: 400;
+			font-weight: $font-weight;;
 			border-color: $accent-color;
 			color: inherit;
 		}
@@ -1005,6 +1006,7 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 	vertical-align: middle;
 	white-space: nowrap;
 	line-height: 1.5;
+	font-weight: $font-weight;;
 	
 	&.small {
 		padding: $input-padding-y-sm $input-padding-x-sm;
@@ -1061,7 +1063,7 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 }
 
 input[type="submit"], button.default, a.button.default {
-	@include button-colors($button-primary-color, $button-primary-text-color);
+	@include button-colors($button-primary-color, $button-primary-text-color, false);
 }
 
 /* !Fields */
@@ -1197,7 +1199,7 @@ input[type="submit"], button.default, a.button.default {
 	align-items: center;
 	padding: $input-padding-y $input-padding-x;
 	font-size: $input-font-size;
-	font-weight: 400;
+	font-weight: $font-weight;;
 	line-height: 1.5rem;
 	text-align: center;
 	white-space: nowrap;
