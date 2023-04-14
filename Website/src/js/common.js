@@ -172,6 +172,8 @@ class BeaconDialog {
 			overlay.classList.add('visible');
 			modal.classList.add('visible');
 		}, 10);
+		
+		//window.addEventListener('resize', this.checkViewport);
 	}
 	
 	static hideModal() {
@@ -185,6 +187,8 @@ class BeaconDialog {
 			return;
 		}
 		
+		//window.removeEventListener('resize', this.checkViewport);
+		
 		overlay.classList.remove('visible');
 		modal.classList.remove('visible');
 		
@@ -193,6 +197,10 @@ class BeaconDialog {
 			modal.classList.remove('exist');
 			BeaconDialog.activeModal = null;
 		}, 300);
+	}
+	
+	static checkViewport() {
+		console.log('checkViewport');
 	}
 }
 

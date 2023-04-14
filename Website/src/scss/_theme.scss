@@ -445,7 +445,7 @@ a {
 }
 
 .pagebody {
-	min-width: 280px;
+	min-width: 320px;
 	width: auto;
 	max-width: $max_content_width;
 	margin-left: auto;
@@ -460,30 +460,11 @@ a {
 }
 
 .hidden {
-	display: none;
+	display: none !important;
 }
 
 .invisible {
 	opacity: 0;
-}
-
-div.wizard, #storefront {
-	& > div {
-		webkit-transition-property: opacity;
-		-o-transition-property: opacity;
-		transition-property: opacity;
-		-webkit-transition-timing-function: linear;
-		-o-transition-timing-function: linear;
-		transition-timing-function: linear;
-		-webkit-transition-duration: $animation-timing;
-		-o-transition-duration: $animation-timing;
-		transition-duration: $animation-timing;
-		/*opacity: 1;
-		
-		&.invisible {
-			opacity: 0;
-		}*/
-	}
 }
 
 div.small_section {
@@ -971,9 +952,14 @@ table.generic {
 
 /* !Buttons */
 
-@mixin button-colors($button-color, $button-text-color) {
-	$contrasted-button-color: contrasting-color($background-color, $button-color);
-	$contrasted-text-color: contrasting-color($contrasted-button-color, $button-text-color);
+@mixin button-colors($button-color, $button-text-color, $auto-contrast: true) {
+	$contrasted-button-color: $button-color;
+	$contrasted-text-color: $button-text-color;
+	
+	@if $auto-contrast {
+		$contrasted-button-color: contrasting-color($background-color, $button-color);
+		$contrasted-text-color: contrasting-color($contrasted-button-color, $button-text-color);
+	}
 	
 	background-color: $contrasted-button-color;
 	color: $contrasted-text-color;
@@ -1142,7 +1128,7 @@ input[type="submit"], button.default, a.button.default {
 		box-sizing: border-box;
 		
 		&::placeholder {
-			color: transparent;
+			color: transparent !important;
 		}
 		
 		&:focus, &:not(:placeholder-shown) {
@@ -1198,6 +1184,11 @@ input[type="submit"], button.default, a.button.default {
 		&:focus {
 			z-index: 3;
 		}
+	}
+	
+	button {
+		border: 1px solid $input-border-color;
+		@include button-colors(color.mix($foreground-color, $background-color, 3%), $foreground-color, false);
 	}
 }
 
@@ -1725,23 +1716,23 @@ div.results {
 }
 
 .modal {
+	$padding: 20px;
+	
 	display: none;
-	opacity: 0;
+	opacity: 1;
 	transition-duration: 0.25s;
 	transition-timing-function: ease-out;
 	transition-property: opacity, top;
 	z-index: 2001;
 	position: fixed;
-	top: 35%;
-	left: 50%;
-	width: 600px;
-	margin-left: -300px;
-	margin-right: auto;
-	padding: 30px;
-	border-radius: 6px;
+	top: 100%;
+	left: 0px;
+	width: 100%;
+	min-width: 320px;
+	height: 100%;
+	padding: 0px;
 	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.45);
 	box-sizing: border-box;
-	transform: translateY(-50%);
 	line-height: 1.5em;
 	background-color: $background-color;
 	
@@ -1750,46 +1741,64 @@ div.results {
 	}
 	
 	&.visible {
-		opacity: 1;
-		top: 40%;
+		top: 0%;
 	}
 	
-	.button-bar {
+	.modal-content {
 		display: flex;
-		margin-top: 30px;
-		justify-content: space-between;
-		align-items: center;
+		flex-direction: column;
+		box-sizing: border-box;
+		max-height: 100vh;
 		
-		.left {
-			text-align: left;
-			flex: 1 1 auto;
+		.title-bar {
+			font-weight: 600;
+			flex: 0 0 auto;
+			box-sizing: border-box;
+			margin-top: max(env(safe-area-inset-top, $padding), $padding);
+			margin-left: max(env(safe-area-inset-left, $padding), $padding);
+			margin-right: max(env(safe-area-inset-right, $padding), $padding);
+			margin-bottom: $padding;
 		}
 		
-		.middle {
-			text-align: center;
+		.content {
 			flex: 1 1 auto;
+			overflow: auto;
+			box-sizing: border-box;
+			padding-top: $padding;
+			padding-left: max(env(safe-area-inset-left, $padding), $padding);
+			padding-right: max(env(safe-area-inset-right, $padding), $padding);
+			padding-bottom: $padding;
+			border-top: 1px solid $separator-color;
+			border-bottom: 1px solid $separator-color;
 		}
-		
-		.right {
-			text-align: right;
-			flex: 1 1 auto;
-		}
-	}
 	
-	.title-bar {
-		font-weight: 600;
-		margin-bottom: 30px;
-	}
-	
-	@media (max-width: 640px) {
-		left: 20px;
-		width: auto;
-		right: 20px;
-		margin: 0px;
-		top: 45%;
-		
-		&.visible {
-			top: 50%;	
+		.button-bar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 1rem;
+			flex: 0 0 auto;
+			box-sizing: border-box;
+			margin-top: $padding;
+			margin-left: max(env(safe-area-inset-left, $padding), $padding);
+			margin-right: max(env(safe-area-inset-right, $padding), $padding);
+			margin-bottom: max(env(safe-area-inset-bottom, $padding), $padding);
+			
+			.left {
+				text-align: left;
+				flex: 1 1 auto;
+			}
+			
+			.middle {
+				text-align: center;
+				flex: 1 1 auto;
+			}
+			
+			.right {
+				text-align: right;
+				flex: 1 1 auto;
+			}
 		}
 	}
 }
@@ -2319,6 +2328,96 @@ div.comment-block {
 
 /* !Store */
 
+#checkout-wizard, #storefront {
+	& > div {
+		webkit-transition-property: opacity;
+		-o-transition-property: opacity;
+		transition-property: opacity;
+		-webkit-transition-timing-function: linear;
+		-o-transition-timing-function: linear;
+		transition-timing-function: linear;
+		-webkit-transition-duration: $animation-timing;
+		-o-transition-duration: $animation-timing;
+		transition-duration: $animation-timing;
+		/*opacity: 1;
+		
+		&.invisible {
+			opacity: 0;
+		}*/
+	}
+}
+
+#checkout-wizard-game-list {
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	
+	input[type=number] {
+		-moz-appearance: textfield;
+	}
+	
+	& > div {
+		display: flex;
+		align-items: center;
+		
+		&+div {
+			margin-top: 20px;
+		}
+		
+		.checkout-wizard-checkbox-cell {
+			flex: 0 1 auto;
+		}
+		
+		.checkout-wizard-description-cell {
+			flex: 1 1 auto;
+			padding-left: 10px;
+			padding-right: 10px;
+			
+			& > label {
+				font-weight: bold;
+			}
+			
+			.checkout-wizard-game-status {
+				font-size: smaller;
+				opacity: 0.8;
+			}
+			
+			div.field-with-label {
+				display: inline-flex;
+				align-items: center;
+				gap: 12px;
+				
+				& > div:nth-child(1) {
+					flex: 0 0 auto;
+					text-align: right;
+				}
+				
+				& > div:nth-child(2) {
+					flex: 0 0 60px;
+				}
+				
+				& > div:nth-child(3) {
+					flex: 0 0 auto;
+				}
+			}
+		}
+		
+		.checkout-wizard-price-cell {
+			flex: 0 1 auto;
+			
+			.checkout-wizard-discounted {
+				text-decoration: line-through;
+			}
+			
+			.checkout-wizard-discount {
+				
+			}
+		}
+	}
+}
+
 #storefront {
 	$cart-width: 800px;
 	
@@ -2402,19 +2501,20 @@ div.comment-block {
 			.bundle-product {
 				display: flex;
 				align-items: center;
+				gap: 1rem;
 				
 				div:nth-child(1) {
-					flex: 1 1 auto;
+					flex: 0 0 5%;
+					text-align: center;
 				}
 				
 				div:nth-child(2) {
-					flex: 0 0 20%;
-					text-align: right;
+					flex: 1 1 auto;
 				}
 				
-				a.remove {
-					font-size: 0.75em;
-					margin-left: 2em;
+				div:nth-child(3) {
+					flex: 0 0 20%;
+					text-align: right;
 				}
 			}
 			
@@ -2432,6 +2532,28 @@ div.comment-block {
 				margin-top: 1rem;
 			}
 		}
+	}
+}
+
+.shake {
+	animation: shake-keyframes 0.4s linear 1;
+}
+
+@keyframes shake-keyframes {
+	0% {
+		transform: translate(10px);
+	}
+	20% {
+		transform: translate(-10px);
+	}
+	40% {
+		transform: translate(5px);
+	}
+	80% {
+		transform: translate(-5px);
+	}
+	100% {
+		transform: translate(0px);
 	}
 }
 
@@ -2528,6 +2650,57 @@ div.comment-block {
 		div.page-panel-footer {
 			flex: 1 1 0;
 			display: block;
+		}
+	}
+	
+	.modal {
+		$padding: 30px;
+		
+		opacity: 0;
+		top: 35%;
+		left: 50%;
+		width: 600px;
+		margin-left: -300px;
+		margin-right: auto;
+		padding: $padding;
+		transform: translateY(-50%);
+		border-radius: $border-radius;
+		margin-left: -300px;
+		margin-right: auto;
+		height: auto;
+		
+		&.visible {
+			top: 40%;
+			opacity: 1;
+		}
+		
+		.modal-content {
+			.title-bar {
+				margin: 0px;
+				margin-bottom: $padding;
+			}
+			
+			.content {
+				border: none;
+				padding: 0px;
+			}
+			
+			.button-bar {
+				margin: 0px;
+				margin-top: $padding;
+			}
+		}
+		
+		@media (max-width: 640px) {
+			left: 20px;
+			width: auto;
+			right: 20px;
+			margin: 0px;
+			top: 45%;
+			
+			&.visible {
+				top: 50%;	
+			}
 		}
 	}
 }

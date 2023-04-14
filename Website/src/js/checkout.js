@@ -5,6 +5,8 @@ const StatusBuying = 'buying'; // The user is buying it in this cart item
 const StatusInCart = 'in-cart'; // The user has it in their cart elsewhere
 const StatusNone = 'none';
 
+const MaxRenewalCount = 5;
+
 const validateEmail = (email) => {
 	const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return re.test(String(email).trim().toLowerCase());
@@ -355,8 +357,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			arkSAUpgradePriceField: document.getElementById('checkout-wizard-game-arksa-discount-price'),
 			arkSAStatusField: document.getElementById('checkout-wizard-game-status-arksa'),
 			arkStatusField: document.getElementById('checkout-wizard-game-status-ark'),
+			arkSADurationGroup: document.getElementById('checkout-wizard-arksa-duration-group'),
 			arkSADurationField: document.getElementById('checkout-wizard-game-arksa-duration-field'),
-			arkSADurationSuffixField: document.getElementById('checkout-wizard-game-arksa-duration-suffix-field')
+			arkSADurationUpButton: document.getElementById('checkout-wizard-game-arksa-yearup-button'),
+			arkSADurationDownButton: document.getElementById('checkout-wizard-game-arksa-yeardown-button')
 		}
 	};
 	const cartElements = {
@@ -407,9 +411,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		let arkSAFullPrice = Products.ArkSA.Base.Price;
 		let arkSAEffectivePrice = Products.ArkSA.Base.Price;
 		
-		const arkSAYears = Math.min(Math.max(parseInt(wizard.game.arkSADurationField.value) || 1, 1), 10);
-		wizard.game.arkSADurationSuffixField.innerText = arkSAYears === 1 ? 'Year' : 'Years';
-		if (parseInt(wizard.game.arkSADurationField.value) !== arkSAYears) {
+		const arkSAYears = Math.min(Math.max(parseInt(wizard.game.arkSADurationField.value) || 1, 1), MaxRenewalCount);
+		if (parseInt(wizard.game.arkSADurationField.value) !== arkSAYears && document.activeElement !== wizard.game.arkSADurationField) {
 			wizard.game.arkSADurationField.value = arkSAYears;
 		}
 		const arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
@@ -506,8 +509,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		const name = ProductIds[productId].Name;
 		const price = ProductIds[productId].Price;
 		
+		const quantityCell = document.createElement('div');
+		quantityCell.appendChild(document.createTextNode(quantity));
+		
 		const nameCell = document.createElement('div');
-		nameCell.appendChild(document.createTextNode(`${quantity} x ${name}`));
+		nameCell.appendChild(document.createTextNode(name));
 		
 		const priceCell = document.createElement('div');
 		priceCell.classList.add('formatted-price');
@@ -515,6 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		
 		const row = document.createElement('div');
 		row.classList.add('bundle-product');
+		row.appendChild(quantityCell);
 		row.appendChild(nameCell);
 		row.appendChild(priceCell);
 		
@@ -802,7 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		lineItem.reset();
 		
-		arkSAYears = Math.min(Math.max(arkSAYears, 1), 10);
+		arkSAYears = Math.min(Math.max(arkSAYears, 1), MaxRenewalCount);
 		const arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
 		
 		if (gameStatus.Ark === StatusBuying || gameStatus.Ark === StatusInCart) {
@@ -843,6 +850,33 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 	wizard.game.arkSADurationField.addEventListener('input', (ev) => {
 		updateGamesList();
+	});
+	
+	const nudgeArkSADuration = (amount) => {
+		const originalValue = parseInt(wizard.game.arkSADurationField.value);
+		let newValue = originalValue + amount;
+		if (newValue > MaxRenewalCount || newValue < 1) {
+			wizard.game.arkSADurationGroup.classList.add('shake');
+			setTimeout(() => {
+				wizard.game.arkSADurationGroup.classList.remove('shake');
+			}, 400);
+			newValue = Math.max(Math.min(newValue, MaxRenewalCount), 1);
+		}
+		if (originalValue !== newValue) {
+			wizard.game.arkSADurationField.value = newValue;
+			wizard.game.arkSACheck.checked = true;
+			updateGamesList();
+		}
+	}
+	
+	wizard.game.arkSADurationUpButton.addEventListener('click', (ev) => {
+		ev.preventDefault();
+		nudgeArkSADuration(1);
+	});
+	
+	wizard.game.arkSADurationDownButton.addEventListener('click', (ev) => {
+		ev.preventDefault();
+		nudgeArkSADuration(-1);
 	});
 	
 	window.addEventListener('popstate', (ev) => {

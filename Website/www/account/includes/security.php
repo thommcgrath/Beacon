@@ -48,7 +48,7 @@ if ($has_authenticators) {
 		echo '<p>Two step authentication is <strong>enabled</strong> for your account. An authenticator code is required to sign in on an untrusted device, and to change or reset your password.</p>';
 		echo '<table class="generic" id="authenticators-table"><thead><tr><th>Nickname</th><th class="low-priority">Date Added (<span id="authenticators_time_zone_name">UTC</span>)</th><th class="min-width">Actions</th></tr></thead><tbody>';
 		foreach ($authenticators as $authenticator) {
-			echo '<tr id="authenticator-' . htmlentities($authenticator->AuthenticatorID()) . '"><td>' . htmlentities($authenticator->Nickname()) . '<div class="row-details">Date Added: <time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></div></td><td class="low-priority"><time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></td><td class="min-width"><button beacon-authenticator-id="' . htmlentities($authenticator->AuthenticatorID()) . '" beacon-authenticator-name="' . html_entity_decode($authenticator->Nickname()) . '" class="delete_authenticator_button destructive">Delete</a></td></tr>';
+			echo '<tr id="authenticator-' . htmlentities($authenticator->AuthenticatorID()) . '"><td>' . htmlentities($authenticator->Nickname()) . '<div class="row-details">Date Added: <time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></div></td><td class="low-priority"><time datetime="' . date('c', $authenticator->DateAdded()) . '">' . date('M jS, Y \a\t g:i A e', $authenticator->DateAdded()) . '</time></td><td class="min-width"><button beacon-authenticator-id="' . htmlentities($authenticator->AuthenticatorID()) . '" beacon-authenticator-name="' . html_entity_decode($authenticator->Nickname()) . '" class="delete_authenticator_button destructive red">Delete</a></td></tr>';
 		}
 		echo '</table></table>';
 	} else {
@@ -70,29 +70,36 @@ if ($has_authenticators) {
 		}
 		echo '</div>';
 	?>
-	<p class="text-right"><button id="replace-backup-codes-button">Replace Backup Codes</button></p>
+	<p class="text-right"><button id="replace-backup-codes-button" class="yellow">Replace Backup Codes</button></p>
 </div>
 <?php } ?>
 <?php BeaconTemplate::StartModal('add-authenticator-modal'); ?>
-<div class="title-bar">Add Authenticator</div>
-<div id="add-authenticator-content">
-	<div id="add-authenticator-content-left"><img id="add-authenticator-qrcode" src=""></img></div>
-	<div id="add-authenticator-content-right">
-		<p>Scan this code with your authenticator app, then enter the code it generates.</p>
-		<div class="floating-label">
-			<input type="text" class="text-field" id="add-authenticator-code-field" placeholder="Verification Code">
-			<label for="add-authenticator-code-field">Verification Code</label>
-		</div>
-		<div class="floating-label">
-			<input type="text" class="text-field" id="add-authenticator-nickname-field" placeholder="Nickname" value="Google Authenticator">
-			<label for="add-authenticator-nickname-field">Nickname</label>
+<div class="modal-content">
+	<div class="title-bar">Add Authenticator</div>
+	<div id="add-authenticator-content" class="content">
+		<div id="add-authenticator-content-left"><img id="add-authenticator-qrcode" src=""></img></div>
+		<div id="add-authenticator-content-right">
+			<p>Scan this code with your authenticator app, then enter the code it generates.</p>
+			<div class="floating-label">
+				<input type="text" class="text-field" id="add-authenticator-code-field" placeholder="Verification Code">
+				<label for="add-authenticator-code-field">Verification Code</label>
+			</div>
+			<div class="floating-label">
+				<input type="text" class="text-field" id="add-authenticator-nickname-field" placeholder="Nickname" value="Google Authenticator">
+				<label for="add-authenticator-nickname-field">Nickname</label>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="button-bar">
-	<div class="left">&nbsp;</div>
-	<div class="middle">&nbsp;</div>
-	<div class="right"><button id="add-authenticator-cancel-button">Cancel</button> <button id="add-authenticator-action-button" class="default" disabled>Verify</button></div>
+	<div class="button-bar">
+		<div class="left">&nbsp;</div>
+		<div class="middle">&nbsp;</div>
+		<div class="right">
+			<div class="button-group">
+				<button id="add-authenticator-cancel-button">Cancel</button>
+				<button id="add-authenticator-action-button" class="default" disabled>Verify</button>
+			</div>
+		</div>
+	</div>
 </div>
 <?php BeaconTemplate::FinishModal(); ?>
 <?php } ?>

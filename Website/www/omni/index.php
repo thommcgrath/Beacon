@@ -237,24 +237,25 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 	</div>
 </div>
 <?php BeaconTemplate::StartModal('checkout-wizard'); ?>
-<div id="checkout-wizard" class="wizard">
-	<div id="checkout-wizard-start">
+	<div id="checkout-wizard-start" class="wizard modal-content">
 		<div class="title-bar">Getting Started</div>
-		<div>
+		<div class="content">
 			<p>Thanks for your interest in Beacon Omni. We'll ask you a couple simple questions to get your purchase right.</p>
 		</div>
 		<div class="button-bar">
 			<div class="left">&nbsp;</div>
 			<div class="middle">&nbsp;</div>
 			<div class="right">
-				<button id="checkout-wizard-start-cancel">Cancel</button>
-				<button id="checkout-wizard-start-action" class="default">Next</button>
+				<div class="button-group">
+					<button id="checkout-wizard-start-cancel">Cancel</button>
+					<button id="checkout-wizard-start-action" class="default">Next</button>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div id="checkout-wizard-email" class="invisible hidden">
+	<div id="checkout-wizard-email" class="invisible hidden wizard modal-content">
 		<div class="title-bar">Your E-Mail Address</div>
-		<div>
+		<div class="content">
 			<p>Let's start with your E-Mail address. We'll use this to check your purchases so you don't accidentally purchase twice. This will not be stored and will not be used for marketing messages.</p>
 			<p><input type="email" id="checkout-wizard-email-field" placeholder="E-Mail Address"></p>
 			<p class="hidden text-red" id="checkout-wizard-email-error">There was an error with your email address</p>
@@ -263,14 +264,16 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 			<div class="left">&nbsp;</div>
 			<div class="middle">&nbsp;</div>
 			<div class="right">
-				<button id="checkout-wizard-email-cancel">Back</button>
-				<button id="checkout-wizard-email-action" class="default">Next</button>
+				<div class="button-group">
+					<button id="checkout-wizard-email-cancel">Back</button>
+					<button id="checkout-wizard-email-action" class="default">Next</button>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div id="checkout-wizard-game" class="invisible hidden">
+	<div id="checkout-wizard-game" class="invisible hidden wizard modal-content">
 		<div class="title-bar">Select Your Games</div>
-		<div>
+		<div class="content">
 			<p>For which games would you like to purchase Beacon Omni?</p>
 			<div id="checkout-wizard-game-list">
 				<div id="checkout-wizard-game-list-arksa">
@@ -282,10 +285,11 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 						<span class="checkout-wizard-game-status">
 							<span id="checkout-wizard-game-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price">10</span> each.</span>
 						</span><br>
-						<div class="input-group input-group-sm">
-							<span class="input-group-text">Update Plan Duration</span>
+						<div id="checkout-wizard-arksa-duration-group" class="input-group input-group-sm">
+							<span class="input-group-text">Update Years</span>
 							<input class="text-field" type="number" value="1" id="checkout-wizard-game-arksa-duration-field" min="1" max="10">
-							<span class="input-group-text" id="checkout-wizard-game-arksa-duration-suffix-field">Years</span>
+							<button id="checkout-wizard-game-arksa-yeardown-button">-</button>
+							<button id="checkout-wizard-game-arksa-yearup-button">+</button>
 						</div>
 					</div>
 					<div class="checkout-wizard-price-cell">
@@ -305,10 +309,11 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 			<div class="left"><label class="checkbox"><input type="checkbox" value="true" id="checkout-wizard-game-gift-check"><span></span>This purchase is a gift.</label></div>
 			<div class="middle">&nbsp;</div>
 			<div class="right">
-				<button id="checkout-wizard-game-cancel">Back</button>
-				<button id="checkout-wizard-game-action" class="default" disabled>Add to Cart</button>
+				<div class="button-group">
+					<button id="checkout-wizard-game-cancel">Back</button>
+					<button id="checkout-wizard-game-action" class="default" disabled>Add to Cart</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 <?php BeaconTemplate::FinishModal(); ?>
