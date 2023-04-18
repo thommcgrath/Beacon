@@ -237,81 +237,72 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 	</div>
 </div>
 <?php BeaconTemplate::StartModal('checkout-wizard'); ?>
-	<div id="checkout-wizard-start" class="wizard modal-content">
-		<div class="title-bar">Getting Started</div>
-		<div class="content">
-			<p>Thanks for your interest in Beacon Omni. We'll ask you a couple simple questions to get your purchase right.</p>
-		</div>
-		<div class="button-bar">
-			<div class="left">&nbsp;</div>
-			<div class="middle">&nbsp;</div>
-			<div class="right">
-				<div class="button-group">
-					<button id="checkout-wizard-start-cancel">Cancel</button>
-					<button id="checkout-wizard-start-action" class="default">Next</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div id="checkout-wizard-email" class="invisible hidden wizard modal-content">
-		<div class="title-bar">Your E-Mail Address</div>
-		<div class="content">
-			<p>Let's start with your E-Mail address. We'll use this to check your purchases so you don't accidentally purchase twice. This will not be stored and will not be used for marketing messages.</p>
-			<p><input type="email" id="checkout-wizard-email-field" placeholder="E-Mail Address"></p>
-			<p class="hidden text-red" id="checkout-wizard-email-error">There was an error with your email address</p>
-		</div>
-		<div class="button-bar">
-			<div class="left">&nbsp;</div>
-			<div class="middle">&nbsp;</div>
-			<div class="right">
-				<div class="button-group">
-					<button id="checkout-wizard-email-cancel">Back</button>
-					<button id="checkout-wizard-email-action" class="default">Next</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div id="checkout-wizard-game" class="invisible hidden wizard modal-content">
+	<div class="modal-content">
 		<div class="title-bar">Select Your Games</div>
 		<div class="content">
 			<p>For which games would you like to purchase Beacon Omni?</p>
-			<div id="checkout-wizard-game-list">
-				<div id="checkout-wizard-game-list-arksa">
+			<div id="checkout-wizard-list">
+				<div id="checkout-wizard-list-arksa">
 					<div class="checkout-wizard-checkbox-cell">
-						<label class="checkbox"><input type="checkbox" value="arksa" id="checkout-wizard-game-arksa-check"><span></span></label>
+						<label class="checkbox"><input type="checkbox" value="arksa" id="checkout-wizard-arksa-check"><span></span></label>
 					</div>
 					<div class="checkout-wizard-description-cell">
-						<label for="checkout-wizard-game-arksa-check">Ark: Survival Ascended</label><br>
-						<span class="checkout-wizard-game-status">
-							<span id="checkout-wizard-game-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price">10</span> each.</span>
+						<label for="checkout-wizard-arksa-check">Ark: Survival Ascended</label><br>
+						<span class="checkout-wizard-status">
+							<span id="checkout-wizard-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price">10</span> each.</span>
 						</span><br>
 						<div id="checkout-wizard-arksa-duration-group" class="input-group input-group-sm">
 							<span class="input-group-text">Update Years</span>
-							<input class="text-field" type="number" value="1" id="checkout-wizard-game-arksa-duration-field" min="1" max="10">
-							<button id="checkout-wizard-game-arksa-yeardown-button">-</button>
-							<button id="checkout-wizard-game-arksa-yearup-button">+</button>
+							<input class="text-field" type="number" value="1" id="checkout-wizard-arksa-duration-field" min="1" max="10">
+							<button id="checkout-wizard-arksa-yeardown-button">-</button>
+							<button id="checkout-wizard-arksa-yearup-button">+</button>
 						</div>
 					</div>
 					<div class="checkout-wizard-price-cell">
-						<span id="checkout-wizard-game-arksa-full-price" class="formatted-price">20</span><br>
-						<span id="checkout-wizard-game-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount">10</span>
+						<span id="checkout-wizard-arksa-full-price" class="formatted-price">20</span><br>
+						<span id="checkout-wizard-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount">10</span>
 					</div>
 				</div>
-				<div id="checkout-wizard-game-list-ark">
-					<div class="checkout-wizard-checkbox-cell"><label class="checkbox"><input type="checkbox" value="ark" id="checkout-wizard-game-ark-check"><span></span></label></div>
-					<div class="checkout-wizard-description-cell"><label for="checkout-wizard-game-ark-check">Ark: Survival Evolved</label><br><span id="checkout-wizard-game-status-ark" class="checkout-wizard-game-status">Includes lifetime updates.</span></div>
-					<div class="checkout-wizard-price-cell"><span id="checkout-wizard-game-ark-price" class="formatted-price">15</span></div>
+				<div id="checkout-wizard-list-ark">
+					<div class="checkout-wizard-checkbox-cell"><label class="checkbox"><input type="checkbox" value="ark" id="checkout-wizard-ark-check"><span></span></label></div>
+					<div class="checkout-wizard-description-cell"><label for="checkout-wizard-ark-check">Ark: Survival Evolved</label><br><span id="checkout-wizard-status-ark" class="checkout-wizard-status">Includes lifetime updates.</span></div>
+					<div class="checkout-wizard-price-cell"><span id="checkout-wizard-ark-price" class="formatted-price">15</span></div>
 				</div>
 			</div>
 			<p class="smaller text-lighter">These are one time payments. Beacon Omni is not subscription software. <a href="/omni/updates" target="_blank">Learn More</a></p>
 		</div>
 		<div class="button-bar">
-			<div class="left"><label class="checkbox"><input type="checkbox" value="true" id="checkout-wizard-game-gift-check"><span></span>This purchase is a gift.</label></div>
+			<div class="left"><label class="checkbox"><input type="checkbox" value="true" id="checkout-wizard-gift-check"><span></span>This purchase is a gift.</label></div>
 			<div class="middle">&nbsp;</div>
 			<div class="right">
 				<div class="button-group">
-					<button id="checkout-wizard-game-cancel">Back</button>
-					<button id="checkout-wizard-game-action" class="default" disabled>Add to Cart</button>
+					<button id="checkout-wizard-cancel">Cancel</button>
+					<button id="checkout-wizard-action" class="default" disabled>Add to Cart</button>
+				</div>
+			</div>
+		</div>
+	</div>
+<?php
+BeaconTemplate::FinishModal();
+BeaconTemplate::StartModal('checkout-email');
+?>
+	<div class="modal-content">
+		<div class="title-bar">Your E-Mail Address</div>
+		<div class="content">
+			<p>We need your e-mail address to check your purchases so you don't accidentally purchase twice. This will not be stored until your purchase is complete and will not be used for marketing messages. Feel free to read more about our <a href="/help/about_user_privacy" target="_blank">privacy policy</a> in a new tab.</p>
+			<div class="floating-label">
+				<input class="text-field" type="email" id="checkout-email-field" placeholder="E-Mail Address">
+				<label for="checkout-email-field">E-Mail Address</label>
+			</div>
+			<p class="hidden text-red" id="checkout-email-error">There was an error with your email address</p>
+		</div>
+		<div class="button-bar">
+			<div class="left">&nbsp;</div>
+			<div class="middle">&nbsp;</div>
+			<div class="right">
+				<div class="button-group">
+					<button id="checkout-email-cancel">Cancel</button>
+					<button id="checkout-email-action" class="default">Ok</button>
 				</div>
 			</div>
 		</div>

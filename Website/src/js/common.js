@@ -76,9 +76,10 @@ class BeaconWebRequest {
 
 class BeaconDialog {
 	static activeModal = null;
+	static viewportWatcher = null;
 	
 	static show(message, explanation = undefined, actionCaption = 'Ok') {
-		return BeaconDialog.confirm(message, explanation, actionCaption, null);
+		return this.confirm(message, explanation, actionCaption, null);
 	}
 	
 	static confirm(message, explanation = undefined, actionCaption = 'Ok', cancelCaption = 'Cancel') {
@@ -116,7 +117,7 @@ class BeaconDialog {
 			}
 			
 			dialogActionButton.clickHandler = (event) => {
-				BeaconDialog.hide();
+				this.hide();
 				setTimeout(() => {
 					resolve();
 				}, 300);
@@ -126,7 +127,7 @@ class BeaconDialog {
 			
 			if (cancelCaption) {
 				dialogCancelButton.clickHandler = (event) => {
-					BeaconDialog.hide();
+					this.hide();
 					setTimeout(() => {
 						reject();
 					}, 300);
@@ -154,7 +155,7 @@ class BeaconDialog {
 	}
 	
 	static showModal(elementId) {
-		if (BeaconDialog.activeModal) {
+		if (this.activeModal) {
 			return;
 		}
 		
@@ -166,41 +167,52 @@ class BeaconDialog {
 		
 		overlay.classList.add('exist');
 		modal.classList.add('exist');
-		BeaconDialog.activeModal = elementId;
+		this.activeModal = elementId;
 		
 		setTimeout(() => {
 			overlay.classList.add('visible');
 			modal.classList.add('visible');
 		}, 10);
 		
-		//window.addEventListener('resize', this.checkViewport);
+		this.viewportWatcher = setInterval(() => {
+			if (!this.activeModal) {
+				return;
+			}
+			
+			const contentAreas = document.querySelectorAll(`#${this.activeModal} .modal-content .content`);
+			contentAreas.forEach((contentArea) => {
+				modal.classList.toggle('scrolled', contentArea.scrollHeight > contentArea.clientHeight);
+			});
+			
+			const viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+			modal.classList.toggle('centered', modal.clientHeight > viewportHeight * 0.75);
+		}, 100);
 	}
 	
 	static hideModal() {
-		if (!BeaconDialog.activeModal) {
+		if (!this.activeModal) {
 			return;
 		}
 		
 		const overlay = document.getElementById('overlay');
-		const modal = document.getElementById(BeaconDialog.activeModal);
+		const modal = document.getElementById(this.activeModal);
 		if (!(overlay && modal)) {
 			return;
 		}
 		
-		//window.removeEventListener('resize', this.checkViewport);
+		if (this.viewportWatcher) {
+			clearInterval(this.viewportWatcher);
+			this.viewportWatcher = null;
+		}
 		
 		overlay.classList.remove('visible');
 		modal.classList.remove('visible');
 		
-		setTimeout(function() {
+		setTimeout(() => {
 			overlay.classList.remove('exist');
 			modal.classList.remove('exist');
-			BeaconDialog.activeModal = null;
+			this.activeModal = null;
 		}, 300);
-	}
-	
-	static checkViewport() {
-		console.log('checkViewport');
 	}
 }
 

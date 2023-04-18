@@ -2656,7 +2656,7 @@ div.comment-block {
 	}
 	
 	.modal {
-		$padding: 30px;
+		$padding: 22px;
 		
 		opacity: 0;
 		top: 35%;
@@ -2664,7 +2664,6 @@ div.comment-block {
 		width: 600px;
 		margin-left: -300px;
 		margin-right: auto;
-		padding: $padding;
 		transform: translateY(-50%);
 		border-radius: $border-radius;
 		margin-left: -300px;
@@ -2676,20 +2675,52 @@ div.comment-block {
 			opacity: 1;
 		}
 		
+		&.centered {
+			top: 45%;
+			
+			&.visible {
+				top: 50%;
+			}
+		}
+		
 		.modal-content {
 			.title-bar {
 				margin: 0px;
-				margin-bottom: $padding;
+				padding: $padding $padding 0px $padding;
 			}
 			
 			.content {
 				border: none;
-				padding: 0px;
+				padding: $padding;
 			}
 			
 			.button-bar {
 				margin: 0px;
-				margin-top: $padding;
+				padding: 0px $padding $padding $padding;
+			}
+		}
+		
+		&.scrolled {
+			border-radius: 0px;
+			
+			$originalTotalPadding: $padding * 2;
+			$contentPadding: math.floor(math.div($originalTotalPadding, 3));
+			$adjustedPadding: ($originalTotalPadding - $contentPadding) * 0.5;
+			
+			.modal-content {
+				.title-bar {
+					padding: $adjustedPadding $padding $adjustedPadding $padding;
+					border-bottom: 1px solid $separator-color;
+				}
+				
+				.content {
+					padding: $contentPadding $padding;
+				}
+				
+				.button-bar {
+					padding: $adjustedPadding $padding $adjustedPadding $padding;
+					border-top: 1px solid $separator-color;
+				}
 			}
 		}
 		
