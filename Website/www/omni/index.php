@@ -247,10 +247,11 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 						<label class="checkbox"><input type="checkbox" value="arksa" id="checkout-wizard-arksa-check"><span></span></label>
 					</div>
 					<div class="checkout-wizard-description-cell">
-						<label for="checkout-wizard-arksa-check">Ark: Survival Ascended</label><br>
-						<span class="checkout-wizard-status">
+						<div><label for="checkout-wizard-arksa-check">Ark: Survival Ascended</label></div>
+						<div class="checkout-wizard-promo" id="checkout-wizard-promo-arksa">50% off when bundled with Ark: Survival Evolved</div>
+						<div class="checkout-wizard-status">
 							<span id="checkout-wizard-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price" beacon-price="10">10</span> each.</span>
-						</span><br>
+						</div>
 						<div id="checkout-wizard-arksa-duration-group" class="input-group input-group-sm">
 							<span class="input-group-text">Update Years</span>
 							<input class="text-field" type="number" value="1" id="checkout-wizard-arksa-duration-field" min="1" max="10">
@@ -264,9 +265,18 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 					</div>
 				</div>
 				<div id="checkout-wizard-list-ark">
-					<div class="checkout-wizard-checkbox-cell"><label class="checkbox"><input type="checkbox" value="ark" id="checkout-wizard-ark-check"><span></span></label></div>
-					<div class="checkout-wizard-description-cell"><label for="checkout-wizard-ark-check">Ark: Survival Evolved</label><br><span id="checkout-wizard-status-ark" class="checkout-wizard-status">Includes lifetime updates.</span></div>
-					<div class="checkout-wizard-price-cell"><span id="checkout-wizard-ark-price" class="formatted-price" beacon-price="15">15</span></div>
+					<div class="checkout-wizard-checkbox-cell">
+						<label class="checkbox"><input type="checkbox" value="ark" id="checkout-wizard-ark-check"><span></span></label>
+					</div>
+					<div class="checkout-wizard-description-cell">
+						<div><label for="checkout-wizard-ark-check">Ark: Survival Evolved</label></div>
+						<div class="checkout-wizard-status">
+							<span id="checkout-wizard-status-ark">Includes lifetime updates.</span>
+						</div>
+					</div>
+					<div class="checkout-wizard-price-cell">
+						<span id="checkout-wizard-ark-price" class="formatted-price" beacon-price="15">15</span>
+					</div>
 				</div>
 			</div>
 			<p class="smaller text-lighter">These are one time payments. Beacon Omni is not subscription software. <a href="/omni/updates" target="_blank">Learn More</a></p>

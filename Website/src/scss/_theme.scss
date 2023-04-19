@@ -2372,13 +2372,19 @@ div.comment-block {
 			padding-left: 10px;
 			padding-right: 10px;
 			
-			& > label {
+			& > div > label {
 				font-weight: bold;
 			}
 			
-			.checkout-wizard-game-status {
-				font-size: smaller;
+			.checkout-wizard-status {
+				font-size: 0.8em;
 				opacity: 0.8;
+			}
+			
+			.checkout-wizard-promo {
+				font-weight: bold;
+				color: $text-green;
+				font-size: 0.9em;
 			}
 			
 			div.field-with-label {
