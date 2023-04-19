@@ -81,6 +81,19 @@ class BeaconCartItem {
 		};
 	}
 	
+	get fingerprint() {
+		const sorted = Object.keys(this.#products).sort().reduce((obj, key) => {
+			obj[key] = this.#products[key];
+			return obj;
+		}, {});
+		
+		return btoa(JSON.stringify({
+			id: this.#id,
+			products: sorted,
+			isGift: this.#isGift
+		}));
+	}
+	
 	get hasArk() {
 		return this.getQuantity(Products?.Ark?.Base?.ProductId) > 0;
 	}
@@ -176,21 +189,63 @@ class BeaconCart {
 	setEmail(newEmail) {
 		return new Promise((resolve, reject) => {
 			if (newEmail === this.#email) {
-				resolve(newEmail);
+				resolve({newEmail, cartChanged: false});
+				return;
+			}
+			
+			// Returns true if the cart was changed
+			const rebuildCart = () => {
+				const cartItem = this.personalCartItem;
+				if (!cartItem) {
+					return false;
+				}
+				
+				const buyArk = cartItem.hasArk;
+				const buyArkSAYears = cartItem.arkSAYears;
+				const fingerprint = cartItem.fingerprint;
+				
+				cartItem.reset();
+				cartItem.isGift = false; // Just to be sure
+				
+				if (buyArk && this.arkLicense === null) {
+					cartItem.setQuantity(Products?.Ark?.Base?.ProductId, 1);
+				}
+				
+				if (buyArkSAYears > 0) {
+					if (this.arkSALicense !== null) {
+						// Renew
+						cartItem.setQuantity(Products?.ArkSA?.Renewal?.ProductId, buyArkSAYears);
+					} else if (buyArk || this.arkLicense !== null) {
+						// Upgrade
+						cartItem.setQuantity(Products?.ArkSA?.Upgrade?.ProductId, 1);
+						if (buyArkSAYears > 1) {
+							cartItem.setQuantity(Products?.ArkSA?.Renewal?.ProductId, buyArkSAYears - 1);
+						}
+					} else {
+						// New
+						cartItem.setQuantity(Products?.ArkSA?.Base?.ProductId, 1);
+						if (buyArkSAYears > 1) {
+							cartItem.setQuantity(Products?.ArkSA?.Renewal?.ProductId, buyArkSAYears - 1);
+						}
+					}
+				}
+				
+				return (cartItem.fingerprint !== fingerprint);
+			};
+			
+			if (newEmail === null) {
+				this.#email = null;
+				this.#emailVerified = false;
+				this.#licenses = [];
+				const cartChanged = rebuildCart();
+				this.save();
+				resolve({newEmail: null, cartChanged});
 				return;
 			}
 			
 			if (!validateEmail(newEmail)) {
 				reject('Address is not valid');
 				return;
-			}
-			
-			let buyArk = false;
-			let buyArkSAYears = 0;
-			const cartItem = this.personalCartItem;
-			if (cartItem) {
-				buyArk = cartItem.hasArk;
-				buyArkSAYears = cartItem.arkSAYears;
 			}
 			
 			const params = new URLSearchParams();
@@ -201,41 +256,14 @@ class BeaconCart {
 				this.#email = info.email;
 				this.#emailVerified = info.verified;
 				this.#licenses = info.purchases;
-				
-				if (cartItem) {
-					cartItem.reset();
-					cartItem.isGift = false; // Just to be sure
-					
-					if (buyArk && this.arkLicense !== null) {
-						cartItem.setQuantity(Products?.Ark?.Base?.ProductId, 1);
-					}
-					
-					if (buyArkSAYears > 0) {
-						if (this.arkSALicense !== null) {
-							// Renew
-							cartItem.setQuantity(Products?.ArkSA?.Renewal?.ProductId, buyArkSAYears);
-						} else if (buyArk) {
-							// Upgrade
-							cartItem.setQuantity(Products?.ArkSA?.Upgrade?.ProductId, 1);
-							if (buyArkSAYears > 1) {
-								cartItem.setQuantity(Products?.ArkSA?.Renewal?.ProductId, buyArkSAYears - 1);
-							}
-						} else {
-							// New
-							cartItem.setQuantity(Products?.ArkSA?.Base?.ProductId, 1);
-							if (buyArkSAYears > 1) {
-								cartItem.setQuantity(Products?.ArkSA?.Renewal?.ProductId, buyArkSAYears - 1);
-							}
-						}
-					}
-				}
-				
+				const cartChanged = rebuildCart();
 				this.save();
-				resolve(newEmail);
+				resolve({newEmail, cartChanged});
 			}).catch((error) => {
 				this.#email = null;
 				this.#emailVerified = false;
 				this.#licenses = [];
+				rebuildCart();
 				this.save();
 				reject(error.statusText);
 			});
@@ -382,35 +410,42 @@ document.addEventListener('DOMContentLoaded', () => {
 		emailField: document.getElementById('checkout-email-field'),
 		errorField: document.getElementById('checkout-email-error'),
 		allowsSkipping: false,
-		successFunction: function() {},
+		successFunction: function(cartChanged) {},
 		init: function() {
-			this.actionButton.addEventListener('click', (ev) => {
-				ev.preventDefault();
-				ev.target.disabled = true;
+			const actionFunction = (email) => {
+				this.actionButton.disabled = true;
+				this.cancelButton.disabled = true;
 				this.errorField.classList.add('hidden');
 				
-				cart.setEmail(this.emailField.value).then((email) => {
+				cart.setEmail(email).then(({newEmail, cartChanged}) => {
 					BeaconDialog.hideModal();
 					setTimeout(() => {
-						this.successFunction();
+						this.successFunction(cartChanged);
 					}, 310);
 				}).catch((reason) => {
 					this.errorField.innerText = reason;
 					this.errorField.classList.remove('hidden');
 				}).finally(() => {
-					ev.target.disabled = false;
+					this.actionButton.disabled = false;
+					this.cancelButton.disabled = false;
 				});
+			};
+			
+			this.actionButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				
+				actionFunction(this.emailField.value);
 			});
 			
 			this.cancelButton.addEventListener('click', (ev) => {
 				ev.preventDefault();
 				
-				BeaconDialog.hideModal();
 				if (this.allowsSkipping) {
-					setTimeout(() => {
-						this.successFunction();
-					}, 310);
+					actionFunction(null);
+					return;
 				}
+				
+				BeaconDialog.hideModal();
 			});
 		},
 		present: function(allowSkipping, successFunction) {
@@ -460,11 +495,15 @@ document.addEventListener('DOMContentLoaded', () => {
 				ev.preventDefault();
 				
 				const isGift = this.giftCheck.checked;
-				const gameStatus = this.getGameStatus();
+				const includeArk = this.arkCheck.disabled === false && this.arkCheck.checked;
+				const includeArkSA = this.arkSACheck.disabled === false && this.arkSACheck.checked;				
 				
-				if (gameStatus.Ark !== StatusBuying && gameStatus.ArkSA !== StatusBuying) {
+				if ((includeArk || includeArkSA) === false) {
 					return;
 				}
+				
+				const gameStatus = this.getGameStatus();
+				console.log(JSON.stringify(gameStatus));
 				
 				let arkSAYears = parseInt(this.arkSADurationField.value) || 1;
 				
@@ -485,6 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				arkSAYears = Math.min(Math.max(arkSAYears, 1), MaxRenewalCount);
 				const arkSAAdditionalYears = Math.max(arkSAYears - 1, 0);
 				
+				// This logic is very broken
 				if (gameStatus.Ark === StatusBuying || gameStatus.Ark === StatusInCart) {
 					lineItem.setQuantity(Products.Ark.Base.ProductId, 1);
 				}
@@ -667,16 +707,13 @@ document.addEventListener('DOMContentLoaded', () => {
 				this.arkStatusField.innerText = `You already own ${Products.Ark.Base.Name}.`;
 				this.arkCheck.disabled = true;
 				this.arkCheck.checked = false;
-				this.arkPriceField.classList.add('hidden');
 			} else if (gameStatus.Ark === StatusInCart) {
 				this.arkStatusField.innerText = `${Products.Ark.Base.Name} is already in your cart.`;
 				this.arkCheck.disabled = true;
 				this.arkCheck.checked = false;
-				this.arkPriceField.classList.add('hidden');
 			} else {
 				this.arkStatusField.innerText = 'Includes lifetime app updates.';
 				this.arkCheck.disabled = false;
-				this.arkPriceField.classList.remove('hidden');
 			}
 			
 			let total = 0;
@@ -832,13 +869,18 @@ document.addEventListener('DOMContentLoaded', () => {
 			
 			cartElements.checkoutButton = document.createElement('button');
 			cartElements.checkoutButton.addEventListener('click', (ev) => {
-				const checkoutFunction = () => {
+				const checkoutFunction = (cartChanged) => {
+					updateCart();
+					if (cartChanged) {
+						BeaconDialog.show('Your cart contents have changed.', 'The items in your cart have changed based on your e-mail address. Please review before continuing checkout.');
+						return;
+					}
 					console.log('Checkout');
 				};
 				if (!cart.email) {
 					emailDialog.present(false, checkoutFunction);
 				} else {
-					checkoutFunction();
+					checkoutFunction(false);
 				}
 			});
 			cartElements.checkoutButton.classList.add('default');
@@ -860,6 +902,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			footer.appendChild(buttonsCell);
 			
 			cartContainer.appendChild(footer);
+			
+			buyButton.innerText = 'Go to Cart';
 		} else {
 			cartElements.emailField.innerText = '';
 			cartElements.changeEmailButton.classList.add('hidden');
@@ -876,7 +920,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			
 			cartElements.buyMoreButton = document.createElement('button');
 			cartElements.buyMoreButton.addEventListener('click', (ev) => {
-				wizard.present();
+				emailDialog.present(true, (cartChanged) => {
+					wizard.present();
+				});
 			});
 			cartElements.buyMoreButton.classList.add('default');
 			cartElements.buyMoreButton.appendChild(document.createTextNode('Buy Omni'));
@@ -887,6 +933,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			cartContainer.appendChild(middleCell);
 			
 			cartContainer.appendChild(document.createElement("div"));
+			
+			buyButton.innerText = 'Buy Omni';
 		}
 		
 		BeaconCurrency.formatPrices();
@@ -902,10 +950,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	};
 	
-	if (cart.count > 0) {
-		buyButton.innerText = 'Go to Cart';
-	}
-	
 	buyButton.addEventListener('click', (ev) => {
 		ev.preventDefault();
 		
@@ -914,7 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			return;
 		}
 		
-		emailDialog.present(true, () => {
+		emailDialog.present(true, (cartChanged) => {
 			wizard.present();
 		});
 	});
@@ -924,7 +968,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 	
 	cartElements.changeEmailButton.addEventListener('click', (ev) => {
-		emailDialog.present(true, () => {
+		emailDialog.present(false, (cartChanged) => {
 			updateCart();
 		});
 	});

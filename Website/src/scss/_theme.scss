@@ -2330,7 +2330,7 @@ div.comment-block {
 
 /* !Store */
 
-#checkout-wizard, #storefront {
+#storefront {
 	& > div {
 		webkit-transition-property: opacity;
 		-o-transition-property: opacity;
@@ -2341,15 +2341,10 @@ div.comment-block {
 		-webkit-transition-duration: $animation-timing;
 		-o-transition-duration: $animation-timing;
 		transition-duration: $animation-timing;
-		/*opacity: 1;
-		
-		&.invisible {
-			opacity: 0;
-		}*/
 	}
 }
 
-#checkout-wizard-game-list {
+#checkout-wizard-list {
 	input::-webkit-outer-spin-button,
 	input::-webkit-inner-spin-button {
 		-webkit-appearance: none;

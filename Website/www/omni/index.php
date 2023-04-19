@@ -249,7 +249,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 					<div class="checkout-wizard-description-cell">
 						<label for="checkout-wizard-arksa-check">Ark: Survival Ascended</label><br>
 						<span class="checkout-wizard-status">
-							<span id="checkout-wizard-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price">10</span> each.</span>
+							<span id="checkout-wizard-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price" beacon-price="10">10</span> each.</span>
 						</span><br>
 						<div id="checkout-wizard-arksa-duration-group" class="input-group input-group-sm">
 							<span class="input-group-text">Update Years</span>
@@ -259,14 +259,14 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 						</div>
 					</div>
 					<div class="checkout-wizard-price-cell">
-						<span id="checkout-wizard-arksa-full-price" class="formatted-price">20</span><br>
-						<span id="checkout-wizard-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount">10</span>
+						<span id="checkout-wizard-arksa-full-price" class="formatted-price" beacon-price="20">20</span><br>
+						<span id="checkout-wizard-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount" beacon-price="10">10</span>
 					</div>
 				</div>
 				<div id="checkout-wizard-list-ark">
 					<div class="checkout-wizard-checkbox-cell"><label class="checkbox"><input type="checkbox" value="ark" id="checkout-wizard-ark-check"><span></span></label></div>
 					<div class="checkout-wizard-description-cell"><label for="checkout-wizard-ark-check">Ark: Survival Evolved</label><br><span id="checkout-wizard-status-ark" class="checkout-wizard-status">Includes lifetime updates.</span></div>
-					<div class="checkout-wizard-price-cell"><span id="checkout-wizard-ark-price" class="formatted-price">15</span></div>
+					<div class="checkout-wizard-price-cell"><span id="checkout-wizard-ark-price" class="formatted-price" beacon-price="15">15</span></div>
 				</div>
 			</div>
 			<p class="smaller text-lighter">These are one time payments. Beacon Omni is not subscription software. <a href="/omni/updates" target="_blank">Learn More</a></p>
@@ -289,7 +289,7 @@ BeaconTemplate::StartModal('checkout-email');
 	<div class="modal-content">
 		<div class="title-bar">Your E-Mail Address</div>
 		<div class="content">
-			<p>We need your e-mail address to check your purchases so you don't accidentally purchase twice. This will not be stored until your purchase is complete and will not be used for marketing messages. Feel free to read more about our <a href="/help/about_user_privacy" target="_blank">privacy policy</a> in a new tab.</p>
+			<p>We need your e-mail address to show you the most accurate pricing and options. This will not be stored until your purchase is complete and will not be used for marketing messages. Feel free to read more about our <a href="/help/about_user_privacy" target="_blank">privacy policy</a> in a new tab.</p>
 			<div class="floating-label">
 				<input class="text-field" type="email" id="checkout-email-field" placeholder="E-Mail Address">
 				<label for="checkout-email-field">E-Mail Address</label>
