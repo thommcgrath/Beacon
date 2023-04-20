@@ -71,30 +71,49 @@ while (!$results->EOF()) {
 $ark2_enabled = isset($product_details['Ark2']);
 $arksa_enabled = isset($product_details['ArkSA']);
 
+$payment_methods = [
+	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
+	'EUR' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
+];
+$payment_labels = [
+	'apple' => 'Apple Pay',
+	'google' => 'Google Pay',
+	'mastercard' => 'Mastercard',
+	'visa' => 'Visa',
+	'amex' => 'American Express',
+	'discover' => 'Discover',
+	'dinersclub' => 'Diner\'s Club',
+	'jcb' => 'JCB',
+	'bancontact' => 'Bancontact',
+	'eps' => 'EPS',
+	'giropay' => 'giropay',
+	'ideal' => 'iDEAL',
+	'p24' => 'Przelewy24'
+];
+
+$supported_payment_methods = $payment_methods['Universal'];
+if (array_key_exists($currency, $payment_methods)) {
+	$supported_payment_methods = array_merge($supported_payment_methods, $payment_methods[$currency]);
+}
+$payment_method_info = [];
+foreach ($supported_payment_methods as $payment_method) {
+	$payment_method_info[] = [
+		'key' => $payment_method,
+		'label' => $payment_labels[$payment_method],
+		'iconUrl' => BeaconCommon::AssetURI('paymethod_' . $payment_method . '.svg')
+	];
+}
+
 BeaconTemplate::LoadGlobalize();
 
 BeaconTemplate::StartScript();
 ?>
 <script>
 BeaconCurrency.currencyCode = <?php echo json_encode($currency); ?>;
+const Currencies = <?php echo json_encode($_SESSION['store_currency_options']); ?>;
+const PaymentMethods = <?php echo json_encode($payment_method_info); ?>;
 const Products = <?php echo json_encode($product_details); ?>;
 const ProductIds = <?php echo json_encode($product_ids); ?>;
-
-// Deprecated
-const currencyCode = <?php echo json_encode($currency); ?>;
-const arkPrice = Products.Ark?.Base?.Price ?? 0;
-const arkGiftPrice = Products.Ark?.Gift?.Price ?? 0;
-const stwPrice = Products.STW?.Base?.Price ?? 0;
-const ark2Price = Products.Ark2?.Base?.Price ?? 0;
-const ark2GiftPrice = Products.Ark2?.Gift?.Price ?? 0;
-const arkSAPrice = Products.ArkSA?.Base?.Price ?? 0;
-const arkSAGiftPrice = Products.ArkSA?.Gift?.Price ?? 0;
-const arkSAUpgradePrice = Products.ArkSA?.Upgrade?.Price ?? 0;
-const arkSARenewPrice = Products.ArkSA?.Renewal?.Price ?? 0;
-
-const arkProductId = Products.Ark?.Base?.ProductId ?? '';
-const ark2ProductId = Products.Ark2?.Base?.ProductId ?? '';
-const arkSAProductId = Products.ArkSA?.Base?.ProductId ?? '';
 </script>
 <?php
 BeaconTemplate::FinishScript();
@@ -228,12 +247,51 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 		</table>
 	</div>
 	<div id="page-cart" class="hidden invisible">
-		<div id="storefront-cart-header">
+		<div id="storefront-cart-header" class="storefront-cart-section">
 			<div><button id="cart-back-button">&laquo; Back</button></div>
 			<div id="storefront-cart-header-email-field">&nbsp;</div>
 			<div><button id="storefront-cart-header-email-button" class="hidden">Change Email</button></div>
 		</div>
-		<div id="storefront-cart"></div>
+		<div id="storefront-cart" class="storefront-cart-section"></div>
+		<div id="storefront-cart-footer" class="storefront-cart-section">
+			<div class="double-group">
+				<div>
+					<div class="select"><span></span>
+						<select id="storefront-cart-currency-menu">
+							<?php
+							
+							foreach ($_SESSION['store_currency_options'] as $currencyCode => $currencyLabel) {
+								echo '<option value="' . htmlentities($currencyCode) . '"';
+								if ($currencyCode === $currency) {
+									echo ' selected="selected"';
+								}
+								echo '>' . htmlentities($currencyLabel) . '</option>';
+							}
+							
+							?>
+						</select>
+					</div>
+				</div>
+				<div>
+					<div class="button-group">
+						<button id="storefront-cart-more-button">Add More</button>
+						<button id="storefront-cart-checkout-button" class="default">Checkout</button>
+					</div>
+				</div>
+			</div>
+			<div class="storefront-cart-paymethods">
+				<?php
+				
+				foreach ($payment_method_info as $payMethod) {
+					echo '<div><img src="' . $payMethod['iconUrl'] . '" title="' . $payMethod['label'] . '" alt="' . $payMethod['label'] . '"></div>';	
+				}
+				
+				?>
+			</div>
+			<div class="storefront-cart-notice">
+				<a href="/help/refund_policy">Beacon Refund Policy</a>
+			</div>
+		</div>
 	</div>
 </div>
 <?php BeaconTemplate::StartModal('checkout-wizard'); ?>
@@ -250,7 +308,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 						<div><label for="checkout-wizard-arksa-check">Ark: Survival Ascended</label></div>
 						<div class="checkout-wizard-promo" id="checkout-wizard-promo-arksa">50% off when bundled with Ark: Survival Evolved</div>
 						<div class="checkout-wizard-status">
-							<span id="checkout-wizard-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price" beacon-price="10">10</span> each.</span>
+							<span id="checkout-wizard-status-arksa">Includes one year of app updates. Additional years cost <span class="formatted-price" beacon-price="<?php echo $product_details['ArkSA']['Renewal']['Price']; ?>"></span> each.</span>
 						</div>
 						<div id="checkout-wizard-arksa-duration-group" class="input-group input-group-sm">
 							<span class="input-group-text">Update Years</span>
@@ -260,8 +318,8 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 						</div>
 					</div>
 					<div class="checkout-wizard-price-cell">
-						<span id="checkout-wizard-arksa-full-price" class="formatted-price" beacon-price="20">20</span><br>
-						<span id="checkout-wizard-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount" beacon-price="10">10</span>
+						<span id="checkout-wizard-arksa-full-price" class="formatted-price" beacon-price="<?php echo $product_details['ArkSA']['Base']['Price']; ?>"></span><br>
+						<span id="checkout-wizard-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount" beacon-price="<?php echo $product_details['ArkSA']['Upgrade']['Price']; ?>"></span>
 					</div>
 				</div>
 				<div id="checkout-wizard-list-ark">
@@ -275,7 +333,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 						</div>
 					</div>
 					<div class="checkout-wizard-price-cell">
-						<span id="checkout-wizard-ark-price" class="formatted-price" beacon-price="15">15</span>
+						<span id="checkout-wizard-ark-price" class="formatted-price" beacon-price="<?php echo $product_details['Ark']['Base']['Price']; ?>"></span>
 					</div>
 				</div>
 			</div>

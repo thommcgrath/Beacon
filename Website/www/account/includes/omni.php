@@ -1,7 +1,7 @@
 <?php
 
 $database = BeaconCommon::Database();
-$licenses = $database->Query('SELECT purchase_id, product_id, product_name, purchase_date, EXTRACT(epoch FROM expiration) AS expiration FROM purchased_products WHERE purchaser_email = $1;', $user->EmailID());
+$licenses = $database->Query('SELECT licenses.purchase_id, licenses.product_id, products.product_name, purchases.purchase_date, EXTRACT(epoch FROM licenses.expiration) AS expiration FROM public.licenses INNER JOIN public.products ON (licenses.product_id = products.product_id) INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 AND purchases.refunded = FALSE ORDER BY products.product_name;', $user->EmailId());
 $has_purchased = $licenses->RecordCount() > 0;
 $purchases = $database->Query('SELECT purchase_id, EXTRACT(epoch FROM purchase_date) AS purchase_date, total_paid, currency, refunded FROM purchases WHERE purchaser_email = $1 ORDER BY purchase_date DESC;', $user->EmailID());
 
@@ -62,7 +62,7 @@ function ShowGiftCodes() {
 	global $user;
 	
 	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT gift_codes.code, gift_codes.redemption_date, products.product_name FROM gift_codes INNER JOIN purchases ON (gift_codes.source_purchase_id = purchases.purchase_id) INNER JOIN products ON (gift_codes.product_id = products.product_id) WHERE purchases.purchaser_email = $1 ORDER BY purchases.purchase_date DESC;', $user->EmailID());
+	$results = $database->Query('SELECT gift_codes.code, gift_codes.redemption_date, (SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(products_template))) FROM (SELECT products.product_name, gift_code_products.quantity FROM public.gift_code_products INNER JOIN public.products ON (gift_code_products.product_id = products.product_id) WHERE gift_code_products.code = gift_codes.code) AS products_template) AS products FROM gift_codes INNER JOIN purchases ON (gift_codes.source_purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 ORDER BY purchases.purchase_date DESC;', $user->EmailID());
 	if ($results->RecordCount() == 0) {
 		return;
 	}
@@ -74,9 +74,17 @@ function ShowGiftCodes() {
 	while (!$results->EOF()) {
 		$code = $results->Field('code');
 		$redeemed = is_null($results->Field('redemption_date')) === false;
-		$product_name = $results->Field('product_name');
+		$products = json_decode($results->Field('products'), true);
+		$products_list = [];
+		foreach ($products as $product) {
+			if ($product['quantity'] > 1) {
+				$products_list[] = $product['quantity'] . ' x ' . $product['product_name'];
+			} else {
+				$products_list[] = $product['product_name'];
+			}
+		}
 		
-		echo '<tr><td class="w-40"><span class="text-lighter smaller">' . htmlentities($product_name) . '</span><br>' . htmlentities($code) . '<div class="row-details"><span class="detail">' . ($redeemed ? 'Redeemed' : BeaconCommon::AbsoluteURL('/redeem/' . htmlentities($code))) . '<span></div></td><td class="low-priority w-40">' . ($redeemed ? 'Redeemed' : BeaconCommon::AbsoluteURL('/redeem/' . htmlentities($code))) . '</td></tr>';
+		echo '<tr><td class="w-40"><span class="text-lighter smaller">' . htmlentities(BeaconCommon::ArrayToEnglish($products_list)) . '</span><br>' . htmlentities($code) . '<div class="row-details"><span class="detail">' . ($redeemed ? 'Redeemed' : BeaconCommon::AbsoluteURL('/redeem/' . htmlentities($code))) . '<span></div></td><td class="low-priority w-40">' . ($redeemed ? 'Redeemed' : BeaconCommon::AbsoluteURL('/redeem/' . htmlentities($code))) . '</td></tr>';
 		$results->MoveNext();
 	}
 	echo '</table>';

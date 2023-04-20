@@ -429,7 +429,6 @@ let updateCart = () => {};
 document.addEventListener('DOMContentLoaded', () => {
 	const buyButton = document.getElementById('buy-button');
 	const landingButton = document.getElementById('cart-back-button');
-	const cartContainer = document.getElementById('storefront-cart');
 	
 	const emailDialog = {
 		cancelButton: document.getElementById('checkout-email-cancel'),
@@ -552,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
 				
 				cart.save();
-				updateCart();
+				cartView.update();
 				goToCart();
 				
 				BeaconDialog.hideModal();
@@ -750,10 +749,227 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 	wizard.init();
 	
-	const cartElements = {
+	const cartView = {
 		emailField: document.getElementById('storefront-cart-header-email-field'),
-		changeEmailButton: document.getElementById('storefront-cart-header-email-button')
+		changeEmailButton: document.getElementById('storefront-cart-header-email-button'),
+		currencyMenu: document.getElementById('storefront-cart-currency-menu'),
+		addMoreButton: document.getElementById('storefront-cart-more-button'),
+		checkoutButton: document.getElementById('storefront-cart-checkout-button'),
+		footer: document.getElementById('storefront-cart-footer'),
+		body: document.getElementById('storefront-cart'),
+		init: function() {
+			this.currencyMenu.addEventListener('change', (ev) => {
+				ev.preventDefault();
+				
+				BeaconWebRequest.get(`/omni/currency?currency=${ev.target.value}`).then((response) => {
+					window.location.reload();
+				}).catch((error) => {
+					console.log(JSON.stringify(error));
+					BeaconDialog.show('Currency was not changed', error.statusText);
+				});
+			});
+			
+			this.addMoreButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				
+				wizard.present();
+			});
+			
+			this.checkoutButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				
+				const checkoutFunction = (cartChanged) => {
+					this.update();
+					if (cartChanged) {
+						BeaconDialog.show('Your cart contents have changed.', 'The items in your cart have changed based on your e-mail address. Please review before continuing checkout.');
+						return;
+					}
+					
+					this.checkoutButton.disabled = true;
+					
+					BeaconWebRequest.post('/omni/begin', cart).then((response) => {
+						try {
+							const parsed = JSON.parse(response.body);
+							const url = parsed.url;
+							window.location = url;
+						} catch (err) {
+							console.log(response.body);
+							BeaconDialog.show('Unknown Error', 'There was an unknown error while starting the checkout process.');
+						}
+					}).catch((error) => {
+						try {
+							const parsed = JSON.parse(error.body);
+							const message = parsed.message;
+							BeaconDialog.show('Checkout Error', message);
+						} catch (err) {
+							console.log(error.body);
+							BeaconDialog.show('Unknown Error', 'There was an unknown error while starting the checkout process.');
+						}
+					}).finally(() => {
+						this.checkoutButton.disabled = false
+					});
+				};
+				
+				if (!cart.email) {
+					emailDialog.present(false, checkoutFunction);
+				} else {
+					checkoutFunction(false);
+				}
+			});
+			
+			this.changeEmailButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				
+				emailDialog.present(false, (cartChanged) => {
+					this.update();
+				});
+			});
+			
+			this.update();
+		},
+		update: function() {
+			if (cart.count > 0) {
+				this.emailField.innerText = cart.email;
+				this.changeEmailButton.classList.remove('hidden');
+				this.body.innerText = '';
+				this.body.classList.remove('empty');
+				this.footer.classList.remove('hidden');
+				
+				const items = cart.items;
+				items.forEach((cartItem) => {
+					const bundleRow = this.createCartItemRow(cartItem);
+					if (bundleRow) {
+						this.body.appendChild(bundleRow);
+					}
+				});
+				
+				buyButton.innerText = 'Go to Cart';
+			} else {
+				this.emailField.innerText = '';
+				this.changeEmailButton.classList.add('hidden');
+				this.body.innerText = '';
+				this.body.classList.add('empty');
+				this.footer.classList.add('hidden');
+				this.body.appendChild(document.createElement('div'));
+				
+				const middleCell = document.createElement('div');
+				const firstParagraph = document.createElement('p');
+				firstParagraph.appendChild(document.createTextNode('Your cart is empty.'));
+				middleCell.appendChild(firstParagraph);
+				
+				this.buyMoreButton = document.createElement('button');
+				this.buyMoreButton.addEventListener('click', (ev) => {
+					emailDialog.present(true, (cartChanged) => {
+						wizard.present();
+					});
+				});
+				this.buyMoreButton.classList.add('default');
+				this.buyMoreButton.appendChild(document.createTextNode('Buy Omni'));
+				const secondParagraph = document.createElement('p');
+				secondParagraph.appendChild(this.buyMoreButton);
+				middleCell.appendChild(secondParagraph);
+				
+				this.body.appendChild(middleCell);
+				
+				this.body.appendChild(document.createElement("div"));
+				
+				buyButton.innerText = 'Buy Omni';
+			}
+			
+			BeaconCurrency.formatPrices();
+		},
+		createProductRow: function(cartItem, productId) {
+			const quantity = cartItem.getQuantity(productId);
+			if (quantity <= 0) {
+				return null;
+			}
+			
+			const name = ProductIds[productId].Name;
+			const price = ProductIds[productId].Price;
+			
+			const quantityCell = document.createElement('div');
+			quantityCell.appendChild(document.createTextNode(quantity));
+			
+			const nameCell = document.createElement('div');
+			nameCell.appendChild(document.createTextNode(name));
+			
+			const priceCell = document.createElement('div');
+			priceCell.classList.add('formatted-price');
+			priceCell.appendChild(document.createTextNode(price * quantity));
+			
+			const row = document.createElement('div');
+			row.classList.add('bundle-product');
+			row.appendChild(quantityCell);
+			row.appendChild(nameCell);
+			row.appendChild(priceCell);
+			
+			return row;
+		},
+		createCartItemRow: function(cartItem) {
+			const productIds = cartItem.productIds;
+			if (productIds.length <= 0) {
+				return null;
+			}
+			
+			const row = document.createElement('div');
+			row.classList.add('bundle');
+			productIds.forEach((productId) => {
+				const productRow = this.createProductRow(cartItem, productId);
+				if (productRow) {
+					row.appendChild(productRow);
+				}
+			});
+			
+			const giftCell = document.createElement('div');
+			if (cartItem.isGift) {
+				row.classList.add('gift');
+				
+				giftCell.classList.add('gift');
+				if (productIds.length > 1) {
+					giftCell.appendChild(document.createTextNode('These products are a gift. You will receive a gift code for them.'));
+				} else {
+					giftCell.appendChild(document.createTextNode('This product is a gift. You will receive a gift code for it.'));
+				}
+			}
+			
+			const editButton = document.createElement('button');
+			editButton.appendChild(document.createTextNode('Edit'));
+			editButton.classList.add('small');
+			editButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				wizard.present(cartItem);
+			});
+			
+			const removeButton = document.createElement('button');
+			removeButton.appendChild(document.createTextNode('Remove'));
+			removeButton.classList.add('red');
+			removeButton.classList.add('small');
+			removeButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				cart.remove(cartItem);
+				this.update();
+			});
+			
+			const actionButtons = document.createElement('div');
+			actionButtons.classList.add('button-group');
+			actionButtons.appendChild(editButton);
+			actionButtons.appendChild(removeButton);
+			
+			const actionsCell = document.createElement('div');
+			actionsCell.appendChild(actionButtons);
+			
+			const actionsRow = document.createElement('div');
+			actionsRow.classList.add('actions');
+			actionsRow.classList.add('double-group');
+			actionsRow.appendChild(giftCell);
+			actionsRow.appendChild(actionsCell);
+			
+			row.appendChild(actionsRow);
+			
+			return row;
+		}
 	};
+	cartView.init();
 	
 	const goToCart = () => {
 		history.pushState({}, '', '/omni/#checkout');
@@ -764,196 +980,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		history.pushState({}, '', '/omni/');
 		dispatchEvent(new PopStateEvent('popstate', {}));
 	}
-	
-	const createProductRow = (cartItem, productId) => {
-		const quantity = cartItem.getQuantity(productId);
-		if (quantity <= 0) {
-			return null;
-		}
-		
-		const name = ProductIds[productId].Name;
-		const price = ProductIds[productId].Price;
-		
-		const quantityCell = document.createElement('div');
-		quantityCell.appendChild(document.createTextNode(quantity));
-		
-		const nameCell = document.createElement('div');
-		nameCell.appendChild(document.createTextNode(name));
-		
-		const priceCell = document.createElement('div');
-		priceCell.classList.add('formatted-price');
-		priceCell.appendChild(document.createTextNode(price * quantity));
-		
-		const row = document.createElement('div');
-		row.classList.add('bundle-product');
-		row.appendChild(quantityCell);
-		row.appendChild(nameCell);
-		row.appendChild(priceCell);
-		
-		return row;
-	};
-	
-	const createCartItemRow = (cartItem) => {
-		const productIds = cartItem.productIds;
-		if (productIds.length <= 0) {
-			return null;
-		}
-		
-		const row = document.createElement('div');
-		row.classList.add('bundle');
-		productIds.forEach((productId) => {
-			const productRow = createProductRow(cartItem, productId);
-			if (productRow) {
-				row.appendChild(productRow);
-			}
-		});
-		
-		const giftCell = document.createElement('div');
-		if (cartItem.isGift) {
-			row.classList.add('gift');
-			
-			giftCell.classList.add('gift');
-			if (productIds.length > 1) {
-				giftCell.appendChild(document.createTextNode('These products are a gift. You will receive a gift code for them.'));
-			} else {
-				giftCell.appendChild(document.createTextNode('This product is a gift. You will receive a gift code for it.'));
-			}
-		}
-		
-		const editButton = document.createElement('button');
-		editButton.appendChild(document.createTextNode('Edit'));
-		editButton.classList.add('small');
-		editButton.addEventListener('click', (ev) => {
-			ev.preventDefault();
-			wizard.present(cartItem);
-		});
-		
-		const removeButton = document.createElement('button');
-		removeButton.appendChild(document.createTextNode('Remove'));
-		removeButton.classList.add('red');
-		removeButton.classList.add('small');
-		removeButton.addEventListener('click', (ev) => {
-			ev.preventDefault();
-			cart.remove(cartItem);
-			updateCart();
-		});
-		
-		const actionButtons = document.createElement('div');
-		actionButtons.classList.add('button-group');
-		actionButtons.appendChild(editButton);
-		actionButtons.appendChild(removeButton);
-		
-		const actionsCell = document.createElement('div');
-		actionsCell.appendChild(actionButtons);
-		
-		const actionsRow = document.createElement('div');
-		actionsRow.classList.add('actions');
-		actionsRow.classList.add('double-group');
-		actionsRow.appendChild(giftCell);
-		actionsRow.appendChild(actionsCell);
-		
-		row.appendChild(actionsRow);
-		
-		return row;
-	};
-	
-	updateCart = () => {
-		if (cart.count > 0) {
-			cartElements.emailField.innerText = cart.email;
-			cartElements.changeEmailButton.classList.remove('hidden');
-			cartContainer.innerText = '';
-			cartContainer.classList.remove('empty');
-			
-			const items = cart.items;
-			items.forEach((cartItem) => {
-				const bundleRow = createCartItemRow(cartItem);
-				if (bundleRow) {
-					cartContainer.appendChild(bundleRow);
-				}
-			});
-			
-			const buttonGroup = document.createElement('div');
-			buttonGroup.classList.add('button-group');
-			
-			cartElements.buyMoreButton = document.createElement('button');
-			cartElements.buyMoreButton.addEventListener('click', (ev) => {
-				wizard.present();
-			});
-			cartElements.buyMoreButton.appendChild(document.createTextNode('Add More'));
-			
-			cartElements.checkoutButton = document.createElement('button');
-			cartElements.checkoutButton.addEventListener('click', (ev) => {
-				const checkoutFunction = (cartChanged) => {
-					updateCart();
-					if (cartChanged) {
-						BeaconDialog.show('Your cart contents have changed.', 'The items in your cart have changed based on your e-mail address. Please review before continuing checkout.');
-						return;
-					}
-					console.log('Checkout');
-				};
-				if (!cart.email) {
-					emailDialog.present(false, checkoutFunction);
-				} else {
-					checkoutFunction(false);
-				}
-			});
-			cartElements.checkoutButton.classList.add('default');
-			cartElements.checkoutButton.appendChild(document.createTextNode('Checkout'));
-			
-			buttonGroup.appendChild(cartElements.buyMoreButton);
-			buttonGroup.appendChild(cartElements.checkoutButton);
-			
-			const currencyCell = document.createElement('div');
-			currencyCell.appendChild(document.createTextNode('Currency Menu'));
-			
-			const buttonsCell = document.createElement('div');
-			buttonsCell.appendChild(buttonGroup);
-			
-			const footer = document.createElement('div');
-			footer.classList.add('storefront-cart-footer');
-			footer.classList.add('double-group');
-			footer.appendChild(currencyCell);
-			footer.appendChild(buttonsCell);
-			
-			cartContainer.appendChild(footer);
-			
-			buyButton.innerText = 'Go to Cart';
-		} else {
-			cartElements.emailField.innerText = '';
-			cartElements.changeEmailButton.classList.add('hidden');
-			cartElements.checkoutButton = null;
-			cartContainer.innerText = '';
-			cartContainer.classList.add('empty');
-			
-			cartContainer.appendChild(document.createElement('div'));
-			
-			const middleCell = document.createElement('div');
-			const firstParagraph = document.createElement('p');
-			firstParagraph.appendChild(document.createTextNode('Your cart is empty.'));
-			middleCell.appendChild(firstParagraph);
-			
-			cartElements.buyMoreButton = document.createElement('button');
-			cartElements.buyMoreButton.addEventListener('click', (ev) => {
-				emailDialog.present(true, (cartChanged) => {
-					wizard.present();
-				});
-			});
-			cartElements.buyMoreButton.classList.add('default');
-			cartElements.buyMoreButton.appendChild(document.createTextNode('Buy Omni'));
-			const secondParagraph = document.createElement('p');
-			secondParagraph.appendChild(cartElements.buyMoreButton);
-			middleCell.appendChild(secondParagraph);
-			
-			cartContainer.appendChild(middleCell);
-			
-			cartContainer.appendChild(document.createElement("div"));
-			
-			buyButton.innerText = 'Buy Omni';
-		}
-		
-		BeaconCurrency.formatPrices();
-	};
-	updateCart();
 	
 	const setViewMode = (animated = true) => {
 		window.scrollTo(window.scrollX, 0);
@@ -981,12 +1007,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		goToLanding();
 	});
 	
-	cartElements.changeEmailButton.addEventListener('click', (ev) => {
-		emailDialog.present(false, (cartChanged) => {
-			updateCart();
-		});
-	});
-	
 	window.addEventListener('popstate', (ev) => {
 		setViewMode(true);
 	});
@@ -994,5 +1014,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('GlobalizeLoaded', () => {
-	updateCart();
+	//cartView.update();
 });

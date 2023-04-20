@@ -14,16 +14,77 @@ abstract class BeaconShop {
 	
 	const STW_ID = 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015';
 	
-	public static function IssuePurchases(string $purchase_id): void {
+	public static function IssuePurchases(string $purchase_id, array $bundles): void {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT issued, refunded, purchaser_email FROM purchases WHERE purchase_id = $1;', $purchase_id);
+		$results = $database->Query('SELECT issued, refunded, purchaser_email FROM public.purchases WHERE purchase_id = $1;', $purchase_id);
 		if ($results->RecordCount() === 0 || $results->Field('issued') === true || $results->Field('refunded') === true) {
 			return;
 		}
+		$email_id = $results->Field('purchaser_email');
+		
+		$products = [];
+		$results = $database->Query('SELECT product_id, EXTRACT(epoch FROM updates_length) AS updates_length_seconds, flags, game_id, tag FROM public.products;');
+		while ($results->EOF() === false) {
+			$products[$results->Field('product_id')] = [
+				'length' => $results->Field('updates_length_seconds'),
+				'flags' => $results->Field('flags'),
+				'game' => $results->Field('game_id'),
+				'tag' => $results->Field('tag')
+			];
+			$products[$results->Field('game_id')][$results->Field('tag')] = [
+				'product_id' => $results->Field('product_id'),
+				'length' => $results->Field('updates_length_seconds'),
+				'flags' => $results->Field('flags')
+			];
+			$results->MoveNext();
+		}
 		
 		$database->BeginTransaction();
-		$email_id = $results->Field('purchaser_email');
-		$results = $database->Query('SELECT products.product_id, EXTRACT(epoch FROM products.updates_length) AS updates_length_seconds, products.flags, purchase_items.quantity FROM purchase_items INNER JOIN products ON (purchase_items.product_id = products.product_id) WHERE purchase_id = $1;', $purchase_id);
+		
+		$results = $database->Query("SELECT EXTRACT(epoch FROM DATE_TRUNC('day', CURRENT_TIMESTAMP + '1 day')) AS base_expiration;");
+		$new_license_start_timestamp = intval($results->Field('base_expiration'));
+		
+		foreach ($bundles as $bundle) {
+			$purchased_products = $bundle['products'];
+			$isGift = $bundle['isGift'];
+			
+			if ($isGift) {
+				$code = BeaconCommon::CreateGiftCode();
+				$database->Query('INSERT INTO public.gift_codes (code, source_purchase_id) VALUES ($1, $2);', $code, $purchase_id);
+				foreach ($purchased_products as $product_id => $quantity) {
+					$database->Query('INSERT INTO public.gift_code_products (code, product_id, quantity) VALUES ($1, $2, $3);', $code, $product_id, $quantity);
+				}
+				continue;
+			}
+			
+			foreach ($purchased_products as $product_id => $quantity) {
+				$product = $products[$product_id];
+				
+				// Renewals and upgrades need to use the base product id. Keep $product pointing to the correct product,
+				// in case the upgrade or renewal has a special behavior such as length.
+				if ($product['tag'] === 'Renewal' || $product['tag'] === 'Upgrade') {
+					$product_id = $products[$product['game']]['Base']['product_id'];
+				}
+				
+				if (is_null($product['length'])) {
+					$database->Query('INSERT INTO public.licenses (purchase_id, product_id) VALUES ($1, $2);', $purchase_id, $product_id);
+				} else {
+					$update_seconds = intval($product['length']) * $quantity;
+					$start_timestamp = $new_license_start_timestamp;
+					
+					$licenses = $database->Query('SELECT license_id, EXTRACT(epoch FROM expiration) AS expiration_timestamp FROM public.licenses INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 AND licenses.product_id = $2;', $email_id, $product_id);
+					if ($licenses->RecordCount() > 0) {
+						$license_id = $licenses->Field('license_id');
+						$start_timestamp = max($start_timestamp, intval($licenses->Field('expiration_timestamp')));
+						$database->Query('UPDATE public.licenses SET expiration = to_timestamp($2) WHERE license_id = $1;', $license_id, $start_timestamp + $update_seconds);
+					} else {
+						$database->Query('INSERT INTO public.licenses (purchase_id, product_id, expiration) VALUES ($1, $2, to_timestamp($3));', $purchase_id, $product_id, $start_timestamp + $update_seconds);
+					}
+				}
+			}
+		}
+		
+		/*$results = $database->Query('SELECT products.product_id, EXTRACT(epoch FROM products.updates_length) AS updates_length_seconds, products.flags, purchase_items.quantity FROM purchase_items INNER JOIN products ON (purchase_items.product_id = products.product_id) WHERE purchase_id = $1;', $purchase_id);
 		while ($results->EOF() === false) {
 			$product_id = $results->Field('product_id');
 			$quantity = intval($results->Field('quantity'));
@@ -56,7 +117,7 @@ abstract class BeaconShop {
 				break;
 			}
 			$results->MoveNext();
-		}
+		}*/
 		$database->Query('UPDATE purchases SET issued = TRUE WHERE purchase_id = $1;', $purchase_id);
 		$database->Commit();
 	}

@@ -890,6 +890,19 @@ abstract class BeaconCommon {
 		
 		return $device_id;
 	}
+	
+	public static function Base64UrlEncode(string $value): string {
+		$base64 = base64_encode($value);
+		if ($base64 === false) {
+			return false;
+		}
+		return str_replace(['+', '/', '='], ['-', '_', ''], $base64);
+	}
+	
+	public static function Base64UrlDecode(string $value): string {
+		$value = str_replace(['-', '_'], ['+', '/'], $value);
+		return base64_decode($value);
+	}
 }
 
 ?>
