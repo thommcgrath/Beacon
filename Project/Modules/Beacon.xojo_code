@@ -92,19 +92,23 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function ClassStringFromPath(Path As String) As String
-		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
-		    If Path.Right(2) = "_C" Then
-		      // Appears to be a BlueprintGeneratedClass Path
-		      Path = Path.Left(Path.Length - 2)
-		    End If
-		  Else
+		  If Path.Length <= 6 Or Path.Left(6) <> "/Game/" Then
 		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
 		  End If
 		  
 		  Var Components() As String = Path.Split("/")
 		  Var Tail As String = Components(Components.LastIndex)
 		  Components = Tail.Split(".")
-		  Return Components(Components.LastIndex) + "_C"
+		  
+		  Var FirstPart As String = Components(Components.FirstIndex)
+		  Var SecondPart As String = Components(Components.LastIndex)
+		  
+		  If SecondPart.EndsWith("_C") And FirstPart.EndsWith("_C") = False Then
+		    // Appears to be a BlueprintGeneratedClass Path
+		    SecondPart = SecondPart.Left(SecondPart.Length - 2)
+		  End If
+		  
+		  Return SecondPart + "_C"
 		End Function
 	#tag EndMethod
 

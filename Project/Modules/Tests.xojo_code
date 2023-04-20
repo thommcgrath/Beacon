@@ -43,8 +43,25 @@ Protected Module Tests
 		    TestFilenames()
 		    TestIntervalParsing()
 		    TestIniValidation()
+		    TestArkClassStrings()
 		    App.Log("Tests complete")
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestArkClassStrings()
+		  Const NormalPath = "/Game/Aberration/CoreBlueprints/AB_DinoSpawnEntriesRockDrake.AB_DinoSpawnEntriesRockDrake_C"
+		  Const ScorpionPath = "/Game/Mods/LostIsland/Assets/Spawners/Scorpion/DinoSpawnEntriesCave2-LowSpiderScorp_C.DinoSpawnEntriesCave2-LowSpiderScorp_C"
+		  Const ReaperPath = "/Game/Genesis2/Dinos/BiomeVariants/Xenomorph_Character_Female_BP_Gen2.Xenomorph_Character_BP_Female_Gen2"
+		  
+		  Var NormalClass As String = Beacon.ClassStringFromPath(NormalPath)
+		  Var ScorpionClass As String = Beacon.ClassStringFromPath(ScorpionPath)
+		  Var ReaperClass As String = Beacon.ClassStringFromPath(ReaperPath)
+		  
+		  Call Assert(NormalClass = "AB_DinoSpawnEntriesRockDrake_C", "Class from path is wrong. Expected AB_DinoSpawnEntriesRockDrake_C, got " + NormalClass + ".")
+		  Call Assert(ScorpionClass = "DinoSpawnEntriesCave2-LowSpiderScorp_C_C", "Class from path is wrong. Expected DinoSpawnEntriesCave2-LowSpiderScorp_C_C, got " + ScorpionClass + ".")
+		  Call Assert(ReaperClass = "Xenomorph_Character_BP_Female_Gen2_C", "Class from path is wrong. Expected Xenomorph_Character_BP_Female_Gen2_C, got " + ReaperClass + ".")
 		End Sub
 	#tag EndMethod
 
