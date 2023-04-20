@@ -13,12 +13,6 @@ if (!$has_purchased) {
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 
-BeaconTemplate::StartScript(); ?>
-<script>
-
-</script><?php
-BeaconTemplate::FinishScript();
-
 ?><p>Thanks for purchasing Beacon Omni! Your support means a lot.</p>
 <div id="section-activation" class="visual-group">
 	<h3>Activating Beacon Omni</h3>
@@ -100,7 +94,7 @@ function ShowLicenses() {
 	
 	echo '<div id="section-licenses" class="visual-group">';
 	echo '<h3>Licenses</h3>';
-	echo '<table class="generic"><thead><tr><th class="w-50">Product</th><th class="low-priority w-25">Updates Until</th><th class="low-priority w-25">Actions</th></thead>';
+	echo '<table class="generic"><thead><tr><th class="w-50">Product</th><th class="low-priority w-30">Updates Until</th><th class="low-priority w-20">Actions</th></thead>';
 	while ($licenses->EOF() === false) {
 		$purchase_id = $licenses->Field('purchase_id');
 		$product_id = $licenses->Field('product_id');
@@ -113,9 +107,12 @@ function ShowLicenses() {
 		if (is_null($expiration_seconds)) {
 			$expiration_str = 'Forever';
 		} else {
-			$expiration_str = '<time datetime="' . date('Y-m-d H:i:s.000O', $expiration_seconds) . '">' . htmlentities(date('F jS Y', $expiration_seconds)) . '</time>';
-			$renew_caption = ($expiration_seconds < time() ? 'Renew' : 'Extend');
-			$actions[$renew_caption] = '/omni/buy/' . $product_id;
+			$expiration_str = '<time class="no-localize" datetime="' . date('Y-m-d H:i:s.000O', $expiration_seconds) . '">' . htmlentities(date('F jS Y', $expiration_seconds)) . '</time>';
+			if ($expiration_seconds < time()) {
+				$newest_build = BeaconCommon::NewestBuildForExpiration($expiration_seconds, true);
+				$newest_version = BeaconCommon::BuildNumberToVersion($newest_build);
+				$expiration_str .= '<br class="large-only"><span class="small-only">, </span>Version ' . $newest_version;
+			}
 		}
 		
 		$actions_html_members = [];
@@ -124,7 +121,7 @@ function ShowLicenses() {
 		}
 		$actions_html = implode(' ', $actions_html_members);
 		
-		echo '<tr><td class="w-50">' . htmlentities($product_name) . '<div class="row-details"><span class="detail">Receives updates through ' . $expiration_str . '</span><span class="detail">Actions: ' . $actions_html . '</div></td><td class="low-priority w-25">' . $expiration_str . '</td><td class="low-priority w-25 text-center">' . $actions_html . '</td></tr>';
+		echo '<tr><td class="w-50">' . htmlentities($product_name) . '<div class="row-details"><span class="detail">Receives updates until ' . $expiration_str . '</span><span class="detail">Actions: ' . $actions_html . '</div></td><td class="low-priority w-30 smaller">' . $expiration_str . '</td><td class="low-priority w-20 text-center">' . $actions_html . '</td></tr>';
 		
 		$licenses->MoveNext();
 	}

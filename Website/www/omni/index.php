@@ -44,7 +44,7 @@ $stable_version = BeaconCommon::NewestVersionForStage(3);
 $currency = $_SESSION['store_currency'];
 $supported_currencies = $_SESSION['store_currency_options'];
 
-$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, products.product_name, product_prices.price FROM products INNER JOIN product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currency);
+$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, products.product_name, product_prices.price, EXTRACT(epoch FROM products.updates_length) AS plan_length_seconds FROM products INNER JOIN product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currency);
 $product_details = [];
 $product_ids = [];
 while (!$results->EOF()) {
@@ -53,13 +53,15 @@ while (!$results->EOF()) {
 	$product_price = $results->Field('price');
 	$game_id = $results->Field('game_id');
 	$tag = $results->Field('tag');
+	$plan_length_seconds = $results->Field('plan_length_seconds');
 	
 	$product = [
 		'ProductId' => $product_id,
 		'Name' => $product_name,
 		'Price' => floatval($product_price),
 		'GameId' => $game_id,
-		'Tag' => $tag
+		'Tag' => $tag,
+		'PlanLengthSeconds' => $plan_length_seconds
 	];
 	
 	$product_details[$game_id][$tag] = $product;
@@ -74,6 +76,7 @@ $arksa_enabled = isset($product_details['ArkSA']);
 $payment_methods = [
 	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
 	'EUR' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
+	'PLN' => ['p24']
 ];
 $payment_labels = [
 	'apple' => 'Apple Pay',
@@ -119,6 +122,7 @@ const ProductIds = <?php echo json_encode($product_ids); ?>;
 BeaconTemplate::FinishScript();
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 
 ?>

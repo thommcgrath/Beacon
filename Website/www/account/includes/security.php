@@ -5,9 +5,6 @@ $authenticators = BeaconAPI\Authenticator::GetForUser($user);
 $has_authenticators = count($authenticators) > 0;
 
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('jsOTP-es5-min.js'));
-if ($has_authenticators) {
-	BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
-}
 
 ?><div class="visual-group">
 	<h3>Change Password</h3>

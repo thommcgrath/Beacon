@@ -474,6 +474,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		if (moment) {
 			const timeElements = document.querySelectorAll('time');
 			for (const timeElement of timeElements) {
+				if (timeElement.classList.contains('no-localize')) {
+					continue;
+				}
+				
 				const dateTime = timeElement.getAttribute('datetime');
 				if (dateTime) {
 					const time = moment(dateTime);

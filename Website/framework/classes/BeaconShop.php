@@ -260,7 +260,7 @@ abstract class BeaconShop {
 				
 				// The price should be an even multiple, plus 1% for conversion fees
 				$converted_price = ceil(($retail_price * ($currency === 'USD' ? 1.0 : 1.01) * $rate) / $round_to) * $round_to;
-				$converted_price_stripe = $converted_price * 100;
+				$converted_price_stripe = $converted_price * ($currency !== 'JPY' ? 100 : 1);
 				
 				$active_price_id = null;
 				foreach ($prices[$currency] as $price) {

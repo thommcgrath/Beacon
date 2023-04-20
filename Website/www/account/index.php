@@ -27,6 +27,7 @@ const apiDomain = <?php echo json_encode(BeaconCommon::APIDomain()); ?>;
 BeaconTemplate::FinishScript();
 	
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('account.js'));
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
 

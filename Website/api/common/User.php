@@ -838,7 +838,7 @@ class User implements \JsonSerializable {
 			}
 		}
 		
-		$results = $database->Query('SELECT product_id, EXTRACT(epoch FROM expiration) AS expiration, flags FROM purchased_products WHERE purchaser_email = $1 ORDER BY product_id;', $this->email_id);
+		$results = $database->Query('SELECT licenses.product_id, EXTRACT(epoch FROM licenses.expiration) AS expiration, products.flags FROM public.licenses INNER JOIN public.products ON (licenses.product_id = products.product_id) INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 ORDER BY licenses.product_id;', $this->email_id);
 		while ($results->EOF() === false) {
 			$purchase = [
 				'product_id' => $results->Field('product_id'),
@@ -849,7 +849,8 @@ class User implements \JsonSerializable {
 			
 			$expires = $results->Field('expiration');
 			if (is_null($expires) === false) {
-				$expires_str = date('Y-m-d H:i:sO', intval($expires));
+				$purchase['expires_epoch'] = intval($expires);
+				$expires_str = date('Y-m-d H:i:sO', $purchase['expires_epoch']);
 				$purchase['expires'] = $expires_str;
 				$hash_data .= ':' . $expires_str;
 			}

@@ -903,6 +903,44 @@ abstract class BeaconCommon {
 		$value = str_replace(['-', '_'], ['+', '/'], $value);
 		return base64_decode($value);
 	}
+	
+	public static function NewestBuildForLicense(string $licenseId, bool $onlyPublished = false): int {
+		$database = static::Database();
+		$results = $database->Query('SELECT EXTRACT(epoch FROM expiration) AS expiration FROM public.licenses WHERE license_id = $1;', $licenseId);
+		if ($results->RecordCount() === 0) {
+			return 0;
+		}
+		return static::NewestBuildForExpiration($results->Field('expiration'), $onlyPublished);
+	}
+	
+	public static function NewestBuildForExpiration(int $expiration, bool $onlyPublished = false): int {
+		$database = static::Database();
+		
+		// Find the newest. If there is a beta running, that changes the answer.
+		$results = $database->Query('SELECT build_number, stage FROM public.updates WHERE published IS NOT NULL ORDER BY build_number DESC LIMIT 1;');
+		$latestBuild = $results->Field('build_number');
+		$latestBuildBase = floor($latestBuild / 1000);
+		$isBetaActive = $results->Field('stage') < 3;
+		
+		// Find the latest build the expiration allows.
+		$results = $database->Query('SELECT build_number FROM public.updates WHERE published <= to_timestamp($1) AND stage >= $2 ORDER BY build_number DESC LIMIT 1;', $expiration, ($isBetaActive ? 0: 3));
+		$allowedBuild = $results->Field('build_number');
+		$allowedBuildBase = floor($allowedBuild / 1000);
+		
+		if ($isBetaActive && $allowedBuildBase === $latestBuildBase) {
+			// User had access to at least one of the active betas, so they should have access to all betas until release
+			$allowedBuild = ($allowedBuildBase * 1000) + 299;
+		} else {
+			$allowedBuild = ($allowedBuildBase * 1000) + 999;
+		}
+		
+		if ($onlyPublished === false) {
+			return $allowedBuild;
+		}
+		
+		$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM public.updates WHERE build_number <= $1;', $allowedBuild);
+		return $results->Field('newest_build');
+	}
 }
 
 ?>

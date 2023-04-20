@@ -679,7 +679,21 @@ document.addEventListener('DOMContentLoaded', () => {
 			
 			if (gameStatus.ArkSA === StatusOwns) {
 				// Show as renewal
-				const license = ark.arkSALicense;
+				const license = cart.arkSALicense;
+				const now = Math.floor(Date.now() / 1000);
+				const currentExpiration = license.expires_epoch;
+				const currentExpirationDisplay = moment.unix(currentExpiration).format('MMM Do YYYY');
+				const startEpoch = (now > currentExpiration) ? ((Math.floor(now / 86400) * 86400) + 86400) : currentExpiration;
+				const newExpiration = startEpoch + (Products.ArkSA.Renewal.PlanLengthSeconds * arkSAYears);
+				const newExpirationDisplay = moment.unix(newExpiration).format('MMM Do YYYY');
+				
+				let statusHtml;
+				if (now > currentExpiration) {
+					statusHtml = `Renew your update plan<br>Expired on <span class="text-red">${currentExpirationDisplay}</span><br>New expiration: <span class="text-green">${newExpirationDisplay}</span>`;
+				} else {
+					statusHtml = `Extend your update plan<br>Expires on <span class="text-green">${currentExpirationDisplay}</span><br>New expiration: <span class="text-green">${newExpirationDisplay}</span>`;
+				}
+				this.arkSAStatusField.innerHTML = statusHtml;
 				
 				arkSAFullPrice = Products.ArkSA.Renewal.Price * arkSAYears;
 				arkSAEffectivePrice = arkSAFullPrice;
