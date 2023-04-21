@@ -93,6 +93,9 @@ Source: "..\..\Artwork\BeaconData.ico"; DestDir: "{app}\{#MyAppResources}"; Flag
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 
 [Registry]
+root: HKA; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 10.0
+Root: HKA; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 10.0
+
 Root: HKA; Subkey: "Software\Classes\.beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconDocument"; ValueData: "{#MyAppName} Document"; ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\BeaconDocument\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconDocument.ico,0"; ValueType: string; ValueName: ""
