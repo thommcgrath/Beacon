@@ -43,7 +43,6 @@ $database = BeaconCommon::Database();
 if (isset($_COOKIE['beacon_affiliate'])) {
 	$client_reference_id = $_COOKIE['beacon_affiliate'];
 	
-	
 	$rows = $database->Query('SELECT purchase_id, code FROM affiliate_tracking WHERE client_reference_id = $1;', $client_reference_id);
 	if ($rows->RecordCount() === 1 && is_null($rows->Field('purchase_id')) === false) {
 		// need a new id

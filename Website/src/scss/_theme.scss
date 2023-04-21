@@ -201,6 +201,18 @@ $enable-rounded: true;
 	}
 }
 
+@mixin backdrop-blur($size, $color) {
+	@supports (-webkit-backdrop-filter: blur($size)) {
+		-webkit-backdrop-filter: blur($size);
+		background-color: $color;
+	}
+	
+	@supports (backdrop-filter: blur($size)) {
+		backdrop-filter: blur($size);
+		background-color: $color;
+	}
+}
+
 $foreground-color: #000000 !default;
 $background-color: #ffffff !default;
 $accent-color: #9c0fb0 !default;
@@ -823,10 +835,7 @@ table.generic {
 	background-color: $background-color;
 	border-color: rgba($foreground-color, 0.1);
 	
-	@supports (-webkit-backdrop-filter: blur(30px)) {
-		-webkit-backdrop-filter: blur(30px);
-		background-color: rgba($background-color, 0.5);
-	}
+	@include backdrop-blur(30px, rgba($background-color, 0.5));
 }
 
 #header {
@@ -1728,15 +1737,13 @@ div.results {
 	right: 0px;
 	transition-duration: 0.25s;
 	transition-timing-function: ease-out;
-	transition-property: background-color, -webkit-backdrop-filter;
+	transition-property: background-color, -webkit-backdrop-filter, backdrop-filter;
 	z-index: 2000;
 	background-color: rgba(0, 0, 0, 0.0);
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 	background-color: rgba(#000000, 0);
 	
-	@supports (-webkit-backdrop-filter: blur(0px)) {
-			-webkit-backdrop-filter: blur(0px);
-	}
+	@include backdrop-blur(0px, rgba(#000000, 0));
 	
 	&.exist {
 		display: block;
@@ -1745,10 +1752,7 @@ div.results {
 	&.visible {
 		background-color: rgba(#000000, 0.8);
 		
-		@supports (-webkit-backdrop-filter: blur(15px)) {
-			background-color: rgba(#000000, 0.3);
-			-webkit-backdrop-filter: blur(15px);
-		}
+		@include backdrop-blur(15px, rgba(#000000, 0.3));
 	}
 }
 
@@ -2625,6 +2629,30 @@ div.comment-block {
 		padding-top: 1rem;
 		border-top: 1px solid $separator-color;
 		margin-top: 1rem;
+		
+		.storefront-cart-totals {
+			margin-bottom: 1rem;
+			
+			.storefront-cart-total-row {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: flex-end;
+				
+				div:nth-child(1) {
+					text-align: right;
+					flex: 0 0 auto;
+				}
+				
+				div:nth-child(2) {
+					text-align: right;
+					flex: 0 0 120px;
+				}
+			}
+			
+			.storefront-cart-total-row+.storefront-cart-total-row {
+				margin-top: 0.5rem;
+			}
+		}
 		
 		.storefront-cart-paymethods {
 			display: flex;

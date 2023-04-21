@@ -99,7 +99,7 @@ class BeaconCartItem {
 	}
 	
 	get hasArkSA() {
-		return this.getQuantity(Products?.ArkSA?.Base?.ProductId) > 0 || this.getQuantity(Products?.ArkSA?.Upgrade?.ProductId) > 0;
+		return this.getQuantity(Products?.ArkSA?.Base?.ProductId) > 0 || this.getQuantity(Products?.ArkSA?.Upgrade?.ProductId) > 0 || this.getQuantity(Products?.ArkSA?.Renewal?.ProductId) > 0;
 	}
 	
 	get arkSAYears() {
@@ -162,6 +162,15 @@ class BeaconCartItem {
 		const arkSAYears = this.arkSAYears + otherLineItem.arkSAYears;
 		this.build(this.isGift, includeArk, arkSAYears);
 	}
+	
+	get total() {
+		const ids = this.productIds;
+		let total = 0;
+		for (const productId of ids) {
+			total += ProductIds[productId]['Price'] * this.getQuantity(productId);
+		}
+		return total;
+	}
 }
 
 class BeaconCart {
@@ -213,11 +222,11 @@ class BeaconCart {
 	}
 	
 	save() {
-		localStorage.setItem('beacon-cart', JSON.stringify(this));
+		localStorage.setItem('beaconCart', JSON.stringify(this));
 	}
 	
 	static load() {
-		return new this(localStorage.getItem('beacon-cart'));
+		return new this(localStorage.getItem('beaconCart'));
 	}
 	
 	add(item) {
@@ -245,11 +254,6 @@ class BeaconCart {
 	
 	setEmail(newEmail) {
 		return new Promise((resolve, reject) => {
-			if (newEmail === this.#email) {
-				resolve({newEmail, cartChanged: false});
-				return;
-			}
-			
 			// Returns true if the cart was changed
 			const rebuildCart = () => {
 				const cartItem = this.personalCartItem;
@@ -346,6 +350,14 @@ class BeaconCart {
 			}
 		}
 		return null;
+	}
+	
+	get total() {
+		let total = 0;
+		for (const cartItem of this.#items) {
+			total += cartItem.total;
+		}
+		return total;
 	}
 }
 const cart = BeaconCart.load();
@@ -602,17 +614,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		},
 		present: function(editCartItem = null) {
 			this.editCartItem = editCartItem;
-			this.arkCheck.checked = editCartItem?.hasArk || false;
-			this.arkSACheck.checked = editCartItem?.hasArkSA || false;
 			this.arkCheck.disabled = false; // update() will disable them
 			this.arkSACheck.disabled = false;
 			
 			if (editCartItem) {
 				this.giftCheck.checked = editCartItem.isGift;
 				this.giftCheck.disabled = true;
+				this.arkCheck.checked = editCartItem.hasArk;
+				this.arkSACheck.checked = editCartItem.hasArkSA;
 			} else {
 				this.giftCheck.checked = false;
 				this.giftCheck.disabled = false;
+				this.arkCheck.checked = false;
+				this.arkSACheck.checked = false;
 			}
 			
 			if (editCartItem) {
@@ -771,6 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		checkoutButton: document.getElementById('storefront-cart-checkout-button'),
 		footer: document.getElementById('storefront-cart-footer'),
 		body: document.getElementById('storefront-cart'),
+		totalField: document.getElementById('storefront-cart-total'),
 		init: function() {
 			this.currencyMenu.addEventListener('change', (ev) => {
 				ev.preventDefault();
@@ -805,6 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						try {
 							const parsed = JSON.parse(response.body);
 							const url = parsed.url;
+							sessionStorage.setItem('clientReferenceId', parsed.client_reference_id);
 							window.location = url;
 						} catch (err) {
 							console.log(response.body);
@@ -890,6 +906,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				buyButton.innerText = 'Buy Omni';
 			}
 			
+			this.totalField.setAttribute('beacon-price', cart.total);
 			BeaconCurrency.formatPrices();
 		},
 		createProductRow: function(cartItem, productId) {

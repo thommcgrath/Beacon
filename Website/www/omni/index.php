@@ -258,6 +258,11 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 		</div>
 		<div id="storefront-cart" class="storefront-cart-section"></div>
 		<div id="storefront-cart-footer" class="storefront-cart-section">
+			<div class="storefront-cart-totals">
+				<div class="storefront-cart-total-row">
+					<div class="bold">Total</div><div id="storefront-cart-total" class="formatted-price"></div>
+				</div>
+			</div>
 			<div class="double-group">
 				<div>
 					<div class="select"><span></span>
@@ -341,7 +346,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 					</div>
 				</div>
 			</div>
-			<p class="smaller text-lighter">These are one time payments. Beacon Omni is not subscription software. <a href="/omni/updates" target="_blank">Learn More</a></p>
+			<p class="smaller text-lighter">These are one time payments. Beacon Omni is not subscription software. <a href="/omni/updates" target="beacon" rel="noopener noreferrer">Learn More</a></p>
 		</div>
 		<div class="button-bar">
 			<div class="left"><label class="checkbox"><input type="checkbox" value="true" id="checkout-wizard-gift-check"><span></span>This purchase is a gift.</label></div>
@@ -361,7 +366,7 @@ BeaconTemplate::StartModal('checkout-email');
 	<div class="modal-content">
 		<div class="title-bar">Your E-Mail Address</div>
 		<div class="content">
-			<p>We need your e-mail address to show you the most accurate pricing and options. This will not be stored until your purchase is complete and will not be used for marketing messages. Feel free to read more about our <a href="/help/about_user_privacy" target="_blank">privacy policy</a> in a new tab.</p>
+			<p>We need your e-mail address to show you the most accurate pricing and options. This will not be stored until your purchase is complete and will not be used for marketing messages. Feel free to read more about our <a href="/help/about_user_privacy" target="beacon" rel="noopener noreferrer">privacy policy</a> in a new tab.</p>
 			<div class="floating-label">
 				<input class="text-field" type="email" id="checkout-email-field" placeholder="E-Mail Address">
 				<label for="checkout-email-field">E-Mail Address</label>

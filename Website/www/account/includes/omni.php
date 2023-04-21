@@ -107,8 +107,9 @@ function ShowLicenses() {
 		if (is_null($expiration_seconds)) {
 			$expiration_str = 'Forever';
 		} else {
-			$expiration_str = '<time class="no-localize" datetime="' . date('Y-m-d H:i:s.000O', $expiration_seconds) . '">' . htmlentities(date('F jS Y', $expiration_seconds)) . '</time>';
-			if ($expiration_seconds < time()) {
+			$expired = $expiration_seconds < time();
+			$expiration_str = '<time class="no-localize' . ($expired ? ' text-red' : '') . '" datetime="' . date('Y-m-d H:i:s.000O', $expiration_seconds) . '">' . htmlentities(date('F jS Y', $expiration_seconds)) . '</time>';
+			if ($expired) {
 				$newest_build = BeaconCommon::NewestBuildForExpiration($expiration_seconds, true);
 				$newest_version = BeaconCommon::BuildNumberToVersion($newest_build);
 				$expiration_str .= '<br class="large-only"><span class="small-only">, </span>Version ' . $newest_version;
