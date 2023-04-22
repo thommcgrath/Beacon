@@ -7,3 +7,7 @@
 #header_logo, .white-on-dark {
 	filter: brightness(0) invert(1);
 }
+
+.accented-foreground {
+	filter: invert(22%) sepia(68%) saturate(2401%) hue-rotate(271deg) brightness(88%) contrast(105%);
+}

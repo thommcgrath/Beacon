@@ -4,6 +4,6 @@
 	$accent-color: #ffffff
 );
 
-#header_logo, .white-on-dark {
+#header_logo, .white-on-dark, .accented-foreground {
 	filter: brightness(0) invert(1);
 }
