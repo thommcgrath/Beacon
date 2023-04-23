@@ -105,7 +105,7 @@ const buildDownloadsTable = async () => {
 		
 		let first = true; // Set first only after a row is added, in case one gets skipped
 		for (const downloadKey of priorities) {
-			let recommendedTag = (recommend === true && hasRecommendation === true && first === true) ? '<span class="tag blue mini left-space">Recommended</span>' : '';
+			let recommendedTag = (recommend === true && hasRecommendation === true && first === true) ? '<span class="tag blue left-space">Recommended</span>' : '';
 			
 			switch (downloadKey) {
 			case downloadMac:

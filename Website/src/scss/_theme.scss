@@ -12,33 +12,36 @@ $header-border-opacity: 0.15;
 $border-radius: 0.25rem;
 $border-radius-sm: 0.2rem;
 $border-radius-lg: 0.3rem;
-$font-size: 1rem;
+$font-size: 16px;
+$font-size-sm: $font-size * 0.875;
+$font-size-lg: $font-size * 1.25;
 $font-weight: 400;
-$button-line-height: 1.5rem;
+$button-line-height: 1.5em;
 $input-placeholder-opacity: 0.4;
 
 $input-padding-y: 0.375rem;
 $input-padding-x: 0.75rem;
-$input-font-size: $font-size;
+$input-font-size: 1rem;
 $input-margin: 16px;
 
 $input-padding-y-sm: 0.25rem;
 $input-padding-x-sm: 0.5rem;
-$input-font-size-sm: $font-size * 0.875;
+$input-font-size-sm: 1rem * 0.875;
 $input-margin-sm: $input-margin * 0.75;
 
 $input-padding-y-lg: 0.5rem;
 $input-padding-x-lg: 1rem;
-$input-font-size-lg: $font-size * 1.25;
+$input-font-size-lg: 1rem * 1.25;
 $input-margin-lg: $input-margin * 1.25;
 
 $page_margins: 20px;
 $max_content_width: 1200px;
+$reduced_content_width: 800px;
 $disabled-opacity: 0.4;
 
 $breakpoint_mini: 400px;
 $breakpoint_mobile: 635px;
-$breakpoint_desktop: 800px + ($page_margins * 2);
+$breakpoint_desktop: $reduced_content_width + ($page_margins * 2);
 
 $animation-timing: 0.15s;
 
@@ -252,13 +255,14 @@ $button-secondary-text-color: $foreground-color;
 
 $input-border-color: color.mix($foreground-color, $background-color, 30%);
 
-body {
-	font-family: 'Inter', sans-serif;
-	font-weight: $font-weight;;
+html {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: $font-weight;
 	font-style: normal;
-	font-size: 11pt;
+	font-size: $font-size-sm;
 	color: $foreground-color;
 	background-color: $background-color;
+	font-kerning: normal;
 }
 
 *:first-child {
@@ -294,10 +298,10 @@ code, .code {
 	@include source-code-pro();
 	border-width: 1px;
 	border-style: solid;
-	border-radius: 0.4em;
-	padding: 0.2em 0.5em;
-	font-size: 0.8em;
-	line-height: 2.0em;
+	border-radius: 0.4rem;
+	padding: 0.2rem 0.5rem;
+	font-size: 0.8rem;
+	line-height: 2.0rem;
 	background-color: rgba($foreground-color, 0.05);
 	border-color: rgba($foreground-color, 0.1);
 }
@@ -305,12 +309,12 @@ code, .code {
 pre {
 	border-width: 1px;
 	border-style: solid;
-	padding: 0.6em;
-	border-radius: 0.4em;
+	padding: 0.6rem;
+	border-radius: 0.4rem;
 	overflow: auto;
 	margin: 10px;
 	display: block;
-	font-size: 0.8em;
+	font-size: 0.8rem;
 	background-color: rgba($foreground-color, 0.05);
 	border-color: rgba($foreground-color, 0.1);
 	
@@ -348,9 +352,12 @@ a {
 }
 
 .platform_tag, .tag {
-	border-radius: 0.5em;
+	border-radius: 0.25em;
+	line-height: 1;
+	font-weight: 700;
 	display: inline-block;
-	padding: 2px 8px;
+	padding: 0.35em 0.65em;
+	font-size: 0.75em;
 	
 	&+& {
 		margin-left: 6px;
@@ -470,6 +477,12 @@ a {
 	box-sizing: border-box;
 }
 
+.reduced-width {
+	max-width: $reduced_content_width;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .indent {
 	margin-left: 40px;
 }
@@ -566,25 +579,24 @@ div.medium_section {
 }
 
 h1 {
-	font-size: 17pt;
+	font-size: $font-size-sm * 1.2;
 }
 
 h2 {
-	font-size: 15pt;
+	font-size: $font-size-sm * 1.1;
 }
 
 h3 {
-	font-size: 13pt;
+	font-size: $font-size-sm;
 }
 
 h1, h2, h3 {
 	font-weight: 600;
-	line-height: 0.9em;
 	
 	.subtitle {
 		font-weight: 300;
-		font-size: 0.6em;
-		line-height: 0.9em;
+		font-size: 0.8rem;
+		line-height: 0.8rem;
 	}
 }
 
@@ -959,7 +971,7 @@ table.generic {
 
 #content_wrapper {
 	margin-top: 136px;
-	line-height: 1.5em;
+	line-height: 1.7rem;
 }
 
 #footer {
@@ -1115,13 +1127,13 @@ input[type="submit"], button.default, a.button.default {
 	-o-transition-timing-function: ease-in-out;
 	transition-timing-function: ease-in-out;
 	width: 100%;
-	line-height: 1.0em;
+	line-height: 1.0rem;
 	background-clip: padding-box;
 	
 	&::placeholder {
-		line-height: 1.0em;
+		line-height: 1.0rem;
 		vertical-align: bottom;
-		padding-top: 0.3em;
+		padding-top: 0.3rem;
 		color: $foreground-color;
 		opacity: $input-placeholder-opacity;
 	}
@@ -1266,7 +1278,7 @@ input[type="submit"], button.default, a.button.default {
 .field-pair {
 	label {
 		padding-left: 6px;
-		line-height: 1.6em;
+		line-height: 1.6rem;
 		color: color.mix($foreground-color, $background-color, 70%);
 	}
 }
@@ -1459,7 +1471,6 @@ div.select {
 		display: inline-block;
 		font-family: inherit;
 		font-size: $input-font-size;
-		text-align: center;
 		text-decoration: none;
 		-webkit-transition-duration: $animation-timing;
 		-o-transition-duration: $animation-timing;
@@ -1482,11 +1493,12 @@ div.select {
 	
 	span:after {
 		position: absolute;
-		top: $input-padding-y / 2;
+		top: calc(50% - 0.5em);
 		right: $input-padding-x;
 		content: '▾';
 		font-size: $input-font-size;
 		pointer-events: none;
+		line-height: 0.9em;
 	}
 	
 	@include menu-colors($button-primary-color, $button-primary-text-color, false);
@@ -1817,7 +1829,7 @@ div.results {
 	padding: 0px;
 	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.45);
 	box-sizing: border-box;
-	line-height: 1.5em;
+	line-height: 1.5rem;
 	background-color: $background-color;
 	
 	&.exist {
@@ -1952,16 +1964,29 @@ div.results {
 	flex-wrap: nowrap;
 	
 	#knowledge_main {
-		line-height: 1.4em;
+		$element-margin: 0.5rem;
+		
+		& > * {
+			margin-top: $element-margin;
+			margin-bottom: $element-margin;
+			
+			&:first-child {
+				margin-top: 0px;
+			}
+			
+			&:last-child {
+				margin-bottom: 0px;
+			}
+		}
 		
 		h2, h3 {
 			border-bottom-width: 1px;
 			border-bottom-style: solid;
-			padding-bottom: 0.3em;
-			border-color: color.mix($separator-color, $background-color, 30%);
+			padding-bottom: 0.3rem;
+			border-color: color.mix($separator-color, $background-color, 50%);
 		}
 		
-		h1, h2, h3, h4, h5, h6 {
+		/*& > h1, h2, h3, h4, h5, h6 {
 			margin-top: 20px;
 		}
 		
@@ -1981,18 +2006,22 @@ div.results {
 		h4, h5, h6 {
 			margin-bottom: 0px;
 			font-weight: 600;
-		}
+		}*/
 		
 		code {
 			padding: 0px 5px;
 			border-radius: 4px;
-			line-height: 1.4em;
+			line-height: 1.4rem;
 		}
 		
-		pre {
+		pre code {
+			padding: 0px;
+		}
+		
+		/*pre {
 			margin-top: 15px;
 			margin-bottom: 15px;
-		}
+		}*/
 		
 		.affected_ini_keys {
 			border-top-width: 1px;
@@ -2051,6 +2080,7 @@ div.results {
 				padding-left: 10px;
 				padding-top: 4px;
 				padding-bottom: 4px;
+				line-height: 1.4rem;
 				
 				&.current {
 					padding-left: 7px;
@@ -2257,11 +2287,13 @@ div.page-panel {
 			a {
 				text-decoration: none;
 				display: inline-block;
-				padding: 4pt;
-				border-radius: 4pt;
+				padding: $input-padding-y $input-padding-x;
+				border-radius: $border-radius;
 				white-space: nowrap;
 				background-color: none;
 				color: $text-accent-color;
+				line-height: $button-line-height;
+				font-size: $input-font-size;
 			}
 			
 			&.page-panel-active a {
@@ -2310,20 +2342,20 @@ div.flex-grid {
 }
 
 @media (min-width: $breakpoint_mobile) {
-	body {
-		font-size: 13pt;
+	html {
+		font-size: $font-size;
 	}
 	
 	h1 {
-		font-size: 19pt;
+		font-size: $font-size * 1.2;
 	}
 	
 	h2 {
-		font-size: 17pt;
+		font-size: $font-size * 1.1;
 	}
 	
 	h3 {
-		font-size: 15pt;
+		font-size: $font-size;
 	}
 	
 	#header_wrapper {
@@ -2514,11 +2546,9 @@ div.comment-block {
 }
 
 #storefront {
-	$cart-width: 800px;
-	
 	.storefront-cart-section {
 		box-sizing: border-box;
-		max-width: $cart-width;
+		max-width: $reduced_content_width;
 		margin-left: auto;
 		margin-right: auto;
 	}
@@ -2539,6 +2569,9 @@ div.comment-block {
 			margin-left: 1rem;
 			margin-right: 1rem;
 			flex: 1 1 auto;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 		
 		div:nth-child(3) {
@@ -2691,6 +2724,21 @@ div.comment-block {
 	}
 	100% {
 		transform: translate(0px);
+	}
+}
+
+.header-with-subtitle {
+	margin-bottom: 1rem;
+	
+	h1, h2, h3, h4, h5, h6 {
+		margin-bottom: 0px;
+		margin-top: 0px;
+	}
+	
+	.subtitle {
+		font-size: 0.8rem;
+		line-height: 1.0rem;
+		display: block;
 	}
 }
 
