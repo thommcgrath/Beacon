@@ -64,12 +64,77 @@ function RedeemCode(string $code, bool $confirmed): void {
 		return;
 	}
 	
+	$licenses = $user->Licenses();
+	$licenseMap = [];
+	foreach ($licenses as $license) {
+		$licenseMap[$license['product_id']] = $license;
+	}
+	
+	$results = $database->Query('SELECT products.product_id, products.product_name, gift_code_products.quantity FROM public.gift_code_products INNER JOIN public.products ON (gift_code_products.product_id = products.product_id) WHERE gift_code_products.code = $1 ORDER BY products.product_name;', $code);
+	
+	if ($results->RecordCount() === 1 && array_key_exists($results->Field('product_id'), $licenseMap) && array_key_exists('expires', $licenseMap[$results->Field('product_id')]) === false) {
+		echo '<p>You already own ' . htmlentities($results->Field('product_name')) . '. You cannot redeem this gift code.</p>';
+		return;
+	}
+	
 	if ($confirmed) {
 		// Redeem the gift code
+		$gift_products = [];
+		$regular_products = [];
+		$bundles = [];
 		
+		while (!$results->EOF()) {
+			$productId = $results->Field('product_id');
+			$quantity = $results->Field('quantity');
+			
+			if (array_key_exists($productId, $licenseMap) && array_key_exists('expires', $licenseMap[$productId]) === false) {
+				$gift_products[$productId] = ($gift_products[$productId] ?? 0) + $quantity;
+			} else {
+				$regular_products[$productId] = ($regular_products[$productId] ?? 0) + $quantity;
+			}
+			
+			$results->MoveNext();
+		}
+		
+		if (count($regular_products) > 0) {
+			$bundles[] = BeaconShop::CreateBundle($regular_products, false);
+		}
+		if (count($gift_products) > 0) {
+			$bundles[] = BeaconShop::CreateBundle($gift_products, true);
+		}
+		
+		$database->BeginTransaction();
+		$purchaseId = BeaconShop::GrantProducts($user->EmailId(), $bundles, "Redeemed gift code {$code}", true);
+		$database->Query('UPDATE gift_codes SET redemption_purchase_id = $2, redemption_date = CURRENT_TIMESTAMP WHERE code = $1;', $code, $purchaseId);
+		LogRedeemAttempt($code, $user->UserID(), true);
+		$database->Commit();
+		
+		echo '<p class="text-center"><span class="text-blue">Gift code redeemed!</span><br><a href="/account/#omni">Activation instructions</a> are available if you need them.</p>';
 	} else {
 		// Show confirmation
-		$results = $database->Query('SELECT products.product_id, products.product_name, gift_code_products.quantity FROM public.gift_code_products INNER JOIN public.products ON (gift_code_products.product_id = products.product_id) WHERE gift_code_products.code = $1;', $code);
+		echo '<form action="/account/redeem" method="post"><input type="hidden" name="process" value="redeem-final"><input type="hidden" name="code" value="' . htmlentities($code) . '">';
+		echo '<p>The following products will be added to account ' . htmlentities($user->Username()) . '<span class="user-suffix">#' . htmlentities($user->Suffix()) . '</span>.</p>';
+		
+		echo '<ul>';
+		while (!$results->EOF()) {
+			$productId = $results->Field('product_id');
+			$productName = $results->Field('product_name');
+			$quantity = $results->Field('quantity');
+			
+			echo '<li>' . ($quantity > 1 ? $quantity . ' x ' : '') . htmlentities($productName);
+			
+			if (array_key_exists($productId, $licenseMap) && array_key_exists('expires', $licenseMap[$productId]) === false) {
+				echo '<br><span class="text-blue">You already own ' . htmlentities($productName) . '. You will be given a gift code for it instead. Share it with somebody.</span>';	
+			}
+			
+			echo '</li>';
+			
+			$results->MoveNext();
+		}
+		echo '</ul>';
+		
+		echo '<div class="double-group"><div>&nbsp;</div><div><div class="button-group"><div><a href="/account/redeem" class="button">Cancel</a></div><div><input type="submit" value="Redeem"></div></div></div>';
+		echo '</form>';
 	}
 }
 

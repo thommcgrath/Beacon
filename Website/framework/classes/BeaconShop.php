@@ -14,198 +14,224 @@ abstract class BeaconShop {
 	
 	const STW_ID = 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015';
 	
-	public static function IssuePurchases(string $purchase_id, array $bundles): void {
-		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT issued, refunded, purchaser_email FROM public.purchases WHERE purchase_id = $1;', $purchase_id);
+	private static $products = [];
+	
+	public static function CacheProducts(string $currencyCode): void {
+		if (isset(static::$products[$currencyCode])) {
+			return;
+		}
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT products.product_id, products.product_name, EXTRACT(epoch FROM products.updates_length) AS plan_length_seconds, products.flags, products.round_to, products.game_id, products.tag, product_prices.price FROM public.product_prices INNER JOIN public.products ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currencyCode);
+		$cache = [];
+		while (!$results->EOF()) {
+			$productId = $results->Field('product_id');
+			$name = $results->Field('product_name');
+			$planLength = intval($results->Field('plan_length_seconds'));
+			$flags = $results->Field('flags');
+			$roundTo = $results->Field('round_to');
+			$gameId = $results->Field('game_id');
+			$tag = $results->Field('tag');
+			$price = $results->Field('price');
+			
+			$product = [
+				'ProductId' => $productId,
+				'GameId' => $gameId,
+				'Tag' => $tag,
+				'Name' => $name,
+				'Price' => $price,
+				'PlanLength' => $planLength,
+				'Flags' => $flags,
+				'RoundTo' => $roundTo
+			];
+			
+			$cache[$productId] = $product;
+			$cache[$gameId][$tag] = $product;
+			
+			$results->MoveNext();
+		}
+		static::$products[$currencyCode] = $cache;
+	}
+	
+	public static function GetProductById(string $currencyCode, string $productId): ?array {
+		if (isset(static::$products[$currencyCode]) === false) {
+			static::CacheProducts($currencyCode);
+		}
+		
+		return static::$products[$currencyCode][$productId] ?? null;
+	}
+	
+	public static function GetProductByTag(string $currencyCode, string $gameId, string $tag): ?array {
+		if (isset(static::$products[$currencyCode]) === false) {
+			static::CacheProducts($currencyCode);
+		}
+		
+		return static::$products[$currencyCode][$gameId][$tag] ?? null;
+	}
+	
+	public static function CreateBundle(array $quantities, bool $isGift): array {
+		return [
+			'isGift' => $isGift,
+			'products' => $quantities
+		];
+	}
+	
+	public static function IssuePurchases(string $purchaseId, array $bundles): void {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT issued, refunded, purchaser_email, currency FROM public.purchases WHERE purchase_id = $1;', $purchaseId);
 		if ($results->RecordCount() === 0 || $results->Field('issued') === true || $results->Field('refunded') === true) {
 			return;
 		}
-		$email_id = $results->Field('purchaser_email');
-		
-		$products = [];
-		$results = $database->Query('SELECT product_id, EXTRACT(epoch FROM updates_length) AS updates_length_seconds, flags, game_id, tag FROM public.products;');
-		while ($results->EOF() === false) {
-			$products[$results->Field('product_id')] = [
-				'length' => $results->Field('updates_length_seconds'),
-				'flags' => $results->Field('flags'),
-				'game' => $results->Field('game_id'),
-				'tag' => $results->Field('tag')
-			];
-			$products[$results->Field('game_id')][$results->Field('tag')] = [
-				'product_id' => $results->Field('product_id'),
-				'length' => $results->Field('updates_length_seconds'),
-				'flags' => $results->Field('flags')
-			];
-			$results->MoveNext();
-		}
+		$emailId = $results->Field('purchaser_email');
+		$currencyCode = $results->Field('currency');
 		
 		$database->BeginTransaction();
 		
 		$results = $database->Query("SELECT EXTRACT(epoch FROM DATE_TRUNC('day', CURRENT_TIMESTAMP + '1 day')) AS base_expiration;");
-		$new_license_start_timestamp = intval($results->Field('base_expiration'));
+		$newLicenseStartTimestamp = intval($results->Field('base_expiration'));
 		
 		foreach ($bundles as $bundle) {
-			$purchased_products = $bundle['products'];
+			$purchasedProducts = $bundle['products'];
 			$isGift = $bundle['isGift'];
 			
 			if ($isGift) {
 				$code = BeaconCommon::CreateGiftCode();
-				$database->Query('INSERT INTO public.gift_codes (code, source_purchase_id) VALUES ($1, $2);', $code, $purchase_id);
-				foreach ($purchased_products as $product_id => $quantity) {
-					$database->Query('INSERT INTO public.gift_code_products (code, product_id, quantity) VALUES ($1, $2, $3);', $code, $product_id, $quantity);
+				$database->Query('INSERT INTO public.gift_codes (code, source_purchase_id) VALUES ($1, $2);', $code, $purchaseId);
+				foreach ($purchasedProducts as $productId => $quantity) {
+					$database->Query('INSERT INTO public.gift_code_products (code, product_id, quantity) VALUES ($1, $2, $3);', $code, $productId, $quantity);
 				}
 				continue;
 			}
 			
-			foreach ($purchased_products as $product_id => $quantity) {
-				$product = $products[$product_id];
+			foreach ($purchasedProducts as $productId => $quantity) {
+				$product = static::GetProductById($currencyCode, $productId);
 				
 				// Renewals and upgrades need to use the base product id. Keep $product pointing to the correct product,
 				// in case the upgrade or renewal has a special behavior such as length.
-				if ($product['tag'] === 'Renewal' || $product['tag'] === 'Upgrade') {
-					$product_id = $products[$product['game']]['Base']['product_id'];
+				if ($product['Tag'] === 'Renewal' || $product['Tag'] === 'Upgrade') {
+					$productId = static::GetProductByTag($currencyCode, $product['Game'], 'Base')['ProductId'];
 				}
 				
-				if (is_null($product['length'])) {
-					$database->Query('INSERT INTO public.licenses (purchase_id, product_id) VALUES ($1, $2);', $purchase_id, $product_id);
+				if (is_null($product['PlanLength'])) {
+					$database->Query('INSERT INTO public.licenses (purchase_id, product_id) VALUES ($1, $2);', $purchaseId, $productId);
 				} else {
-					$update_seconds = intval($product['length']) * $quantity;
-					$start_timestamp = $new_license_start_timestamp;
+					$updateSeconds = $product['PlanLength'] * $quantity;
+					$startTimestamp = $newLicenseStartTimestamp;
 					
-					$licenses = $database->Query('SELECT license_id, EXTRACT(epoch FROM expiration) AS expiration_timestamp FROM public.licenses INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 AND licenses.product_id = $2;', $email_id, $product_id);
+					$licenses = $database->Query('SELECT license_id, EXTRACT(epoch FROM expiration) AS expiration_timestamp FROM public.licenses INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 AND licenses.product_id = $2;', $emailId, $productId);
 					if ($licenses->RecordCount() > 0) {
-						$license_id = $licenses->Field('license_id');
-						$start_timestamp = max($start_timestamp, intval($licenses->Field('expiration_timestamp')));
-						$database->Query('UPDATE public.licenses SET expiration = to_timestamp($2) WHERE license_id = $1;', $license_id, $start_timestamp + $update_seconds);
+						$licenseId = $licenses->Field('license_id');
+						$startTimestamp = max($startTimestamp, intval($licenses->Field('expiration_timestamp')));
+						$database->Query('UPDATE public.licenses SET expiration = to_timestamp($2) WHERE license_id = $1;', $licenseId, $startTimestamp + $updateSeconds);
 					} else {
-						$database->Query('INSERT INTO public.licenses (purchase_id, product_id, expiration) VALUES ($1, $2, to_timestamp($3));', $purchase_id, $product_id, $start_timestamp + $update_seconds);
+						$database->Query('INSERT INTO public.licenses (purchase_id, product_id, expiration) VALUES ($1, $2, to_timestamp($3));', $purchaseId, $productId, $startTimestamp + $updateSeconds);
 					}
 				}
 			}
 		}
 		
-		/*$results = $database->Query('SELECT products.product_id, EXTRACT(epoch FROM products.updates_length) AS updates_length_seconds, products.flags, purchase_items.quantity FROM purchase_items INNER JOIN products ON (purchase_items.product_id = products.product_id) WHERE purchase_id = $1;', $purchase_id);
-		while ($results->EOF() === false) {
-			$product_id = $results->Field('product_id');
-			$quantity = intval($results->Field('quantity'));
-			$update_seconds = $results->Field('updates_length_seconds');
-			switch ($product_id) {
-			case self::ARK_PRODUCT_ID:
-			case self::ARK2_PRODUCT_ID:
-			case self::ARKSA_PRODUCT_ID:
-				if (is_null($update_seconds)) {
-					$database->Query('INSERT INTO licenses (purchase_id, product_id) VALUES ($1, $2);', $purchase_id, $product_id);
-				} else {
-					$update_seconds = intval($update_seconds) * $quantity;
-					$licenses = $database->Query('SELECT EXTRACT(epoch FROM GREATEST(MAX(expiration), DATE_TRUNC(\'day\', CURRENT_TIMESTAMP + \'1 day\'))) AS base_expiration FROM licenses INNER JOIN purchases ON (licenses.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 AND licenses.product_id = $2;', $email_id, $product_id);
-					$database->Query('INSERT INTO licenses (purchase_id, product_id, expiration) VALUES ($1, $2, to_timestamp($3));', $purchase_id, $product_id, $update_seconds + intval($licenses->Field('base_expiration')));
-				}
-				$database->Query('DELETE FROM stw_applicants WHERE email_id = $1 AND desired_product = $2 AND generated_purchase_id IS NULL;', $email_id, $product_id);
-				break;
-			case self::ARK_GIFT_ID:
-			case self::ARK2_GIFT_ID:
-			case self::ARKSA_GIFT_ID:
-				for ($i = 1; $i <= $quantity; $i++) {
-					$code = \BeaconCommon::CreateGiftCode();
-					$database->Query('INSERT INTO gift_codes (code, source_purchase_id, product_id) VALUES ($1, $2, $3);', $code, $purchase_id, $product_id);
-				}
-				break;
-			case self::STW_ID:
-				for ($i = 1; $i <= $quantity; $i++) {
-					$database->Query('INSERT INTO stw_purchases (original_purchase_id) VALUES ($1);', $purchase_id);
-				}
-				break;
-			}
-			$results->MoveNext();
-		}*/
-		$database->Query('UPDATE purchases SET issued = TRUE WHERE purchase_id = $1;', $purchase_id);
+		$database->Query('UPDATE purchases SET issued = TRUE WHERE purchase_id = $1;', $purchaseId);
 		$database->Commit();
 	}
 	
-	public static function RevokePurchases(string $purchase_id, bool $is_disputed = false): bool {
-		$database = \BeaconCommon::Database();
-		if (BeaconCommon::IsUUID($purchase_id) === false) {
-			$results = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $purchase_id);
+	public static function RevokePurchases(string $purchaseId, bool $isDisputed = false): bool {
+		$database = BeaconCommon::Database();
+		if (BeaconCommon::IsUUID($purchaseId) === false) {
+			$results = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $purchaseId);
 			if ($results->RecordCount() !== 1) {
 				return false;
 			}
-			$purchase_id = $results->Field('purchase_id');
+			$purchaseId = $results->Field('purchase_id');
 		}
 		
-		$results = $database->Query('SELECT issued, purchaser_email FROM purchases WHERE purchase_id = $1;', $purchase_id);
+		$results = $database->Query('SELECT issued, purchaser_email FROM purchases WHERE purchase_id = $1;', $purchaseId);
 		if ($results->RecordCount() === 0) {
 			return false;
 		}
-		$email_id = $results->Field('purchaser_email');
-		$was_issued = $results->Field('issued');
+		$emailId = $results->Field('purchaser_email');
+		$wasIssued = $results->Field('issued');
 		
 		$database->BeginTransaction();
-		$database->Query('UPDATE purchases SET refunded = TRUE WHERE purchase_id = $1 AND refunded = FALSE;', $purchase_id);
-		if ($is_disputed) {
-			$database->Query('UPDATE users SET banned = TRUE WHERE email_id = $1;', $email_id);
+		$database->Query('UPDATE purchases SET refunded = TRUE WHERE purchase_id = $1 AND refunded = FALSE;', $purchaseId);
+		if ($isDisputed) {
+			$database->Query('UPDATE users SET banned = TRUE WHERE email_id = $1;', $emailId);
 		}
 		
-		if ($was_issued) {
-			$database->Query('DELETE FROM licenses WHERE purchase_id = $1;', $purchase_id);
+		if ($wasIssued) {
+			$database->Query('DELETE FROM licenses WHERE purchase_id = $1;', $purchaseId);
 			
 			// Also revoke gift redemptions
-			$results = $database->Query('SELECT redemption_purchase_id FROM gift_codes WHERE source_purchase_id = $1 AND redemption_purchase_id IS NOT NULL;', $purchase_id);
+			$results = $database->Query('SELECT redemption_purchase_id FROM gift_codes WHERE source_purchase_id = $1 AND redemption_purchase_id IS NOT NULL;', $purchaseId);
 			while ($results->EOF() === false) {
 				self::RevokePurchases($results->Field('redemption_purchase_id'));
 				$results->MoveNext();
 			}
-			$database->Query('DELETE FROM gift_codes WHERE source_purchase_id = $1;', $purchase_id);
+			$database->Query('DELETE FROM gift_codes WHERE source_purchase_id = $1;', $purchaseId);
 			
 			// Revoke STW purchases that have NOT been awarded yet. Don't punish somebody who won.
-			$database->Query('DELETE FROM stw_purchases WHERE original_purchase_id = $1 AND generated_purchase_id IS NULL;', $purchase_id);
+			$database->Query('DELETE FROM stw_purchases WHERE original_purchase_id = $1 AND generated_purchase_id IS NULL;', $purchaseId);
 		}
 		$database->Commit();
 		
 		return true;
 	}
 	
-	public static function CreateGiftPurchase(string $email, string $product_id, int $quantity, string $notes, bool $process = false): string {
+	public static function CreateGiftPurchase(string $email, string $productId, int $quantity, string $notes, bool $process = false): string {
+		return static::GrantProducts($email, [static::CreateBundle(false, [$productId => $quantity])], $notes, $process);
+	}
+	
+	public static function GrantProducts(string $email, array $bundles, string $notes, bool $process = false): string {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		
 		if (BeaconCommon::IsUUID($email)) {
-			$email_id = $email;
+			$emailId = $email;
 		} else {
 			// get a uuid for this address
 			$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
-			$email_id = $results->Field('email_id');
+			$emailId = $results->Field('email_id');
 		}
 		
-		// find the current price of the product in USD
-		$results = $database->Query('SELECT price FROM product_prices WHERE product_id = $1 AND currency = $2;', $product_id, 'USD');
-		$retail_price = $results->Field('price');
-		$subtotal = $retail_price * $quantity;
+		$quantities = [];
+		foreach ($bundles as $bundle) {
+			foreach ($bundle['products'] as $productId => $quantity) {
+				$quantities[$productId] = ($quantities[$productId] ?? 0) + $quantity;
+			}
+		}
 		
-		// generate the purchase record
-		$purchase_id = BeaconCommon::GenerateUUID();
-		$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, tax_locality, total_paid, merchant_reference, currency, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);', $purchase_id, $email_id, $subtotal, $subtotal, 0, 'US CT', 0, $purchase_id, 'USD', $notes);
-		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', $purchase_id, $product_id, 'USD', $quantity, $retail_price, $subtotal, $subtotal, 0, 0);
+		$subtotal = 0;
+		$purchaseId = BeaconCommon::GenerateUUID();
+		foreach ($quantities as $productId => $quantity) {
+			$price = static::GetProductById('USD', $productId)['Price'];
+			$lineTotal = $price * $quantity;
+			$subtotal += $lineTotal;
+			$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', $purchaseId, $productId, 'USD', $quantity, $price, $lineTotal, $lineTotal, 0, 0);
+		}
+		
+		$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, tax_locality, total_paid, merchant_reference, currency, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);', $purchaseId, $emailId, $subtotal, $subtotal, 0, 'US CT', 0, $purchaseId, 'USD', $notes);
+		
 		if ($process === true) {
-			self::IssuePurchases($purchase_id);
+			self::IssuePurchases($purchaseId, $bundles);
 		}
+		
 		$database->Commit();
 		
-		return $purchase_id;
+		return $purchaseId;
 	}
 	
 	public static function TrackAffiliateClick(string $code): string {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT code FROM affiliate_links WHERE code = $1;', $code);
-		$client_reference_id = BeaconCommon::GenerateUUID();
+		$clientReferenceId = BeaconCommon::GenerateUUID();
 		
 		if ($rows->RecordCount() === 1) {
 			$code = $rows->Field('code'); // Just because
 			
 			$database->BeginTransaction();
-			$database->Query('INSERT INTO affiliate_tracking (code, client_reference_id, click_time) VALUES ($1, $2, CURRENT_TIMESTAMP);', $code, $client_reference_id);
+			$database->Query('INSERT INTO affiliate_tracking (code, client_reference_id, click_time) VALUES ($1, $2, CURRENT_TIMESTAMP);', $code, $clientReferenceId);
 			$database->Commit();
 			
-			setcookie('beacon_affiliate', $client_reference_id, [
+			setcookie('beacon_affiliate', $clientReferenceId, [
 				'expires' => time() + 86430,
 				'path' => '/omni',
 				'domain' => '',
@@ -215,12 +241,12 @@ abstract class BeaconShop {
 			]);
 		}
 		
-		return $client_reference_id;
+		return $clientReferenceId;
 	}
 	
 	public static function SyncWithStripe(): void {
-		$api_secret = BeaconCommon::GetGlobal('Stripe_Secret_Key');
-		$api = new BeaconStripeAPI($api_secret, '2022-08-01');
+		$apiSecret = BeaconCommon::GetGlobal('Stripe_Secret_Key');
+		$api = new BeaconStripeAPI($apiSecret, '2022-08-01');
 		$database = BeaconCommon::Database();
 			
 		$results = $database->Query('SELECT code, usd_conversion_rate FROM public.currencies ORDER BY code;');
@@ -232,65 +258,65 @@ abstract class BeaconShop {
 		
 		$products = $database->Query('SELECT product_id, product_name, retail_price, updates_length, round_to FROM public.products ORDER BY product_name;');
 		while (!$products->EOF()) {
-			$product_id = $products->Field('product_id');
-			$product_name = $products->Field('product_name');
-			$retail_price = $products->Field('retail_price');
-			$round_to = $products->Field('round_to');
+			$productId = $products->Field('product_id');
+			$productName = $products->Field('product_name');
+			$retailPrice = $products->Field('retail_price');
+			$roundTo = $products->Field('round_to');
 			
-			$product = $api->GetProductByUUID($product_id);
+			$product = $api->GetProductByUUID($productId);
 			if (is_null($product)) {
 				$products->MoveNext();
 				continue;
 			}
 			
-			$product_code = $product['id'];
-			$default_price = $product['default_price'];
-			$product_prices = $api->GetProductPrices($product_code);
+			$productCode = $product['id'];
+			$defaultPrice = $product['default_price'];
+			$productPrices = $api->GetProductPrices($productCode);
 			
 			$prices = [];
 			foreach ($rates as $currency => $rate) {
 				$prices[$currency] = [];
 			}
-			foreach ($product_prices as $price) {
+			foreach ($productPrices as $price) {
 				$prices[strtoupper($price['currency'])][] = $price;
 			}
 			
 			foreach ($rates as $currency => $rate) {
-				echo "Syncing {$product_name} {$currency}\n";
+				echo "Syncing {$productName} {$currency}\n";
 				
 				// The price should be an even multiple, plus 1% for conversion fees
-				$converted_price = ceil(($retail_price * ($currency === 'USD' ? 1.0 : 1.01) * $rate) / $round_to) * $round_to;
-				$converted_price_stripe = $converted_price * ($currency !== 'JPY' ? 100 : 1);
+				$convertedPrice = ceil(($retailPrice * ($currency === 'USD' ? 1.0 : 1.01) * $rate) / $roundTo) * $roundTo;
+				$convertedPriceStripe = $convertedPrice * ($currency !== 'JPY' ? 100 : 1);
 				
-				$active_price_id = null;
+				$activePriceId = null;
 				foreach ($prices[$currency] as $price) {
-					$price_id = $price['id'];
-					$should_be_active = $price['unit_amount'] == $converted_price_stripe && $price['tax_behavior'] === 'exclusive';
-					if ($should_be_active) {
-						$active_price_id = $price_id;
+					$priceId = $price['id'];
+					$shouldBeActive = $price['unit_amount'] == $convertedPriceStripe && $price['tax_behavior'] === 'exclusive';
+					if ($shouldBeActive) {
+						$activePriceId = $priceId;
 					}
-					if ($should_be_active == true && $price['active'] == false) {
+					if ($shouldBeActive == true && $price['active'] == false) {
 						echo "Enabling price {$price['unit_amount']} {$currency}…\n";
-						$api->EditPrice($price_id, ['active' => 'true']);
-					} else if ($should_be_active == false && $price['active'] == true) {
+						$api->EditPrice($priceId, ['active' => 'true']);
+					} else if ($shouldBeActive == false && $price['active'] == true) {
 						echo "Disabling price {$price['unit_amount']} {$currency}…\n";
-						$api->EditPrice($price_id, ['active' => 'false']);
+						$api->EditPrice($priceId, ['active' => 'false']);
 					}
 				}
-				if (is_null($active_price_id)) {
+				if (is_null($activePriceId)) {
 					// Create a new price
-					echo "Creating price for {$converted_price_stripe} {$currency}…\n";
-					$active_price_id = $api->CreatePrice($product_code, $currency, $converted_price_stripe);
-					echo "Created price {$active_price_id}\n";
+					echo "Creating price for {$convertedPriceStripe} {$currency}…\n";
+					$activePriceId = $api->CreatePrice($productCode, $currency, $convertedPriceStripe);
+					echo "Created price {$activePriceId}\n";
 				}
 				
-				if ($currency === 'USD' && $active_price_id !== $default_price) {
+				if ($currency === 'USD' && $activePriceId !== $defaultPrice) {
 					echo "Setting default price…\n";
-					$api->EditProduct($product_code, ['default_price' => $active_price_id]);
+					$api->EditProduct($productCode, ['default_price' => $activePriceId]);
 				}
 				
 				$database->BeginTransaction();
-				$database->Query('INSERT INTO public.product_prices (price_id, product_id, currency, price) VALUES ($1, $2, $3, $4) ON CONFLICT (product_id, currency) DO UPDATE SET price_id = EXCLUDED.price_id, price = EXCLUDED.price WHERE product_prices.price_id != EXCLUDED.price_id;', $active_price_id, $product_id, $currency, $converted_price);
+				$database->Query('INSERT INTO public.product_prices (price_id, product_id, currency, price) VALUES ($1, $2, $3, $4) ON CONFLICT (product_id, currency) DO UPDATE SET price_id = EXCLUDED.price_id, price = EXCLUDED.price WHERE product_prices.price_id != EXCLUDED.price_id;', $activePriceId, $productId, $currency, $convertedPrice);
 				$database->Commit();
 			}
 			
