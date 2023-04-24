@@ -118,7 +118,7 @@ try {
 } catch (Exception $err) {
 }
 
-$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, product_prices.price_id FROM products INNER JOIN product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currency);
+$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, product_prices.price_id FROM public.products INNER JOIN public.product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1 AND products.active = TRUE;', $currency);
 $product_map = [];
 $products = [];
 while (!$results->EOF()) {
@@ -141,12 +141,15 @@ while (!$results->EOF()) {
 	$results->MoveNext();
 }
 
+$includeArk = isset($products['Ark']['Base']);
+$includeArkSA = isset($products['ArkSA']['Base']);
+
 $lines = [];
 foreach ($bundles as $bundle) {
 	$bundle = new CartBundle($bundle);
 	
-	$wantsArk = $bundle->getQuantity($products['Ark']['Base']['ProductId']) > 0;
-	$wantsArkSAYears = $bundle->getQuantity($products['ArkSA']['Base']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Upgrade']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Renewal']['ProductId']);
+	$wantsArk = $includeArk ? $bundle->getQuantity($products['Ark']['Base']['ProductId']) > 0 : false;
+	$wantsArkSAYears = $includeArkSA ? $bundle->getQuantity($products['ArkSA']['Base']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Upgrade']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Renewal']['ProductId']) : 0;
 	
 	if ($bundle->isGift()) {
 		if ($wantsArk) {

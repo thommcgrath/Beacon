@@ -815,10 +815,16 @@ class User implements \JsonSerializable {
 		
 		$free_licenses = [];
 		if (self::ARK_FREE) {
-			$free_licenses[] = \BeaconShop::ARK_PRODUCT_ID;
+			$arkProductId = \BeaconShop::GetProductByTag('Ark', 'Base');
+			if ($arkProductId) {
+				$free_licenses[] = $arkProductId;
+			}
 		}
 		if (self::ARK2_FREE) {
-			$free_licenses[] = \BeaconShop::ARK2_PRODUCT_ID;
+			$ark2ProductId = \BeaconShop::GetProductByTag('Ark2', 'Base');
+			if ($ark2ProductId) {
+				$free_licenses[] = $ark2ProductId;
+			}
 		}
 		if (count($free_licenses) > 0) {
 			$expires = (floor(time() / 604800) * 604800) + 1209600;

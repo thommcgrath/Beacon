@@ -44,7 +44,7 @@ $stable_version = BeaconCommon::NewestVersionForStage(3);
 $currency = $_SESSION['store_currency'];
 $supported_currencies = $_SESSION['store_currency_options'];
 
-$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, products.product_name, product_prices.price, EXTRACT(epoch FROM products.updates_length) AS plan_length_seconds FROM products INNER JOIN product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currency);
+$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, products.product_name, product_prices.price, EXTRACT(epoch FROM products.updates_length) AS plan_length_seconds FROM public.products INNER JOIN public.product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1 AND products.active = TRUE;', $currency);
 $product_details = [];
 $product_ids = [];
 while (!$results->EOF()) {
@@ -309,7 +309,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 		<div class="content">
 			<p>For which games would you like to purchase Beacon Omni?</p>
 			<div id="checkout-wizard-list">
-				<div id="checkout-wizard-list-arksa">
+				<?php if ($arksa_enabled) { ?><div id="checkout-wizard-list-arksa">
 					<div class="checkout-wizard-checkbox-cell">
 						<label class="checkbox"><input type="checkbox" value="arksa" id="checkout-wizard-arksa-check"><span></span></label>
 					</div>
@@ -330,7 +330,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 						<span id="checkout-wizard-arksa-full-price" class="formatted-price" beacon-price="<?php echo $product_details['ArkSA']['Base']['Price']; ?>"></span><br>
 						<span id="checkout-wizard-arksa-discount-price" class="hidden formatted-price checkout-wizard-discount" beacon-price="<?php echo $product_details['ArkSA']['Upgrade']['Price']; ?>"></span>
 					</div>
-				</div>
+				</div><?php } ?>
 				<div id="checkout-wizard-list-ark">
 					<div class="checkout-wizard-checkbox-cell">
 						<label class="checkbox"><input type="checkbox" value="ark" id="checkout-wizard-ark-check"><span></span></label>
