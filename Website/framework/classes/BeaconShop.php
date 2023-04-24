@@ -122,7 +122,7 @@ abstract class BeaconShop {
 					if ($licenses->RecordCount() > 0) {
 						$licenseId = $licenses->Field('license_id');
 						$startTimestamp = max($startTimestamp, intval($licenses->Field('expiration_timestamp')));
-						$database->Query('UPDATE public.licenses SET expiration = to_timestamp($2) WHERE license_id = $1;', $licenseId, $startTimestamp + $updateSeconds);
+						$database->Query('UPDATE public.licenses SET expiration = to_timestamp($2), purchase_id = $3 WHERE license_id = $1;', $licenseId, $startTimestamp + $updateSeconds, $purchaseId);
 					} else {
 						$database->Query('INSERT INTO public.licenses (purchase_id, product_id, expiration) VALUES ($1, $2, to_timestamp($3));', $purchaseId, $productId, $startTimestamp + $updateSeconds);
 					}

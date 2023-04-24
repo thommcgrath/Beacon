@@ -113,6 +113,12 @@ function ShowLicenses() {
 				$newest_build = BeaconCommon::NewestBuildForExpiration($expiration_seconds, true);
 				$newest_version = BeaconCommon::BuildNumberToVersion($newest_build);
 				$expiration_str .= '<br class="large-only"><span class="small-only">, </span>Version ' . $newest_version;
+				
+				$tokenSecret = BeaconCommon::GetGlobal('Legacy Download Secret');
+				$tokenExpires = time() + 300;
+				$token = BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$newest_build}:{$tokenExpires}:{$tokenSecret}", true));
+				
+				$actions['Download'] = "/download/{$newest_build}?token={$token}&expires={$tokenExpires}";
 			}
 		}
 		
