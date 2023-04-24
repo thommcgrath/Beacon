@@ -815,13 +815,13 @@ class User implements \JsonSerializable {
 		
 		$free_licenses = [];
 		if (self::ARK_FREE) {
-			$arkProductId = \BeaconShop::GetProductByTag('Ark', 'Base');
+			$arkProductId = \BeaconShop::GetProductByTag('USD', 'Ark', 'Base');
 			if ($arkProductId) {
 				$free_licenses[] = $arkProductId;
 			}
 		}
 		if (self::ARK2_FREE) {
-			$ark2ProductId = \BeaconShop::GetProductByTag('Ark2', 'Base');
+			$ark2ProductId = \BeaconShop::GetProductByTag('USD', 'Ark2', 'Base');
 			if ($ark2ProductId) {
 				$free_licenses[] = $ark2ProductId;
 			}

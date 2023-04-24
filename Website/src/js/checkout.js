@@ -441,6 +441,7 @@ let updateCart = () => {};
 document.addEventListener('DOMContentLoaded', () => {
 	const buyButton = document.getElementById('buy-button');
 	const landingButton = document.getElementById('cart-back-button');
+	const arkOnlyMode = Object.keys(ProductIds).length === 1;
 	
 	const emailDialog = {
 		cancelButton: document.getElementById('checkout-email-cancel'),
@@ -822,7 +823,11 @@ document.addEventListener('DOMContentLoaded', () => {
 				const checkoutFunction = (cartChanged) => {
 					this.update();
 					if (cartChanged) {
-						BeaconDialog.show('Your cart contents have changed.', 'The items in your cart have changed based on your e-mail address. Please review before continuing checkout.');
+						if (cart.count > 0) {
+							BeaconDialog.show('Your cart contents have changed.', 'The items in your cart have changed based on your e-mail address. Please review before continuing checkout.');
+						} else {
+							BeaconDialog.show('Your cart is now empty.', 'You already own everything in your cart. There is no need to purchase again.');	
+						}
 						return;
 					}
 					
