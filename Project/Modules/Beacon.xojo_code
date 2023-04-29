@@ -1111,6 +1111,34 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ParseQueryString(QueryString As String) As Dictionary
+		  // Does not handle multiple parameters of the same name
+		  
+		  QueryString = QueryString.Trim
+		  
+		  If QueryString.BeginsWith("?") Then
+		    QueryString = QueryString.Middle(1)
+		  End If
+		  
+		  Var Params As New Dictionary
+		  Var Parts() As String = QueryString.Split("&")
+		  For Each Part As String In Parts
+		    Var Pos As Integer = Part.IndexOf("=")
+		    If Pos = -1 Then
+		      Params.Value(DecodeURLComponent(Part)) = True
+		      Continue
+		    End If
+		    
+		    Var Key As String = DecodeURLComponent(Part.Left(Pos)).DefineEncoding(Encodings.UTF8)
+		    Var Value As String = DecodeURLComponent(Part.Middle(Pos + 1)).DefineEncoding(Encodings.UTF8)
+		    Params.Value(Key) = Value
+		  Next
+		  
+		  Return Params
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function PrettyText(Value As Double) As String
 		  Return PrettyText(Value, DefaultPrettyDecimals, DefaultPrettyLocalized)
 		End Function

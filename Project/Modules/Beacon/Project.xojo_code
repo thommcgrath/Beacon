@@ -947,6 +947,16 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ServerProfile(ProfileId As String) As Beacon.ServerProfile
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    If Profile.ProfileID = ProfileId Then
+		      Return Profile
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ServerProfileCount() As Integer
 		  Return Self.mServerProfiles.Count
 		End Function

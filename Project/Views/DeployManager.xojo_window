@@ -674,6 +674,38 @@ Begin BeaconAutopositionWindow DeployManager
          VisualState     =   0
          Width           =   459
       End
+      Begin ReactionButton CopyTriggerButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Copy Trigger"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   321
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "Copies a link to perform this deploy using automation tools."
+         Top             =   510
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   113
+      End
    End
    Begin Timer DeployWatcher
       Enabled         =   True
@@ -685,7 +717,6 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
    Begin Beacon.OAuth2Client Authorizer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -725,37 +756,19 @@ End
 		Sub Open()
 		  Self.Title = "Deploy: " + Self.Project.Title
 		  
-		  Self.CreateBackupCheckbox.Value = Preferences.DeployCreateBackup
-		  Self.ReviewChangesCheckbox.Value = Preferences.DeployReviewChanges
-		  Self.RunAdvisorCheckbox.Value = Preferences.DeployRunAdvisor
-		  
-		  
-		  
-		  // Var ProfileBound As Integer = Self.Project.ServerProfileCount - 1
-		  // For Idx As Integer = 0 To ProfileBound
-		  // Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
-		  // If Profile.DeployCapable = False Then
-		  // Continue
-		  // End If
-		  // 
-		  // Var Label As String = Profile.Name
-		  // If Profile.SecondaryName.Length > 0 Then
-		  // Label = Label + EndOfLine + Profile.SecondaryName
-		  // End If
-		  // Self.ServerList.AddRow("", Label)
-		  // Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
-		  // If Self.PreselectProfileUUIDs.Count = 0 Then
-		  // Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Profile.Enabled
-		  // Else
-		  // Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Self.PreselectProfileUUIDs.IndexOf(Profile.ProfileID) > -1
-		  // End If
-		  // Next
+		  Self.CreateBackupCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionBackup
+		  Self.ReviewChangesCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionReview
+		  Self.RunAdvisorCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionAdvise
 		  
 		  Self.ServerList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
 		  Self.ServerList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		  Self.ServerList.UpdateList()
 		  
 		  Self.CheckOptionsActionEnabled
+		  
+		  If (Self.Settings.Options And Beacon.DeploySettings.OptionRunImmediately) = Beacon.DeploySettings.OptionRunImmediately Then
+		    Self.Begin()
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -933,11 +946,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Project As Beacon.Project, PreselectServers() As Beacon.ServerProfile)
-		  Self.Project = Project
-		  For Each Profile As Beacon.ServerProfile In PreselectServers
-		    Self.PreselectProfileUUIDs.Add(Profile.ProfileID)
-		  Next Profile
+		Sub Constructor(ProjectController As Beacon.ProjectController, Settings As Beacon.DeploySettings)
+		  Self.Controller = ProjectController
+		  Self.Settings = Settings
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -1210,6 +1221,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private Controller As Beacon.ProjectController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private DeployFinished As Boolean
 	#tag EndProperty
 
@@ -1221,12 +1236,17 @@ End
 		Private Engines As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private PreselectProfileUUIDs() As String
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.Controller.Project
+			End Get
+		#tag EndGetter
+		Private Project As Beacon.Project
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private Project As Beacon.Project
+		Private Settings As Beacon.DeploySettings
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1287,11 +1307,19 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CustomizeProfileRow(Profile As Beacon.ServerProfile, RowIndex As Integer)
-		  If Self.PreselectProfileUUIDs.Count = 0 Then
+		  If Self.Settings.Servers.Count = 0 Then
 		    Me.CellCheckBoxValueAt(RowIndex, 0) = Profile.Enabled
-		  Else
-		    Me.CellCheckBoxValueAt(RowIndex, 0) = Self.PreselectProfileUUIDs.IndexOf(Profile.ProfileID) > -1
+		    Return
 		  End If
+		  
+		  For Each OtherProfile As Beacon.ServerProfile In Self.Settings.Servers
+		    If OtherProfile = Profile Then
+		      Me.CellCheckBoxValueAt(RowIndex, 0) = True
+		      Return
+		    End If
+		  Next
+		  
+		  Me.CellCheckBoxValueAt(RowIndex, 0) = False
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1426,6 +1454,47 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events CopyTriggerButton
+	#tag Event
+		Sub Action()
+		  Var Settings As New Beacon.DeploySettings
+		  Settings.Options = Beacon.DeploySettings.OptionRunImmediately
+		  If Self.CreateBackupCheckbox.Value Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionBackup
+		  End If
+		  If Self.NukeConfigCheckbox.Value Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionErase
+		  End If
+		  If Self.ReviewChangesCheckbox.Value Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionReview
+		  End If
+		  If Self.RunAdvisorCheckbox.Value Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
+		  End If
+		  
+		  For I As Integer = 0 To Self.ServerList.LastRowIndex
+		    If Not Self.ServerList.CellCheckBoxValueAt(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
+		    Settings.Servers.Add(Profile)
+		  Next
+		  
+		  Var TriggerURL As String
+		  Try
+		    TriggerURL = Self.Controller.BuildDeployURL(Settings)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Unable to Copy Trigger URL", Err.Message)
+		    Return
+		  End Try
+		  Var Board As New Clipboard
+		  Board.Text = TriggerURL
+		  
+		  Me.Caption = "Copied!"
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events DeployWatcher
 	#tag Event
 		Sub Action()
@@ -1500,7 +1569,12 @@ End
 		      // What?
 		    End If
 		    
-		    Self.ShowAlert("The deploy process has finished.", Explanation)
+		    // If this was an auto-run, just close the deploy window.
+		    If (Self.Settings.Options And Beacon.DeploySettings.OptionRunImmediately) = Beacon.DeploySettings.OptionRunImmediately Then
+		      Self.Close
+		    Else
+		      Self.ShowAlert("The deploy process has finished.", Explanation)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent

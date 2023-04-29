@@ -214,6 +214,18 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RunScriptActions(Actions() As Beacon.ScriptAction)
+		  For Each Action As Beacon.ScriptAction In Actions
+		    Try
+		      RaiseEvent RunScriptAction(Action)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Running script action")
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SwitchedFrom()
 		  Self.mIsFrontmost = False
 		  RaiseEvent Hidden
@@ -283,6 +295,10 @@ Implements ObservationKit.Observable
 
 	#tag Hook, Flags = &h0
 		Event OwnerModifiedHook()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event RunScriptAction(Action As Beacon.ScriptAction)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

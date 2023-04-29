@@ -347,6 +347,25 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub RunScriptAction(Action As Beacon.ScriptAction)
+		  Select Case Action.Action
+		  Case "Deploy"
+		    Var Settings As New Beacon.DeploySettings
+		    Settings.Options = UInt64.FromString(Action.Value("Options"), Locale.Raw)
+		    Var ProfileIds() As String = Action.Value("Servers").Split(",")
+		    For Each ProfileId As String In ProfileIds
+		      Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(ProfileId)
+		      If (Profile Is Nil) = False Then
+		        Settings.Servers.Add(Profile)
+		      End If
+		    Next
+		    
+		    Self.BeginDeploy(Settings)
+		  End Select
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ShouldSave(CloseWhenFinished As Boolean)
 		  #Pragma Unused CloseWhenFinished
 		  
@@ -412,13 +431,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
-		  Var PreselectServers() As Beacon.ServerProfile
-		  Self.BeginDeploy(PreselectServers)
+		  Self.BeginDeploy(Preferences.NewDeploySettings)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub BeginDeploy(PreselectServers() As Beacon.ServerProfile)
+		Private Sub BeginDeploy(Settings As Beacon.DeploySettings)
 		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
 		    DeployManager(Self.mDeployWindow.Value).BringToFront()
 		  Else
@@ -437,10 +455,18 @@ End
 		      Var Validator As New Beacon.ProjectValidator
 		      AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
 		      AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Deploy
-		      Validator.StartValidation(Self.Project, PreselectServers)
+		      Validator.StartValidation(Self.Project, Settings)
 		      Self.mValidator = Validator
 		    End If
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BeginDeploy(PreselectServers() As Beacon.ServerProfile)
+		  Var Settings As Beacon.DeploySettings = Preferences.NewDeploySettings
+		  Settings.Servers = PreselectServers
+		  Self.BeginDeploy(Settings)
 		End Sub
 	#tag EndMethod
 
@@ -816,13 +842,13 @@ End
 		    Return
 		  End If
 		  
-		  Var PreselectServers() As Beacon.ServerProfile
+		  Var Settings As Beacon.DeploySettings
 		  Try
-		    PreselectServers = UserData
+		    Settings = UserData
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Casting UserData into PreselectServers")
 		  End Try
-		  Var Win As DeployManager = New DeployManager(Self.Project, PreselectServers)
+		  Var Win As DeployManager = New DeployManager(Self.Controller, Settings)
 		  Self.mDeployWindow = New WeakRef(Win)
 		  Win.BringToFront()
 		End Sub

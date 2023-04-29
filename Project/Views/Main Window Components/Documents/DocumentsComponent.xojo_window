@@ -280,7 +280,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Controller_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project)
+		Private Sub Controller_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project, Actions() As Beacon.ScriptAction)
 		  #Pragma Unused Project
 		  
 		  Self.DetachControllerEvents(Sender)
@@ -304,6 +304,8 @@ End
 		  
 		  Self.AppendPage(View)
 		  Self.CurrentPage = View
+		  
+		  View.RunScriptActions(Actions)
 		End Sub
 	#tag EndMethod
 
@@ -470,14 +472,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mAutosaveController_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project)
+		Private Sub mAutosaveController_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project, Actions() As Beacon.ScriptAction)
 		  RemoveHandler Sender.Loaded, AddressOf mAutosaveController_Loaded
 		  
 		  // Create a modified transient document
 		  Project.Modified = True
 		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity)
 		  Controller.AutosaveURL = Sender.URL
-		  Self.OpenController(Controller, False)
+		  Self.OpenController(Controller, False, Actions)
 		End Sub
 	#tag EndMethod
 
@@ -528,7 +530,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub OpenController(Controller As Beacon.ProjectController, AddToRecents As Boolean = True)
+		Private Sub OpenController(Controller As Beacon.ProjectController, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
 		  If Self.CheckGameDatabase(Controller.GameID) = False Then
 		    Return
 		  End If
@@ -539,7 +541,7 @@ End
 		  
 		  Self.AttachControllerEvents(Controller)
 		  
-		  Controller.Load()
+		  Controller.Load(Actions)
 		  
 		  If AddToRecents Then
 		    Preferences.AddToRecentDocuments(Controller.URL)
@@ -550,7 +552,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean = True)
+		Sub OpenDocument(URL As Beacon.ProjectURL)
+		  Var Actions() As Beacon.ScriptAction
+		  Self.OpenDocument(URL, True, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(URL As Beacon.ProjectURL, Actions() As Beacon.ScriptAction)
+		  Self.OpenDocument(URL, True, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean)
+		  Var Actions() As Beacon.ScriptAction
+		  Self.OpenDocument(URL, AddToRecents, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
 		  Var Hash As String = URL.Hash
 		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
 		  If (NavItem Is Nil) = False Then
@@ -559,22 +581,50 @@ End
 		      Var Page As BeaconSubview = Self.Page(Idx)
 		      If Page.LinkedOmniBarItem = NavItem Then
 		        Self.CurrentPage = Page
+		        
+		        If Page IsA DocumentEditorView Then
+		          Var Controller As Beacon.ProjectController = DocumentEditorView(Page).Controller
+		          If Controller.AddActions(Actions) = False Then
+		            // Returns false when the controller did not accept the actions
+		            Page.RunScriptActions(Actions)
+		          End If
+		        End If
+		        
 		        Return
 		      End If
 		    Next
-		    
 		    Return
 		  End If
 		  
 		  Var Controller As New Beacon.ProjectController(URL, App.IdentityManager.CurrentIdentity)
-		  Self.OpenController(Controller, AddToRecents)
+		  Self.OpenController(Controller, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean = True)
+		Sub OpenDocument(File As FolderItem)
+		  Var Actions() As Beacon.ScriptAction
+		  Self.OpenDocument(File, True, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(File As FolderItem, Actions() As Beacon.ScriptAction)
+		  Self.OpenDocument(File, True, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean)
+		  Var Actions() As Beacon.ScriptAction
+		  Self.OpenDocument(File, AddToRecents, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
 		  Var URL As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(File))
-		  Self.OpenDocument(URL, AddToRecents)
+		  Self.OpenDocument(URL, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 

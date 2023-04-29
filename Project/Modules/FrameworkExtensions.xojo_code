@@ -179,6 +179,14 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DecodeBase64URL(Source As String) As String
+		  Source = Source.ReplaceAll("-", "+")
+		  Source = Source.ReplaceAll("_", "/")
+		  Return DecodeBase64(Source)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DeepDelete(Extends File As FolderItem, FollowAlias As Boolean = True) As Boolean
 		  If Not File.Exists Then
 		    Return True
@@ -209,6 +217,16 @@ Protected Module FrameworkExtensions
 		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, ResolveWithFirst As Boolean = False) As Double
 		  Var Value As Variant = Dict.Value(Key)
 		  Return VariantToDouble(Value, ResolveWithFirst)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EncodeBase64URL(Source As String) As String
+		  Var Encoded As String = EncodeBase64(Source, 0)
+		  Encoded = Encoded.ReplaceAll("+", "-")
+		  Encoded = Encoded.ReplaceAll("/", "_")
+		  Encoded = Encoded.ReplaceAll("=", "")
+		  Return Encoded
 		End Function
 	#tag EndMethod
 

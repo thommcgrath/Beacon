@@ -1,6 +1,71 @@
 #tag Class
 Protected Class ProjectController
 	#tag Method, Flags = &h0
+		Function AddAction(ParamArray Actions() As Beacon.ScriptAction) As Boolean
+		  Return Self.AddActions(Actions)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AddActions(Actions() As Beacon.ScriptAction) As Boolean
+		  If Self.Loaded Then
+		    Return False
+		  End If
+		  
+		  For Each NewAction As Beacon.ScriptAction In Actions
+		    Var NewHash As String = NewAction.Hash
+		    For Each PendingAction As Beacon.ScriptAction In Self.mActions
+		      If NewHash = PendingAction.Hash Then
+		        Continue For NewAction
+		      End If
+		    Next
+		    
+		    Self.mActions.Add(NewAction)
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BuildDeployURL(Settings As Beacon.DeploySettings) As String
+		  If Settings Is Nil Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "No deploy settings provided to BuildDeployURL."
+		    Raise Err
+		  ElseIf Settings.Servers Is Nil Or Settings.Servers.Count < 1 Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Deploy settings do not have any selected servers."
+		    Raise Err
+		  End If
+		  
+		  Var SaveInfo As String
+		  Select Case Self.mProjectURL.Scheme
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeWeb
+		    SaveInfo = Self.mProjectURL
+		  Case Beacon.ProjectURL.TypeLocal
+		    Var File As BookmarkedFolderItem = Self.mProjectURL.File
+		    SaveInfo = File.SaveInfo(True)
+		  Else
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Target project must be a local or cloud project."
+		    Raise Err
+		  End Select
+		  
+		  SaveInfo = EncodeBase64URL(Beacon.Compress(SaveInfo))
+		  
+		  Var Servers() As String
+		  For Each Profile As Beacon.ServerProfile In Settings.Servers
+		    Servers.Add(Profile.ProfileID)
+		  Next
+		  
+		  Var Action As New Beacon.ScriptAction("Deploy")
+		  Action.Value("Options") = Settings.Options.ToString(Locale.Raw, "0")
+		  Action.Value("Servers") = String.FromArray(Servers, ",")
+		  
+		  Return "beacon://run/" + SaveInfo + "?" + Action.ToQueryString
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Busy() As Boolean
 		  Return Self.mActiveThread <> Nil And Self.mActiveThread.ThreadState <> Thread.ThreadStates.NotRunning
 		End Function
@@ -87,8 +152,17 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h0
 		Sub Load()
+		  Var EmptyArray() As Beacon.ScriptAction
+		  Self.Load(EmptyArray)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Load(Actions() As Beacon.ScriptAction)
+		  Call Self.AddActions(Actions)
+		  
 		  If Self.Loaded Then
-		    RaiseEvent Loaded(Self.mProject)
+		    Self.TriggerLoadSuccess()
 		    Return
 		  End If
 		  
@@ -368,7 +442,11 @@ Protected Class ProjectController
 		Private Sub TriggerLoadSuccess()
 		  CallLater.Cancel(Self.mLoadStartedCallbackKey)
 		  
-		  RaiseEvent Loaded(Self.mProject)
+		  Var Actions() As Beacon.ScriptAction = Self.mActions
+		  Var NewActions() As Beacon.ScriptAction
+		  Self.mActions = NewActions
+		  
+		  RaiseEvent Loaded(Self.mProject, Actions)
 		End Sub
 	#tag EndMethod
 
@@ -462,7 +540,7 @@ Protected Class ProjectController
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Loaded(Project As Beacon.Project)
+		Event Loaded(Project As Beacon.Project, Actions() As Beacon.ScriptAction)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -488,6 +566,10 @@ Protected Class ProjectController
 
 	#tag Property, Flags = &h0
 		AutosaveURL As Beacon.ProjectURL
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mActions() As Beacon.ScriptAction
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

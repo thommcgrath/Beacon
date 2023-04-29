@@ -151,8 +151,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function Controller() As Beacon.ProjectController
+	#tag Method, Flags = &h0
+		Function Controller() As Beacon.ProjectController
 		  Return Self.mController
 		End Function
 	#tag EndMethod

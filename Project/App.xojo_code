@@ -766,6 +766,31 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    If (FrontmostView Is Nil) = False Then
 		      FrontmostView.SwitchToEditor(ConfigName)
 		    End If
+		  ElseIf URL.Left(4) = "run/" Then
+		    Var SaveInfo As String = URL.Middle(4)
+		    Var QueryPos As Integer = SaveInfo.IndexOf("?")
+		    Var QueryString As String
+		    If QueryPos > -1 Then
+		      QueryString = SaveInfo.Middle(QueryPos + 1)
+		      SaveInfo = SaveInfo.Left(QueryPos)
+		    End If
+		    Try
+		      SaveInfo = Beacon.Decompress(DecodeBase64URL(SaveInfo))
+		    Catch Err As RuntimeException
+		      Self.Log(Err, CurrentMethodName, "Decoding deploy saveinfo")
+		      Return True
+		    End Try
+		    
+		    Var Action As Beacon.ScriptAction = Beacon.ScriptAction.FromQueryString(QueryString)
+		    If (Action Is Nil) = False Then
+		      Var Actions(0) As Beacon.ScriptAction
+		      Actions(0) = Action
+		      
+		      Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(SaveInfo, True)
+		      If (File Is Nil) = False And File.Exists Then
+		        Self.mMainWindow.Documents.OpenDocument(File, Actions)
+		      End If
+		    End If
 		  Else
 		    Var LegacyURL As String = "thezaz.com/beacon/documents.php/"
 		    Var Idx As Integer = URL.IndexOf(LegacyURL)

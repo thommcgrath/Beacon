@@ -505,11 +505,6 @@ Protected Module DedicatedServer
 	#tag EndMethod
 
 
-	#tag Constant, Name = PathSeparator, Type = String, Dynamic = False, Default = \"/", Scope = Protected
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"\\"
-	#tag EndConstant
-
-
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Name"

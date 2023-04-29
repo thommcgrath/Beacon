@@ -18,7 +18,11 @@ Inherits FolderItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveInfo(SaveInfo As String) As BookmarkedFolderItem
+		Shared Function FromSaveInfo(SaveInfo As String, Raw As Boolean = False) As BookmarkedFolderItem
+		  If Raw = False Then
+		    SaveInfo = DecodeBase64(SaveInfo)
+		  End If
+		  
 		  #if TargetiOS
 		    Return Nil
 		  #elseif TargetMacOS
@@ -30,7 +34,7 @@ Inherits FolderItem
 		    Declare Sub Autorelease Lib "Cocoa" Selector "autorelease" (Target As Ptr)
 		    Declare Function StartAccessingSecurityScopedResource Lib "Cocoa" Selector "startAccessingSecurityScopedResource" (Target As Ptr) As Boolean
 		    
-		    Var Mem As MemoryBlock = DecodeBase64(SaveInfo)
+		    Var Mem As MemoryBlock = SaveInfo
 		    Var DataRef As Ptr = DataWithBytes(Alloc(objc_getClass("NSData")), Mem, CType(Mem.Size, UInteger))
 		    Autorelease(DataRef)
 		    
@@ -50,14 +54,14 @@ Inherits FolderItem
 		      App.Log("Unable to resolve saveinfo: " + ErrorCode(ErrorRef).ToString(Locale.Raw, "0") + " " + ErrorDescription(ErrorRef))
 		    End If
 		  #else
-		    Var File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(SaveInfo))
+		    Var File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(SaveInfo)
 		    Return New BookmarkedFolderItem(File)
 		  #endif
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveInfo() As String
+		Function SaveInfo(Raw As Boolean = False) As String
 		  #if TargetiOS
 		    Return ""
 		  #elseif TargetMacOS
@@ -76,7 +80,11 @@ Inherits FolderItem
 		        Var DataLen As UInteger = DataLength(DataRef)
 		        Var Mem As New MemoryBlock(CType(DataLen, Integer))
 		        DataBytes(DataRef, Mem, DataLen)
-		        Return EncodeBase64(Mem, 0)
+		        If Raw Then
+		          Return Mem
+		        Else
+		          Return EncodeBase64(Mem, 0)
+		        End If
 		      Else
 		        Declare Function ErrorCode Lib "Cocoa" Selector "code" (Target As Ptr) As Integer
 		        Declare Function ErrorDescription Lib "Cocoa" Selector "localizedDescription" (Target As Ptr) As CFStringRef
@@ -84,7 +92,11 @@ Inherits FolderItem
 		      End If
 		    End If
 		  #else
-		    Return EncodeBase64(Self.SaveInfo(Nil), 0)
+		    If Raw Then
+		      Return Self.SaveInfo(Nil)
+		    Else
+		      Return EncodeBase64(Self.SaveInfo(Nil), 0)
+		    End If
 		  #endif
 		End Function
 	#tag EndMethod

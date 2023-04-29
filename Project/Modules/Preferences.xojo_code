@@ -154,6 +154,22 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function NewDeploySettings() As Beacon.DeploySettings
+		  Var Settings As New Beacon.DeploySettings
+		  If Preferences.DeployCreateBackup Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionBackup
+		  End If
+		  If Preferences.DeployReviewChanges Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionReview
+		  End If
+		  If Preferences.DeployRunAdvisor Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
+		  End If
+		  Return Settings
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub ProjectState(ProjectUUID As String, Key As String, Assigns Value As Variant)
 		  Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
 		  Var State As Dictionary
