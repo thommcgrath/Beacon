@@ -1433,7 +1433,7 @@ End
 #tag EndEvents
 #tag Events CopyTriggerButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Settings As New Beacon.DeploySettings
 		  Settings.Options = Beacon.DeploySettings.OptionRunImmediately
 		  If Self.CreateBackupCheckbox.Value Then
@@ -1634,6 +1634,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false

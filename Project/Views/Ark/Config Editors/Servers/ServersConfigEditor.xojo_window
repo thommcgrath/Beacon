@@ -50,7 +50,7 @@ Begin ArkConfigEditor ServersConfigEditor
       FontSize        =   0.0
       FontUnit        =   0
       GridLineStyle   =   0
-      HasBorder       =   True
+      HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
@@ -325,7 +325,7 @@ End
 		    Var ProjectProfile As Beacon.ServerProfile = Profiles.Value(ServiceId)
 		    ProjectProfile.UpdateDetailsFrom(DiscoveredProfile)
 		  Next
-		  Self.Changed = Self.Project.Modified
+		  Self.Modified = Self.Project.Modified
 		  
 		  Var AllFinished As Boolean = True
 		  For Each Entry As DictionaryEntry In Self.mEngines
@@ -369,7 +369,7 @@ End
 		  Self.ServerList.UpdateList()
 		  
 		  Var Explanation As String = "The information shown in the list is the most up-to-date Beacon has available."
-		  If Self.Changed Then
+		  If Self.Modified Then
 		    Explanation = Explanation + " Don't forget to save your project."
 		  End If 
 		  Self.ShowAlert("Server Refresh Finished", Explanation)
