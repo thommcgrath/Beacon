@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		}
 		
 		const params = new URLSearchParams();
-		params.add('username', username);
+		params.append('username', username);
 		
 		BeaconWebRequest.post('/account/actions/username', params).then((response) => {
 			const message = {

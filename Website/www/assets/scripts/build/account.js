@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', event => {
       return false;
     }
     var params = new URLSearchParams();
-    params.add('username', username);
+    params.append('username', username);
     BeaconWebRequest.post('/account/actions/username', params).then(response => {
       var message = {
         message: 'Username changed',
