@@ -235,6 +235,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Self.ServerList.UpdateList()
+		  Self.UpdateRefreshButton()
 		End Sub
 	#tag EndEvent
 
@@ -300,6 +301,80 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Engine_Discovered(Sender As Ark.IntegrationEngine, Data() As Beacon.DiscoveredData)
+		  Var Profiles As New Dictionary
+		  Var AllProfiles() As Beacon.ServerProfile = Self.Project.ServerProfiles
+		  For Each Profile As Beacon.ServerProfile In AllProfiles
+		    Var ServiceId As Variant = Profile.ProviderServiceID
+		    If IsNull(ServiceId) Then
+		      Continue
+		    End If
+		    
+		    Profiles.Value(ServiceId) = Profile
+		  Next
+		  
+		  For Each DiscoveredData As Beacon.DiscoveredData In Data
+		    Var DiscoveredProfile As Beacon.ServerProfile = DiscoveredData.Profile
+		    Var ServiceId As Variant = DiscoveredProfile.ProviderServiceID
+		    If IsNull(ServiceId) Or Profiles.HasKey(ServiceId) = False Then
+		      Continue
+		    End If
+		    
+		    Var ProjectProfile As Beacon.ServerProfile = Profiles.Value(ServiceId)
+		    ProjectProfile.UpdateDetailsFrom(DiscoveredProfile)
+		  Next
+		  Self.Changed = Self.Project.Modified
+		  
+		  Var AllFinished As Boolean = True
+		  For Each Entry As DictionaryEntry In Self.mEngines
+		    Var Engine As Ark.IntegrationEngine = Entry.Value
+		    
+		    If Engine.Finished = False Then
+		      AllFinished = False
+		    End If
+		  Next
+		  
+		  If AllFinished Then
+		    Self.FinishRefreshingDetails()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Engine_Wait(Sender As Ark.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
+		  #Pragma Unused Sender
+		  
+		  Select Case Controller.Action
+		  Case "Auth External"
+		    Var Profile As Ark.ServerProfile = Sender.Profile
+		    Var Account As Beacon.ExternalAccount = Self.Project.Accounts.GetByUUID(Profile.ExternalAccountUUID)
+		    If (Account Is Nil) = False Then
+		      Self.ShowAlert("Authorization Expired", "Authorization for " + Account.Provider + " account '" + Account.Label + "' has expired. Please select a server which belongs to the account to refresh authorization.")
+		    Else
+		      Call ShowAlert("Authorization Expired", "The authorization for an unknown account has expired. It may be necessary to import again.")
+		    End If
+		  End Select
+		  
+		  Controller.ShouldResume = True
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub FinishRefreshingDetails()
+		  Self.mRefreshing = False
+		  Self.UpdateRefreshButton()
+		  Self.ServerList.UpdateList()
+		  
+		  Var Explanation As String = "The information shown in the list is the most up-to-date Beacon has available."
+		  If Self.Changed Then
+		    Explanation = Explanation + " Don't forget to save your project."
+		  End If 
+		  Self.ShowAlert("Server Refresh Finished", Explanation)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub HandleViewMenu(ItemRect As Rect)
 		  Var Base As New MenuItem
@@ -349,6 +424,65 @@ End
 		Function InternalName() As String
 		  Return Ark.Configs.NameServersPseudo
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub RefreshDetails()
+		  If Self.mRefreshing = True Then
+		    Return
+		  End If
+		  
+		  Var Accounts() As Beacon.ExternalAccount = Self.Project.Accounts.All
+		  Var Engines As New Dictionary
+		  For Each Account As Beacon.ExternalAccount In Accounts
+		    Var Engine As Ark.IntegrationEngine
+		    
+		    Select Case Account.Provider
+		    Case Beacon.ExternalAccount.ProviderNitrado
+		      Var Profile As New Ark.NitradoServerProfile
+		      Profile.ExternalAccountUUID = Account.UUID
+		      
+		      Engine = New Ark.NitradoIntegrationEngine(Profile)
+		    Case Beacon.ExternalAccount.ProviderGameServerApp
+		      Engine = New Ark.GSAIntegrationEngine(Account)
+		    End Select
+		    
+		    If Engine Is Nil Then
+		      Continue
+		    End If
+		    
+		    Engines.Value(Account.UUID.StringValue) = Engine
+		    AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		    AddHandler Engine.Wait, WeakAddressOf Engine_Wait
+		    Engine.BeginDiscovery(Self.Project)
+		  Next
+		  Self.mEngines = Engines
+		  Self.mRefreshing = True
+		  Self.UpdateRefreshButton()
+		  
+		  If Self.mEngines.KeyCount = 0 Then
+		    Self.FinishRefreshingDetails()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateRefreshButton()
+		  If Self.ConfigToolbar Is Nil Then
+		    Return
+		  End If
+		  
+		  Var RefreshButton As OmniBarItem = Self.ConfigToolbar.Item("RefreshButton")
+		  If RefreshButton Is Nil Then
+		    Return
+		  End If
+		  
+		  RefreshButton.HasProgressIndicator = Self.mRefreshing
+		  RefreshButton.Progress = OmniBarItem.ProgressIndeterminate
+		  RefreshButton.ActiveColor = If(Self.mRefreshing, OmniBarItem.ActiveColors.Blue, OmniBarItem.ActiveColors.Accent)
+		  RefreshButton.AlwaysUseActiveColor = Self.mRefreshing
+		  RefreshButton.Enabled = Self.mRefreshing = False And Self.Project.ServerProfileCount > 0
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -409,6 +543,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCurrentProfileID As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngines As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRefreshing As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -513,6 +655,8 @@ End
 		      Me.RemoveRowAt(I)
 		    End If
 		  Next
+		  
+		  Self.UpdateRefreshButton()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -632,7 +776,8 @@ End
 		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddServerButton", "New Server", IconToolbarAdd, "Add a new simple server."))
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
-		  Me.Append(OmniBarItem.CreateButton("ViewOptionsButton", "View Options", IconToolbarView, "Change server list view options."))
+		  Me.Append(OmniBarItem.CreateButton("RefreshButton", "Refresh", IconToolbarRefresh, "Refresh server details.", Self.Project.ServerProfileCount > 0))
+		  Me.Append(OmniBarItem.CreateButton("ViewOptionsButton", "View", IconToolbarView, "Change server list view options."))
 		  
 		  Me.Item("ConfigTitle").Priority = 5
 		  Me.Item("ConfigTitleSeparator").Priority = 5
@@ -647,8 +792,11 @@ End
 		    
 		    Self.Project.AddServerProfile(Profile)
 		    Self.ServerList.UpdateList(Profile, True)
+		    Self.UpdateRefreshButton()
 		  Case "ViewOptionsButton"
 		    Self.HandleViewMenu(ItemRect)
+		  Case "RefreshButton"
+		    Self.RefreshDetails()
 		  End Select
 		End Sub
 	#tag EndEvent

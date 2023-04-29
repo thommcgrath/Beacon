@@ -19,6 +19,22 @@ Inherits Ark.ServerProfile
 	#tag EndEvent
 
 	#tag Event
+		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  If Not Profile IsA Ark.LocalServerProfile Then
+		    Return
+		  End If
+		  
+		  Var LocalProfile As Ark.LocalServerProfile = Ark.LocalServerProfile(Profile)
+		  If LocalProfile.GameIniFile <> Nil Then
+		    Self.GameIniFile = LocalProfile.GameIniFile
+		  End If
+		  If LocalProfile.GameUserSettingsIniFile <> Nil Then
+		    Self.GameUserSettingsIniFile = LocalProfile.GameUserSettingsIniFile
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  If Self.mGameIniFile <> Nil Then
 		    Dict.Value(Ark.ConfigFileGame) = Self.mGameIniFile.SaveInfo
@@ -55,24 +71,6 @@ Inherits Ark.ServerProfile
 		    Return Self.mGameIniFile.NativePath
 		  End If
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UpdateDetailsFrom(Profile As Ark.ServerProfile)
-		  Super.UpdateDetailsFrom(Profile)
-		  
-		  If Not Profile IsA Ark.LocalServerProfile Then
-		    Return
-		  End If
-		  
-		  Var LocalProfile As Ark.LocalServerProfile = Ark.LocalServerProfile(Profile)
-		  If LocalProfile.GameIniFile <> Nil Then
-		    Self.GameIniFile = LocalProfile.GameIniFile
-		  End If
-		  If LocalProfile.GameUserSettingsIniFile <> Nil Then
-		    Self.GameUserSettingsIniFile = LocalProfile.GameUserSettingsIniFile
-		  End If
-		End Sub
 	#tag EndMethod
 
 
