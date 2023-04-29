@@ -50,14 +50,20 @@ Protected Module PasswordStorage
 		  #if TargetMacOS
 		    #Pragma BreakOnExceptions False
 		    Try
+		      Var IsAccountId As Boolean = v4UUID.IsValid(EmailOrUserId)
+		      
 		      Var Item As New KeyChainItem
 		      Item.ServiceName = "Beacon"
-		      If v4UUID.IsValid(EmailOrUserId) Then
+		      If IsAccountId Then
 		        Item.AccountName = EmailOrUserId
 		      Else
 		        Item.Label = EmailOrUserId
 		      End If
-		      Return System.KeyChain.FindPassword(Item)
+		      
+		      Var Password As String = System.KeyChain.FindPassword(Item)
+		      If (IsAccountId And Item.AccountName = EmailOrUserId) Or (IsAccountId = False And Item.Label = EmailOrUserId) Then
+		        Return Password
+		      End If
 		    Catch Err As KeychainException
 		      Return ""
 		    End Try

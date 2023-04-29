@@ -46,7 +46,7 @@ Begin DesktopWindow UserWelcomeWindow
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   424
       Begin DesktopLabel PrivacyMessageLabel
@@ -2447,7 +2447,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub FocusLost()
+		Sub FocusReceived()
 		  If Me.Text.IsEmpty Then
 		    Try
 		      Me.Text = PasswordStorage.RetrievePassword(Self.LoginEmailField.Text.Trim)
