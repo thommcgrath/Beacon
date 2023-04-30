@@ -49,7 +49,7 @@ Begin BeaconDialog ArkAddLootDropDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -598,7 +598,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   0
+         RowSelectionType=   1
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1

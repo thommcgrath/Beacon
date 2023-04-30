@@ -135,7 +135,7 @@ Begin ArkConfigEditor ArkHarvestRatesEditor
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
-      AllowFocusRing  =   True
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
@@ -171,7 +171,7 @@ Begin ArkConfigEditor ArkHarvestRatesEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0

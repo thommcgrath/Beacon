@@ -36,7 +36,7 @@ Begin BeaconContainer ArkCraftingCostEditor
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
-      AllowFocusRing  =   True
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
@@ -72,7 +72,7 @@ Begin BeaconContainer ArkCraftingCostEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0

@@ -49,7 +49,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   2
+      Value           =   1
       Visible         =   True
       Width           =   740
       Begin DesktopLabel LockExplanationLabel
@@ -579,7 +579,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   0
+         RowSelectionType=   1
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
@@ -635,7 +635,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   0
+         RowSelectionType=   1
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   3

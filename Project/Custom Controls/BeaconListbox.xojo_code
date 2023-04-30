@@ -234,6 +234,10 @@ Inherits DesktopListBox
 		    Self.ColumnSortDirectionAt(Column) = Direction
 		  End If
 		  
+		  If Self.HasBorder = False Then
+		    Self.AllowFocusRing = False
+		  End If
+		  
 		  RaiseEvent Opening
 		  
 		  Self.Transparent = False

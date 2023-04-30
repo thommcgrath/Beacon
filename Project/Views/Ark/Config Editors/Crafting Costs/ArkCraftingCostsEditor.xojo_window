@@ -63,7 +63,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
-      AllowFocusRing  =   True
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
@@ -99,7 +99,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -189,6 +189,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2

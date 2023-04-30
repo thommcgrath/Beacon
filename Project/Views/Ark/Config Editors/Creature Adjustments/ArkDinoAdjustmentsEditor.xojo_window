@@ -31,7 +31,7 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
-      AllowFocusRing  =   True
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
@@ -67,7 +67,7 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0

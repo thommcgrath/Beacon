@@ -61,7 +61,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
-      AllowFocusRing  =   True
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
@@ -97,7 +97,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -157,6 +157,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2

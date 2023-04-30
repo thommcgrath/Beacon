@@ -220,7 +220,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0

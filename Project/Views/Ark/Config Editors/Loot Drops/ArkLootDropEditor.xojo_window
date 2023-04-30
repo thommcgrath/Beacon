@@ -36,7 +36,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
-      AllowFocusRing  =   True
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
@@ -72,7 +72,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -132,6 +132,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -255,6 +256,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      Modified        =   False
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
