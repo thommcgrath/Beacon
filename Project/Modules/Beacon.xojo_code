@@ -628,7 +628,13 @@ Protected Module Beacon
 		  #if TargetMacOS
 		    Return SystemInformationMBS.MacUUID.Lowercase
 		  #elseif TargetWindows Or TargetLinux
-		    Return v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey)
+		    Var Source As String = SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey
+		    Select Case Preferences.HardwareIdVersion
+		    Case 4
+		      Return v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Source)
+		    Else
+		      Return Beacon.UUID.v5(Source)
+		    End Select
 		  #elseif TargetiOS
 		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 		    

@@ -81,6 +81,11 @@ Protected Module Preferences
 		      Next Timestamp
 		      mManager.DictionaryValue("Project State") = Replacement
 		    End If
+		    
+		    Var NewestUsedBuild As Integer = NewestUsedBuild
+		    If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
+		      HardwareIdVersion = 4
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -574,6 +579,22 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected EntryEditorSize As Size
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Hardware Id Version", 5)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Hardware Id Version") = Value
+			End Set
+		#tag EndSetter
+		Protected HardwareIdVersion As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

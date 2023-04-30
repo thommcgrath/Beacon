@@ -2094,15 +2094,18 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Login(OTP As String, Trust As NullableBoolean)
 		  Var Body As New Dictionary
-		  Body.Value("device_id") = Beacon.HardwareID
-		  
 		  If (Trust Is Nil) = False Then
 		    Body.Value("trust") = Trust.BooleanValue
 		  End If
 		  
 		  If OTP.IsEmpty = False Then
 		    Body.Value("verification_code") = OTP
+		    
+		    // Upgrade device id if necessary
+		    Preferences.HardwareIdVersion = 5
 		  End If
+		  
+		  Body.Value("device_id") = Beacon.HardwareID
 		  
 		  Self.LoginSocket.SetRequestContent(Beacon.GenerateJSON(Body, False), "application/json")
 		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Text.Trim + ":" + Self.LoginPasswordField.Text, 0)
