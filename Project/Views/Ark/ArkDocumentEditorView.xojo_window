@@ -626,15 +626,15 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandleConfigPickerClick()
-		  Var Menu As New MenuItem
-		  Menu.AddMenu(New MenuItem("Create and switch to new config set…", "beacon:createandswitch"))
-		  Menu.AddMenu(New MenuItem("Manage config sets…", "beacon:manage"))
-		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Var Menu As New DesktopMenuItem
+		  Menu.AddMenu(New DesktopMenuItem("Create and switch to new config set…", "beacon:createandswitch"))
+		  Menu.AddMenu(New DesktopMenuItem("Manage config sets…", "beacon:manage"))
+		  Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		  
 		  Var SetNames() As String = Self.Project.ConfigSetNames
 		  SetNames.Sort
 		  For Each SetName As String In SetNames
-		    Var Item As New MenuItem(SetName, SetName)
+		    Var Item As New DesktopMenuItem(SetName, SetName)
 		    Item.HasCheckMark = SetName = Self.ActiveConfigSet
 		    If SetName = Beacon.Project.BaseConfigSetName Then
 		      Item.Shortcut = "B"
@@ -642,11 +642,12 @@ End
 		    Menu.AddMenu(Item)
 		  Next
 		  
-		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		  Menu.AddMenu(New MenuItem("Learn more about config sets…", "beacon:help"))
+		  Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Menu.AddMenu(New DesktopMenuItem("Learn more about config sets…", "beacon:help"))
 		  
-		  Var Origin As Point = Self.ConfigSetPicker.GlobalizeCoordinate(Self.mConfigPickerMenuOrigin)
-		  Var Choice As MenuItem = Menu.PopUp(Origin.X, Origin.Y)
+		  Var PickerOrigin As Point = Self.ConfigSetPicker.GlobalPosition
+		  Var Origin As Point = New Point(PickerOrigin.X + Self.mConfigPickerMenuOrigin.X, PickerOrigin.Y + Self.mConfigPickerMenuOrigin.Y)
+		  Var Choice As DesktopMenuItem = Menu.PopUp(Origin.X, Origin.Y)
 		  If (Choice Is Nil) = False Then
 		    If Choice.Tag.StringValue.BeginsWith("beacon:") Then
 		      Var Tag As String = Choice.Tag.StringValue.Middle(7)
@@ -1403,23 +1404,23 @@ End
 		  Case "ToolsButton"
 		    Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
 		    Var LastEditor As String
-		    Var Base As New MenuItem
+		    Var Base As New DesktopMenuItem
 		    For Each Tool As Ark.ProjectTool In Tools
 		      If Tool.FirstGroup <> LastEditor Then
 		        If Base.Count > 0 Then
-		          Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		          Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		        End If
 		        
-		        Var Header As New MenuItem(Language.LabelForConfig(Tool.FirstGroup))
+		        Var Header As New DesktopMenuItem(Language.LabelForConfig(Tool.FirstGroup))
 		        Header.Enabled = False
 		        Base.AddMenu(Header)
 		        LastEditor = Tool.FirstGroup
 		      End If
-		      Base.AddMenu(New MenuItem(Tool.Caption, Tool))
+		      Base.AddMenu(New DesktopMenuItem(Tool.Caption, Tool))
 		    Next
 		    
-		    Var Position As Point = Me.Window.GlobalPosition
-		    Var Choice As MenuItem = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		    If Choice Is Nil Then
 		      Return
 		    End If
@@ -1501,35 +1502,35 @@ End
 		    Config = Self.Project.ConfigGroup(ConfigName, False)
 		  End If
 		  
-		  Var Base As New MenuItem
-		  Var CopyItem As New MenuItem("Copy", CopyTag)
+		  Var Base As New DesktopMenuItem
+		  Var CopyItem As New DesktopMenuItem("Copy", CopyTag)
 		  CopyItem.Enabled = (ItemIndex > -1) And (Config Is Nil) = False And Config.IsImplicit = False
 		  Base.AddMenu(CopyItem)
 		  Var Board As New Clipboard
-		  Var PasteItem As New MenuItem("Paste", PasteTag)
+		  Var PasteItem As New DesktopMenuItem("Paste", PasteTag)
 		  PasteItem.Enabled = Board.RawDataAvailable(Self.kConfigGroupClipboardType) And (ItemIndex = -1 Or Board.RawData(Self.kConfigGroupClipboardType).IndexOf("""GroupName"":""" + ConfigName + """") > -1)
 		  Base.AddMenu(PasteItem)
 		  
 		  If ItemIndex > -1 Then
-		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
 		    For Each Tool As Ark.ProjectTool In Tools
 		      If Tool.IsRelevantForGroup(ConfigName) Then
-		        Base.AddMenu(New MenuItem(Tool.Caption, Tool.UUID))
+		        Base.AddMenu(New DesktopMenuItem(Tool.Caption, Tool.UUID))
 		      End If
 		    Next
 		    If Base.Count > 0 Then
-		      Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		      Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    End If
-		    Base.AddMenu(New MenuItem("Restore """ + Item.Caption + """ to Default", RestoreTag))
+		    Base.AddMenu(New DesktopMenuItem("Restore """ + Item.Caption + """ to Default", RestoreTag))
 		  End If
 		  
-		  Var Position As Point = Me.Window.GlobalPosition
-		  Var Choice As MenuItem
+		  Var Position As Point = Me.GlobalPosition
+		  Var Choice As DesktopMenuItem
 		  If ItemRect Is Nil Then
-		    Choice = Base.PopUp(Position.X + Me.Left + MouseX, Position.Y + Me.Top + MouseY)
+		    Choice = Base.PopUp(Position.X + MouseX, Position.Y + MouseY)
 		  Else
-		    Choice = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		    Choice = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		  End If
 		  If Choice Is Nil Then
 		    Return

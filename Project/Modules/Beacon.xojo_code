@@ -554,30 +554,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
-		Function GlobalPosition(Extends Target As DesktopWindow) As Point
-		  Var Left As Integer = Target.Left
-		  Var Top As Integer = Target.Top
-		  
-		  While Target IsA DesktopContainer
-		    Var Parent As Object = DesktopContainer(Target).Parent
-		    If Parent IsA DesktopContainer Then
-		      Left = Left + DesktopContainer(Parent).Left
-		      Top = Top + DesktopContainer(Parent).Top
-		      Target = DesktopContainer(Parent)
-		    ElseIf Parent IsA DesktopWindow Then
-		      Left = Left + DesktopWindow(Parent).Left
-		      Top = Top + DesktopWindow(Parent).Top
-		      Target = Nil
-		    Else
-		      Target = Nil
-		    End If
-		  Wend
-		  
-		  Return New Point(Left, Top)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function GuessEncoding(Extends Value As String) As String
 		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,

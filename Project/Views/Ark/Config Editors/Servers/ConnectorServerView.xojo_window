@@ -29,6 +29,7 @@ Begin ServerViewContainer ConnectorServerView
    Width           =   600
    Begin Beacon.ConnectorClientSocket ClientSocket
       Address         =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0

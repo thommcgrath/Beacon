@@ -1380,11 +1380,11 @@ End
 		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
 		  Select Case Item.Name
 		  Case "AddSetButton"
-		    Var Base As New MenuItem
+		    Var Base As New DesktopMenuItem
 		    Self.BuildPresetMenu(Base)
 		    
-		    Var Position As Point = Me.Window.GlobalPosition
-		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		    If (Choice Is Nil) = False Then
 		      Call Self.HandlePresetMenu(Choice)
 		    End If

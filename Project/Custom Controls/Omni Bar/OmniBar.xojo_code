@@ -223,26 +223,26 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		        RaiseEvent ItemPressed(Item, InsetRect)
 		      End If
 		    ElseIf Self.mMouseDownIndex = Self.OverflowItemIndex Then
-		      Var Base As New MenuItem
+		      Var Base As New DesktopMenuItem
 		      For Idx As Integer = Self.mOverflowStopIndex + 1 To Self.mItems.LastIndex
 		        Var Item As OmniBarItem = Self.mItems(Idx)
 		        Select Case Item.Type
 		        Case OmniBarItem.Types.Button, OmniBarItem.Types.Tab
-		          Var Menu As New MenuItem(Item.Caption, Idx)
+		          Var Menu As New DesktopMenuItem(Item.Caption, Idx)
 		          Menu.HasCheckMark = Item.Toggled
 		          Base.AddMenu(Menu)
 		        Case OmniBarItem.Types.Separator
-		          Var Menu As New MenuItem(MenuItem.TextSeparator)
+		          Var Menu As New DesktopMenuItem(MenuItem.TextSeparator)
 		          Base.AddMenu(Menu)
 		        Case OmniBarItem.Types.Title
-		          Var Menu As New MenuItem(Item.Caption)
+		          Var Menu As New DesktopMenuItem(Item.Caption)
 		          Menu.Enabled = False
 		          Base.AddMenu(Menu)
 		        End Select
 		      Next
 		      
-		      Var Position As Point = Self.Window.GlobalPosition
-		      Var Choice As MenuItem = Base.PopUp(Position.X + Self.mOverflowRect.Left, Position.Y + Self.mOverflowRect.Bottom)
+		      Var Position As Point = Self.GlobalPosition
+		      Var Choice As DesktopMenuItem = Base.PopUp(Position.X + Self.mOverflowRect.Left, Position.Y + Self.mOverflowRect.Bottom)
 		      If (Choice Is Nil) = False And Choice.Tag.IsNull = False Then
 		        Var Item As OmniBarItem = Self.Item(Choice.Tag.IntegerValue)
 		        RaiseEvent ItemPressed(Item, Self.mOverflowRect)

@@ -181,25 +181,43 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function GlobalizeCoordinate(Extends Target As DesktopUIControl, Coordinate As Xojo.Point) As Xojo.Point
-		  Var Globalized As New Xojo.Point(Target.Left + Coordinate.X, Target.Top + Coordinate.Y)
-		  
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function GlobalPosition(Extends Target As DesktopContainer) As Xojo.Point
+		  Var Offset As Xojo.Point
 		  Var Parent As Object = Target.Parent
-		  Do
-		    If Parent IsA DesktopWindow Then
-		      Globalized = New Xojo.Point(Globalized.X + DesktopWindow(Parent).Left, Globalized.Y + DesktopWindow(Parent).Top)
-		    ElseIf Parent IsA DesktopUIControl Then
-		      Globalized = New Xojo.Point(Globalized.X + DesktopUIControl(Parent).Left, Globalized.Y + DesktopUIControl(Parent).Top)
-		    End If
-		    If Parent IsA DesktopContainer Then
-		      Parent = DesktopContainer(Parent).Parent
-		    ElseIf Parent IsA DesktopUIControl Then
-		      Parent = DesktopUIControl(Parent).Parent
-		    Else
-		      Return Globalized
-		    End If
+		  
+		  Do Until (Parent IsA DesktopUIControl) = False
+		    Parent = DesktopUIControl(Parent).Parent
 		  Loop
+		  
+		  Select Case Parent
+		  Case IsA DesktopContainer
+		    Offset = DesktopContainer(Parent).GlobalPosition
+		  Case IsA DesktopWindow
+		    Offset = New Xojo.Point(DesktopWindow(Parent).Left, DesktopWindow(Parent).Top)
+		  End Select
+		  
+		  Return New Xojo.Point(Target.Left + Offset.X, Target.Top + Offset.Y)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function GlobalPosition(Extends Target As DesktopUIControl) As Xojo.Point
+		  Var Offset As Xojo.Point
+		  Var Parent As Object = Target.Parent
+		  
+		  Do Until (Parent IsA DesktopUIControl) = False
+		    Parent = DesktopUIControl(Parent).Parent
+		  Loop
+		  
+		  Select Case Parent
+		  Case IsA DesktopContainer
+		    Offset = DesktopContainer(Parent).GlobalPosition
+		  Case IsA DesktopWindow
+		    Offset = New Xojo.Point(DesktopWindow(Parent).Left, DesktopWindow(Parent).Top)
+		  End Select
+		  
+		  Return New Xojo.Point(Target.Left + Offset.X, Target.Top + Offset.Y)
 		End Function
 	#tag EndMethod
 

@@ -378,14 +378,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandleViewMenu(ItemRect As Rect)
-		  Var Base As New MenuItem
+		  Var Base As New DesktopMenuItem
 		  
-		  Var ViewFullNames As New MenuItem("Use Full Server Names", ServersListbox.NamesFull)
-		  Var ViewAbbreviatedNames As New MenuItem("Use Abbreviated Server Names", ServersListbox.NamesAbbreviated)
-		  Var SortByName As New MenuItem("Sort By Name", ServersListbox.SortByName)
-		  Var SortByAddress As New MenuItem("Sort By Address", ServersListbox.SortByAddress)
-		  Var SortByColor As New MenuItem("Sort By Color", ServersListbox.SortByColor)
-		  Var ShowServerIds As New MenuItem("Show Server Ids")
+		  Var ViewFullNames As New DesktopMenuItem("Use Full Server Names", ServersListbox.NamesFull)
+		  Var ViewAbbreviatedNames As New DesktopMenuItem("Use Abbreviated Server Names", ServersListbox.NamesAbbreviated)
+		  Var SortByName As New DesktopMenuItem("Sort By Name", ServersListbox.SortByName)
+		  Var SortByAddress As New DesktopMenuItem("Sort By Address", ServersListbox.SortByAddress)
+		  Var SortByColor As New DesktopMenuItem("Sort By Color", ServersListbox.SortByColor)
+		  Var ShowServerIds As New DesktopMenuItem("Show Server Ids")
 		  ViewFullNames.HasCheckMark = Preferences.ServersListNameStyle = ServersListbox.NamesFull
 		  ViewAbbreviatedNames.HasCheckMark = Preferences.ServersListNameStyle = ServersListbox.NamesAbbreviated
 		  SortByName.HasCheckMark = Preferences.ServersListSortedValue = ServersListbox.SortByName
@@ -394,15 +394,15 @@ End
 		  ShowServerIds.HasCheckMark = Preferences.ServersListShowIds
 		  Base.AddMenu(ViewFullNames)
 		  Base.AddMenu(ViewAbbreviatedNames)
-		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		  Base.AddMenu(SortByName)
 		  Base.AddMenu(SortByAddress)
 		  Base.AddMenu(SortByColor)
-		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		  Base.AddMenu(ShowServerIds)
 		  
-		  Var Position As Point = Self.GlobalPosition
-		  Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		  Var Position As Point = Self.ConfigToolbar.GlobalPosition
+		  Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		  If Choice Is Nil Then
 		    Return
 		  End If
@@ -665,15 +665,15 @@ End
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var CopyProfileMenuItem As New MenuItem("Copy Profile ID")
+		  Var CopyProfileMenuItem As New DesktopMenuItem("Copy Profile ID")
 		  CopyProfileMenuItem.Enabled = False
 		  Base.AddMenu(CopyProfileMenuItem)
 		  
-		  Var DeployItem As MenuItem
+		  Var DeployItem As DesktopMenuItem
 		  If Me.SelectedRowCount > 1 Then
-		    DeployItem = New MenuItem("Deploy These Servers…")
+		    DeployItem = New DesktopMenuItem("Deploy These Servers…")
 		  Else
-		    DeployItem = New MenuItem("Deploy This Server…")
+		    DeployItem = New DesktopMenuItem("Deploy This Server…")
 		  End If
 		  Var DeployProfiles() As Beacon.ServerProfile
 		  Var NitradoProfiles() As Ark.NitradoServerProfile
@@ -697,17 +697,17 @@ End
 		  DeployItem.Tag = DeployProfiles
 		  Base.AddMenu(DeployItem)
 		  
-		  Var BackupsItem As New MenuItem("Show Config Backups")
+		  Var BackupsItem As New DesktopMenuItem("Show Config Backups")
 		  Base.AddMenu(BackupsItem)
 		  
 		  If NitradoProfiles.Count > 0 Then
-		    Base.AddMenu(New MenuItem("Open Nitrado Dashboard", NitradoProfiles))
+		    Base.AddMenu(New DesktopMenuItem("Open Nitrado Dashboard", NitradoProfiles))
 		  End If
 		  
 		  If LocalProfiles.Count > 0 Then
 		    #if Not TargetMacOS
 		      // Sandbox prevents this from working on macOS
-		      Base.AddMenu(New MenuItem("Show Config Files", LocalProfiles))
+		      Base.AddMenu(New DesktopMenuItem("Show Config Files", LocalProfiles))
 		    #endif
 		  End If
 		  

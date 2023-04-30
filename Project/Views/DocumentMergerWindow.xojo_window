@@ -791,10 +791,10 @@ End
 		  End Select
 		  
 		  
-		  Var WindowPos As Point = Self.GlobalPosition
+		  Var WindowPos As Point = Me.GlobalPosition
 		  Var OffsetX, OffsetY As Integer
-		  OffsetX = WindowPos.X + Me.Left
-		  OffsetY = WindowPos.Y + Me.Top
+		  OffsetX = WindowPos.X
+		  OffsetY = WindowPos.Y
 		  For I As Integer = 0 To Column - 1
 		    OffsetX = OffsetX + Me.ColumnAttributesAt(I).WidthActual
 		  Next

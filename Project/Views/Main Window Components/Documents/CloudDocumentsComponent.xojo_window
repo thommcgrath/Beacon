@@ -966,7 +966,7 @@ End
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var VersionsItem As New MenuItem("Older Versions…", "versions")
+		  Var VersionsItem As New DesktopMenuItem("Older Versions…", "versions")
 		  VersionsItem.Enabled = Me.SelectedRowCount = 1 And Preferences.OnlineToken.IsEmpty = False
 		  Base.AddMenu(VersionsItem)
 		  

@@ -519,16 +519,16 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub ShowMenu(Item As BeaconToolbarItem)
-		  Var Menu As New MenuItem
+		  Var Menu As New DesktopMenuItem
 		  RaiseEvent BuildMenu(Item, Menu)
 		  
 		  If Menu.Count = 0 Then
 		    Return
 		  End If
 		  
-		  Var Position As Point = Self.Window.GlobalPosition
-		  Var Choice As MenuItem = Menu.PopUp(Position.X + Self.Left + Item.Rect.Left, Position.Y + Self.Top + Item.Rect.Bottom)
-		  If Choice <> Nil Then
+		  Var Position As Xojo.Point = DesktopUIControl(Self).GlobalPosition
+		  Var Choice As DesktopMenuItem = Menu.PopUp(Position.X + Item.Rect.Left, Position.Y + Item.Rect.Bottom)
+		  If (Choice Is Nil) = False Then
 		    RaiseEvent HandleMenuAction(Item, Choice)
 		  End If
 		End Sub
@@ -544,7 +544,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
+		Event BuildMenu(Item As BeaconToolbarItem, Menu As DesktopMenuItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -552,7 +552,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
+		Event HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As DesktopMenuItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

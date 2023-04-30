@@ -2196,29 +2196,29 @@ End
 		    Var ImprintAmountMultiplier As String = Config.BabyImprintAmountMultiplier.ToString(Format)
 		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier) + "&iam=" + EncodeURLComponent(ImprintAmountMultiplier)))
 		  Case "BaselineButton"
-		    Var Base As New MenuItem
+		    Var Base As New DesktopMenuItem
 		    
-		    Var NormalMenuItem As New MenuItem("Normal Rates", "multiplayer")
-		    Var SingleMenuItem As New MenuItem("Single Player Rates", "singleplayer")
+		    Var NormalMenuItem As New DesktopMenuItem("Normal Rates", "multiplayer")
+		    Var SingleMenuItem As New DesktopMenuItem("Single Player Rates", "singleplayer")
 		    NormalMenuItem.HasCheckMark = Not Self.mComputeSinglePlayer
 		    SingleMenuItem.HasCheckMark = Self.mComputeSinglePlayer
 		    Base.AddMenu(NormalMenuItem)
 		    Base.AddMenu(SingleMenuItem)
-		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    
-		    Var NoEventItem As New MenuItem("No Event", "")
+		    Var NoEventItem As New DesktopMenuItem("No Event", "")
 		    NoEventItem.HasCheckMark = Self.mActiveEvent.IsEmpty
 		    Base.AddMenu(NoEventItem)
 		    
 		    Var Events() As Ark.GameEvent = Ark.DataSource.Pool.Get(False).GetGameEvents()
 		    For Each GameEvent As Ark.GameEvent In Events
-		      Var EventItem As New MenuItem(GameEvent.Label, GameEvent.ArkCode)
+		      Var EventItem As New DesktopMenuItem(GameEvent.Label, GameEvent.ArkCode)
 		      EventItem.HasCheckMark = (GameEvent.ArkCode = Self.mActiveEvent)
 		      Base.AddMenu(EventItem)
 		    Next
 		    
-		    Var Position As Point = Me.Window.GlobalPosition
-		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		    If Choice Is Nil Then
 		      Return
 		    End If

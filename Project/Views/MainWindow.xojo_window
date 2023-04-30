@@ -108,6 +108,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -143,6 +144,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -178,6 +180,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -213,6 +216,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   2
@@ -278,6 +282,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -313,6 +318,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -792,25 +798,25 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowUserMenu(X As Integer, Y As Integer)
-		  Var Base As New MenuItem
+		  Var Base As New DesktopMenuItem
 		  
 		  If Not Preferences.OnlineEnabled Then
-		    Base.AddMenu(New MenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
+		    Base.AddMenu(New DesktopMenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
 		  Else
 		    If App.IdentityManager.CurrentIdentity Is Nil Or App.IdentityManager.CurrentIdentity.Username.IsEmpty Then
-		      Base.AddMenu(New MenuItem("Log In", "beacon://action/signin"))
+		      Base.AddMenu(New DesktopMenuItem("Log In", "beacon://action/signin"))
 		    Else
-		      Var IdentityItem As New MenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
+		      Var IdentityItem As New DesktopMenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
 		      IdentityItem.Enabled = False
 		      Base.AddMenu(IdentityItem)
-		      Base.AddMenu(New MenuItem("Manage Account", "beacon://action/showaccount"))
-		      Base.AddMenu(New MenuItem("Log Out", "beacon://action/signout"))
+		      Base.AddMenu(New DesktopMenuItem("Manage Account", "beacon://action/showaccount"))
+		      Base.AddMenu(New DesktopMenuItem("Log Out", "beacon://action/signout"))
 		    End If
 		  End If
-		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		  Base.AddMenu(New MenuItem("User Info…", "beacon://action/showidentity"))
+		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem("User Info…", "beacon://action/showidentity"))
 		  
-		  Var Choice As MenuItem = Base.PopUp(X, Y)
+		  Var Choice As DesktopMenuItem = Base.PopUp(X, Y)
 		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Then
 		    Return
 		  End If
@@ -1059,6 +1065,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false

@@ -65,7 +65,7 @@ Inherits DesktopListBox
 		  Var Bound As Integer = Base.Count - 1
 		  For I As Integer = 0 To Bound
 		    If Base.MenuAt(I) = DeleteItem And I < Bound Then
-		      Base.AddMenuAt(I + 1, New MenuItem(MenuItem.TextSeparator))
+		      Base.AddMenuAt(I + 1, New DesktopMenuItem(MenuItem.TextSeparator))
 		    End If
 		  Next
 		  

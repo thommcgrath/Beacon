@@ -532,11 +532,11 @@ End
 		  Var Labels As Dictionary = Config.Containers.Disambiguate(Self.Project.MapMask)
 		  
 		  If Containers.LastIndex = -1 Then
-		    Var Warning As MenuItem
+		    Var Warning As DesktopMenuItem
 		    If Mask = CType(0, UInt64) Then
-		      Warning = New MenuItem("List is empty because no maps have been selected.")
+		      Warning = New DesktopMenuItem("List is empty because no maps have been selected.")
 		    Else
-		      Warning = New MenuItem("List is empty because all drops have been implemented.")
+		      Warning = New DesktopMenuItem("List is empty because all drops have been implemented.")
 		    End If
 		    Warning.Enabled = False
 		    Menu.AddMenu(Warning)
@@ -546,13 +546,13 @@ End
 		  Containers.Sort
 		  
 		  For Each Container As Ark.LootContainer In Containers
-		    Menu.AddMenu(New MenuItem(Labels.Lookup(Container.ObjectID, Container.Label), Container))
+		    Menu.AddMenu(New DesktopMenuItem(Labels.Lookup(Container.ObjectID, Container.Label), Container))
 		  Next
 		  
 		  If HasExperimentalContainers Then
-		    Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    
-		    Var ExpItem As New MenuItem("Show Experimental Containers", "toggle_experimental")
+		    Var ExpItem As New DesktopMenuItem("Show Experimental Containers", "toggle_experimental")
 		    ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
 		    Menu.AddMenu(ExpItem)
 		  End If
@@ -1066,11 +1066,11 @@ End
 		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
 		  Select Case Item.Name
 		  Case "AddContainerButton"
-		    Var Base As New MenuItem
+		    Var Base As New DesktopMenuItem
 		    Self.BuildQuickDropMenu(Base)
 		    
-		    Var Position As Point = Me.Window.GlobalPosition
-		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		    If (Choice Is Nil) = False Then
 		      Call Self.HandleQuickDropMenu(Choice)
 		    End If

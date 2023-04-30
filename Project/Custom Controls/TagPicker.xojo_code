@@ -478,37 +478,37 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h21
 		Private Sub ShowContextualMenu(CellIndex As Integer, MouseX As Integer, MouseY As Integer)
-		  Var Base As New MenuItem
+		  Var Base As New DesktopMenuItem
 		  Var OffsetX, OffsetY As Integer
 		  
 		  If CellIndex > -1 Then
 		    Var Tag As String = Self.mTags(CellIndex)
 		    Var TagHuman As String = Tag.ReplaceAll("_", " ").Titlecase
 		    
-		    Var RequireItem As New MenuItem("Results Must Be Tagged With """ + TagHuman + """", "require:" + Tag)
+		    Var RequireItem As New DesktopMenuItem("Results Must Be Tagged With """ + TagHuman + """", "require:" + Tag)
 		    RequireItem.HasCheckMark = Self.mRequireTags.IndexOf(Tag) > -1
 		    If Self.RequireTagCaption.IsEmpty = False Then
 		      RequireItem.Text = Self.RequireTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
 		    
-		    Var ExcludeItem As New MenuItem("Do Not Show Results Tagged With """ + TagHuman + """", "exclude:" + Tag)
+		    Var ExcludeItem As New DesktopMenuItem("Do Not Show Results Tagged With """ + TagHuman + """", "exclude:" + Tag)
 		    ExcludeItem.HasCheckMark = Self.mExcludeTags.IndexOf(Tag) > -1
 		    If Self.ExcludeTagCaption.IsEmpty = False Then
 		      ExcludeItem.Text = Self.ExcludeTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
 		    
-		    Var NeutralItem As New MenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
+		    Var NeutralItem As New DesktopMenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
 		    NeutralItem.HasCheckMark = RequireItem.HasCheckMark = False And ExcludeItem.HasCheckMark = False
 		    If Self.NeutralTagCaption.IsEmpty = False Then
 		      NeutralItem.Text = Self.NeutralTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
 		    
-		    Var HideItem As New MenuItem("Hide """ + TagHuman + """ Tag", "hide:" + Tag)
+		    Var HideItem As New DesktopMenuItem("Hide """ + TagHuman + """ Tag", "hide:" + Tag)
 		    
 		    Base.AddMenu(RequireItem)
 		    Base.AddMenu(ExcludeItem)
 		    Base.AddMenu(NeutralItem)
-		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    Base.AddMenu(HideItem)
 		    
 		    OffsetX = Self.mCells(CellIndex).Left
@@ -518,11 +518,11 @@ Inherits ControlCanvas
 		    OffsetY = MouseY
 		  End If
 		  
-		  Var RestoreItem As New MenuItem("Restore Hidden Tags", "restore:")
+		  Var RestoreItem As New DesktopMenuItem("Restore Hidden Tags", "restore:")
 		  Base.AddMenu(RestoreItem)
 		  
-		  Var Position As Point = Self.Window.GlobalPosition
-		  Var Choice As MenuItem = Base.PopUp(Position.X + Self.Left + OffsetX, Position.Y + Self.Top + OffsetY)
+		  Var Position As Point = Self.GlobalPosition
+		  Var Choice As DesktopMenuItem = Base.PopUp(Position.X + OffsetX, Position.Y + OffsetY)
 		  If Choice Is Nil Then
 		    Return
 		  End If

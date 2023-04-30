@@ -1455,15 +1455,15 @@ End
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var Item As MenuItem
+		  Var Item As DesktopMenuItem
 		  
-		  Item = New MenuItem
+		  Item = New DesktopMenuItem
 		  Item.Text = "Create Blueprint Entry"
 		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "createblueprintentry"
 		  Base.AddMenu(Item)
 		  
-		  Item = New MenuItem
+		  Item = New DesktopMenuItem
 		  Item.Text = "Match Official Availability"
 		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "matchavailability"
