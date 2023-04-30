@@ -549,8 +549,8 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   5
-         ColumnWidths    =   "30,*,100,120,100"
+         ColumnCount     =   6
+         ColumnWidths    =   "30,*,100,120,100,100"
          DefaultRowHeight=   22
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -569,7 +569,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          Height          =   401
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   " 	Engram	Quantity	Quality	Blueprint %"
+         InitialValue    =   " 	Engram	Quantity	Quality	Blueprint %	Weight"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -605,8 +605,8 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   5
-         ColumnWidths    =   "40%,15%,15%,15%,15%"
+         ColumnCount     =   6
+         ColumnWidths    =   "30%,14%,14%,14%,14%,14%"
          DefaultRowHeight=   22
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -625,7 +625,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          Height          =   435
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "Group	Min Quality Change	Max Quality Change	Quantity Multiplier	Blueprint % Multiplier"
+         InitialValue    =   "Group	Min Quality Change	Max Quality Change	Quantity Multiplier	Blueprint % Multiplier	Weight Multiplier"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -972,12 +972,14 @@ End
 		  
 		  Self.ContentsList.RowTagAt(Index) = Entry.MutableVersion
 		  Self.ContentsList.CellTextAt(Index, Self.ColumnDescription) = Entry.Label
-		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
-		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Entry.MinQuality.Label, Entry.MinQuality.Label(False) + "-" + Entry.MaxQuality.Label(False))
-		  Self.ContentsList.CellTextAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint.ToString(Locale.Current, "0%"), "N/A")
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuantity) = If(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuality) = If(Entry.MinQuality = Entry.MaxQuality, Entry.MinQuality.Label, Entry.MinQuality.Label(False) + "-" + Entry.MaxQuality.Label(False))
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnBlueprint) = If(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint.ToString(Locale.Current, "0%"), "N/A")
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnWeight) = Entry.RawWeight.ToString(Locale.Current, "0,")
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultipliers
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuality) = Entry.RespectQualityOffsets
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnBlueprint) = Entry.RespectBlueprintChanceMultipliers
+		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnWeight) = Entry.RespectWeightMultipliers
 		  
 		  If SelectIt Then
 		    Self.ContentsList.RowSelectedAt(Index) = True
@@ -1128,6 +1130,7 @@ End
 		    Var MinQualityModifier As Integer = Self.mTemplate.MinQualityOffset(TemplateSelector)
 		    Var MaxQualityModifier As Integer = Self.mTemplate.MaxQualityOffset(TemplateSelector)
 		    Var BlueprintMultiplier As Double = Self.mTemplate.BlueprintChanceMultiplier(TemplateSelector)
+		    Var WeightMultiplier As Double = Self.mTemplate.WeightMultiplier(TemplateSelector)
 		    
 		    Var QuantityLabel As String = "x " + QuantityMultiplier.PrettyText(True)
 		    Var BlueprintLabel As String = "x " + BlueprintMultiplier.PrettyText(True)
@@ -1142,8 +1145,9 @@ End
 		    Else
 		      MaxQualityLabel = MaxQualityModifier.ToString(Locale.Current, "+0;-0") + " Tier" + If(Abs(MaxQualityModifier) <> 1, "s", "")
 		    End If
+		    Var WeightLabel As String = "x " + WeightMultiplier.PrettyText(True)
 		    
-		    Self.ModifiersList.AddRow(TemplateSelector.Label, MinQualityLabel, MaxQualityLabel, QuantityLabel, BlueprintLabel)
+		    Self.ModifiersList.AddRow(TemplateSelector.Label, MinQualityLabel, MaxQualityLabel, QuantityLabel, BlueprintLabel, WeightLabel)
 		    Self.ModifiersList.RowTagAt(Self.ModifiersList.LastAddedRowIndex) = TemplateSelector.UUID
 		  Next TemplateSelector
 		  Self.ModifiersList.HeadingIndex = 0
@@ -1210,6 +1214,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnQuantity, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnWeight, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ModifierClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.presetmodifier", Scope = Private
@@ -1381,6 +1388,7 @@ End
 		  Me.ColumnTypeAt(Self.ColumnQuantity) = DesktopListbox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnQuality) = DesktopListbox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnBlueprint) = DesktopListbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnWeight) = DesktopListBox.CellTypes.CheckBox
 		  Me.TypeaheadColumn = Self.ColumnDescription
 		End Sub
 	#tag EndEvent
@@ -1428,6 +1436,14 @@ End
 		    Var Entry As Ark.MutableLootTemplateEntry = Me.RowTagAt(Row)
 		    If Entry.RespectBlueprintChanceMultipliers <> Checked Then
 		      Entry.RespectBlueprintChanceMultipliers = Checked
+		      Self.mTemplate.Add(Entry)
+		      Self.Modified = True
+		    End If
+		  Case Self.ColumnWeight
+		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
+		    Var Entry As Ark.MutableLootTemplateEntry = Me.RowTagAt(Row)
+		    If Entry.RespectWeightMultipliers <> Checked Then
+		      Entry.RespectWeightMultipliers = Checked
 		      Self.mTemplate.Add(Entry)
 		      Self.Modified = True
 		    End If
@@ -1606,6 +1622,7 @@ End
 		    Dict.Value("MinQuality") = Self.mTemplate.MinQualityOffset(ModifierID)
 		    Dict.Value("MaxQuality") = Self.mTemplate.MaxQualityOffset(ModifierID)
 		    Dict.Value("Blueprint") = Self.mTemplate.BlueprintChanceMultiplier(ModifierID)
+		    Dict.Value("Weight") = Self.mTemplate.WeightMultiplier(ModifierID)
 		    Modifiers.Value(ModifierID) = Dict
 		  Next
 		  
@@ -1638,6 +1655,9 @@ End
 		      End If
 		      If Dict.HasKey("Blueprint") Then
 		        Self.mTemplate.BlueprintChanceMultiplier(ModifierID) = Dict.Value("Blueprint")
+		      End If
+		      If Dict.HasKey("Weight") Then
+		        Self.mTemplate.WeightMultiplier(ModifierID) = Dict.Value("Weight")
 		      End If
 		    Next
 		    

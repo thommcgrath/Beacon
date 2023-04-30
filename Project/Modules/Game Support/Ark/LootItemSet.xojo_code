@@ -180,6 +180,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Var MinQualityModifiers() As Integer
 		  Var MaxQualityModifiers() As Integer
 		  Var BlueprintMultipliers() As Double
+		  Var WeightMultipliers() As Double
 		  Var CommonData As Beacon.CommonData
 		  If ActiveModifiers.Count > 0 Then
 		    CommonData = Beacon.CommonData.Pool.Get(False)
@@ -196,6 +197,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		      MinQualityModifiers.Add(Template.MinQualityOffset(LootSelectorUUID))
 		      MaxQualityModifiers.Add(Template.MaxQualityOffset(LootSelectorUUID))
 		      BlueprintMultipliers.Add(Template.BlueprintChanceMultiplier(LootSelectorUUID))
+		      WeightMultipliers.Add(Template.WeightMultiplier(LootSelectorUUID))
 		    End If
 		  Next LootSelectorUUID
 		  
@@ -207,7 +209,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    End If
 		    
 		    Var Entry As New Ark.MutableLootItemSetEntry
-		    Entry.RawWeight = TemplateEntry.RawWeight
 		    Entry.SingleItemQuantity = TemplateEntry.SingleItemQuantity
 		    Entry.PreventGrinding = TemplateEntry.PreventGrinding
 		    Entry.StatClampMultiplier = TemplateEntry.StatClampMultiplier
@@ -265,6 +266,14 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Else
 		      Entry.ChanceToBeBlueprint = TemplateEntry.ChanceToBeBlueprint
 		    End If
+		    
+		    Var RawWeight As Double = TemplateEntry.RawWeight
+		    If TemplateEntry.RespectWeightMultipliers Then
+		      For Each Multiplier As Double In WeightMultipliers
+		        RawWeight = RawWeight * Multiplier
+		      Next
+		    End If
+		    Entry.RawWeight = RawWeight
 		    
 		    Set.Add(Entry)
 		  Next

@@ -155,6 +155,15 @@ Inherits Ark.LootTemplateEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RespectWeightMultipliers(Assigns Value As Boolean)
+		  If Self.mRespectWeightMultipliers <> Value Then 
+		    Self.mRespectWeightMultipliers = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SingleItemQuantity(Assigns Value As Boolean)
 		  Self.mSingleItemQuantity = Value
 		  Self.Modified = True

@@ -91,6 +91,10 @@ Inherits Ark.LootTemplate
 
 	#tag Method, Flags = &h0
 		Sub BlueprintChanceMultiplier(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Double)
+		  If TemplateSelector Is Nil Then
+		    Return
+		  End If
+		  
 		  Self.BlueprintChanceMultiplier(TemplateSelector.UUID) = Value
 		End Sub
 	#tag EndMethod
@@ -147,6 +151,10 @@ Inherits Ark.LootTemplate
 
 	#tag Method, Flags = &h0
 		Sub MaxQualityOffset(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Integer)
+		  If TemplateSelector Is Nil Then
+		    Return
+		  End If
+		  
 		  Self.MaxQualityOffset(TemplateSelector.UUID) = Value
 		End Sub
 	#tag EndMethod
@@ -171,6 +179,10 @@ Inherits Ark.LootTemplate
 
 	#tag Method, Flags = &h0
 		Sub MinQualityOffset(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Integer)
+		  If TemplateSelector Is Nil Then
+		    Return
+		  End If
+		  
 		  Self.MinQualityOffset(TemplateSelector.UUID) = Value
 		End Sub
 	#tag EndMethod
@@ -201,6 +213,10 @@ Inherits Ark.LootTemplate
 
 	#tag Method, Flags = &h0
 		Sub QuantityMultiplier(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Double)
+		  If TemplateSelector Is Nil Then
+		    Return
+		  End If
+		  
 		  Self.QuantityMultiplier(TemplateSelector.UUID) = Value
 		End Sub
 	#tag EndMethod
@@ -235,6 +251,28 @@ Inherits Ark.LootTemplate
 	#tag Method, Flags = &h0
 		Sub ResizeTo(UpperBound As Integer)
 		  Self.mEntries.ResizeTo(UpperBound)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub WeightMultiplier(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Double)
+		  If TemplateSelector Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.WeightMultiplier(TemplateSelector.UUID) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub WeightMultiplier(TemplateSelectorId As String, Assigns Value As Double)
+		  If Self.mModifierValues Is Nil Then
+		    Self.mModifierValues = New Dictionary
+		  End If
+		  
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorId, New Dictionary)
+		  Dict.Value(Self.ModifierWeight) = Value
+		  Self.mModifierValues.Value(TemplateSelectorId) = Dict
 		End Sub
 	#tag EndMethod
 

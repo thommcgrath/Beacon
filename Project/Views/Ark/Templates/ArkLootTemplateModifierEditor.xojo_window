@@ -8,16 +8,16 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   236
+   Height          =   270
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   236
+   MaxHeight       =   270
    MaximizeButton  =   False
    MaxWidth        =   500
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   236
+   MinHeight       =   270
    MinimizeButton  =   False
    MinWidth        =   500
    Placement       =   1
@@ -47,11 +47,11 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       LockTop         =   True
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   9
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   156
+      Top             =   190
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -226,14 +226,14 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Selector:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   156
+      Top             =   190
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -261,11 +261,11 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   196
+      Top             =   230
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -293,11 +293,11 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   196
+      Top             =   230
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -452,6 +452,79 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       Visible         =   True
       Width           =   80
    End
+   Begin UITweaks.ResizedLabel WeightLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Weight Multiplier:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   156
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   180
+   End
+   Begin UITweaks.ResizedTextField WeightField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   212
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1.00"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   156
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndDesktopWindow
 
@@ -464,6 +537,7 @@ End
 		  Self.MaxQualityField.DoubleValue = Self.mTemplate.MaxQualityOffset(Self.mEditID)
 		  Self.QuantityField.Text = Self.mTemplate.QuantityMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
 		  Self.BlueprintField.Text = Self.mTemplate.BlueprintChanceMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
+		  Self.WeightField.Text = Self.mTemplate.WeightMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
 		End Sub
 	#tag EndEvent
 
@@ -546,8 +620,9 @@ End
 		  Var MaxQualityModifier As Integer = Self.MaxQualityField.DoubleValue
 		  Var QuantityMultiplier As Double = CDbl(Self.QuantityField.Text)
 		  Var BlueprintMultiplier As Double = CDbl(Self.BlueprintField.Text)
+		  Var WeightMultiplier As Double = CDbl(Self.WeightField.Text)
 		  
-		  If MinQualityModifier = 0 And MaxQualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 Then
+		  If MinQualityModifier = 0 And MaxQualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 And WeightMultiplier = 1 Then
 		    BeaconUI.ShowAlert("This modifier has no effect", "There's no reason to add this modifier, because it does not change the quality or quantity of items.")
 		    Return
 		  End If
@@ -564,6 +639,7 @@ End
 		  Self.mTemplate.MaxQualityOffset(LootSelector) = MaxQualityModifier
 		  Self.mTemplate.QuantityMultiplier(LootSelector) = QuantityMultiplier
 		  Self.mTemplate.BlueprintChanceMultiplier(LootSelector) = BlueprintMultiplier
+		  Self.mTemplate.WeightMultiplier(LootSelector) = WeightMultiplier
 		  
 		  Self.mCancelled = False
 		  Self.Hide
