@@ -125,6 +125,11 @@ Protected Class LogManager
 		    Return
 		  End If
 		  
+		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
+		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
+		    Return
+		  #endif
+		  
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  If Info Is Nil Then
 		    Return

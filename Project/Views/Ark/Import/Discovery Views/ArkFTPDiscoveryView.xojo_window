@@ -662,6 +662,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   3
@@ -1000,12 +1001,17 @@ End
 		  Self.BrowseSpinner.Visible = False
 		  
 		  Var Reason As String
-		  If Err.Message.IsEmpty Then
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		    Reason = "Unhandled " + Info.FullName
-		  Else
-		    Reason = Err.Message
-		  End If
+		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
+		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
+		    Reason = "Unhandled Exception"
+		  #else
+		    If Err.Message.IsEmpty Then
+		      Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		      Reason = "Unhandled " + Info.FullName
+		    Else
+		      Reason = Err.Message
+		    End If
+		  #endif
 		  
 		  Self.ShowAlert("Beacon was unable to retrieve the file list.", Reason)
 		End Sub

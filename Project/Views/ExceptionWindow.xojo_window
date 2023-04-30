@@ -759,6 +759,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Function BuildPostFields(Err As RuntimeException, Comments As String) As Dictionary
+		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
+		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
+		    Return Nil
+		  #endif
+		  
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Stack() As StackFrame = Err.StackFrames
 		  While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))

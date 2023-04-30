@@ -489,17 +489,22 @@ Protected Class ProjectController
 		    RaiseEvent WriteSuccess()
 		  Else
 		    Var Reason As String
-		    Var Err As RuntimeException = Sender.Error
-		    If Err <> Nil Then
-		      Reason = Err.Explanation
-		      If Reason = "" Then
-		        Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		        If Info <> Nil Then
-		          Reason = Info.Name + " from JSONWriter"
+		    
+		    // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
+		    #if (TargetMacOS And TargetX86 And XojoVersion < 2023.020) = False
+		      Var Err As RuntimeException = Sender.Error
+		      If (Err Is Nil) = False Then
+		        Reason = Err.Explanation
+		        If Reason = "" Then
+		          Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		          If Info <> Nil Then
+		            Reason = Info.Name + " from JSONWriter"
+		          End If
 		        End If
 		      End If
-		    End If
-		    If Reason = "" Then
+		    #endif
+		    
+		    If Reason.IsEmpty Then
 		      Reason = "Unknown JSONWriter error"
 		    End If
 		    

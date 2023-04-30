@@ -1116,9 +1116,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Sub LogAPIException(Err As RuntimeException, Location As String, URL As String, HTTPStatus As Integer, RawContent As MemoryBlock)
-		  If Err = Nil Then
+		  If Err Is Nil Then
 		    Return
 		  End If
+		  
+		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
+		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
+		    Return
+		  #endif
+		  
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Base64 As String
 		  If RawContent <> Nil And RawContent.Size > 0 Then

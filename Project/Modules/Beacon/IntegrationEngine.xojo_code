@@ -488,18 +488,25 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub SetError(Err As RuntimeException)
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		  Var Reason As String
-		  If Err.Message <> "" Then
-		    Reason = Err.Message
-		  ElseIf Err.Message <> "" Then
-		    Reason = Err.Message
-		  Else
-		    Reason = "No details available"
-		  End If
+		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
+		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
+		    Self.Log("Error: Unhandled Exception")
+		    Self.ErrorMessage = "Error: Unhandled Exception"
+		  #else
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		    Var Reason As String
+		    If Err.Message <> "" Then
+		      Reason = Err.Message
+		    ElseIf Err.Message <> "" Then
+		      Reason = Err.Message
+		    Else
+		      Reason = "No details available"
+		    End If
+		    
+		    Self.Log("Error: Unhandled " + Info.FullName + ": '" + Reason + "'")
+		    Self.ErrorMessage = "Error: Unhandled " + Info.FullName + ": '" + Reason + "'"
+		  #endif
 		  
-		  Self.Log("Error: Unhandled " + Info.FullName + ": '" + Reason + "'")
-		  Self.ErrorMessage = "Error: Unhandled " + Info.FullName + ": '" + Reason + "'"
 		  Self.Errored = True
 		  Self.Finished = True
 		End Sub
