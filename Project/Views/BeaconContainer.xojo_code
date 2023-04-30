@@ -118,9 +118,7 @@ Inherits DesktopContainer
 			  
 			  Self.mModified = Value
 			  
-			  If Value Then
-			    RaiseEvent ContentsChanged
-			  End If
+			  RaiseEvent ContentsChanged
 			End Set
 		#tag EndSetter
 		Modified As Boolean
