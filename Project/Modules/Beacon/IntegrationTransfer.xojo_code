@@ -42,13 +42,8 @@ Protected Class IntegrationTransfer
 		    Return
 		  End If
 		  
-		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
-		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
-		    Self.ErrorMessage = "Unhandled Exception"
-		  #else
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		    Self.ErrorMessage = "Unhandled " + Info.Name + ": " + Err.Message
-		  #endif
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Self.ErrorMessage = "Unhandled " + Info.Name + ": " + Err.Message
 		End Sub
 	#tag EndMethod
 

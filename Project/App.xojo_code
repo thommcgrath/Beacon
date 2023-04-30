@@ -432,6 +432,24 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 
 	#tag Method, Flags = &h0
+		Function AffectedBy72314() As Boolean
+		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
+		  
+		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.02
+		    Static IsAffected As Boolean
+		    Static Tested As Boolean
+		    
+		    If Tested = False Then
+		      IsAffected = SystemInformationMBS.IsVentura
+		      Tested = True
+		    End If
+		    
+		    Return IsAffected
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AppearanceChanged()
 		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
 		  OmniBar.RebuildColors()
@@ -641,7 +659,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If Thread.Current = Nil Then
+		  If Thread.Current Is Nil Then
 		    Self.PresentException(Error)
 		  Else
 		    Call CallLater.Schedule(0, AddressOf PresentException, Error)
@@ -1120,10 +1138,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
-		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
+		  If Self.AffectedBy72314() Then
 		    Return
-		  #endif
+		  End If
 		  
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Base64 As String

@@ -759,50 +759,53 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Function BuildPostFields(Err As RuntimeException, Comments As String) As Dictionary
-		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
-		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
-		    Return Nil
-		  #endif
-		  
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		  Var Stack() As StackFrame = Err.StackFrames
-		  While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
-		    Stack.RemoveAt(0)
-		  Wend
-		  
+		  Var Type As String = Info.FullName
+		  Var Trace As String
 		  Var Location As String = "Unknown"
-		  If Stack.LastIndex >= 0 Then
-		    Location = Stack(0).Name
-		  End If
 		  Var Reason As String = Err.Message
-		  If Reason.IsEmpty Then
-		    Reason = Err.Message
+		  
+		  If App.AffectedBy72314 Then
+		    Trace = "Exceptions are broken on this system"
+		    App.Log("Unhandled " + Type + ": " + Reason)
+		  Else
+		    Var Stack() As StackFrame = Err.StackFrames
+		    While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		      Stack.RemoveAt(0)
+		    Wend
+		    
+		    If Stack.LastIndex >= 0 Then
+		      Location = Stack(0).Name
+		    End If
+		    
+		    App.Log("Unhandled " + Type + " in " + Location + ": " + Reason)
+		    
+		    If Location.BeginsWith("Delegate.IM_Invoke") Then
+		      // Ignore this one
+		      Return Nil
+		    End If
+		    
+		    Var Lines() As String
+		    For Each Frame As StackFrame In Stack
+		      Lines.Add(Frame.Name)
+		    Next
+		    
+		    Trace = Lines.Join(EndOfLine.UNIX)
+		    Location = Location
 		  End If
-		  
-		  App.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
-		  
-		  If Location.BeginsWith("Delegate.IM_Invoke") Then
-		    // Ignore this one
-		    Return Nil
-		  End If
-		  
-		  Var Lines() As String
-		  For Each Frame As StackFrame In Stack
-		    Lines.Add(Frame.Name)
-		  Next
 		  
 		  Var Fields As New Dictionary
 		  Fields.Value("build") = App.BuildNumber.ToString
-		  Fields.Value("trace") = Lines.Join(EndOfLine.UNIX)
-		  Fields.Value("hash") = EncodeHex(Crypto.SHA1(Fields.Value("trace").StringValue)).Lowercase
-		  Fields.Value("type") = Info.FullName
-		  Fields.Value("reason") = Reason
-		  Fields.Value("location") = Location
 		  Fields.Value("comments") = Comments.Trim.ReplaceLineEndings(EndOfLine.UNIX)
 		  Fields.Value("time") = DateTime.Now.SQLDateTimeWithOffset
-		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
+		  If (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
 		    Fields.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		  End If
+		  Fields.Value("type") = Type
+		  Fields.Value("reason") = Reason
+		  Fields.Value("hash") = EncodeHex(Crypto.SHA1(Trace)).Lowercase
+		  Fields.Value("trace") = Trace
+		  Fields.Value("location") = Location
 		  
 		  Return Fields
 		End Function
@@ -881,6 +884,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Function SaveReport(Fields As Dictionary) As Boolean
+		  If App.AffectedBy72314 Then
+		    // Don't bother reporting it
+		    Return True
+		  End If
+		  
 		  Try
 		    Var ErrorsFolder As FolderItem = App.ExceptionsFolder(True)
 		    If ErrorsFolder Is Nil Or ErrorsFolder.Exists = False Then

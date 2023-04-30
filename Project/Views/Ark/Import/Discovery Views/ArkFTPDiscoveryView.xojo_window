@@ -1001,17 +1001,12 @@ End
 		  Self.BrowseSpinner.Visible = False
 		  
 		  Var Reason As String
-		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
-		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.020
-		    Reason = "Unhandled Exception"
-		  #else
-		    If Err.Message.IsEmpty Then
-		      Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		      Reason = "Unhandled " + Info.FullName
-		    Else
-		      Reason = Err.Message
-		    End If
-		  #endif
+		  If Err.Message.IsEmpty Then
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		    Reason = "Unhandled " + Info.FullName
+		  Else
+		    Reason = Err.Message
+		  End If
 		  
 		  Self.ShowAlert("Beacon was unable to retrieve the file list.", Reason)
 		End Sub
