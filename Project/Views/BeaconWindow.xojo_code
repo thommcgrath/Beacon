@@ -127,7 +127,7 @@ Inherits DesktopWindow
 		    Var SharedApp As Ptr = SharedApplication(NSClassFromString("NSApplication"))
 		    ActivateIgnoringOtherApps(SharedApp, True)
 		  #elseif TargetWin32
-		    Declare Function BringWindowToTop Lib "User32" (Target As Int32) As Boolean
+		    Declare Function BringWindowToTop Lib "User32" (Target As Ptr) As Boolean
 		    Call BringWindowToTop(Self.Handle)
 		  #else
 		    #Pragma Warning "No code to bring a window to foreground on this platform."
@@ -450,6 +450,14 @@ Inherits DesktopWindow
 			Group="OS X (Carbon)"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Modified"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
