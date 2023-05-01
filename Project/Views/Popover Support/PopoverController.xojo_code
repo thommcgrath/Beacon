@@ -39,10 +39,7 @@ Protected Class PopoverController
 		  Self.mDialog = New PopoverDialog(Self)
 		  Self.mDialog.Visible = False
 		  Self.mDialog.Title = Title
-		  Var Instance As DesktopUIControl = Self.mDialog.Embed(Container, Self.mPaddingLeft, Self.mPaddingTop)
-		  #if Not TargetMacOS
-		    #Pragma Unused Instance
-		  #endif
+		  Self.mDialog.Embed(Container, Self.mPaddingLeft, Self.mPaddingTop)
 		  
 		  If Container IsA BeaconSubview Then
 		    Try
@@ -60,7 +57,7 @@ Protected Class PopoverController
 		  #if TargetMacOS
 		    If NSPopoverMBS.Available Then
 		      Var ViewController As New NSViewControllerMBS
-		      ViewController.View = Instance.NSViewMBS
+		      ViewController.View = Container.NSViewMBS
 		      ViewController.View.SetBoundsOrigin(New NSPointMBS(Self.mPaddingLeft * -1, Self.mPaddingBottom)) // No idea why the X should be negative here
 		      
 		      Self.mPopover = New BeaconPopover
@@ -175,7 +172,7 @@ Protected Class PopoverController
 		  Self.mVisible = True
 		  
 		  If Self.mPopover Is Nil Then
-		    Self.mDialog.ShowModal(Parent.Window)
+		    Self.mDialog.Show(Parent.Window)
 		  Else
 		    Var ParentView As NSViewMBS = Parent.NSViewMBS
 		    Var PositionRect As NSRectMBS

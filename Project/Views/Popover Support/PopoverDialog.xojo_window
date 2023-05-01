@@ -108,12 +108,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Embed(Container As DesktopContainer, PaddingX As Integer, PaddingY As Integer) As DesktopUIControl
+		Sub Embed(Container As DesktopContainer, PaddingX As Integer, PaddingY As Integer)
 		  Container.EmbedWithin(Self, PaddingX, PaddingY, Container.Width, Container.Height)
 		  Self.Width = Container.Width + (PaddingX * 2)
 		  Self.Height = Container.Height + (PaddingY * 2) + 40
-		  Return DesktopUIControl(Self.ControlAt(Self.ControlCount - 1))
-		End Function
+		End Sub
 	#tag EndMethod
 
 
