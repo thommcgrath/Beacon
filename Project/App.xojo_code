@@ -802,9 +802,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Var Actions(0) As Beacon.ScriptAction
 		      Actions(0) = Action
 		      
-		      Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(SaveInfo, True)
-		      If (File Is Nil) = False And File.Exists Then
-		        Self.mMainWindow.Documents.OpenDocument(File, Actions)
+		      If SaveInfo.BeginsWith(Beacon.ProjectURL.TypeCloud + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeLocal + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeWeb + "://") Then
+		        Self.mMainWindow.Documents.OpenDocument(SaveInfo, Actions)
+		      Else
+		        Var File As BookmarkedFolderItem
+		        Try
+		          File = BookmarkedFolderItem.FromSaveInfo(SaveInfo, True)
+		        Catch Err As RuntimeException
+		          Self.Log(Err, CurrentMethodName, "Decoding save info")
+		        End Try
+		        If (File Is Nil) = False And File.Exists Then
+		          Self.mMainWindow.Documents.OpenDocument(File, Actions)
+		        End If
 		      End If
 		    End If
 		  Else
