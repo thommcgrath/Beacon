@@ -861,7 +861,11 @@ End
 		      Continue
 		    End If
 		    
-		    StopMessage = StopMessageDialog.Present(Self)
+		    If (Self.Settings Is Nil) = False And Self.Settings.StopMessage.IsEmpty = False Then
+		      StopMessage = Self.Settings.StopMessage
+		    Else
+		      StopMessage = StopMessageDialog.Present(Self)
+		    End If
 		    If StopMessage.IsEmpty Then
 		      Return
 		    Else
@@ -1449,6 +1453,7 @@ End
 		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
 		  End If
 		  
+		  Var UseStopMessage As Boolean
 		  For I As Integer = 0 To Self.ServerList.LastRowIndex
 		    If Not Self.ServerList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
@@ -1456,7 +1461,16 @@ End
 		    
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
 		    Settings.Servers.Add(Profile)
+		    UseStopMessage = UseStopMessage Or Profile.SupportsCustomStopMessage
 		  Next
+		  
+		  If UseStopMessage Then
+		    Var StopMessage As String = StopMessageDialog.Present(Self)
+		    If StopMessage.IsEmpty Then
+		      Return
+		    End If
+		    Settings.StopMessage = StopMessage
+		  End If
 		  
 		  Var TriggerURL As String
 		  Try

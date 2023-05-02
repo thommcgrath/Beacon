@@ -341,6 +341,7 @@ End
 		  Case "Deploy"
 		    Var Settings As New Beacon.DeploySettings
 		    Settings.Options = UInt64.FromString(Action.Value("Options"), Locale.Raw)
+		    Settings.StopMessage = Action.Value("StopMessage")
 		    Var ProfileIds() As String = Action.Value("Servers").Split(",")
 		    For Each ProfileId As String In ProfileIds
 		      Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(ProfileId)

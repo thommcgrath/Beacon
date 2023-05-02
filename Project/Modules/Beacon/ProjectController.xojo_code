@@ -60,6 +60,7 @@ Protected Class ProjectController
 		  Var Action As New Beacon.ScriptAction("Deploy")
 		  Action.Value("Options") = Settings.Options.ToString(Locale.Raw, "0")
 		  Action.Value("Servers") = String.FromArray(Servers, ",")
+		  Action.Value("StopMessage") = Settings.StopMessage
 		  
 		  Return "beacon://run/" + SaveInfo + "?" + Action.ToQueryString
 		End Function

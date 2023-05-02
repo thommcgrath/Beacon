@@ -8,6 +8,10 @@ Protected Class DeploySettings
 		Servers() As Beacon.ServerProfile
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		StopMessage As String
+	#tag EndProperty
+
 
 	#tag Constant, Name = OptionAdvise, Type = Double, Dynamic = False, Default = \"8", Scope = Public
 	#tag EndConstant
