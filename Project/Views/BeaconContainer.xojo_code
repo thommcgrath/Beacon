@@ -112,10 +112,6 @@ Inherits DesktopContainer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mModified = Value Then
-			    Return
-			  End If
-			  
 			  Self.mModified = Value
 			  
 			  RaiseEvent ContentsChanged
