@@ -237,7 +237,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin DesktopMenuItem EditPreferences
+      Begin DesktopPreferencesMenuItem EditPreferences
          SpecialMenu = 0
          Index = -2147483648
          Text = "#App.kEditPreferences"
