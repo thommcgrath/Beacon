@@ -16,7 +16,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Function ScrollMaximum() As Double
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Return Self.Target.MaximumValue
 		  End If
 		End Function
@@ -24,7 +24,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Sub ScrollMaximum(Assigns Value As Double)
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Self.Target.MaximumValue = Value
 		  End If
 		End Sub
@@ -32,7 +32,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Function ScrollMinimum() As Double
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Return Self.Target.MinimumValue
 		  End If
 		End Function
@@ -40,7 +40,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Sub ScrollMinimum(Assigns Value As Double)
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Self.Target.MinimumValue = Value
 		  End If
 		End Sub
@@ -48,7 +48,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Function ScrollPosition() As Double
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Return Self.Target.Value
 		  End If
 		End Function
@@ -56,7 +56,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Sub ScrollPosition(Assigns Value As Double)
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Self.Target.Value = Value
 		  End If
 		End Sub
@@ -64,7 +64,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Function Target() As ScrollBar
-		  If TargetRef <> Nil And TargetRef.Value <> Nil Then
+		  If (TargetRef Is Nil) = False And (TargetRef.Value Is Nil) = False Then
 		    Return ScrollBar(TargetRef.Value)
 		  End If
 		End Function

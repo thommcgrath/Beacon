@@ -214,7 +214,7 @@ Inherits AnimationKit.DeltaTask
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI) or  (TargetIOS)
 		Function OriginalRect() As Rect
-		  If Self.StartBounds <> Nil Then
+		  If (Self.StartBounds Is Nil) = False Then
 		    Return CloneRect(Self.StartBounds)
 		  End If
 		End Function

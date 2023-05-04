@@ -14,7 +14,7 @@ Protected Module AnimationKit
 		Sub Animate(Extends Target As AnimationKit.ValueAnimator, Identifier As String, StartValue As Double, EndValue As Double, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Var Task As New AnimationKit.ValueTask(Target, Identifier, StartValue, EndValue)
 		  Task.DurationInSeconds = DurationInSeconds
-		  If Curve <> Nil Then
+		  If (Curve Is Nil) = False Then
 		    Task.Curve = Curve
 		  End If
 		  Task.Run
@@ -26,7 +26,7 @@ Protected Module AnimationKit
 		  Var Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
-		  If Curve <> Nil Then
+		  If (Curve Is Nil) = False Then
 		    Task.Curve = Curve
 		  End If
 		  Task.Run
@@ -38,7 +38,7 @@ Protected Module AnimationKit
 		  Var Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
-		  If Curve <> Nil Then
+		  If (Curve Is Nil) = False Then
 		    Task.Curve = Curve
 		  End If
 		  Task.Run

@@ -87,7 +87,7 @@ Protected Class Task
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.ItemRef <> Nil And Self.ItemRef.Value <> Nil Then
+			  If (Self.ItemRef Is Nil) = False And (Self.ItemRef.Value Is Nil) = False Then
 			    Return Self.ItemRef.Value
 			  Else
 			    Return Nil

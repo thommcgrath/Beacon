@@ -16,7 +16,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Function ScrollMaximum() As Double
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Return Self.Target.RowCount
 		  End If
 		End Function
@@ -44,7 +44,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Function ScrollPosition() As Double
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Return Self.Target.ScrollPosition
 		  End If
 		End Function
@@ -52,16 +52,16 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Sub ScrollPosition(Assigns Value As Double)
-		  If Self.Target <> Nil Then
+		  If (Self.Target Is Nil) = False Then
 		    Self.Target.ScrollPosition = Round(Value)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Target() As Listbox
-		  If TargetRef <> Nil And TargetRef.Value <> Nil Then
-		    Return Listbox(TargetRef.Value)
+		Function Target() As DesktopListbox
+		  If (TargetRef Is Nil) = False And (TargetRef.Value Is Nil) = False Then
+		    Return DesktopListbox(TargetRef.Value)
 		  End If
 		End Function
 	#tag EndMethod
