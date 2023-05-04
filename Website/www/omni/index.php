@@ -70,8 +70,9 @@ while (!$results->EOF()) {
 	$results->MoveNext();
 }
 
-$ark2_enabled = isset($product_details['Ark2']);
-$arksa_enabled = isset($product_details['ArkSA']);
+$ark2Enabled = isset($product_details['Ark2']);
+$arkSAEnabled = isset($product_details['ArkSA']);
+$arkOnlyMode = ($ark2Enabled || $arkSAEnabled) === false;
 
 $payment_methods = [
 	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
@@ -256,7 +257,20 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 			<div id="storefront-cart-header-email-field">&nbsp;</div>
 			<div><button id="storefront-cart-header-email-button" class="hidden">Change Email</button></div>
 		</div>
-		<div id="storefront-cart" class="storefront-cart-section"></div>
+		<div id="storefront-cart" class="storefront-cart-section"><?php if ($arkOnlyMode) { ?>
+			<table class="generic no-row-colors">
+				<tr>
+					<td><?php echo htmlentities($product_details['Ark']['Base']['Name']); ?><br><span class="smaller text-lighter">Purchase a copy of <?php echo htmlentities($product_details['Ark']['Base']['Name']); ?> for your account. All software updates are included for life.</span></td>
+					<td class="text-center"><div id="storefront-ark-owned" class="hidden">Owned</div><label class="checkbox hidden"><input type="checkbox" value="ark" id="storefront-ark-check"><span></span></label></td>
+					<td class="formatted-price text-right" beacon-price="<?php echo $product_details['Ark']['Base']['Price']; ?>"></td>
+				</tr>
+				<tr>
+					<td><?php echo htmlentities($product_details['Ark']['Base']['Name']); ?> (Giftable)<br><span class="smaller text-lighter">Same option as above, except you will be sent a gift code that can be given away however you'd like.</span></td>
+					<td class="text-center"><input class="text-center" type="number" value="0" id="storefront-ark-gift-field" min="0" max="5"></td>
+					<td class="formatted-price text-right" beacon-price="<?php echo $product_details['Ark']['Base']['Price']; ?>"></td>
+				</tr>
+			</table>
+		<?php } ?></div>
 		<div id="storefront-cart-footer" class="storefront-cart-section">
 			<div class="storefront-cart-totals">
 				<div class="storefront-cart-total-row">
@@ -303,13 +317,15 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 		</div>
 	</div>
 </div>
-<?php BeaconTemplate::StartModal('checkout-wizard'); ?>
+<?php
+if ($arkOnlyMode === false) {
+	BeaconTemplate::StartModal('checkout-wizard'); ?>
 	<div class="modal-content">
 		<div class="title-bar">Select Your Games</div>
 		<div class="content">
 			<p>For which games would you like to purchase Beacon Omni?</p>
 			<div id="checkout-wizard-list">
-				<?php if ($arksa_enabled) { ?><div id="checkout-wizard-list-arksa">
+				<?php if ($arkSAEnabled) { ?><div id="checkout-wizard-list-arksa">
 					<div class="checkout-wizard-checkbox-cell">
 						<label class="checkbox"><input type="checkbox" value="arksa" id="checkout-wizard-arksa-check"><span></span></label>
 					</div>
@@ -360,7 +376,8 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 		</div>
 	</div>
 <?php
-BeaconTemplate::FinishModal();
+	BeaconTemplate::FinishModal();
+}
 BeaconTemplate::StartModal('checkout-email');
 ?>
 	<div class="modal-content">

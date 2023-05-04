@@ -2558,6 +2558,7 @@ div.comment-block {
 		align-items: center;
 		border-bottom: 1px solid $separator-color;
 		padding-bottom: 1rem;
+		margin-bottom: 1rem;
 		
 		div:nth-child(1) {
 			text-align: left;
@@ -2581,6 +2582,8 @@ div.comment-block {
 	}
 	
 	#storefront-cart {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
 		&.empty {
 			display: flex;
 			flex-direction: column;
