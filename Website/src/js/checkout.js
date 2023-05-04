@@ -536,6 +536,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		arkOnlyCheck: document.getElementById('storefront-ark-check'),
 		arkOnlyGiftField: document.getElementById('storefront-ark-gift-field'),
 		arkOnlyOwnedField: document.getElementById('storefront-ark-owned'),
+		arkOnlyGiftQuantityGroup: document.getElementById('storefront-ark-gift-group'),
+		arkOnlyGiftUpButton: document.getElementById('storefront-ark-gift-increase'),
+		arkOnlyGiftDownButton: document.getElementById('storefront-ark-gift-decrease'),
 		init: function() {
 			if (this.cancelButton) {
 				this.cancelButton.addEventListener('click', (ev) => {
@@ -658,14 +661,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			
 			if (this.arkOnlyGiftField) {
-				this.arkOnlyGiftField.addEventListener('input', (ev) => {
-					ev.preventDefault();
-					
+				const updateCartArkGiftBundles = (desiredQuantity) => {
 					const items = cart.items.filter((cartItem) => {
 						return cartItem.isGift === true && cartItem.hasArk;
 					});
 					
-					const desiredQuantity = Math.min(Math.max(parseInt(ev.currentTarget.value), 0), 5);
 					if (items.length === desiredQuantity) {
 						return;
 					} else if (items.length > desiredQuantity) {
@@ -681,6 +681,41 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 					
 					cartView.update();
+				};
+				
+				this.arkOnlyGiftField.addEventListener('input', (ev) => {
+					const desiredQuantity = Math.min(Math.max(parseInt(ev.currentTarget.value), 0), MaxRenewalCount);
+					updateCartArkGiftBundles(desiredQuantity);
+				});
+				
+				this.arkOnlyGiftField.addEventListener('blur', (ev) => {
+					cartView.update();
+				});
+				
+				const nudgeArkOnlyGiftQuantity = (amount) => {
+					const originalValue = parseInt(this.arkOnlyGiftField.value);
+					let newValue = originalValue + amount;
+					if (newValue > MaxRenewalCount || newValue < 0) {
+						this.arkOnlyGiftQuantityGroup.classList.add('shake');
+						setTimeout(() => {
+							this.arkOnlyGiftQuantityGroup.classList.remove('shake');
+						}, 400);
+						newValue = Math.max(Math.min(newValue, MaxRenewalCount), 0);
+					}
+					if (originalValue !== newValue) {
+						this.arkOnlyGiftField.value = newValue;
+						updateCartArkGiftBundles(newValue);
+					}
+				}
+				
+				this.arkOnlyGiftUpButton.addEventListener('click', (ev) => {
+					ev.preventDefault();
+					nudgeArkOnlyGiftQuantity(1);
+				});
+				
+				this.arkOnlyGiftDownButton.addEventListener('click', (ev) => {
+					ev.preventDefault();
+					nudgeArkOnlyGiftQuantity(-1);
 				});
 			}
 		},

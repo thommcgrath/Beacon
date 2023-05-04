@@ -167,8 +167,8 @@ foreach ($bundles as $bundle) {
 			}
 		}
 	} else {
-		$ownsArk = findLicense($licenses, $products['Ark']['Base']['ProductId']) !== null;
-		$ownsArkSA = findLicense($licenses, $products['ArkSA']['Base']['ProductId']) !== null;
+		$ownsArk = $includeArk && findLicense($licenses, $products['Ark']['Base']['ProductId']) !== null;
+		$ownsArkSA = $includeArkSA && findLicense($licenses, $products['ArkSA']['Base']['ProductId']) !== null;
 		
 		if ($wantsArk && !$ownsArk) {
 			$lines[$products['Ark']['Base']['PriceId']] = ($lines[$products['Ark']['Base']['PriceId']] ?? 0) + 1;

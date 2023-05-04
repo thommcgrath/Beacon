@@ -2383,33 +2383,21 @@ div.comment-block {
 	border-color: rgba($foreground-color, 0.1);
 }
 
-/* !Store */
-
-#storefront {
-	& > div {
-		webkit-transition-property: opacity;
-		-o-transition-property: opacity;
-		transition-property: opacity;
-		-webkit-transition-timing-function: linear;
-		-o-transition-timing-function: linear;
-		transition-timing-function: linear;
-		-webkit-transition-duration: $animation-timing;
-		-o-transition-duration: $animation-timing;
-		transition-duration: $animation-timing;
-	}
-}
-
-#checkout-wizard-list {
-	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
+input.no-stepper {
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
 	}
 	
-	input[type=number] {
+	&[type=number] {
 		-moz-appearance: textfield;
 	}
-	
+}
+
+/* !Store */
+
+#checkout-wizard-list {
 	& > div {
 		display: flex;
 		align-items: center;
@@ -2510,6 +2498,18 @@ div.comment-block {
 			text-align: right;
 			flex: 0 1 auto;
 		}
+	}
+	
+	& > div {
+		webkit-transition-property: opacity;
+		-o-transition-property: opacity;
+		transition-property: opacity;
+		-webkit-transition-timing-function: linear;
+		-o-transition-timing-function: linear;
+		transition-timing-function: linear;
+		-webkit-transition-duration: $animation-timing;
+		-o-transition-duration: $animation-timing;
+		transition-duration: $animation-timing;
 	}
 	
 	#storefront-cart {

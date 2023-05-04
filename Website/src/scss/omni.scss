@@ -208,6 +208,11 @@ table.generic .bullet-column {
 	}
 }
 
+table.generic .storefront-quantity-column {
+	min-width: 125px;
+	max-width: 150px;
+}
+
 td.bullet-column {
 	color: #008000;
 }
