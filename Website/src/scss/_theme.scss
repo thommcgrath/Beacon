@@ -3,6 +3,17 @@
 @use 'sass:math';
 @forward "normalize";
 @forward "fonts";
+@forward "utilities";
+
+$foreground-color: #000000 !default;
+$background-color: #ffffff !default;
+$accent-color: #9c0fb0 !default;
+
+$button-gray: #5c636a !default;
+$button-blue: #0d6efd !default;
+$button-green: #157347 !default;
+$button-red: #bb2d3b !default;
+$button-yellow: #ffc107 !default;
 
 $header-link-opacity: 0.6;
 $header-link-border-opacity: 0.4;
@@ -17,7 +28,7 @@ $font-size-sm: $font-size * 0.875;
 $font-size-lg: $font-size * 1.25;
 $font-weight: 400;
 $button-line-height: 1.5em;
-$input-placeholder-opacity: 0.4;
+$input-placeholder-opacity: 0.6;
 
 $input-padding-y: 0.375rem;
 $input-padding-x: 0.75rem;
@@ -217,10 +228,6 @@ $enable-rounded: true;
 	}
 }
 
-$foreground-color: #000000 !default;
-$background-color: #ffffff !default;
-$accent-color: #9c0fb0 !default;
-
 $pc-fill: contrasting-color($background-color, #c27c0e);
 $xbox-fill: contrasting-color($background-color, #107c10);
 $playstation-fill: contrasting-color($background-color, #003791);
@@ -253,7 +260,7 @@ $button-primary-text-color: $accent-text-color;
 $button-secondary-color: color.mix($foreground-color, $background-color, 7%);
 $button-secondary-text-color: $foreground-color;
 
-$input-border-color: color.mix($foreground-color, $background-color, 30%);
+$input-border-color: color.mix($foreground-color, $background-color, 40%);
 
 html {
 	font-family: 'Source Sans Pro', sans-serif;
@@ -757,82 +764,6 @@ table.generic {
 	}
 }
 
-.w-10 {
-	width: 10%;
-}
-
-.w-20 {
-	width: 20%;
-}
-
-.w-25 {
-	width: 25%;
-}
-
-.w-30 {
-	width: 30%;
-}
-
-.w-40 {
-	width: 40%;
-}
-
-.w-50 {
-	width: 50%;
-}
-
-.w-60 {
-	width: 60%;
-}
-
-.w-70 {
-	width: 70%;
-}
-
-.w-75 {
-	width: 75%;
-}
-
-.w-80 {
-	width: 80%;
-}
-
-.w-90 {
-	width: 90%;
-}
-
-@for $i from 1 through 5 {
-	.m-#{$i} {
-		margin: $i * 1em;
-	}
-	
-	.mt-#{$i} {
-		margin-top: $i * 1em;
-	}
-	
-	.mb-#{$i} {
-		margin-bottom: $i * 1em;
-	}
-	
-	.ml-#{$i} {
-		margin-left: $i * 1em;
-	}
-	
-	.mr-#{$i} {
-		margin-right: $i * 1em;
-	}
-	
-	.mh-#{$i} {
-		margin-left: $i * 1em;
-		margin-right: $i * 1em;
-	}
-	
-	.mv-#{$i} {
-		margin-top: $i * 1em;
-		margin-bottom: $i * 1em;
-	}
-}
-
 /* ! Header */
 
 #header_wrapper {
@@ -1068,22 +999,22 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 		opacity: $disabled-opacity;
 	}
 	
-	@include button-colors(#5c636a, #ffffff);
+	@include button-colors($button-gray, #ffffff, false);
 	
 	&.blue {
-		@include button-colors(#0d6efd, #ffffff);
+		@include button-colors($button-blue, #ffffff, false);
 	}
 	
 	&.green {
-		@include button-colors(#157347, #ffffff);
+		@include button-colors($button-green, #ffffff, false);
 	}
 	
 	&.red {
-		@include button-colors(#bb2d3b, #ffffff);
+		@include button-colors($button-red, #ffffff, false);
 	}
 	
 	&.yellow {
-		@include button-colors(#ffc107, #ffffff);
+		@include button-colors($button-yellow, #000000, false);
 	}
 	
 	.spinner {
@@ -1504,23 +1435,23 @@ div.select {
 	@include menu-colors($button-primary-color, $button-primary-text-color, false);
 	
 	&.gray {
-		@include menu-colors(#5c636a, #ffffff);
+		@include menu-colors($button-gray, #ffffff, false);
 	}
 	
 	&.blue {
-		@include menu-colors(#0d6efd, #ffffff);
+		@include menu-colors($button-blue, #ffffff, false);
 	}
 	
 	&.green {
-		@include menu-colors(#157347, #ffffff);
+		@include menu-colors($button-green, #ffffff, false);
 	}
 	
 	&.red {
-		@include menu-colors(#bb2d3b, #ffffff);
+		@include menu-colors($button-red, #ffffff, false);
 	}
 	
 	&.yellow {
-		@include menu-colors(#ffc107, #ffffff);
+		@include menu-colors($button-yellow, #000000, false);
 	}
 	
 	&.small {

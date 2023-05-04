@@ -1,7 +1,8 @@
 @use "theme" as * with (
 	$foreground-color: #ffffff,
 	$background-color: #9c0fb0,
-	$accent-color: #ffffff
+	$accent-color: #ffffff,
+	$button-gray: #ab33bc
 );
 
 #header_logo, .white-on-dark, .accented-foreground {

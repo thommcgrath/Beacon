@@ -200,7 +200,12 @@
 }
 
 table.generic .bullet-column {
-	width: 100px;
+	width: 0px;
+	white-space: nowrap;
+	
+	@media (min-width: 635px) {
+		width: 100px;
+	}
 }
 
 td.bullet-column {
