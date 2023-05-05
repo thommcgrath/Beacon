@@ -197,6 +197,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Simulate()
+		  If Self.List Is Nil Then
+		    Return
+		  End If
+		  
 		  Self.List.RemoveAllRows()
 		  
 		  If IsNull(Self.mTarget)Then
@@ -214,6 +218,10 @@ End
 		  
 		  Var GroupedItems As New Dictionary
 		  For Each Selection As Ark.LootSimulatorSelection In Selections
+		    If Selection Is Nil Then
+		      Continue
+		    End If
+		    
 		    Var Description As String = Selection.Description
 		    Var Quantity As Integer
 		    If GroupedItems.HasKey(Description) Then
@@ -225,10 +233,10 @@ End
 		  For Each Item As DictionaryEntry In GroupedItems
 		    Var Description As String = Item.Key
 		    Var Quantity As Integer = Item.Value
-		    List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
+		    Self.List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		  
-		  Self.StatusBar1.Caption = List.RowCount.ToString(Locale.Current, ",##0") + " item" + If(List.RowCount = 1, "", "s")
+		  Self.StatusBar1.Caption = Self.List.RowCount.ToString(Locale.Current, ",##0") + " item" + If(Self.List.RowCount = 1, "", "s")
 		  Self.Refresh
 		End Sub
 	#tag EndMethod
