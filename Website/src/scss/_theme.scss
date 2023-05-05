@@ -1047,7 +1047,7 @@ input[type="submit"], button.default, a.button.default {
 	font-family: inherit;
 	font-size: $input-font-size;
 	margin: 0px;
-	padding: 0.375rem 0.75rem;
+	padding: $input-padding-y $input-padding-x;
 	-webkit-transition-duration: $animation-timing;
 	-o-transition-duration: $animation-timing;
 	transition-duration: $animation-timing;
@@ -1080,6 +1080,15 @@ input[type="submit"], button.default, a.button.default {
 	
 	&.invalid {
 		border-color: $text-red;
+	}
+}
+
+textarea {
+	line-height: 1.5;
+	
+	&::placeholder {
+		padding-top: 0px;
+		line-height: 1.5;
 	}
 }
 
@@ -1117,6 +1126,15 @@ input[type="submit"], button.default, a.button.default {
 		}
 	}
 	
+	& > div.select {
+		& > select {
+			padding: 1.625rem (($input-padding-x * 2) + $input-font-size) 0.625rem $input-padding-x;
+			height: calc(3.5rem + 2px);
+			line-height: 1.25rem;
+			box-sizing: border-box;
+		}
+	}
+	
 	& > label {
 		position: absolute;
 		top: 0;
@@ -1129,6 +1147,11 @@ input[type="submit"], button.default, a.button.default {
 		@include transition(opacity .1s ease-in-out, transform .1s ease-in-out);
 		box-sizing: border-box;
 		opacity: $input-placeholder-opacity;
+	}
+	
+	& > div.select+label {
+		transform: scale(.85) translateY(-.5rem) translateX(.15rem);
+		color: #ffffff;
 	}
 }
 

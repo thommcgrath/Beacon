@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const contactTimestampField = document.getElementById('contactTimestampField');
 	const contactHashField = document.getElementById('contactHashField');
 	
+	const contactPageInitial = document.getElementById('pageInitial');
+	const contactPageForm = document.getElementById('pageContactForm');
+	const contactShowFormLink = document.getElementById('showWebFormLink');
+	
 	const showError = (message) => {
 		if (contactErrorNotice) {
 			contactErrorNotice.innerHTML = message;
@@ -99,5 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (storedEmail) {
 			contactEmailField.value = storedEmail;
 		}
+	}
+	
+	if (contactShowFormLink) {
+		contactShowFormLink.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			if (contactPageInitial) {
+				contactPageInitial.classList.add('hidden');
+			}
+			
+			if (contactPageForm) {
+				contactPageForm.classList.remove('hidden');
+			}
+		});
 	}
 });

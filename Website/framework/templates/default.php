@@ -40,7 +40,6 @@ if ($body_class === 'purple') {
 		<?php if (!empty($description)) { ?><meta name="description" content="<?php echo htmlentities($description); ?>">
 		<?php } ?><link rel="icon" type="image/png" sizes="32x32" href="<?php echo BeaconCommon::AssetURI('favicon-32x32.png'); ?>">
 		<link rel="icon" type="image/png" sizes="16x16" href="<?php echo BeaconCommon::AssetURI('favicon-16x16.png'); ?>">
-		<link rel="manifest" href="<?php echo BeaconCommon::AssetURI('manifest.json'); ?>">
 		<link rel="mask-icon" href="<?php echo BeaconCommon::AssetURI('safari-pinned-tab.svg'); ?>" color="#9c0fb0">
 		<link rel="shortcut icon" href="<?php echo BeaconCommon::AssetURI('favicon.ico'); ?>">
 		<link rel="apple-touch-icon" href="<?php echo BeaconCommon::AssetURI('apple-touch-icon.png'); ?>">
