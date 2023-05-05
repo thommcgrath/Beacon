@@ -729,9 +729,17 @@ Implements NotificationKit.Receiver
 		    Self.SQLExecute("INSERT OR REPLACE INTO variables (key, value) VALUES (?1, ?2);", Key, Value)
 		    Self.CommitTransaction()
 		  Catch Err As RuntimeException
-		    Self.RollbackTransaction()
+		    If Self.InTransaction Then
+		      Self.RollbackTransaction()
+		    End If
 		  End Try
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Writeable() As Boolean
+		  Return mAllowWriting
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

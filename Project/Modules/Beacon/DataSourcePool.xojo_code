@@ -76,7 +76,18 @@ Implements Iterable
 		  Var CurrentThreadID As Integer = CurrentThread.ThreadID
 		  
 		  If Self.mInstances.HasKey(CurrentThreadID) = False Then
-		    Self.mInstances.Value(CurrentThreadID) = RaiseEvent NewInstance(Writeable)
+		    Var Instance As Beacon.DataSource = RaiseEvent NewInstance(Writeable)
+		    If Instance Is Nil Then
+		      Var Err As New NilObjectException
+		      Err.Message = "DataSourcePool.NewInstance returned nil"
+		      Raise Err
+		    ElseIf Writeable = True And Instance.Writeable = False Then
+		      Var Err As New UnsupportedOperationException
+		      Err.Message = "DataSourcePool.NewInstance returned a read-only database when a writeable database was requested."
+		      Raise Err
+		    End If
+		    
+		    Self.mInstances.Value(CurrentThreadID) = Instance
 		  End If
 		  
 		  If Self.mThreads.HasKey(CurrentThreadID) = False Then
