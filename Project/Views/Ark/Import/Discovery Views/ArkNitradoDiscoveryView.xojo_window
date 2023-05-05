@@ -11,7 +11,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
    Enabled         =   True
    EraseBackground =   "True"
    HasBackgroundColor=   False
-   Height          =   400
+   Height          =   480
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -26,11 +26,11 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   600
+   Width           =   720
    Begin DesktopPagePanel PagePanel1
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   400
+      Height          =   480
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -51,7 +51,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
       Transparent     =   False
       Value           =   1
       Visible         =   True
-      Width           =   600
+      Width           =   720
       Begin UITweaks.ResizedPushButton FindingCancelButton
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -66,7 +66,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   500
+         Left            =   620
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -78,7 +78,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   360
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -115,7 +115,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin DesktopProgressBar FindingProgress
          Active          =   False
@@ -142,7 +142,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
-         Width           =   560
+         Width           =   680
          _mIndex         =   0
          _mInitialParent =   ""
          _mName          =   ""
@@ -179,7 +179,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin UITweaks.ResizedPushButton ListCancelButton
          AllowAutoDeactivate=   True
@@ -195,7 +195,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   408
+         Left            =   528
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -207,7 +207,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   360
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -227,7 +227,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   500
+         Left            =   620
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -239,7 +239,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   360
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -271,7 +271,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   360
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -308,7 +308,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin BeaconListbox List
          AllowAutoDeactivate=   True
@@ -320,8 +320,8 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   3
-         ColumnWidths    =   "26,*,200"
+         ColumnCount     =   4
+         ColumnWidths    =   "26,*,170,170"
          DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -337,10 +337,10 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   296
+         Height          =   360
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
-         InitialValue    =   " 	Name	Address"
+         InitialValue    =   " 	Name	Address	Platform"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -356,13 +356,13 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   52
+         Top             =   60
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
          Visible         =   True
          VisibleRowCount =   0
-         Width           =   560
+         Width           =   680
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -496,7 +496,19 @@ End
 		  End If
 		  
 		  For Each Server As Beacon.DiscoveredData In Data
-		    Self.List.AddRow("", Server.Profile.Name, Ark.NitradoServerProfile(Server.Profile).Address)
+		    Var PlatformText As String = "Unknown"
+		    Select Case Server.Profile.Platform
+		    Case Beacon.ServerProfile.PlatformPC
+		      PlatformText = "Steam & Epic"
+		    Case Beacon.ServerProfile.PlatformPlayStation
+		      PlatformText = "PlayStation"
+		    Case Beacon.ServerProfile.PlatformSwitch
+		      PlatformText = "Switch"
+		    Case Beacon.ServerProfile.PlatformXbox
+		      PlatformText = "Xbox & Windows Store"
+		    End Select
+		    
+		    Self.List.AddRow("", Server.Profile.Name, Ark.NitradoServerProfile(Server.Profile).Address, PlatformText)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Server
 		  Next
 		  
@@ -507,12 +519,33 @@ End
 		      Return
 		    End If
 		    
+		    Var AllSamePlatform As Boolean = True
+		    Var PlatformText As String
+		    For Idx As Integer = 0 To Self.List.LastRowIndex
+		      If PlatformText.IsEmpty Then
+		        PlatformText = Self.List.CellTextAt(Idx, 3)
+		        Continue
+		      End If
+		      
+		      If PlatformText <> Self.List.CellTextAt(Idx, 3) Then
+		        AllSamePlatform = False
+		        Exit For Idx
+		      End If
+		    Next
+		    
+		    If AllSamePlatform Then
+		      Self.List.ColumnAttributesAt(3).WidthExpression = "0"
+		    Else
+		      Self.List.SizeColumnToFit(3)
+		    End If
+		    Self.List.SizeColumnToFit(2)
+		    
 		    App.FrontmostMBS = True
 		    Self.TrueWindow.ActivateWindowMBS
 		    
 		    Self.List.SortingColumn = 1
 		    Self.List.Sort
-		    Self.DesiredHeight = 400
+		    Self.DesiredHeight = 480
 		    Self.PagePanel1.SelectedPanelIndex = 1
 		  End If
 		End Sub
@@ -591,6 +624,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mAddressColumnWidth As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mAuthController As Beacon.TaskWaitController
 	#tag EndProperty
 
@@ -604,6 +641,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mPendingListActions As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPlatformColumnWidth As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

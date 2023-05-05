@@ -637,6 +637,17 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub SizeColumnToFit(Extends List As DesktopListbox, ColumnIndex As Integer)
+		  Var TestPic As New Picture(10, 10)
+		  Var MaxWidth As Integer
+		   For Row As Integer = 0 To List.LastRowIndex
+		    MaxWidth = Max(MaxWidth, Ceiling(TestPic.Graphics.TextWidth(List.CellTextAt(Row, ColumnIndex)) + 30))
+		  Next
+		  List.ColumnAttributesAt(ColumnIndex).WidthExpression = MaxWidth.ToString(Locale.Raw, "0")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub SizeToFit(Targets() As DesktopLabel)
 		  Var Width As Integer = IdealWidth(Targets)

@@ -336,6 +336,10 @@ Inherits Ark.IntegrationEngine
 		        Profile.Name = Details.Value("name")
 		        Profile.ServiceID = Dict.Value("id")
 		        Profile.Address = Details.Value("address")
+		        
+		        If Profile.Name.BeginsWith("Gameserver - ") And Dict.HasKey("comment") And IsNull(Dict.Value("comment")) = False Then
+		          Profile.Name = Dict.Value("comment")
+		        End If
 		      Catch Err As RuntimeException
 		        Continue
 		      End Try

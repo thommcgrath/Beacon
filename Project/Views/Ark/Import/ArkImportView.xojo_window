@@ -17,7 +17,7 @@ Begin DocumentImportView ArkImportView
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   456
+   Height          =   480
    ImplicitInstance=   True
    Index           =   "-2147483648"
    InitialParent   =   ""
@@ -43,11 +43,11 @@ Begin DocumentImportView ArkImportView
    Transparent     =   "True"
    Type            =   0
    Visible         =   True
-   Width           =   600
+   Width           =   720
    Begin DesktopPagePanel Views
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   456
+      Height          =   480
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -66,9 +66,9 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   5
+      Value           =   1
       Visible         =   True
-      Width           =   600
+      Width           =   720
       Begin DesktopRadioButton SourceRadio
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -97,7 +97,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin DesktopLabel ImportSourceMessage
          AllowAutoDeactivate=   True
@@ -130,7 +130,7 @@ Begin DocumentImportView ArkImportView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin DesktopRadioButton SourceRadio
          AllowAutoDeactivate=   True
@@ -160,7 +160,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin DesktopRadioButton SourceRadio
          AllowAutoDeactivate=   True
@@ -190,7 +190,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin UITweaks.ResizedPushButton SourceCancelButton
          AllowAutoDeactivate=   True
@@ -206,7 +206,7 @@ Begin DocumentImportView ArkImportView
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   408
+         Left            =   528
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -238,7 +238,7 @@ Begin DocumentImportView ArkImportView
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   500
+         Left            =   620
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -266,7 +266,7 @@ Begin DocumentImportView ArkImportView
          Composited      =   False
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   456
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -283,7 +283,7 @@ Begin DocumentImportView ArkImportView
          Top             =   0
          Transparent     =   True
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
       Begin ArkFTPDiscoveryView FTPDiscoveryView1
          AllowAutoDeactivate=   True
@@ -295,7 +295,7 @@ Begin DocumentImportView ArkImportView
          Composited      =   False
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   456
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -312,7 +312,7 @@ Begin DocumentImportView ArkImportView
          Top             =   0
          Transparent     =   True
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
       Begin ArkLocalDiscoveryView LocalDiscoveryView1
          AllowAutoDeactivate=   True
@@ -324,7 +324,7 @@ Begin DocumentImportView ArkImportView
          Composited      =   False
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   456
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -341,7 +341,7 @@ Begin DocumentImportView ArkImportView
          Top             =   0
          Transparent     =   True
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
       Begin DesktopLabel StatusMessageLabel
          AllowAutoDeactivate=   True
@@ -374,7 +374,7 @@ Begin DocumentImportView ArkImportView
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin UITweaks.ResizedPushButton StatusCancelButton
          AllowAutoDeactivate=   True
@@ -390,7 +390,7 @@ Begin DocumentImportView ArkImportView
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   500
+         Left            =   620
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -402,7 +402,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   5
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   416
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -422,7 +422,7 @@ Begin DocumentImportView ArkImportView
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   408
+         Left            =   528
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -434,7 +434,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   5
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   416
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   False
@@ -468,7 +468,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin DesktopLabel OtherDocsMessageLabel
          AllowAutoDeactivate=   True
@@ -501,7 +501,7 @@ Begin DocumentImportView ArkImportView
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin UITweaks.ResizedPushButton OtherDocsActionButton
          AllowAutoDeactivate=   True
@@ -517,7 +517,7 @@ Begin DocumentImportView ArkImportView
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   500
+         Left            =   620
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -529,7 +529,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   6
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   416
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -549,7 +549,7 @@ Begin DocumentImportView ArkImportView
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   408
+         Left            =   528
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -561,7 +561,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   6
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   416
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -577,7 +577,7 @@ Begin DocumentImportView ArkImportView
          Composited      =   False
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   456
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -594,7 +594,7 @@ Begin DocumentImportView ArkImportView
          Top             =   0
          Transparent     =   False
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
       Begin DesktopRadioButton SourceRadio
          AllowAutoDeactivate=   True
@@ -624,7 +624,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Value           =   False
          Visible         =   False
-         Width           =   560
+         Width           =   680
       End
       Begin BeaconListbox StatusList
          AllowAutoDeactivate=   True
@@ -653,7 +653,7 @@ Begin DocumentImportView ArkImportView
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   336
+         Height          =   360
          Index           =   -2147483648
          InitialParent   =   "Views"
          InitialValue    =   ""
@@ -678,7 +678,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Visible         =   True
          VisibleRowCount =   0
-         Width           =   560
+         Width           =   680
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -709,7 +709,7 @@ Begin DocumentImportView ArkImportView
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   1
-         Height          =   336
+         Height          =   360
          Index           =   -2147483648
          InitialParent   =   "Views"
          InitialValue    =   ""
@@ -734,7 +734,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Visible         =   True
          VisibleRowCount =   0
-         Width           =   560
+         Width           =   680
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -748,7 +748,7 @@ Begin DocumentImportView ArkImportView
          Composited      =   False
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   456
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -765,7 +765,7 @@ Begin DocumentImportView ArkImportView
          Top             =   0
          Transparent     =   True
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
       Begin DesktopRadioButton SourceRadio
          AllowAutoDeactivate=   True
@@ -795,7 +795,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
    End
    Begin Timer DiscoveryWatcher

@@ -10,20 +10,20 @@ Begin DesktopWindow DocumentImportWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   400
+   Height          =   480
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
+   MinimumHeight   =   480
+   MinimumWidth    =   480
    Resizeable      =   False
    Title           =   "Import"
    Type            =   0
    Visible         =   True
-   Width           =   600
+   Width           =   720
 End
 #tag EndDesktopWindow
 
