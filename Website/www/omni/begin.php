@@ -217,6 +217,27 @@ $session = $api->CreateCheckoutSession($payment);
 if (is_null($session)) {
 	http_response_code(400);
 	echo json_encode(['error' => true, 'message' => 'Was not able to create the checkout session.'], JSON_PRETTY_PRINT);
+	
+	$attachments = [
+		[
+			'title' => 'Cart Details',
+			'fields' => [
+				[
+					'title' => 'Currency',
+					'value' => $currency,
+					'short' => true
+				],
+				[
+					'title' => 'Bundles',
+					'value' => '```' . json_encode($bundles, JSON_PRETTY_PRINT) . '```'
+				]
+			],
+			'ts' => time()
+		]
+	];
+	
+	BeaconCommon::PostSlackRaw(json_encode(['text' => 'There was an error starting a checkout session.', 'attachments' => $attachments]));
+	
 	exit;
 }
 
