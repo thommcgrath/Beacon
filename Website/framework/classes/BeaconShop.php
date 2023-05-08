@@ -14,7 +14,7 @@ abstract class BeaconShop {
 		while (!$results->EOF()) {
 			$productId = $results->Field('product_id');
 			$name = $results->Field('product_name');
-			$planLength = intval($results->Field('plan_length_seconds'));
+			$planLength = is_null($results->Field('plan_length_seconds')) ? null : intval($results->Field('plan_length_seconds'));
 			$flags = $results->Field('flags');
 			$roundTo = $results->Field('round_to');
 			$gameId = $results->Field('game_id');
