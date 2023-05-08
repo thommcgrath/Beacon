@@ -92,7 +92,7 @@ class BeaconStripeAPI {
 	}
 	
 	public function GetCustomersByEmail(string $customer_email): ?array {
-		return $this->GetURL('https://api.stripe.com/v1/customers?email=' . urlencode($customer_email));
+		return $this->GetURL('https://api.stripe.com/v1/customers/search?query=' . urlencode("email:'{$customer_email}'"));
 	}
 	
 	public function GetProductByUUID(string $product_id): ?array {
