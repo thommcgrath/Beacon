@@ -51,17 +51,25 @@ if (isset($_COOKIE['beacon_affiliate'])) {
 } else {
 	$client_reference_id = BeaconCommon::GenerateUUID();
 }
+
+$payment_methods = ['card'];
+switch ($currency) {
+case 'EUR':
+	$payment_methods[] = 'ideal';
+	$payment_methods[] = 'giropay';
+	$payment_methods[] = 'bancontact';
+	$payment_methods[] = 'p24';
+	$payment_methods[] = 'eps';
+	break;
+case 'PLN':
+	$payment_methods[] = 'p24';
+	break;
+}
+
 $payment = [
 	'client_reference_id' => $client_reference_id,
 	'customer_email' => $email,
-	'payment_method_types' => [
-		'card',
-		'ideal',
-		'giropay',
-		'bancontact',
-		'p24',
-		'eps'
-	],
+	'payment_method_types' => $payment_methods,
 	'mode' => 'payment',
 	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/'),
 	'cancel_url' => BeaconCommon::AbsoluteURL('/omni/#checkout'),
