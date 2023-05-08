@@ -1,0 +1,60 @@
+/* Hello World */
+
+ul.buttons {
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+	
+	li {
+		text-align: center;
+		width: auto;
+		margin-top: 12px;
+		margin-bottom: 12px;
+	}
+
+	@media (min-width: 635px) {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-ms-flex-wrap: nowrap;
+		flex-wrap: nowrap;
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+		-ms-flex-direction: row;
+		flex-direction: row;
+		-webkit-box-pack: center;
+		-ms-flex-pack: center;
+		justify-content: center;
+		
+		li {
+			margin-left: 6px;
+			margin-right: 6px;
+			margin-top: 0px;
+			margin-bottom: 0px;
+		}
+	}
+}
+
+a.username-suggestion {
+	font-style: italic;
+}
+
+.as-new-user {
+	.new-user-part {
+		display: initial;
+	}
+	
+	.recover-user-part {
+		display: none;
+	}
+}
+
+.as-recover-user {
+	.new-user-part {
+		display: none;
+	}
+	
+	.recover-user-part {
+		display: initial;
+	}
+}

@@ -27,10 +27,14 @@ const apiDomain = <?php echo json_encode(BeaconCommon::APIDomain()); ?>;
 BeaconTemplate::FinishScript();
 	
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('account.js'));
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
 
-?><h1 id="account-user-header" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>"><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
+?><div id="account-user-header" class="header-with-subtitle" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>">
+	<h1><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span></h1>
+	<span class="subtitle"><a href="/account/auth?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span>
+</div>
 <div class="page-panel" id="panel-account">
 	<div class="page-panel-nav">
 		<ul>

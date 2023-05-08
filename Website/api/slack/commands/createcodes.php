@@ -6,11 +6,11 @@ if (strpos($text, ' ') === false) {
 	PostReply("You need more parameters.");
 	return;
 }
-list($num_codes, $gameid, $email, $reason) = explode(' ', $text, 4);
+list($numCodes, $gameid, $email, $reason) = explode(' ', $text, 4);
 
-$num_codes = intval($num_codes);
-if ($num_codes <= 0) {
-	PostReply("It doesn't really make sense to ask for $num_codes codes. Try something like `" . USAGE_HINT . '`.');
+$numCodes = intval($numCodes);
+if ($numCodes <= 0) {
+	PostReply("It doesn't really make sense to ask for $numCodes codes. Try something like `" . USAGE_HINT . '`.');
 	return;
 }
 if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
@@ -22,20 +22,26 @@ if (empty($reason)) {
 	PostReply('You need to give a reason for the codes, like `' . USAGE_HINT . '`.');
 	return;
 }
-$gameid = strtolower($gameid);
+$productId = null;
 switch ($gameid) {
 case 'ark':
-	$product_id = BeaconShop::ARK_GIFT_ID;
+case 'Ark':
+	$productId = BeaconShop::GetProductByTag('USD', 'Ark', 'Base');
 	break;
 case 'ark2':
-	$product_id = BeaconShop::ARK2_GIFT_ID;
+case 'Ark2':
+	$productId = BeaconShop::GetProductByTag('USD', 'Arks2', 'Base');
+	break;
+case 'arkSA':
+case 'ArkSA':
+	$productId = BeaconShop::GetProductByTag('USD', 'ArkSA', 'Base');
 	break;
 default:
-	PostReply('Invalid game id, try `' . USAGE_HINT . '`.');
+	PostReply('Unknown game_id value.');
 	return;
 }
 
-BeaconShop::CreateGiftPurchase($email, $product_id, $num_codes, $reason, true);
+BeaconShop::CreateGiftPurchase($email, $productId, $numCodes, $reason, true);
 
 PostReply('Codes have been issued to ' . $email . '.');
 

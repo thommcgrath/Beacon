@@ -2,6 +2,21 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 //header('Accept-CH: UA-Mobile, UA-Arch, UA-Platform, UA-Bitness');
+
+$forceBuild = null;
+if (isset($_GET['build']) && isset($_GET['token']) && isset($_GET['expires'])) {
+	$build = $_GET['build'];
+	$token = $_GET['token'];
+	$tokenExpires = $_GET['expires'];
+	$tokenSecret = BeaconCommon::GetGlobal('Legacy Download Secret');
+	
+	$expectedToken = BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$build}:{$tokenExpires}:{$tokenSecret}", true));
+	if ($token === $expectedToken && $tokenExpires > time()) {
+		// Show a legacy version
+		$forceBuild = $build;
+	}
+}
+
 ?><p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
 <div id="stable-table" class="downloads-table"></div>
 <div id="prerelease-table" class="downloads-table"></div>
@@ -24,9 +39,15 @@ header('Cache-Control: no-cache');
 	</div>
 </div><?php
 
-$stable = BeaconUpdates::FindLatestInChannel(BeaconUpdates::CHANNEL_STABLE);
-$prerelease = BeaconUpdates::FindLatestInChannel(BeaconUpdates::CHANNEL_ALPHA);
-$legacy = BeaconUpdates::GetUpdateByBuildNumber(10601303);
+if ($forceBuild) {
+	$stable = BeaconUpdates::GetUpdateByBuildNumber($forceBuild);
+	$prerelease = null;
+	$legacy = null;
+} else {
+	$stable = BeaconUpdates::FindLatestInChannel(BeaconUpdates::CHANNEL_STABLE);
+	$prerelease = BeaconUpdates::FindLatestInChannel(BeaconUpdates::CHANNEL_ALPHA);
+	$legacy = BeaconUpdates::GetUpdateByBuildNumber(10601303);
+}
 
 $database = BeaconCommon::Database();
 $download_links = [

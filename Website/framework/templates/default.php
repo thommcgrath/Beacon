@@ -8,6 +8,21 @@ if (!BeaconTemplate::IsHTML()) {
 $description = BeaconTemplate::PageDescription();
 	
 $body_class = BeaconTemplate::BodyClass();
+
+$css_folder = dirname(__FILE__, 3) . '/www/assets/css/';
+if ($body_class === '') {
+	$theme = 'beacon';
+} else {
+	$theme = $body_class;
+}
+$theme_files = [];
+if (file_exists($css_folder . "theme-{$theme}.css")) {
+	$theme_files[''] = "theme-{$theme}.css";
+}
+if (file_exists($css_folder . "theme-{$theme}-dark.css")) {
+	$theme_files['(prefers-color-scheme: dark)'] = "theme-{$theme}-dark.css";
+}
+
 $theme_colors = [];
 if ($body_class === 'purple') {
 	$theme_colors[''] = '#9c0fb0';
@@ -17,15 +32,14 @@ if ($body_class === 'purple') {
 }
 
 ?><!DOCTYPE html>
-<html lang="en"<?php if ($body_class !== '') { echo ' class="' . $body_class . '"'; } ?>>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<?php if (!empty($description)) { ?><meta name="description" content="<?php echo htmlentities($description); ?>">
 		<?php } ?><link rel="icon" type="image/png" sizes="32x32" href="<?php echo BeaconCommon::AssetURI('favicon-32x32.png'); ?>">
 		<link rel="icon" type="image/png" sizes="16x16" href="<?php echo BeaconCommon::AssetURI('favicon-16x16.png'); ?>">
-		<link rel="manifest" href="<?php echo BeaconCommon::AssetURI('manifest.json'); ?>">
 		<link rel="mask-icon" href="<?php echo BeaconCommon::AssetURI('safari-pinned-tab.svg'); ?>" color="#9c0fb0">
 		<link rel="shortcut icon" href="<?php echo BeaconCommon::AssetURI('favicon.ico'); ?>">
 		<link rel="apple-touch-icon" href="<?php echo BeaconCommon::AssetURI('apple-touch-icon.png'); ?>">
@@ -42,9 +56,14 @@ if ($body_class === 'purple') {
 				echo "<meta name=\"theme-color\" media=\"{$media}\" content=\"{$color}\">\n\t\t";
 			}
 		}
+		foreach ($theme_files as $media => $asset) {
+			if (empty($media)) {
+				echo '<link href="' . BeaconCommon::AssetURI($asset) . '" rel="stylesheet" type="text/css">';
+			} else {
+				echo '<link href="' . BeaconCommon::AssetURI($asset) . '" media="' . $media . '" rel="stylesheet" type="text/css">';
+			}
+		}
 		?><meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
-		<link href="<?php echo BeaconCommon::AssetURI('default.scss'); ?>" rel="stylesheet" type="text/css">
-		<link href="<?php echo BeaconCommon::AssetURI('colors.scss'); ?>" rel="stylesheet" type="text/css">
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
 		<script src="<?php echo BeaconCommon::AssetURI('default.js'); ?>"></script>
 		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>

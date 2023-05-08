@@ -98,10 +98,8 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{$
 		var original_version = <?php echo json_encode($original_version); ?>;
 		var current_version = <?php echo json_encode($current_version); ?>;
 		</script>
-		<script src="index.js"></script>
-		<link href="/assets/css/normalize.css" rel="stylesheet">
-		<link href="/assets/css/fonts.css" rel="stylesheet">
-		<link href="index.css" rel="stylesheet">
+		<script src="/assets/scripts/build/whatsnew.js"></script>
+		<link href="/assets/css/build/whatsnew.css" rel="stylesheet">
 	</head>
 	<body>
 		<div id="main_wrapper">

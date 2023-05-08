@@ -117,11 +117,15 @@ case 'checkout.session.completed':
 		BeaconLogin::SendVerification($email);
 	}
 	
+	$metadata = $obj['metadata'];
+	$bundles = json_decode(gzdecode(BeaconCommon::Base64UrlDecode($metadata['Beacon Cart'])), true);
+	
 	$purchase_subtotal = $obj['amount_subtotal'] / 100;
 	$purchase_total = $obj['amount_total'] / 100;
 	$purchase_discount = $obj['total_details']['amount_discount'] / 100;
 	$purchase_tax = $obj['total_details']['amount_tax'] / 100;
 	$purchase_id = BeaconCommon::GenerateUUID();
+	
 	$database->BeginTransaction();
 	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality, currency) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9, $10);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, $purchase_tax, $purchase_total, $intent_id, $client_reference_id, $billing_locality, $purchase_currency);
 	foreach ($purchased_products as $item) {
@@ -134,50 +138,47 @@ case 'checkout.session.completed':
 		$line_total = $item['total'];
 		$currency = $item['currency'];
 		
-		if ($product_id == BeaconShop::ARK_PRODUCT_ID) {
-			// Check to see if there is already a purchase for this user and convert to giftable
-			$results = $database->Query('SELECT SUM(purchase_items.quantity) AS licenses FROM purchase_items INNER JOIN purchases ON (purchase_items.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = uuid_for_email($1) AND purchase_items.product_id = $2 AND purchases.refunded = FALSE;', $email, $product_id);
-			if ($results->Field('licenses') > 0) {
-				$product_id = BeaconShop::ARK_GIFT_ID;
-			}
-		}
-		
 		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, currency, quantity, unit_price, subtotal, discount, tax, line_total) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', $purchase_id, $product_id, $currency, $quantity, $unit_price, $subtotal, $discount, $tax, $line_total);
 	}
-	BeaconShop::IssuePurchases($purchase_id);
+	BeaconShop::IssuePurchases($purchase_id, $bundles);
 	$database->Query('UPDATE affiliate_tracking SET purchase_id = $2 WHERE client_reference_id = $1 AND purchase_id IS NULL;', $client_reference_id, $purchase_id);
 	$database->Commit();
 		
 	// Look up gift codes and email them
 	$codes = [];
-	$results = $database->Query('SELECT code, product_name FROM gift_codes INNER JOIN products ON (gift_codes.product_id = products.product_id) WHERE source_purchase_id = $1;', $purchase_id);
+	$results = $database->Query('SELECT code FROM public.gift_codes WHERE source_purchase_id = $1;', $purchase_id);
 	$code_count = $results->RecordCount();
 	while ($results->EOF() === false) {
-		$product_name = $results->Field('product_name');
 		$code = $results->Field('code');
-		if (array_key_exists($product_name, $codes)) {
-			$codes[$product_name][] = $code;
-		} else {
-			$codes[$product_name] = [$code];
+		$code_products = $database->Query('SELECT products.product_name, gift_code_products.quantity FROM public.gift_code_products INNER JOIN public.products ON (gift_code_products.product_id = products.product_id) WHERE gift_code_products.code = $1;', $code);
+		while ($code_products->EOF() === false) {
+			$product_name = $code_products->Field('quantity') . ' x ' . $code_products->Field('product_name');
+			
+			if (array_key_exists($code, $codes)) {
+				$codes[$code][] = $product_name;
+			} else {
+				$codes[$code] = [$product_name];
+			}
+			
+			$code_products->MoveNext();
 		}
+		
 		$results->MoveNext();
 	}
 	
 	if ($code_count > 0) {
 		$email_body_plain = 'Thanks for purchasing ' . ($code_count > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <https://usebeacon.app/redeem>.';
 		$email_body_html = '<p>Thanks for purchasing ' . ($code_count > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <a href="https://usebeacon.app/redeem">https://usebeacon.app/redeem</a> or by the direct link for a code below.</p>';
-		foreach ($codes as $product_name => $product_codes) {
-			if (count($product_codes) > 1) {
-				$email_body_plain .= "\n\nYour \"$product_name\" codes are:\n" . implode("\n", $product_codes);
-				$email_body_html .= '<p>Your &quot;' . htmlentities($product_name) . '&quot; codes are';
-				foreach ($product_codes as $code) {
-					$email_body_html .= '<br />' . htmlentities($code) . ',  Redeem Link: <a href="https://usebeacon.app/redeem/' . urlencode($code) . '">https://usebeacon.app/redeem/' . htmlentities($code) . '</a>';
-				}
-				$email_body_html .= '</p>';
-			} else {
-				$email_body_plain .= "\n\nYour \"$product_name\" code is: " . $product_codes[0];
-				$email_body_html .= '<p>Your &quot;' . htmlentities($product_name) . '&quot; code is ' . htmlentities($product_codes[0]) . ' and can be redeemed using <a href="https://usebeacon.app/redeem/' . urlencode($product_codes[0]) . '">https://usebeacon.app/redeem/' . htmlentities($product_codes[0]) . '</a></p>';
+		foreach ($codes as $code => $product_names) {
+			$email_body_plain .= "\n\nCode {$code}:\n    Redeem Link: https://usebeacon.app/redeem/{$code}";
+			$email_body_html .= "\n\n<p>Code {$code}<br />&nbsp;&nbsp;&nbsp;&nbsp;Redeem Link: https://usebeacon.app/redeem/{$code}";
+			
+			foreach ($product_names as $product_name) {
+				$email_body_plain .= "\n    {$product_name}";
+				$email_body_html .= "<br />&nbsp;&nbsp;&nbsp;&nbsp;" . htmlentities($product_name);
 			}
+			
+			$email_body_html .= "</p>";
 		}
 		$email_body_plain .= "\n\nYou can also view the status of all purchased gift codes at <https://usebeacon.app/account/#omni>.";
 		$email_body_html .= '<p>You can also view the status of all purchased gift codes at <a href="https://usebeacon.app/account/#omni">https://usebeacon.app/account/#omni</a></p>';
