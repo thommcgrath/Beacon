@@ -474,6 +474,10 @@ End
 		      ElementIdx = ElementIdx + 1
 		    Next Member
 		  Next GroupIdx
+		  
+		  #if TargetWindows
+		    Self.Refresh(False)
+		  #endif
 		End Sub
 	#tag EndMethod
 
