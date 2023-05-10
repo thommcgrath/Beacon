@@ -16,7 +16,7 @@ abstract class BeaconShop {
 			$name = $results->Field('product_name');
 			$planLength = is_null($results->Field('plan_length_seconds')) ? null : intval($results->Field('plan_length_seconds'));
 			$flags = $results->Field('flags');
-			$roundTo = $results->Field('round_to');
+			$productRoundingMultiplier = $results->Field('round_to');
 			$gameId = $results->Field('game_id');
 			$tag = $results->Field('tag');
 			$price = $results->Field('price');
@@ -29,7 +29,7 @@ abstract class BeaconShop {
 				'Price' => $price,
 				'PlanLength' => $planLength,
 				'Flags' => $flags,
-				'RoundTo' => $roundTo
+				'RoundTo' => $productRoundingMultiplier
 			];
 			
 			$cache[$productId] = $product;
@@ -236,10 +236,17 @@ abstract class BeaconShop {
 		$api = new BeaconStripeAPI($apiSecret, '2022-08-01');
 		$database = BeaconCommon::Database();
 			
-		$results = $database->Query('SELECT code, usd_conversion_rate FROM public.currencies ORDER BY code;');
+		$results = $database->Query('SELECT code, usd_conversion_rate, rounding_multiplier, fee_multiplier, stripe_multiplier FROM public.currencies ORDER BY code;');
 		$rates = [];
 		while (!$results->EOF()) {
-			$rates[$results->Field('code')] = $results->Field('usd_conversion_rate');
+			$rates[$results->Field('code')] = [
+				'rate' => $results->Field('usd_conversion_rate'),
+				'multipliers' => [
+					'rounding' => $results->Field('rounding_multiplier'),
+					'fee' => $results->Field('fee_multiplier'),
+					'stripe' => $results->Field('stripe_multiplier')
+				]
+			];
 			$results->MoveNext();
 		}
 		
@@ -249,7 +256,7 @@ abstract class BeaconShop {
 			$productId = $products->Field('product_id');
 			$productName = $products->Field('product_name');
 			$retailPrice = $products->Field('retail_price');
-			$roundTo = $products->Field('round_to');
+			$productRoundingMultiplier = $products->Field('round_to');
 			
 			$product = $api->GetProductByUUID($productId);
 			if (is_null($product)) {
@@ -269,12 +276,18 @@ abstract class BeaconShop {
 				$prices[strtoupper($price['currency'])][] = $price;
 			}
 			
-			foreach ($rates as $currency => $rate) {
+			foreach ($rates as $currency => $rateInfo) {
 				echo "Syncing {$productName} {$currency}\n";
 				
-				// The price should be an even multiple, plus 1% for conversion fees
-				$convertedPrice = ceil(($retailPrice * ($currency === 'USD' ? 1.0 : 1.01) * $rate) / $roundTo) * $roundTo;
-				$convertedPriceStripe = $convertedPrice * ($currency !== 'JPY' ? 100 : 1);
+				$rate = $rateInfo['rate'];
+				$currencyRoundingMultiplier = $rateInfo['multipliers']['rounding'];
+				$currencyFeeMultiplier = $rateInfo['multipliers']['fee'];
+				$currencyStripeMultiplier = $rateInfo['multipliers']['stripe'];
+				
+				$convertedPrice = $retailPrice * $currencyFeeMultiplier * $rate;
+				$convertedPrice = ceil($convertedPrice / $currencyRoundingMultiplier) * $currencyRoundingMultiplier;
+				$convertedPrice = ceil($convertedPrice / $productRoundingMultiplier) * $productRoundingMultiplier;
+				$convertedPriceStripe = $convertedPrice * $currencyStripeMultiplier;
 				
 				$activePriceId = null;
 				foreach ($prices[$currency] as $price) {
