@@ -65,11 +65,7 @@ Implements Iterable
 		      Raise Err
 		    End If
 		    
-		    Const MainThreadID = "Main"
-		    If Self.mInstances.HasKey(MainThreadID) = False Then
-		      Self.mInstances.Value(MainThreadID) = RaiseEvent NewInstance(False)
-		    End If
-		    Return Self.mInstances.Value(MainThreadID)
+		    Return Self.Main()
 		  End If
 		  
 		  Var CurrentThread As Global.Thread = Thread.Current
@@ -110,6 +106,15 @@ Implements Iterable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Main() As Beacon.DataSource
+		  If Self.mInstances.HasKey(MainThreadId) = False Then
+		    Self.mInstances.Value(MainThreadId) = RaiseEvent NewInstance(False)
+		  End If
+		  Return Self.mInstances.Value(MainThreadId)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mCleanupTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
@@ -135,6 +140,10 @@ Implements Iterable
 	#tag Property, Flags = &h21
 		Private mThreads As Dictionary
 	#tag EndProperty
+
+
+	#tag Constant, Name = MainThreadId, Type = String, Dynamic = False, Default = \"Main", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior

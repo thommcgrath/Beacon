@@ -2313,6 +2313,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MainInstance() As Beacon.DataSource
+		  Return Self.Pool.Main()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function OfficialPlayerLevelData() As Ark.PlayerLevelData
 		  If Self.mOfficialPlayerLevelData Is Nil Then
 		    Self.mOfficialPlayerLevelData = Ark.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))

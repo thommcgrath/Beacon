@@ -626,6 +626,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MainInstance() As Beacon.DataSource
+		  Return Self.Pool.Main()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Pool() As Beacon.CommonDataPool
 		  If mPool Is Nil Then
 		    mPool = New Beacon.CommonDataPool
