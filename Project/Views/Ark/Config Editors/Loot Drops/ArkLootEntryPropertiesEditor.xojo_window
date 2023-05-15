@@ -647,7 +647,7 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      MaximumValue    =   100
+      MaximumValue    =   1000
       MinimumValue    =   0
       PageStep        =   25
       Scope           =   2
