@@ -1085,6 +1085,39 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
+		  Var SelectedEntryIds() As String
+		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
+		    If Self.ContentsList.RowSelectedAt(I) Then
+		      Var Entry As Ark.MutableLootTemplateEntry = Self.ContentsList.RowTagAt(I)
+		      SelectedEntryIds.Add(Entry.UUID)
+		    End If
+		  Next
+		  Self.UpdateUI(SelectedEntryIds)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI(SelectedEntries() As Ark.LootTemplateEntry)
+		  Var SelectedEntryIds() As String
+		  If SelectedEntries Is Nil Then
+		    Self.UpdateUI(SelectedEntryIds)
+		    Return
+		  End If
+		  
+		  For Each Entry As Ark.LootTemplateEntry In SelectedEntries
+		    If Entry Is Nil Then
+		      Continue
+		    End If
+		    
+		    SelectedEntryIds.Add(Entry.UUID)
+		  Next
+		  
+		  Self.UpdateUI(SelectedEntryIds)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI(SelectedEntryIds() As String)
 		  If (Self.mSaveFile Is Nil) = False Then
 		    Self.Title = Self.mSaveFile.DisplayName
 		  Else
@@ -1101,16 +1134,9 @@ End
 		  Next
 		  
 		  Var Maps() As Ark.Map = Self.FilteredMaps()
-		  Var SelectedEntries() As String
-		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
-		    If Self.ContentsList.RowSelectedAt(I) Then
-		      Var Entry As Ark.MutableLootTemplateEntry = Self.ContentsList.RowTagAt(I)
-		      SelectedEntries.Add(Entry.UUID)
-		    End If
-		  Next
 		  Self.ContentsList.RemoveAllRows()
 		  For Each Entry As Ark.LootTemplateEntry In Self.mTemplate
-		    Self.PutEntryInRow(Entry, -1, Maps, SelectedEntries.IndexOf(Entry.UUID) > -1)
+		    Self.PutEntryInRow(Entry, -1, Maps, SelectedEntryIds.IndexOf(Entry.UUID) > -1)
 		  Next
 		  Self.ContentsList.Sort
 		  
@@ -1490,12 +1516,7 @@ End
 		      Return True
 		    End If
 		    
-		    Var SelectedMaps() As Ark.Map = Self.FilteredMaps()
-		    For Each Entry As Ark.LootTemplateEntry In CreatedEntries
-		      Self.PutEntryInRow(Entry, -1, SelectedMaps, True)
-		    Next Entry
-		    
-		    Me.Sort
+		    Self.UpdateUI(CreatedEntries)
 		    Me.EnsureSelectionIsVisible()
 		    Self.Modified = True
 		  Case "matchavailability"
@@ -1511,6 +1532,7 @@ End
 		        Availability = Availability Or Option.Engram.Availability
 		      Next
 		      If Entry.Availability <> Availability Then
+		        Entry.Availability = Availability
 		        Self.mTemplate.Add(Entry)
 		        Changed = True
 		        Self.PutEntryInRow(Entry, Idx, Self.FilteredMaps)

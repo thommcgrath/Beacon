@@ -19,8 +19,7 @@ Inherits Ark.LootTemplate
 		    MatchingUUIDs.Add(Sources(Idx).UUID)
 		  Next Idx
 		  
-		  Var MissingWeight, MinQualitySum, MaxQualitySum As Double
-		  Var EntryCount As Double
+		  Var TotalWeight, MinQualitySum, MaxQualitySum, EntryCount As Double
 		  Var References As New Dictionary
 		  For Idx As Integer = Self.mEntries.FirstIndex To Self.mEntries.LastIndex
 		    If MatchingUUIDs.IndexOf(Self.mEntries(Idx).UUID) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
@@ -33,16 +32,13 @@ Inherits Ark.LootTemplate
 		      End If
 		    Next Option
 		    
-		    Var AdjustedWeight As Double = Self.mEntries(Idx).RawWeight * (1 - Self.mEntries(Idx).ChanceToBeBlueprint)
-		    MissingWeight = MissingWeight + (Self.mEntries(Idx).RawWeight - AdjustedWeight)
-		    
 		    EntryCount = EntryCount + 1
 		    MinQualitySum = MinQualitySum + Self.mEntries(Idx).MinQuality.BaseValue
 		    MaxQualitySum = MaxQualitySum + Self.mEntries(Idx).MaxQuality.BaseValue
+		    TotalWeight = TotalWeight + Self.mEntries(Idx).RawWeight
 		    
 		    Var Mutable As New Ark.MutableLootTemplateEntry(Self.mEntries(Idx))
 		    Mutable.ChanceToBeBlueprint = 0
-		    Mutable.RawWeight = AdjustedWeight
 		    Mutable.RespectBlueprintChanceMultipliers = False
 		    Self.mEntries(Idx) = New Ark.LootTemplateEntry(Mutable)
 		  Next Idx
@@ -64,9 +60,10 @@ Inherits Ark.LootTemplate
 		    Blueprint.ChanceToBeBlueprint = 1
 		    Blueprint.RespectBlueprintChanceMultipliers = False
 		    Blueprint.RespectQuantityMultipliers = False
+		    Blueprint.RespectWeightMultipliers = True
 		    Blueprint.Availability = EngramMask
 		    Blueprint.ChanceToBeBlueprint = 1
-		    Blueprint.RawWeight = MissingWeight
+		    Blueprint.RawWeight = TotalWeight / EntryCount
 		    Blueprint.MinQuantity = 1
 		    Blueprint.MaxQuantity = 1
 		    Blueprint.MinQuality = Ark.Qualities.ForBaseValue(MinQualitySum / EntryCount)
