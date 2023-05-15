@@ -1,0 +1,1018 @@
+{
+    "ID": "3f693c95-e2ab-4cfa-9492-6294f332fa1f",
+    "Game": "Ark",
+    "Label": "Wood Housing",
+    "Kind": "LootTemplate",
+    "Version": 3,
+    "MinVersion": 3,
+    "Grouping": "Housing",
+    "Min": 2,
+    "Max": 6,
+    "ItemSets": [
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "75e65766-6fba-4f53-b528-7a490c4e58b1",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Wood/PrimalItemStructure_WoodRoof.PrimalItemStructure_WoodRoof",
+                        "UUID": "f7ffa8d5-f70a-41f5-9a79-ea69b271092e",
+                        "Class": "PrimalItemStructure_WoodRoof_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "b2422441-229d-486f-9022-514bf9f15ebf",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "ab459458-be49-4bca-8b80-d9c93449e813",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodLadder.PrimalItemStructure_WoodLadder",
+                        "UUID": "63120e5c-9679-4c97-811f-01699bc272ec",
+                        "Class": "PrimalItemStructure_WoodLadder_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 6,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "d72b05d8-f1f4-4dbe-9955-589d33c6d99c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "b661b5b7-b903-4690-93a0-1525cb479d67",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFloor.PrimalItemStructure_WoodFloor",
+                        "UUID": "2edff5cc-2071-4780-87d5-4d0c13c541e6",
+                        "Class": "PrimalItemStructure_WoodFloor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f1920487-bdbe-4340-adad-d47831dcfa56",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "ab3008ad-6687-4f95-8182-9bd85cd3ff65",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodGateframe.PrimalItemStructure_WoodGateframe",
+                        "UUID": "c5002849-4656-43c3-b564-671fc2065cc4",
+                        "Class": "PrimalItemStructure_WoodGateframe_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5ee72bee-b744-4408-993a-595f26cd01f9",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5c61ec65-559e-48d3-ad1c-3a8a5079a42d",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithDoor.PrimalItemStructure_WoodWallWithDoor",
+                        "UUID": "93242825-4ec7-49b8-bea0-db4136fb7beb",
+                        "Class": "PrimalItemStructure_WoodWallWithDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "627f2492-9e18-4b20-a7f1-7bf9ad1e82b8",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "da4b3222-c880-4433-98e3-74a887eccb8c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRamp.PrimalItemStructure_WoodRamp",
+                        "UUID": "8ad01d14-dc51-478f-93d9-3e05eaa5960e",
+                        "Class": "PrimalItemStructure_WoodRamp_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f99a2c35-d0c3-4c5b-b502-2051494140c2",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "fec53b84-c971-44c6-bd85-154afa4f3c39",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodGate.PrimalItemStructure_WoodGate",
+                        "UUID": "6a8d8fdd-ec53-4ab9-b813-5d57f6504c33",
+                        "Class": "PrimalItemStructure_WoodGate_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "04a43e9d-6ee7-4821-9a6f-dfa6e3d7c8dd",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "296dd958-06c2-4d5d-8f07-2242f4ea0f56",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Wood/PrimalItemStructure_WoodWall_Sloped_Right.PrimalItemStructure_WoodWall_Sloped_Right",
+                        "UUID": "f6b4cc29-5405-4cf9-9de1-c2cc01efff1d",
+                        "Class": "PrimalItemStructure_WoodWall_Sloped_Right_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "8088da1b-527b-41df-bbf8-d75c54c2de0f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "54ab71a1-992d-4c85-b194-65c952645f89",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRailing.PrimalItemStructure_WoodRailing",
+                        "UUID": "211551de-318d-4552-87d2-5f71c766515a",
+                        "Class": "PrimalItemStructure_WoodRailing_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 20,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "ec5849a5-1f80-4a1e-a803-baaa5925687c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "36feac13-b1ea-4eba-891a-7aa6a696a297",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodDoor.PrimalItemStructure_WoodDoor",
+                        "UUID": "8711e5e1-2ac3-459d-88d1-b430e21cfd5d",
+                        "Class": "PrimalItemStructure_WoodDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "47fc21a1-e95e-4548-afe4-fc665b4aac59",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "20e2260a-3add-49fe-9fba-d37715d54e6f",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodStairs.PrimalItemStructure_WoodStairs",
+                        "UUID": "492dda35-8bf4-4a1e-8193-05c43f20ef97",
+                        "Class": "PrimalItemStructure_WoodStairs_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "d3541a20-0ea1-45da-80c3-f4f7ccaf2af0",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "e2dd4a4d-90cb-4237-b483-52f3ae8882bd",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRamp.PrimalItemStructure_WoodRamp",
+                        "UUID": "8ad01d14-dc51-478f-93d9-3e05eaa5960e",
+                        "Class": "PrimalItemStructure_WoodRamp_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "17c6840f-3ab5-4bc7-ad2e-5d44265586c6",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a18c66cf-c823-42a5-aabb-b47a5cfd8b3c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeiling.PrimalItemStructure_WoodCeiling",
+                        "UUID": "29c31f37-088f-4ffc-8b28-9d9cb0533596",
+                        "Class": "PrimalItemStructure_WoodCeiling_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "efb6966a-3cca-4c2c-920c-232b895ad78e",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "47674387-19db-40c0-8720-dec349aa447f",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodPillar.PrimalItemStructure_WoodPillar",
+                        "UUID": "ac63ca93-73c9-4a94-9455-64e807e6cd01",
+                        "Class": "PrimalItemStructure_WoodPillar_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "11035e85-3fc6-44f9-82f4-f4ba6bfe42c0",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "36604f4c-5819-4fa9-a339-b42abe3336aa",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWindow.PrimalItemStructure_WoodWindow",
+                        "UUID": "64ba5197-49b5-4ce8-8819-c3af90988201",
+                        "Class": "PrimalItemStructure_WoodWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9ca9f002-ea99-4f22-85b5-4b08f17881e2",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "8e3030fd-101f-4987-9d6a-0b9efa5b2bbc",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWall.PrimalItemStructure_WoodWall",
+                        "UUID": "fb346be2-0410-4f0c-b4b6-a9aa40c2fcf7",
+                        "Class": "PrimalItemStructure_WoodWall_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 32,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "1d4a6eeb-5c18-4c72-ab09-94bdffe5eb4d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "bc4a683d-233a-45fc-916b-5bd0d64136bf",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "2edff5cc-2071-4780-87d5-4d0c13c541e6",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFloor.PrimalItemStructure_WoodFloor",
+                        "Class": "PrimalItemStructure_WoodFloor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "5b72aef0-d233-453d-bcef-95460c3277fa",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "93242825-4ec7-49b8-bea0-db4136fb7beb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithDoor.PrimalItemStructure_WoodWallWithDoor",
+                        "Class": "PrimalItemStructure_WoodWallWithDoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "30bdd745-0bf3-41e3-9a68-bda087d35c58",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f7ffa8d5-f70a-41f5-9a79-ea69b271092e",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Wood/PrimalItemStructure_WoodRoof.PrimalItemStructure_WoodRoof",
+                        "Class": "PrimalItemStructure_WoodRoof_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "76e4dc36-d00e-441d-a901-893efc76381c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "63120e5c-9679-4c97-811f-01699bc272ec",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodLadder.PrimalItemStructure_WoodLadder",
+                        "Class": "PrimalItemStructure_WoodLadder_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c2753ea6-7b60-4a77-b852-94f511f5dfe3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "8ad01d14-dc51-478f-93d9-3e05eaa5960e",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRamp.PrimalItemStructure_WoodRamp",
+                        "Class": "PrimalItemStructure_WoodRamp_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d321c8e6-016f-4916-a20c-ac6131896f6e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3c6f25d1-e598-4327-a295-da0b4eb012b4",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Wood/PrimalItemStructure_WoodWall_Sloped_Left.PrimalItemStructure_WoodWall_Sloped_Left",
+                        "Class": "PrimalItemStructure_WoodWall_Sloped_Left_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "34312dc2-e4fb-4f3a-ba61-750251cf197c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "211551de-318d-4552-87d2-5f71c766515a",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRailing.PrimalItemStructure_WoodRailing",
+                        "Class": "PrimalItemStructure_WoodRailing_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "577ae4c5-b6ae-4186-9365-d48ba1b0287e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "5f2e41c6-a12e-4f92-b7b2-0aebe0600326",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeilingWithTrapdoor.PrimalItemStructure_WoodCeilingWithTrapdoor",
+                        "Class": "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "5303ab5d-d248-40d5-87d7-c47ebdfa1b84",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3b0f2ca7-18f3-4eed-ab1f-1c8fb9a2c6cf",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithWindow.PrimalItemStructure_WoodWallWithWindow",
+                        "Class": "PrimalItemStructure_WoodWallWithWindow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "23b3a17a-e2aa-4e10-8b48-f8e28fcb117a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "29c31f37-088f-4ffc-8b28-9d9cb0533596",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeiling.PrimalItemStructure_WoodCeiling",
+                        "Class": "PrimalItemStructure_WoodCeiling_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8b75f916-b95e-4fed-9d25-aa4bb70d710b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f6b4cc29-5405-4cf9-9de1-c2cc01efff1d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Wood/PrimalItemStructure_WoodWall_Sloped_Right.PrimalItemStructure_WoodWall_Sloped_Right",
+                        "Class": "PrimalItemStructure_WoodWall_Sloped_Right_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "e58d380c-de5c-4b8b-8c4c-87386d10c3d6",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "64ba5197-49b5-4ce8-8819-c3af90988201",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWindow.PrimalItemStructure_WoodWindow",
+                        "Class": "PrimalItemStructure_WoodWindow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a3505acd-b5f1-435a-bba3-338047292770",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "8711e5e1-2ac3-459d-88d1-b430e21cfd5d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodDoor.PrimalItemStructure_WoodDoor",
+                        "Class": "PrimalItemStructure_WoodDoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "5b098786-78a6-40c2-b3a6-46a7a8b730b3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "9106683f-fd0a-42e5-95bc-fad0fcbbf3c3",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodTrapdoor.PrimalItemStructure_WoodTrapdoor",
+                        "Class": "PrimalItemStructure_WoodTrapdoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "ea73006a-841d-484e-8bc9-bc82c615bbe0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "492dda35-8bf4-4a1e-8193-05c43f20ef97",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodStairs.PrimalItemStructure_WoodStairs",
+                        "Class": "PrimalItemStructure_WoodStairs_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2c91e22b-6c1b-4b91-a03d-8df87d34fd84",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "e423110e-0d77-45fe-85f0-3d1070e8219d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFenceFoundation.PrimalItemStructure_WoodFenceFoundation",
+                        "Class": "PrimalItemStructure_WoodFenceFoundation_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8af6cd7a-52bb-4000-a90c-1f7fcb1a2094",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fb346be2-0410-4f0c-b4b6-a9aa40c2fcf7",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWall.PrimalItemStructure_WoodWall",
+                        "Class": "PrimalItemStructure_WoodWall_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fd36da2d-af16-457b-ae7f-7809f639dff2",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "6a8d8fdd-ec53-4ab9-b813-5d57f6504c33",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodGate.PrimalItemStructure_WoodGate",
+                        "Class": "PrimalItemStructure_WoodGate_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f5fd891d-2093-473d-b783-2ea05d1bd18d",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c5002849-4656-43c3-b564-671fc2065cc4",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodGateframe.PrimalItemStructure_WoodGateframe",
+                        "Class": "PrimalItemStructure_WoodGateframe_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "cda4926c-1f00-473f-9c29-cb9ca776f62a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "ac63ca93-73c9-4a94-9455-64e807e6cd01",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodPillar.PrimalItemStructure_WoodPillar",
+                        "Class": "PrimalItemStructure_WoodPillar_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "fa0fab2e-5c72-4989-82b2-624bfa7c05a8",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "c557e661-876c-44c4-99ae-c2e676dbddef",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Wood/PrimalItemStructure_WoodWall_Sloped_Left.PrimalItemStructure_WoodWall_Sloped_Left",
+                        "UUID": "3c6f25d1-e598-4327-a295-da0b4eb012b4",
+                        "Class": "PrimalItemStructure_WoodWall_Sloped_Left_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "21955510-8587-4319-9260-096d1ce19094",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "fcc50658-92fa-415d-9e97-e3d0c634b704",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodTrapdoor.PrimalItemStructure_WoodTrapdoor",
+                        "UUID": "9106683f-fd0a-42e5-95bc-fad0fcbbf3c3",
+                        "Class": "PrimalItemStructure_WoodTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "59cd66b5-de82-4c38-a6e4-5173a3089a02",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "8b3df753-f0bf-4b26-871a-6ac857de274e",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFenceFoundation.PrimalItemStructure_WoodFenceFoundation",
+                        "UUID": "e423110e-0d77-45fe-85f0-3d1070e8219d",
+                        "Class": "PrimalItemStructure_WoodFenceFoundation_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5f0385d4-612a-49a2-b01b-107b5d13d54b",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "caa9065f-cad2-4c03-b390-4d60103339ae",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeilingWithTrapdoor.PrimalItemStructure_WoodCeilingWithTrapdoor",
+                        "UUID": "5f2e41c6-a12e-4f92-b7b2-0aebe0600326",
+                        "Class": "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "85a86ebd-f3fb-4ab8-97bd-43b23785eda0",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "dcd51423-9c3a-44d5-b0b8-e6260388c39c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithWindow.PrimalItemStructure_WoodWallWithWindow",
+                        "UUID": "3b0f2ca7-18f3-4eed-ab1f-1c8fb9a2c6cf",
+                        "Class": "PrimalItemStructure_WoodWallWithWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "ca3dc32b-da5d-4cc7-9e71-1a42b62cfe20",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "Quantity": 3.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        }
+    }
+}

@@ -1,0 +1,1077 @@
+{
+    "ID": "39d25b8d-ac51-42e4-af19-8aa511ceda17",
+    "Game": "Ark",
+    "Label": "Tek Housing",
+    "Kind": "LootTemplate",
+    "Version": 3,
+    "MinVersion": 3,
+    "Grouping": "Housing",
+    "Min": 2,
+    "Max": 6,
+    "ItemSets": [
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "830e858e-fbfa-4d4d-af8b-dacc684a3387",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekGateframe.PrimalItemStructure_TekGateframe",
+                        "UUID": "94e4de2e-018e-4f1b-a825-38e4333eb7ba",
+                        "Class": "PrimalItemStructure_TekGateframe_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "cb3d51eb-086a-43ff-8e38-06ea610bf584",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "d65afa8a-959c-4acc-bdb0-dd9e28b51142",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWindow.PrimalItemStructure_TekWindow",
+                        "UUID": "687627fb-49c2-4951-94f1-0cc79cf15547",
+                        "Class": "PrimalItemStructure_TekWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "fba20dd2-7788-4cb3-be7d-2a6f5e4be485",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "698ceb86-88e5-4009-b040-6b1ba90ed4c4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekGate.PrimalItemStructure_TekGate",
+                        "UUID": "74a9819e-8534-4ef8-a625-d13c6a15059a",
+                        "Class": "PrimalItemStructure_TekGate_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "925c8ab9-0e1b-4f6c-a8dd-ad7a9b988af7",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "4619de1d-3e42-46b8-aabe-610fbc16c075",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekPillar.PrimalItemStructure_TekPillar",
+                        "UUID": "17326a6d-5bed-41f8-9bef-6e4aa58f447f",
+                        "Class": "PrimalItemStructure_TekPillar_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "09fb207a-dcc5-4a27-86fa-a8b3c778d5ee",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "16b64047-b09c-4af9-8edc-28442471d10b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekLadder.PrimalItemStructure_TekLadder",
+                        "UUID": "a2c302bc-6f8f-46b0-b8e5-5bb1d569c9d7",
+                        "Class": "PrimalItemStructure_TekLadder_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 6,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "4ec2b3ff-b477-443b-8a44-d019ce0849bd",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "0e23ace4-c34e-4a3c-b23e-c61100137c76",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekFloor.PrimalItemStructure_TekFloor",
+                        "UUID": "da69a52c-9655-4a4c-82a2-20a63d27e8bd",
+                        "Class": "PrimalItemStructure_TekFloor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f8d3ad7f-24f3-4f4c-942a-4305274ba837",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "ab72fb25-ea53-4027-b543-128341a8fe67",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWall.PrimalItemStructure_TekWall",
+                        "UUID": "b91f0aab-7e78-4614-94a6-acd451dca07d",
+                        "Class": "PrimalItemStructure_TekWall_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 32,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f0068a7e-f3e5-4ed5-ad97-e54de3c35b5b",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5ab567c1-9a32-494d-bc33-cbfce868d87c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWall_Sloped_Left.PrimalItemStructure_TekWall_Sloped_Left",
+                        "UUID": "2a931a34-6937-4a50-9785-363186cc4dba",
+                        "Class": "PrimalItemStructure_TekWall_Sloped_Left_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f9641934-9b63-4836-b11c-4f0f78513aef",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "30abd665-0d3a-4081-b8e2-96c19fadcea6",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekCeilingWithTrapdoor.PrimalItemStructure_TekCeilingWithTrapdoor",
+                        "UUID": "5856ced8-69c6-4401-9d45-697c173be352",
+                        "Class": "PrimalItemStructure_TekCeilingWithTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "b4bd55dc-1236-4e03-8d12-8cb26b9eba03",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "184401d9-250d-4666-9976-197c44990c71",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWallWithDoor.PrimalItemStructure_TekWallWithDoor",
+                        "UUID": "009c923d-3433-4ab8-a10c-f49bbdd7c7da",
+                        "Class": "PrimalItemStructure_TekWallWithDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a7e9908e-9b3d-4263-b51f-6608f990d1a8",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "96f9aec3-998b-4385-8ab7-6ff3b64570bd",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWall_Sloped_Right.PrimalItemStructure_TekWall_Sloped_Right",
+                        "UUID": "41904c6d-405d-4f9c-95d6-93245f521215",
+                        "Class": "PrimalItemStructure_TekWall_Sloped_Right_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9571dfc0-4618-408f-a66a-3fb90ec837a1",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "6f98fc2b-f12f-4779-a775-2316b9347d03",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekCeiling.PrimalItemStructure_TekCeiling",
+                        "UUID": "bcbbb47a-5c62-425a-b9b0-0555853fa82b",
+                        "Class": "PrimalItemStructure_TekCeiling_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "7e061150-6766-4359-a63a-7620a8d7c532",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "da5da160-33e8-46f4-8a13-1e9f8a7cf55c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekDoor.PrimalItemStructure_TekDoor",
+                        "UUID": "0448d8e9-8ed3-4919-9991-fb15448714d8",
+                        "Class": "PrimalItemStructure_TekDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "433a0ca0-6744-455c-9144-6adc3f52ba19",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "274aa20f-6384-421c-a4ac-4b3ad9b5f5ee",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekGate_Large.PrimalItemStructure_TekGate_Large",
+                        "UUID": "26f3cc00-fe80-4128-ae78-fc3700289bcd",
+                        "Class": "PrimalItemStructure_TekGate_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "6dcfe45a-8186-4b3d-8488-922b62957091",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "27e22273-7345-43c6-bc80-ce887a5cc5cc",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekRailing.PrimalItemStructure_TekRailing",
+                        "UUID": "b9b37fe4-afae-4f73-9d6d-4584474d0718",
+                        "Class": "PrimalItemStructure_TekRailing_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 20,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2d99c54c-4cbc-47fa-97f3-3e8a9bd32af5",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "2e89ae1f-c1aa-4b93-ab78-effda3e5dbb0",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekFenceFoundation.PrimalItemStructure_TekFenceFoundation",
+                        "UUID": "c84a3c28-96e7-4a85-a6d3-43ff6ae5c687",
+                        "Class": "PrimalItemStructure_TekFenceFoundation_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5098d178-8f36-4cc4-876d-8678ee72652d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "543573ea-d47d-4145-901a-3d800dc08d73",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekRamp.PrimalItemStructure_TekRamp",
+                        "UUID": "3f4a5ef7-3404-4b1a-bbe1-049de60320ea",
+                        "Class": "PrimalItemStructure_TekRamp_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "bc4fd6fa-4dfc-49ce-9b94-0ee135e2ecf7",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "8c341b6d-65ba-470d-8d66-8a9cc174ebd6",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekRoof.PrimalItemStructure_TekRoof",
+                        "UUID": "26bdb08f-9c4b-4d21-81f4-dcc4a73ba6ff",
+                        "Class": "PrimalItemStructure_TekRoof_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "36fb6e87-1971-457c-a555-4af30ce13216",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f401e433-dd6c-4f3e-8f4a-0ca52c4d3f94",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWallWithWindow.PrimalItemStructure_TekWallWithWindow",
+                        "UUID": "1c58190d-d712-4120-93f5-c141df40ba28",
+                        "Class": "PrimalItemStructure_TekWallWithWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f625c90b-2bdd-47b6-9f9f-074610e0f26c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "7b369043-d1fb-4fbe-8c56-fff9c58874c7",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekStairs.PrimalItemStructure_TekStairs",
+                        "UUID": "22700578-f96d-43f4-aa99-ea526659862f",
+                        "Class": "PrimalItemStructure_TekStairs_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "e440a57a-7e13-470b-9fd0-61fdd75f0ef4",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "00efc03e-b231-48c6-9e9e-1952bfea3f99",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekGateframe_Large.PrimalItemStructure_TekGateframe_Large",
+                        "UUID": "7e33695b-b1b9-4a9f-8c67-b7535f67d5d9",
+                        "Class": "PrimalItemStructure_TekGateframe_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "13c4b0e9-b1ad-498b-9a45-adba8605f905",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f2fef9e7-70a8-41f0-88bd-5222c66db223",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b9b37fe4-afae-4f73-9d6d-4584474d0718",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekRailing.PrimalItemStructure_TekRailing",
+                        "Class": "PrimalItemStructure_TekRailing_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1ddcbe88-8454-4d36-967e-f8f6ee0f3555",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "bcbbb47a-5c62-425a-b9b0-0555853fa82b",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekCeiling.PrimalItemStructure_TekCeiling",
+                        "Class": "PrimalItemStructure_TekCeiling_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d19b06fa-8d1a-44e3-be88-686e2e258dea",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1c58190d-d712-4120-93f5-c141df40ba28",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWallWithWindow.PrimalItemStructure_TekWallWithWindow",
+                        "Class": "PrimalItemStructure_TekWallWithWindow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1c216539-c7bc-4bfd-85b6-5d3b954a14d2",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "7e33695b-b1b9-4a9f-8c67-b7535f67d5d9",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekGateframe_Large.PrimalItemStructure_TekGateframe_Large",
+                        "Class": "PrimalItemStructure_TekGateframe_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "17e9905c-84d5-4ce1-98b1-12b50c0076af",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b91f0aab-7e78-4614-94a6-acd451dca07d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWall.PrimalItemStructure_TekWall",
+                        "Class": "PrimalItemStructure_TekWall_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "66e8385f-2832-4efb-a958-e128cf073548",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "da69a52c-9655-4a4c-82a2-20a63d27e8bd",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekFloor.PrimalItemStructure_TekFloor",
+                        "Class": "PrimalItemStructure_TekFloor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "668d28ca-d51d-42b5-95bf-55552c71e1c4",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "687627fb-49c2-4951-94f1-0cc79cf15547",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWindow.PrimalItemStructure_TekWindow",
+                        "Class": "PrimalItemStructure_TekWindow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "cb1b78b0-a99a-4800-b324-7a073ce657e8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "94e4de2e-018e-4f1b-a825-38e4333eb7ba",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekGateframe.PrimalItemStructure_TekGateframe",
+                        "Class": "PrimalItemStructure_TekGateframe_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "23f96d5f-baed-45e0-b455-c70f186e9918",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "5c83f76f-b8ca-4994-bf9e-d7a528702e42",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekTrapdoor.PrimalItemStructure_TekTrapdoor",
+                        "Class": "PrimalItemStructure_TekTrapdoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "86fa9149-d139-479e-b432-6c3a4f696e5f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c84a3c28-96e7-4a85-a6d3-43ff6ae5c687",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekFenceFoundation.PrimalItemStructure_TekFenceFoundation",
+                        "Class": "PrimalItemStructure_TekFenceFoundation_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2df7d5b6-6d88-450a-b2d6-b921ea2774f7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "74a9819e-8534-4ef8-a625-d13c6a15059a",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekGate.PrimalItemStructure_TekGate",
+                        "Class": "PrimalItemStructure_TekGate_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1749aa2c-bd4d-45fd-b5c3-d10bbc4d6ec5",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "22700578-f96d-43f4-aa99-ea526659862f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekStairs.PrimalItemStructure_TekStairs",
+                        "Class": "PrimalItemStructure_TekStairs_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "bfdc01d3-7b7f-4ec2-af11-d5432f960496",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a2c302bc-6f8f-46b0-b8e5-5bb1d569c9d7",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekLadder.PrimalItemStructure_TekLadder",
+                        "Class": "PrimalItemStructure_TekLadder_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "20d79ebc-34e1-402c-b688-9c36950c5efb",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3f4a5ef7-3404-4b1a-bbe1-049de60320ea",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekRamp.PrimalItemStructure_TekRamp",
+                        "Class": "PrimalItemStructure_TekRamp_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "dcc69adb-bf63-4235-a560-1405469e62e8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "17326a6d-5bed-41f8-9bef-6e4aa58f447f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekPillar.PrimalItemStructure_TekPillar",
+                        "Class": "PrimalItemStructure_TekPillar_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "bdcafe65-c335-4651-96e2-e839da7bab5d",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "009c923d-3433-4ab8-a10c-f49bbdd7c7da",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWallWithDoor.PrimalItemStructure_TekWallWithDoor",
+                        "Class": "PrimalItemStructure_TekWallWithDoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a53043f7-59bc-453a-9be1-3bf40fe5df9e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "2a931a34-6937-4a50-9785-363186cc4dba",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWall_Sloped_Left.PrimalItemStructure_TekWall_Sloped_Left",
+                        "Class": "PrimalItemStructure_TekWall_Sloped_Left_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2d4dcdaa-6796-4f4c-94d2-d7a990b45af9",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0448d8e9-8ed3-4919-9991-fb15448714d8",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekDoor.PrimalItemStructure_TekDoor",
+                        "Class": "PrimalItemStructure_TekDoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2178c66e-d864-4ef3-9282-69bb42b9e2e3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "41904c6d-405d-4f9c-95d6-93245f521215",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekWall_Sloped_Right.PrimalItemStructure_TekWall_Sloped_Right",
+                        "Class": "PrimalItemStructure_TekWall_Sloped_Right_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "09f7a9dc-0ad5-4cf1-83b5-80faa5e3d90a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "26bdb08f-9c4b-4d21-81f4-dcc4a73ba6ff",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekRoof.PrimalItemStructure_TekRoof",
+                        "Class": "PrimalItemStructure_TekRoof_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "70daf402-1478-4592-a2f0-65108c586ef5",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "26f3cc00-fe80-4128-ae78-fc3700289bcd",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekGate_Large.PrimalItemStructure_TekGate_Large",
+                        "Class": "PrimalItemStructure_TekGate_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "af092ce9-a0f9-4405-9946-ce7cda7b52ba",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "5856ced8-69c6-4401-9d45-697c173be352",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekCeilingWithTrapdoor.PrimalItemStructure_TekCeilingWithTrapdoor",
+                        "Class": "PrimalItemStructure_TekCeilingWithTrapdoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "c38027b4-66b3-40f5-aa7c-c36c42fdeea6",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "6ce7cff6-3320-4a54-85a5-2edb6766afff",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Tek/PrimalItemStructure_TekTrapdoor.PrimalItemStructure_TekTrapdoor",
+                        "UUID": "5c83f76f-b8ca-4994-bf9e-d7a528702e42",
+                        "Class": "PrimalItemStructure_TekTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "d6b42b7c-9b8b-4e52-a069-3bdf494a5c13",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "Quantity": 3.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        }
+    }
+}

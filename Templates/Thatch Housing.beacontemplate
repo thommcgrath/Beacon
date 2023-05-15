@@ -1,0 +1,433 @@
+{
+    "ID": "c3691f55-98ba-49f2-853a-1c258a248ba3",
+    "Game": "Ark",
+    "Label": "Thatch Housing",
+    "Kind": "LootTemplate",
+    "Version": 3,
+    "MinVersion": 3,
+    "Grouping": "Housing",
+    "Min": 2,
+    "Max": 4,
+    "ItemSets": [
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "dab45b34-a307-4554-9774-a4027876e4c4",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "38b23d36-7729-411e-b520-2c654cdf9fb5",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Thatch/PrimalItemStructure_ThatchWall_Sloped_Right.PrimalItemStructure_ThatchWall_Sloped_Right",
+                        "Class": "PrimalItemStructure_ThatchWall_Sloped_Right_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8d62059d-1d96-439d-a7e2-3a4d5477b49d",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "42b77b6b-1aee-481d-bce4-e8ec7de03473",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchWallWithDoor.PrimalItemStructure_ThatchWallWithDoor",
+                        "Class": "PrimalItemStructure_ThatchWallWithDoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "099df8f4-db2f-44b1-b355-e6dea14af190",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "af98402a-6a80-4b67-ae6b-aaf5e335710e",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchCeiling.PrimalItemStructure_ThatchCeiling",
+                        "Class": "PrimalItemStructure_ThatchCeiling_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "e70b110c-465a-441f-870d-5c5ddf19d7d2",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f7dc87e5-9d17-438a-8f5c-e9bbcf06465d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Thatch/PrimalItemStructure_ThatchRoof.PrimalItemStructure_ThatchRoof",
+                        "Class": "PrimalItemStructure_ThatchRoof_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b4e61862-1e4a-4d79-b644-0c8119be7f8a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "8b16c7c8-ec0a-4cd9-9960-2da2d0232af7",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchFloor.PrimalItemStructure_ThatchFloor",
+                        "Class": "PrimalItemStructure_ThatchFloor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "e1adf327-b26a-46fd-bc85-c67f02fce5fa",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "9b5389ef-7a4a-4346-95c9-62bc0dc180e2",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchDoor.PrimalItemStructure_ThatchDoor",
+                        "Class": "PrimalItemStructure_ThatchDoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0c699809-65ab-4578-bc46-c1e1135fedd2",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a505236c-18f2-422c-ad21-f0e035d3a37e",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchWall.PrimalItemStructure_ThatchWall",
+                        "Class": "PrimalItemStructure_ThatchWall_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fdf57040-96c7-4d08-9c93-dc0ec2d83a3c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a5fac70e-60b7-42ba-bdab-ac0169e25dd2",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Thatch/PrimalItemStructure_ThatchWall_Sloped_Left.PrimalItemStructure_ThatchWall_Sloped_Left",
+                        "Class": "PrimalItemStructure_ThatchWall_Sloped_Left_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "be8958e2-9f75-4433-9bb1-57fbbe8790cc",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "7338135f-d3ee-4a78-9873-ea95c006d113",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchWall.PrimalItemStructure_ThatchWall",
+                        "UUID": "a505236c-18f2-422c-ad21-f0e035d3a37e",
+                        "Class": "PrimalItemStructure_ThatchWall_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 32,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2d3ae853-c6f1-4918-962e-a75186e8ceae",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "9b9a06c0-1021-4c35-b77b-d083869caa4b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchWallWithDoor.PrimalItemStructure_ThatchWallWithDoor",
+                        "UUID": "42b77b6b-1aee-481d-bce4-e8ec7de03473",
+                        "Class": "PrimalItemStructure_ThatchWallWithDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f6a572ce-bcb1-4069-bc27-dcadd5519be1",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5a97cfad-1f8f-4429-a0df-41fa2d082c3d",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchFloor.PrimalItemStructure_ThatchFloor",
+                        "UUID": "8b16c7c8-ec0a-4cd9-9960-2da2d0232af7",
+                        "Class": "PrimalItemStructure_ThatchFloor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "000c3c75-f3d6-45bb-9bed-147acca47332",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "9e36bc32-dda7-4d9f-b3ac-a2dea617acca",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchCeiling.PrimalItemStructure_ThatchCeiling",
+                        "UUID": "af98402a-6a80-4b67-ae6b-aaf5e335710e",
+                        "Class": "PrimalItemStructure_ThatchCeiling_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "24f14bfa-861d-4a02-8425-3914a4ce2c1a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "fed24892-1fab-4d9d-bea6-da658e3adafd",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchDoor.PrimalItemStructure_ThatchDoor",
+                        "UUID": "9b5389ef-7a4a-4346-95c9-62bc0dc180e2",
+                        "Class": "PrimalItemStructure_ThatchDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "848754ba-7bb2-48e2-b815-d3e3f381e8d1",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "66ab2d34-bd7c-4e0a-8ff2-5408637b209a",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Thatch/PrimalItemStructure_ThatchWall_Sloped_Right.PrimalItemStructure_ThatchWall_Sloped_Right",
+                        "UUID": "38b23d36-7729-411e-b520-2c654cdf9fb5",
+                        "Class": "PrimalItemStructure_ThatchWall_Sloped_Right_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "22810f47-3fc8-4dec-b134-2d513e543e25",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5130ec0d-4207-4a67-80ed-206f56946b03",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Thatch/PrimalItemStructure_ThatchRoof.PrimalItemStructure_ThatchRoof",
+                        "UUID": "f7dc87e5-9d17-438a-8f5c-e9bbcf06465d",
+                        "Class": "PrimalItemStructure_ThatchRoof_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a9a68f3f-424a-4e84-988a-bfd079d2d2a9",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "da50f901-fb5f-458e-921f-0f14deda943b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Thatch/PrimalItemStructure_ThatchWall_Sloped_Left.PrimalItemStructure_ThatchWall_Sloped_Left",
+                        "UUID": "a5fac70e-60b7-42ba-bdab-ac0169e25dd2",
+                        "Class": "PrimalItemStructure_ThatchWall_Sloped_Left_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "4acecd42-00fb-4a68-89e7-82be12286bd5",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "Quantity": 3.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        }
+    }
+}

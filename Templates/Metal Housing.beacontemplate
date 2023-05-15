@@ -1,0 +1,1169 @@
+{
+    "ID": "72f5d82a-743e-48f7-9b75-cde603eb2f93",
+    "Game": "Ark",
+    "Label": "Metal Housing",
+    "Kind": "LootTemplate",
+    "Version": 3,
+    "MinVersion": 3,
+    "Grouping": "Housing",
+    "Min": 2,
+    "Max": 6,
+    "ItemSets": [
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "c3d3308c-528b-4eb2-bd89-2a054f3845c1",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoor.PrimalItemStructure_MetalCeilingWithTrapdoor",
+                        "UUID": "211da9ef-a1d0-4252-a179-af6231d6b9bd",
+                        "Class": "PrimalItemStructure_MetalCeilingWithTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "63f0947b-0cff-406a-bd5b-3c132ad210e9",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "d05e66fc-30d0-4b58-bd6f-13e31d3227c4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRamp.PrimalItemStructure_MetalRamp",
+                        "UUID": "415f85b0-bfe9-4acb-b4d6-67d418597796",
+                        "Class": "PrimalItemStructure_MetalRamp_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "1edb537e-bc0e-4bfe-9fc0-13b592a8667c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "69aff5ae-f2f7-49d2-a9af-f94384783d01",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFenceFoundation.PrimalItemStructure_MetalFenceFoundation",
+                        "UUID": "19ccff6c-b7a1-4c97-9f73-2c0f1918f4bb",
+                        "Class": "PrimalItemStructure_MetalFenceFoundation_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "fe3e98bc-462f-4a86-9eaf-1c023577ecc8",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "0e598f06-b62b-4ae1-a56d-a56b8e11a0aa",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate_Large.PrimalItemStructure_MetalGate_Large",
+                        "UUID": "c59fc4a7-d67d-4829-9c22-14f4c81dd89b",
+                        "Class": "PrimalItemStructure_MetalGate_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5c5049f3-42f1-466d-83fb-7da7a0731699",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "3e4bbaf3-fcf6-4968-bdfa-5678eba80bf2",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeiling.PrimalItemStructure_MetalCeiling",
+                        "UUID": "32f92ea0-85df-46e2-9970-f3e1537a4f0f",
+                        "Class": "PrimalItemStructure_MetalCeiling_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "576ed840-68f2-4afa-b5f1-8f19c07b70be",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "e36e95cd-a2bc-4a7d-8f90-189c558c73a0",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRailing.PrimalItemStructure_MetalRailing",
+                        "UUID": "c41a3bfd-43d8-4758-aa6c-fa6e54dd6ecc",
+                        "Class": "PrimalItemStructure_MetalRailing_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 20,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "902cb4b4-8707-4b6d-bf8a-b626b162e58a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "035ddaa1-4be8-4a7d-b0ea-f627d8d3c1f5",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoor.PrimalItemStructure_MetalTrapdoor",
+                        "UUID": "35b55f47-da30-4ad3-abb3-3fc00682a06f",
+                        "Class": "PrimalItemStructure_MetalTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "bfca385e-cd2f-4fe0-9f8d-29195775beab",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "53f96f04-dad1-47c2-bd82-3802c06c5433",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFloor.PrimalItemStructure_MetalFloor",
+                        "UUID": "48f0df05-9b55-458e-ae44-79abbb930f14",
+                        "Class": "PrimalItemStructure_MetalFloor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "c1040d93-a8f4-4105-8b78-d941fb6bcded",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "446b4864-fda3-47da-a90c-028a6743de58",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithWindow.PrimalItemStructure_MetalWallWithWindow",
+                        "UUID": "d9795854-a108-4f32-a8e0-7892bbe82ab6",
+                        "Class": "PrimalItemStructure_MetalWallWithWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9737d29a-c535-4e8b-8c34-0f87af9276c5",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "777524e4-6623-487e-9b1c-0e48b5b6fb07",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalPillar.PrimalItemStructure_MetalPillar",
+                        "UUID": "dffae49f-b736-4b9a-8925-711307bf7611",
+                        "Class": "PrimalItemStructure_MetalPillar_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "c652441d-e2aa-431b-9f12-af34e096574c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a9714391-a8b7-4fcc-8865-cf7052432fa2",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWindow.PrimalItemStructure_MetalWindow",
+                        "UUID": "dd0555dd-c55e-4551-81fe-760f827fa9f0",
+                        "Class": "PrimalItemStructure_MetalWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "76612327-01fa-4155-b570-efa976031b9b",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a104bbe4-9808-442f-acb5-8e5d2c04016b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoorGiant.PrimalItemStructure_MetalTrapdoorGiant",
+                        "UUID": "486d87c8-f6aa-4715-ae8b-f9d07f18343e",
+                        "Class": "PrimalItemStructure_MetalTrapdoorGiant_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "d888d544-bfa4-411c-ad21-59aa5c15c098",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5253dce8-b698-42e3-9e46-2d892811af24",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalRoof.PrimalItemStructure_MetalRoof",
+                        "UUID": "fb4bec4c-c18e-43ac-b7c6-5e1d3bffdc65",
+                        "Class": "PrimalItemStructure_MetalRoof_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "d223611a-18b1-4318-a86a-23ea9f315513",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "4627e444-4cea-410a-99d0-f5fd4273b7b3",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalStairs.PrimalItemStructure_MetalStairs",
+                        "UUID": "f31c598f-730f-48c4-8424-d5046bb3382f",
+                        "Class": "PrimalItemStructure_MetalStairs_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "ef753de1-baf1-405d-bf39-209254484927",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "48ba1da6-6363-4e4c-a5d7-7b764873d836",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoorGiant.PrimalItemStructure_MetalCeilingWithTrapdoorGiant",
+                        "UUID": "59f32796-d278-44b3-80f8-9bd7f0b8f3b0",
+                        "Class": "PrimalItemStructure_MetalCeilingWithTrapdoorGiant_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "bd20bb61-aa4f-4ed0-b38a-de90a47c127a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "ef0c4bc1-36fd-494e-969e-b8223e506174",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe.PrimalItemStructure_MetalGateframe",
+                        "UUID": "6212f47e-be4a-426e-ac03-ce26429556e3",
+                        "Class": "PrimalItemStructure_MetalGateframe_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a49205d8-abb3-408e-84ba-4a7a32b47ec7",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "2ec0b54b-a83f-4ae5-86e4-54ced2d82b54",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalWall_Sloped_Right.PrimalItemStructure_MetalWall_Sloped_Right",
+                        "UUID": "cd49e12d-b2f5-4e40-89a9-de88fa048951",
+                        "Class": "PrimalItemStructure_MetalWall_Sloped_Right_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "ff20e71b-5aff-4464-af49-c7df65a769d4",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "44d10594-531c-445d-96a7-435de62d0b94",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalWall_Sloped_Left.PrimalItemStructure_MetalWall_Sloped_Left",
+                        "UUID": "5a18ddbd-1946-40a2-b51c-2372388800e7",
+                        "Class": "PrimalItemStructure_MetalWall_Sloped_Left_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "6a758cb7-af21-4acb-970d-5b677e9103ab",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "6cbf288a-44b1-42bf-84f9-67cf6968629c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWall.PrimalItemStructure_MetalWall",
+                        "UUID": "30769a9d-5278-4055-b3f5-25fed868ca78",
+                        "Class": "PrimalItemStructure_MetalWall_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 32,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "8abda9c3-81ca-494a-a533-dc4ab373f054",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "fb097495-27b5-40d4-b300-3913be21a490",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithDoor.PrimalItemStructure_MetalWallWithDoor",
+                        "UUID": "d546f9e5-a936-4a16-a073-22ae73be9cca",
+                        "Class": "PrimalItemStructure_MetalWallWithDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "1ce4fd08-c260-4bfa-bf30-9bccaa012db1",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f2f36ce2-7b33-4aac-89bd-26fd520feed4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe_Large.PrimalItemStructure_MetalGateframe_Large",
+                        "UUID": "456417d0-8553-4c3e-9ad9-a22f530dc780",
+                        "Class": "PrimalItemStructure_MetalGateframe_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "aee8a87a-7fe4-4724-82b1-f9d4112ab67d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "ba765443-174e-47f7-a1a2-912a6064f6a1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f31c598f-730f-48c4-8424-d5046bb3382f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalStairs.PrimalItemStructure_MetalStairs",
+                        "Class": "PrimalItemStructure_MetalStairs_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0f923648-c178-4e9c-8d83-59cdbb2759f8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fb4bec4c-c18e-43ac-b7c6-5e1d3bffdc65",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalRoof.PrimalItemStructure_MetalRoof",
+                        "Class": "PrimalItemStructure_MetalRoof_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6eae5183-d5bc-4f7f-af77-12618c3ef867",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "19ccff6c-b7a1-4c97-9f73-2c0f1918f4bb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFenceFoundation.PrimalItemStructure_MetalFenceFoundation",
+                        "Class": "PrimalItemStructure_MetalFenceFoundation_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8aa6ff20-5c1a-4f24-99f4-568a639e1cde",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "dd0555dd-c55e-4551-81fe-760f827fa9f0",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWindow.PrimalItemStructure_MetalWindow",
+                        "Class": "PrimalItemStructure_MetalWindow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "640ead42-c0f0-4669-9eba-53b36aed214e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "59f32796-d278-44b3-80f8-9bd7f0b8f3b0",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoorGiant.PrimalItemStructure_MetalCeilingWithTrapdoorGiant",
+                        "Class": "PrimalItemStructure_MetalCeilingWithTrapdoorGiant_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "81a2a1ac-19bd-4fd2-a57d-1ba57c81d100",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "30769a9d-5278-4055-b3f5-25fed868ca78",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWall.PrimalItemStructure_MetalWall",
+                        "Class": "PrimalItemStructure_MetalWall_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "76a820c7-e061-487f-acec-28cab5fd72f0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "32f92ea0-85df-46e2-9970-f3e1537a4f0f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeiling.PrimalItemStructure_MetalCeiling",
+                        "Class": "PrimalItemStructure_MetalCeiling_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "335b4fdf-1f36-46c8-901a-1529c9c01e7c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "ae2a29cc-2ac4-45d0-92d6-cf09202bf1b4",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate.PrimalItemStructure_MetalGate",
+                        "Class": "PrimalItemStructure_MetalGate_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "88fd90de-6deb-4b8f-a7dd-e34257ef326b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "415f85b0-bfe9-4acb-b4d6-67d418597796",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRamp.PrimalItemStructure_MetalRamp",
+                        "Class": "PrimalItemStructure_MetalRamp_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "53f31a29-04b4-41f8-b5cd-7fb53e748ee5",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "49a3876b-9348-4437-a841-de791350cb73",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalLadder.PrimalItemStructure_MetalLadder",
+                        "Class": "PrimalItemStructure_MetalLadder_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f072de48-7701-4771-ace2-98098cfd06c7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "dffae49f-b736-4b9a-8925-711307bf7611",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalPillar.PrimalItemStructure_MetalPillar",
+                        "Class": "PrimalItemStructure_MetalPillar_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "dc71c68f-fdc5-4545-bbad-0938393a265e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "81a8243f-3903-4ae5-97eb-dc888b527440",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalDoor.PrimalItemStructure_MetalDoor",
+                        "Class": "PrimalItemStructure_MetalDoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "88ab87f7-7dc6-454f-a755-720b7dbca00c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c59fc4a7-d67d-4829-9c22-14f4c81dd89b",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate_Large.PrimalItemStructure_MetalGate_Large",
+                        "Class": "PrimalItemStructure_MetalGate_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c9df1701-a3a2-4d69-b6b5-79467faf5189",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "456417d0-8553-4c3e-9ad9-a22f530dc780",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe_Large.PrimalItemStructure_MetalGateframe_Large",
+                        "Class": "PrimalItemStructure_MetalGateframe_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "7fbda4c7-54d7-49a8-aa93-4308bbe563ca",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "486d87c8-f6aa-4715-ae8b-f9d07f18343e",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoorGiant.PrimalItemStructure_MetalTrapdoorGiant",
+                        "Class": "PrimalItemStructure_MetalTrapdoorGiant_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a7cf176f-ca65-41b5-b5bc-7d571b1daf39",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "35b55f47-da30-4ad3-abb3-3fc00682a06f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoor.PrimalItemStructure_MetalTrapdoor",
+                        "Class": "PrimalItemStructure_MetalTrapdoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "828bc192-92a6-43cc-9444-3eb7fb1ef1c4",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "cd49e12d-b2f5-4e40-89a9-de88fa048951",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalWall_Sloped_Right.PrimalItemStructure_MetalWall_Sloped_Right",
+                        "Class": "PrimalItemStructure_MetalWall_Sloped_Right_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "cb51c8d7-5246-4bd9-8f3a-7762eac8dbdd",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c41a3bfd-43d8-4758-aa6c-fa6e54dd6ecc",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRailing.PrimalItemStructure_MetalRailing",
+                        "Class": "PrimalItemStructure_MetalRailing_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6e3d5d3a-0007-4733-9295-9964b636036a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "6212f47e-be4a-426e-ac03-ce26429556e3",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe.PrimalItemStructure_MetalGateframe",
+                        "Class": "PrimalItemStructure_MetalGateframe_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "54992ef4-1629-4947-a209-080f05e5cff1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "5a18ddbd-1946-40a2-b51c-2372388800e7",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalWall_Sloped_Left.PrimalItemStructure_MetalWall_Sloped_Left",
+                        "Class": "PrimalItemStructure_MetalWall_Sloped_Left_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d50922d1-3c56-460e-bb80-cf79bc1790a4",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "48f0df05-9b55-458e-ae44-79abbb930f14",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFloor.PrimalItemStructure_MetalFloor",
+                        "Class": "PrimalItemStructure_MetalFloor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c58faa01-70da-46ad-9616-1ccefac7e534",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d9795854-a108-4f32-a8e0-7892bbe82ab6",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithWindow.PrimalItemStructure_MetalWallWithWindow",
+                        "Class": "PrimalItemStructure_MetalWallWithWindow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "802c8e3b-1f32-409d-aed1-d8c7da7c0c24",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d546f9e5-a936-4a16-a073-22ae73be9cca",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithDoor.PrimalItemStructure_MetalWallWithDoor",
+                        "Class": "PrimalItemStructure_MetalWallWithDoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "475555c7-7bea-4a03-b6c1-d21b30eef2c8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "211da9ef-a1d0-4252-a179-af6231d6b9bd",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoor.PrimalItemStructure_MetalCeilingWithTrapdoor",
+                        "Class": "PrimalItemStructure_MetalCeilingWithTrapdoor_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "6fd91964-3e7d-4aa4-8db5-7ef557ada2ee",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "63ef6580-0994-4877-bb30-72d0025dd0b8",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate.PrimalItemStructure_MetalGate",
+                        "UUID": "ae2a29cc-2ac4-45d0-92d6-cf09202bf1b4",
+                        "Class": "PrimalItemStructure_MetalGate_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "0d8d298f-04ee-4329-8fad-bb03e559ce0c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "956ff2c3-5a2e-44ed-97c0-5f0908768f6e",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalDoor.PrimalItemStructure_MetalDoor",
+                        "UUID": "81a8243f-3903-4ae5-97eb-dc888b527440",
+                        "Class": "PrimalItemStructure_MetalDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "e0fd16e9-c1cb-4b7c-957b-7bd37ba02e04",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5b77e374-29f3-4873-a3c0-0d37a9659b8d",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalLadder.PrimalItemStructure_MetalLadder",
+                        "UUID": "49a3876b-9348-4437-a841-de791350cb73",
+                        "Class": "PrimalItemStructure_MetalLadder_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 6,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f9799ee3-5a87-4bc4-bb59-355172967433",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "Quantity": 3.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        }
+    }
+}

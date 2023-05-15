@@ -1,0 +1,2388 @@
+{
+    "ID": "1abe6864-dabf-4b5c-b0a0-cb79cfdd17ba",
+    "Game": "Ark",
+    "Label": "Raw Materials",
+    "Kind": "LootTemplate",
+    "Version": 3,
+    "MinVersion": 3,
+    "Grouping": "Miscellaneous",
+    "Min": 1,
+    "Max": 4,
+    "ItemSets": [
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "af77d775-f51a-486b-942d-de4ab0b570e5",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Narcotic.PrimalItemConsumable_Narcotic",
+                        "UUID": "9bdb9145-cbbe-4424-929e-76339ad52de5",
+                        "Class": "PrimalItemConsumable_Narcotic_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f652bbe4-4016-4e3a-ad40-9ca3b4235129",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 464,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "53272a21-2542-43dc-939e-aea2100cc70b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemResource_CommonMushroom.PrimalItemResource_CommonMushroom",
+                        "UUID": "02157ed2-15d0-4168-9a49-89064d0518fc",
+                        "Class": "PrimalItemResource_CommonMushroom_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "731b0f60-a7f2-47c0-835d-b70a925b661b",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 464,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5677ef6b-1034-404d-b1d1-55e70f5b27d5",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_BioLum.PrimalItemResource_Gem_BioLum",
+                        "UUID": "f5e44c9c-0ba5-461d-8d9a-fb1cd93acce0",
+                        "Class": "PrimalItemResource_Gem_BioLum_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "253949be-ac17-473b-82e0-7397ecdc935a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "7726a2b2-7688-408d-8fba-a0be88ab5a25",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Propellant.PrimalItemResource_Propellant",
+                        "UUID": "01b3e872-fbe0-488b-aee7-a487fff5cea5",
+                        "Class": "PrimalItemResource_Propellant_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "6912956b-5d4c-4163-854e-62925a8440df",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "aad5d264-e335-4dce-b3e0-6ae08ae33f60",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Chitin.PrimalItemResource_Chitin",
+                        "UUID": "90f7473a-ed5f-4b07-89dc-50ea7c858020",
+                        "Class": "PrimalItemResource_Chitin_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "8bcb8d20-2e2a-4895-a9d8-0843ae793d5f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "1942e6a2-5d73-420f-9656-41ea8c180d66",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Flint.PrimalItemResource_Flint",
+                        "UUID": "c1f002db-4be8-4704-bdb6-aa53cb0ded08",
+                        "Class": "PrimalItemResource_Flint_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "b4c6ff40-ee28-4e7e-883a-e75a259aa6d2",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 128,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 0.25,
+            "Items": [
+                {
+                    "UUID": "d8f01baf-386a-4cd0-844f-a396346c2fa4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Genesis/Dinos/SpaceWhale/PrimalItemResource_Ambergris.PrimalItemResource_Ambergris",
+                        "UUID": "ef2addaf-4642-4e49-95bb-4843b90cab3e",
+                        "Class": "PrimalItemResource_Ambergris_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "abbc2e33-f7c9-4b31-b906-bfdc8adc3685",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 250.0,
+            "UUID": "df1a654b-b7a8-4026-b5ac-c44d3cbcda6d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3616,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "3308666d-8645-4870-9312-d8b96671d53d",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/Structures/ItemBalloon/PrimalItemStructure_StorageBox_Balloon.PrimalItemStructure_StorageBox_Balloon",
+                        "UUID": "90075f3d-c8cb-4306-ad46-9d0a82937818",
+                        "Class": "PrimalItemStructure_StorageBox_Balloon_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9fa838a6-e63a-4079-b105-a58a7514854c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 32,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "3333d103-de02-45e0-9adb-5f688a2c6b06",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_BlueSap.PrimalItemResource_BlueSap",
+                        "UUID": "ee5596c4-cb71-4d76-afe6-d956094bcc28",
+                        "Class": "PrimalItemResource_BlueSap_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "926e0f5e-390a-4091-ab49-29edbb25019f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "48c796bd-9282-49fc-80c6-bfbe96c17886",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Polymer.PrimalItemResource_Polymer",
+                        "UUID": "50f56159-aeaf-44d6-983d-255a648e3547",
+                        "Class": "PrimalItemResource_Polymer_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2d35e495-3b9d-42d0-b402-15ae1c02dbe0",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "bf9486a2-b8b0-456c-93b5-2d8b36ead442",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Obsidian.PrimalItemResource_Obsidian",
+                        "UUID": "3cf3c4eb-40e1-4736-94b9-ce3fb9c9df69",
+                        "Class": "PrimalItemResource_Obsidian_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "0ced80c1-1fbb-40cd-9814-0b90ef29717c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1514,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "bc77a574-63da-44d8-a77e-39cf0f987e6b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Sand.PrimalItemResource_Sand",
+                        "UUID": "46835598-5b57-4073-b925-8627955d9378",
+                        "Class": "PrimalItemResource_Sand_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "32682eb6-749e-4d2c-9e60-4a5b30e166a1",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "4902be54-1aa3-4937-a511-9ee77c0bc057",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_ChitinPaste.PrimalItemResource_ChitinPaste",
+                        "UUID": "d5b40c2e-9d88-40d8-89ad-0ff5c437ca57",
+                        "Class": "PrimalItemResource_ChitinPaste_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "b00dcd9a-a334-4241-b211-9a3542ebe46d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1501,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a5462f32-82fb-4067-99ad-1dc633cb2ab4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Silicon.PrimalItemResource_Silicon",
+                        "UUID": "6d73b706-67d2-4032-b604-05170cde80bc",
+                        "Class": "PrimalItemResource_Silicon_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "94da1f8a-654f-4095-8d74-305f86ebf49b",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "6f45b668-4640-42d7-9408-29eb24b502a6",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Metal.PrimalItemResource_Metal",
+                        "UUID": "5f5acd45-483d-4ac2-88fd-329dd155eb43",
+                        "Class": "PrimalItemResource_Metal_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9f151584-ff02-413b-9110-f59bd3294fe1",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1485,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "31ab451d-44b5-4b3b-932e-cc8cedfa318a",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_AmmoniteBlood.PrimalItemResource_AmmoniteBlood",
+                        "UUID": "63ae542b-2130-4dc5-8410-df6189a3ffea",
+                        "Class": "PrimalItemResource_AmmoniteBlood_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 50,
+            "MinQuality": "Tier1",
+            "MinQuantity": 50,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "eefa4424-b800-4dd8-b71e-894603a761b8",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "b0723fff-51e5-435f-b289-49bfb6e62d64",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Electronics.PrimalItemResource_Electronics",
+                        "UUID": "152c6c09-99e8-4ffe-8f9e-a69f9bad68bc",
+                        "Class": "PrimalItemResource_Electronics_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9759c835-8bc3-48eb-8214-beb796fcd9cc",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "78764bb8-2f88-4adf-9909-7eb8d5d6effd",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Fibers.PrimalItemResource_Fibers",
+                        "UUID": "244bc843-2540-486e-af4a-8824500c0e56",
+                        "Class": "PrimalItemResource_Fibers_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5d20a599-adbe-451c-9484-316adc780d10",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 32,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "066fe188-e2fb-4565-8866-585451947443",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_CondensedGas.PrimalItemResource_CondensedGas",
+                        "UUID": "c66163e9-687b-47d1-85ab-32e92986ca86",
+                        "Class": "PrimalItemResource_CondensedGas_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "159710e5-384b-425e-97e1-f1cb3972f297",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 32,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "80929d53-b80d-4b7c-87ba-5585e86bd587",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_RareDrop_CorruptHeart.PrimalItemResource_RareDrop_CorruptHeart",
+                        "UUID": "b165def2-8085-41b1-89c0-a6f6d0881b40",
+                        "Class": "PrimalItemResource_RareDrop_CorruptHeart_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "1bda47b7-c38f-47a9-9f1d-420f9e25fa45",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1501,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a060b91a-e416-4e16-97fe-7b686a7dcc0e",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_AnglerGel.PrimalItemResource_AnglerGel",
+                        "UUID": "4f32fd2f-37d2-4e5b-baa6-051ae0258727",
+                        "Class": "PrimalItemResource_AnglerGel_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "99185c7c-dbb9-4fca-b3c7-770c24e01df1",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f33304db-2a15-4578-b38f-45b60a74630e",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_ScrapMetal.PrimalItemResource_ScrapMetal",
+                        "UUID": "42d26114-6514-46a0-9f1e-56862941ddb8",
+                        "Class": "PrimalItemResource_ScrapMetal_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2a6eb2c3-64f2-4277-9881-e773fd625ed7",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "01e3a1f9-1194-46fc-a8ec-38d060b2e893",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Charcoal.PrimalItemResource_Charcoal",
+                        "UUID": "5a009897-a4cc-4a47-bcd0-1d5cdea3afba",
+                        "Class": "PrimalItemResource_Charcoal_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "66d939cb-4dc4-41e0-b21a-cc8e6a3be55f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 160,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "501fe657-cb4b-43c0-8c12-5a93e8540aad",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_ApexDrop_GasBag.PrimalItemResource_ApexDrop_GasBag",
+                        "UUID": "ec8023ed-b9ec-491b-a252-b3df148ce0d9",
+                        "Class": "PrimalItemResource_ApexDrop_GasBag_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "1e3fb08e-c1e2-454c-8395-22faab62fbe0",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1485,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "c5b6f0ba-474c-49e9-9023-06e68cbfd710",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_LeechBlood.PrimalItemResource_LeechBlood",
+                        "UUID": "2502b20c-d8c6-4e73-bd6f-9b9b9261721f",
+                        "Class": "PrimalItemResource_LeechBlood_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 50,
+            "MinQuality": "Tier1",
+            "MinQuantity": 50,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "34f47dcc-e0e0-47f7-b089-a8256d7372f7",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "4105d4c6-fff5-46cf-a6ba-42d258f1ac75",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_PreservingSalt.PrimalItemResource_PreservingSalt",
+                        "UUID": "6398ce74-6ada-4b48-ae1f-56a6b80cb957",
+                        "Class": "PrimalItemResource_PreservingSalt_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 6,
+            "MinQuality": "Tier1",
+            "MinQuantity": 6,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "20a8cc91-90b7-4f98-a0d7-1c82512ca960",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "476a6426-2f8d-4813-97c7-0ab86d2a7783",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Thatch.PrimalItemResource_Thatch",
+                        "UUID": "cb3556a2-be31-4fc5-96ff-d3787a99acd3",
+                        "Class": "PrimalItemResource_Thatch_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "4b22db56-1cd9-4c14-8a7b-450290556454",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1514,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "c3ba5a71-0fe1-479a-b73d-e3d0be5c402d",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Silk.PrimalItemResource_Silk",
+                        "UUID": "e29eb757-bae0-413a-a85c-ff576b0110fe",
+                        "Class": "PrimalItemResource_Silk_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9489a3a1-2a94-4d60-8569-29c9ed97d4e6",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 128,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 0.25,
+            "Items": [
+                {
+                    "UUID": "b7dab49b-e235-4189-a608-40129d41f010",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Genesis/CoreBlueprints/Resources/PrimalItemResource_TurtleShell.PrimalItemResource_TurtleShell",
+                        "UUID": "a663da5a-7312-4404-845c-5e00488f2d6e",
+                        "Class": "PrimalItemResource_TurtleShell_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "abbc2e33-f7c9-4b31-b906-bfdc8adc3685",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 250.0,
+            "UUID": "3de75a5f-d62d-4910-a637-e6750abb1dca",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a2ffcdbe-b2d3-4475-b5bf-3eb1d4ec72cd",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_ScrapMetalIngot.PrimalItemResource_ScrapMetalIngot",
+                        "UUID": "ef00249e-adfe-4a87-a4ad-2af3482d81b4",
+                        "Class": "PrimalItemResource_ScrapMetalIngot_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9434425f-a356-44e8-b9a1-17c1b64b9c21",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "3dbceec0-9912-407b-bb29-79acce086317",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_RareFlower.PrimalItemResource_RareFlower",
+                        "UUID": "5c95b7ac-6a94-4144-b376-2bbb3289f46b",
+                        "Class": "PrimalItemResource_RareFlower_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "782a5f34-e819-4aeb-8c8d-adbf4043a7b9",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 496,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "23c7ea4d-7eb5-4608-b9df-4b785499beff",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_FungalWood.PrimalItemResource_FungalWood",
+                        "UUID": "1feeb85e-8e15-41ab-9aa6-32cc3bd0a723",
+                        "Class": "PrimalItemResource_FungalWood_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5c3e1ec1-6e9c-41d5-8ce4-6074d5bd2d95",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1517,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "d5bf7a31-7524-438f-9ebe-edaa60991da7",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Horn.PrimalItemResource_Horn",
+                        "UUID": "918bfcc8-6150-4bfe-8358-bfe975dfb279",
+                        "Class": "PrimalItemResource_Horn_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 20,
+            "MinQuality": "Tier1",
+            "MinQuantity": 20,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "90b10427-bd6d-4a07-96ca-6573e7e28858",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1514,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "7c0a1d61-6723-4be0-a3d5-def9baae21b7",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_RawSalt.PrimalItemResource_RawSalt",
+                        "UUID": "1c4c8491-5c6e-457d-b3e3-947552a8b274",
+                        "Class": "PrimalItemResource_RawSalt_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "00100fae-aa0c-4dbf-9c19-c9c1055ff098",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1034,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "9340f664-7690-43a8-a6cd-3de616412b22",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Dinos/Deathworm/PrimalItemResource_KeratinSpike.PrimalItemResource_KeratinSpike",
+                        "UUID": "2a77316a-c11a-4be9-bbc7-306a4b01e651",
+                        "Class": "PrimalItemResource_KeratinSpike_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 20,
+            "MinQuality": "Tier1",
+            "MinQuantity": 20,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "b04577aa-ebe5-4bb0-9c83-cfd66f977f5b",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "d8ad8aec-2525-442c-9cf8-8cc8c6c55bb1",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Wood.PrimalItemResource_Wood",
+                        "UUID": "ba0f31c2-bf95-4b1c-87d8-bc04a7a7a5c2",
+                        "Class": "PrimalItemResource_Wood_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "3c78afd2-bf71-4a97-9ee5-01b9db4f13e3",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 496,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "7696045a-f063-448a-ad64-b0321f0d0339",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gas.PrimalItemResource_Gas",
+                        "UUID": "aeba80a7-e4d4-42d0-80d9-5f6f794056fe",
+                        "Class": "PrimalItemResource_Gas_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a29c2978-f7c1-4cf7-9e50-f4106ad84d2b",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 464,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "9b1bebda-81eb-4db9-b286-9f60dd59d270",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Auric.PrimalItemConsumable_Mushroom_Auric",
+                        "UUID": "381d3e8a-6172-4bde-98c2-39a3e7ab9f5e",
+                        "Class": "PrimalItemConsumable_Mushroom_Auric_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "41715aaa-5dae-43b3-9e68-1a4187d60a6d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 512,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 0.2000000000000000111,
+            "Items": [
+                {
+                    "UUID": "8981e690-6e90-470a-a478-e175ad4f320c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Genesis2/CoreBlueprints/Environment/Mutagen/PrimalItemConsumable_Mutagel.PrimalItemConsumable_Mutagel",
+                        "UUID": "e236c4fe-1674-4e49-bc2b-0e1048aa33ee",
+                        "Class": "PrimalItemConsumable_Mutagel_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 200.0,
+            "UUID": "d8810658-2518-4581-8a8a-380d980c7182",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 32,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "b749b281-d520-4621-8ee5-8b25a8fdab04",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_CorruptedWood.PrimalItemResource_CorruptedWood",
+                        "UUID": "3b5f2ff4-7dde-4bee-9c2a-68d55d1826e8",
+                        "Class": "PrimalItemResource_CorruptedWood_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "933a8ee5-d4f8-464a-8623-260a32c80923",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f52bdc20-c955-4e44-9367-fbe12905ae3b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sap.PrimalItemResource_Sap",
+                        "UUID": "95871cc8-f0ba-4a62-93b5-6d815cb303c6",
+                        "Class": "PrimalItemResource_Sap_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 20,
+            "MinQuality": "Tier1",
+            "MinQuantity": 20,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f463c865-d434-4d44-91a8-07e8f75cff19",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f5cfa21f-b605-43e3-8052-b22ec6f67dd3",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Fertilizer_Compost.PrimalItemConsumable_Fertilizer_Compost",
+                        "UUID": "a6d9622e-2677-48ef-bbd1-f10c069cd088",
+                        "Class": "PrimalItemConsumable_Fertilizer_Compost_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 10,
+            "MinQuality": "Tier1",
+            "MinQuantity": 5,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "ef089471-087c-4e16-98f3-c38a414d900a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "dcecdb26-b846-4788-bdf0-62fd1286bc97",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Gasoline.PrimalItemResource_Gasoline",
+                        "UUID": "1c89e32f-1040-44e3-8937-ac425eca9033",
+                        "Class": "PrimalItemResource_Gasoline_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "c58c4223-856e-42d4-ad2a-6996886a62fa",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1514,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "ddddf5a8-903a-4537-9821-82998326ceba",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Sulfur.PrimalItemResource_Sulfur",
+                        "UUID": "33c7adcf-ce80-49b4-8237-17533e153c67",
+                        "Class": "PrimalItemResource_Sulfur_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5eff16a4-5191-4922-8e3b-10c0a0b3a3a8",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 464,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "23737d72-74ba-4644-95f3-6377795144a7",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_Element.PrimalItemResource_Gem_Element",
+                        "UUID": "684d6580-6960-4c05-9a09-cfc29dc83c87",
+                        "Class": "PrimalItemResource_Gem_Element_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "61e1d2b8-71ce-4a78-b160-83f10335c88c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 464,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "cde1dab0-9fb4-471f-a2c4-8d887ef6d969",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Aquatic.PrimalItemConsumable_Mushroom_Aquatic",
+                        "UUID": "cb15422f-913b-403a-a276-9c1af9a7903b",
+                        "Class": "PrimalItemConsumable_Mushroom_Aquatic_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "3588d22b-0103-438c-94e7-4d7c30f738e9",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1418,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "6e06e919-931f-4bc0-88aa-d5928949b4a4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Oil.PrimalItemResource_Oil",
+                        "UUID": "4fe42472-0d66-4700-a2fb-5dd00e71114b",
+                        "Class": "PrimalItemResource_Oil_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2d507599-8af9-4efa-a197-be0d71f4bf53",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 464,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "471747ef-1cb7-4c6f-9d9e-c81c55028d8f",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_Fertile.PrimalItemResource_Gem_Fertile",
+                        "UUID": "342ea6f2-340d-4cf8-b23e-e8ca5855e8dc",
+                        "Class": "PrimalItemResource_Gem_Fertile_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "0bd367b2-1aab-4dcc-9b53-eaf8b8734a10",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "daf6bdc9-ca44-4fc8-9a51-f6ff2b0da88b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_SubstrateAbsorbent.PrimalItemResource_SubstrateAbsorbent",
+                        "UUID": "9e4a71bf-ea25-48a4-a5e8-1d86abb30c46",
+                        "Class": "PrimalItemResource_SubstrateAbsorbent_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a33b6708-33da-44db-b312-cec947a5c551",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5dfdca04-2f72-421f-861c-1958016c3509",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_BloodPack.PrimalItemConsumable_BloodPack",
+                        "UUID": "e5024b0d-1012-498e-9435-7296ccf2b9c1",
+                        "Class": "PrimalItemConsumable_BloodPack_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "d4e9e63b-516f-4675-8481-bd51b3177d16",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "b26031ee-3b1a-40ee-a8d8-b2b54f0d5219",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_ElementDust.PrimalItemResource_ElementDust",
+                        "UUID": "805fb1af-dd4f-4ad5-accd-69b802b65df1",
+                        "Class": "PrimalItemResource_ElementDust_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1000,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1000,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "62410145-0911-47aa-8e99-fe416396abfd",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "9ce347b6-9217-4336-9398-ae8eb6c29a53",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_MetalIngot.PrimalItemResource_MetalIngot",
+                        "UUID": "a6bda539-02d3-4dc9-b651-f61776f5845d",
+                        "Class": "PrimalItemResource_MetalIngot_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "7e6e5c68-4082-498e-92d4-ef2ce40ffec6",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1503,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "72275a97-5feb-440d-8644-b187a3258288",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_BlackPearl.PrimalItemResource_BlackPearl",
+                        "UUID": "55a49e42-7341-4acd-a7fb-dc06ed24be91",
+                        "Class": "PrimalItemResource_BlackPearl_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "0d0c2509-a318-46e0-843e-419486821355",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 32,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "e1893148-6f93-4a58-ad4a-3ed2d6fbd665",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_FracturedGem.PrimalItemResource_FracturedGem",
+                        "UUID": "7c35fd67-55cf-43af-aeeb-7aaffd796ccf",
+                        "Class": "PrimalItemResource_FracturedGem_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "03156a5c-73a8-4691-82f2-01a923341560",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "421f3994-60c7-40fa-b3d1-3439df8c0829",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Stimulant.PrimalItemConsumable_Stimulant",
+                        "UUID": "84df5582-6023-4ad2-a234-1684d81bb159",
+                        "Class": "PrimalItemConsumable_Stimulant_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "468add3c-f6aa-4c53-8f65-ea88192c0a7d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1501,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "bba6d10d-a1fe-4431-8d8a-9195d67d83f4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_JellyVenom.PrimalItemConsumable_JellyVenom",
+                        "UUID": "7f2411e5-4bd9-49e8-befb-7d6161e09814",
+                        "Class": "PrimalItemConsumable_JellyVenom_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "280b4fd7-2307-4606-877f-3591f7f0c4df",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "cccabf5c-b351-4d97-96e5-37e1353fdd04",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Keratin.PrimalItemResource_Keratin",
+                        "UUID": "c394cb0c-92c9-4ead-92bb-15a1af97233a",
+                        "Class": "PrimalItemResource_Keratin_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "8a2b211e-4987-4c07-8861-9e88418c221f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "74cc05be-3946-466d-8057-51a5585b45ac",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Gunpowder.PrimalItemResource_Gunpowder",
+                        "UUID": "3669ed66-6e2b-454b-8d86-6e82747a11ce",
+                        "Class": "PrimalItemResource_Gunpowder_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "7cbb1466-ad49-40cd-b177-83b6692fb5b7",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "87e05015-0708-4540-8cea-684e4d000f54",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_RareMushroom.PrimalItemResource_RareMushroom",
+                        "UUID": "f1e7fe5c-07fb-4933-9bf9-225a598fbe0e",
+                        "Class": "PrimalItemResource_RareMushroom_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "c1a55bc3-3639-498b-a15d-2c26b73b1cc3",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "40a9393e-22fc-44a1-9741-6482823fb508",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Hide.PrimalItemResource_Hide",
+                        "UUID": "2cc238d3-cfbd-4572-bf65-2419874d4a0f",
+                        "Class": "PrimalItemResource_Hide_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "fb7bdc15-00c2-4bb0-b911-6503fdaa5964",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f22021b1-5625-4194-9b36-38f8c51a886d",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Crystal.PrimalItemResource_Crystal",
+                        "UUID": "164c77ad-4895-4d3c-8915-fa4eabc78473",
+                        "Class": "PrimalItemResource_Crystal_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "b764931c-53db-4ccb-b3ba-46993191431a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "6313ae06-e8ba-4f70-8fa8-0f4db0e26183",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Stone.PrimalItemResource_Stone",
+                        "UUID": "400b6808-4303-43fd-add9-fcf6e9b4a5fa",
+                        "Class": "PrimalItemResource_Stone_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "7eb81678-943b-4504-8146-0004d7a6def4",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 464,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "91569497-1bcc-4ab5-99a4-a1f195cce123",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Ascerbic.PrimalItemConsumable_Mushroom_Ascerbic",
+                        "UUID": "1e1e346f-710b-49ca-9d92-394012b3393d",
+                        "Class": "PrimalItemConsumable_Mushroom_Ascerbic_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "36322081-8715-4fa9-8e83-0b699a41c8a7",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 32,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "44de87d0-1edc-4376-a950-c11aca338427",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_RedSap.PrimalItemResource_RedSap",
+                        "UUID": "892f3d6d-e308-41fe-84ba-16951328c6f5",
+                        "Class": "PrimalItemResource_RedSap_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "47e26b65-cded-4fbf-b535-fe697aef616f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 32,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "dd0dab2e-0dec-44cc-8233-d119864aa1ac",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_CorruptedPolymer.PrimalItemResource_CorruptedPolymer",
+                        "UUID": "adca5e22-87bf-435a-9329-59e3dc30cc0c",
+                        "Class": "PrimalItemResource_CorruptedPolymer_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 10,
+            "MinQuality": "Tier1",
+            "MinQuantity": 10,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a4fb2beb-8a9c-4e56-b645-984fde9d5b44",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "40a5091d-1fa2-4b15-aac4-cb8b4d31e897",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableMiracleGro.PrimalItemConsumableMiracleGro",
+                        "UUID": "11d33abc-955f-4b8d-9e13-da61521f83ed",
+                        "Class": "PrimalItemConsumableMiracleGro_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "946161ff-06ab-4af7-9082-e9386b064685",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "c44cb196-8f90-40ff-8ddd-a794ae8cdc49",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Clay.PrimalItemResource_Clay",
+                        "UUID": "5bd1ecc7-9678-4412-998d-0bd9aa4c61ae",
+                        "Class": "PrimalItemResource_Clay_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "0ecb736c-89d9-472a-acc5-359ff70390a8",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 1514,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "489af16d-5e5d-4e6e-aded-dad580e1ca50",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/CoreBlueprints/Consumables/PrimalItemConsumable_CactusSap.PrimalItemConsumable_CactusSap",
+                        "UUID": "de44be88-b690-4c74-8c7f-b732dc8a3f74",
+                        "Class": "PrimalItemConsumable_CactusSap_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "0e71ab06-0e9f-4254-996f-2c9269fa6858",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "51dc9f38-a7ff-43df-a97b-f908c551b8dc",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sparkpowder.PrimalItemResource_Sparkpowder",
+                        "UUID": "87c52dfd-f7c5-4868-baae-62b1597ff65d",
+                        "Class": "PrimalItemResource_Sparkpowder_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 100,
+            "MinQuality": "Tier1",
+            "MinQuantity": 100,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "1991a469-ae91-48e6-b9d8-17cdf9d9efee",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3920,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "958102ec-8c92-433c-970e-ddf8c9f0cc31",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/WeaponGlowStickCharge/PrimalItem_ChargeBattery.PrimalItem_ChargeBattery",
+                        "UUID": "314097be-2b04-4e75-b85f-5b85d8809bd6",
+                        "Class": "PrimalItem_ChargeBattery_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier10",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9c0d6a4e-8f3d-480b-9e4f-609815f7fd33",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "bc91dd97-68a5-4b15-a1d9-fa0c2b90d96f",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Pelt.PrimalItemResource_Pelt",
+                        "UUID": "fac20414-2566-4376-b38b-43d4e9f5362a",
+                        "Class": "PrimalItemResource_Pelt_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 200,
+            "MinQuality": "Tier1",
+            "MinQuantity": 200,
+            "RespectBlueprintMultiplier": true,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "683511d6-c6fb-4755-9f1c-bde7605cce16",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "Quantity": 3.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        }
+    }
+}

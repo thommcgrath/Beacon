@@ -1,0 +1,1169 @@
+{
+    "ID": "6b86cfd0-6794-4da2-bc59-222b11ce0bcd",
+    "Game": "Ark",
+    "Label": "Adobe Housing",
+    "Kind": "LootTemplate",
+    "Version": 3,
+    "MinVersion": 3,
+    "Grouping": "Housing",
+    "Min": 2,
+    "Max": 6,
+    "ItemSets": [
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "2bb01884-3774-4cfb-beb7-8df7bf9f9c07",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor_Large.PrimalItemStructure_AdobeGateDoor_Large",
+                        "UUID": "bbf7c70d-9c52-431e-894b-57199135600c",
+                        "Class": "PrimalItemStructure_AdobeGateDoor_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "b6310d2a-955e-4386-a397-b5fa215ea0cb",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "56a7d2c6-939e-4382-a601-c0c8349dc03c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFloor.PrimalItemStructure_AdobeFloor",
+                        "UUID": "6190df29-716d-4623-8d9c-e1b9cbbb7041",
+                        "Class": "PrimalItemStructure_AdobeFloor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "822b54bd-435a-43d6-a6fd-0b32d34ce06c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "3f0422dc-b006-42c2-a1f7-c42371c821ed",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Left.PrimalItemStructure_AdobeWall_Sloped_Left",
+                        "UUID": "30f91f23-f521-4717-9725-b4f0c0c362aa",
+                        "Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "ae17c19d-d260-4223-a94b-892cce078a23",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "4a228121-9009-4600-adb4-b08c3bce2821",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRailing.PrimalItemStructure_AdobeRailing",
+                        "UUID": "7098f99d-7247-4437-81bf-981496ce8848",
+                        "Class": "PrimalItemStructure_AdobeRailing_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 20,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "efe099b2-9c49-4440-af70-7480013c5074",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f2164b8c-afe3-459f-9045-a1dd86e23927",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRoof.PrimalItemStructure_AdobeRoof",
+                        "UUID": "01fd42d8-2847-4234-8de0-e6c1dc4d0e4d",
+                        "Class": "PrimalItemStructure_AdobeRoof_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "7444d387-bbe3-44ec-a93f-c6be8dd37115",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f747b507-07d1-4329-b3e5-993786c02eaa",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithWindow.PrimalItemStructure_AdobeWallWithWindow",
+                        "UUID": "d2ff5bc5-c84b-4065-99a1-a6bd490d5478",
+                        "Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "e6976d10-3d97-4e0c-8db4-2b58c34e1597",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "d2f8633b-9196-4d8d-a881-029da8003748",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithTrapdoor.PrimalItemStructure_AdobeCeilingWithTrapdoor",
+                        "UUID": "3d95abe5-04bd-4a4c-8566-19ce190c25df",
+                        "Class": "PrimalItemStructure_AdobeCeilingWithTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2157b5a6-17bc-4bc8-8532-629ccd0434db",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "9603d8ab-30ff-49ae-b68b-24568618b87e",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Right.PrimalItemStructure_AdobeWall_Sloped_Right",
+                        "UUID": "0f24d807-59e7-4b8c-b7eb-0df63f66215e",
+                        "Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "0da304c8-d60a-493f-92ad-f45963dcd9dc",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "28699e6c-b3e7-4a36-afef-b3a13143079c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithDoorWay_Giant.PrimalItemStructure_AdobeCeilingWithDoorWay_Giant",
+                        "UUID": "c5b5114e-ef36-408e-8c80-8d59c2b18ad6",
+                        "Class": "PrimalItemStructure_AdobeCeilingWithDoorWay_Giant_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9ae83464-c3d5-4fc7-9cf0-a9351ada70cb",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "ec78c6b8-d9a5-4bff-9e9d-30a79c5a1a35",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall.PrimalItemStructure_AdobeWall",
+                        "UUID": "9d5ebcac-a6df-43cf-9e0f-7104f8671b4c",
+                        "Class": "PrimalItemStructure_AdobeWall_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 32,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "947a6e4c-047f-4765-a958-edc783dab315",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "ff87e2ad-c2a3-486f-bee4-6bfc62d956ff",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeLader.PrimalItemStructure_AdobeLader",
+                        "UUID": "01f2168c-e493-4326-b292-a38c6b2c5323",
+                        "Class": "PrimalItemStructure_AdobeLader_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 6,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2f57cd99-2e45-4949-9df4-48e3d0ce6651",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "b602394a-e518-4476-9e92-6eb7a4de9fad",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateframe_Large.PrimalItemStructure_AdobeGateframe_Large",
+                        "UUID": "e3d4782c-747f-4733-bd0e-121cb7a6b478",
+                        "Class": "PrimalItemStructure_AdobeGateframe_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "0bc40807-794a-4d26-b0c2-354a09e55bda",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a38c4fd2-a5e4-4803-9069-4bcd432a8259",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeTrapdoor.PrimalItemStructure_AdobeTrapdoor",
+                        "UUID": "f47bc7c7-6c9e-476b-9684-b6b6858bf617",
+                        "Class": "PrimalItemStructure_AdobeTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "6ff4c167-8811-43d5-812f-f724338113b1",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "28afe810-520e-4843-ad46-dba5df7a47f5",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFrameGate.PrimalItemStructure_AdobeFrameGate",
+                        "UUID": "b461fce9-666c-4801-b13f-6155dc603b60",
+                        "Class": "PrimalItemStructure_AdobeFrameGate_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "c3d9ff59-ce4c-458a-8ece-61d08a04e69a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "54f71ab7-7db7-4196-8b1b-a4db8e472f97",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeDoor.PrimalItemStructure_AdobeDoor",
+                        "UUID": "f355f9b4-06f3-4aa6-8aa1-a55635adacfc",
+                        "Class": "PrimalItemStructure_AdobeDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "715e3d8b-a238-4565-889d-2bf13ab52c34",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "59e7a452-c883-48c0-a0ee-538463b0d491",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeStaircase.PrimalItemStructure_AdobeStaircase",
+                        "UUID": "f2a621c3-d05a-4eab-b938-da806ad3cd2f",
+                        "Class": "PrimalItemStructure_AdobeStaircase_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "8d3a24e4-a089-4f07-ae20-dd052bbdf414",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "8b9c539f-758c-4756-8674-23f4cde41b58",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithDoor.PrimalItemStructure_AdobeWallWithDoor",
+                        "UUID": "069e3f2f-4874-4b28-ada7-19328e5d4fc5",
+                        "Class": "PrimalItemStructure_AdobeWallWithDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 2,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "df3b177a-2053-41c7-99e2-cc88a30d6b27",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "10dc4bb3-6d40-4ba6-91b4-f4e783b35591",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobePillar.PrimalItemStructure_AdobePillar",
+                        "UUID": "bf6fe1e9-4f4c-4646-8c9d-1f2823500059",
+                        "Class": "PrimalItemStructure_AdobePillar_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "3c3ef6d4-5aa2-4a12-bed5-e605fba40b57",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5e18b7ce-378c-4faf-b014-6eae259af63f",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWindow.PrimalItemStructure_AdobeWindow",
+                        "UUID": "3eff5487-e40a-40ec-8e75-18407ff771c4",
+                        "Class": "PrimalItemStructure_AdobeWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f2895367-9973-467b-b4b8-711c6083a0ec",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "946f773c-2b35-435f-b0d6-ad6a076b6406",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "069e3f2f-4874-4b28-ada7-19328e5d4fc5",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithDoor.PrimalItemStructure_AdobeWallWithDoor",
+                        "Class": "PrimalItemStructure_AdobeWallWithDoor_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a76464b4-d519-4668-ae1a-2c51802cf4ac",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d056b3d7-6314-4de7-a472-5d6b34c04a8f",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor.PrimalItemStructure_AdobeGateDoor",
+                        "Class": "PrimalItemStructure_AdobeGateDoor_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "3ba8bc14-d336-48bc-a265-8a5fb8c094ce",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "9d5ebcac-a6df-43cf-9e0f-7104f8671b4c",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall.PrimalItemStructure_AdobeWall",
+                        "Class": "PrimalItemStructure_AdobeWall_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "ff76b479-394e-457d-9293-1068b78cca7e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f355f9b4-06f3-4aa6-8aa1-a55635adacfc",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeDoor.PrimalItemStructure_AdobeDoor",
+                        "Class": "PrimalItemStructure_AdobeDoor_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "348b39b3-ee12-45ad-b724-6f30255422c5",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "01fd42d8-2847-4234-8de0-e6c1dc4d0e4d",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRoof.PrimalItemStructure_AdobeRoof",
+                        "Class": "PrimalItemStructure_AdobeRoof_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c44bf1ad-4167-4d1a-bddd-11189d88ed71",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "30f91f23-f521-4717-9725-b4f0c0c362aa",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Left.PrimalItemStructure_AdobeWall_Sloped_Left",
+                        "Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "03506279-c3d8-4703-9d52-ca1194c765b0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "75a499af-e493-497b-9917-5d8e7c781cca",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingDoorGiant.PrimalItemStructure_AdobeCeilingDoorGiant",
+                        "Class": "PrimalItemStructure_AdobeCeilingDoorGiant_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fe004969-935e-4ae5-947f-35fe99806bdd",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "2c62e851-dd28-424f-9447-f8dbde3f274b",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeiling.PrimalItemStructure_AdobeCeiling",
+                        "Class": "PrimalItemStructure_AdobeCeiling_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "991ee2c2-29e3-4489-9102-e2b96ebd932e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "bf6fe1e9-4f4c-4646-8c9d-1f2823500059",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobePillar.PrimalItemStructure_AdobePillar",
+                        "Class": "PrimalItemStructure_AdobePillar_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c1f384e9-9868-48b2-bd33-ab158c0ab03e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c5b5114e-ef36-408e-8c80-8d59c2b18ad6",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithDoorWay_Giant.PrimalItemStructure_AdobeCeilingWithDoorWay_Giant",
+                        "Class": "PrimalItemStructure_AdobeCeilingWithDoorWay_Giant_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6a41877b-43c0-4e02-95ee-3546a5c956f1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b461fce9-666c-4801-b13f-6155dc603b60",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFrameGate.PrimalItemStructure_AdobeFrameGate",
+                        "Class": "PrimalItemStructure_AdobeFrameGate_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "21c88597-1bdd-43f8-9c1d-bda862ab5aa7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "7098f99d-7247-4437-81bf-981496ce8848",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRailing.PrimalItemStructure_AdobeRailing",
+                        "Class": "PrimalItemStructure_AdobeRailing_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "04552171-fc61-4fb5-8cea-b2ff3bcbbf5b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3d95abe5-04bd-4a4c-8566-19ce190c25df",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithTrapdoor.PrimalItemStructure_AdobeCeilingWithTrapdoor",
+                        "Class": "PrimalItemStructure_AdobeCeilingWithTrapdoor_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "822156be-61c6-4ec5-a044-e2a9a56b90c7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0f24d807-59e7-4b8c-b7eb-0df63f66215e",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Right.PrimalItemStructure_AdobeWall_Sloped_Right",
+                        "Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "bb29f014-4770-4968-ab34-788113cc412d",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3eff5487-e40a-40ec-8e75-18407ff771c4",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWindow.PrimalItemStructure_AdobeWindow",
+                        "Class": "PrimalItemStructure_AdobeWindow_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "5955ed16-07d0-4b14-a2d8-cfb77f896d50",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "6190df29-716d-4623-8d9c-e1b9cbbb7041",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFloor.PrimalItemStructure_AdobeFloor",
+                        "Class": "PrimalItemStructure_AdobeFloor_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c7860a09-0273-4d7f-8c34-1b29f897bc46",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f2a621c3-d05a-4eab-b938-da806ad3cd2f",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeStaircase.PrimalItemStructure_AdobeStaircase",
+                        "Class": "PrimalItemStructure_AdobeStaircase_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a96254af-228d-4847-9d13-e1d07a14b47f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "01f2168c-e493-4326-b292-a38c6b2c5323",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeLader.PrimalItemStructure_AdobeLader",
+                        "Class": "PrimalItemStructure_AdobeLader_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8624ab75-d92c-44df-940b-287199e0faa3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f47bc7c7-6c9e-476b-9684-b6b6858bf617",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeTrapdoor.PrimalItemStructure_AdobeTrapdoor",
+                        "Class": "PrimalItemStructure_AdobeTrapdoor_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "45cc5d71-243c-4832-8fba-16efeda22c99",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f3503733-b0ba-4f88-befd-c17b24982170",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFenceFoundation.PrimalItemStructure_AdobeFenceFoundation",
+                        "Class": "PrimalItemStructure_AdobeFenceFoundation_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "edc1fb64-6e58-424c-8469-6fbb78f037ee",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "bbf7c70d-9c52-431e-894b-57199135600c",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor_Large.PrimalItemStructure_AdobeGateDoor_Large",
+                        "Class": "PrimalItemStructure_AdobeGateDoor_Large_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fe864fca-11ba-43ea-a446-4031d110363b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d2ff5bc5-c84b-4065-99a1-a6bd490d5478",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithWindow.PrimalItemStructure_AdobeWallWithWindow",
+                        "Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "60917542-6f71-4fae-877a-dd0c56ed7bce",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "e3d4782c-747f-4733-bd0e-121cb7a6b478",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateframe_Large.PrimalItemStructure_AdobeGateframe_Large",
+                        "Class": "PrimalItemStructure_AdobeGateframe_Large_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d0b90c8b-7c64-46ae-ad2a-12ad520670e8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "20cb64ab-bf6e-404d-b9ee-00c9cc1d3398",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRamp.PrimalItemStructure_AdobeRamp",
+                        "Class": "PrimalItemStructure_AdobeRamp_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "991be350-fe15-4fac-be74-9d3e9c51e8c5",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "54f13bd2-7c15-4af7-b3cb-8b77cd6313e2",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRamp.PrimalItemStructure_AdobeRamp",
+                        "UUID": "20cb64ab-bf6e-404d-b9ee-00c9cc1d3398",
+                        "Class": "PrimalItemStructure_AdobeRamp_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "4cd1b632-d37d-4a56-b074-33cb7250057c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "c6e0a0e5-3208-41be-8faf-159b32166414",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingDoorGiant.PrimalItemStructure_AdobeCeilingDoorGiant",
+                        "UUID": "75a499af-e493-497b-9917-5d8e7c781cca",
+                        "Class": "PrimalItemStructure_AdobeCeilingDoorGiant_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "32c30e6c-2932-45f4-8e39-7eee2f117c29",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "60a2384f-7739-4d85-912d-cb727c53c4ab",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeiling.PrimalItemStructure_AdobeCeiling",
+                        "UUID": "2c62e851-dd28-424f-9447-f8dbde3f274b",
+                        "Class": "PrimalItemStructure_AdobeCeiling_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "d755e9ed-148b-4fe6-835b-be9254c36bad",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "2720c123-4cbc-42ba-83b0-ed611935d51f",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor.PrimalItemStructure_AdobeGateDoor",
+                        "UUID": "d056b3d7-6314-4de7-a472-5d6b34c04a8f",
+                        "Class": "PrimalItemStructure_AdobeGateDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "6fe91961-e83b-4cf3-88d0-a2c016cbd686",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "7e365e24-1f39-4f25-b1ab-88c174b6025c",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFenceFoundation.PrimalItemStructure_AdobeFenceFoundation",
+                        "UUID": "f3503733-b0ba-4f88-befd-c17b24982170",
+                        "Class": "PrimalItemStructure_AdobeFenceFoundation_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 16,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "f0b7c512-7da9-4a7e-8235-a090b6b4ba60",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "Quantity": 3.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "Quantity": 4.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 0,
+            "MinQuality": 0
+        }
+    }
+}

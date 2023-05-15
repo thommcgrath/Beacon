@@ -1,0 +1,2595 @@
+{
+    "ID": "7fb2b414-4caf-47b7-a15f-f24e258edf44",
+    "Game": "Ark",
+    "Label": "Basic Furniture",
+    "Kind": "LootTemplate",
+    "Version": 3,
+    "MinVersion": 3,
+    "Grouping": "Furniture",
+    "Min": 1,
+    "Max": 4,
+    "ItemSets": [
+        {
+            "Availability": 3712,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 0.25,
+            "Items": [
+                {
+                    "UUID": "f5140478-3f5e-446b-b819-ba6543f0032d",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Genesis2/Structures/AmmoBox/PrimalItemStructure_AmmoContainer.PrimalItemStructure_AmmoContainer",
+                        "UUID": "45f31152-8e8c-45e9-af27-c5f1e9122271",
+                        "Class": "PrimalItemStructure_AmmoContainer_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 250.0,
+            "UUID": "f98d4539-5acc-4592-a43f-2a202e9e7805",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3920,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "268b1f41-f37b-4217-a72d-69bcf3229384",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_FishBasket.PrimalItemStructure_FishBasket",
+                        "UUID": "e7e5dac1-101f-4c01-9263-e4a4e8555944",
+                        "Class": "PrimalItemStructure_FishBasket_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "50d0a943-7eec-4861-8e29-8ae71593b6dc",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "42a7f3f2-8954-4c14-9fbd-68e94a180002",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+                        "UUID": "1b5cdf48-79e1-436b-aec6-1b676f3f4bc5",
+                        "Class": "PrimalItemStructure_Bed_Simple_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "cd5ce365-0cbe-429d-85dc-f80230218c63",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "b868ac75-19f7-4570-95cf-f80dbdfb2313",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+                        "UUID": "b7f72734-3ac2-434a-a1a0-08974625e838",
+                        "Class": "PrimalItemStructure_StandingTorch_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 3,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "c8fca6b1-d748-4042-b6b8-6443d174e3b4",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "eebf68a6-341b-4664-9ae4-37e441147878",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+                        "UUID": "856f8a19-8719-426b-905c-4a0becf2eb8d",
+                        "Class": "PrimalItemStructure_CookingPot_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2b93f511-e358-42a8-8f5c-e2ea5c42d9cc",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "6e1a892c-a029-4b72-983d-97d8bfdefd9f",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+                        "UUID": "59ff7f0f-57c5-4f99-8d17-600ae5d7706f",
+                        "Class": "PrimalItemStructure_SleepingBag_Hide_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 3,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "243b1fc8-e417-4570-b617-c9c3b95a623f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "83541585-48b0-4291-a855-d626c30f7109",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_PreservingBin.PrimalItemStructure_PreservingBin",
+                        "UUID": "96d1b6c5-942a-4b6c-897c-b08ef11c4a65",
+                        "Class": "PrimalItemStructure_PreservingBin_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 3,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "6a1f140e-a902-48d5-8cc0-7ea1abc8f30d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "3c1c1092-51a5-4512-b57f-c9aa02988c77",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bookshelf.PrimalItemStructure_Bookshelf",
+                        "UUID": "24bc3c84-27aa-4bb0-ac1b-f0ecb5508c66",
+                        "Class": "PrimalItemStructure_Bookshelf_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "20623b38-ff02-4407-86d8-b2ba6de33772",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3712,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 0.25,
+            "Items": [
+                {
+                    "UUID": "05388064-ba91-43c8-8e90-c0738fead6c2",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Genesis2/Structures/LoadoutMannequin/PrimalItemStructure_LoadoutDummy.PrimalItemStructure_LoadoutDummy",
+                        "UUID": "418e03db-c4d2-4465-9424-09e9c1ab0ee4",
+                        "Class": "PrimalItemStructure_LoadoutDummy_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 250.0,
+            "UUID": "63991394-5308-4ad6-8af8-7bdc4f4119db",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "458d7326-5214-471f-b539-a54308ba36d4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+                        "UUID": "b59c76cd-dd67-48fd-861d-ec3ca6e91d6f",
+                        "Class": "PrimalItemStructure_CompostBin_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "d1671f89-eea4-4135-b060-41ed13969769",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a3deac73-6f42-4dc3-bc00-b31f723607b8",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AnvilBench.PrimalItemStructure_AnvilBench",
+                        "UUID": "3ef54100-142b-4dda-acfd-54fc626dceda",
+                        "Class": "PrimalItemStructure_AnvilBench_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "4933418c-945a-4e6a-840f-91a8a9722e4d",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3616,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "8cfa67f7-13a8-4d5d-82fa-f7f22d90e235",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Small.PrimalItemStructure_TaxidermyBase_Small",
+                        "UUID": "717d37bd-0e21-4778-82db-161e20a95cf6",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Small_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "8b86e71e-4876-4c57-88cf-7b8314fca752",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.93999999999999994671,
+            "Items": [
+                {
+                    "UUID": "05bffe98-bc44-44d9-b403-0658a1037c61",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "682981e7-8085-40f0-9edb-783ea69fba59",
+                        "Path": "/Game/Genesis2/Structures/AmmoBox/PrimalItemStructure_AmmoContainer.PrimalItemStructure_AmmoContainer",
+                        "Class": "PrimalItemStructure_AmmoContainer_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b02a3bb5-a25e-4ad3-9a72-e06a8282d5c2",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "65e2eead-d66c-4928-8706-10aaf3209a88",
+                        "Path": "/Game/ScorchedEarth/Structures/Tent/PrimalItemStructure_Tent.PrimalItemStructure_Tent",
+                        "Class": "PrimalItemStructure_Tent_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "82de80ed-1a57-4076-8576-c32014b77ac6",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "96d1b6c5-942a-4b6c-897c-b08ef11c4a65",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_PreservingBin.PrimalItemStructure_PreservingBin",
+                        "Class": "PrimalItemStructure_PreservingBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1689ed16-86f4-497b-98f8-abfcabe7817e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "856f8a19-8719-426b-905c-4a0becf2eb8d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+                        "Class": "PrimalItemStructure_CookingPot_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1cf8cd84-8bdd-4a89-9858-32ce293f7614",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "84ae3b01-d5d0-477b-b8ae-3505449ae119",
+                        "Path": "/Game/Extinction/Structures/DinoLeash/PrimalItemStructure_DinoLeash.PrimalItemStructure_DinoLeash",
+                        "Class": "PrimalItemStructure_DinoLeash_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0d76bf12-ebd1-4087-9279-6ac7734d516b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a02e62c8-c255-42b1-aeb3-e321a2d0004c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+                        "Class": "PrimalItemStructure_Forge_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4dd182a7-0e72-4aa2-a552-27514b376493",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2b44ba3-2497-4f8d-8a70-a1e9176c19d1",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+                        "Class": "PrimalItemStructure_MortarAndPestle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "e5e477c1-bda1-40bc-8f8e-b4fd9e4c85ea",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fafeda61-739b-4975-a207-c208f78e36f8",
+                        "Path": "/Game/ScorchedEarth/Structures/WaterWell/PrimalItemStructure_WaterWell.PrimalItemStructure_WaterWell",
+                        "Class": "PrimalItemStructure_WaterWell_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "97d35823-75ec-4472-9927-872b51cfa0ff",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "24bc3c84-27aa-4bb0-ac1b-f0ecb5508c66",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bookshelf.PrimalItemStructure_Bookshelf",
+                        "Class": "PrimalItemStructure_Bookshelf_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "784dbdec-7b1a-4a57-b145-8cba7c5b3b51",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1b5cdf48-79e1-436b-aec6-1b676f3f4bc5",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+                        "Class": "PrimalItemStructure_Bed_Simple_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "09d58687-ed9e-43d6-b13c-32849080141f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "986478fc-10aa-47b8-9743-a8d711b8bdcb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_FeedingTrough.PrimalItemStructure_FeedingTrough",
+                        "Class": "PrimalItemStructure_FeedingTrough_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "90596d86-3e25-4432-9873-746ac57df63c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b59c76cd-dd67-48fd-861d-ec3ca6e91d6f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+                        "Class": "PrimalItemStructure_CompostBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "95300532-326c-48e1-a8d6-ce65f144fbdc",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7f72734-3ac2-434a-a1a0-08974625e838",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+                        "Class": "PrimalItemStructure_StandingTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "e0a75765-5489-45ee-a46e-d34569c56423",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "cb0c6940-218a-46b5-8718-4a930f33fd31",
+                        "Path": "/Game/ScorchedEarth/Structures/DesertFurnitureSet/Vessel/PrimalItemStructure_Vessel.PrimalItemStructure_Vessel",
+                        "Class": "PrimalItemStructure_Vessel_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "5013b0e4-ab9a-4547-b2ad-dab172756c27",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7ff97b6-fb09-47fd-bd96-aef7b08f3b4a",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+                        "Class": "PrimalItemStructure_StorageBox_Small_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c335b595-a1d0-45ed-876e-a4d844897af4",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2fe838d-39cf-4be2-9f71-d3cf70973919",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_WallTorch.PrimalItemStructure_WallTorch",
+                        "Class": "PrimalItemStructure_WallTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1c36bb83-e4bf-4807-9b7f-544be65bf957",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0a141980-12f3-4488-bcd9-1268b708878c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+                        "Class": "PrimalItemStructure_Campfire_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d2ebd9e3-d47a-466a-866e-4b56fec45c05",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "e7e5dac1-101f-4c01-9263-e4a4e8555944",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_FishBasket.PrimalItemStructure_FishBasket",
+                        "Class": "PrimalItemStructure_FishBasket_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f6a6e414-1ae3-4db8-b390-9857edca8248",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fded1471-bd80-4edf-8526-aa7dd9f2ed54",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+                        "Class": "PrimalItemStructure_StorageBox_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0fb6fd0d-97c8-4a80-a6bb-8495827ccc22",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "59ff7f0f-57c5-4f99-8d17-600ae5d7706f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+                        "Class": "PrimalItemStructure_SleepingBag_Hide_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9c0ba473-2304-485a-b6d6-309b42c61ef9",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c40fbad9-ca34-4dbc-ae98-f888958f8ded",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Medium.PrimalItemStructure_TaxidermyBase_Medium",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Medium_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "03a15600-15a5-40cb-a339-c9afe9e27afd",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "717d37bd-0e21-4778-82db-161e20a95cf6",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Small.PrimalItemStructure_TaxidermyBase_Small",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Small_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9a81644c-760a-4ffe-a3b7-31a1fb9a661e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "7ed1300b-132c-4b09-8b09-e78bd5650364",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Large.PrimalItemStructure_TaxidermyBase_Large",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Large_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "bf47803a-fddb-4f7d-a1a3-ba64e7987b4f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3ef54100-142b-4dda-acfd-54fc626dceda",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AnvilBench.PrimalItemStructure_AnvilBench",
+                        "Class": "PrimalItemStructure_AnvilBench_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "22562f1e-fbcd-4b83-970d-8bbbfcdb793e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "21e8bd72-bf26-4ab0-9422-5e4f33fff84c",
+                        "Path": "/Game/Genesis2/Structures/LoadoutMannequin/PrimalItemStructure_LoadoutDummy.PrimalItemStructure_LoadoutDummy",
+                        "Class": "PrimalItemStructure_LoadoutDummy_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 940.0,
+            "UUID": "7f2c1bed-dbce-4cca-a3bd-3d2f64d7e936",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "e58125d6-7a00-4c61-bea7-07c542e8d07d",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/DesertFurnitureSet/Vessel/PrimalItemStructure_Vessel.PrimalItemStructure_Vessel",
+                        "UUID": "cb0c6940-218a-46b5-8718-4a930f33fd31",
+                        "Class": "PrimalItemStructure_Vessel_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a28293e4-c25b-4ddd-884d-1eac00aebc90",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3712,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.93999999999999994671,
+            "Items": [
+                {
+                    "UUID": "974d5f96-480a-41ce-adf6-2e16c816db21",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "682981e7-8085-40f0-9edb-783ea69fba59",
+                        "Path": "/Game/Genesis2/Structures/AmmoBox/PrimalItemStructure_AmmoContainer.PrimalItemStructure_AmmoContainer",
+                        "Class": "PrimalItemStructure_AmmoContainer_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f041ef5b-ecad-4958-9625-b879cc110342",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "65e2eead-d66c-4928-8706-10aaf3209a88",
+                        "Path": "/Game/ScorchedEarth/Structures/Tent/PrimalItemStructure_Tent.PrimalItemStructure_Tent",
+                        "Class": "PrimalItemStructure_Tent_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9a74efb6-eb1f-4da6-abb2-b96b7b9551bc",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "96d1b6c5-942a-4b6c-897c-b08ef11c4a65",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_PreservingBin.PrimalItemStructure_PreservingBin",
+                        "Class": "PrimalItemStructure_PreservingBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "09f099e5-a520-4c86-be5a-4f022607f35b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "856f8a19-8719-426b-905c-4a0becf2eb8d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+                        "Class": "PrimalItemStructure_CookingPot_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "55bcce75-e60f-46c0-90ab-86c538507e7f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "84ae3b01-d5d0-477b-b8ae-3505449ae119",
+                        "Path": "/Game/Extinction/Structures/DinoLeash/PrimalItemStructure_DinoLeash.PrimalItemStructure_DinoLeash",
+                        "Class": "PrimalItemStructure_DinoLeash_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "56871cdd-a3e5-44fe-9862-cba6f367ece1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a02e62c8-c255-42b1-aeb3-e321a2d0004c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+                        "Class": "PrimalItemStructure_Forge_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f67842c8-b97e-4068-959a-0d8a10caa935",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2b44ba3-2497-4f8d-8a70-a1e9176c19d1",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+                        "Class": "PrimalItemStructure_MortarAndPestle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a56e53a6-26f9-4a3b-ab13-e36c361d5759",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fafeda61-739b-4975-a207-c208f78e36f8",
+                        "Path": "/Game/ScorchedEarth/Structures/WaterWell/PrimalItemStructure_WaterWell.PrimalItemStructure_WaterWell",
+                        "Class": "PrimalItemStructure_WaterWell_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "efe37b57-d54f-4b34-b41c-acc993c4a723",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "24bc3c84-27aa-4bb0-ac1b-f0ecb5508c66",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bookshelf.PrimalItemStructure_Bookshelf",
+                        "Class": "PrimalItemStructure_Bookshelf_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a5de5cbb-3213-4997-b81b-54846d939c4a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1b5cdf48-79e1-436b-aec6-1b676f3f4bc5",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+                        "Class": "PrimalItemStructure_Bed_Simple_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "457dc494-992a-44c1-a3bd-6892945fd132",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "986478fc-10aa-47b8-9743-a8d711b8bdcb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_FeedingTrough.PrimalItemStructure_FeedingTrough",
+                        "Class": "PrimalItemStructure_FeedingTrough_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c9e3827e-c34a-495a-be87-8142162e9327",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b59c76cd-dd67-48fd-861d-ec3ca6e91d6f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+                        "Class": "PrimalItemStructure_CompostBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "e9563b4c-9058-4b56-a722-f03269335a81",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7f72734-3ac2-434a-a1a0-08974625e838",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+                        "Class": "PrimalItemStructure_StandingTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6ef736ae-d9b8-4f3f-abaa-c07d5f0b2e32",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "cb0c6940-218a-46b5-8718-4a930f33fd31",
+                        "Path": "/Game/ScorchedEarth/Structures/DesertFurnitureSet/Vessel/PrimalItemStructure_Vessel.PrimalItemStructure_Vessel",
+                        "Class": "PrimalItemStructure_Vessel_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b94a8d5a-d08c-4338-af8f-7a5648899901",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7ff97b6-fb09-47fd-bd96-aef7b08f3b4a",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+                        "Class": "PrimalItemStructure_StorageBox_Small_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "330c9ff9-20ee-498c-bd20-918959bdccfa",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2fe838d-39cf-4be2-9f71-d3cf70973919",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_WallTorch.PrimalItemStructure_WallTorch",
+                        "Class": "PrimalItemStructure_WallTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f3c37d5e-5de8-4dd2-867f-6c3ca2ea5f78",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0a141980-12f3-4488-bcd9-1268b708878c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+                        "Class": "PrimalItemStructure_Campfire_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "7412d97a-a024-44ef-9e59-0e20dbf00c81",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "e7e5dac1-101f-4c01-9263-e4a4e8555944",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_FishBasket.PrimalItemStructure_FishBasket",
+                        "Class": "PrimalItemStructure_FishBasket_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "5eca1fbb-fe6f-4b78-8473-e8025dc5af2b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fded1471-bd80-4edf-8526-aa7dd9f2ed54",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+                        "Class": "PrimalItemStructure_StorageBox_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "3ff6d4cd-c478-45a6-81db-1d40a0c2c4b7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "59ff7f0f-57c5-4f99-8d17-600ae5d7706f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+                        "Class": "PrimalItemStructure_SleepingBag_Hide_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b1971490-2c1c-40bf-810e-bf693ce3eb65",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c40fbad9-ca34-4dbc-ae98-f888958f8ded",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Medium.PrimalItemStructure_TaxidermyBase_Medium",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Medium_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6c910e4d-1614-4431-a3a7-0a6ceeea4dab",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "717d37bd-0e21-4778-82db-161e20a95cf6",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Small.PrimalItemStructure_TaxidermyBase_Small",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Small_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "55e31164-1e93-4457-bd3a-1e7e63fe0c68",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "7ed1300b-132c-4b09-8b09-e78bd5650364",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Large.PrimalItemStructure_TaxidermyBase_Large",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Large_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c08d13a4-481f-4ba5-a61a-0a6841632bb7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3ef54100-142b-4dda-acfd-54fc626dceda",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AnvilBench.PrimalItemStructure_AnvilBench",
+                        "Class": "PrimalItemStructure_AnvilBench_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "89520d70-9203-4b08-b742-f00b8819418b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "21e8bd72-bf26-4ab0-9422-5e4f33fff84c",
+                        "Path": "/Game/Genesis2/Structures/LoadoutMannequin/PrimalItemStructure_LoadoutDummy.PrimalItemStructure_LoadoutDummy",
+                        "Class": "PrimalItemStructure_LoadoutDummy_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 940.0,
+            "UUID": "4e8b65aa-c02c-4c01-a976-4269f98875bb",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "4c3e384d-8c83-429e-99f5-fafbb0e38729",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_WallTorch.PrimalItemStructure_WallTorch",
+                        "UUID": "b2fe838d-39cf-4be2-9f71-d3cf70973919",
+                        "Class": "PrimalItemStructure_WallTorch_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 3,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "98e2b5a5-2686-4d08-a481-80a41d5206ef",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3616,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "71845442-8a5a-4ad6-8d8f-073ce094c2f8",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Large.PrimalItemStructure_TaxidermyBase_Large",
+                        "UUID": "7ed1300b-132c-4b09-8b09-e78bd5650364",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "886bbc93-bbc0-4170-8247-d3bc08a69a86",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3920,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.93999999999999994671,
+            "Items": [
+                {
+                    "UUID": "17785af4-4bb1-43ad-9e2d-57c8518d9bb2",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "682981e7-8085-40f0-9edb-783ea69fba59",
+                        "Path": "/Game/Genesis2/Structures/AmmoBox/PrimalItemStructure_AmmoContainer.PrimalItemStructure_AmmoContainer",
+                        "Class": "PrimalItemStructure_AmmoContainer_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6c8ec146-2d4b-4e13-8a59-928b749e002b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "65e2eead-d66c-4928-8706-10aaf3209a88",
+                        "Path": "/Game/ScorchedEarth/Structures/Tent/PrimalItemStructure_Tent.PrimalItemStructure_Tent",
+                        "Class": "PrimalItemStructure_Tent_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "61b0d33e-d448-4354-82b3-04131cad794f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "96d1b6c5-942a-4b6c-897c-b08ef11c4a65",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_PreservingBin.PrimalItemStructure_PreservingBin",
+                        "Class": "PrimalItemStructure_PreservingBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "16ae1934-86e4-4066-952b-369981c9cb12",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "856f8a19-8719-426b-905c-4a0becf2eb8d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+                        "Class": "PrimalItemStructure_CookingPot_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fd1609f7-56fb-4e63-ae82-52e3c7f0ee7c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "84ae3b01-d5d0-477b-b8ae-3505449ae119",
+                        "Path": "/Game/Extinction/Structures/DinoLeash/PrimalItemStructure_DinoLeash.PrimalItemStructure_DinoLeash",
+                        "Class": "PrimalItemStructure_DinoLeash_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "3c195274-1a2c-4bc8-b41b-0e027bd2e4ab",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a02e62c8-c255-42b1-aeb3-e321a2d0004c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+                        "Class": "PrimalItemStructure_Forge_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "ded1a2c5-620d-4903-a5a2-f25f3bd935ce",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2b44ba3-2497-4f8d-8a70-a1e9176c19d1",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+                        "Class": "PrimalItemStructure_MortarAndPestle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8c0f1c22-967c-47eb-aa65-664a346ecd86",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fafeda61-739b-4975-a207-c208f78e36f8",
+                        "Path": "/Game/ScorchedEarth/Structures/WaterWell/PrimalItemStructure_WaterWell.PrimalItemStructure_WaterWell",
+                        "Class": "PrimalItemStructure_WaterWell_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "94fb3eeb-bc37-460c-bddb-5b22d656aab6",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "24bc3c84-27aa-4bb0-ac1b-f0ecb5508c66",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bookshelf.PrimalItemStructure_Bookshelf",
+                        "Class": "PrimalItemStructure_Bookshelf_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f7c14d69-79ef-416a-a330-6f7771020e3a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1b5cdf48-79e1-436b-aec6-1b676f3f4bc5",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+                        "Class": "PrimalItemStructure_Bed_Simple_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9fe02d20-3933-4200-89d4-a8177f65f939",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "986478fc-10aa-47b8-9743-a8d711b8bdcb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_FeedingTrough.PrimalItemStructure_FeedingTrough",
+                        "Class": "PrimalItemStructure_FeedingTrough_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "44c3787e-3e93-40cd-8e60-fd685ecfd162",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b59c76cd-dd67-48fd-861d-ec3ca6e91d6f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+                        "Class": "PrimalItemStructure_CompostBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d4119d1f-ff42-4ac8-a3c4-65bb09c3c519",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7f72734-3ac2-434a-a1a0-08974625e838",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+                        "Class": "PrimalItemStructure_StandingTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "71fa5e9d-8eb8-44f4-b6d7-d968214f55e4",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "cb0c6940-218a-46b5-8718-4a930f33fd31",
+                        "Path": "/Game/ScorchedEarth/Structures/DesertFurnitureSet/Vessel/PrimalItemStructure_Vessel.PrimalItemStructure_Vessel",
+                        "Class": "PrimalItemStructure_Vessel_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "288e1d6e-f85f-44f8-862f-ca629a7e6de5",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7ff97b6-fb09-47fd-bd96-aef7b08f3b4a",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+                        "Class": "PrimalItemStructure_StorageBox_Small_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "cd22a36d-3c0e-41ec-b2bf-8a6cba3a9713",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2fe838d-39cf-4be2-9f71-d3cf70973919",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_WallTorch.PrimalItemStructure_WallTorch",
+                        "Class": "PrimalItemStructure_WallTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6c545d70-d7bf-45c7-9cbb-5adf307c5c75",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0a141980-12f3-4488-bcd9-1268b708878c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+                        "Class": "PrimalItemStructure_Campfire_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "7c83dc82-1955-4854-823f-575396463d2b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "e7e5dac1-101f-4c01-9263-e4a4e8555944",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_FishBasket.PrimalItemStructure_FishBasket",
+                        "Class": "PrimalItemStructure_FishBasket_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0f3b0edc-e772-494f-9c63-5c1b39b295f8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fded1471-bd80-4edf-8526-aa7dd9f2ed54",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+                        "Class": "PrimalItemStructure_StorageBox_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "84556cc0-aae3-4063-886c-337837d8f80d",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "59ff7f0f-57c5-4f99-8d17-600ae5d7706f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+                        "Class": "PrimalItemStructure_SleepingBag_Hide_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4f51ef94-51d4-4ac0-8ee3-bb0c7b2532ed",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c40fbad9-ca34-4dbc-ae98-f888958f8ded",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Medium.PrimalItemStructure_TaxidermyBase_Medium",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Medium_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "327dd50a-029d-4bec-afb0-b49be3aeecef",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "717d37bd-0e21-4778-82db-161e20a95cf6",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Small.PrimalItemStructure_TaxidermyBase_Small",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Small_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8fb742a6-c017-4c56-a0ec-eb012585d8d0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "7ed1300b-132c-4b09-8b09-e78bd5650364",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Large.PrimalItemStructure_TaxidermyBase_Large",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Large_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "307a6b4d-d1fc-47d8-8016-fdde2ec6ce42",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3ef54100-142b-4dda-acfd-54fc626dceda",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AnvilBench.PrimalItemStructure_AnvilBench",
+                        "Class": "PrimalItemStructure_AnvilBench_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1d14a1ed-6df7-474b-995c-b86aa659a80d",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "21e8bd72-bf26-4ab0-9422-5e4f33fff84c",
+                        "Path": "/Game/Genesis2/Structures/LoadoutMannequin/PrimalItemStructure_LoadoutDummy.PrimalItemStructure_LoadoutDummy",
+                        "Class": "PrimalItemStructure_LoadoutDummy_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 940.0,
+            "UUID": "67afa501-0909-4e2d-b883-51522a9225c7",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "131ca47c-3911-41d4-b674-c9558ff011d5",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Tent/PrimalItemStructure_Tent.PrimalItemStructure_Tent",
+                        "UUID": "65e2eead-d66c-4928-8706-10aaf3209a88",
+                        "Class": "PrimalItemStructure_Tent_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "364fea7e-7e66-4ebe-9946-c6f8c59e9b65",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3616,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.93999999999999994671,
+            "Items": [
+                {
+                    "UUID": "aad6576b-830f-4be2-b000-b84c868306ab",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "682981e7-8085-40f0-9edb-783ea69fba59",
+                        "Path": "/Game/Genesis2/Structures/AmmoBox/PrimalItemStructure_AmmoContainer.PrimalItemStructure_AmmoContainer",
+                        "Class": "PrimalItemStructure_AmmoContainer_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2e74a275-4a75-4554-9af4-4b572c613b37",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "65e2eead-d66c-4928-8706-10aaf3209a88",
+                        "Path": "/Game/ScorchedEarth/Structures/Tent/PrimalItemStructure_Tent.PrimalItemStructure_Tent",
+                        "Class": "PrimalItemStructure_Tent_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4941262b-bed2-4e9b-aca0-0e2b551b0d3f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "96d1b6c5-942a-4b6c-897c-b08ef11c4a65",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_PreservingBin.PrimalItemStructure_PreservingBin",
+                        "Class": "PrimalItemStructure_PreservingBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "24a7a20c-1449-430f-a57c-fdb6db9ff5e6",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "856f8a19-8719-426b-905c-4a0becf2eb8d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+                        "Class": "PrimalItemStructure_CookingPot_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "eff42120-acc7-46e3-89c3-5671ae7a27fa",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "84ae3b01-d5d0-477b-b8ae-3505449ae119",
+                        "Path": "/Game/Extinction/Structures/DinoLeash/PrimalItemStructure_DinoLeash.PrimalItemStructure_DinoLeash",
+                        "Class": "PrimalItemStructure_DinoLeash_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4d466224-1163-4fde-8854-6641c983b579",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a02e62c8-c255-42b1-aeb3-e321a2d0004c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+                        "Class": "PrimalItemStructure_Forge_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c5abf456-ee5f-409d-9789-e24d7b794d97",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2b44ba3-2497-4f8d-8a70-a1e9176c19d1",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+                        "Class": "PrimalItemStructure_MortarAndPestle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b01e4bb6-3dd3-4885-9e6f-78346b604b1c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fafeda61-739b-4975-a207-c208f78e36f8",
+                        "Path": "/Game/ScorchedEarth/Structures/WaterWell/PrimalItemStructure_WaterWell.PrimalItemStructure_WaterWell",
+                        "Class": "PrimalItemStructure_WaterWell_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2fa10ecc-fc68-465b-b759-28864e86e534",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "24bc3c84-27aa-4bb0-ac1b-f0ecb5508c66",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bookshelf.PrimalItemStructure_Bookshelf",
+                        "Class": "PrimalItemStructure_Bookshelf_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "cdc8026a-40b8-4745-b291-a7ded3429ab2",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1b5cdf48-79e1-436b-aec6-1b676f3f4bc5",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+                        "Class": "PrimalItemStructure_Bed_Simple_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2ba9a4ac-d4d9-4165-91c1-8ad54eb516e3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "986478fc-10aa-47b8-9743-a8d711b8bdcb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_FeedingTrough.PrimalItemStructure_FeedingTrough",
+                        "Class": "PrimalItemStructure_FeedingTrough_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6dd341be-7273-4582-b454-8735301fe43a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b59c76cd-dd67-48fd-861d-ec3ca6e91d6f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+                        "Class": "PrimalItemStructure_CompostBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "05ba527f-4615-4cc0-9812-e022c95b956b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7f72734-3ac2-434a-a1a0-08974625e838",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+                        "Class": "PrimalItemStructure_StandingTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "456e7aa7-6239-4204-8458-5885fc1eb8ad",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "cb0c6940-218a-46b5-8718-4a930f33fd31",
+                        "Path": "/Game/ScorchedEarth/Structures/DesertFurnitureSet/Vessel/PrimalItemStructure_Vessel.PrimalItemStructure_Vessel",
+                        "Class": "PrimalItemStructure_Vessel_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "595d5bfa-5822-4749-b837-260bc1c6d1da",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7ff97b6-fb09-47fd-bd96-aef7b08f3b4a",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+                        "Class": "PrimalItemStructure_StorageBox_Small_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "7329ee1a-a581-4a61-bf1d-1f9aa1d7b259",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2fe838d-39cf-4be2-9f71-d3cf70973919",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_WallTorch.PrimalItemStructure_WallTorch",
+                        "Class": "PrimalItemStructure_WallTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a7a54da1-77b9-44e9-8666-221ee22fdb85",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0a141980-12f3-4488-bcd9-1268b708878c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+                        "Class": "PrimalItemStructure_Campfire_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "15774ec2-5d88-4f9e-9802-6e8c900bb40a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "e7e5dac1-101f-4c01-9263-e4a4e8555944",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_FishBasket.PrimalItemStructure_FishBasket",
+                        "Class": "PrimalItemStructure_FishBasket_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "e573ad64-bf87-4c42-a22b-f045daa5a36c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fded1471-bd80-4edf-8526-aa7dd9f2ed54",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+                        "Class": "PrimalItemStructure_StorageBox_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "604e4add-6483-4518-babb-c58acad4a6f1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "59ff7f0f-57c5-4f99-8d17-600ae5d7706f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+                        "Class": "PrimalItemStructure_SleepingBag_Hide_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b38f069d-5a6b-4fe6-8419-de9943188a40",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c40fbad9-ca34-4dbc-ae98-f888958f8ded",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Medium.PrimalItemStructure_TaxidermyBase_Medium",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Medium_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b48e0e7a-099e-4f86-a05b-4b0c59513e29",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "717d37bd-0e21-4778-82db-161e20a95cf6",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Small.PrimalItemStructure_TaxidermyBase_Small",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Small_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "79d3db76-e92b-440f-a0dd-d706de775435",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "7ed1300b-132c-4b09-8b09-e78bd5650364",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Large.PrimalItemStructure_TaxidermyBase_Large",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Large_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c84fcece-010b-4e45-a0e7-08a98086e1aa",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3ef54100-142b-4dda-acfd-54fc626dceda",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AnvilBench.PrimalItemStructure_AnvilBench",
+                        "Class": "PrimalItemStructure_AnvilBench_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "24673fbe-ded0-472f-96b5-075953994554",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "21e8bd72-bf26-4ab0-9422-5e4f33fff84c",
+                        "Path": "/Game/Genesis2/Structures/LoadoutMannequin/PrimalItemStructure_LoadoutDummy.PrimalItemStructure_LoadoutDummy",
+                        "Class": "PrimalItemStructure_LoadoutDummy_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 940.0,
+            "UUID": "4bf8a118-d9d0-453c-8113-224d55051291",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3616,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "53b81a36-53db-49d4-838a-43dc6a397eca",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/Structures/DinoLeash/PrimalItemStructure_DinoLeash.PrimalItemStructure_DinoLeash",
+                        "UUID": "84ae3b01-d5d0-477b-b8ae-3505449ae119",
+                        "Class": "PrimalItemStructure_DinoLeash_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "3898baa0-f0ff-4aff-8bef-844de1d3677f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "31a76280-cb31-4343-b7ee-b89c9d0c3a29",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+                        "UUID": "b2b44ba3-2497-4f8d-8a70-a1e9176c19d1",
+                        "Class": "PrimalItemStructure_MortarAndPestle_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "dfca14c0-a0b1-4a3a-9d3d-8e33574f549c",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3616,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "0102cc22-b6df-4bd9-a186-99abe1931452",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Medium.PrimalItemStructure_TaxidermyBase_Medium",
+                        "UUID": "c40fbad9-ca34-4dbc-ae98-f888958f8ded",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Medium_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "efa3c0c3-0601-40a0-af82-df1c5daafb40",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "af0f4724-a8b1-45e7-bc36-cb75f31b9204",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/WaterWell/PrimalItemStructure_WaterWell.PrimalItemStructure_WaterWell",
+                        "UUID": "fafeda61-739b-4975-a207-c208f78e36f8",
+                        "Class": "PrimalItemStructure_WaterWell_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "e51c6725-d2a4-4ac4-9344-fa7bbac2ec09",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "66096fad-b99c-4d8d-92f1-b3d2f42b9d97",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_FeedingTrough.PrimalItemStructure_FeedingTrough",
+                        "UUID": "986478fc-10aa-47b8-9743-a8d711b8bdcb",
+                        "Class": "PrimalItemStructure_FeedingTrough_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9a4788e0-a8f1-433b-8607-f1946d82066a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "09276248-29a9-4e4e-8d59-ad987ab62849",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+                        "UUID": "b7ff97b6-fb09-47fd-bd96-aef7b08f3b4a",
+                        "Class": "PrimalItemStructure_StorageBox_Small_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 5,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "dddf709c-18d7-4046-b2ef-49b31a763400",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.93999999999999994671,
+            "Items": [
+                {
+                    "UUID": "e22a8e4f-0bc3-42e1-b5c2-5951e4db533c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "682981e7-8085-40f0-9edb-783ea69fba59",
+                        "Path": "/Game/Genesis2/Structures/AmmoBox/PrimalItemStructure_AmmoContainer.PrimalItemStructure_AmmoContainer",
+                        "Class": "PrimalItemStructure_AmmoContainer_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0d06ecb1-ebdc-40be-948e-17d8a14f07b0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "65e2eead-d66c-4928-8706-10aaf3209a88",
+                        "Path": "/Game/ScorchedEarth/Structures/Tent/PrimalItemStructure_Tent.PrimalItemStructure_Tent",
+                        "Class": "PrimalItemStructure_Tent_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b43a6e64-cd51-49ec-9eba-025feb2e07e3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "96d1b6c5-942a-4b6c-897c-b08ef11c4a65",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_PreservingBin.PrimalItemStructure_PreservingBin",
+                        "Class": "PrimalItemStructure_PreservingBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "89dd507e-1910-407a-b78b-b01acb5b148a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "856f8a19-8719-426b-905c-4a0becf2eb8d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+                        "Class": "PrimalItemStructure_CookingPot_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "dfc25dba-96f1-415c-8715-ddf4d379c6f0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "84ae3b01-d5d0-477b-b8ae-3505449ae119",
+                        "Path": "/Game/Extinction/Structures/DinoLeash/PrimalItemStructure_DinoLeash.PrimalItemStructure_DinoLeash",
+                        "Class": "PrimalItemStructure_DinoLeash_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b8e421cd-f9a4-4d55-a8a3-a3c7d91ee44b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a02e62c8-c255-42b1-aeb3-e321a2d0004c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+                        "Class": "PrimalItemStructure_Forge_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fb3bfe7c-1cab-493c-9922-516898ad15b5",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2b44ba3-2497-4f8d-8a70-a1e9176c19d1",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+                        "Class": "PrimalItemStructure_MortarAndPestle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fd904c81-c7ac-4e5c-a011-2e37b5bb20d3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fafeda61-739b-4975-a207-c208f78e36f8",
+                        "Path": "/Game/ScorchedEarth/Structures/WaterWell/PrimalItemStructure_WaterWell.PrimalItemStructure_WaterWell",
+                        "Class": "PrimalItemStructure_WaterWell_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fdba7e2d-1215-40e5-80c7-b78d216c56a5",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "24bc3c84-27aa-4bb0-ac1b-f0ecb5508c66",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bookshelf.PrimalItemStructure_Bookshelf",
+                        "Class": "PrimalItemStructure_Bookshelf_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "847f1c3a-9cfc-4212-b138-343c75c350de",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1b5cdf48-79e1-436b-aec6-1b676f3f4bc5",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+                        "Class": "PrimalItemStructure_Bed_Simple_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c5a0d086-8f8c-4af0-a636-1673f398ab39",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "986478fc-10aa-47b8-9743-a8d711b8bdcb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_FeedingTrough.PrimalItemStructure_FeedingTrough",
+                        "Class": "PrimalItemStructure_FeedingTrough_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b3b27c07-705e-43a9-bedd-3e77fb7e91f6",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b59c76cd-dd67-48fd-861d-ec3ca6e91d6f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+                        "Class": "PrimalItemStructure_CompostBin_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0206bac7-ee65-4895-a266-b693d7a3d84a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7f72734-3ac2-434a-a1a0-08974625e838",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+                        "Class": "PrimalItemStructure_StandingTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6e4efa4b-ef8a-42ba-9029-79c2ab19d95e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "cb0c6940-218a-46b5-8718-4a930f33fd31",
+                        "Path": "/Game/ScorchedEarth/Structures/DesertFurnitureSet/Vessel/PrimalItemStructure_Vessel.PrimalItemStructure_Vessel",
+                        "Class": "PrimalItemStructure_Vessel_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d2360181-8ea4-4f21-9dcf-9123c2f9b6c0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b7ff97b6-fb09-47fd-bd96-aef7b08f3b4a",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+                        "Class": "PrimalItemStructure_StorageBox_Small_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "21689eea-cbd8-434d-965d-1c49219fe8b7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2fe838d-39cf-4be2-9f71-d3cf70973919",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_WallTorch.PrimalItemStructure_WallTorch",
+                        "Class": "PrimalItemStructure_WallTorch_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8889e825-0096-4eb4-b5d4-0e85081565a1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0a141980-12f3-4488-bcd9-1268b708878c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+                        "Class": "PrimalItemStructure_Campfire_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "76146de8-7ec2-4954-99ec-1238b971214c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "e7e5dac1-101f-4c01-9263-e4a4e8555944",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_FishBasket.PrimalItemStructure_FishBasket",
+                        "Class": "PrimalItemStructure_FishBasket_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "28af301d-7af4-48ac-b037-8e3dc66c59d1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "fded1471-bd80-4edf-8526-aa7dd9f2ed54",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+                        "Class": "PrimalItemStructure_StorageBox_Large_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9410b66a-92c1-40cc-a3ae-562fdcc3f4b7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "59ff7f0f-57c5-4f99-8d17-600ae5d7706f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+                        "Class": "PrimalItemStructure_SleepingBag_Hide_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f2d1b86f-268d-4929-8582-53766bb56bd4",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "c40fbad9-ca34-4dbc-ae98-f888958f8ded",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Medium.PrimalItemStructure_TaxidermyBase_Medium",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Medium_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6722b7a9-2b3f-41a9-93b1-7de5d257b494",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "717d37bd-0e21-4778-82db-161e20a95cf6",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Small.PrimalItemStructure_TaxidermyBase_Small",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Small_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "783dddc5-e44e-4e28-8f7c-0f57ddad3c27",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "7ed1300b-132c-4b09-8b09-e78bd5650364",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Large.PrimalItemStructure_TaxidermyBase_Large",
+                        "Class": "PrimalItemStructure_TaxidermyBase_Large_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "ff0c3b2e-3464-406e-8c70-ca4bc1f4f7df",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "3ef54100-142b-4dda-acfd-54fc626dceda",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AnvilBench.PrimalItemStructure_AnvilBench",
+                        "Class": "PrimalItemStructure_AnvilBench_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "cd892fe8-1ff1-4a09-9603-dd6df3207eb4",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "21e8bd72-bf26-4ab0-9422-5e4f33fff84c",
+                        "Path": "/Game/Genesis2/Structures/LoadoutMannequin/PrimalItemStructure_LoadoutDummy.PrimalItemStructure_LoadoutDummy",
+                        "Class": "PrimalItemStructure_LoadoutDummy_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 940.0,
+            "UUID": "570f40e9-22d1-4898-a777-066afc82cfa2",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "994bdc06-159b-4210-9694-b9a3039138ff",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+                        "UUID": "fded1471-bd80-4edf-8526-aa7dd9f2ed54",
+                        "Class": "PrimalItemStructure_StorageBox_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 5,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "07659912-87e7-4ec9-96da-8e8410c18efb",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "1db9d795-e79e-4b08-9c51-fa16e87c4193",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+                        "UUID": "a02e62c8-c255-42b1-aeb3-e321a2d0004c",
+                        "Class": "PrimalItemStructure_Forge_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "21f11a76-6eb8-43ec-b00b-28a699d71dd9",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "87ac389a-889b-44cd-8ee3-81df4267dae5",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+                        "UUID": "0a141980-12f3-4488-bcd9-1268b708878c",
+                        "Class": "PrimalItemStructure_Campfire_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 3,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "3123eadd-ccb7-4b4d-8a5d-28bb258df59a",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 3,
+            "MinQuality": 3
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "Quantity": 1.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 6,
+            "MinQuality": 6
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "Quantity": 1.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 6,
+            "MinQuality": 6
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "Quantity": 1.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 6,
+            "MinQuality": 6
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 3,
+            "MinQuality": 3
+        }
+    }
+}
