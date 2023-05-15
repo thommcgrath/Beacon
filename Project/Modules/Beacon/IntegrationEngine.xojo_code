@@ -321,7 +321,7 @@ Protected Class IntegrationEngine
 		    Return Self.PutFile(Contents, Filename, TriesRemaining - 1)
 		  End If
 		  
-		  Self.Log("Could not upload " + Transfer.Filename + " and verify its content is correct on the server.")
+		  Self.SetError("Could not upload " + Transfer.Filename + " and verify its content is correct on the server.")
 		  
 		  If Transfer.ErrorMessage.IsEmpty = False Then
 		    Self.Log("Reason: " + Transfer.ErrorMessage)
