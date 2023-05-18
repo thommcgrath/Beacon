@@ -326,6 +326,65 @@ abstract class BeaconShop {
 		
 		echo "Finished\n";
 	}
+	
+	private static function LoadCurrencyData(): void {
+		if (isset($_SESSION['store_currency_options']) && isset($_SESSION['store_currency']) && empty($_SESSION['store_currency_options']) === false && empty($_SESSION['store_currency']) === false) {
+			return;
+		}
+		
+		$stripe_api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'), '2022-08-01');
+		$country = BeaconCommon::RemoteCountry();
+		if ($country === 'XX') {
+			$country = 'US';
+		}
+		$countries = [$country];
+		if ($country !== 'US') {
+			$countries[] = 'US';
+		}
+		
+		foreach ($countries as $country) {
+			$cache_key = 'country:' . $country;
+			$spec = BeaconCache::Get($cache_key);
+			if (is_null($spec)) {
+				$spec = $stripe_api->GetCountrySpec($country);
+				if (is_null($spec) === false) {
+					BeaconCache::Set($cache_key, $spec);
+					break;
+				}
+			}
+		}
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT code, name FROM public.currencies WHERE code = ANY($1) ORDER BY name;', '{' . implode(',', $spec['supported_payment_currencies']) . '}');
+		$supported_currencies = [];
+		while (!$results->EOF()) {
+			$supported_currencies[$results->Field('code')] = $results->Field('name');
+			$results->MoveNext();
+		}
+		$_SESSION['store_currency_options'] = $supported_currencies;
+		$_SESSION['store_default_currency'] = strtoupper($spec['default_currency']);
+		$_SESSION['store_currency'] = $_SESSION['store_default_currency'];
+	}
+	
+	public static function GetCurrencyOptions(): array {
+		static::LoadCurrencyData();
+		return $_SESSION['store_currency_options'];
+	}
+	
+	public static function GetCurrency(): string {
+		static::LoadCurrencyData();
+		return $_SESSION['store_currency'];
+	}
+	
+	public static function SetCurrency(string $currency): string {
+		$currencyOptions = static::GetCurrencyOptions();
+		if (array_key_exists($currency, $currencyOptions)) {
+			$_SESSION['store_currency'] = $currency;
+		} else {
+			$_SESSION['store_currency'] = $_SESSION['store_default_currency'];
+		}
+		return $_SESSION['store_currency'];
+	}
 }
 
 ?>

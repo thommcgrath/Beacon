@@ -31,7 +31,7 @@ if ($cart === false) {
 
 $email = strtolower(trim($cart['email']));
 $bundles = $cart['items'];
-$currency = $_SESSION['store_currency'];
+$currency = BeaconShop::GetCurrency();
 
 if (count($bundles) === 0) {
 	http_response_code(400);

@@ -5,44 +5,10 @@ require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconCommon::StartSession();
 	
 $database = BeaconCommon::Database();
-	
-if (isset($_SESSION['store_currency_options']) === false) {
-	$stripe_api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'), '2022-08-01');
-	$country = BeaconCommon::RemoteCountry();
-	if ($country === 'XX') {
-		$country = 'US';
-	}
-	$countries = [$country];
-	if ($country !== 'US') {
-		$countries[] = 'US';
-	}
-	
-	foreach ($countries as $country) {
-		$cache_key = 'country:' . $country;
-		$spec = BeaconCache::Get($cache_key);
-		if (is_null($spec)) {
-			$spec = $stripe_api->GetCountrySpec($country);
-			if (is_null($spec) === false) {
-				BeaconCache::Set($cache_key, $spec);
-				break;
-			}
-		}
-	}
-	
-	$results = $database->Query('SELECT code, name FROM public.currencies WHERE code = ANY($1) ORDER BY name;', '{' . implode(',', $spec['supported_payment_currencies']) . '}');
-	$supported_currencies = [];
-	while (!$results->EOF()) {
-		$supported_currencies[$results->Field('code')] = $results->Field('name');
-		$results->MoveNext();
-	}
-	$_SESSION['store_currency_options'] = $supported_currencies;
-	$_SESSION['store_default_currency'] = strtoupper($spec['default_currency']);
-	$_SESSION['store_currency'] = $_SESSION['store_default_currency'];
-}
 
 $stable_version = BeaconCommon::NewestVersionForStage(3);
-$currency = $_SESSION['store_currency'];
-$supported_currencies = $_SESSION['store_currency_options'];
+$currency = BeaconShop::GetCurrency();
+$supported_currencies = BeaconShop::GetCurrencyOptions();
 
 $results = $database->Query('SELECT products.game_id, products.tag, products.product_id, products.product_name, product_prices.price, EXTRACT(epoch FROM products.updates_length) AS plan_length_seconds FROM public.products INNER JOIN public.product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1 AND products.active = TRUE;', $currency);
 $product_details = [];
