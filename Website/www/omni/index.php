@@ -42,6 +42,7 @@ $arkOnlyMode = ($ark2Enabled || $arkSAEnabled) === false;
 
 $payment_methods = [
 	'Universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
+	'USD' => ['cashapp'],
 	'EUR' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
 	'PLN' => ['p24']
 ];
@@ -58,7 +59,8 @@ $payment_labels = [
 	'eps' => 'EPS',
 	'giropay' => 'giropay',
 	'ideal' => 'iDEAL',
-	'p24' => 'Przelewy24'
+	'p24' => 'Przelewy24',
+	'cashapp' => 'Cash App Pay'
 ];
 
 $supported_payment_methods = $payment_methods['Universal'];

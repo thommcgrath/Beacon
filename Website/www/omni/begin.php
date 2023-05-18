@@ -52,7 +52,7 @@ if (isset($_COOKIE['beacon_affiliate'])) {
 	$client_reference_id = BeaconCommon::GenerateUUID();
 }
 
-$payment_methods = ['card'];
+$payment_methods = ['card', 'link'];
 switch ($currency) {
 case 'EUR':
 	$payment_methods[] = 'ideal';
@@ -63,6 +63,9 @@ case 'EUR':
 	break;
 case 'PLN':
 	$payment_methods[] = 'p24';
+	break;
+case 'USD':
+	$payment_methods[] = 'cashapp';
 	break;
 }
 
