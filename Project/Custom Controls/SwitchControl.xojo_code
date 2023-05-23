@@ -294,6 +294,7 @@ Inherits ControlCanvas
 		    Self.mValueChangeAnimation.Run
 		  Else
 		    Self.mAnimationState = TargetState
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndMethod
