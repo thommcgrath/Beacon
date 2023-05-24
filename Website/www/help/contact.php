@@ -15,7 +15,7 @@ ob_start();
 	<div id="pageInitial" class="larger">
 		<p>If you have Beacon installed, please open a ticket from inside the app. This will allow you to include your project, as well as log files and backups, which will get you a better and faster answer.</p>
 		<ul class="no-markings">
-			<li class="my-3"><a href="beacon://action/newhelpticket">I have Beacon installed, take me to the help form.</a></li>
+			<li class="my-3"><a href="beacon://action/newhelpticket">I have Beacon installed, take me to the help form.</a><br><span class="smaller text-lighter">Link not working? Launch Beacon and choose &quot;Create Support Ticket&quot; from the &quot;Help&quot; menu.</span></li>
 			<li class="mt-3"><a href="#" id="showWebFormLink">I cannot access Beacon's built-in help form.</a></li>
 		</ul>
 	</div>
