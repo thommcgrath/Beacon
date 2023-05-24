@@ -828,6 +828,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Self.mMainWindow.Documents.OpenDocument(FileURL)
 		  End If
 		  
+		  Try
+		    If Self.WindowCount > 0 Then
+		      Var Frontview As DesktopWindow = Self.WindowAt(0)
+		      If Frontview IsA BeaconWindow Then
+		        BeaconWindow(Frontview).BringToFront()
+		      End If
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		  
 		  Return True
 		End Function
 	#tag EndMethod
