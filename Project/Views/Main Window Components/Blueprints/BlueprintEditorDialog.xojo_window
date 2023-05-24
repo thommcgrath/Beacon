@@ -2230,22 +2230,22 @@ End
 		  Self.EngramEntryStringField.Text = Engram.EntryString
 		  
 		  If (Engram.RequiredPlayerLevel Is Nil) = False Then
-		    Self.EngramPlayerLevelField.Text = Engram.RequiredPlayerLevel.IntegerValue.ToString(Locale.Current, ",##0")
+		    Self.EngramPlayerLevelField.Text = Engram.RequiredPlayerLevel.IntegerValue.ToString(Locale.Current, "#,##0")
 		  ElseIf Engram.EntryString.IsEmpty = False Then
 		    Self.EngramPlayerLevelField.Text = "Tek"
 		  End If
 		  
 		  If (Engram.RequiredUnlockPoints Is Nil) = False Then
-		    Self.EngramRequiredPointsField.Text = Engram.RequiredUnlockPoints.IntegerValue.ToString(Locale.Current, ",##0")
+		    Self.EngramRequiredPointsField.Text = Engram.RequiredUnlockPoints.IntegerValue.ToString(Locale.Current, "#,##0")
 		  End If
 		  
 		  If (Engram.StackSize Is Nil) = False Then
-		    Self.EngramStackSizeField.Text = Engram.StackSize.IntegerValue.ToString(Locale.Current, ",##0")
+		    Self.EngramStackSizeField.Text = Engram.StackSize.IntegerValue.ToString(Locale.Current, "#,##0")
 		  End If
 		  
 		  Var Ingredients() As Ark.CraftingCostIngredient = Engram.Recipe
 		  For Each Ingredient As Ark.CraftingCostIngredient In Ingredients
-		    Self.EngramCraftingCostList.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Current, ",##0"))
+		    Self.EngramCraftingCostList.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Current, "#,##0"))
 		    Self.EngramCraftingCostList.CellCheckBoxValueAt(Self.EngramCraftingCostList.LastAddedRowIndex, 2) = Ingredient.RequireExact
 		    Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
 		  Next
@@ -3100,12 +3100,12 @@ End
 		    Var Quantity As Integer = Round(CDbl(Value))
 		    If IsNumeric(Value) = False Or Quantity <= 0 Then
 		      System.Beep
-		      Me.CellTextAt(Row, Column) = Ingredient.Quantity.ToString(Locale.Current, ",##0")
+		      Me.CellTextAt(Row, Column) = Ingredient.Quantity.ToString(Locale.Current, "#,##0")
 		      Return
 		    End If
 		    
 		    Me.RowTagAt(Row) = New Ark.CraftingCostIngredient(Ingredient.Engram, Quantity, Ingredient.RequireExact)
-		    Me.CellTextAt(Row, Column) = Quantity.ToString(Locale.Current, ",##0")
+		    Me.CellTextAt(Row, Column) = Quantity.ToString(Locale.Current, "#,##0")
 		  Case 2
 		    Me.RowTagAt(Row) = New Ark.CraftingCostIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  End Select

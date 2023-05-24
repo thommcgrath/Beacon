@@ -466,6 +466,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       End
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -708,7 +709,7 @@ End
 		    Self.List.CellTextAt(I, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
 		    Self.List.CellTextAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
 		    Self.List.CellTextAt(I, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		    Self.List.CellTextAt(I, Self.ColumnRevision) = Document.Revision.ToString(Locale.Current, ",##0")
+		    Self.List.CellTextAt(I, Self.ColumnRevision) = Document.Revision.ToString(Locale.Current, "#,##0")
 		    Self.List.RowTagAt(I) = Document
 		    Self.List.RowSelectedAt(I) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
 		  Next

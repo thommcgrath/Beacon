@@ -1371,7 +1371,7 @@ End
 		Shared Function FormatStat(Value As Double) As String
 		  Value = Round(Value * 100) / 100
 		  
-		  Var Formatter As String = ",##0"
+		  Var Formatter As String = "#,##0"
 		  If Value - Floor(Value) <> 0 Then
 		    Formatter = Formatter + ".0#"
 		  End If

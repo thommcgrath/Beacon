@@ -228,6 +228,7 @@ Begin BeaconDialog ArkEngramControlWizard
    End
    Begin Thread WorkThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3
@@ -285,7 +286,7 @@ End
 		  End If
 		  
 		  Self.mProgress.Progress = Self.mEngramsProcessed / Self.mEngramCount
-		  Self.mProgress.Detail = "Updated " + Self.mEngramsProcessed.ToString(Locale.Current, ",##0") + " of " + Self.mEngramCount.ToString(Locale.Current, ",##0") + " engrams"
+		  Self.mProgress.Detail = "Updated " + Self.mEngramsProcessed.ToString(Locale.Current, "#,##0") + " of " + Self.mEngramCount.ToString(Locale.Current, "#,##0") + " engrams"
 		End Sub
 	#tag EndMethod
 

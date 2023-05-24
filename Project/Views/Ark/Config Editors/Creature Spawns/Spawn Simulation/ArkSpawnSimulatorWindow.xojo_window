@@ -461,6 +461,7 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
    End
    Begin Thread SimulationThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -545,9 +546,9 @@ End
 		    Self.SpawnTotalPopField.Text = "N/A"
 		  Else
 		    Var AvgPop As Integer = Round(PopFigures.TargetPopulation / PopFigures.Instances)
-		    Self.SpawnAvgPopField.Text = AvgPop.ToString(Locale.Current, "0,")
-		    Self.SpawnInstanceCountField.Text = PopFigures.Instances.ToString(Locale.Current, "0,")
-		    Self.SpawnTotalPopField.Text = PopFigures.TargetPopulation.ToString(Locale.Current, "0,")
+		    Self.SpawnAvgPopField.Text = AvgPop.ToString(Locale.Current, "#,##0")
+		    Self.SpawnInstanceCountField.Text = PopFigures.Instances.ToString(Locale.Current, "#,##0")
+		    Self.SpawnTotalPopField.Text = PopFigures.TargetPopulation.ToString(Locale.Current, "#,##0")
 		  End If
 		  
 		  Self.SpawnAvgPopField.SizeToFit
@@ -697,6 +698,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
 		Visible=true

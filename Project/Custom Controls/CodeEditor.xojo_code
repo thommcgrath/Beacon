@@ -119,7 +119,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub UpdateLineNumbersGutter()
-		  Var LineCount As String = Self.LineCount.ToString(Locale.Current, ",##0")
+		  Var LineCount As String = Self.LineCount.ToString(Locale.Current, "#,##0")
 		  Var Measure As New Picture(10, 10)
 		  Var Style As ScintillaStyleMBS = Self.Style(ScintillaStyleMBS.kStylesCommonDefault)
 		  Measure.Graphics.FontName = Style.Font

@@ -538,6 +538,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
    End
    Begin Thread ProcessingThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   2
@@ -943,7 +944,7 @@ End
 		      Self.mConfig.Add(Mutable)
 		    Next Definition
 		    CreaturesProcessed = CreaturesProcessed + 1
-		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for " + CreaturesProcessed.ToString(Locale.Current, ",##0") + " of " + TotalCreaturesText + "…"))
+		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for " + CreaturesProcessed.ToString(Locale.Current, "#,##0") + " of " + TotalCreaturesText + "…"))
 		  Next Creature
 		  
 		  // Next, process everything
@@ -956,7 +957,7 @@ End
 		    Var Mutable As Ark.MutableSpawnPoint = Point.MutableVersion
 		    Self.ProcessSpawnPoint(Mutable)
 		    PointsProcessed = PointsProcessed + 1
-		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed " + PointsProcessed.ToString(Locale.Current, ",##0") + " of " + TotalPointsText + "…"))
+		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed " + PointsProcessed.ToString(Locale.Current, "#,##0") + " of " + TotalPointsText + "…"))
 		  Next Point
 		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Status": "Finished"))

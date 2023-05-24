@@ -422,9 +422,9 @@ End
 		    Var WeightText As String
 		    Var Weight As Double = Entry.RawWeight
 		    If Floor(Weight) = Weight Then
-		      WeightText = Weight.ToString(Locale.Current, ",##0")
+		      WeightText = Weight.ToString(Locale.Current, "#,##0")
 		    Else
-		      WeightText = Weight.ToString(Locale.Current, ",##0.0####")
+		      WeightText = Weight.ToString(Locale.Current, "#,##0.0####")
 		    End If
 		    
 		    Var BlueprintText As String = BlueprintChance.ToString(Locale.Current, "0%")
@@ -491,9 +491,9 @@ End
 		  Var TotalCount As Integer = Self.EntryList.RowCount
 		  Var SelectedCount As Integer = Self.EntryList.SelectedRowCount
 		  
-		  Var Caption As String = TotalCount.ToString(Locale.Current, ",##0") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
+		  Var Caption As String = TotalCount.ToString(Locale.Current, "#,##0") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
 		  If SelectedCount > 0 Then
-		    Caption = SelectedCount.ToString(Locale.Current, ",##0") + " of " + Caption + " Selected"
+		    Caption = SelectedCount.ToString(Locale.Current, "#,##0") + " of " + Caption + " Selected"
 		  End If
 		  Self.StatusBar1.Caption = Caption
 		End Sub

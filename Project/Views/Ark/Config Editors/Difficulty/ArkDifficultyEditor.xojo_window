@@ -696,7 +696,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Difficulty As Ark.Configs.Difficulty = Self.Config(False)
-		  Self.MaxDinoLevelField.Text = Difficulty.MaxDinoLevel.ToString(Locale.Current, ",##0")
+		  Self.MaxDinoLevelField.Text = Difficulty.MaxDinoLevel.ToString(Locale.Current, "#,##0")
 		  Self.FillReferenceFields(Difficulty)
 		End Sub
 	#tag EndEvent
@@ -712,13 +712,13 @@ End
 		Private Sub FillReferenceFields(Difficulty As Ark.Configs.Difficulty)
 		  Var DifficultyOffset As Double = 1.0
 		  
-		  Self.LootScaleField.Text = Difficulty.DifficultyValue.ToString(Locale.Current, ",##0%")
+		  Self.LootScaleField.Text = Difficulty.DifficultyValue.ToString(Locale.Current, "#,##0%")
 		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyText(Ark.Configs.Difficulty.DecimalPlaces, True)
 		  Self.DifficultyOffsetField.Text = DifficultyOffset.ToString(Locale.Current, "0.0")
 		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText(Ark.Configs.Difficulty.DecimalPlaces, True)
-		  Self.MaxTekLevelField.Text = Difficulty.MaxTekLevel.ToString(Locale.Current, ",##0")
-		  Self.MaxWyvernLevelField.Text = Difficulty.MaxWyvernLevel.ToString(Locale.Current, ",##0")
-		  Self.MaxCrystalWyvernLevelField.Text = Difficulty.MaxCrystalWyvernLevel.ToString(Locale.Current, ",##0")
+		  Self.MaxTekLevelField.Text = Difficulty.MaxTekLevel.ToString(Locale.Current, "#,##0")
+		  Self.MaxWyvernLevelField.Text = Difficulty.MaxWyvernLevel.ToString(Locale.Current, "#,##0")
+		  Self.MaxCrystalWyvernLevelField.Text = Difficulty.MaxCrystalWyvernLevel.ToString(Locale.Current, "#,##0")
 		End Sub
 	#tag EndMethod
 

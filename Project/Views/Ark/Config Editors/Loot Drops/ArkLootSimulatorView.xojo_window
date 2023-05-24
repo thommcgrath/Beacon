@@ -236,7 +236,7 @@ End
 		    Self.List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		  
-		  Self.StatusBar1.Caption = Self.List.RowCount.ToString(Locale.Current, ",##0") + " item" + If(Self.List.RowCount = 1, "", "s")
+		  Self.StatusBar1.Caption = Self.List.RowCount.ToString(Locale.Current, "#,##0") + " item" + If(Self.List.RowCount = 1, "", "s")
 		  Self.Refresh
 		End Sub
 	#tag EndMethod

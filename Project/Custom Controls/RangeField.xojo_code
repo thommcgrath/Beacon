@@ -41,10 +41,10 @@ Inherits UITweaks.ResizedTextField
 		Private Shared Function Format(Value As Double) As String
 		  If Floor(Value) = Value Then
 		    // Integer
-		    Return Value.ToString(Locale.Current, ",##0")
+		    Return Value.ToString(Locale.Current, "#,##0")
 		  Else
 		    // Double
-		    Return Value.ToString(Locale.Current, ",##0.0####")
+		    Return Value.ToString(Locale.Current, "#,##0.0####")
 		  End If
 		End Function
 	#tag EndMethod

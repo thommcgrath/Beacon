@@ -161,7 +161,7 @@ Protected Module Language
 
 	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
-		  Return Quantity.ToString(Locale.Current, ",##0") + " " + If(Quantity = 1, Singular, Plural)
+		  Return Quantity.ToString(Locale.Current, "#,##0") + " " + If(Quantity = 1, Singular, Plural)
 		End Function
 	#tag EndMethod
 

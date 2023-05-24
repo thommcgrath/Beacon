@@ -402,10 +402,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.LevelField.Text = Self.mEditingLevel.ToString(Locale.Current, ",##0")
-		  Self.MinXPField.Text = Self.mMinXP.ToString(Locale.Current, ",##0")
-		  Self.MaxXPField.Text = Self.mMaxXP.ToString(Locale.Current, ",##0")
-		  Self.XPField.Text = Self.mInitialXP.ToString(Locale.Current, ",##0")
+		  Self.LevelField.Text = Self.mEditingLevel.ToString(Locale.Current, "#,##0")
+		  Self.MinXPField.Text = Self.mMinXP.ToString(Locale.Current, "#,##0")
+		  Self.MaxXPField.Text = Self.mMaxXP.ToString(Locale.Current, "#,##0")
+		  Self.XPField.Text = Self.mInitialXP.ToString(Locale.Current, "#,##0")
 		  Self.XPField.SelectAll()
 		  
 		  Self.SwapButtons()

@@ -635,7 +635,7 @@ End
 		  If NumChanges = 1 Then
 		    Self.ShowAlert("1 item set changed", "Rebuilding changed 1 item set to match its template.")
 		  Else
-		    Self.ShowAlert(NumChanges.ToString(Locale.Current, ",##0") + " item sets changed", "Rebuilding changed " + NumChanges.ToString(Locale.Current, ",##0") + " item sets to match their templates.")
+		    Self.ShowAlert(NumChanges.ToString(Locale.Current, "#,##0") + " item sets changed", "Rebuilding changed " + NumChanges.ToString(Locale.Current, "#,##0") + " item sets to match their templates.")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -758,9 +758,9 @@ End
 		  Var TotalCount As Integer = Self.List.RowCount
 		  Var SelectedCount As Integer = Self.List.SelectedRowCount
 		  
-		  Var Caption As String = TotalCount.ToString(Locale.Current, ",##0") + " " + If(TotalCount = 1, "Loot Drop", "Loot Drops")
+		  Var Caption As String = TotalCount.ToString(Locale.Current, "#,##0") + " " + If(TotalCount = 1, "Loot Drop", "Loot Drops")
 		  If SelectedCount > 0 Then
-		    Caption = SelectedCount.ToString(Locale.Current, ",##0") + " of " + Caption + " Selected"
+		    Caption = SelectedCount.ToString(Locale.Current, "#,##0") + " of " + Caption + " Selected"
 		  End If
 		  Self.StatusBar1.Caption = Caption
 		End Sub

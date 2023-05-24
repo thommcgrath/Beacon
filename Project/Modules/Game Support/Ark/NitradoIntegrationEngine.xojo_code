@@ -110,7 +110,7 @@ Inherits Ark.IntegrationEngine
 		    End If
 		    
 		    If Self.mDoGuidedDeploy And FinishedValue.Length > 65535 Then
-		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, ",##0") + " characters, and Nitrado has a limit of 65,535 characters.")
+		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, "#,##0") + " characters, and Nitrado has a limit of 65,535 characters.")
 		      Self.SwitchToExpertMode(ConfigKey.Key, FinishedValue.Length)
 		      Return False
 		    End If

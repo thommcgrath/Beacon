@@ -1173,7 +1173,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub FocusLost()
-		  Me.Text = Self.ChanceSlider.Value.ToString(Locale.Current, ",##0")
+		  Me.Text = Self.ChanceSlider.Value.ToString(Locale.Current, "#,##0")
 		  Self.ChanceSlider.Enabled = True
 		End Sub
 	#tag EndEvent
@@ -1187,7 +1187,7 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  If Self.Focus <> ChanceField Then
-		    ChanceField.Text = Me.Value.ToString(Locale.Current, ",##0")
+		    ChanceField.Text = Me.Value.ToString(Locale.Current, "#,##0")
 		  End If
 		  
 		  If Not Self.mIgnoreChanges Then

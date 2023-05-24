@@ -148,6 +148,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -200,7 +201,7 @@ End
 		    Self.List.CellTextAt(Idx, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
 		    Self.List.CellTextAt(Idx, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
 		    Self.List.CellTextAt(Idx, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		    Self.List.CellTextAt(Idx, Self.ColumnDownloads) = Document.DownloadCount.ToString(Locale.Raw, ",##0")
+		    Self.List.CellTextAt(Idx, Self.ColumnDownloads) = Document.DownloadCount.ToString(Locale.Raw, "#,##0")
 		    Self.List.RowTagAt(Idx) = Document
 		    Self.List.RowSelectedAt(Idx) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
 		  Next

@@ -457,6 +457,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    End
    Begin Thread ProcessorThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -672,7 +673,7 @@ End
 		    
 		    NumProcessed = NumProcessed + 1
 		    Self.mProgress.Progress = NumProcessed / TotalEngrams
-		    Self.mProgress.Detail = "Updated " + NumProcessed.ToString(Locale.Current, ",##0") + " of " + TotalEngrams.ToString(Locale.Current, ",##0")
+		    Self.mProgress.Detail = "Updated " + NumProcessed.ToString(Locale.Current, "#,##0") + " of " + TotalEngrams.ToString(Locale.Current, "#,##0")
 		  Next
 		  
 		  Self.mProject.AddConfigGroup(WorkingConfig)

@@ -454,7 +454,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.stacksize", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"\x2C##0", Scope = Private
+	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"#\x2C##0", Scope = Private
 	#tag EndConstant
 
 

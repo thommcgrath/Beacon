@@ -265,6 +265,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread FibercraftBuilderThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -276,6 +277,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -668,7 +670,7 @@ End
 		  Var Noun As String = If(TotalItems = 1, "Engram", "Engrams")
 		  
 		  If SelectedItems > 0 Then
-		    Self.ListStatusBar.Caption = SelectedItems.ToString(Locale.Current, ",##0") + " of " + TotalItems.ToString(Locale.Current, ",##0") + " " + Noun + " Selected"
+		    Self.ListStatusBar.Caption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
 		  Else
 		    Self.ListStatusBar.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
 		  End If
@@ -1015,7 +1017,7 @@ End
 		    ReplacementConfig.Add(Cost)
 		    
 		    Self.mProgressWindow.Progress = NumProcessed / Engrams.Count
-		    Self.mProgressWindow.Detail = "Updated " + NumProcessed.ToString(Locale.Current, ",##0") + " of " + Engrams.Count.ToString(Locale.Current, ",##0")
+		    Self.mProgressWindow.Detail = "Updated " + NumProcessed.ToString(Locale.Current, "#,##0") + " of " + Engrams.Count.ToString(Locale.Current, "#,##0")
 		  Next
 		  
 		  Self.Project.AddConfigGroup(ReplacementConfig)

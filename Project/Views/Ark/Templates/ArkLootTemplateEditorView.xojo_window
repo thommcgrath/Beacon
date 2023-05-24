@@ -972,10 +972,10 @@ End
 		  
 		  Self.ContentsList.RowTagAt(Index) = Entry.MutableVersion
 		  Self.ContentsList.CellTextAt(Index, Self.ColumnDescription) = Entry.Label
-		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuantity) = If(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuantity) = If(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "#,##0"), Entry.MinQuantity.ToString(Locale.Current, "#,##0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "#,##0"))
 		  Self.ContentsList.CellTextAt(Index, Self.ColumnQuality) = If(Entry.MinQuality = Entry.MaxQuality, Entry.MinQuality.Label, Entry.MinQuality.Label(False) + "-" + Entry.MaxQuality.Label(False))
 		  Self.ContentsList.CellTextAt(Index, Self.ColumnBlueprint) = If(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint.ToString(Locale.Current, "0%"), "N/A")
-		  Self.ContentsList.CellTextAt(Index, Self.ColumnWeight) = Entry.RawWeight.ToString(Locale.Current, "0,")
+		  Self.ContentsList.CellTextAt(Index, Self.ColumnWeight) = Entry.RawWeight.ToString(Locale.Current, "#,##0")
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultipliers
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuality) = Entry.RespectQualityOffsets
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnBlueprint) = Entry.RespectBlueprintChanceMultipliers

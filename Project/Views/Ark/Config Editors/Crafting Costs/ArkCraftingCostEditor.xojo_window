@@ -195,7 +195,7 @@ End
 		  Self.List.RemoveAllRows
 		  For Idx As Integer = 0 To Self.mTarget.LastIndex
 		    Var Ingredient As Ark.CraftingCostIngredient = Self.mTarget.Ingredient(Idx)
-		    Self.List.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Raw, ",##0"))
+		    Self.List.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Raw, "#,##0"))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Ingredient.RequireExact
 		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Ingredient
@@ -214,7 +214,7 @@ End
 		  Var Noun As String = If(TotalItems = 1, "Resource", "Resources")
 		  
 		  If SelectedItems > 0 Then
-		    Self.Status.Caption = SelectedItems.ToString(Locale.Current, ",##0") + " of " + TotalItems.ToString(Locale.Current, ",##0") + " " + Noun + " Selected"
+		    Self.Status.Caption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
 		  Else
 		    Self.Status.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
 		  End If

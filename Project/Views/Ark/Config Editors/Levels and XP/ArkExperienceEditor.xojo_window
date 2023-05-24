@@ -227,7 +227,7 @@ End
 		  LevelXP = MinXP
 		  
 		  If MinXP > CType(Ark.Configs.ExperienceCurves.MaxSupportedXP, UInt64) Then
-		    Self.ShowAlert("No more levels possible", "Current Max XP is greater than Ark's supported maximum of " + Ark.Configs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, ",##0"))
+		    Self.ShowAlert("No more levels possible", "Current Max XP is greater than Ark's supported maximum of " + Ark.Configs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, "#,##0"))
 		    Return
 		  End If
 		  
@@ -364,9 +364,9 @@ End
 		    
 		    Var Columns(-1) As String
 		    Columns.ResizeTo(Max(Self.ColumnAscension, Self.ColumnLevel, Self.ColumnLevelXP, Self.ColumnTime, Self.ColumnTotalXP))
-		    Columns(Self.ColumnLevel) = Level.ToString(Locale.Current, ",##0")
-		    Columns(Self.ColumnLevelXP) = LevelXP.ToString(Locale.Current, ",##0")
-		    Columns(Self.ColumnTotalXP) = TotalXP.ToString(Locale.Current, ",##0")
+		    Columns(Self.ColumnLevel) = Level.ToString(Locale.Current, "#,##0")
+		    Columns(Self.ColumnLevelXP) = LevelXP.ToString(Locale.Current, "#,##0")
+		    Columns(Self.ColumnTotalXP) = TotalXP.ToString(Locale.Current, "#,##0")
 		    Columns(Self.ColumnAscension) = If(IsAscensionLevel, "Yes", "No")
 		    Columns(Self.ColumnTime) = Beacon.SecondsToString(TekBedSeconds)
 		    

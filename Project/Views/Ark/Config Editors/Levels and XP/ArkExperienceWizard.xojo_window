@@ -838,13 +838,13 @@ End
 		          LastXP = TotalXP
 		          
 		          Var DisplayLevel As Integer = (Level - 1) + Self.mStartingLevel
-		          Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
+		          Self.List.AddRow(DisplayLevel.ToString(Locale.Current, "#,##0"), LevelXP.ToString(Locale.Current, "#,##0"), TotalXP.ToString(Locale.Current, "#,##0"))
 		          Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
 		        Catch Err As RuntimeException
 		        End Try
 		      Next
 		      Self.List.ScrollPosition = Self.mLastScrollPosition
-		      Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
+		      Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, "#,##0")
 		    End Select
 		  Next Idx
 		End Sub
@@ -910,13 +910,13 @@ End
 		      LastXP = TotalXP
 		      
 		      Var DisplayLevel As Integer = (Level - 1) + StartingLevel
-		      Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
+		      Self.List.AddRow(DisplayLevel.ToString(Locale.Current, "#,##0"), LevelXP.ToString(Locale.Current, "#,##0"), TotalXP.ToString(Locale.Current, "#,##0"))
 		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
 		    Next
 		    Self.List.ScrollPosition = ScrollPosition
 		    
-		    Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
-		    Self.NextLevelField.Text = StartingLevel.ToString(Locale.Current, ",##0")
+		    Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, "#,##0")
+		    Self.NextLevelField.Text = StartingLevel.ToString(Locale.Current, "#,##0")
 		    Self.ActionButton.Enabled = Allowed
 		    Self.WarningLabel.Visible = Not Allowed
 		  #endif
@@ -1021,7 +1021,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  If Not Self.mValidXPAmount Then
-		    Self.ShowAlert("XP total is too high", "Ark has a limit of " + Ark.Configs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, ",##0") + " total experience.")
+		    Self.ShowAlert("XP total is too high", "Ark has a limit of " + Ark.Configs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, "#,##0") + " total experience.")
 		    Return
 		  End If
 		  

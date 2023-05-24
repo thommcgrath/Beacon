@@ -1829,7 +1829,7 @@ End
 		    End If
 		    Var MaxImprint As Double = Min(MaxCuddles * PerCuddle, 1.0)
 		    
-		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", PerCuddle.ToString(Locale.Current, ",##0%")), If(PerCuddle = 0, "", MaxImprint.ToString(Locale.Current, ",##0%")))
+		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", PerCuddle.ToString(Locale.Current, "#,##0%")), If(PerCuddle = 0, "", MaxImprint.ToString(Locale.Current, "#,##0%")))
 		    Var Idx As Integer = CreaturesList.LastAddedRowIndex
 		    CreaturesList.CellTagAt(Idx, Self.ColumnIncubationTime) = IncubationSeconds
 		    CreaturesList.CellTagAt(Idx, Self.ColumnMatureTime) = MatureSeconds
