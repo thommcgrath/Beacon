@@ -1057,6 +1057,7 @@ End
 		  #Pragma Unused Item
 		  
 		  Self.SetupUI()
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1064,6 +1065,7 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.CheckReadyState()
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1076,6 +1078,7 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.CheckReadyState()
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1083,6 +1086,7 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.CheckReadyState()
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1090,6 +1094,7 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  Self.SetupUI()
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1112,6 +1117,7 @@ End
 		  End If
 		  
 		  Self.PublicKeyFile = KeyFile
+		  Self.Modified = True
 		  
 		  If KeyFile.Name.EndsWith(".pub") = False Then
 		    Return
@@ -1152,6 +1158,7 @@ End
 		  End If
 		  
 		  Self.PrivateKeyFile = KeyFile
+		  Self.Modified = True
 		  
 		  Var PublicFile As FolderItem = KeyFile.Parent.Child(KeyFile.Name + ".pub")
 		  If PublicFile Is Nil Or PublicFile.Exists = False Then
@@ -1173,6 +1180,7 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.CheckReadyState()
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

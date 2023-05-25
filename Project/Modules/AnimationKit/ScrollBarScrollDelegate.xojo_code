@@ -63,9 +63,9 @@ Implements AnimationKit.Scrollable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Target() As ScrollBar
+		Function Target() As DesktopScrollBar
 		  If (TargetRef Is Nil) = False And (TargetRef.Value Is Nil) = False Then
-		    Return ScrollBar(TargetRef.Value)
+		    Return DesktopScrollBar(TargetRef.Value)
 		  End If
 		End Function
 	#tag EndMethod

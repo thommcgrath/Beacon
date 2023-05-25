@@ -131,11 +131,11 @@ Inherits Ark.ServerProfile
 		    Return
 		  End If
 		  
-		  If Self.mPublicKey.BeginsWith("---") Then
+		  If Self.IsPrivateKeyInternal Then
 		    // Plain key
 		    Var KeysFolder As FolderItem = App.ApplicationSupport.Child("Private Keys")
 		    If KeysFolder.Exists = False Then
-		      Var Permissions As New Permissions(&o600)
+		      Var Permissions As New Permissions(&o700)
 		      Permissions.GidBit = False
 		      Permissions.StickyBit = False
 		      Permissions.UidBit = False
@@ -243,6 +243,15 @@ Inherits Ark.ServerProfile
 			End Set
 		#tag EndSetter
 		Host As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPrivateKey.BeginsWith("---")
+			End Get
+		#tag EndGetter
+		IsPrivateKeyInternal As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21

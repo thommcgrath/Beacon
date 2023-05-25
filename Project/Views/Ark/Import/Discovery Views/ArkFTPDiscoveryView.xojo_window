@@ -732,6 +732,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mInternalize As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mInternalizeAskedFor As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProfile As Ark.FTPServerProfile
 	#tag EndProperty
 
@@ -829,6 +837,36 @@ End
 		  Self.mProfile.Password = Self.SettingsView.Password
 		  Self.mProfile.VerifyHost = Self.SettingsView.VerifyTLSCertificate
 		  Self.mProfile.Mode = Self.SettingsView.Mode
+		  
+		  If Self.SettingsView.UsePublicKeyAuth Then
+		    Var PublicKeyFile As FolderItem = Self.SettingsView.PublicKeyFile
+		    Var PrivateKeyFile As FolderItem = Self.SettingsView.PrivateKeyFile
+		    If PublicKeyFile Is Nil Or PrivateKeyFile Is Nil Then
+		      Return
+		    End If
+		    
+		    If Self.mInternalizeAskedFor <> PrivateKeyFile.NativePath Then
+		      Var KeyInternalizeMessage As String = "Do you want to store your key pair inside your Beacon project?"
+		      Var KeyInternalizeExplanation As String = "If you choose to store your key pair inside your Beacon project, it will be kept inside the encrypted section of your project and protected by your Beacon account password. Your key will be usable on any device." + EndOfLine + EndOfLine + "If you choose not to store the key pair in your account, it will need to exist at the same path on every device which uses your Beacon project."
+		      Var KeyInternalizeChoice As BeaconUI.ConfirmResponses = Self.ShowConfirm(KeyInternalizeMessage, KeyInternalizeExplanation, "Store in Project", "Cancel", "Store on Disk")
+		      Self.mInternalizeAskedFor = PrivateKeyFile.NativePath
+		      
+		      Select Case KeyInternalizeChoice
+		      Case BeaconUI.ConfirmResponses.Action
+		        Self.mInternalize = True
+		      Case BeaconUI.ConfirmResponses.Cancel
+		        Return
+		      Case BeaconUI.ConfirmResponses.Alternate
+		        Self.mInternalize = False
+		      End Select
+		    End If
+		    
+		    If Self.mInternalize Then
+		      Self.mProfile.SetKeyPair(Self.SettingsView.PublicKeyFile.Read(Encodings.UTF8), Self.SettingsView.PrivateKeyFile.Read(Encodings.UTF8))
+		    Else
+		      Self.mProfile.SetKeyPair(Self.SettingsView.PublicKeyFile, Self.SettingsView.PrivateKeyFile)
+		    End If
+		  End If
 		  
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		  
