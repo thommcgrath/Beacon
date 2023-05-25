@@ -18,6 +18,8 @@ Inherits Ark.ServerProfile
 		  Self.mMode = Dict.Lookup("Mode", ModeAuto)
 		  Self.mMask = Dict.Lookup("Mask", 0)
 		  Self.mVerifyHost = Dict.Lookup("Verify Host", True)
+		  Self.mPublicKey = Dict.Lookup("Public Key", "")
+		  Self.mPrivateKey = Dict.Lookup("Private Key", "")
 		End Sub
 	#tag EndEvent
 
@@ -33,6 +35,11 @@ Inherits Ark.ServerProfile
 		  Dict.Value("Mode") = Self.mMode
 		  Dict.Value("Mask") = Self.mMask
 		  Dict.Value("Verify Host") = Self.mVerifyHost
+		  
+		  If Self.mPublicKey.IsEmpty = False And Self.mPrivateKey.IsEmpty = False Then
+		    Dict.Value("Public Key") = Self.mPublicKey
+		    Dict.Value("Private Key") = Self.mPrivateKey
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -76,6 +83,20 @@ Inherits Ark.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetPrivateKeyFile() As FolderItem
+		  Self.PrepareKeyFiles()
+		  Return Self.mPrivateKeyFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetPublicKeyFile() As FolderItem
+		  Self.PrepareKeyFiles()
+		  Return Self.mPublicKeyFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Mask() As UInt64
 		  Return Self.mMask
 		End Function
@@ -104,6 +125,44 @@ Inherits Ark.ServerProfile
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub PrepareKeyFiles()
+		  If (Self.mPrivateKeyFile Is Nil And Self.mPublicKeyFile Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  If Self.mPublicKey.BeginsWith("---") Then
+		    // Plain key
+		    Var KeysFolder As FolderItem = App.ApplicationSupport.Child("Private Keys")
+		    If KeysFolder.Exists = False Then
+		      Var Permissions As New Permissions(&o600)
+		      Permissions.GidBit = False
+		      Permissions.StickyBit = False
+		      Permissions.UidBit = False
+		      
+		      KeysFolder.CreateFolder
+		      KeysFolder.Permissions = Permissions
+		    End If
+		    
+		    Var KeyHash As String = EncodeHex(Crypto.MD5(Self.mPublicKey)).Lowercase
+		    Self.mPublicKeyFile = KeysFolder.Child(KeyHash + ".pub")
+		    Self.mPrivateKeyFile = KeysFolder.Child(KeyHash)
+		    
+		    If Self.mPublicKeyFile.Exists = False Then
+		      Call Self.mPublicKeyFile.Write(Self.mPublicKey)
+		    End If
+		    
+		    If Self.mPrivateKeyFile.Exists = False Then
+		      Call Self.mPrivateKeyFile.Write(Self.mPrivateKey)
+		    End If
+		  Else
+		    // File reference
+		    Self.mPublicKeyFile = BookmarkedFolderItem.FromSaveInfo(Self.mPublicKey)
+		    Self.mPrivateKeyFile = BookmarkedFolderItem.FromSaveInfo(Self.mPrivateKey)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SecondaryName() As String
 		  Return Self.Username + "@" + Self.Host + ":" + Self.Port.ToString
@@ -114,6 +173,24 @@ Inherits Ark.ServerProfile
 		Function ServerID() As String
 		  Return Self.mUsername.Lowercase + "@" + Self.mHost.Lowercase + If(Self.mGameIniPath.BeginsWith("/"), "", "/") + Self.mGameIniPath
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetKeyPair(PublicKey As FolderItem, PrivateKey As FolderItem)
+		  Var BookmarkedPublicKey As New BookmarkedFolderItem(PublicKey)
+		  Var BookmarkedPrivateKey As New BookmarkedFolderItem(PrivateKey)
+		  
+		  Self.SetKeyPair(BookmarkedPublicKey.SaveInfo, BookmarkedPrivateKey.SaveInfo)
+		  Self.mPublicKeyFile = BookmarkedPublicKey
+		  Self.mPrivateKeyFile = BookmarkedPrivateKey
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetKeyPair(PublicKey As String, PrivateKey As String)
+		  Self.mPublicKey = PublicKey
+		  Self.mPrivateKey = PrivateKey
+		End Sub
 	#tag EndMethod
 
 
@@ -220,6 +297,22 @@ Inherits Ark.ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mPort As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPrivateKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPrivateKeyFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPublicKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPublicKeyFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

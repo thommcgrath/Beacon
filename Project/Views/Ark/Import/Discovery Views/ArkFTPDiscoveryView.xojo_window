@@ -11,7 +11,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
    Enabled         =   True
    EraseBackground =   "True"
    HasBackgroundColor=   False
-   Height          =   310
+   Height          =   450
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -30,7 +30,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
    Begin DesktopPagePanel ViewPanel
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   310
+      Height          =   450
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -52,102 +52,6 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
       Value           =   0
       Visible         =   True
       Width           =   600
-      Begin UITweaks.ResizedLabel ServerModeLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   10
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Mode:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   238
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedPopupMenu ServerModeMenu
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         InitialValue    =   "Autodetect\nFTP\nFTP with TLS\nSFTP"
-         Italic          =   False
-         Left            =   158
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         SelectedRowIndex=   0
-         TabIndex        =   11
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   238
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   142
-      End
-      Begin DesktopLabel ExplanationLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   38
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Beacon will securely send this information to the Beacon API server, which will perform the FTP work. The server will not store or log FTP information in any way."
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   52
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
       Begin DesktopLabel ServerMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
@@ -180,306 +84,6 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Underline       =   False
          Visible         =   True
          Width           =   560
-      End
-      Begin UITweaks.ResizedLabel ServerHostLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Host:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   102
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedTextField ServerHostField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   158
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   102
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   422
-      End
-      Begin UITweaks.ResizedLabel ServerPortLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Port:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   136
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedTextField ServerPortField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   158
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "21"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   136
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   101
-      End
-      Begin UITweaks.ResizedLabel ServerUserLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   6
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Username:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   170
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedTextField ServerUserField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   158
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   170
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   422
-      End
-      Begin UITweaks.ResizedLabel ServerPassLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Password:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   204
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   126
-      End
-      Begin UITweaks.ResizedTextField ServerPassField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   158
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   True
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   204
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   422
       End
       Begin DesktopLabel DiscoveringMessage
          AllowAutoDeactivate=   True
@@ -604,7 +208,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   270
+         Top             =   410
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -636,7 +240,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   270
+         Top             =   410
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -653,7 +257,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          CurrentPath     =   ""
          Enabled         =   True
          HasBackgroundColor=   False
-         Height          =   204
+         Height          =   344
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   21
@@ -692,7 +296,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabIndex        =   8
          TabPanelIndex   =   3
          Tooltip         =   ""
-         Top             =   274
+         Top             =   414
          Transparent     =   False
          Visible         =   False
          Width           =   16
@@ -723,11 +327,11 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   19
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   270
+         Top             =   410
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -755,11 +359,11 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   14
+         TabIndex        =   20
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   270
+         Top             =   410
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -820,7 +424,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   257
+         Top             =   397
          Transparent     =   True
          Visible         =   True
          Width           =   560
@@ -833,7 +437,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Backdrop        =   0
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   204
+         Height          =   344
          Index           =   2
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -863,7 +467,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Backdrop        =   0
          ContentHeight   =   0
          Enabled         =   True
-         Height          =   204
+         Height          =   344
          Index           =   3
          InitialParent   =   "ViewPanel"
          Left            =   579
@@ -885,10 +489,97 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Visible         =   True
          Width           =   1
       End
-      Begin DesktopCheckBox VerifyCertificateCheck
+      Begin FTPSettingsView SettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   328
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   21
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   61
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
+      Begin FadedSeparator SettingsTopSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   22
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   60
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
+      Begin FadedSeparator SettingsBottomSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   23
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   389
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
+      Begin DesktopButton ServerLoadSpecButton
          AllowAutoDeactivate=   True
          Bold            =   False
-         Caption         =   "Verify Certificate (TLS Only)"
+         Cancel          =   False
+         Caption         =   "Load FileZilla Spec"
+         Default         =   False
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -897,24 +588,23 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
-         Left            =   312
+         Left            =   20
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   12
+         TabIndex        =   24
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   238
+         Top             =   410
          Transparent     =   False
          Underline       =   False
-         Value           =   True
          Visible         =   True
-         VisualState     =   0
-         Width           =   268
+         Width           =   141
       End
    End
    Begin Timer StatusWatcher
@@ -952,36 +642,6 @@ End
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Sub CheckHostForPort()
-		  Var Checker As New Regex
-		  Checker.SearchPattern = ":(\d{1,5})$"
-		  Checker.ReplacementPattern = ""
-		  
-		  Var CheckedValue As String = Self.ServerHostField.Text.Trim
-		  
-		  Var Matches As RegexMatch = Checker.Search(CheckedValue)
-		  If Matches Is Nil Then
-		    If Self.ServerHostField.Text <> CheckedValue Then
-		      Self.ServerHostField.Text = CheckedValue
-		    End If
-		    Return
-		  End If
-		  
-		  Self.ServerHostField.Text = CheckedValue.Left(CheckedValue.Length - Matches.SubExpressionString(0).Length)
-		  Self.ServerPortField.Text = Matches.SubExpressionString(1)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CheckServerActionButton()
-		  Var Enabled As Boolean = Self.ServerHostField.Text.Length > 0 And Val(Self.ServerPortField.Text) > 0 And Self.ServerUserField.Text.Length > 0 And Self.ServerPassField.Text.Length > 0
-		  If Self.ServerActionButton.Enabled <> Enabled Then
-		    Self.ServerActionButton.Enabled = Enabled
-		  End If
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub mEngine_Discovered(Sender As Ark.FTPIntegrationEngine, Data() As Beacon.DiscoveredData)
@@ -1099,51 +759,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ServerModeMenu
-	#tag Event
-		Sub SelectionChanged(item As DesktopMenuItem)
-		  #Pragma Unused Item
-		  
-		  Self.VerifyCertificateCheck.Visible = Me.SelectedRowIndex = 0 Or Me.SelectedRowIndex = 2
-		  Self.VerifyCertificateCheck.Caption = If(Me.SelectedRowIndex = 0, "Verify Certificate (TLS Only)", "Verify Certificate")
-		  
-		  Self.CheckServerActionButton
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerHostField
-	#tag Event
-		Sub TextChanged()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub FocusLost()
-		  Self.CheckHostForPort()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerPortField
-	#tag Event
-		Sub TextChanged()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerUserField
-	#tag Event
-		Sub TextChanged()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerPassField
-	#tag Event
-		Sub TextChanged()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events BrowseActionButton
 	#tag Event
 		Sub Pressed()
@@ -1207,35 +822,60 @@ End
 #tag Events ServerActionButton
 	#tag Event
 		Sub Pressed()
-		  Self.CheckHostForPort()
-		  
 		  Self.mProfile = New Ark.FTPServerProfile()
-		  Self.mProfile.Host = Self.ServerHostField.Text
-		  Self.mProfile.Port = CDbl(Self.ServerPortField.Text)
-		  Self.mProfile.Username = Self.ServerUserField.Text
-		  Self.mProfile.Password = Self.ServerPassField.Text
-		  Self.mProfile.VerifyHost = Self.VerifyCertificateCheck.Value
-		  
-		  Select Case Self.ServerModeMenu.SelectedRowIndex
-		  Case 1
-		    Self.mProfile.Mode = Ark.FTPServerProfile.ModeFTP
-		  Case 2
-		    Self.mProfile.Mode = Ark.FTPServerProfile.ModeFTPTLS
-		  Case 3
-		    Self.mProfile.Mode = Ark.FTPServerProfile.ModeSFTP
-		  Else
-		    Self.mProfile.Mode = Ark.FTPServerProfile.ModeAuto
-		  End Select
+		  Self.mProfile.Host = Self.SettingsView.Host
+		  Self.mProfile.Port = Self.SettingsView.Port
+		  Self.mProfile.Username = Self.SettingsView.Username
+		  Self.mProfile.Password = Self.SettingsView.Password
+		  Self.mProfile.VerifyHost = Self.SettingsView.VerifyTLSCertificate
+		  Self.mProfile.Mode = Self.SettingsView.Mode
 		  
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		  
 		  Self.mEngine = New Ark.FTPIntegrationEngine(Self.mProfile)
-		  Self.mEngine.VerifyHost = Self.VerifyCertificateCheck.Value
+		  Self.mEngine.VerifyHost = Self.mProfile.VerifyHost
 		  AddHandler mEngine.Wait, WeakAddressOf mEngine_Wait
 		  AddHandler mEngine.Discovered, WeakAddressOf mEngine_Discovered
 		  AddHandler mEngine.FilesListed, WeakAddressOf mEngine_FilesListed
 		  AddHandler mEngine.FileListError, WeakAddressOf mEngine_FileListError
 		  Self.mEngine.BeginDiscovery(Self.Project)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SettingsView
+	#tag Event
+		Sub ReadyStateChanged()
+		  Self.ServerActionButton.Enabled = Me.Ready
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WantsHeightChange(NewDesiredHeight As Integer)
+		  Me.Height = NewDesiredHeight
+		  Self.SettingsBottomSeparator.Top = Me.Top + Me.Height
+		  Self.ServerActionButton.Top = Self.SettingsBottomSeparator.Bottom + 20
+		  Self.ServerCancelButton.Top = Self.ServerActionButton.Top
+		  Self.ServerLoadSpecButton.Top = Self.ServerActionButton.Top
+		  Self.DesiredHeight = Self.ServerActionButton.Bottom + 20
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServerLoadSpecButton
+	#tag Event
+		Sub Pressed()
+		  Var Board As New Clipboard
+		  If Board.TextAvailable And Self.SettingsView.ImportFileZillaSpec(Board.Text) Then
+		    Return
+		  End If
+		  
+		  Var Dialog As New OpenDialog
+		  Dialog.Filter = BeaconFileTypes.Text
+		  
+		  Var SpecFile As FolderItem = Dialog.ShowModal(Self)
+		  If SpecFile Is Nil Then
+		    Return
+		  End If
+		  
+		  Call Self.SettingsView.ImportFileZillaSpec(SpecFile)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1260,7 +900,7 @@ End
 	#tag Event
 		Sub ClipboardChanged(Content As String)
 		  Var Matcher As New Regex
-		  Matcher.SearchPattern = "^((ftp|ftps|sftp)://)?(([^@:\s]+):([^@:\s]+)@)?([^/:\s]+\.[^/:\s]+)(:(\d{1,5}))?"
+		  Matcher.SearchPattern = "^((ftp|ftps|sftp)://)(([^@:\s]+):([^@:\s]+)@)?([^/:\s]+\.[^/:\s]+)(:(\d{1,5}))?"
 		  
 		  Var Matches As RegexMatch = Matcher.Search(Content)
 		  If Matches Is Nil Then
@@ -1273,37 +913,27 @@ End
 		  Var Host As String = If(Matches.SubExpressionCount >= 6, DecodeURLComponent(Matches.SubExpressionString(6)), "")
 		  Var Port As String = If(Matches.SubExpressionCount >= 8, DecodeURLComponent(Matches.SubExpressionString(8)), "")
 		  
-		  Select Case Protocol
-		  Case "ftp"
-		    Self.ServerModeMenu.SelectedRowIndex = 1
-		    If Port.IsEmpty Then
-		      Port = "21"
-		    End If
-		  Case "ftps"
-		    Self.ServerModeMenu.SelectedRowIndex = 2
-		    If Port.IsEmpty Then
-		      Port = "21"
-		    End If
-		  Case "sftp"
-		    Self.ServerModeMenu.SelectedRowIndex = 3
-		    If Port.IsEmpty Then
+		  If Port.IsEmpty Then
+		    If Protocol = "sftp" Then
 		      Port = "22"
+		    Else
+		      Port = "21"
 		    End If
-		  Else
-		    Self.ServerModeMenu.SelectedRowIndex = 0
-		  End Select
+		  End If
+		  
+		  Self.SettingsView.Mode = Protocol
 		  
 		  If Host.IsEmpty = False Then
-		    Self.ServerHostField.Text = Host
+		    Self.SettingsView.Host = Host
 		  End If
 		  If Port.IsEmpty = False Then
-		    Self.ServerPortField.Text = Port
+		    Self.SettingsView.Port = Integer.FromString(Port, Locale.Current)
 		  End If
 		  If Username.IsEmpty = False Then
-		    Self.ServerUserField.Text = Username
+		    Self.SettingsView.Username = Username
 		  End If
 		  If Password.IsEmpty = False Then
-		    Self.ServerPassField.Text = Password
+		    Self.SettingsView.Password = Password
 		  End If
 		  
 		  Exception Err As RuntimeException

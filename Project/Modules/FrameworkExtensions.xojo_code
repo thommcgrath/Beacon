@@ -294,6 +294,20 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FindNode(Extends Parent As XMLNode, Named As String) As XMLNode()
+		  Var Children() As XMLNode
+		  Var Bound As Integer = Parent.ChildCount - 1
+		  For Idx As Integer = 0 To Bound
+		    Var Child As XMLNode = Parent.Child(Idx)
+		    If Child.Name = Named Then
+		      Children.Add(Child)
+		    End If
+		  Next
+		  Return Children
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasAllKeys(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Boolean
 		  For Each Key As Variant In Keys
 		    If Dict.HasKey(Key) = False Then

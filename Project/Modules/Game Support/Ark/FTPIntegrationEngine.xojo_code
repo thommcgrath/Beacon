@@ -217,6 +217,15 @@ Inherits Ark.IntegrationEngine
 		  Self.mSocket.OptionTimeOut = 10
 		  Self.mSocket.YieldTime = True
 		  
+		  Var PublicKeyFile As FolderItem = Ark.FTPServerProfile(Profile).GetPublicKeyFile
+		  Var PrivateKeyFile As FolderItem = Ark.FTPServerProfile(Profile).GetPrivateKeyFile
+		  If (PublicKeyFile Is Nil And PrivateKeyFile Is Nil) = False Then
+		    Self.mSocket.OptionSSHAuthTypes = Self.mSocket.OptionSSHAuthTypes Or CURLSMBS.kSSHAuthPublicKey
+		    Self.mSocket.OptionSSHPublicKeyfile = PublicKeyFile.NativePath
+		    Self.mSocket.OptionSSHPrivateKeyfile = PrivateKeyFile.NativePath
+		    Self.mSocket.OptionKeyPassword = Self.mSocket.OptionPassword
+		  End If
+		  
 		  Self.mSocketLock = New CriticalSection
 		  
 		  Super.Constructor(Profile)

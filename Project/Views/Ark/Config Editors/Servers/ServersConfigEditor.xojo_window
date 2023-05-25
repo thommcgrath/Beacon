@@ -304,6 +304,8 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub Engine_Discovered(Sender As Ark.IntegrationEngine, Data() As Beacon.DiscoveredData)
+		  #Pragma Unused Sender
+		  
 		  Var Profiles As New Dictionary
 		  Var AllProfiles() As Beacon.ServerProfile = Self.Project.ServerProfiles
 		  For Each Profile As Beacon.ServerProfile In AllProfiles
