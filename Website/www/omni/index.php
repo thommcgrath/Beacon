@@ -353,14 +353,15 @@ if ($arkOnlyMode === false) {
 BeaconTemplate::StartModal('checkout-email');
 ?>
 	<div class="modal-content">
-		<div class="title-bar">Your E-Mail Address</div>
+		<div class="title-bar">Beacon Account E-Mail Address</div>
 		<div class="content">
-			<p>We need your e-mail address to show you the most accurate pricing and options. This will not be stored until your purchase is complete and will not be used for marketing messages. Feel free to read more about our <a href="/help/about_user_privacy" target="beacon" rel="noopener noreferrer">privacy policy</a> in a new tab.</p>
+			<p>We need the e-mail address of your Beacon account to show you the most accurate pricing and options. If you do not have a Beacon account yet, enter the e-mail address you want to use to create one. You will create your Beacon account after purchase.</p>
 			<div class="floating-label">
-				<input class="text-field" type="email" id="checkout-email-field" placeholder="E-Mail Address">
-				<label for="checkout-email-field">E-Mail Address</label>
+				<input class="text-field" type="email" id="checkout-email-field" placeholder="Beacon Account E-Mail Address">
+				<label for="checkout-email-field">Beacon Account E-Mail Address</label>
 			</div>
 			<p class="hidden text-red" id="checkout-email-error">There was an error with your email address</p>
+			<p> This will not be stored until your purchase is complete and will not be used for marketing messages. Feel free to read more about our <a href="/help/about_user_privacy" target="beacon" rel="noopener noreferrer">privacy policy</a> in a new tab.</p>
 		</div>
 		<div class="button-bar">
 			<div class="left">&nbsp;</div>
