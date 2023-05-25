@@ -9,7 +9,7 @@ Begin BeaconContainer FTPSettingsView
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   328
+   Height          =   294
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -334,110 +334,6 @@ Begin BeaconContainer FTPSettingsView
       VisualState     =   0
       Width           =   422
    End
-   Begin UITweaks.ResizedLabel PublicKeyLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Public Key File:"
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   186
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   126
-   End
-   Begin UITweaks.ResizedTextField PublicKeyField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   158
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   186
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Visible         =   True
-      Width           =   320
-   End
-   Begin UITweaks.ResizedPushButton PublicKeyChooseButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Choose…"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   490
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   187
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   90
-   End
    Begin UITweaks.ResizedLabel PrivateKeyLabel
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -464,7 +360,7 @@ Begin BeaconContainer FTPSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   220
+      Top             =   186
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -504,7 +400,7 @@ Begin BeaconContainer FTPSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   220
+      Top             =   186
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -536,7 +432,7 @@ Begin BeaconContainer FTPSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   221
+      Top             =   187
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -568,7 +464,7 @@ Begin BeaconContainer FTPSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   254
+      Top             =   220
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -608,7 +504,7 @@ Begin BeaconContainer FTPSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   254
+      Top             =   220
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -637,7 +533,7 @@ Begin BeaconContainer FTPSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   288
+      Top             =   254
       Transparent     =   False
       Underline       =   False
       Value           =   True
@@ -682,7 +578,7 @@ End
 		  
 		  Self.mReady = Self.Host.IsEmpty = False And Self.Port > 0 And Self.Username.IsEmpty = False
 		  If Self.Mode = "sftp" Then
-		    Self.mReady = Self.mReady And ((Self.UsePublicKeyAuth = True And Self.PublicKeyField.Text.IsEmpty = False And Self.PrivateKeyField.Text.IsEmpty = False) Or (Self.UsePublicKeyAuth = False And Self.Password.IsEmpty = False))
+		    Self.mReady = Self.mReady And ((Self.UsePublicKeyAuth = True And Self.PrivateKeyField.Text.IsEmpty = False) Or (Self.UsePublicKeyAuth = False And Self.Password.IsEmpty = False))
 		  Else
 		    Self.mReady = Self.mReady And Self.Password.IsEmpty = False
 		  End If
@@ -806,16 +702,13 @@ End
 		  Var UsePublicKeyAuth As Boolean = (RowIndex = Self.IndexSFTP) And Self.UsePublicKeyCheck.Value
 		  
 		  Self.UsePublicKeyCheck.Visible = (RowIndex = Self.IndexSFTP)
-		  Self.PublicKeyLabel.Visible = UsePublicKeyAuth
-		  Self.PublicKeyField.Visible = UsePublicKeyAuth
-		  Self.PublicKeyChooseButton.Visible = UsePublicKeyAuth
 		  Self.PrivateKeyLabel.Visible = UsePublicKeyAuth
 		  Self.PrivateKeyField.Visible = UsePublicKeyAuth
 		  Self.PrivateKeyChooseButton.Visible = UsePublicKeyAuth
 		  Self.PassLabel.Text = If(UsePublicKeyAuth, "Key Password:", "Password:")
 		  Self.VerifyCertificateCheck.Visible = (RowIndex = Self.IndexFTPS)
 		  
-		  BeaconUI.SizeToFit(Self.ModeLabel, Self.HostLabel, Self.PortLabel, Self.UserLabel, Self.PublicKeyLabel, Self.PrivateKeyLabel, Self.PassLabel)
+		  BeaconUI.SizeToFit(Self.ModeLabel, Self.HostLabel, Self.PortLabel, Self.UserLabel, Self.PrivateKeyLabel, Self.PassLabel)
 		  
 		  Var FieldsLeft As Integer = Self.ModeLabel.Right + 12
 		  Self.ModeMenu.Left = FieldsLeft
@@ -825,8 +718,6 @@ End
 		  Self.UserField.Left = FieldsLeft
 		  Self.UserField.Width = Self.Width - (20 + FieldsLeft)
 		  Self.UsePublicKeyCheck.Left = FieldsLeft
-		  Self.PublicKeyField.Left = FieldsLeft
-		  Self.PublicKeyField.Width = Self.PublicKeyChooseButton.Left - (12 + FieldsLeft)
 		  Self.PrivateKeyField.Left = FieldsLeft
 		  Self.PrivateKeyField.Width = Self.PrivateKeyChooseButton.Left - (12 + FieldsLeft)
 		  Self.PassField.Left = FieldsLeft
@@ -837,12 +728,6 @@ End
 		  If Self.UsePublicKeyCheck.Visible Then
 		    Self.UsePublicKeyCheck.Top = NextTop
 		    NextTop = Self.UsePublicKeyCheck.Bottom + 12
-		  End If
-		  If Self.PublicKeyField.Visible Then
-		    Self.PublicKeyLabel.Top = NextTop
-		    Self.PublicKeyField.Top = NextTop
-		    Self.PublicKeyChooseButton.Top = NextTop + 1
-		    NextTop = Self.PublicKeyField.Bottom + 12
 		  End If
 		  If Self.PrivateKeyField.Visible Then
 		    Self.PrivateKeyLabel.Top = NextTop
@@ -984,21 +869,6 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mPublicKeyFile
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mPublicKeyFile = Value
-			  Self.PublicKeyField.Text = Value.NativePath
-			End Set
-		#tag EndSetter
-		PublicKeyFile As FolderItem
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
 			  Return Self.UsePublicKeyCheck.Value
 			End Get
 		#tag EndGetter
@@ -1098,47 +968,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PublicKeyField
-	#tag Event
-		Sub TextChanged()
-		  Self.CheckReadyState()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PublicKeyChooseButton
-	#tag Event
-		Sub Pressed()
-		  Var Dialog As New OpenDialog
-		  Dialog.Filter = BeaconFileTypes.Any
-		  
-		  Var KeyFile As FolderItem = Dialog.ShowModal(Self)
-		  If KeyFile Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.PublicKeyFile = KeyFile
-		  Self.Modified = True
-		  
-		  If KeyFile.Name.EndsWith(".pub") = False Then
-		    Return
-		  End If
-		  
-		  Var PrivateFile As FolderItem = KeyFile.Parent.Child(KeyFile.Name.Left(KeyFile.Name.Length - 4))
-		  If PrivateFile Is Nil Or PrivateFile.Exists = False Then
-		    Return
-		  End If
-		  
-		  Try
-		    Var Stream As BinaryStream = BinaryStream.Open(PrivateFile, False)
-		    Call Stream.Read(4)
-		    Stream.Close
-		    
-		    Self.PrivateKeyFile = PrivateFile
-		  Catch Err As RuntimeException
-		  End Try
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events PrivateKeyField
 	#tag Event
 		Sub TextChanged()
@@ -1149,7 +978,7 @@ End
 #tag Events PrivateKeyChooseButton
 	#tag Event
 		Sub Pressed()
-		  Var Dialog As New OpenDialog
+		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.Any
 		  
 		  Var KeyFile As FolderItem = Dialog.ShowModal(Self)
@@ -1159,20 +988,6 @@ End
 		  
 		  Self.PrivateKeyFile = KeyFile
 		  Self.Modified = True
-		  
-		  Var PublicFile As FolderItem = KeyFile.Parent.Child(KeyFile.Name + ".pub")
-		  If PublicFile Is Nil Or PublicFile.Exists = False Then
-		    Return
-		  End If
-		  
-		  Try
-		    Var Stream As BinaryStream = BinaryStream.Open(PublicFile, False)
-		    Call Stream.Read(4)
-		    Stream.Close
-		    
-		    Self.PublicKeyFile = PublicFile
-		  Catch Err As RuntimeException
-		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents

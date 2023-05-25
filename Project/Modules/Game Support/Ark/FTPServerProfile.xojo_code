@@ -18,7 +18,6 @@ Inherits Ark.ServerProfile
 		  Self.mMode = Dict.Lookup("Mode", ModeAuto)
 		  Self.mMask = Dict.Lookup("Mask", 0)
 		  Self.mVerifyHost = Dict.Lookup("Verify Host", True)
-		  Self.mPublicKey = Dict.Lookup("Public Key", "")
 		  Self.mPrivateKey = Dict.Lookup("Private Key", "")
 		End Sub
 	#tag EndEvent
@@ -36,8 +35,7 @@ Inherits Ark.ServerProfile
 		  Dict.Value("Mask") = Self.mMask
 		  Dict.Value("Verify Host") = Self.mVerifyHost
 		  
-		  If Self.mPublicKey.IsEmpty = False And Self.mPrivateKey.IsEmpty = False Then
-		    Dict.Value("Public Key") = Self.mPublicKey
+		  If Self.mPrivateKey.IsEmpty = False Then
 		    Dict.Value("Private Key") = Self.mPrivateKey
 		  End If
 		End Sub
@@ -83,20 +81,6 @@ Inherits Ark.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPrivateKeyFile() As FolderItem
-		  Self.PrepareKeyFiles()
-		  Return Self.mPrivateKeyFile
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetPublicKeyFile() As FolderItem
-		  Self.PrepareKeyFiles()
-		  Return Self.mPublicKeyFile
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Mask() As UInt64
 		  Return Self.mMask
 		End Function
@@ -126,8 +110,8 @@ Inherits Ark.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PrepareKeyFiles()
-		  If (Self.mPrivateKeyFile Is Nil And Self.mPublicKeyFile Is Nil) = False Then
+		Private Sub PrepareKeyFile()
+		  If (Self.mPrivateKeyFile Is Nil) = False Then
 		    Return
 		  End If
 		  
@@ -144,22 +128,39 @@ Inherits Ark.ServerProfile
 		      KeysFolder.Permissions = Permissions
 		    End If
 		    
-		    Var KeyHash As String = EncodeHex(Crypto.MD5(Self.mPublicKey)).Lowercase
-		    Self.mPublicKeyFile = KeysFolder.Child(KeyHash + ".pub")
-		    Self.mPrivateKeyFile = KeysFolder.Child(KeyHash)
+		    Var KeyId As String = Beacon.UUID.v5(Self.mPrivateKey, "b763e1c2-809e-45c7-bce4-1d3a7a07ec1f")
 		    
-		    If Self.mPublicKeyFile.Exists = False Then
-		      Call Self.mPublicKeyFile.Write(Self.mPublicKey)
-		    End If
+		    Self.mPrivateKeyFile = KeysFolder.Child(KeyId)
 		    
 		    If Self.mPrivateKeyFile.Exists = False Then
 		      Call Self.mPrivateKeyFile.Write(Self.mPrivateKey)
 		    End If
 		  Else
 		    // File reference
-		    Self.mPublicKeyFile = BookmarkedFolderItem.FromSaveInfo(Self.mPublicKey)
 		    Self.mPrivateKeyFile = BookmarkedFolderItem.FromSaveInfo(Self.mPrivateKey)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PrivateKeyFile() As FolderItem
+		  Self.PrepareKeyFile()
+		  Return Self.mPrivateKeyFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PrivateKeyFile(Assigns PrivateKey As FolderItem)
+		  Var BookmarkedPrivateKey As New BookmarkedFolderItem(PrivateKey)
+		  Self.mPrivateKey = BookmarkedPrivateKey.SaveInfo
+		  Self.mPrivateKeyFile = BookmarkedPrivateKey
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PrivateKeyFile(Assigns PrivateKey As String)
+		  Self.mPrivateKey = PrivateKey
+		  Self.mPrivateKeyFile = Nil
 		End Sub
 	#tag EndMethod
 
@@ -173,24 +174,6 @@ Inherits Ark.ServerProfile
 		Function ServerID() As String
 		  Return Self.mUsername.Lowercase + "@" + Self.mHost.Lowercase + If(Self.mGameIniPath.BeginsWith("/"), "", "/") + Self.mGameIniPath
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetKeyPair(PublicKey As FolderItem, PrivateKey As FolderItem)
-		  Var BookmarkedPublicKey As New BookmarkedFolderItem(PublicKey)
-		  Var BookmarkedPrivateKey As New BookmarkedFolderItem(PrivateKey)
-		  
-		  Self.SetKeyPair(BookmarkedPublicKey.SaveInfo, BookmarkedPrivateKey.SaveInfo)
-		  Self.mPublicKeyFile = BookmarkedPublicKey
-		  Self.mPrivateKeyFile = BookmarkedPrivateKey
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetKeyPair(PublicKey As String, PrivateKey As String)
-		  Self.mPublicKey = PublicKey
-		  Self.mPrivateKey = PrivateKey
-		End Sub
 	#tag EndMethod
 
 
@@ -314,14 +297,6 @@ Inherits Ark.ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mPrivateKeyFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPublicKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPublicKeyFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -597,6 +572,14 @@ Inherits Ark.ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="VerifyHost"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsPrivateKeyInternal"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
