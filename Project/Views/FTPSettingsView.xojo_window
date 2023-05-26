@@ -732,7 +732,7 @@ End
 		  If Self.PrivateKeyField.Visible Then
 		    Self.PrivateKeyLabel.Top = NextTop
 		    Self.PrivateKeyField.Top = NextTop
-		    Self.PrivateKeyChooseButton.Top = NextTop + 1
+		    Self.PrivateKeyChooseButton.Top = NextTop
 		    NextTop = Self.PrivateKeyField.Bottom + 12
 		  End If
 		  
@@ -860,7 +860,7 @@ End
 		#tag Setter
 			Set
 			  Self.mPrivateKeyFile = Value
-			  Self.PrivateKeyField.Text = Value.NativePath
+			  Self.PrivateKeyField.Text = If(Value Is Nil, "", Value.NativePath)
 			End Set
 		#tag EndSetter
 		PrivateKeyFile As FolderItem

@@ -631,7 +631,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.DesiredHeight = 310
+		  Self.DesiredHeight = Self.DesiredHeight
 		End Sub
 	#tag EndEvent
 

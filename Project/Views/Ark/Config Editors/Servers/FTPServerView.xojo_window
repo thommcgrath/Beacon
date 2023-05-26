@@ -105,519 +105,6 @@ Begin ServerViewContainer FTPServerView
          Visible         =   True
          Width           =   560
       End
-      Begin UITweaks.ResizedLabel ModeLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Mode:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   197
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedPopupMenu ModeMenu
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   "Autodetect\nFTP\nFTP with TLS\nSFTP"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         SelectedRowIndex=   0
-         TabIndex        =   9
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   197
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   165
-      End
-      Begin UITweaks.ResizedLabel GameUserSettingsIniPathLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   13
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "GameUserSettings.ini Path:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   263
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   14
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   263
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   376
-      End
-      Begin UITweaks.ResizedLabel GameIniPathLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   11
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Game.ini Path:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   229
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedTextField GameIniPathField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   12
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   229
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   376
-      End
-      Begin UITweaks.ResizedLabel PassLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   6
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Password:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   163
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedTextField PassField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   True
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   163
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   376
-      End
-      Begin UITweaks.ResizedLabel UserLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Username:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   129
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedTextField UserField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   129
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   376
-      End
-      Begin UITweaks.ResizedLabel PortLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Port:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   95
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedTextField PortField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   95
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   67
-      End
-      Begin UITweaks.ResizedLabel HostLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Host:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   61
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedTextField HostField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   61
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   376
-      End
       Begin CommonServerSettingsView SettingsView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -650,36 +137,242 @@ Begin ServerViewContainer FTPServerView
          Visible         =   True
          Width           =   600
       End
-      Begin DesktopCheckBox VerifyCertificateCheck
+      Begin DesktopGroupBox ConnectionGroup
          AllowAutoDeactivate=   True
          Bold            =   False
-         Caption         =   "Verify Certificate"
+         Caption         =   "Connection"
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         Height          =   20
+         Height          =   310
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   381
+         Left            =   20
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   15
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   197
+         Top             =   61
          Transparent     =   False
          Underline       =   False
-         Value           =   False
          Visible         =   True
-         VisualState     =   0
-         Width           =   199
+         Width           =   560
+         Begin FTPSettingsView ConnectionView
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   False
+            AllowTabs       =   True
+            Backdrop        =   0
+            BackgroundColor =   &cFFFFFF
+            Composited      =   False
+            Enabled         =   True
+            HasBackgroundColor=   False
+            Height          =   294
+            Index           =   -2147483648
+            InitialParent   =   "ConnectionGroup"
+            Left            =   20
+            LockBottom      =   True
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            TabIndex        =   0
+            TabPanelIndex   =   2
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   77
+            Transparent     =   True
+            Visible         =   True
+            Width           =   560
+         End
+      End
+      Begin DesktopGroupBox PathsGroup
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Paths"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   112
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   16
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   383
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+         Begin UITweaks.ResizedTextField GameIniPathField
+            AllowAutoDeactivate=   True
+            AllowFocusRing  =   True
+            AllowSpellChecking=   False
+            AllowTabs       =   False
+            BackgroundColor =   &cFFFFFF
+            Bold            =   False
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Format          =   ""
+            HasBorder       =   True
+            Height          =   22
+            Hint            =   ""
+            Index           =   -2147483648
+            InitialParent   =   "PathsGroup"
+            Italic          =   False
+            Left            =   224
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            MaximumCharactersAllowed=   0
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   0
+            TabPanelIndex   =   2
+            TabStop         =   True
+            Text            =   ""
+            TextAlignment   =   0
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   419
+            Transparent     =   False
+            Underline       =   False
+            ValidationMask  =   ""
+            Visible         =   True
+            Width           =   336
+         End
+         Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
+            AllowAutoDeactivate=   True
+            AllowFocusRing  =   True
+            AllowSpellChecking=   False
+            AllowTabs       =   False
+            BackgroundColor =   &cFFFFFF
+            Bold            =   False
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Format          =   ""
+            HasBorder       =   True
+            Height          =   22
+            Hint            =   ""
+            Index           =   -2147483648
+            InitialParent   =   "PathsGroup"
+            Italic          =   False
+            Left            =   224
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            MaximumCharactersAllowed=   0
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   1
+            TabPanelIndex   =   2
+            TabStop         =   True
+            Text            =   ""
+            TextAlignment   =   0
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   453
+            Transparent     =   False
+            Underline       =   False
+            ValidationMask  =   ""
+            Visible         =   True
+            Width           =   336
+         End
+         Begin UITweaks.ResizedLabel GameUserSettingsIniPathLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   22
+            Index           =   -2147483648
+            InitialParent   =   "PathsGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   2
+            TabPanelIndex   =   2
+            TabStop         =   True
+            Text            =   "GameUserSettings.ini Path:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   453
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   172
+         End
+         Begin UITweaks.ResizedLabel GameIniPathLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   22
+            Index           =   -2147483648
+            InitialParent   =   "PathsGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   3
+            TabPanelIndex   =   2
+            TabStop         =   True
+            Text            =   "Game.ini Path:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   419
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   172
+         End
       End
    End
    Begin OmniBar ControlToolbar
@@ -724,17 +417,21 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
+		  Self.mSettingUp = True
 		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
-		  Self.HostField.Text = Self.mProfile.Host
-		  Self.PortField.Text = Self.mProfile.Port.ToString
-		  Self.UserField.Text = Self.mProfile.Username
-		  Self.PassField.Text = Self.mProfile.Password
+		  Self.ConnectionView.Mode = Self.mProfile.Mode
+		  Self.ConnectionView.Host = Self.mProfile.Host
+		  Self.ConnectionView.Port = Self.mProfile.Port
+		  Self.ConnectionView.Username = Self.mProfile.Username
+		  Self.ConnectionView.Password = Self.mProfile.Password
+		  Self.ConnectionView.VerifyTLSCertificate = Self.mProfile.VerifyHost
+		  Self.ConnectionView.UsePublicKeyAuth = (Self.mProfile.PrivateKeyFile Is Nil) = False
+		  Self.ConnectionView.PrivateKeyFile = Self.mProfile.PrivateKeyFile
 		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
 		  Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniPath
-		  Self.VerifyCertificateCheck.Value = Self.mProfile.VerifyHost
-		  Self.ModeMenu.SelectByTag(Self.mProfile.Mode)
 		  
 		  Self.SettingsView.RefreshUI()
+		  Self.mSettingUp = False
 		End Sub
 	#tag EndEvent
 
@@ -755,6 +452,10 @@ End
 		Private mProfile As Ark.FTPServerProfile
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSettingUp As Boolean
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
@@ -770,79 +471,11 @@ End
 #tag Events AdminNotesField
 	#tag Event
 		Sub TextChanged()
-		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Modified = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ModeMenu
-	#tag Event
-		Sub Opening()
-		  Me.RemoveAllRows
-		  Me.AddRow("Autodetect", Ark.FTPServerProfile.ModeAuto)
-		  Me.AddRow("FTP", Ark.FTPServerProfile.ModeFTP)
-		  Me.AddRow("FTP with TLS", Ark.FTPServerProfile.ModeFTPTLS)
-		  Me.AddRow("SFTP", Ark.FTPServerProfile.ModeSFTP)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SelectionChanged(item As DesktopMenuItem)
-		  #Pragma Unused Item
+		  If Self.mSettingUp Then
+		    Return
+		  End If
 		  
-		  Self.mProfile.Mode = Me.Tag
-		  Self.Modified = Self.mProfile.Modified
-		  Self.VerifyCertificateCheck.Visible = Self.mProfile.Mode = Ark.FTPServerProfile.ModeAuto Or Self.mProfile.Mode = Ark.FTPServerProfile.ModeFTPTLS
-		  Self.VerifyCertificateCheck.Caption = If(Self.mProfile.Mode = Ark.FTPServerProfile.ModeAuto, "Verify Certificate (TLS Only)", "Verify Certificate")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GameUserSettingsIniPathField
-	#tag Event
-		Sub TextChanged()
-		  Self.mProfile.GameUserSettingsIniPath = Me.Text
-		  Self.Modified = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GameIniPathField
-	#tag Event
-		Sub TextChanged()
-		  Self.mProfile.GameIniPath = Me.Text
-		  Self.Modified = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PassField
-	#tag Event
-		Sub TextChanged()
-		  Self.mProfile.Password = Me.Text
-		  Self.Modified = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UserField
-	#tag Event
-		Sub TextChanged()
-		  Self.mProfile.Username = Me.Text
-		  Self.Modified = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PortField
-	#tag Event
-		Sub TextChanged()
-		  Try
-		    Self.mProfile.Port = Integer.FromString(Me.Text)
-		    Self.Modified = Self.mProfile.Modified
-		  Catch Err As InvalidArgumentException
-		  End Try
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events HostField
-	#tag Event
-		Sub TextChanged()
-		  Self.mProfile.Host = Me.Text
+		  Self.mProfile.AdminNotes = Me.Text
 		  Self.Modified = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -850,6 +483,10 @@ End
 #tag Events SettingsView
 	#tag Event
 		Sub ContentsChanged()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
 		  Self.Modified = Me.Modified
 		End Sub
 	#tag EndEvent
@@ -864,10 +501,52 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events VerifyCertificateCheck
+#tag Events ConnectionView
 	#tag Event
-		Sub ValueChanged()
-		  Self.mProfile.VerifyHost = Me.Value
+		Sub WantsHeightChange(NewDesiredHeight As Integer)
+		  Self.ConnectionGroup.Height = NewDesiredHeight + 16
+		  Self.PathsGroup.Top = Self.ConnectionGroup.Bottom + 12
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContentsChanged()
+		  If Me.Ready = False Or Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.mProfile.Mode = Me.Mode
+		  Self.mProfile.Host = Me.Host
+		  Self.mProfile.Port = Me.Port
+		  Self.mProfile.Username = Me.Username
+		  Self.mProfile.Password = Me.Password
+		  Self.mProfile.VerifyHost = Me.VerifyTLSCertificate
+		  
+		  If Me.UsePublicKeyAuth Then
+		    If Self.mProfile.IsPrivateKeyInternal Then
+		      Self.mProfile.PrivateKeyFile = Me.PrivateKeyFile.Read(Encodings.UTF8)
+		    Else
+		      Self.mProfile.PrivateKeyFile = Me.PrivateKeyFile
+		    End If
+		  Else
+		    Self.mProfile.PrivateKeyFile = Nil
+		  End If
+		  
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GameIniPathField
+	#tag Event
+		Sub TextChanged()
+		  Self.mProfile.GameIniPath = Me.Text
+		  Self.Modified = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GameUserSettingsIniPathField
+	#tag Event
+		Sub TextChanged()
+		  Self.mProfile.GameUserSettingsIniPath = Me.Text
 		  Self.Modified = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent

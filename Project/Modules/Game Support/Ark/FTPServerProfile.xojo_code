@@ -71,6 +71,7 @@ Inherits Ark.ServerProfile
 		  Self.Port = Profile.Port
 		  Self.Username = Profile.Username
 		  Self.VerifyHost = Profile.VerifyHost
+		  Self.PrivateKeyFile = Profile.PrivateKeyFile
 		End Sub
 	#tag EndMethod
 
@@ -137,7 +138,7 @@ Inherits Ark.ServerProfile
 		    End If
 		  Else
 		    // File reference
-		    Self.mPrivateKeyFile = BookmarkedFolderItem.FromSaveInfo(Self.mPrivateKey)
+		    Self.mPrivateKeyFile = BookmarkedFolderItem.FromSaveInfo(Beacon.Decompress(DecodeBase64(Self.mPrivateKey)), True)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -151,8 +152,14 @@ Inherits Ark.ServerProfile
 
 	#tag Method, Flags = &h0
 		Sub PrivateKeyFile(Assigns PrivateKey As FolderItem)
+		  If PrivateKey Is Nil Or PrivateKey.Exists = False Or PrivateKey.IsFolder Then
+		    Self.mPrivateKey = ""
+		    Self.mPrivateKeyFile = Nil
+		    Return
+		  End If
+		  
 		  Var BookmarkedPrivateKey As New BookmarkedFolderItem(PrivateKey)
-		  Self.mPrivateKey = BookmarkedPrivateKey.SaveInfo
+		  Self.mPrivateKey = EncodeBase64(Beacon.Compress(BookmarkedPrivateKey.SaveInfo(True)), 0)
 		  Self.mPrivateKeyFile = BookmarkedPrivateKey
 		End Sub
 	#tag EndMethod
