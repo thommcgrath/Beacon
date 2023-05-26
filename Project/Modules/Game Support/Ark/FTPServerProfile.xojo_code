@@ -15,7 +15,7 @@ Inherits Ark.ServerProfile
 		  Self.mPassword = Dict.Value("Pass")
 		  Self.mGameIniPath = Dict.Value("Game.ini Path")
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
-		  Self.mMode = Dict.Lookup("Mode", ModeFTP)
+		  Self.mMode = Dict.Lookup("Mode", Beacon.FTPModeInsecure)
 		  Self.mMask = Dict.Lookup("Mask", 0)
 		  Self.mVerifyHost = Dict.Lookup("Verify Host", True)
 		  Self.mPrivateKey = Dict.Lookup("Private Key", "")
@@ -57,7 +57,7 @@ Inherits Ark.ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Do not call Super.Constructor()
-		  Self.mMode = Self.ModeFTP
+		  Self.mMode = Beacon.FTPModeInsecure
 		  Self.mPort = 21
 		End Sub
 	#tag EndMethod
@@ -296,10 +296,10 @@ Inherits Ark.ServerProfile
 		#tag Setter
 			Set
 			  Select Case Value
-			  Case Self.ModeFTP, Self.ModeFTPTLS, Self.ModeSFTP
+			  Case Beacon.FTPModeInsecure, Beacon.FTPModeExplicitTLS, Beacon.FTPModeSSH, Beacon.FTPModeImplicitTLS
 			    // Whitelist
 			  Else
-			    Value = Self.ModeFTP
+			    Value = Beacon.FTPModeInsecure
 			  End Select
 			  
 			  If Self.mMode.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
@@ -410,16 +410,6 @@ Inherits Ark.ServerProfile
 		#tag EndSetter
 		VerifyHost As Boolean
 	#tag EndComputedProperty
-
-
-	#tag Constant, Name = ModeFTP, Type = String, Dynamic = False, Default = \"ftp", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ModeFTPTLS, Type = String, Dynamic = False, Default = \"ftp+tls", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ModeSFTP, Type = String, Dynamic = False, Default = \"sftp", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior

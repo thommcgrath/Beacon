@@ -143,10 +143,12 @@ Inherits Ark.IntegrationEngine
 		  Var FTPProfile As Ark.FTPServerProfile = Ark.FTPServerProfile(Self.Profile)
 		  Var Protocol As String
 		  Select Case FTPProfile.Mode
-		  Case Ark.FTPServerProfile.ModeFTP, Ark.FTPServerProfile.ModeFTPTLS
+		  Case Beacon.FTPModeInsecure, Beacon.FTPModeExplicitTLS
 		    Protocol = "ftp"
-		  Case Ark.FTPServerProfile.ModeSFTP
+		  Case Beacon.FTPModeSSH
 		    Protocol = "sftp"
+		  Case Beacon.FTPModeImplicitTLS
+		    Protocol = "ftps"
 		  End Select
 		  
 		  Return Protocol + "://" + FTPProfile.Host + ":" + FTPProfile.Port.ToString
@@ -164,7 +166,7 @@ Inherits Ark.IntegrationEngine
 		  Self.mSocket.YieldTime = True
 		  
 		  Select Case FTPProfile.Mode
-		  Case Ark.FTPServerProfile.ModeFTPTLS
+		  Case Beacon.FTPModeExplicitTLS, Beacon.FTPModeImplicitTLS
 		    If FTPProfile.VerifyHost Then
 		      #if TargetLinux
 		        #if DebugBuild
@@ -184,8 +186,8 @@ Inherits Ark.IntegrationEngine
 		    
 		    Self.mSocket.OptionUseSSL = CURLSMBS.kFTPSSL_ALL
 		    Self.mSocket.OptionFTPSSLAuth = CURLSMBS.kFTPAUTH_TLS
-		    Self.mSocket.OptionSSLVersion = CURLSMBS.kSSLVersionTLSv10
-		  Case Ark.FTPServerProfile.ModeSFTP
+		    Self.mSocket.OptionSSLVersion = CURLSMBS.kSSLVersionTLSv12
+		  Case Beacon.FTPModeSSH
 		    Self.mSocket.OptionSSHAuthTypes = CURLSMBS.kSSHAuthPassword
 		    Self.mSocket.OptionSSHCompression = False
 		    

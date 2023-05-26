@@ -66,7 +66,7 @@ Begin BeaconContainer FTPSettingsView
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
-      InitialValue    =   "FTP\nFTP with TLS\nSFTP"
+      InitialValue    =   "FTP\nFTP with TLS\nFTP with Implicit TLS\nSFTP"
       Italic          =   False
       Left            =   158
       LockBottom      =   False
@@ -609,7 +609,7 @@ End
 		  Var WasReady As Boolean = Self.mReady
 		  
 		  Self.mReady = Self.Host.IsEmpty = False And Self.Port > 0 And Self.Username.IsEmpty = False
-		  If Self.Mode = "sftp" Then
+		  If Self.Mode = Beacon.FTPModeSSH Then
 		    Self.mReady = Self.mReady And ((Self.UsePublicKeyAuth = True And Self.PrivateKeyField.Text.IsEmpty = False) Or (Self.UsePublicKeyAuth = False And Self.Password.IsEmpty = False))
 		  Else
 		    Self.mReady = Self.mReady And Self.Password.IsEmpty = False
@@ -715,12 +715,14 @@ End
 		      Case "Protocol"
 		        Var Protocol As Integer = Integer.FromString(Child.FirstChild.Value, Locale.Raw)
 		        Select Case Protocol
-		        Case 0, 3
-		          Self.Mode = "ftp"
+		        Case 0
+		          Self.Mode = Beacon.FTPModeInsecure
 		        Case 1
-		          Self.Mode = "sftp"
+		          Self.Mode = Beacon.FTPModeSSH
+		        Case 3
+		          Self.Mode = Beacon.FTPModeImplicitTLS
 		        Case 4
-		          Self.Mode = "ftp+tls"
+		          Self.Mode = Beacon.FTPModeExplicitTLS
 		        End Select
 		      End Select
 		    Next
@@ -747,7 +749,7 @@ End
 		  Self.PrivateKeyChooseButton.Visible = UsePublicKeyAuth
 		  Self.InternalizeKeyCheck.Visible = UsePublicKeyAuth
 		  Self.PassLabel.Text = If(UsePublicKeyAuth, "Key Password:", "Password:")
-		  Self.VerifyCertificateCheck.Visible = (RowIndex = Self.IndexFTPS)
+		  Self.VerifyCertificateCheck.Visible = (RowIndex = Self.IndexFTPTLS Or RowIndex = Self.IndexFTPS)
 		  
 		  BeaconUI.SizeToFit(Self.ModeLabel, Self.HostLabel, Self.PortLabel, Self.UserLabel, Self.PrivateKeyLabel, Self.PassLabel)
 		  
@@ -794,11 +796,15 @@ End
 		  Self.DesiredHeight = NextTop + 8
 		  
 		  If RowIndex = Self.IndexSFTP Then
-		    If Self.Port = 21 Then
+		    If Self.Port = 21 Or Self.Port = 990 Then
 		      Self.Port = 22
 		    End If
+		  ElseIf RowIndex = Self.IndexFTPS Then
+		    If Self.Port = 21 Or Self.Port = 22 Then
+		      Self.Port = 990
+		    End If
 		  Else
-		    If Self.Port = 22 Then
+		    If Self.Port = 22 Or Self.Port = 990 Then
 		      Self.Port = 21
 		    End If
 		  End If
@@ -866,11 +872,13 @@ End
 			Get
 			  Select Case Self.ModeMenu.SelectedRowIndex
 			  Case Self.IndexFTP
-			    Return "ftp"
-			  Case Self.IndexFTPS
-			    Return "ftp+tls"
+			    Return Beacon.FTPModeInsecure
+			  Case Self.IndexFTPTLS
+			    Return Beacon.FTPModeExplicitTLS
 			  Case Self.IndexSFTP
-			    Return "sftp"
+			    Return Beacon.FTPModeSSH
+			  Case Self.IndexFTPS
+			    Return Beacon.FTPModeImplicitTLS
 			  End Select
 			End Get
 		#tag EndGetter
@@ -881,9 +889,11 @@ End
 			  End If
 			  
 			  Select Case Value
-			  Case "ftps", "ftp+tls"
+			  Case Beacon.FTPModeImplicitTLS
 			    Self.ModeMenu.SelectedRowIndex = Self.IndexFTPS
-			  Case "sftp"
+			  Case Beacon.FTPModeExplicitTLS
+			    Self.ModeMenu.SelectedRowIndex = Self.IndexFTPTLS
+			  Case Beacon.FTPModeSSH
 			    Self.ModeMenu.SelectedRowIndex = Self.IndexSFTP
 			  Else
 			    Self.ModeMenu.SelectedRowIndex = Self.IndexFTP
@@ -1032,10 +1042,13 @@ End
 	#tag Constant, Name = IndexFTP, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = IndexFTPS, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = IndexFTPS, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = IndexSFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = IndexFTPTLS, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IndexSFTP, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
