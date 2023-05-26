@@ -15,7 +15,7 @@ Inherits Ark.ServerProfile
 		  Self.mPassword = Dict.Value("Pass")
 		  Self.mGameIniPath = Dict.Value("Game.ini Path")
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
-		  Self.mMode = Dict.Lookup("Mode", ModeAuto)
+		  Self.mMode = Dict.Lookup("Mode", ModeFTP)
 		  Self.mMask = Dict.Lookup("Mask", 0)
 		  Self.mVerifyHost = Dict.Lookup("Verify Host", True)
 		  Self.mPrivateKey = Dict.Lookup("Private Key", "")
@@ -57,7 +57,8 @@ Inherits Ark.ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Do not call Super.Constructor()
-		  Self.mMode = Self.ModeAuto
+		  Self.mMode = Self.ModeFTP
+		  Self.mPort = 21
 		End Sub
 	#tag EndMethod
 
@@ -298,7 +299,7 @@ Inherits Ark.ServerProfile
 			  Case Self.ModeFTP, Self.ModeFTPTLS, Self.ModeSFTP
 			    // Whitelist
 			  Else
-			    Value = Self.ModeAuto
+			    Value = Self.ModeFTP
 			  End Select
 			  
 			  If Self.mMode.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
@@ -410,9 +411,6 @@ Inherits Ark.ServerProfile
 		VerifyHost As Boolean
 	#tag EndComputedProperty
 
-
-	#tag Constant, Name = ModeAuto, Type = String, Dynamic = False, Default = \"auto", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = ModeFTP, Type = String, Dynamic = False, Default = \"ftp", Scope = Public
 	#tag EndConstant

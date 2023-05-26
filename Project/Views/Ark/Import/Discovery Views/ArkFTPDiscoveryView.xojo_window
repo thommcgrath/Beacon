@@ -500,14 +500,20 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Enabled         =   True
          HasBackgroundColor=   False
          Height          =   328
+         Host            =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
+         InternalizeKey  =   False
          Left            =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Mode            =   ""
+         Modified        =   False
+         Password        =   ""
+         Port            =   0
          Scope           =   2
          TabIndex        =   21
          TabPanelIndex   =   1
@@ -515,6 +521,9 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          Tooltip         =   ""
          Top             =   61
          Transparent     =   True
+         UsePublicKeyAuth=   False
+         Username        =   ""
+         VerifyTLSCertificate=   False
          Visible         =   True
          Width           =   600
       End
@@ -524,6 +533,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   1
          Index           =   -2147483648
@@ -535,6 +545,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   22
@@ -552,6 +563,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   1
          Index           =   -2147483648
@@ -563,6 +575,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   23
@@ -846,7 +859,6 @@ End
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		  
 		  Self.mEngine = New Ark.FTPIntegrationEngine(Self.mProfile)
-		  Self.mEngine.VerifyHost = Self.mProfile.VerifyHost
 		  AddHandler mEngine.Wait, WeakAddressOf mEngine_Wait
 		  AddHandler mEngine.Discovered, WeakAddressOf mEngine_Discovered
 		  AddHandler mEngine.FilesListed, WeakAddressOf mEngine_FilesListed

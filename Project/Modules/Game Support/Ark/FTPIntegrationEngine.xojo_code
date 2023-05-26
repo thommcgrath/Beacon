@@ -5,91 +5,39 @@ Inherits Ark.IntegrationEngine
 		Function Discover() As Beacon.DiscoveredData()
 		  Var FTPProfile As Ark.FTPServerProfile = Self.Profile
 		  
-		  Var Protocols() As String
-		  Select Case FTPProfile.Mode
-		  Case Ark.FTPServerProfile.ModeFTP
-		    Protocols.Add("ftp")
-		  Case Ark.FTPServerProfile.ModeFTPTLS
-		    Protocols.Add("ftps")
-		  Case Ark.FTPServerProfile.ModeSFTP
-		    Protocols.Add("sftp")
-		  Else
-		    // If the port number ends in 21, try sftp mode last.
-		    Var BasePort As Integer = Abs(FTPProfile.Port) Mod 100
-		    Break
-		    If BasePort = 21 Then
-		      Protocols.Add("ftps")
-		      Protocols.Add("ftp")
-		      Protocols.Add("sftp")
-		    Else
-		      Protocols.Add("sftp")
-		      Protocols.Add("ftps")
-		      Protocols.Add("ftp")
-		    End If
-		  End Select
-		  
-		  If FTPProfile.Mode <> Ark.FTPServerProfile.ModeAuto Then
-		    Self.Log("Connecting to server…")
-		  End If
+		  Self.Log("Connecting to server…")
 		  
 		  Var IPMatch As New Regex
 		  IPMatch.SearchPattern = "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}_\d{1,5}$"
 		  
-		  Var Files() As Beacon.FTPFileListing
 		  Var PotentialPaths() As String
-		  For Each Protocol As String In Protocols
-		    If FTPProfile.Mode = Ark.FTPServerProfile.ModeAuto Then
-		      Self.Log("Attempting " + Protocol + " mode…")
-		    End If
-		    
-		    Files = Self.PrivateListFiles(Protocol + "://" + FTPProfile.Host + ":" + FTPProfile.Port.ToString)
-		    If Files = Nil Then
-		      // That didn't work
+		  Var BaseURL As String = Self.BaseURL
+		  Var Files() As Beacon.FTPFileListing = Self.PrivateListFiles(BaseURL)
+		  If Files Is Nil Then
+		    Self.SetError("The server either refused the connection or could not list files. Check the connection information and try again. If the problem persists, contact the hosting provider.")
+		    Return Nil
+		  End If
+		  
+		  Self.Log("Connected to " + FTPProfile.Host + ".")
+		  
+		  For Each Info As Beacon.FTPFileListing In Files
+		    If Not Info.IsDirectory Then
 		      Continue
 		    End If
 		    
-		    Self.Log("Connected with " + Protocol + ".")
-		    Select Case Protocol
-		    Case "ftp"
-		      FTPProfile.Mode = Ark.FTPServerProfile.ModeFTP
-		    Case "ftps"
-		      FTPProfile.Mode = Ark.FTPServerProfile.ModeFTPTLS
-		    Case "sftp"
-		      FTPProfile.Mode = Ark.FTPServerProfile.ModeSFTP
-		    End Select
-		    
-		    Var BaseURL As String = Self.BaseURL
-		    For Each Info As Beacon.FTPFileListing In Files
-		      If Not Info.IsDirectory Then
-		        Continue
-		      End If
-		      
-		      If Info.Filename = "arkse" Or Info.Filename = "arkserer" Then
-		        PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/ShooterGame/Saved")
-		        PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
-		      ElseIf Info.Filename = "ShooterGame" Then
-		        PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/Saved")
-		        PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/SavedArks")
-		      ElseIf Info.Filename = "Saved" Or Info.Filename = "SavedArks" Then
-		        PotentialPaths.Add(BaseURL + "/" + Info.Filename)
-		      ElseIf IPMatch.Search(Info.Filename) <> Nil Then
-		        PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/Saved")
-		        PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
-		      End If
-		    Next
-		    
-		    Exit
-		  Next
-		  
-		  // None of them worked
-		  If Files = Nil Then
-		    If Protocols.Count > 1 Then
-		      Self.SetError("The server either refused all connection attempts or could not list files. Check the connection information and try again. If the problem persists, contact the hosting provider.")
-		    Else
-		      Self.SetError("The server either refused the connection or could not list files. Check the connection information and try again. If the problem persists, contact the hosting provider.")
+		    If Info.Filename = "arkse" Or Info.Filename = "arkserer" Then
+		      PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/ShooterGame/Saved")
+		      PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
+		    ElseIf Info.Filename = "ShooterGame" Then
+		      PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/Saved")
+		      PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/SavedArks")
+		    ElseIf Info.Filename = "Saved" Or Info.Filename = "SavedArks" Then
+		      PotentialPaths.Add(BaseURL + "/" + Info.Filename)
+		    ElseIf IPMatch.Search(Info.Filename) <> Nil Then
+		      PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/Saved")
+		      PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
 		    End If
-		    Return Nil
-		  End If
+		  Next
 		  
 		  Self.Log("Discovering paths…")
 		  Var DiscoveredData() As Beacon.DiscoveredData
@@ -195,10 +143,8 @@ Inherits Ark.IntegrationEngine
 		  Var FTPProfile As Ark.FTPServerProfile = Ark.FTPServerProfile(Self.Profile)
 		  Var Protocol As String
 		  Select Case FTPProfile.Mode
-		  Case Ark.FTPServerProfile.ModeFTP
+		  Case Ark.FTPServerProfile.ModeFTP, Ark.FTPServerProfile.ModeFTPTLS
 		    Protocol = "ftp"
-		  Case Ark.FTPServerProfile.ModeFTPTLS
-		    Protocol = "ftps"
 		  Case Ark.FTPServerProfile.ModeSFTP
 		    Protocol = "sftp"
 		  End Select
@@ -209,21 +155,47 @@ Inherits Ark.IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Profile As Beacon.ServerProfile)
+		  Var FTPProfile As Ark.FTPServerProfile = Ark.FTPServerProfile(Profile)
+		  
 		  Self.mSocket = New CURLSMBS
-		  Call Self.mSocket.UseSystemCertificates
-		  Self.mSocket.OptionUsername = Ark.FTPServerProfile(Profile).Username
-		  Self.mSocket.OptionPassword = Ark.FTPServerProfile(Profile).Password
-		  Self.mSocket.OptionSSHAuthTypes = CURLSMBS.kSSHAuthPassword
-		  Self.mSocket.OptionSSHCompression = False
+		  Self.mSocket.OptionUsername = FTPProfile.Username
+		  Self.mSocket.OptionPassword = FTPProfile.Password
 		  Self.mSocket.OptionTimeOut = 10
 		  Self.mSocket.YieldTime = True
 		  
-		  Var PrivateKeyFile As FolderItem = Ark.FTPServerProfile(Profile).PrivateKeyFile
-		  If (PrivateKeyFile Is Nil) = False Then
-		    Self.mSocket.OptionSSHAuthTypes = Self.mSocket.OptionSSHAuthTypes Or CURLSMBS.kSSHAuthPublicKey
-		    Self.mSocket.OptionSSHPrivateKeyfile = PrivateKeyFile.NativePath
-		    Self.mSocket.OptionKeyPassword = Self.mSocket.OptionPassword
-		  End If
+		  Select Case FTPProfile.Mode
+		  Case Ark.FTPServerProfile.ModeFTPTLS
+		    If FTPProfile.VerifyHost Then
+		      #if TargetLinux
+		        #if DebugBuild
+		          #Pragma Warning "Linux cannot load system certificates"
+		        #else
+		          #Pragma Error "Linux cannot load system certificates"
+		        #endif
+		      #endif
+		      Call Self.mSocket.UseSystemCertificates
+		      
+		      Self.mSocket.OptionSSLVerifyHost = 2
+		      Self.mSocket.OptionSSLVerifyPeer = 1
+		    Else
+		      Self.mSocket.OptionSSLVerifyHost = 0
+		      Self.mSocket.OptionSSLVerifyPeer = 0
+		    End If
+		    
+		    Self.mSocket.OptionUseSSL = CURLSMBS.kFTPSSL_ALL
+		    Self.mSocket.OptionFTPSSLAuth = CURLSMBS.kFTPAUTH_TLS
+		    Self.mSocket.OptionSSLVersion = CURLSMBS.kSSLVersionTLSv10
+		  Case Ark.FTPServerProfile.ModeSFTP
+		    Self.mSocket.OptionSSHAuthTypes = CURLSMBS.kSSHAuthPassword
+		    Self.mSocket.OptionSSHCompression = False
+		    
+		    Var PrivateKeyFile As FolderItem = FTPProfile.PrivateKeyFile
+		    If (PrivateKeyFile Is Nil) = False Then
+		      Self.mSocket.OptionSSHAuthTypes = Self.mSocket.OptionSSHAuthTypes Or CURLSMBS.kSSHAuthPublicKey
+		      Self.mSocket.OptionSSHPrivateKeyfile = PrivateKeyFile.NativePath
+		      Self.mSocket.OptionKeyPassword = Self.mSocket.OptionPassword
+		    End If
+		  End Select
 		  
 		  Self.mSocketLock = New CriticalSection
 		  
@@ -412,6 +384,7 @@ Inherits Ark.IntegrationEngine
 		    Self.LockLeave(Locked)
 		    If Err <> CURLSMBS.kError_OK Then
 		      Self.Log("Curl Error " + Err.ToString)
+		      Self.Log(Self.mSocket.DebugMessages)
 		      Return Nil
 		    End If
 		    
@@ -457,6 +430,8 @@ Inherits Ark.IntegrationEngine
 		  Self.LockLeave(Locked)
 		  If Err <> CURLSMBS.kError_OK Then
 		    Self.Log("Curl Error " + Err.ToString)
+		    Self.Log(Self.mSocket.OptionURL)
+		    Self.Log(Self.mSocket.DebugMessages)
 		    Return Nil
 		  End If
 		  
@@ -483,13 +458,6 @@ Inherits Ark.IntegrationEngine
 	#tag Method, Flags = &h21
 		Private Sub SetURL(URL As String)
 		  Self.mSocket.OptionURL = URL
-		  If URL.BeginsWith("ftps://") Then
-		    Self.mSocket.OptionSSLVerifyHost = 2
-		    Self.mSocket.OptionSSLVerifyPeer = 1
-		  Else
-		    Self.mSocket.OptionSSLVerifyHost = 0
-		    Self.mSocket.OptionSSLVerifyPeer = 0
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -529,26 +497,6 @@ Inherits Ark.IntegrationEngine
 	#tag Property, Flags = &h21
 		Private mSocketLock As CriticalSection
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mSocket.OptionSSLVerifyHost = 2
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value Then
-			    Self.mSocket.OptionSSLVerifyHost = 2
-			    Self.mSocket.OptionSSLVerifyPeer = 1
-			  Else
-			    Self.mSocket.OptionSSLVerifyHost = 0
-			    Self.mSocket.OptionSSLVerifyPeer = 0
-			  End If
-			End Set
-		#tag EndSetter
-		VerifyHost As Boolean
-	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -590,14 +538,6 @@ Inherits Ark.IntegrationEngine
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="VerifyHost"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

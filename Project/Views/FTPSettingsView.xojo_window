@@ -330,6 +330,7 @@ Begin BeaconContainer FTPSettingsView
       Top             =   154
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   0
       Width           =   422
@@ -566,6 +567,7 @@ Begin BeaconContainer FTPSettingsView
       Top             =   220
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   0
       Width           =   422
@@ -578,6 +580,7 @@ End
 		Sub Opening()
 		  RaiseEvent Opening
 		  Self.SetupUI
+		  Self.mOpening = False
 		End Sub
 	#tag EndEvent
 
@@ -615,6 +618,14 @@ End
 		  If Self.mReady <> WasReady Then
 		    RaiseEvent ReadyStateChanged()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mOpening = True
+		  Super.Constructor
+		  
 		End Sub
 	#tag EndMethod
 
@@ -782,6 +793,16 @@ End
 		  
 		  Self.DesiredHeight = NextTop + 8
 		  
+		  If RowIndex = Self.IndexSFTP Then
+		    If Self.Port = 21 Then
+		      Self.Port = 22
+		    End If
+		  Else
+		    If Self.Port = 22 Then
+		      Self.Port = 21
+		    End If
+		  End If
+		  
 		  Self.CheckReadyState()
 		End Sub
 	#tag EndMethod
@@ -808,6 +829,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  Self.HostField.Text = Value
 			End Set
 		#tag EndSetter
@@ -822,6 +847,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  Self.InternalizeKeyCheck.Value = Value
 			End Set
 		#tag EndSetter
@@ -847,6 +876,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  Select Case Value
 			  Case "ftps", "ftp+tls"
 			    Self.ModeMenu.SelectedRowIndex = Self.IndexFTPS
@@ -859,6 +892,10 @@ End
 		#tag EndSetter
 		Mode As String
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mOpening As Boolean = True
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mPrivateKeyFile As FolderItem
@@ -880,6 +917,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  Self.PassField.Text = Value
 			End Set
 		#tag EndSetter
@@ -894,6 +935,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  Self.PortField.Text = Value.ToString(Locale.Current, "0")
 			End Set
 		#tag EndSetter
@@ -908,6 +953,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  If Value Is Nil Then
 			    Self.mPrivateKeyFile = Nil
 			    Self.PrivateKeyField.Text = ""
@@ -933,6 +982,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  Self.UsePublicKeyCheck.Value = Value
 			End Set
 		#tag EndSetter
@@ -947,6 +1000,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  Self.UserField.Text = Value
 			End Set
 		#tag EndSetter
@@ -961,6 +1018,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mOpening Then
+			    Return
+			  End If
+			  
 			  Self.VerifyCertificateCheck.Value = Value
 			End Set
 		#tag EndSetter
@@ -1067,14 +1128,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Modified"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
@@ -1112,14 +1165,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="InitialParent"
-		Visible=false
-		Group="Position"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1173,14 +1218,6 @@ End
 	#tag ViewProperty
 		Name="TabIndex"
 		Visible=true
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabPanelIndex"
-		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
@@ -1259,6 +1296,14 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowFocus"
 		Visible=true
 		Group="Behavior"
@@ -1279,14 +1324,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Composited"
-		Visible=true
-		Group="Window Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -1352,6 +1389,30 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="InitialParent"
+		Visible=false
+		Group="Position"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="TabPanelIndex"
+		Visible=false
+		Group="Position"
+		InitialValue="0"
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior
