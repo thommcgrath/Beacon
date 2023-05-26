@@ -15,9 +15,10 @@ Inherits Ark.ServerProfile
 		  Self.mPassword = Dict.Value("Pass")
 		  Self.mGameIniPath = Dict.Value("Game.ini Path")
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
-		  Self.mMode = Dict.Lookup("Mode", ModeAuto)
+		  Self.mMode = Dict.Lookup("Mode", Beacon.FTPModeInsecure)
 		  Self.mMask = Dict.Lookup("Mask", 0)
 		  Self.mVerifyHost = Dict.Lookup("Verify Host", True)
+		  Self.mPrivateKey = Dict.Lookup("Private Key", "")
 		End Sub
 	#tag EndEvent
 
@@ -33,6 +34,10 @@ Inherits Ark.ServerProfile
 		  Dict.Value("Mode") = Self.mMode
 		  Dict.Value("Mask") = Self.mMask
 		  Dict.Value("Verify Host") = Self.mVerifyHost
+		  
+		  If Self.mPrivateKey.IsEmpty = False Then
+		    Dict.Value("Private Key") = Self.mPrivateKey
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -52,7 +57,8 @@ Inherits Ark.ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Do not call Super.Constructor()
-		  Self.mMode = Self.ModeAuto
+		  Self.mMode = Beacon.FTPModeInsecure
+		  Self.mPort = 21
 		End Sub
 	#tag EndMethod
 
@@ -66,6 +72,7 @@ Inherits Ark.ServerProfile
 		  Self.Port = Profile.Port
 		  Self.Username = Profile.Username
 		  Self.VerifyHost = Profile.VerifyHost
+		  Self.PrivateKeyFile = Profile.PrivateKeyFile
 		End Sub
 	#tag EndMethod
 
@@ -102,6 +109,75 @@ Inherits Ark.ServerProfile
 		  
 		  Return Self.ServerID.Compare(Ark.FTPServerProfile(Other).ServerID, ComparisonOptions.CaseSensitive)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PrepareKeyFile()
+		  If (Self.mPrivateKeyFile Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  If Self.IsPrivateKeyInternal Then
+		    // Plain key
+		    Var KeysFolder As FolderItem = App.ApplicationSupport.Child("Private Keys")
+		    If KeysFolder.Exists = False Then
+		      Var Permissions As New Permissions(&o700)
+		      Permissions.GidBit = False
+		      Permissions.StickyBit = False
+		      Permissions.UidBit = False
+		      
+		      KeysFolder.CreateFolder
+		      KeysFolder.Permissions = Permissions
+		    End If
+		    
+		    Var KeyId As String = Beacon.UUID.v5(Self.mPrivateKey, "b763e1c2-809e-45c7-bce4-1d3a7a07ec1f")
+		    
+		    Self.mPrivateKeyFile = KeysFolder.Child(KeyId)
+		    
+		    If Self.mPrivateKeyFile.Exists = False Then
+		      Call Self.mPrivateKeyFile.Write(Self.mPrivateKey)
+		    End If
+		  Else
+		    // File reference
+		    Self.mPrivateKeyFile = BookmarkedFolderItem.FromSaveInfo(Beacon.Decompress(DecodeBase64(Self.mPrivateKey)), True)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PrivateKeyFile() As FolderItem
+		  Self.PrepareKeyFile()
+		  Return Self.mPrivateKeyFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PrivateKeyFile(Assigns PrivateKey As String)
+		  Self.mPrivateKey = PrivateKey
+		  Self.mPrivateKeyFile = Nil
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PrivateKeyFile(Internalize As Boolean = False, Assigns PrivateKey As FolderItem)
+		  If PrivateKey Is Nil Or PrivateKey.Exists = False Or PrivateKey.IsFolder Then
+		    Self.mPrivateKey = ""
+		    Self.mPrivateKeyFile = Nil
+		    Self.Modified = True
+		    Return
+		  End If
+		  
+		  If Internalize Then
+		    Self.PrivateKeyFile = PrivateKey.Read(Encodings.UTF8)
+		    Return
+		  End If
+		  
+		  Var BookmarkedPrivateKey As New BookmarkedFolderItem(PrivateKey)
+		  Self.mPrivateKey = EncodeBase64(Beacon.Compress(BookmarkedPrivateKey.SaveInfo(True)), 0)
+		  Self.mPrivateKeyFile = BookmarkedPrivateKey
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -168,6 +244,29 @@ Inherits Ark.ServerProfile
 		Host As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPrivateKey.BeginsWith("---")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = Self.IsPrivateKeyInternal Then
+			    Return
+			  End If
+			  
+			  Var PrivateKeyFile As FolderItem = Self.PrivateKeyFile
+			  If PrivateKeyFile Is Nil Then
+			    Return
+			  End If
+			  
+			  Self.PrivateKeyFile(Value) = PrivateKeyFile
+			End Set
+		#tag EndSetter
+		IsPrivateKeyInternal As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mGameIniPath As String
 	#tag EndProperty
@@ -197,10 +296,10 @@ Inherits Ark.ServerProfile
 		#tag Setter
 			Set
 			  Select Case Value
-			  Case Self.ModeFTP, Self.ModeFTPTLS, Self.ModeSFTP
+			  Case Beacon.FTPModeInsecure, Beacon.FTPModeExplicitTLS, Beacon.FTPModeSSH, Beacon.FTPModeImplicitTLS
 			    // Whitelist
 			  Else
-			    Value = Self.ModeAuto
+			    Value = Beacon.FTPModeInsecure
 			  End Select
 			  
 			  If Self.mMode.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
@@ -220,6 +319,14 @@ Inherits Ark.ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mPort As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPrivateKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPrivateKeyFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -303,19 +410,6 @@ Inherits Ark.ServerProfile
 		#tag EndSetter
 		VerifyHost As Boolean
 	#tag EndComputedProperty
-
-
-	#tag Constant, Name = ModeAuto, Type = String, Dynamic = False, Default = \"auto", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ModeFTP, Type = String, Dynamic = False, Default = \"ftp", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ModeFTPTLS, Type = String, Dynamic = False, Default = \"ftp+tls", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ModeSFTP, Type = String, Dynamic = False, Default = \"sftp", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior
@@ -495,6 +589,14 @@ Inherits Ark.ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="VerifyHost"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsPrivateKeyInternal"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
