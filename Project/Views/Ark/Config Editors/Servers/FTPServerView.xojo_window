@@ -427,6 +427,7 @@ End
 		  Self.ConnectionView.VerifyTLSCertificate = Self.mProfile.VerifyHost
 		  Self.ConnectionView.UsePublicKeyAuth = (Self.mProfile.PrivateKeyFile Is Nil) = False
 		  Self.ConnectionView.PrivateKeyFile = Self.mProfile.PrivateKeyFile
+		  Self.ConnectionView.InternalizeKey = Self.mProfile.IsPrivateKeyInternal
 		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
 		  Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniPath
 		  
