@@ -151,23 +151,31 @@ Inherits Ark.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PrivateKeyFile(Assigns PrivateKey As FolderItem)
+		Sub PrivateKeyFile(Assigns PrivateKey As String)
+		  Self.mPrivateKey = PrivateKey
+		  Self.mPrivateKeyFile = Nil
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PrivateKeyFile(Internalize As Boolean = False, Assigns PrivateKey As FolderItem)
 		  If PrivateKey Is Nil Or PrivateKey.Exists = False Or PrivateKey.IsFolder Then
 		    Self.mPrivateKey = ""
 		    Self.mPrivateKeyFile = Nil
+		    Self.Modified = True
+		    Return
+		  End If
+		  
+		  If Internalize Then
+		    Self.PrivateKeyFile = PrivateKey.Read(Encodings.UTF8)
 		    Return
 		  End If
 		  
 		  Var BookmarkedPrivateKey As New BookmarkedFolderItem(PrivateKey)
 		  Self.mPrivateKey = EncodeBase64(Beacon.Compress(BookmarkedPrivateKey.SaveInfo(True)), 0)
 		  Self.mPrivateKeyFile = BookmarkedPrivateKey
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub PrivateKeyFile(Assigns PrivateKey As String)
-		  Self.mPrivateKey = PrivateKey
-		  Self.mPrivateKeyFile = Nil
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -241,6 +249,20 @@ Inherits Ark.ServerProfile
 			  Return Self.mPrivateKey.BeginsWith("---")
 			End Get
 		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = Self.IsPrivateKeyInternal Then
+			    Return
+			  End If
+			  
+			  Var PrivateKeyFile As FolderItem = Self.PrivateKeyFile
+			  If PrivateKeyFile Is Nil Then
+			    Return
+			  End If
+			  
+			  Self.PrivateKeyFile(Value) = PrivateKeyFile
+			End Set
+		#tag EndSetter
 		IsPrivateKeyInternal As Boolean
 	#tag EndComputedProperty
 

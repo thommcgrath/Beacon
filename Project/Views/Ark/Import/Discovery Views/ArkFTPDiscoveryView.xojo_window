@@ -732,14 +732,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mInternalize As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mInternalizeAskedFor As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mProfile As Ark.FTPServerProfile
 	#tag EndProperty
 
@@ -844,23 +836,7 @@ End
 		      Return
 		    End If
 		    
-		    If Self.mInternalizeAskedFor <> PrivateKeyFile.NativePath Then
-		      Var KeyInternalizeMessage As String = "Do you want to store your private key inside your Beacon project?"
-		      Var KeyInternalizeExplanation As String = "If you choose to store your private key inside your Beacon project, it will be kept inside the encrypted section of your project and protected by your Beacon account password. Your key will be usable on any device you are signed into." + EndOfLine + EndOfLine + "If you choose not to store the private key in your project, it will need to exist at the same path on every device which uses your Beacon project."
-		      Var KeyInternalizeChoice As BeaconUI.ConfirmResponses = Self.ShowConfirm(KeyInternalizeMessage, KeyInternalizeExplanation, "Store in Project", "Cancel", "Store on Disk")
-		      Self.mInternalizeAskedFor = PrivateKeyFile.NativePath
-		      
-		      Select Case KeyInternalizeChoice
-		      Case BeaconUI.ConfirmResponses.Action
-		        Self.mInternalize = True
-		      Case BeaconUI.ConfirmResponses.Cancel
-		        Return
-		      Case BeaconUI.ConfirmResponses.Alternate
-		        Self.mInternalize = False
-		      End Select
-		    End If
-		    
-		    If Self.mInternalize Then
+		    If Self.SettingsView.InternalizeKey Then
 		      Self.mProfile.PrivateKeyFile = Self.SettingsView.PrivateKeyFile.Read(Encodings.UTF8)
 		    Else
 		      Self.mProfile.PrivateKeyFile = Self.SettingsView.PrivateKeyFile

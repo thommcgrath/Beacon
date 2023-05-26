@@ -514,6 +514,8 @@ End
 		    Return
 		  End If
 		  
+		  Self.mSettingUp = True
+		  
 		  Self.mProfile.Mode = Me.Mode
 		  Self.mProfile.Host = Me.Host
 		  Self.mProfile.Port = Me.Port
@@ -522,14 +524,13 @@ End
 		  Self.mProfile.VerifyHost = Me.VerifyTLSCertificate
 		  
 		  If Me.UsePublicKeyAuth Then
-		    If Self.mProfile.IsPrivateKeyInternal Then
-		      Self.mProfile.PrivateKeyFile = Me.PrivateKeyFile.Read(Encodings.UTF8)
-		    Else
-		      Self.mProfile.PrivateKeyFile = Me.PrivateKeyFile
-		    End If
+		    Self.mProfile.PrivateKeyFile(Me.InternalizeKey) = Me.PrivateKeyFile
+		    Me.PrivateKeyFile = Self.mProfile.PrivateKeyFile // Just to make sure the path shows correctly
 		  Else
 		    Self.mProfile.PrivateKeyFile = Nil
 		  End If
+		  
+		  Self.mSettingUp = False
 		  
 		  Self.Modified = True
 		End Sub

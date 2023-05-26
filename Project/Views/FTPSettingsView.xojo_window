@@ -9,7 +9,7 @@ Begin BeaconContainer FTPSettingsView
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   294
+   Height          =   326
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -464,7 +464,7 @@ Begin BeaconContainer FTPSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   220
+      Top             =   252
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -504,7 +504,7 @@ Begin BeaconContainer FTPSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   220
+      Top             =   252
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -533,10 +533,39 @@ Begin BeaconContainer FTPSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   254
+      Top             =   286
       Transparent     =   False
       Underline       =   False
       Value           =   True
+      Visible         =   True
+      VisualState     =   0
+      Width           =   422
+   End
+   Begin DesktopCheckBox InternalizeKeyCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Store Private Key in Project"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   158
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "If you choose to store your private key in the project, it will be available to any device where you are signed in. It will be encrypted with the rest of the private project data. If you choose not to store your private key in the project, every device which uses the project will need to have the key file in the same path."
+      Top             =   220
+      Transparent     =   False
+      Underline       =   False
       Visible         =   True
       VisualState     =   0
       Width           =   422
@@ -705,6 +734,7 @@ End
 		  Self.PrivateKeyLabel.Visible = UsePublicKeyAuth
 		  Self.PrivateKeyField.Visible = UsePublicKeyAuth
 		  Self.PrivateKeyChooseButton.Visible = UsePublicKeyAuth
+		  Self.InternalizeKeyCheck.Visible = UsePublicKeyAuth
 		  Self.PassLabel.Text = If(UsePublicKeyAuth, "Key Password:", "Password:")
 		  Self.VerifyCertificateCheck.Visible = (RowIndex = Self.IndexFTPS)
 		  
@@ -720,6 +750,7 @@ End
 		  Self.UsePublicKeyCheck.Left = FieldsLeft
 		  Self.PrivateKeyField.Left = FieldsLeft
 		  Self.PrivateKeyField.Width = Self.PrivateKeyChooseButton.Left - (12 + FieldsLeft)
+		  Self.InternalizeKeyCheck.Left = FieldsLeft
 		  Self.PassField.Left = FieldsLeft
 		  Self.PassField.Width = Self.Width - (20 + FieldsLeft)
 		  Self.VerifyCertificateCheck.Left = FieldsLeft
@@ -734,6 +765,10 @@ End
 		    Self.PrivateKeyField.Top = NextTop
 		    Self.PrivateKeyChooseButton.Top = NextTop
 		    NextTop = Self.PrivateKeyField.Bottom + 12
+		  End If
+		  If Self.InternalizeKeyCheck.Visible Then
+		    Self.InternalizeKeyCheck.Top = NextTop
+		    NextTop = Self.InternalizeKeyCheck.Bottom + 12
 		  End If
 		  
 		  Self.PassLabel.Top = NextTop
@@ -777,6 +812,20 @@ End
 			End Set
 		#tag EndSetter
 		Host As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.InternalizeKeyCheck.Value
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.InternalizeKeyCheck.Value = Value
+			End Set
+		#tag EndSetter
+		InternalizeKey As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -859,8 +908,18 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Value Is Nil Then
+			    Self.mPrivateKeyFile = Nil
+			    Self.PrivateKeyField.Text = ""
+			    Return
+			  End If
+			  
+			  If Self.PrivateKeyField.Text = Value.NativePath Then
+			    Return
+			  End If
+			  
 			  Self.mPrivateKeyFile = Value
-			  Self.PrivateKeyField.Text = If(Value Is Nil, "", Value.NativePath)
+			  Self.PrivateKeyField.Text = Value.NativePath
 			End Set
 		#tag EndSetter
 		PrivateKeyFile As FolderItem
@@ -995,6 +1054,13 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.CheckReadyState()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events InternalizeKeyCheck
+	#tag Event
+		Sub ValueChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
@@ -1274,6 +1340,14 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="VerifyTLSCertificate"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="InternalizeKey"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
