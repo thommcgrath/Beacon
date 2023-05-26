@@ -963,14 +963,13 @@ End
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  Var Matcher As New Regex
-		  Matcher.SearchPattern = "^\d+$"
+		  Matcher.SearchPattern = "[^\d,]+"
+		  Matcher.ReplacementPattern = ""
+		  Matcher.Options.ReplaceAllMatches = True
+		  ModsString = Matcher.Replace(ModsString)
+		  
 		  Var ModIDs() As String = ModsString.Split(",")
 		  For Each ModID As String In ModIDs
-		    If Matcher.Search(ModID) Is Nil Then
-		      Self.ShowAlert("Mods field should contain only numbers and commas", "Format the mods field exactly like you would the ActiveMods setting in GameUserSettings.ini.")
-		      Return
-		    End If
-		    
 		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithWorkshopID(ModID)
 		    If (Pack Is Nil) = False And Pack.IsLocal = False Then
 		      Self.ShowAlert("Mod already supported", Pack.Name + " (" + ModID + ") is already built into Beacon, there is no need to run discovery on it.")
