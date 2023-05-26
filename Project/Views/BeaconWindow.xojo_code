@@ -127,8 +127,7 @@ Inherits DesktopWindow
 		    Var SharedApp As Ptr = SharedApplication(NSClassFromString("NSApplication"))
 		    ActivateIgnoringOtherApps(SharedApp, True)
 		  #elseif TargetWin32
-		    Declare Function BringWindowToTop Lib "User32" (Target As Ptr) As Boolean
-		    Call BringWindowToTop(Self.Handle)
+		    Self.ActivateWindowMBS
 		  #else
 		    #Pragma Warning "No code to bring a window to foreground on this platform."
 		  #endif

@@ -140,7 +140,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    #if Not TargetMacOS
 		      Var StartTime As Double = System.Microseconds
 		      Var PushSocket As New IPCSocket
-		      PushSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
+		      PushSocket.Path = Self.GetIPCPath()
 		      PushSocket.Connect
 		      Do Until PushSocket.IsConnected Or System.Microseconds - StartTime > 5000000
 		        PushSocket.Poll
@@ -159,7 +159,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Else
 		    #if Not TargetMacOS
 		      Self.mHandoffSocket = New IPCSocket
-		      Self.mHandoffSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
+		      Self.mHandoffSocket.Path = Self.GetIPCPath()
 		      AddHandler Self.mHandoffSocket.DataAvailable, WeakAddressOf Self.mHandoffSocket_DataReceived
 		      AddHandler Self.mHandoffSocket.Error, WeakAddressOf Self.mHandoffSocket_Error
 		      Self.mHandoffSocket.Listen
@@ -570,6 +570,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h0
 		Function GenericLootSourceIcon() As Picture
 		  Return IconLootStandard
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetIPCPath() As String
+		  Return Self.ApplicationSupport.Child("ipc").NativePath
 		End Function
 	#tag EndMethod
 
