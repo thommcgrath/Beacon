@@ -36,7 +36,7 @@ Password authentication is the most familiar, but most SSH servers do not allow 
 
 Public key authentication requires a public and private key pair. The public key gets whitelisted on the server, while the private key remains on your computer. If your private key is encrypted, Beacon has a **Key Password**{:.ui-keyword} field to provide the key's password.
 
-> Beacon uses libcurl 7.88.1 which has a [bug](https://github.com/curl/curl/issues/10143) advertising RSA keys incorrectly. Most servers will (and should) reject RSA key due to this bug.
+> Beacon uses libssh2 1.10.0 which does not support rsa-sha2-256 and rsa-sha2-256 keys. Most servers will (and should) reject RSA keys due to this.
 
 #### Generate SSH Keys
 
