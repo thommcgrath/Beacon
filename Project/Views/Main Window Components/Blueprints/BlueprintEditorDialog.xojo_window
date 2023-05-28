@@ -184,7 +184,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         SelectedRowIndex=   0
+         SelectedRowIndex=   -1
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
