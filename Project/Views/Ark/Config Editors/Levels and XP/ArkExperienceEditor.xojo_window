@@ -355,7 +355,7 @@ End
 		  For I As Integer = 0 To Levels.LastIndex
 		    Var Level As Integer = I + IndexOffset
 		    Var TotalXP As UInt64 = Levels(I)
-		    Var LevelXP As UInt64 = TotalXP - LastXP
+		    Var LevelXP As UInt64 = If(TotalXP > LastXP, TotalXP - LastXP, 0)
 		    Var IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)
 		    LastXP = TotalXP
 		    

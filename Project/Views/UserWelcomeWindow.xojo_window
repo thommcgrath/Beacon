@@ -2890,15 +2890,18 @@ End
 		  If HTTPStatus = 403 Then
 		    Try
 		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Var ReasonCode As String = Dictionary(Dict.Value("details").ObjectValue).Value("code").StringValue
-		      If ReasonCode = "2FA_ENABLED" Then
-		        Self.PagePanel1.SelectedPanelIndex = Self.PageOTP
-		        
-		        If Self.OTPCodeField.Text.IsEmpty = False Then
-		          Self.ShowAlert("Invalid two factor token, please try again", "The codes are timed.")
+		      Var Details As Variant = Dict.Lookup("details", "")
+		      If Details.Type = Variant.TypeObject And Details.ObjectValue IsA Dictionary And Dictionary(Details.ObjectValue).HasKey("code") And Dictionary(Details.ObjectValue).Value("code").Type = Variant.TypeString Then
+		        Var ReasonCode As String = Dictionary(Details.ObjectValue).Value("code").StringValue
+		        If ReasonCode = "2FA_ENABLED" Then
+		          Self.PagePanel1.SelectedPanelIndex = Self.PageOTP
+		          
+		          If Self.OTPCodeField.Text.IsEmpty = False Then
+		            Self.ShowAlert("Invalid two factor token, please try again", "The codes are timed.")
+		          End If
 		        End If
+		        Return
 		      End If
-		      Return
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Looking for reason code in 403 response")
 		    End Try
