@@ -166,7 +166,7 @@ Inherits Ark.IntegrationEngine
 		  Self.mSocket.YieldTime = True
 		  
 		  Select Case FTPProfile.Mode
-		  Case Beacon.FTPModeExplicitTLS, Beacon.FTPModeImplicitTLS
+		  Case Beacon.FTPModeInsecure, Beacon.FTPModeExplicitTLS, Beacon.FTPModeImplicitTLS
 		    If FTPProfile.VerifyHost Then
 		      #if TargetLinux
 		        #if DebugBuild
@@ -184,7 +184,11 @@ Inherits Ark.IntegrationEngine
 		      Self.mSocket.OptionSSLVerifyPeer = 0
 		    End If
 		    
-		    Self.mSocket.OptionUseSSL = CURLSMBS.kFTPSSL_ALL
+		    If FTPProfile.Mode = Beacon.FTPModeInsecure Then
+		      Self.mSocket.OptionUseSSL = CURLSMBS.kFTPSSL_TRY
+		    Else
+		      Self.mSocket.OptionUseSSL = CURLSMBS.kFTPSSL_ALL
+		    End If
 		    Self.mSocket.OptionFTPSSLAuth = CURLSMBS.kFTPAUTH_TLS
 		    Self.mSocket.OptionSSLVersion = CURLSMBS.kSSLVersionTLSv12
 		  Case Beacon.FTPModeSSH

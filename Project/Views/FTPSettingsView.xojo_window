@@ -66,7 +66,7 @@ Begin BeaconContainer FTPSettingsView
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
-      InitialValue    =   "FTP\nFTP with TLS\nFTP with Implicit TLS\nSFTP"
+      InitialValue    =   "FTP with Required TLS\nSFTP\nFTP with Implicit TLS\nFTP with Optional TLS"
       Italic          =   False
       Left            =   158
       LockBottom      =   False
@@ -84,7 +84,7 @@ Begin BeaconContainer FTPSettingsView
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   142
+      Width           =   230
    End
    Begin UITweaks.ResizedLabel HostLabel
       AllowAutoDeactivate=   True
@@ -539,7 +539,7 @@ Begin BeaconContainer FTPSettingsView
       Underline       =   False
       Value           =   True
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   1
       Width           =   422
    End
    Begin DesktopCheckBox InternalizeKeyCheck
@@ -749,7 +749,7 @@ End
 		  Self.PrivateKeyChooseButton.Visible = UsePublicKeyAuth
 		  Self.InternalizeKeyCheck.Visible = UsePublicKeyAuth
 		  Self.PassLabel.Text = If(UsePublicKeyAuth, "Key Password:", "Password:")
-		  Self.VerifyCertificateCheck.Visible = (RowIndex = Self.IndexFTPTLS Or RowIndex = Self.IndexFTPS)
+		  Self.VerifyCertificateCheck.Visible = (RowIndex <> Self.IndexSFTP)
 		  
 		  BeaconUI.SizeToFit(Self.ModeLabel, Self.HostLabel, Self.PortLabel, Self.UserLabel, Self.PrivateKeyLabel, Self.PassLabel)
 		  
@@ -1039,16 +1039,16 @@ End
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = IndexFTP, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag Constant, Name = IndexFTP, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = IndexFTPS, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = IndexFTPTLS, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = IndexFTPTLS, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = IndexSFTP, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = IndexSFTP, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 
