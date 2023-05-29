@@ -54,7 +54,10 @@ Inherits FolderItem
 		      App.Log("Unable to resolve saveinfo: " + ErrorCode(ErrorRef).ToString(Locale.Raw, "0") + " " + ErrorDescription(ErrorRef))
 		    End If
 		  #else
-		    Var File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(SaveInfo)
+		    Var File As FolderItem = FolderItem.FromSaveInfo(SaveInfo)
+		    If File Is Nil Then
+		      Return Nil
+		    End If
 		    Return New BookmarkedFolderItem(File)
 		  #endif
 		End Function
