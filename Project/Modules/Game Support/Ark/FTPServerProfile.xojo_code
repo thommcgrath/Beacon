@@ -113,7 +113,7 @@ Inherits Ark.ServerProfile
 
 	#tag Method, Flags = &h21
 		Private Sub PrepareKeyFile()
-		  If (Self.mPrivateKeyFile Is Nil) = False Then
+		  If (Self.mPrivateKeyFile Is Nil) = False Or Self.mPrivateKey.IsEmpty Then
 		    Return
 		  End If
 		  
