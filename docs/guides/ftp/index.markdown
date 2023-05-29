@@ -16,7 +16,7 @@ The correct mode depends heavily on what the server supports. The good news is m
 
 ### FTP with TLS
 
-You may have heard of SSL, which stands for Secure Socket Layer. You can sometimes see "SSL secured" on credit card pages. TLS, which stands for Transport Layer Security, is a newer version of SSL. In fact, SSL these almost always means TLS, because SSL has been insecure for a very long time.
+You may have heard of SSL, which stands for Secure Socket Layer. You can sometimes see "SSL secured" on credit card pages. TLS, which stands for Transport Layer Security, is a newer version of SSL. In fact, for nearly the past decade SSL almost always means TLS.
 
 Beacon defaults to **FTP with Required TLS**{:.ui-keyword} with the **Verify Server Certificate**{:.ui-keyword} option turned on. This means Beacon will need a secure connection to the server, and will verify the server's identity. This is the same level of security used when making purchases online.
 
@@ -26,11 +26,11 @@ The **FTP with Optional TLS**{:.ui-keyword} option allows an insecure connection
 
 ### Implicit TLS
 
-Normally, TLS is enabled after the initial connection. With implicit TLS, Beacon will connect assuming that TLS is supported. Because this requires a different server behavior, FTP servers will usually run implicit TLS on a different port. Port 990 is the most common.
+Normally, TLS is activated after the initial connection. With implicit TLS, Beacon will connect assuming that TLS is supported. Because this requires a different server behavior, FTP servers will usually run implicit TLS on a different port. Port 990 is the most common.
 
 ### SFTP
 
-SFTP is FTP that runs over an SSH (Secure Socket Shell) connection. SSH supports a wide range of authentication schemes, of which Beacon supports password and public key authentication.
+SFTP is FTP that runs over an SSH (Secure Shell) connection. SSH supports a wide range of authentication schemes, of which Beacon supports password and public key authentication.
 
 Password authentication is the most familiar, but most SSH servers do not allow password authentication.
 
