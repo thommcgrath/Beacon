@@ -8,6 +8,7 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE custom_templates (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, user_id TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_template_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_template_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, user_id TEXT COLLATE NOCASE NOT NULL, game_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE user_public_keys (user_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, username TEXT COLLATE NOCASE NOT NULL, email TEXT COLLATE NOCASE UNIQUE, public_key TEXT NOT NULL, expires INTEGER NOT NULL);")
 		End Sub
 	#tag EndEvent
 
@@ -88,7 +89,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 101
+		  Return 102
 		End Function
 	#tag EndEvent
 
@@ -622,6 +623,64 @@ Inherits Beacon.DataSource
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM official_templates WHERE object_id = ?1;", TemplateUUID)
 		  Return Rows.RowCount = 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LookupUserInfo(LookupString As String, UseCached As Boolean = True) As Beacon.PublicUserInfo
+		  If Self.Writeable = False Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Must call GetUserPublicKey on a writeable thread."
+		    Raise Err
+		  End If
+		  
+		  Var CachedInfo As Beacon.PublicUserInfo
+		  Var Rows As RowSet
+		  Var Email As Variant = Nil
+		  
+		  If UUID.IsValid(LookupString) Then
+		    Rows = Self.SQLSelect("SELECT * FROM user_public_keys WHERE user_id = ?1;", LookupString)
+		  ElseIf LookupString.Length > 9 And LookupString.Right(9).BeginsWith("#") Then
+		    Var Username As String = LookupString.Left(LookupString.Length - 9)
+		    Var Suffix As String = LookupString.Right(8)
+		    Rows = Self.SQLSelect("SELECT * FROM user_public_keys WHERE username = ?1 AND LEFT(user_id, 8) = ?2;", Username, Suffix)
+		  ElseIf Beacon.ValidateEmail(LookupString) Then
+		    Rows = Self.SQLSelect("SELECT * FROM user_public_keys WHERE email = ?1;", LookupString)
+		    Email = LookupString
+		  End If
+		  
+		  If Rows.RowCount = 1 Then
+		    CachedInfo = New Beacon.PublicUserInfo(Rows)
+		    If UseCached = True And Rows.Column("expires").IntegerValue > DateTime.Now.SecondsFrom1970 Then
+		      Return CachedInfo
+		    End If
+		    If Email.IsNull And Rows.Column("email").Value.IsNull = False Then
+		      Email = Rows.Column("email").StringValue
+		    End If
+		  End If
+		  
+		  Var LookupSocket As New URLConnection
+		  LookupSocket.RequestHeader("User-Agent") = App.UserAgent
+		  
+		  Var Response As String = LookupSocket.SendSync("GET", BeaconAPI.URL("/user/" + EncodeURLComponent(LookupString)), 10)
+		  If LookupSocket.HTTPStatusCode <> 200 Then
+		    Return CachedInfo
+		  End If
+		  
+		  Try
+		    Var UserData As Dictionary = Beacon.ParseJSON(Response)
+		    Var UserId As String = UserData.Value("user_id")
+		    Var Username As String = UserData.Value("username_full")
+		    Var PublicKey As String = BeaconEncryption.PEMDecodePublicKey(UserData.Value("public_key"))
+		    
+		    Self.SQLExecute("INSERT OR REPLACE INTO user_public_keys (user_id, username, email, public_key, expires) VALUES (?1, ?2, ?3, ?4, ?5);", UserId, Username, Email, PublicKey, DateTime.Now.SecondsFrom1970 + 14400)
+		    
+		    Rows = Self.SQLSelect("SELECT * FROM user_public_keys WHERE user_id = ?1;", UserId)
+		    Return New Beacon.PublicUserInfo(Rows)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing user info response")
+		    Return CachedInfo
+		  End Try
 		End Function
 	#tag EndMethod
 

@@ -259,12 +259,12 @@ Begin BeaconDialog ShareWithUserDialog
       Visible         =   True
       Width           =   337
    End
-   Begin URLConnection UserLookupSocket
-      AllowCertificateValidation=   False
-      HTTPStatusCode  =   0
+   Begin Thread LookupThread
       Index           =   -2147483648
       LockedInPosition=   False
+      Priority        =   5
       Scope           =   2
+      StackSize       =   0
       TabPanelIndex   =   0
    End
 End
@@ -272,21 +272,20 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ByRef UserID As String, ByRef Username As String, ByRef PublicKey As String) As Boolean
-		  If Parent = Nil Then
-		    Return False
+		Shared Function Present(Parent As DesktopWindow) As Beacon.PublicUserInfo
+		  If Parent Is Nil Then
+		    Return Nil
 		  End If
 		  
 		  Var Win As New ShareWithUserDialog
 		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
+		  Var UserInfo As Beacon.PublicUserInfo
 		  If Not Cancelled Then
-		    UserID = Win.mUserID
-		    PublicKey = Win.mPublicKey
-		    Username = Win.mUserName
+		    UserInfo = Win.mUserInfo
 		  End If
 		  Win.Close
-		  Return Not Cancelled
+		  Return UserInfo
 		End Function
 	#tag EndMethod
 
@@ -296,15 +295,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPublicKey As String
+		Private mLookupString As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserID As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUserName As String
+		Private mUserInfo As Beacon.PublicUserInfo
 	#tag EndProperty
 
 
@@ -315,7 +310,7 @@ End
 		Sub Pressed()
 		  Var EnteredValue As String = Self.UserIDField.Text
 		  If v4UUID.IsValid(EnteredValue) Or (EnteredValue.Length > 9 And EnteredValue.Right(9).BeginsWith("#")) Or Beacon.ValidateEmail(EnteredValue) Then
-		    Self.UserLookupSocket.Send("GET", BeaconAPI.URL("/user/" + EncodeURLComponent(EnteredValue.ReplaceAll(",", ",,"))))
+		    Self.mLookupString = EnteredValue
 		  Else
 		    Self.ShowAlert("User cannot be identified with the given value.", "Please enter the UUID, email address, or full username with suffix (such as User#ABCD1234) to continue.")
 		    Return
@@ -323,6 +318,10 @@ End
 		  
 		  Me.Enabled = False
 		  Self.Spinner.Visible = True
+		  Self.UserIDField.ReadOnly = True
+		  Self.CancelButton.Enabled = False
+		  
+		  Self.LookupThread.Start
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -330,7 +329,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.mCancelled = True
-		  Self.UserLookupSocket.Disconnect
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -342,43 +340,35 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events UserLookupSocket
+#tag Events LookupThread
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
-		  #Pragma Unused URL
-		  
-		  If HTTPStatus = 200 Then
-		    Try
-		      Var UserData As Dictionary = Beacon.ParseJSON(Content)
-		      Self.mUserID = UserData.Value("user_id")
-		      Self.mUserName = UserData.Value("username_full")
-		      Self.mPublicKey = BeaconEncryption.PEMDecodePublicKey(UserData.Value("public_key"))
-		      Self.mCancelled = False
-		      Self.Hide
-		      Return
-		    Catch Err As RuntimeException
-		      Self.ShowAlert("Unable to add user", "There was an error parsing the response: " + Err.Message)
-		    End Try
+		Sub Run()
+		  Var DataSource As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
+		  If (DataSource Is Nil) = False Then
+		    Self.mUserInfo = DataSource.LookupUserInfo(Self.mLookupString, False)
 		  End If
-		  
-		  Self.Spinner.Visible = False
-		  Self.ActionButton.Enabled = True
-		  
-		  Var Message As String
-		  Select Case HTTPStatus
-		  Case 404
-		    Message = "User not found"
-		  Else
-		    Message = Content
-		  End Select
-		  Self.ShowAlert("Unable to add user", Message)
+		  Me.AddUserInterfaceUpdate("Finished" : True)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(e As RuntimeException)
-		  Self.Spinner.Visible = False
-		  Self.ActionButton.Enabled = True
-		  Self.ShowAlert("Unable to connect to server", "Beacon was unable to connect to the server to download the user's private key. Reason: " + e.Message)
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.Lookup("Finished", False).BooleanValue = True Then
+		      Self.Spinner.Visible = False
+		      Self.ActionButton.Enabled = True
+		      Self.UserIDField.ReadOnly = False
+		      Self.CancelButton.Enabled = True
+		      
+		      If Self.mUserInfo Is Nil Then
+		        Self.ShowAlert("Unable To Lookup User", "Please enter the UUID, email address, or full username with suffix such as User#ABCD1234. See the help section for more details.")
+		        Return
+		      End If
+		      
+		      Self.mCancelled = False
+		      Self.Hide
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

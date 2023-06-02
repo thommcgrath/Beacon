@@ -532,6 +532,7 @@ Begin BeaconDialog SharingDialog
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -660,17 +661,19 @@ End
 #tag Events AddUserButton
 	#tag Event
 		Sub Pressed()
-		  Var UserID, Username, PublicKey As String
-		  If ShareWithUserDialog.Present(Self, UserID, Username, PublicKey) Then
-		    If Self.mProject.HasUser(UserID) = False Then
-		      Self.UserList.AddRow(Username, UserID)
-		      Self.UserList.Sort
-		    End If
-		    
-		    // Even if the user is already on the document, call AddUser in case the public key has changed
-		    Self.mProject.AddUser(UserID, PublicKey)
-		    Self.mUsersChanged = True
+		  Var UserInfo As Beacon.PublicUserInfo = ShareWithUserDialog.Present(Self)
+		  If UserInfo Is Nil Then
+		    Return
 		  End If
+		  
+		  If Self.mProject.HasUser(UserInfo.UserId) = False Then
+		    Self.UserList.AddRow(UserInfo.Username(True), UserInfo.UserId)
+		    Self.UserList.Sort
+		  End If
+		  
+		  // Even if the user is already on the document, call AddUser in case the public key has changed
+		  Self.mProject.AddUser(UserInfo.UserId, UserInfo.PublicKey)
+		  Self.mUsersChanged = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
