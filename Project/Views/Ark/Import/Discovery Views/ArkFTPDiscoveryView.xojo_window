@@ -108,11 +108,11 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "Connecting to Server…"
+         Text            =   "Connecting to server…"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   129
+         Top             =   199
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -139,7 +139,7 @@ Begin ArkDiscoveryView ArkFTPDiscoveryView
          TabIndex        =   1
          TabPanelIndex   =   2
          Tooltip         =   ""
-         Top             =   161
+         Top             =   231
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
@@ -652,6 +652,13 @@ End
 		Sub Opening()
 		  RaiseEvent Open
 		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize()
+		  Var ProgressGroup As New ControlGroup(Self.DiscoveringMessage, Self.DiscoveringProgress)
+		  ProgressGroup.Top = Self.ViewPanel.Top + ((Self.ViewPanel.Height - ProgressGroup.Height) / 2.5)
 		End Sub
 	#tag EndEvent
 
