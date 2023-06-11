@@ -2,11 +2,11 @@
   "actions" : {
     "build" : {
       "enabled" : true,
-      "script" : "export NODE_PATH=\"\/opt\/homebrew\/lib\/node_modules\"\nbabel --minified --no-comments src\/js -d www\/assets\/scripts\nsass --style compressed --no-source-map src\/scss:www\/assets\/css"
+      "script" : "export NODE_PATH=\"\/opt\/homebrew\/lib\/node_modules\"\n\/opt\/homebrew\/bin\/babel --minified --no-comments src\/js -d www\/assets\/scripts\n\/opt\/homebrew\/bin\/sass --style compressed --no-source-map src\/scss:www\/assets\/css"
     },
     "run" : {
       "enabled" : true,
-      "script" : "export NODE_PATH=\"\/opt\/homebrew\/lib\/node_modules\"\nbabel --watch src\/js -d www\/assets\/scripts &\nsass --watch --style compressed --no-source-map src\/scss:www\/assets\/css"
+      "script" : "export NODE_PATH=\"\/opt\/homebrew\/lib\/node_modules\"\n\/opt\/homebrew\/bin\/babel --watch src\/js -d www\/assets\/scripts &\n\/opt\/homebrew\/bin\/sass --watch --style compressed --no-source-map src\/scss:www\/assets\/css"
     }
   },
   "openLogOnRun" : "fail"
