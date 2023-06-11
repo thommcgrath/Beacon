@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkDiscoveryView ArkConnectorDiscoveryView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   252
    Index           =   -2147483648
@@ -26,11 +27,9 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
    Transparent     =   True
    Visible         =   True
    Width           =   582
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -51,21 +50,19 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Server Settings"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Server Settings"
       Visible         =   True
       Width           =   542
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -86,13 +83,13 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "If you have Beacon Connector running on your server, enter the address, port, and encryption key of your Beacon Connector to get started."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "If you have Beacon Connector running on your server, enter the address, port, and encryption key of your Beacon Connector to get started."
       Visible         =   True
       Width           =   542
    End
@@ -103,14 +100,12 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -128,6 +123,7 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -135,7 +131,6 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   422
    End
@@ -146,14 +141,12 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -171,6 +164,7 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -178,7 +172,6 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   100
    End
@@ -189,14 +182,12 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -214,6 +205,7 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -221,15 +213,12 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   422
    End
    Begin UITweaks.ResizedLabel PortLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -250,21 +239,19 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Port:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   136
       Transparent     =   False
       Underline       =   False
-      Value           =   "Port:"
       Visible         =   True
       Width           =   108
    End
    Begin UITweaks.ResizedLabel KeyLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -285,21 +272,19 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Encryption Key:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   170
       Transparent     =   False
       Underline       =   False
-      Value           =   "Encryption Key:"
       Visible         =   True
       Width           =   108
    End
    Begin UITweaks.ResizedLabel AddressLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -320,13 +305,13 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Address:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   102
       Transparent     =   False
       Underline       =   False
-      Value           =   "Address:"
       Visible         =   True
       Width           =   108
    End
@@ -396,7 +381,6 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
    End
    Begin Beacon.ConnectorClientSocket TestSocket
       Address         =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -406,8 +390,6 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
    Begin LinkLabel HelpLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -429,19 +411,21 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Learn more about Beacon Connector"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   212
       Transparent     =   False
-      Underline       =   False
+      Underline       =   True
       URL             =   ""
-      Value           =   "Learn more about Beacon Connector"
       Visible         =   True
       Width           =   358
    End
-   Begin ProgressWheel Spinner
+   Begin DesktopProgressWheel Spinner
+      Active          =   False
       AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   16
       Index           =   -2147483648
@@ -452,21 +436,23 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   12
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   -109
       Transparent     =   False
       Visible         =   False
       Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin Label StatusLabel
+   Begin DesktopLabel StatusLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -487,18 +473,18 @@ Begin ArkDiscoveryView ArkConnectorDiscoveryView
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Connecting…"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   -111
       Transparent     =   False
       Underline       =   False
-      Value           =   "Connecting…"
       Visible         =   False
       Width           =   330
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -514,7 +500,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  RaiseEvent Open()
 		  Self.SwapButtons()
 		  Self.CheckEnabled()
@@ -547,28 +533,28 @@ End
 
 #tag Events AddressField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PortField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events KeyField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Profile As New Ark.ConnectorServerProfile
 		  Profile.Address = Self.AddressField.Text
 		  Profile.Port = CDbl(Self.PortField.Text)
@@ -590,7 +576,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.TestSocket.Close
 		  Self.Spinner.Visible = False
 		  Self.StatusLabel.Visible = False
@@ -641,12 +627,20 @@ End
 #tag EndEvents
 #tag Events HelpLabel
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  System.GotoURL(Beacon.WebURL("/connector"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -812,8 +806,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -848,26 +842,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

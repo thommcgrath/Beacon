@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl ArkSettingsListHeader
+#tag DesktopWindow
+Begin DesktopContainer ArkSettingsListHeader
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   30
    Index           =   -2147483648
@@ -26,13 +25,12 @@ Begin ContainerControl ArkSettingsListHeader
    Transparent     =   True
    Visible         =   True
    Width           =   300
-   Begin Canvas Canvas1
+   Begin DesktopCanvas Canvas1
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   30
       Index           =   -2147483648
@@ -54,7 +52,7 @@ Begin ContainerControl ArkSettingsListHeader
       Width           =   300
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
@@ -66,7 +64,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Name(Assigns NewValue As String)
 		  Self.mName = NewValue
-		  Self.Canvas1.Invalidate
+		  Self.Canvas1.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -80,7 +78,7 @@ End
 
 #tag Events Canvas1
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As Rect)
 		  #Pragma Unused Areas
 		  
 		  Var CapHeight As Double = G.CapHeight
@@ -100,6 +98,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
@@ -265,8 +271,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -301,26 +307,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -1,13 +1,18 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconContainer ColumnBrowser
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
+   AcceptFocus     =   "False"
+   AcceptTabs      =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
+   AutoDeactivate  =   "True"
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackColor    =   False
    Height          =   300
    HelpTag         =   ""
@@ -21,65 +26,75 @@ Begin BeaconContainer ColumnBrowser
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
+   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   300
-   Begin ScrollBar Scroller
-      AcceptFocus     =   True
-      AutoDeactivate  =   True
+   Begin DesktopScrollbar Scroller
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowLiveScrolling=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   15
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LineStep        =   200
-      LiveScroll      =   True
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   False
-      Maximum         =   100
-      Minimum         =   0
+      MaximumValue    =   100
+      MinimumValue    =   0
       PageStep        =   300
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   285
       Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   300
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin BeaconListbox Lists
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   2
-      ColumnsResizable=   False
       ColumnWidths    =   "30,*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   285
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   0
       InitialParent   =   ""
       InitialValue    =   ""
@@ -92,23 +107,16 @@ Begin BeaconContainer ColumnBrowser
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionChangeBlocked=   "False"
-      SelectionType   =   0
-      ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   200
@@ -116,15 +124,14 @@ Begin BeaconContainer ColumnBrowser
       _ScrollWidth    =   -1
    End
    Begin FadedSeparator Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   285
-      HelpTag         =   ""
       Index           =   0
       InitialParent   =   ""
       Left            =   200
@@ -140,18 +147,18 @@ Begin BeaconContainer ColumnBrowser
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   1
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function MouseWheel(X As Integer, Y As Integer, DeltaX as Integer, DeltaY as Integer) As Boolean
+		Function MouseWheel(x As Integer, y As Integer, deltaX As Integer, deltaY As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -160,14 +167,14 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  RaiseEvent Open
 		  Self.Reset()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As Rect)
 		  #Pragma Unused Areas
 		  
 		  G.DrawingColor = SystemColors.UnderPageBackgroundColor
@@ -360,7 +367,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function MouseWheel(X As Integer, Y As Integer, deltaX as Integer, deltaY as Integer) As Boolean
+		Function MouseWheel(x As Integer, y As Integer, deltaX As Integer, deltaY As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -371,7 +378,7 @@ End
 #tag EndEvents
 #tag Events Lists
 	#tag Event
-		Sub Change(index as Integer)
+		Sub SelectionChanged(index as Integer)
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -418,7 +425,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function MouseWheel(index as Integer, X As Integer, Y As Integer, deltaX as Integer, deltaY as Integer) As Boolean
+		Function MouseWheel(index as Integer, x As Integer, y As Integer, deltaX As Integer, deltaY As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -426,7 +433,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub CellBackgroundPaint(index as Integer, G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		Sub PaintCellBackground(index as Integer, G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused Index
 		  #Pragma Unused BackgroundColor
 		  #Pragma Unused IsHighlighted
@@ -451,19 +458,27 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -495,8 +510,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -663,14 +678,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

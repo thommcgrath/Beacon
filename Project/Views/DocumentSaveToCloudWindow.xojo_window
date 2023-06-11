@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog DocumentSaveToCloudWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,14 +27,14 @@ Begin BeaconDialog DocumentSaveToCloudWindow
    Title           =   "Save to Cloud"
    Visible         =   True
    Width           =   600
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -51,11 +51,9 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Save to Beacon Cloud"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -63,30 +61,29 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       Width           =   560
    End
    Begin UITweaks.ResizedTextField TitleField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   147
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -94,25 +91,24 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   433
    End
    Begin UITweaks.ResizedLabel TitleLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -129,11 +125,9 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Project Name:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
@@ -141,15 +135,16 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       Width           =   115
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Save"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -159,13 +154,12 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   102
       Transparent     =   False
       Underline       =   False
@@ -173,15 +167,16 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -191,13 +186,12 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   102
       Transparent     =   False
       Underline       =   False
@@ -205,15 +199,16 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton SaveLocalButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Save to Computer"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -223,13 +218,12 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   102
       Transparent     =   False
       Underline       =   False
@@ -237,18 +231,18 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       Width           =   140
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Controller As Beacon.ProjectController) As Integer
+		Shared Function Present(Parent As DesktopWindow, Controller As Beacon.ProjectController) As Integer
 		  If Not Preferences.OnlineEnabled Then
 		    Return StateSaveLocal
 		  End If
@@ -256,7 +250,7 @@ End
 		  Var Win As New DocumentSaveToCloudWindow
 		  Win.mController = Controller
 		  Win.TitleField.Text = Controller.Name
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var State As Integer = Win.mResponseState
 		  Win.Close
@@ -289,7 +283,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mController.Project.NewIdentifier
 		  Var NewURL As String = Beacon.ProjectURL.TypeCloud + "://" + BeaconAPI.URL("project/" + Self.mController.Project.UUID).Middle(8)
 		  Self.mController.Project.Title = Self.TitleField.Text
@@ -301,7 +295,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mResponseState = Self.StateCancelled
 		  Self.Hide
 		End Sub
@@ -309,7 +303,7 @@ End
 #tag EndEvents
 #tag Events SaveLocalButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mResponseState = Self.StateSaveLocal
 		  Self.Hide
 		End Sub
@@ -445,8 +439,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -549,7 +543,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

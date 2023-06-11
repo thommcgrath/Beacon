@@ -35,6 +35,22 @@ Inherits BeaconSubview
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Modified"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Composited"
+			Visible=true
+			Group="Window Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -67,14 +83,6 @@ Inherits BeaconSubview
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Tooltip"
 			Visible=true
 			Group="Appearance"
@@ -103,8 +111,8 @@ Inherits BeaconSubview
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBackgroundColor"
@@ -296,14 +304,6 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="ProgressNone"
 			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

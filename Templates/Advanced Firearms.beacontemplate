@@ -1,0 +1,2165 @@
+{
+    "ID": "279bca28-43fa-4742-8c8b-6b0de13591ef",
+    "Game": "Ark",
+    "Label": "Advanced Firearms",
+    "Kind": "LootTemplate",
+    "Version": 3,
+    "MinVersion": 3,
+    "Grouping": "Firearms",
+    "Min": 1,
+    "Max": 2,
+    "ItemSets": [
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "a8c12e16-7c4d-4b31-8412-2694f9d5e1d6",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_BallistaArrow.PrimalItemAmmo_BallistaArrow",
+                        "UUID": "d9503f1a-14c5-4b38-ba93-2b213d95ab43",
+                        "Class": "PrimalItemAmmo_BallistaArrow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 40,
+            "MinQuality": "Tier1",
+            "MinQuantity": 10,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5fa1b1c0-d97a-4fe0-b139-afa79d356810",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3920,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "6c492be8-30c8-46d6-88d4-ca68071fc5e7",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/WeaponGlowStickCharge/PrimalItem_ChargeBattery.PrimalItem_ChargeBattery",
+                        "UUID": "314097be-2b04-4e75-b85f-5b85d8809bd6",
+                        "Class": "PrimalItem_ChargeBattery_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 8,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a6dd598d-2726-4548-a08b-1413ef673f8b",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "4646d5e4-7911-4126-bca0-22b4d84a2a04",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponEmptyCryopod.PrimalItem_WeaponEmptyCryopod",
+                        "UUID": "b2ef8219-ed6b-4799-9166-9a0753306c0a",
+                        "Class": "PrimalItem_WeaponEmptyCryopod_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 5,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "167b4f5c-c0af-4788-8b6b-f5c40445cb12",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "82becf40-356f-4b4b-aa72-9d4d4aacd655",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedShotgun.PrimalItem_WeaponMachinedShotgun",
+                        "UUID": "72e9e30e-f3ea-4880-875d-b41aa9f38703",
+                        "Class": "PrimalItem_WeaponMachinedShotgun_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "1ab4e3c8-7f46-4602-92cd-a7b526c5e224",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "c4a04a1a-09c9-4bec-884c-7f9b8dc667da",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedPistol.PrimalItem_WeaponMachinedPistol",
+                        "UUID": "52187247-2dff-4567-91f6-0080fa24f988",
+                        "Class": "PrimalItem_WeaponMachinedPistol_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "9955180b-019a-4123-b203-3f95f7dd9591",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.96875,
+            "Items": [
+                {
+                    "UUID": "359dbe3f-2f26-4f4b-b884-1f8326f24848",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "215228dc-968b-4093-bb25-d56ff57f6ad6",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedSniper.PrimalItem_WeaponMachinedSniper",
+                        "Class": "PrimalItem_WeaponMachinedSniper_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "75e40c9d-3c07-4326-9926-7cd97ccf0fb1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d5647622-9a5e-4790-871d-33b1b7261458",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponCompoundBow.PrimalItem_WeaponCompoundBow",
+                        "Class": "PrimalItem_WeaponCompoundBow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9eaac6e1-042b-461b-be1e-42da3bed9cbf",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1398ef78-2bfc-43d4-a0de-64176ff36360",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponHarpoon.PrimalItem_WeaponHarpoon",
+                        "Class": "PrimalItem_WeaponHarpoon_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "ffa9de15-fbbe-4a0f-b707-c6acd0de0c7f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "4b62fef2-b8a0-49fe-a6fb-4138bc0f191f",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItemAmmo_Flamethrower.PrimalItemAmmo_Flamethrower",
+                        "Class": "PrimalItemAmmo_Flamethrower_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "44fbfc5c-4985-4b49-acac-091dad14f640",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "314097be-2b04-4e75-b85f-5b85d8809bd6",
+                        "Path": "/Game/Aberration/WeaponGlowStickCharge/PrimalItem_ChargeBattery.PrimalItem_ChargeBattery",
+                        "Class": "PrimalItem_ChargeBattery_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4fa2a441-b4f1-4719-be70-1b6824a929cb",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "5d266022-b220-468b-a26e-5b814c031a5f",
+                        "Path": "/Game/ScorchedEarth/WeaponClusterGrenade/PrimalItem_WeaponClusterGrenade.PrimalItem_WeaponClusterGrenade",
+                        "Class": "PrimalItem_WeaponClusterGrenade_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d5817410-eef9-407d-a60e-4891246846b8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "853336cc-5314-43a4-84d0-00a20d9c390d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqDart.PrimalItemAmmo_TranqDart",
+                        "Class": "PrimalItemAmmo_TranqDart_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "e7759d2e-cf47-4de0-9f8b-8eaffc21246f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "083b4b07-7f7d-448d-bc4d-18c68777c222",
+                        "Path": "/Game/Genesis2/Weapons/MiniGun/PrimalItem_WeaponMinigun.PrimalItem_WeaponMinigun",
+                        "Class": "PrimalItem_WeaponMinigun_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a141d63d-f9b2-4aac-a00d-6d5646ef9d02",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "341353e1-78c0-44e6-8d8c-afde4d574ca0",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedRifleBullet.PrimalItemAmmo_AdvancedRifleBullet",
+                        "Class": "PrimalItemAmmo_AdvancedRifleBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8077b16c-9a63-4087-9e5e-68116f18c955",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "de8e5a9e-e66f-490a-914a-6565c6ce6583",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedSniperBullet.PrimalItemAmmo_AdvancedSniperBullet",
+                        "Class": "PrimalItemAmmo_AdvancedSniperBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a0cd82c7-d0af-4289-a47c-067a1a02d30f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1a01fd9f-f760-4afb-9bac-723305b86ab2",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItem_WeapFlamethrower.PrimalItem_WeapFlamethrower",
+                        "Class": "PrimalItem_WeapFlamethrower_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "70cc8aa9-6f75-482a-8082-8cf2bcf4b8e8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "56c14ad0-5c97-48bd-a658-4c4a4c820d83",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqSpearBolt.PrimalItemAmmo_TranqSpearBolt",
+                        "Class": "PrimalItemAmmo_TranqSpearBolt_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f6384fd5-21dd-42f0-a46c-45b338be1afa",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "9b56a29a-c1dc-4c37-9684-174af6eac5eb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedBullet.PrimalItemAmmo_AdvancedBullet",
+                        "Class": "PrimalItemAmmo_AdvancedBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "857143df-5913-42bd-a034-21d00537f987",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f7cc1e6c-2b40-4204-8272-10ff56fe55f3",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRifle.PrimalItem_WeaponRifle",
+                        "Class": "PrimalItem_WeaponRifle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "172a925e-6ba5-4713-9aa9-57da7b3d2b2e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b66839be-9ded-42b0-b466-3c4f143d2f18",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_Rocket.PrimalItemAmmo_Rocket",
+                        "Class": "PrimalItemAmmo_Rocket_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "36820000-2189-45e8-a7fc-d0507c6bec64",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0216dfb8-5f0c-40b0-8162-d8be6f87db12",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_CompoundBowArrow.PrimalItemAmmo_CompoundBowArrow",
+                        "Class": "PrimalItemAmmo_CompoundBowArrow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "dd9e91ea-b10a-4d9e-8daf-4c11e474898d",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a326962e-db1b-4074-8804-01abcb44435f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleShotgunBullet.PrimalItemAmmo_SimpleShotgunBullet",
+                        "Class": "PrimalItemAmmo_SimpleShotgunBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "95b62093-dfe6-4d04-b6cc-9af7e68c62c0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "04eec59d-2ee0-4b8f-8f4c-96511f7c9f03",
+                        "Path": "/Game/ScorchedEarth/WeaponHomingMissile/PrimalItemAmmo_RocketHomingMissile.PrimalItemAmmo_RocketHomingMissile",
+                        "Class": "PrimalItemAmmo_RocketHomingMissile_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c6b5639d-868a-4c6f-9a00-a61935281d0e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d9503f1a-14c5-4b38-ba93-2b213d95ab43",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_BallistaArrow.PrimalItemAmmo_BallistaArrow",
+                        "Class": "PrimalItemAmmo_BallistaArrow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9e0e10da-9235-407f-88d7-7aec761d89d3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "8026ad1b-1309-4a44-a25a-033f81a60d93",
+                        "Path": "/Game/Aberration/WeaponRadioactiveLanternCharge/PrimalItem_WeaponRadioactiveLanternCharge.PrimalItem_WeaponRadioactiveLanternCharge",
+                        "Class": "PrimalItem_WeaponRadioactiveLanternCharge_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "17c1f295-dadd-4435-9a6b-6de7c529ba14",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "275bd431-7fe6-4b8a-baea-77d79e33213c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRocketLauncher.PrimalItem_WeaponRocketLauncher",
+                        "Class": "PrimalItem_WeaponRocketLauncher_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0017662b-19f3-4845-91e9-3e0aa6dd7d20",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "52187247-2dff-4567-91f6-0080fa24f988",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedPistol.PrimalItem_WeaponMachinedPistol",
+                        "Class": "PrimalItem_WeaponMachinedPistol_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "a5d8b093-7250-4103-a6f0-f4b35ce395c9",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "72e9e30e-f3ea-4880-875d-b41aa9f38703",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedShotgun.PrimalItem_WeaponMachinedShotgun",
+                        "Class": "PrimalItem_WeaponMachinedShotgun_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2a486af9-075a-4a89-be7c-b3b2f1a691c0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2ef8219-ed6b-4799-9166-9a0753306c0a",
+                        "Path": "/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponEmptyCryopod.PrimalItem_WeaponEmptyCryopod",
+                        "Class": "PrimalItem_WeaponEmptyCryopod_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 968.75,
+            "UUID": "43169307-4c07-4224-ae31-8321c23ed61e",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "99670a1e-c64a-4059-8aa3-58d42cdf22f8",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/WeaponClusterGrenade/PrimalItem_WeaponClusterGrenade.PrimalItem_WeaponClusterGrenade",
+                        "UUID": "5d266022-b220-468b-a26e-5b814c031a5f",
+                        "Class": "PrimalItem_WeaponClusterGrenade_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 6,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "03d573e7-6250-496e-8f45-3120041498c3",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "c4d21fce-8cf2-4108-8566-1b2809183d2a",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRifle.PrimalItem_WeaponRifle",
+                        "UUID": "f7cc1e6c-2b40-4204-8272-10ff56fe55f3",
+                        "Class": "PrimalItem_WeaponRifle_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "27cbb7a0-4463-4482-8f17-c7ce7e4f5032",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3920,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.96875,
+            "Items": [
+                {
+                    "UUID": "5f672847-d4b7-4a24-bb96-d47905e9a944",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "215228dc-968b-4093-bb25-d56ff57f6ad6",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedSniper.PrimalItem_WeaponMachinedSniper",
+                        "Class": "PrimalItem_WeaponMachinedSniper_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "391277c9-ebac-42f8-be01-6e5f3cfa880f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d5647622-9a5e-4790-871d-33b1b7261458",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponCompoundBow.PrimalItem_WeaponCompoundBow",
+                        "Class": "PrimalItem_WeaponCompoundBow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d44219b9-927e-451f-b926-e26cc474a556",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1398ef78-2bfc-43d4-a0de-64176ff36360",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponHarpoon.PrimalItem_WeaponHarpoon",
+                        "Class": "PrimalItem_WeaponHarpoon_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d188e300-bf69-46fc-8880-90536a4b2a16",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "4b62fef2-b8a0-49fe-a6fb-4138bc0f191f",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItemAmmo_Flamethrower.PrimalItemAmmo_Flamethrower",
+                        "Class": "PrimalItemAmmo_Flamethrower_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "3d6d513d-0188-4077-87af-346f4a6bc2f7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "314097be-2b04-4e75-b85f-5b85d8809bd6",
+                        "Path": "/Game/Aberration/WeaponGlowStickCharge/PrimalItem_ChargeBattery.PrimalItem_ChargeBattery",
+                        "Class": "PrimalItem_ChargeBattery_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9dcb3f1a-830b-49e1-83f9-007b696db94c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "5d266022-b220-468b-a26e-5b814c031a5f",
+                        "Path": "/Game/ScorchedEarth/WeaponClusterGrenade/PrimalItem_WeaponClusterGrenade.PrimalItem_WeaponClusterGrenade",
+                        "Class": "PrimalItem_WeaponClusterGrenade_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "24a7db12-6bc3-49fd-870e-ab016dd81a56",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "853336cc-5314-43a4-84d0-00a20d9c390d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqDart.PrimalItemAmmo_TranqDart",
+                        "Class": "PrimalItemAmmo_TranqDart_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6bcc5806-d617-4dc4-89e8-050a24f7ff27",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "083b4b07-7f7d-448d-bc4d-18c68777c222",
+                        "Path": "/Game/Genesis2/Weapons/MiniGun/PrimalItem_WeaponMinigun.PrimalItem_WeaponMinigun",
+                        "Class": "PrimalItem_WeaponMinigun_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "29184e5f-83a6-4ec0-81dc-9e41527582ff",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "341353e1-78c0-44e6-8d8c-afde4d574ca0",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedRifleBullet.PrimalItemAmmo_AdvancedRifleBullet",
+                        "Class": "PrimalItemAmmo_AdvancedRifleBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4f828a7b-b6f7-4711-9514-aa94c2a9f728",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "de8e5a9e-e66f-490a-914a-6565c6ce6583",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedSniperBullet.PrimalItemAmmo_AdvancedSniperBullet",
+                        "Class": "PrimalItemAmmo_AdvancedSniperBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "5559757b-5faa-44c5-991c-3312d3a0dcfb",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1a01fd9f-f760-4afb-9bac-723305b86ab2",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItem_WeapFlamethrower.PrimalItem_WeapFlamethrower",
+                        "Class": "PrimalItem_WeapFlamethrower_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "bb8da422-6acf-42a9-b944-596a11cb00fa",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "56c14ad0-5c97-48bd-a658-4c4a4c820d83",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqSpearBolt.PrimalItemAmmo_TranqSpearBolt",
+                        "Class": "PrimalItemAmmo_TranqSpearBolt_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6c33d974-8066-4ae5-9a6f-81649f0cb64b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "9b56a29a-c1dc-4c37-9684-174af6eac5eb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedBullet.PrimalItemAmmo_AdvancedBullet",
+                        "Class": "PrimalItemAmmo_AdvancedBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1a879cc0-6c19-49a2-99b4-cf71dc53e333",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f7cc1e6c-2b40-4204-8272-10ff56fe55f3",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRifle.PrimalItem_WeaponRifle",
+                        "Class": "PrimalItem_WeaponRifle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2734e66c-d709-4477-9812-46c8103b0106",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b66839be-9ded-42b0-b466-3c4f143d2f18",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_Rocket.PrimalItemAmmo_Rocket",
+                        "Class": "PrimalItemAmmo_Rocket_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "15ca7bb7-a842-41fc-8c60-aff1ffc1fb56",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0216dfb8-5f0c-40b0-8162-d8be6f87db12",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_CompoundBowArrow.PrimalItemAmmo_CompoundBowArrow",
+                        "Class": "PrimalItemAmmo_CompoundBowArrow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "85ec3f18-dc38-4cc3-afd8-cc4067a86103",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a326962e-db1b-4074-8804-01abcb44435f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleShotgunBullet.PrimalItemAmmo_SimpleShotgunBullet",
+                        "Class": "PrimalItemAmmo_SimpleShotgunBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "2d742e02-e532-4eed-92b8-b58c7e015da7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "04eec59d-2ee0-4b8f-8f4c-96511f7c9f03",
+                        "Path": "/Game/ScorchedEarth/WeaponHomingMissile/PrimalItemAmmo_RocketHomingMissile.PrimalItemAmmo_RocketHomingMissile",
+                        "Class": "PrimalItemAmmo_RocketHomingMissile_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "3945dc94-789f-47fe-9c63-74ce83fc35bc",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d9503f1a-14c5-4b38-ba93-2b213d95ab43",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_BallistaArrow.PrimalItemAmmo_BallistaArrow",
+                        "Class": "PrimalItemAmmo_BallistaArrow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b47158aa-df60-4df4-82b0-d3bc51655e2c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "8026ad1b-1309-4a44-a25a-033f81a60d93",
+                        "Path": "/Game/Aberration/WeaponRadioactiveLanternCharge/PrimalItem_WeaponRadioactiveLanternCharge.PrimalItem_WeaponRadioactiveLanternCharge",
+                        "Class": "PrimalItem_WeaponRadioactiveLanternCharge_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "624bd2f3-5498-44e2-8051-554754fe6c74",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "275bd431-7fe6-4b8a-baea-77d79e33213c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRocketLauncher.PrimalItem_WeaponRocketLauncher",
+                        "Class": "PrimalItem_WeaponRocketLauncher_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "40357a43-bd2a-410d-ad72-e649fb436fe0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "52187247-2dff-4567-91f6-0080fa24f988",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedPistol.PrimalItem_WeaponMachinedPistol",
+                        "Class": "PrimalItem_WeaponMachinedPistol_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "ffd957c5-9498-4be9-a902-0610cd7499cc",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "72e9e30e-f3ea-4880-875d-b41aa9f38703",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedShotgun.PrimalItem_WeaponMachinedShotgun",
+                        "Class": "PrimalItem_WeaponMachinedShotgun_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "6e0e67d6-84d6-4e00-9df9-14db6a89d71a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2ef8219-ed6b-4799-9166-9a0753306c0a",
+                        "Path": "/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponEmptyCryopod.PrimalItem_WeaponEmptyCryopod",
+                        "Class": "PrimalItem_WeaponEmptyCryopod_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 968.75,
+            "UUID": "e0e52c3f-f575-404e-bec2-4f222f56b1e0",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f0fca7c5-0657-4900-aa2e-70331e59fe4f",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/WeaponHomingMissile/PrimalItemAmmo_RocketHomingMissile.PrimalItemAmmo_RocketHomingMissile",
+                        "UUID": "04eec59d-2ee0-4b8f-8f4c-96511f7c9f03",
+                        "Class": "PrimalItemAmmo_RocketHomingMissile_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "efd5f0b4-8d53-4549-8a1d-7456098fc1df",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "b28413f3-a6ab-4e4d-970b-a16619b411d7",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItem_WeapFlamethrower.PrimalItem_WeapFlamethrower",
+                        "UUID": "1a01fd9f-f760-4afb-9bac-723305b86ab2",
+                        "Class": "PrimalItem_WeapFlamethrower_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "881a0ce4-473b-4f0a-958d-38846afa3a71",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "92803685-3a10-42a0-83ef-51d7c884e7be",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_CompoundBowArrow.PrimalItemAmmo_CompoundBowArrow",
+                        "UUID": "0216dfb8-5f0c-40b0-8162-d8be6f87db12",
+                        "Class": "PrimalItemAmmo_CompoundBowArrow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 40,
+            "MinQuality": "Tier1",
+            "MinQuantity": 10,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "c3755327-3c3c-4d53-9bc8-d5ff9b88f858",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "46d45996-2dff-4806-8775-3e5ab9c88dab",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponHarpoon.PrimalItem_WeaponHarpoon",
+                        "UUID": "1398ef78-2bfc-43d4-a0de-64176ff36360",
+                        "Class": "PrimalItem_WeaponHarpoon_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "2bf3e7b6-2b17-4cc7-9c39-7f9db7895f18",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "7b215370-a005-4573-bcf2-381daa359370",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqDart.PrimalItemAmmo_TranqDart",
+                        "UUID": "853336cc-5314-43a4-84d0-00a20d9c390d",
+                        "Class": "PrimalItemAmmo_TranqDart_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 40,
+            "MinQuality": "Tier1",
+            "MinQuantity": 10,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "effcb47f-34d2-4b36-98fe-51b2135a3713",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5307129c-5418-4080-a3c5-822bd79fa2f0",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedBullet.PrimalItemAmmo_AdvancedBullet",
+                        "UUID": "9b56a29a-c1dc-4c37-9684-174af6eac5eb",
+                        "Class": "PrimalItemAmmo_AdvancedBullet_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 52,
+            "MinQuality": "Tier1",
+            "MinQuantity": 13,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "72c2d825-4ed0-4e84-8767-04bebbfce1ac",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.96875,
+            "Items": [
+                {
+                    "UUID": "4d4dc5e2-da52-4701-9ba7-90b715536cba",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "215228dc-968b-4093-bb25-d56ff57f6ad6",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedSniper.PrimalItem_WeaponMachinedSniper",
+                        "Class": "PrimalItem_WeaponMachinedSniper_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4089e210-2c0e-4ef1-a8f7-1aae40495cc0",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d5647622-9a5e-4790-871d-33b1b7261458",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponCompoundBow.PrimalItem_WeaponCompoundBow",
+                        "Class": "PrimalItem_WeaponCompoundBow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "cef5fced-2985-4929-9016-f8eaf17b398c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1398ef78-2bfc-43d4-a0de-64176ff36360",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponHarpoon.PrimalItem_WeaponHarpoon",
+                        "Class": "PrimalItem_WeaponHarpoon_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "39623ce3-bd68-4172-8dd1-73a16e4849ec",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "4b62fef2-b8a0-49fe-a6fb-4138bc0f191f",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItemAmmo_Flamethrower.PrimalItemAmmo_Flamethrower",
+                        "Class": "PrimalItemAmmo_Flamethrower_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9337a972-6c31-4c48-bb7d-d07ccebe73fa",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "314097be-2b04-4e75-b85f-5b85d8809bd6",
+                        "Path": "/Game/Aberration/WeaponGlowStickCharge/PrimalItem_ChargeBattery.PrimalItem_ChargeBattery",
+                        "Class": "PrimalItem_ChargeBattery_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "67ae8774-080a-43bb-8442-f8fa84e50c26",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "5d266022-b220-468b-a26e-5b814c031a5f",
+                        "Path": "/Game/ScorchedEarth/WeaponClusterGrenade/PrimalItem_WeaponClusterGrenade.PrimalItem_WeaponClusterGrenade",
+                        "Class": "PrimalItem_WeaponClusterGrenade_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "633a8941-50d3-43be-adc1-34867f2dc914",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "853336cc-5314-43a4-84d0-00a20d9c390d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqDart.PrimalItemAmmo_TranqDart",
+                        "Class": "PrimalItemAmmo_TranqDart_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9eb39bef-14df-4baa-82d2-b3893f2b7c71",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "083b4b07-7f7d-448d-bc4d-18c68777c222",
+                        "Path": "/Game/Genesis2/Weapons/MiniGun/PrimalItem_WeaponMinigun.PrimalItem_WeaponMinigun",
+                        "Class": "PrimalItem_WeaponMinigun_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "9cd6bf1b-7db9-4ffb-9eb7-3789c0f4cbda",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "341353e1-78c0-44e6-8d8c-afde4d574ca0",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedRifleBullet.PrimalItemAmmo_AdvancedRifleBullet",
+                        "Class": "PrimalItemAmmo_AdvancedRifleBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "3f4819d6-0f48-49df-a8f5-00d8e966eb3a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "de8e5a9e-e66f-490a-914a-6565c6ce6583",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedSniperBullet.PrimalItemAmmo_AdvancedSniperBullet",
+                        "Class": "PrimalItemAmmo_AdvancedSniperBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c8e5604e-8907-48fd-9e69-81a817692e99",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1a01fd9f-f760-4afb-9bac-723305b86ab2",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItem_WeapFlamethrower.PrimalItem_WeapFlamethrower",
+                        "Class": "PrimalItem_WeapFlamethrower_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "3c2f61c2-e501-4de7-b5eb-8892609b592c",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "56c14ad0-5c97-48bd-a658-4c4a4c820d83",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqSpearBolt.PrimalItemAmmo_TranqSpearBolt",
+                        "Class": "PrimalItemAmmo_TranqSpearBolt_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c5642d90-b2df-4ed1-bf74-2765a3643f22",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "9b56a29a-c1dc-4c37-9684-174af6eac5eb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedBullet.PrimalItemAmmo_AdvancedBullet",
+                        "Class": "PrimalItemAmmo_AdvancedBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "cd106764-a79c-47b9-987f-929498744420",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f7cc1e6c-2b40-4204-8272-10ff56fe55f3",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRifle.PrimalItem_WeaponRifle",
+                        "Class": "PrimalItem_WeaponRifle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8fad4e7b-9187-442d-8762-419519e6cb07",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b66839be-9ded-42b0-b466-3c4f143d2f18",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_Rocket.PrimalItemAmmo_Rocket",
+                        "Class": "PrimalItemAmmo_Rocket_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "53360824-46de-457a-8494-e0cb5402842b",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0216dfb8-5f0c-40b0-8162-d8be6f87db12",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_CompoundBowArrow.PrimalItemAmmo_CompoundBowArrow",
+                        "Class": "PrimalItemAmmo_CompoundBowArrow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "77c1434c-16e5-4f2a-8c54-bd1b8e7ed28e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a326962e-db1b-4074-8804-01abcb44435f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleShotgunBullet.PrimalItemAmmo_SimpleShotgunBullet",
+                        "Class": "PrimalItemAmmo_SimpleShotgunBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f327639e-1a0b-4e63-9080-bfa949c80d00",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "04eec59d-2ee0-4b8f-8f4c-96511f7c9f03",
+                        "Path": "/Game/ScorchedEarth/WeaponHomingMissile/PrimalItemAmmo_RocketHomingMissile.PrimalItemAmmo_RocketHomingMissile",
+                        "Class": "PrimalItemAmmo_RocketHomingMissile_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "78bd6b08-2cbd-41d5-8e51-000214e8e4b7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d9503f1a-14c5-4b38-ba93-2b213d95ab43",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_BallistaArrow.PrimalItemAmmo_BallistaArrow",
+                        "Class": "PrimalItemAmmo_BallistaArrow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "06070bc6-6e42-48c2-a148-0a90acb30b6a",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "8026ad1b-1309-4a44-a25a-033f81a60d93",
+                        "Path": "/Game/Aberration/WeaponRadioactiveLanternCharge/PrimalItem_WeaponRadioactiveLanternCharge.PrimalItem_WeaponRadioactiveLanternCharge",
+                        "Class": "PrimalItem_WeaponRadioactiveLanternCharge_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fa38e774-5ebc-4ef0-a8d6-47b8bb6c4d33",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "275bd431-7fe6-4b8a-baea-77d79e33213c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRocketLauncher.PrimalItem_WeaponRocketLauncher",
+                        "Class": "PrimalItem_WeaponRocketLauncher_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "1ac95a65-40f9-4711-b3ba-8ff3ebd33015",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "52187247-2dff-4567-91f6-0080fa24f988",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedPistol.PrimalItem_WeaponMachinedPistol",
+                        "Class": "PrimalItem_WeaponMachinedPistol_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "7f952057-5d67-4558-95b6-5080032d2958",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "72e9e30e-f3ea-4880-875d-b41aa9f38703",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedShotgun.PrimalItem_WeaponMachinedShotgun",
+                        "Class": "PrimalItem_WeaponMachinedShotgun_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "f9b19ed8-09a4-42fa-8137-1534648638bd",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2ef8219-ed6b-4799-9166-9a0753306c0a",
+                        "Path": "/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponEmptyCryopod.PrimalItem_WeaponEmptyCryopod",
+                        "Class": "PrimalItem_WeaponEmptyCryopod_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 968.75,
+            "UUID": "cfe3c4cc-003b-41e1-ac64-e30ed928e5d3",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "52eda5c5-7004-44e4-8e3f-d4dee800f229",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_Rocket.PrimalItemAmmo_Rocket",
+                        "UUID": "b66839be-9ded-42b0-b466-3c4f143d2f18",
+                        "Class": "PrimalItemAmmo_Rocket_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 4,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "4d95098d-8005-4a89-ba04-7e3a4aa6b4d8",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "e272d5a9-c165-4662-b852-ea8ec0177898",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedRifleBullet.PrimalItemAmmo_AdvancedRifleBullet",
+                        "UUID": "341353e1-78c0-44e6-8d8c-afde4d574ca0",
+                        "Class": "PrimalItemAmmo_AdvancedRifleBullet_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 160,
+            "MinQuality": "Tier1",
+            "MinQuantity": 40,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "a88b9506-be2f-4428-b2de-0ad10edd42d6",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3712,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 0.25,
+            "Items": [
+                {
+                    "UUID": "bb4f64e2-5dfd-48c2-8055-4b1e6864ee32",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Genesis2/Weapons/MiniGun/PrimalItem_WeaponMinigun.PrimalItem_WeaponMinigun",
+                        "UUID": "a06504a2-eb24-40cb-b404-0f8528473a64",
+                        "Class": "PrimalItem_WeaponMinigun_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 250.0,
+            "UUID": "6571f08c-a7f5-4016-9b30-1d52eb6bde62",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "5058339e-0b16-40e2-aa2b-19a8570105bc",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedSniper.PrimalItem_WeaponMachinedSniper",
+                        "UUID": "215228dc-968b-4093-bb25-d56ff57f6ad6",
+                        "Class": "PrimalItem_WeaponMachinedSniper_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "39f2e155-8d05-47a9-a8ee-79bd5046f888",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "2388e0e9-fdbc-41ae-8294-01657ac93528",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleShotgunBullet.PrimalItemAmmo_SimpleShotgunBullet",
+                        "UUID": "a326962e-db1b-4074-8804-01abcb44435f",
+                        "Class": "PrimalItemAmmo_SimpleShotgunBullet_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 24,
+            "MinQuality": "Tier1",
+            "MinQuantity": 6,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "fd913a9e-7637-4843-ad54-4817f5f1ffc3",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "dfe692ff-279b-4bed-bed3-f8d176be5b80",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponCompoundBow.PrimalItem_WeaponCompoundBow",
+                        "UUID": "d5647622-9a5e-4790-871d-33b1b7261458",
+                        "Class": "PrimalItem_WeaponCompoundBow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "5d52000f-56d4-459b-91d9-c7cd0aad5442",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3920,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "0475dfdb-e48b-49b3-8a50-dda2ad4aa04b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Aberration/WeaponRadioactiveLanternCharge/PrimalItem_WeaponRadioactiveLanternCharge.PrimalItem_WeaponRadioactiveLanternCharge",
+                        "UUID": "8026ad1b-1309-4a44-a25a-033f81a60d93",
+                        "Class": "PrimalItem_WeaponRadioactiveLanternCharge_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "bf21151e-ba81-4033-a43c-be10904a6cfc",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "f548b6b0-7ee3-468f-8bac-b63afc8e1a94",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRocketLauncher.PrimalItem_WeaponRocketLauncher",
+                        "UUID": "275bd431-7fe6-4b8a-baea-77d79e33213c",
+                        "Class": "PrimalItem_WeaponRocketLauncher_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier3",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "888684df-a2e5-4467-92a5-4368be046ccc",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "7ee7bc98-4d74-4bf7-a2a7-70e6e877de89",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqSpearBolt.PrimalItemAmmo_TranqSpearBolt",
+                        "UUID": "56c14ad0-5c97-48bd-a658-4c4a4c820d83",
+                        "Class": "PrimalItemAmmo_TranqSpearBolt_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 40,
+            "MinQuality": "Tier1",
+            "MinQuantity": 10,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "75e0823d-4839-43ef-a312-48a8a7c4bb46",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3914,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "05e1c794-04e0-4024-8151-3a814be4d3b4",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItemAmmo_Flamethrower.PrimalItemAmmo_Flamethrower",
+                        "UUID": "4b62fef2-b8a0-49fe-a6fb-4138bc0f191f",
+                        "Class": "PrimalItemAmmo_Flamethrower_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 8,
+            "MinQuality": "Tier1",
+            "MinQuantity": 2,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "4f4ca24b-ae71-42c9-9bd6-0a8bf4165de3",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 4095,
+            "ChanceToBeBlueprintOverride": 0.0,
+            "EntryWeight": 1.0,
+            "Items": [
+                {
+                    "UUID": "1b0b607b-edfe-49f9-ae4e-7a3fa55aa47b",
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedSniperBullet.PrimalItemAmmo_AdvancedSniperBullet",
+                        "UUID": "de8e5a9e-e66f-490a-914a-6565c6ce6583",
+                        "Class": "PrimalItemAmmo_AdvancedSniperBullet_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 32,
+            "MinQuality": "Tier1",
+            "MinQuantity": 8,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectWeightMultiplier": true,
+            "Weight": 1000.0,
+            "UUID": "1fc1d1a4-9238-4f0f-9a19-b36b6666000f",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        },
+        {
+            "Availability": 3712,
+            "ChanceToBeBlueprintOverride": 1.0,
+            "EntryWeight": 0.96875,
+            "Items": [
+                {
+                    "UUID": "79ebdef7-7864-4c31-b275-76071aadf0b1",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "215228dc-968b-4093-bb25-d56ff57f6ad6",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedSniper.PrimalItem_WeaponMachinedSniper",
+                        "Class": "PrimalItem_WeaponMachinedSniper_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fd4fab2f-dafd-4883-8ff4-dc4c730b3a5d",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d5647622-9a5e-4790-871d-33b1b7261458",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponCompoundBow.PrimalItem_WeaponCompoundBow",
+                        "Class": "PrimalItem_WeaponCompoundBow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4a4b6efb-bf57-4e1d-8952-f098cb6f80cb",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1398ef78-2bfc-43d4-a0de-64176ff36360",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponHarpoon.PrimalItem_WeaponHarpoon",
+                        "Class": "PrimalItem_WeaponHarpoon_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "abcf3d1f-a014-462d-aa21-02272e9483ff",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "4b62fef2-b8a0-49fe-a6fb-4138bc0f191f",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItemAmmo_Flamethrower.PrimalItemAmmo_Flamethrower",
+                        "Class": "PrimalItemAmmo_Flamethrower_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "561089d3-d8ab-47ec-9696-06bf3ee71e48",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "314097be-2b04-4e75-b85f-5b85d8809bd6",
+                        "Path": "/Game/Aberration/WeaponGlowStickCharge/PrimalItem_ChargeBattery.PrimalItem_ChargeBattery",
+                        "Class": "PrimalItem_ChargeBattery_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "fcd43864-7bac-4b33-9293-ebe8abc04538",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "5d266022-b220-468b-a26e-5b814c031a5f",
+                        "Path": "/Game/ScorchedEarth/WeaponClusterGrenade/PrimalItem_WeaponClusterGrenade.PrimalItem_WeaponClusterGrenade",
+                        "Class": "PrimalItem_WeaponClusterGrenade_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0fae51db-a43f-47e3-8117-f96eb87e3357",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "853336cc-5314-43a4-84d0-00a20d9c390d",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqDart.PrimalItemAmmo_TranqDart",
+                        "Class": "PrimalItemAmmo_TranqDart_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b26c8c12-03b3-4d48-8d69-ce3ef6acc619",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "083b4b07-7f7d-448d-bc4d-18c68777c222",
+                        "Path": "/Game/Genesis2/Weapons/MiniGun/PrimalItem_WeaponMinigun.PrimalItem_WeaponMinigun",
+                        "Class": "PrimalItem_WeaponMinigun_C",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "0302f2a6-6bc1-48af-9b60-bb492b1e0fad",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "341353e1-78c0-44e6-8d8c-afde4d574ca0",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedRifleBullet.PrimalItemAmmo_AdvancedRifleBullet",
+                        "Class": "PrimalItemAmmo_AdvancedRifleBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "bbd68099-359e-40ee-998c-8d91afb9e1f8",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "de8e5a9e-e66f-490a-914a-6565c6ce6583",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedSniperBullet.PrimalItemAmmo_AdvancedSniperBullet",
+                        "Class": "PrimalItemAmmo_AdvancedSniperBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "24067546-6f79-44fa-a9ff-7b4f6c5a9864",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "1a01fd9f-f760-4afb-9bac-723305b86ab2",
+                        "Path": "/Game/ScorchedEarth/WeaponFlamethrower/PrimalItem_WeapFlamethrower.PrimalItem_WeapFlamethrower",
+                        "Class": "PrimalItem_WeapFlamethrower_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "83bf4b70-d284-409e-9424-3957c3f5b4de",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "56c14ad0-5c97-48bd-a658-4c4a4c820d83",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqSpearBolt.PrimalItemAmmo_TranqSpearBolt",
+                        "Class": "PrimalItemAmmo_TranqSpearBolt_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "ddfd80be-0625-44d7-a027-493dd4ef7dd6",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "9b56a29a-c1dc-4c37-9684-174af6eac5eb",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedBullet.PrimalItemAmmo_AdvancedBullet",
+                        "Class": "PrimalItemAmmo_AdvancedBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "615c22a7-2f3d-40b6-810c-19e418b5b626",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "f7cc1e6c-2b40-4204-8272-10ff56fe55f3",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRifle.PrimalItem_WeaponRifle",
+                        "Class": "PrimalItem_WeaponRifle_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "b661bf66-22b7-4f28-a7cf-dcdb1bc11097",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b66839be-9ded-42b0-b466-3c4f143d2f18",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_Rocket.PrimalItemAmmo_Rocket",
+                        "Class": "PrimalItemAmmo_Rocket_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c5114b4e-0992-4296-8c8c-d5a5da5e9e54",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "0216dfb8-5f0c-40b0-8162-d8be6f87db12",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_CompoundBowArrow.PrimalItemAmmo_CompoundBowArrow",
+                        "Class": "PrimalItemAmmo_CompoundBowArrow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "de859611-9e20-4f7f-a795-d8403c42884e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "a326962e-db1b-4074-8804-01abcb44435f",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleShotgunBullet.PrimalItemAmmo_SimpleShotgunBullet",
+                        "Class": "PrimalItemAmmo_SimpleShotgunBullet_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c75fbd4d-87d2-4d0e-b9b3-82c853181272",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "04eec59d-2ee0-4b8f-8f4c-96511f7c9f03",
+                        "Path": "/Game/ScorchedEarth/WeaponHomingMissile/PrimalItemAmmo_RocketHomingMissile.PrimalItemAmmo_RocketHomingMissile",
+                        "Class": "PrimalItemAmmo_RocketHomingMissile_C",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "affb3925-ef1b-4b3b-8cae-f7f3d043e63e",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "d9503f1a-14c5-4b38-ba93-2b213d95ab43",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_BallistaArrow.PrimalItemAmmo_BallistaArrow",
+                        "Class": "PrimalItemAmmo_BallistaArrow_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "d3cfd264-ede9-4fd1-8c89-711cadddcdb3",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "8026ad1b-1309-4a44-a25a-033f81a60d93",
+                        "Path": "/Game/Aberration/WeaponRadioactiveLanternCharge/PrimalItem_WeaponRadioactiveLanternCharge.PrimalItem_WeaponRadioactiveLanternCharge",
+                        "Class": "PrimalItem_WeaponRadioactiveLanternCharge_C",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "30a8c51c-b0d3-40f7-a4a8-65f6f1c1526f",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "275bd431-7fe6-4b8a-baea-77d79e33213c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRocketLauncher.PrimalItem_WeaponRocketLauncher",
+                        "Class": "PrimalItem_WeaponRocketLauncher_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "4c5c438e-0990-4b58-ab98-d15c5a455e07",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "52187247-2dff-4567-91f6-0080fa24f988",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedPistol.PrimalItem_WeaponMachinedPistol",
+                        "Class": "PrimalItem_WeaponMachinedPistol_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "c61d6d50-577b-45c8-9d18-acea442bbac7",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "72e9e30e-f3ea-4880-875d-b41aa9f38703",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedShotgun.PrimalItem_WeaponMachinedShotgun",
+                        "Class": "PrimalItem_WeaponMachinedShotgun_C",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                    },
+                    "Weight": 10.0
+                },
+                {
+                    "UUID": "8b79633d-a654-461e-9026-97297b073c40",
+                    "Blueprint": {
+                        "Schema": "Beacon.BlueprintReference",
+                        "Version": 1,
+                        "Kind": "Engram",
+                        "UUID": "b2ef8219-ed6b-4799-9166-9a0753306c0a",
+                        "Path": "/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponEmptyCryopod.PrimalItem_WeaponEmptyCryopod",
+                        "Class": "PrimalItem_WeaponEmptyCryopod_C",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                    },
+                    "Weight": 10.0
+                }
+            ],
+            "MaxQuality": "Tier1",
+            "MaxQuantity": 1,
+            "MinQuality": "Tier1",
+            "MinQuantity": 1,
+            "RespectBlueprintMultiplier": false,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectWeightMultiplier": true,
+            "Weight": 968.75,
+            "UUID": "867edf61-6901-4793-84e3-898160017055",
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 3,
+            "MinQuality": 3
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "Quantity": 1.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 6,
+            "MinQuality": 6
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "Quantity": 1.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 6,
+            "MinQuality": 6
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "Quantity": 1.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 6,
+            "MinQuality": 6
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "Quantity": 2.0,
+            "Blueprint": 1.0,
+            "MaxQuality": 3,
+            "MinQuality": 3
+        }
+    }
+}

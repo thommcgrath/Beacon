@@ -2,7 +2,7 @@
 Protected Class DelayedTextField
 Inherits UITweaks.ResizedTextField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mTimer.Reset
 		  Self.mTimer.RunMode = Timer.RunModes.Single
 		End Sub
@@ -35,7 +35,7 @@ Inherits UITweaks.ResizedTextField
 		Private Sub mTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  RaiseEvent TextChange
+		  RaiseEvent TextChanged()
 		End Sub
 	#tag EndMethod
 
@@ -43,13 +43,13 @@ Inherits UITweaks.ResizedTextField
 		Sub SetImmediately(Value As String)
 		  Self.Text = Value
 		  Self.mTimer.RunMode = Timer.RunModes.Off
-		  RaiseEvent TextChange()
+		  RaiseEvent TextChanged()
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event TextChange()
+		Event TextChanged()
 	#tag EndHook
 
 
@@ -96,8 +96,8 @@ Inherits UITweaks.ResizedTextField
 			Visible=true
 			Group="Appearance"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBorder"
@@ -207,22 +207,6 @@ Inherits UITweaks.ResizedTextField
 			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -365,8 +349,8 @@ Inherits UITweaks.ResizedTextField
 			Visible=true
 			Group="Appearance"
 			InitialValue="&h000000"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

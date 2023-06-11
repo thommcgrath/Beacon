@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkCreatureSpawnsEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   548
    Index           =   -2147483648
@@ -38,8 +39,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Bold            =   False
       ColumnCount     =   1
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -49,8 +48,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -94,7 +92,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
       Index           =   -2147483648
@@ -125,7 +122,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   548
       Index           =   -2147483648
@@ -149,7 +145,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Visible         =   True
       Width           =   1
    End
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   548
@@ -164,6 +160,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -180,9 +177,8 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   548
          Index           =   -2147483648
@@ -193,6 +189,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -211,7 +208,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
          Backdrop        =   0
          Caption         =   "No Selection"
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   527
          Index           =   -2147483648
@@ -244,7 +240,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
          Borders         =   1
          Caption         =   ""
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
          Index           =   -2147483648
@@ -278,7 +273,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -305,6 +299,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Width           =   250
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -322,6 +317,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       LockRight       =   False
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   6
@@ -333,6 +329,10 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Transparent     =   False
       Visible         =   True
       Width           =   232
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -341,7 +341,6 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -366,11 +365,11 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Width           =   250
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  Var Simulator As ArkSpawnSimulatorWindow = Self.SimulatorWindow(False)
 		  If (Simulator Is Nil) = False Then
 		    Simulator.Close
@@ -380,7 +379,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MinimumWidth = Self.ListMinWidth + Self.MainSeparator.Width + ArkSpawnPointEditor.MinEditorWidth
 		  Self.MinimumHeight = 350
 		End Sub
@@ -433,7 +432,7 @@ End
 		    Var SourceConfig As Ark.Configs.SpawnPoints = Self.Config(False)
 		    If ArkBulkSpawnEditWindow.Present(Self, SourceConfig, Self.Project.ContentPacks, Self.Project.MapMask, Self.Project.Difficulty.DifficultyValue) Then
 		      Call Self.Config(True) // To retain the config
-		      Self.Changed = SourceConfig.Modified
+		      Self.Modified = SourceConfig.Modified
 		      Self.SetupUI
 		    End If
 		  Case Self.ToolSpawnSimulator
@@ -488,7 +487,7 @@ End
 		    Config.Add(SpawnPoint)
 		  Next
 		  
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		  Self.UpdateList(SpawnPoints)
 		End Sub
 	#tag EndMethod
@@ -550,7 +549,7 @@ End
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  Var Bound As Integer = Self.List.RowCount - 1
 		  For I As Integer = 0 To Bound
-		    If Self.List.Selected(I) Then
+		    If Self.List.RowSelectedAt(I) Then
 		      SpawnPoints.Add(Self.List.RowTagAt(I))
 		    End If
 		  Next
@@ -587,9 +586,9 @@ End
 		    End Select
 		    
 		    Var RowLabel As String = Prefix + " " + Labels.Lookup(SpawnPoints(I).ObjectID, SpawnPoints(I).Label).StringValue
-		    Self.List.CellValueAt(I, 0) = RowLabel
+		    Self.List.CellTextAt(I, 0) = RowLabel
 		    Self.List.RowTagAt(I) = SpawnPoints(I)
-		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).UniqueKey)
+		    Self.List.RowSelectedAt(I) = Selected.HasKey(SpawnPoints(I).UniqueKey)
 		  Next I
 		  Self.List.SortingColumn = 0
 		  Self.List.Sort
@@ -637,11 +636,11 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      SpawnPoints.Add(Me.RowTagAt(I))
 		    End If
 		  Next
@@ -666,7 +665,7 @@ End
 		  Var Config As Ark.Configs.SpawnPoints = Self.Config(True)
 		  Var Points() As Ark.SpawnPoint
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -682,7 +681,7 @@ End
 		  Next
 		  
 		  Self.UpdateList()
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -695,7 +694,7 @@ End
 		  Var SaveData() As Dictionary
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -711,7 +710,7 @@ End
 		  
 		  Var Lines() As String
 		  For I As Integer = 0 To Bound
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -760,7 +759,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column <> 0 Then
 		    Return False
 		  End If
@@ -826,7 +825,7 @@ End
 		    Self.List.RowTagAt(I) = NewPoint
 		  Next
 		  
-		  Self.Changed = Self.Config(False).Modified
+		  Self.Modified = Self.Config(False).Modified
 		  
 		  Var Simulator As ArkSpawnSimulatorWindow = Self.SimulatorWindow(False)
 		  If (Simulator Is Nil) = False Then
@@ -852,7 +851,7 @@ End
 		      Config.Add(SpawnPoint)
 		    Next
 		    
-		    Self.Changed = Config.Modified
+		    Self.Modified = Config.Modified
 		    Self.UpdateList(SpawnPoints)
 		  Case "DuplicateButton"
 		    Var TargetSpawnPoints() As Ark.SpawnPoint = ArkAddSpawnPointDialog.Present(Self, Self.Project, ArkAddSpawnPointDialog.UIModeDuplicate)
@@ -872,13 +871,13 @@ End
 		      Config.Add(SpawnPoint)
 		    Next
 		    
-		    Self.Changed = Config.Modified
+		    Self.Modified = Config.Modified
 		    Self.UpdateList(TargetSpawnPoints)
 		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("EditorTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator("EditorTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Point", IconToolbarAdd, "Override a spawn point."))
@@ -918,6 +917,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1131,8 +1146,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1167,26 +1182,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

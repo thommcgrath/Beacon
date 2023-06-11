@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkExperienceEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkExperienceEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   422
    Index           =   -2147483648
@@ -27,30 +28,33 @@ Begin ArkConfigEditor ArkExperienceEditor
    Visible         =   True
    Width           =   710
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   5
-      ColumnsResizable=   False
       ColumnWidths    =   "75,*,*,*,*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   381
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Level	Level XP	Total XP	Ascension Required	Time in Tek Bed"
@@ -63,22 +67,16 @@ Begin ArkConfigEditor ArkExperienceEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   1
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   710
@@ -94,7 +92,6 @@ Begin ArkConfigEditor ArkExperienceEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -121,11 +118,11 @@ Begin ArkConfigEditor ArkExperienceEditor
       Width           =   710
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MinimumWidth = 710
 		  Self.MinimumHeight = 368
 		  
@@ -190,7 +187,7 @@ End
 		  Next
 		  
 		  Self.UpdateList()
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -210,7 +207,7 @@ End
 		  Next
 		  
 		  Self.UpdateList()
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -230,7 +227,7 @@ End
 		  LevelXP = MinXP
 		  
 		  If MinXP > CType(Ark.Configs.ExperienceCurves.MaxSupportedXP, UInt64) Then
-		    Self.ShowAlert("No more levels possible", "Current Max XP is greater than Ark's supported maximum of " + Ark.Configs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, ",##0"))
+		    Self.ShowAlert("No more levels possible", "Current Max XP is greater than Ark's supported maximum of " + Ark.Configs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, "#,##0"))
 		    Return
 		  End If
 		  
@@ -244,7 +241,7 @@ End
 		    Var SelectLevels(0) As Integer
 		    SelectLevels(0) = Level
 		    Self.UpdateList(SelectLevels)
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -279,7 +276,7 @@ End
 		  Next
 		  
 		  Self.UpdateList()
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -314,7 +311,7 @@ End
 		    Var SelectLevels(0) As Integer
 		    SelectLevels(0) = Level
 		    Self.UpdateList(SelectLevels)
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -323,8 +320,8 @@ End
 		Private Sub UpdateList()
 		  Var SelectedLevels() As Integer
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.Selected(I) Then
-		      SelectedLevels.Add(Val(Self.List.CellValueAt(I, 0)))
+		    If Self.List.RowSelectedAt(I) Then
+		      SelectedLevels.Add(Val(Self.List.CellTextAt(I, 0)))
 		    End If
 		  Next
 		  Self.UpdateList(SelectedLevels)
@@ -358,7 +355,7 @@ End
 		  For I As Integer = 0 To Levels.LastIndex
 		    Var Level As Integer = I + IndexOffset
 		    Var TotalXP As UInt64 = Levels(I)
-		    Var LevelXP As UInt64 = TotalXP - LastXP
+		    Var LevelXP As UInt64 = If(TotalXP > LastXP, TotalXP - LastXP, 0)
 		    Var IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)
 		    LastXP = TotalXP
 		    
@@ -367,14 +364,14 @@ End
 		    
 		    Var Columns(-1) As String
 		    Columns.ResizeTo(Max(Self.ColumnAscension, Self.ColumnLevel, Self.ColumnLevelXP, Self.ColumnTime, Self.ColumnTotalXP))
-		    Columns(Self.ColumnLevel) = Level.ToString(Locale.Current, ",##0")
-		    Columns(Self.ColumnLevelXP) = LevelXP.ToString(Locale.Current, ",##0")
-		    Columns(Self.ColumnTotalXP) = TotalXP.ToString(Locale.Current, ",##0")
+		    Columns(Self.ColumnLevel) = Level.ToString(Locale.Current, "#,##0")
+		    Columns(Self.ColumnLevelXP) = LevelXP.ToString(Locale.Current, "#,##0")
+		    Columns(Self.ColumnTotalXP) = TotalXP.ToString(Locale.Current, "#,##0")
 		    Columns(Self.ColumnAscension) = If(IsAscensionLevel, "Yes", "No")
 		    Columns(Self.ColumnTime) = Beacon.SecondsToString(TekBedSeconds)
 		    
 		    Self.List.AddRow(Columns)
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectLevels.IndexOf(Level) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = SelectLevels.IndexOf(Level) > -1
 		  Next
 		  
 		  Self.List.EnsureSelectionIsVisible(False)
@@ -428,12 +425,12 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(Self.ColumnLevel) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(Self.ColumnLevelXP) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(Self.ColumnTotalXP) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(Self.ColumnAscension) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(Self.ColumnTime) = Listbox.Alignments.Left
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnLevel) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.ColumnLevelXP) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.ColumnTotalXP) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.ColumnAscension) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnTime) = DesktopListbox.Alignments.Left
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -458,10 +455,10 @@ End
 		  
 		  Var Player As Boolean = Self.ViewingPlayerStats
 		  Var Config As Ark.Configs.ExperienceCurves
-		  Var Modified As Boolean = Self.Changed
+		  Var Modified As Boolean = Self.Modified
 		  
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
-		    If Not Self.List.Selected(I) Then
+		    If Not Self.List.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -480,11 +477,11 @@ End
 		  
 		  Var Levels() As Integer
 		  Self.UpdateList(Levels)
-		  Self.Changed = Modified
+		  Self.Modified = Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var EditButton As OmniBarItem = Self.ConfigToolbar.Item("EditButton")
 		  If (EditButton Is Nil) = False Then
 		    EditButton.Enabled = Me.SelectedRowCount = 1
@@ -527,7 +524,7 @@ End
 		    IndexOffset = 1
 		  End If
 		  For RowIdx As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(RowIdx) = False Then
+		    If Me.RowSelectedAt(RowIdx) = False Then
 		      Continue
 		    End If
 		    
@@ -622,14 +619,14 @@ End
 		  
 		  Self.Project.AddConfigGroup(NewConfig)
 		  Self.InvalidateConfigRef()
-		  Self.Changed = NewConfig.Modified
+		  Self.Modified = NewConfig.Modified
 		  Self.UpdateList(AddedLevels)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateTab("PlayersTab", "Players"))
@@ -673,6 +670,22 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
@@ -713,14 +726,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -749,8 +754,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -933,14 +938,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

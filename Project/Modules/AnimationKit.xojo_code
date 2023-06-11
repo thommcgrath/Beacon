@@ -14,7 +14,7 @@ Protected Module AnimationKit
 		Sub Animate(Extends Target As AnimationKit.ValueAnimator, Identifier As String, StartValue As Double, EndValue As Double, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Var Task As New AnimationKit.ValueTask(Target, Identifier, StartValue, EndValue)
 		  Task.DurationInSeconds = DurationInSeconds
-		  If Curve <> Nil Then
+		  If (Curve Is Nil) = False Then
 		    Task.Curve = Curve
 		  End If
 		  Task.Run
@@ -22,11 +22,11 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Animate(Extends Target As RectControl, Destination As Xojo.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
+		Sub Animate(Extends Target As DesktopUIControl, Destination As Xojo.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Var Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
-		  If Curve <> Nil Then
+		  If (Curve Is Nil) = False Then
 		    Task.Curve = Curve
 		  End If
 		  Task.Run
@@ -34,11 +34,11 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Animate(Extends Target As Window, Destination As Xojo.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
+		Sub Animate(Extends Target As DesktopWindow, Destination As Xojo.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Var Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
-		  If Curve <> Nil Then
+		  If (Curve Is Nil) = False Then
 		    Task.Curve = Curve
 		  End If
 		  Task.Run
@@ -64,13 +64,13 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Function NewMoveTask(Extends Target As RectControl) As AnimationKit.MoveTask
+		Function NewMoveTask(Extends Target As DesktopUIControl) As AnimationKit.MoveTask
 		  Return New AnimationKit.MoveTask(Target)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Function NewMoveTask(Extends Target As Window) As AnimationKit.MoveTask
+		Function NewMoveTask(Extends Target As DesktopWindow) As AnimationKit.MoveTask
 		  Return New AnimationKit.MoveTask(Target)
 		End Function
 	#tag EndMethod

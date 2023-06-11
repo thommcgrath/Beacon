@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkAdjustCostDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkAdjustCostDialog
    Type            =   8
    Visible         =   True
    Width           =   500
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,21 +47,19 @@ Begin BeaconDialog ArkAdjustCostDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Choose Crafting Cost Multiplier"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Choose Crafting Cost Multiplier"
       Visible         =   True
       Width           =   560
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -84,13 +80,13 @@ Begin BeaconDialog ArkAdjustCostDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "This tool will adjust the crafting costs of every engram on the server. Existing crafting cost overrides will be scaled according to the provided multiplier, and new crafting cost overrides will be added and scaled based on official values. Quantities will always be rounded up."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "This tool will adjust the crafting costs of every engram on the server. Existing crafting cost overrides will be scaled according to the provided multiplier, and new crafting cost overrides will be added and scaled based on official values. Quantities will always be rounded up."
       Visible         =   True
       Width           =   460
    End
@@ -101,8 +97,6 @@ Begin BeaconDialog ArkAdjustCostDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -126,6 +120,7 @@ Begin BeaconDialog ArkAdjustCostDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "1.0"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -133,7 +128,6 @@ Begin BeaconDialog ArkAdjustCostDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   80
    End
@@ -202,17 +196,17 @@ Begin BeaconDialog ArkAdjustCostDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As Double
+		Shared Function Present(Parent As DesktopWindow) As Double
 		  If Parent Is Nil Then
 		    Return 1.0
 		  End If
 		  
 		  Var Win As New ArkAdjustCostDialog
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  Var Multiplier As Double = Max(CDbl(Win.MultiplierField.Text), 0.000001)
 		  Win.Close
 		  Return Multiplier
@@ -224,21 +218,21 @@ End
 
 #tag Events MultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.ActionButton.Enabled = IsNumeric(Me.Text)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var One As Double = 1.0
 		  
 		  Self.MultiplierField.Text = One.ToString(Locale.Current, "0.0")
@@ -360,8 +354,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -472,7 +466,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

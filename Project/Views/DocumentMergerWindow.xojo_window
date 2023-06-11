@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog DocumentMergerWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,14 +27,14 @@ Begin BeaconDialog DocumentMergerWindow
    Title           =   "Import Results"
    Visible         =   True
    Width           =   780
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -51,11 +51,9 @@ Begin BeaconDialog DocumentMergerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Import Results"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -63,30 +61,33 @@ Begin BeaconDialog DocumentMergerWindow
       Width           =   740
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   True
       ColumnCount     =   4
-      ColumnsResizable=   False
       ColumnWidths    =   "26,*,175,250"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   380
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   " 	Editor	Config Set	Merge"
@@ -99,22 +100,16 @@ Begin BeaconDialog DocumentMergerWindow
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
       VisibleRowCount =   0
       Width           =   740
@@ -122,15 +117,16 @@ Begin BeaconDialog DocumentMergerWindow
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -140,13 +136,12 @@ Begin BeaconDialog DocumentMergerWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   460
       Transparent     =   False
       Underline       =   False
@@ -154,15 +149,16 @@ Begin BeaconDialog DocumentMergerWindow
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -172,13 +168,12 @@ Begin BeaconDialog DocumentMergerWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   460
       Transparent     =   False
       Underline       =   False
@@ -218,11 +213,11 @@ Begin BeaconDialog DocumentMergerWindow
       Width           =   160
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -373,7 +368,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, SourceProjects() As Beacon.Project, DestinationProject As Beacon.Project, Callback As MergeFinishedCallback = Nil)
+		Shared Sub Present(Parent As DesktopWindow, SourceProjects() As Beacon.Project, DestinationProject As Beacon.Project, Callback As MergeFinishedCallback = Nil)
 		  Var Accounts As New Beacon.ExternalAccountManager
 		  For Each Project As Beacon.Project In SourceProjects
 		    Accounts.Import(Project.Accounts)
@@ -514,7 +509,7 @@ End
 		  Next
 		  Win.UpdateList(True)
 		  Win.CheckEnabled()
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		End Sub
 	#tag EndMethod
 
@@ -615,9 +610,9 @@ End
 		      Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
 		      Var Key As String = ConfigItem.OrganizationKey
 		      If Ark.Configs.SupportsConfigSets(ConfigItem.Group.InternalName) Then
-		        Self.List.CellValueAt(RowIndex, Self.ColumnConfigSet) = ConfigItem.DestinationConfigSet
+		        Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ConfigItem.DestinationConfigSet
 		      Else
-		        Self.List.CellValueAt(RowIndex, Self.ColumnConfigSet) = ""
+		        Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ""
 		      End If
 		      
 		      Var Map() As String
@@ -626,31 +621,31 @@ End
 		      End If
 		      ShowAsReplace = Map.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet) > -1
 		    Else
-		      Self.List.CellValueAt(RowIndex, Self.ColumnConfigSet) = ""
+		      Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ""
 		    End If
 		    
-		    Self.List.CellValueAt(RowIndex, Self.ColumnConfigName) = MergeItem.Label
+		    Self.List.CellTextAt(RowIndex, Self.ColumnConfigName) = MergeItem.Label
 		    
 		    Var CanBeImported As Boolean
 		    Call Self.ModesForItem(MergeItem, CanBeImported)
 		    If CanBeImported Then
-		      Self.List.CellTypeAt(RowIndex, Self.ColumnCheckboxes) = Listbox.CellTypes.CheckBox
+		      Self.List.CellTypeAt(RowIndex, Self.ColumnCheckboxes) = DesktopListbox.CellTypes.CheckBox
 		      Self.List.CellCheckBoxValueAt(RowIndex, Self.ColumnCheckboxes) = MergeItem.IsImported
 		    Else
-		      Self.List.CellTypeAt(RowIndex, Self.ColumnCheckboxes) = Listbox.CellTypes.Normal
+		      Self.List.CellTypeAt(RowIndex, Self.ColumnCheckboxes) = DesktopListbox.CellTypes.Normal
 		      Self.List.CellCheckBoxValueAt(RowIndex, Self.ColumnCheckboxes) = False
 		      MergeItem.Mode = Beacon.DocumentMergeItem.ModeSkip
 		    End If
 		    
 		    Select Case MergeItem.Mode
 		    Case Beacon.DocumentMergeItem.ModeSkip
-		      Self.List.CellValueAt(RowIndex, Self.ColumnMergeMode) = Self.StrDoNotImport
+		      Self.List.CellTextAt(RowIndex, Self.ColumnMergeMode) = Self.StrDoNotImport
 		    Case Beacon.DocumentMergeItem.ModeReplace
-		      Self.List.CellValueAt(RowIndex, Self.ColumnMergeMode) = If(ShowAsReplace, Self.StrReplace, Self.StrAdd)
+		      Self.List.CellTextAt(RowIndex, Self.ColumnMergeMode) = If(ShowAsReplace, Self.StrReplace, Self.StrAdd)
 		    Case Beacon.DocumentMergeItem.ModeMergeImportPriority
-		      Self.List.CellValueAt(RowIndex, Self.ColumnMergeMode) = Self.StrMergeOther
+		      Self.List.CellTextAt(RowIndex, Self.ColumnMergeMode) = Self.StrMergeOther
 		    Case Beacon.DocumentMergeItem.ModeMergeProjectPriority
-		      Self.List.CellValueAt(RowIndex, Self.ColumnMergeMode) = Self.StrMergeSelf
+		      Self.List.CellTextAt(RowIndex, Self.ColumnMergeMode) = Self.StrMergeSelf
 		    End Select
 		  Next
 		  Self.mSettingUp = False
@@ -718,8 +713,8 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(Self.ColumnCheckboxes) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnTypeAt(Self.ColumnCheckboxes) = DesktopListbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -742,13 +737,13 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CellClick(row as Integer, column as Integer, x as Integer, y as Integer) As Boolean
+		Function CellPressed(row As Integer, column As Integer, x As Integer, y As Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnCheckboxes, Self.ColumnConfigName
 		    Return False
 		  End Select
 		  
-		  Var Base As New MenuItem
+		  Var Base As New DesktopMenuItem
 		  Var MergeItem As Beacon.DocumentMergeItem = Me.RowTagAt(Row)
 		  
 		  Select Case Column
@@ -757,27 +752,27 @@ End
 		    For Each Mode As String In Modes
 		      Select Case Mode
 		      Case Self.StrAdd
-		        Var AddItem As New MenuItem(Self.StrAdd, Beacon.DocumentMergeItem.ModeReplace)
+		        Var AddItem As New DesktopMenuItem(Self.StrAdd, Beacon.DocumentMergeItem.ModeReplace)
 		        AddItem.HasCheckMark = MergeItem.IsImported
 		        Base.AddMenu(AddItem)
 		      Case Self.StrAlreadySelected
-		        Var RejectedMenu As New MenuItem(Self.StrAlreadySelected)
+		        Var RejectedMenu As New DesktopMenuItem(Self.StrAlreadySelected)
 		        RejectedMenu.Enabled = False
 		        Base.AddMenu(RejectedMenu)
 		      Case Self.StrDoNotImport
-		        Var DoNothingItem As New MenuItem(Self.StrDoNotImport, Beacon.DocumentMergeItem.ModeSkip)
+		        Var DoNothingItem As New DesktopMenuItem(Self.StrDoNotImport, Beacon.DocumentMergeItem.ModeSkip)
 		        DoNothingItem.HasCheckMark = Not MergeItem.IsImported
 		        Base.AddMenu(DoNothingItem)
 		      Case Self.StrMergeOther
-		        Var MergeOtherItem As New MenuItem(Self.StrMergeOther, Beacon.DocumentMergeItem.ModeMergeImportPriority)
+		        Var MergeOtherItem As New DesktopMenuItem(Self.StrMergeOther, Beacon.DocumentMergeItem.ModeMergeImportPriority)
 		        MergeOtherItem.HasCheckMark = (MergeItem.Mode = Beacon.DocumentMergeItem.ModeMergeImportPriority)
 		        Base.AddMenu(MergeOtherItem)
 		      Case Self.StrMergeSelf
-		        Var MergeSelfItem As New MenuItem(Self.StrMergeSelf, Beacon.DocumentMergeItem.ModeMergeProjectPriority)
+		        Var MergeSelfItem As New DesktopMenuItem(Self.StrMergeSelf, Beacon.DocumentMergeItem.ModeMergeProjectPriority)
 		        MergeSelfItem.HasCheckMark = (MergeItem.Mode = Beacon.DocumentMergeItem.ModeMergeProjectPriority)
 		        Base.AddMenu(MergeSelfItem)
 		      Case Self.StrReplace
-		        Var ReplaceItem As New MenuItem(Self.StrReplace, Beacon.DocumentMergeItem.ModeReplace)
+		        Var ReplaceItem As New DesktopMenuItem(Self.StrReplace, Beacon.DocumentMergeItem.ModeReplace)
 		        ReplaceItem.HasCheckMark = (MergeItem.Mode = Beacon.DocumentMergeItem.ModeReplace)
 		        Base.AddMenu(ReplaceItem)
 		      End Select
@@ -789,19 +784,19 @@ End
 		    
 		    Var ConfigSets() As String = Self.mDestination.ConfigSetNames
 		    For Each ConfigSet As String In ConfigSets
-		      Var Item As New MenuItem(ConfigSet, ConfigSet)
+		      Var Item As New DesktopMenuItem(ConfigSet, ConfigSet)
 		      Item.HasCheckMark = (Ark.DocumentMergeConfigGroupItem(MergeItem).DestinationConfigSet = ConfigSet)
 		      Base.AddMenu(Item)
 		    Next
 		  End Select
 		  
 		  
-		  Var WindowPos As Point = Self.GlobalPosition
+		  Var WindowPos As Point = Me.GlobalPosition
 		  Var OffsetX, OffsetY As Integer
-		  OffsetX = WindowPos.X + Me.Left
-		  OffsetY = WindowPos.Y + Me.Top
+		  OffsetX = WindowPos.X
+		  OffsetY = WindowPos.Y
 		  For I As Integer = 0 To Column - 1
-		    OffsetX = OffsetX + Me.ColumnAt(I).WidthActual
+		    OffsetX = OffsetX + Me.ColumnAttributesAt(I).WidthActual
 		  Next
 		  OffsetX = OffsetX - Me.ScrollPositionX
 		  If Me.HasHeader Then
@@ -809,7 +804,7 @@ End
 		  End If
 		  OffsetY = OffsetY + ((Row - Me.ScrollPosition) * Me.DefaultRowHeight)
 		  
-		  Var Choice As MenuItem = Base.PopUp(OffsetX + X, OffsetY + Y)
+		  Var Choice As DesktopMenuItem = Base.PopUp(OffsetX + X, OffsetY + Y)
 		  If Choice = Nil Then
 		    Return True
 		  End If
@@ -832,7 +827,7 @@ End
 		  If CanBeImported = False Then
 		    MergeItem.Mode = Beacon.DocumentMergeItem.ModeSkip
 		    Self.UpdateList()
-		  ElseIf SupportedModes.IndexOf(Me.CellValueAt(Row, Self.ColumnMergeMode)) = -1 Then
+		  ElseIf SupportedModes.IndexOf(Me.CellTextAt(Row, Self.ColumnMergeMode)) = -1 Then
 		    MergeItem.Mode = Self.BestModeForItem(MergeItem)
 		    Self.UpdateList()
 		  End If
@@ -843,7 +838,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		Function PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 		  #Pragma Unused Row
 		  #Pragma Unused VerticalPosition
 		  #Pragma Unused IsHighlighted
@@ -872,7 +867,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var OriginalConfigSet As String = Self.mDestination.ActiveConfigSet
 		  
 		  For RowIdx As Integer = 0 To Self.List.LastRowIndex
@@ -945,14 +940,14 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ManageConfigSetsButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Call ConfigSetManagerWindow.Present(Self, Self.mDestination)
 		End Sub
 	#tag EndEvent
@@ -1087,8 +1082,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1191,7 +1186,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -36,7 +36,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -62,7 +61,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Visible         =   True
       Width           =   1420
    End
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   782
@@ -77,6 +76,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       PanelCount      =   5
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -87,51 +87,14 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Visible         =   True
       Width           =   1420
       Begin DashboardPane DashboardPane1
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   782
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         IsFrontmost     =   False
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MinimumHeight   =   300
-         MinimumWidth    =   400
-         Progress        =   0.0
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   38
-         Transparent     =   True
-         UseFocusRing    =   False
-         ViewIcon        =   0
-         ViewTitle       =   "Home"
-         Visible         =   True
-         Width           =   1119
-      End
-      Begin BlueprintsComponent BlueprintsComponent1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
          AllowTabs       =   True
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -145,6 +108,43 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Home"
+         Visible         =   True
+         Width           =   1119
+      End
+      Begin BlueprintsComponent BlueprintsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   782
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -165,9 +165,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   True
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -181,6 +180,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -201,9 +201,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -217,6 +216,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   2
@@ -237,7 +237,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   782
          Index           =   -2147483648
@@ -268,9 +267,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -284,6 +282,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -304,9 +303,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
          Index           =   -2147483648
@@ -320,6 +318,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -335,11 +334,11 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function CancelClose(appQuitting as Boolean) As Boolean
+		Function CancelClosing(appQuitting As Boolean) As Boolean
 		  Const AllowClose = False
 		  Const BlockClose = True
 		  
@@ -365,7 +364,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable)
 		  #if TargetMacOS
 		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
@@ -374,7 +373,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuBarSelected()
 		  Var Component As BeaconSubview = Self.CurrentComponent
 		  If (Component Is Nil) = False Then
 		    Component.EnableMenuItems()
@@ -392,7 +391,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Frame As Rect = Self.Bounds
 		  Var XDelta As Integer = Frame.Width - Self.Width
 		  Var YDelta As Integer = Frame.Height - Self.Height
@@ -697,7 +696,7 @@ End
 		  Select Case Key
 		  Case "ViewTitle", "ViewIcon"
 		    If (Self.NavBar Is Nil) = False Then
-		      Self.NavBar.Invalidate
+		      Self.NavBar.Refresh
 		    End If
 		  End Select
 		End Sub
@@ -799,25 +798,25 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowUserMenu(X As Integer, Y As Integer)
-		  Var Base As New MenuItem
+		  Var Base As New DesktopMenuItem
 		  
 		  If Not Preferences.OnlineEnabled Then
-		    Base.AddMenu(New MenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
+		    Base.AddMenu(New DesktopMenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
 		  Else
 		    If App.IdentityManager.CurrentIdentity Is Nil Or App.IdentityManager.CurrentIdentity.Username.IsEmpty Then
-		      Base.AddMenu(New MenuItem("Log In", "beacon://action/signin"))
+		      Base.AddMenu(New DesktopMenuItem("Log In", "beacon://action/signin"))
 		    Else
-		      Var IdentityItem As New MenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
+		      Var IdentityItem As New DesktopMenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
 		      IdentityItem.Enabled = False
 		      Base.AddMenu(IdentityItem)
-		      Base.AddMenu(New MenuItem("Manage Account", "beacon://action/showaccount"))
-		      Base.AddMenu(New MenuItem("Log Out", "beacon://action/signout"))
+		      Base.AddMenu(New DesktopMenuItem("Manage Account", "beacon://action/showaccount"))
+		      Base.AddMenu(New DesktopMenuItem("Log Out", "beacon://action/signout"))
 		    End If
 		  End If
-		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		  Base.AddMenu(New MenuItem("User Info…", "beacon://action/showidentity"))
+		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem("User Info…", "beacon://action/showidentity"))
 		  
-		  Var Choice As MenuItem = Base.PopUp(X, Y)
+		  Var Choice As DesktopMenuItem = Base.PopUp(X, Y)
 		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Then
 		    Return
 		  End If
@@ -967,7 +966,7 @@ End
 
 #tag Events NavBar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Home As OmniBarItem = OmniBarItem.CreateTab("NavHome", "Home")
 		  Home.Toggled = True
 		  Self.DashboardPane1.LinkedOmniBarItem = Home
@@ -1066,6 +1065,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false
@@ -1195,8 +1202,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1259,7 +1266,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

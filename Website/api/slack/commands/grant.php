@@ -16,13 +16,19 @@ if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 	PostReply("Include an email address parameter, like `/grant email@address.com game_id`.");
 	return;
 }
-$product_id = null;
+$productId = null;
 switch ($gameid) {
 case 'ark':
-	$product_id = BeaconShop::ARK_PRODUCT_ID;
+case 'Ark':
+	$productId = BeaconShop::GetProductByTag('USD', 'Ark', 'Base');
 	break;
 case 'ark2':
-	$product_id = BeaconShop::ARK2_PRODUCT_ID;
+case 'Ark2':
+	$productId = BeaconShop::GetProductByTag('USD', 'Arks2', 'Base');
+	break;
+case 'arkSA':
+case 'ArkSA':
+	$productId = BeaconShop::GetProductByTag('USD', 'ArkSA', 'Base');
 	break;
 default:
 	PostReply('Unknown game_id value.');
@@ -35,16 +41,16 @@ $database = BeaconCommon::Database();
 $database->BeginTransaction();
 $results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
 $database->Commit();
-$email_id = $results->Field('email_id');
+$emailId = $results->Field('email_id');
 
 // see if the person already owns Omni
-$results = $database->Query('SELECT expiration FROM purchased_products WHERE purchaser_email = $1 AND product_id = $2;', $email_id, $product_id);
+$results = $database->Query('SELECT expiration FROM purchased_products WHERE purchaser_email = $1 AND product_id = $2;', $emailId, $productId);
 if ($results->RecordCount() === 1 && is_null($results->Field('expiration')) === true) {
 	PostReply("`$email` already has a perpetual license.");
 	return;
 }
 
-BeaconShop::CreateGiftPurchase($email_id, $product_id, 1, 'Granted by Slack', true);
+BeaconShop::CreateGiftPurchase($emailId, $productId, 1, 'Granted by Slack', true);
 
 PostReply("`$email` has been granted a copy of Omni");
 

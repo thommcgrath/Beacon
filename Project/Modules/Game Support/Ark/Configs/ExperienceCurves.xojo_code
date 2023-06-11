@@ -152,7 +152,7 @@ Inherits Ark.ConfigGroup
 		      Issues.Add(New Beacon.Issue(Location + ".PlayerLevels." + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
 		    End If
 		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
-		      Issues.Add(New Beacon.Issue(Location + ".PlayerLevels." + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, ",##0") + "."))
+		      Issues.Add(New Beacon.Issue(Location + ".PlayerLevels." + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
 		    End If
 		  Next I
 		  
@@ -164,7 +164,7 @@ Inherits Ark.ConfigGroup
 		      Issues.Add(New Beacon.Issue(Location + ".DinoLevels." + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
 		    End If
 		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
-		      Issues.Add(New Beacon.Issue(Location + ".DinoLevels." + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, ",##0") + "."))
+		      Issues.Add(New Beacon.Issue(Location + ".DinoLevels." + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, "#,##0") + "."))
 		    End If
 		  Next I
 		End Sub
@@ -437,7 +437,7 @@ Inherits Ark.ConfigGroup
 		  If Self.PlayerLevelCap <> PlayerLevelData.MaxLevel Or Self.PlayerMaxExperience <> PlayerLevelData.ExperienceForLevel(PlayerLevelData.MaxLevel) Then
 		    Return False
 		  End If
-		  For Index As UInt64 = 0 To Self.mPlayerLevels.LastIndex
+		  For Index As Integer = 0 To Self.mPlayerLevels.LastIndex
 		    Var Level As Integer = Index + 2
 		    If Self.mPlayerLevels(Index) <> PlayerLevelData.ExperienceForLevel(Level) Then
 		      Return False

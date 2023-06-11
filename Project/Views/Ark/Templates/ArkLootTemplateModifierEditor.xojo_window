@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkLootTemplateModifierEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -8,16 +8,16 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   236
+   Height          =   270
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   236
+   MaxHeight       =   270
    MaximizeButton  =   False
    MaxWidth        =   500
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   236
+   MinHeight       =   270
    MinimizeButton  =   False
    MinWidth        =   500
    Placement       =   1
@@ -28,63 +28,60 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
    Visible         =   True
    Width           =   500
    Begin UITweaks.ResizedPopupMenu GroupMenu
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
       Left            =   212
-      ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   9
+      SelectedRowIndex=   0
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   156
+      Tooltip         =   ""
+      Top             =   190
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   268
    End
    Begin RangeField MinQualityField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   212
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -92,25 +89,24 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel MinQualityLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -127,11 +123,9 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Quality Tiers:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -139,30 +133,29 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       Width           =   180
    End
    Begin UITweaks.ResizedTextField QuantityField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   212
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -170,25 +163,24 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.00"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   88
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel QuantityLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -205,11 +197,9 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Quantity Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   88
       Transparent     =   False
       Underline       =   False
@@ -217,13 +207,13 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       Width           =   180
    End
    Begin UITweaks.ResizedLabel GroupLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -236,31 +226,30 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Selector:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   156
+      Tooltip         =   ""
+      Top             =   190
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   180
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -270,29 +259,29 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   196
+      Tooltip         =   ""
+      Top             =   230
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -302,27 +291,26 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   16
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   196
+      Tooltip         =   ""
+      Top             =   230
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel BlueprintLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -339,11 +327,9 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Blueprint Chance Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   122
       Transparent     =   False
       Underline       =   False
@@ -351,30 +337,29 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       Width           =   180
    End
    Begin UITweaks.ResizedTextField BlueprintField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   212
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -382,25 +367,24 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.00"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   122
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel MaxQualityLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -417,11 +401,9 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Quality Tiers:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   54
       Transparent     =   False
       Underline       =   False
@@ -429,31 +411,30 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       Width           =   180
    End
    Begin RangeField MaxQualityField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   212
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -461,29 +442,102 @@ Begin BeaconDialog ArkLootTemplateModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   54
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel WeightLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Weight Multiplier:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   156
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   180
+   End
+   Begin UITweaks.ResizedTextField WeightField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   212
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1.00"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   156
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  Self.MinQualityField.DoubleValue = Self.mTemplate.MinQualityOffset(Self.mEditID)
 		  Self.MaxQualityField.DoubleValue = Self.mTemplate.MaxQualityOffset(Self.mEditID)
 		  Self.QuantityField.Text = Self.mTemplate.QuantityMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
 		  Self.BlueprintField.Text = Self.mTemplate.BlueprintChanceMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
+		  Self.WeightField.Text = Self.mTemplate.WeightMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
 		End Sub
 	#tag EndEvent
 
@@ -498,13 +552,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Template As Ark.MutableLootTemplate, EditModifierID As String = "") As Boolean
+		Shared Function Present(Parent As DesktopWindow, Template As Ark.MutableLootTemplate, EditModifierID As String = "") As Boolean
 		  If Parent = Nil Then
 		    Return False
 		  End If
 		  
 		  Var Win As New ArkLootTemplateModifierEditor(Template, EditModifierID)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -530,7 +584,7 @@ End
 
 #tag Events GroupMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Selectors() As Beacon.TemplateSelector = Beacon.CommonData.Pool.Get(False).GetTemplateSelectors("", Ark.Identifier)
 		  Var Actives() As String = Self.mTemplate.ActiveSelectorIDs()
 		  For Each LootSelector As Beacon.TemplateSelector In Selectors
@@ -559,15 +613,16 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.MinQualityField.CheckValue
 		  Self.MaxQualityField.CheckValue
 		  Var MinQualityModifier As Integer = Self.MinQualityField.DoubleValue
 		  Var MaxQualityModifier As Integer = Self.MaxQualityField.DoubleValue
 		  Var QuantityMultiplier As Double = CDbl(Self.QuantityField.Text)
 		  Var BlueprintMultiplier As Double = CDbl(Self.BlueprintField.Text)
+		  Var WeightMultiplier As Double = CDbl(Self.WeightField.Text)
 		  
-		  If MinQualityModifier = 0 And MaxQualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 Then
+		  If MinQualityModifier = 0 And MaxQualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 And WeightMultiplier = 1 Then
 		    BeaconUI.ShowAlert("This modifier has no effect", "There's no reason to add this modifier, because it does not change the quality or quantity of items.")
 		    Return
 		  End If
@@ -584,6 +639,7 @@ End
 		  Self.mTemplate.MaxQualityOffset(LootSelector) = MaxQualityModifier
 		  Self.mTemplate.QuantityMultiplier(LootSelector) = QuantityMultiplier
 		  Self.mTemplate.BlueprintChanceMultiplier(LootSelector) = BlueprintMultiplier
+		  Self.mTemplate.WeightMultiplier(LootSelector) = WeightMultiplier
 		  
 		  Self.mCancelled = False
 		  Self.Hide
@@ -592,7 +648,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -736,8 +792,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -840,7 +896,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

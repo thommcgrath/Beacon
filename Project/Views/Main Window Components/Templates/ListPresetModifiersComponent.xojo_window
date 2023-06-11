@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin TemplatesComponentView ListPresetModifiersComponent
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin TemplatesComponentView ListPresetModifiersComponent
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   300
    Index           =   -2147483648
@@ -35,7 +36,6 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -73,8 +73,6 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       Bold            =   False
       ColumnCount     =   1
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -84,8 +82,7 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -121,11 +118,11 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       _ScrollWidth    =   -1
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ViewTitle = "Selectors"
 		  RaiseEvent Open
 		End Sub
@@ -148,7 +145,7 @@ End
 		  
 		  Var Clones() As Beacon.TemplateSelector
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.Selected(Idx) = False Then
+		    If Self.List.RowSelectedAt(Idx) = False Then
 		      Continue
 		    End If
 		    
@@ -208,7 +205,7 @@ End
 		Private Sub UpdateList()
 		  Var Modifiers() As Beacon.TemplateSelector
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.Selected(Idx) = False Then
+		    If Self.List.RowSelectedAt(Idx) = False Then
 		      Continue
 		    End If
 		    Modifiers.Add(Self.List.RowTagAt(Idx))
@@ -228,9 +225,9 @@ End
 		  
 		  Self.List.RowCount = Modifiers.Count
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    Self.List.CellValueAt(Idx, 0) = Modifiers(Idx).Label
+		    Self.List.CellTextAt(Idx, 0) = Modifiers(Idx).Label
 		    Self.List.RowTagAt(Idx) = Modifiers(Idx)
-		    Self.List.Selected(Idx) = SelectIDs.IndexOf(Modifiers(Idx).UUID) > -1
+		    Self.List.RowSelectedAt(Idx) = SelectIDs.IndexOf(Modifiers(Idx).UUID) > -1
 		  Next
 		  
 		  Self.List.Sort
@@ -262,7 +259,7 @@ End
 
 #tag Events ModifiersToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateButton("NewModifier", "New Selector", IconToolbarAdd, "Create a new loot drop selector."))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EditModifier", "Edit Selector", IconToolbarEdit, "Edit the selected loot drop selector.", Self.List.SelectedRowCount = 1))
@@ -309,7 +306,7 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var Modifiers() As Beacon.TemplateSelector
 		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Idx) Then
+		    If Me.RowSelectedAt(Idx) Then
 		      Modifiers.Add(Me.RowTagAt(Idx))
 		    End If
 		  Next
@@ -325,7 +322,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Dictionaries() As Dictionary
 		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Idx) Then
+		    If Me.RowSelectedAt(Idx) Then
 		      Dictionaries.Add(Beacon.TemplateSelector(Me.RowTagAt(Idx)).SaveData())
 		    End If
 		  Next
@@ -379,7 +376,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If (Self.ModifiersToolbar.Item("CloneModifier") Is Nil) = False Then
 		    Self.ModifiersToolbar.Item("CloneModifier").Enabled = Me.CanCopy()
 		  End If
@@ -390,6 +387,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -603,8 +616,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -639,26 +652,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

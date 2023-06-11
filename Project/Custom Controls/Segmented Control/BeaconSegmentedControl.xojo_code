@@ -3,14 +3,14 @@ Protected Class BeaconSegmentedControl
 Inherits ControlCanvas
 Implements ObservationKit.Observer
 	#tag Event
-		Sub Activate()
-		  Self.Invalidate(False)
+		Sub Activated()
+		  Self.Refresh(False)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Deactivate()
-		  Self.Invalidate(False)
+		Sub Deactivated()
+		  Self.Refresh(False)
 		End Sub
 	#tag EndEvent
 
@@ -19,7 +19,7 @@ Implements ObservationKit.Observer
 		  Var SegmentIndex As Integer = Self.IndexForPoint(X, Y)
 		  Self.mMouseDownIndex = SegmentIndex
 		  Self.mPressedIndex = SegmentIndex
-		  Self.Invalidate(False)
+		  Self.Refresh(False)
 		  Return True
 		End Function
 	#tag EndEvent
@@ -30,7 +30,7 @@ Implements ObservationKit.Observer
 		  Var PressedIndex As Integer = If(SegmentIndex = Self.mMouseDownIndex, SegmentIndex, -1)
 		  If Self.mPressedIndex <> PressedIndex Then
 		    Self.mPressedIndex = PressedIndex
-		    Self.Invalidate(False)
+		    Self.Refresh(False)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -51,19 +51,19 @@ Implements ObservationKit.Observer
 		  End If
 		  Self.mMouseDownIndex = -1
 		  Self.mPressedIndex = -1
-		  Self.Invalidate(False)
+		  Self.Refresh(False)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.mOpening = False
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused SafeArea
 		  
@@ -141,7 +141,7 @@ Implements ObservationKit.Observer
 		  Self.mSegmentRects.Add(New Rect(0, 0, 10, 10)) // Just have to add something for now
 		  Self.ComputeRects()
 		  Segment.AddObserver(Self, "Selected", "Caption")
-		  Self.Invalidate(False)
+		  Self.Refresh(False)
 		End Sub
 	#tag EndMethod
 
@@ -191,7 +191,7 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  RaiseEvent Change()
+		  RaiseEvent Pressed()
 		End Sub
 	#tag EndMethod
 
@@ -248,7 +248,7 @@ Implements ObservationKit.Observer
 		    Self.HandleChange()
 		  End If
 		  
-		  Self.Invalidate(False)
+		  Self.Refresh(False)
 		End Sub
 	#tag EndMethod
 
@@ -279,7 +279,7 @@ Implements ObservationKit.Observer
 		  Self.mSegments.RemoveAt(Idx)
 		  Self.mSegmentRects.RemoveAt(Idx)
 		  Self.ComputeRects()
-		  Self.Invalidate(False)
+		  Self.Refresh(False)
 		End Sub
 	#tag EndMethod
 
@@ -316,7 +316,7 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  Self.mSegments(AtIndex) = Segment
-		  Self.Invalidate(False)
+		  Self.Refresh(False)
 		End Sub
 	#tag EndMethod
 
@@ -351,18 +351,18 @@ Implements ObservationKit.Observer
 		  If Self.mLockCount = 0 And Self.mChangedWhileLocked Then
 		    Self.mChangedWhileLocked = False
 		    
-		    RaiseEvent Change()
+		    RaiseEvent Pressed()
 		  End If
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event Change()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Pressed()
 	#tag EndHook
 
 
@@ -690,22 +690,6 @@ Implements ObservationKit.Observer
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
-			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabPanelIndex"

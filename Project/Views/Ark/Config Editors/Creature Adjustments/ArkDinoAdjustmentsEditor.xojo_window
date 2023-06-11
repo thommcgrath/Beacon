@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkDinoAdjustmentsEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   526
    Index           =   -2147483648
@@ -27,30 +28,33 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
    Visible         =   True
    Width           =   730
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   5
-      ColumnsResizable=   False
       ColumnWidths    =   "*,120,120,120,120"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   34
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   484
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Creature	Wild Damage	Wild Resistance	Tamed Damage	Tamed Resistance"
@@ -63,22 +67,16 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   1
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   730
@@ -94,7 +92,6 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -121,6 +118,7 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       Width           =   462
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -138,6 +136,7 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   4
@@ -149,6 +148,10 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       Transparent     =   False
       Visible         =   True
       Width           =   250
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -157,7 +160,6 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -182,7 +184,7 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       Width           =   269
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -203,7 +205,7 @@ End
 		    Config.Add(Behavior)
 		    Selections.Add(Behavior.TargetCreature.ObjectID)
 		  Next
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateList(Selections)
 		  Return True
 		End Function
@@ -250,7 +252,7 @@ End
 		  If ArkDinoAdjustmentDialog.Present(Self, Creature, Self.Config(False), Self.Project.ContentPacks) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -270,7 +272,7 @@ End
 		  If ArkDinoAdjustmentDialog.Present(Self, Nil, Config, Self.Project.ContentPacks) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -309,7 +311,7 @@ End
 		    Selections.Add(Behavior.TargetCreature.ObjectID)
 		  Next
 		  Self.UpdateList(Selections)
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -317,7 +319,7 @@ End
 		Private Sub UpdateList()
 		  Var Selections() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.Selected(I) Then
+		    If Self.List.RowSelectedAt(I) Then
 		      Selections.Add(Ark.Creature(Self.List.RowTagAt(I)).ObjectID)
 		    End If
 		  Next
@@ -372,7 +374,7 @@ End
 		      Self.List.AddRow(Label, Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####"))
 		    End If
 		    
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetCreature
 		  Next
 		  
@@ -405,11 +407,11 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(Self.ColumnWildDamage) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(Self.ColumnWildResistance) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(Self.ColumnTamedDamage) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(Self.ColumnTamedResistance) = Listbox.Alignments.Center
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnWildDamage) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnWildResistance) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnTamedDamage) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnTamedResistance) = DesktopListbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -432,7 +434,7 @@ End
 		  Var Creatures() As Ark.Creature
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -444,14 +446,14 @@ End
 		    Return
 		  End If
 		  
-		  Var Changed As Boolean = Self.Changed
+		  Var Changed As Boolean = Self.Modified
 		  Var Config As Ark.Configs.DinoAdjustments = Self.Config(True)
 		  For Each Creature As Ark.Creature In Creatures
 		    Config.RemoveBehavior(Creature)
 		    Changed = True
 		  Next
 		  
-		  Self.Changed = Changed
+		  Self.Modified = Changed
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -460,7 +462,7 @@ End
 		  Var Dicts() As Dictionary
 		  Var Config As Ark.Configs.DinoAdjustments = Self.Config(False)
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -501,7 +503,7 @@ End
 		      Selections.Add(Behavior.TargetCreature.ObjectID)
 		      Config.Add(Behavior)
 		    Next
-		    Self.Changed = True
+		    Self.Modified = True
 		    Self.UpdateList(Selections)
 		    Return
 		  End If
@@ -514,7 +516,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("Duplicate")
 		  If (DuplicateButton Is Nil) = False Then
 		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
@@ -534,7 +536,7 @@ End
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AddCreature", "New Adjustment", IconToolbarAdd, "Define new creature adjustments."))
@@ -562,6 +564,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -603,14 +621,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -639,8 +649,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -823,14 +833,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

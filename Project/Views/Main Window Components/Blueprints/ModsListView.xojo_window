@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconSubview ModsListView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin BeaconSubview ModsListView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   300
    Index           =   -2147483648
@@ -38,8 +39,6 @@ Begin BeaconSubview ModsListView
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   "*,200"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   1
@@ -49,8 +48,7 @@ Begin BeaconSubview ModsListView
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -94,7 +92,6 @@ Begin BeaconSubview ModsListView
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -122,7 +119,6 @@ Begin BeaconSubview ModsListView
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -130,10 +126,10 @@ Begin BeaconSubview ModsListView
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -362,7 +358,7 @@ End
 		    Var Names() As String
 		    For Row As Integer = 0 To Me.LastRowIndex
 		      Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Row)
-		      If Me.Selected(Row) And ModInfo.ModID <> Ark.UserContentPackUUID Then
+		      If Me.RowSelectedAt(Row) And ModInfo.ModID <> Ark.UserContentPackUUID Then
 		        Names.Add(ModInfo.Name)
 		        Mods.Add(ModInfo)
 		      End If
@@ -408,7 +404,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If (Self.ModsToolbar.Item("EditModBlueprints") Is Nil) = False Then
 		    Self.ModsToolbar.Item("EditModBlueprints").Enabled = Me.SelectedRowCount = 1
 		  End If
@@ -417,7 +413,7 @@ End
 #tag EndEvents
 #tag Events ModsToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Register Mod", IconToolbarAdd, "Register your mod with Beacon."))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EditModBlueprints", "Edit Blueprints", IconToolbarEdit, "Edit the blueprints provided by the selected mod.", Self.ModsList.SelectedRowCount = 1))
@@ -479,6 +475,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -692,8 +704,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -728,26 +740,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

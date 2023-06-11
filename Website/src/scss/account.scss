@@ -1,0 +1,113 @@
+#session_table {
+	max-width: 100%;
+	
+	.country_column, .revoke_column {
+		width: 75px;
+	}
+	
+	.address_column {
+		width: 150px;
+	}
+	
+	.flag-icon {
+		margin-right: 8px;
+	}
+	
+	.self {
+		font-weight: normal;
+		font-size: 10pt;
+	}
+	
+	td.country_column, td.revoke_column {
+		text-align: center;
+	}
+	
+	.remote-address {
+		/*word-break: break-all*/
+	}
+}
+
+h1 span.tag {
+	margin-left: 12px;
+	font-weight: 400;
+	font-size: smaller;
+	border-radius: 8px;
+}
+
+#login_container {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 600px;
+}
+
+#backup-codes {
+	gap: 20px;
+	max-width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+	
+	@supports not (selector(:first-child)) {
+		& > * {
+			margin: 10px;
+		}
+	}
+	
+	div.flex-grid-item {
+		flex: 1 1 45%;
+		text-align: center;
+	}
+}
+
+#add-authenticator-content {
+	display: flex;
+	gap: 20px;
+	
+	@supports not (selector(:first-child)) {
+		& > * {
+			margin: 10px;
+		}
+	}
+}
+
+#add-authenticator-qrcode {
+	width: 100%;
+	height: auto;
+	display: block;
+	background-color: #ffffff;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+#add-authenticator-content-left {
+	flex: 1 1 33%;
+}
+
+#add-authenticator-content-right {
+	flex: 2 2 66%;
+}
+
+#drop_area * {
+	pointer-events: none;
+}
+
+.session-app-card {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	
+	.session-app-icon {
+		img {
+			box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
+		}
+		
+		flex: 0 0 40px;
+	}
+	
+	.session-app-name {
+		
+	}
+	
+	&+.session-app-agent {
+		margin-top: 10px;
+	}
+}

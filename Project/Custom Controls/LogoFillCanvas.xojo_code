@@ -2,7 +2,7 @@
 Protected Class LogoFillCanvas
 Inherits ControlCanvas
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
 		  #Pragma Unused SafeArea
@@ -39,7 +39,7 @@ Inherits ControlCanvas
 			Set
 			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -71,14 +71,6 @@ Inherits ControlCanvas
 		#tag ViewProperty
 			Name="ScrollingEnabled"
 			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
@@ -162,14 +154,6 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

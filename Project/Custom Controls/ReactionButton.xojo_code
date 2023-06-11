@@ -2,9 +2,9 @@
 Protected Class ReactionButton
 Inherits UITweaks.ResizedPushButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mOriginalCaption = Self.Caption
-		  RaiseEvent Action
+		  RaiseEvent Pressed
 		  If Self.mOriginalCaption = Self.Caption Then
 		    Return
 		  End If
@@ -45,7 +45,7 @@ Inherits UITweaks.ResizedPushButton
 
 
 	#tag Hook, Flags = &h0
-		Event Action()
+		Event Pressed()
 	#tag EndHook
 
 
@@ -187,14 +187,6 @@ Inherits UITweaks.ResizedPushButton
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class PopoverController
 	#tag Method, Flags = &h0
-		Sub Constructor(Title As String, Container As ContainerControl)
+		Sub Constructor(Title As String, Container As DesktopContainer)
 		  Self.mContainer = Container
 		  
 		  If Container IsA PopoverContainer Then
@@ -16,11 +16,11 @@ Protected Class PopoverController
 		    Var ContainerBound As Integer = Container.ControlCount - 1
 		    Var Initial As Boolean = True
 		    For Idx As Integer = 0 To ContainerBound
-		      If (Container.Control(Idx) IsA RectControl) = False Then
+		      If (Container.ControlAt(Idx) IsA RectControl) = False Then
 		        Continue
 		      End If
 		      
-		      Var Ctl As RectControl = RectControl(Container.Control(Idx))
+		      Var Ctl As DesktopUIControl = DesktopUIControl(Container.ControlAt(Idx))
 		      If Initial Then
 		        MinX = Ctl.Left
 		        MinY = Ctl.Top
@@ -39,10 +39,7 @@ Protected Class PopoverController
 		  Self.mDialog = New PopoverDialog(Self)
 		  Self.mDialog.Visible = False
 		  Self.mDialog.Title = Title
-		  Var Instance As RectControl = Self.mDialog.Embed(Container, Self.mPaddingLeft, Self.mPaddingTop)
-		  #if Not TargetMacOS
-		    #Pragma Unused Instance
-		  #endif
+		  Self.mDialog.Embed(Container, Self.mPaddingLeft, Self.mPaddingTop)
 		  
 		  If Container IsA BeaconSubview Then
 		    Try
@@ -60,7 +57,7 @@ Protected Class PopoverController
 		  #if TargetMacOS
 		    If NSPopoverMBS.Available Then
 		      Var ViewController As New NSViewControllerMBS
-		      ViewController.View = Instance.NSViewMBS
+		      ViewController.View = Container.NSViewMBS
 		      ViewController.View.SetBoundsOrigin(New NSPointMBS(Self.mPaddingLeft * -1, Self.mPaddingBottom)) // No idea why the X should be negative here
 		      
 		      Self.mPopover = New BeaconPopover
@@ -76,13 +73,13 @@ Protected Class PopoverController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Container() As ContainerControl
+		Function Container() As DesktopContainer
 		  Return Self.mContainer
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Container_Resize(Sender As ContainerControl)
+		Private Sub Container_Resize(Sender As DesktopContainer)
 		  Var CurrentWidth As Integer = Self.mDialog.Width
 		  Var TargetWidth As Integer = Sender.Width + Self.mPaddingLeft + Self.mPaddingRight
 		  Var TargetHeight As Integer = Sender.Height + Self.mPaddingTop + Self.mPaddingBottom + 40
@@ -161,13 +158,13 @@ Protected Class PopoverController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Show(Parent As RectControl)
+		Sub Show(Parent As DesktopUIControl)
 		  Self.Show(Parent, New Rect(0, 0, Parent.Width, Parent.Height))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Show(Parent As RectControl, InsetRect As Rect)
+		Sub Show(Parent As DesktopUIControl, InsetRect As Rect)
 		  If Self.Visible Or Parent Is Nil Or Parent.Window Is Nil Then
 		    Return
 		  End If
@@ -175,7 +172,7 @@ Protected Class PopoverController
 		  Self.mVisible = True
 		  
 		  If Self.mPopover Is Nil Then
-		    Self.mDialog.ShowWithin(Parent.Window.TrueWindow)
+		    Self.mDialog.Show(Parent.Window)
 		  Else
 		    Var ParentView As NSViewMBS = Parent.NSViewMBS
 		    Var PositionRect As NSRectMBS
@@ -215,7 +212,7 @@ Protected Class PopoverController
 
 
 	#tag Property, Flags = &h21
-		Private mContainer As ContainerControl
+		Private mContainer As DesktopContainer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

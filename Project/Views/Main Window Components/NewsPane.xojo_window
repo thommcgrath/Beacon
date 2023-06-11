@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   300
    Index           =   -2147483648
@@ -38,7 +39,6 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
       BorderTop       =   False
       Caption         =   "News"
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       Index           =   -2147483648
@@ -71,7 +71,6 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   260
       Index           =   -2147483648
@@ -105,17 +104,17 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, Beacon.CommonData.Notification_NewsUpdated)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  NotificationKit.Watch(Self, Beacon.CommonData.Notification_NewsUpdated)
 		  Self.RefreshNews()
 		  Beacon.CommonData.Pool.Get(False).UpdateNews()
@@ -212,7 +211,7 @@ End
 		Private Sub RefreshNews()
 		  Self.mNews = Beacon.CommonData.Pool.Get(False).GetNews
 		  Self.mNewsRects.ResizeTo(Self.mNews.LastIndex)
-		  Self.DrawCanvas.Invalidate
+		  Self.DrawCanvas.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -242,7 +241,7 @@ End
 
 #tag Events DrawCanvas
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
 		  #Pragma Unused SafeArea
@@ -279,7 +278,7 @@ End
 		          Self.mPressed = False
 		          Self.mDownIndex = -1
 		        End If
-		        Me.Invalidate
+		        Me.Refresh
 		        Return True
 		      End If
 		    Catch Err As RuntimeException
@@ -302,12 +301,12 @@ End
 		  If Self.mDownRect <> Nil And Self.mDownRect.Contains(X, Y) Then
 		    If Self.mPressed = False Then
 		      Self.mPressed = True
-		      Me.Invalidate
+		      Me.Refresh
 		    End If
 		  Else
 		    If Self.mPressed = True Then
 		      Self.mPressed = False
-		      Me.Invalidate
+		      Me.Refresh
 		    End If
 		  End If
 		End Sub
@@ -334,7 +333,7 @@ End
 		  Self.mPressed = False
 		  Self.mDownRect = Nil
 		  Self.mDownIndex = -1
-		  Me.Invalidate
+		  Me.Refresh
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -346,6 +345,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -471,8 +486,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -552,22 +567,6 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

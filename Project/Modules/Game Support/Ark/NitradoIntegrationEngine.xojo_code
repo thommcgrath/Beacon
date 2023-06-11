@@ -110,7 +110,7 @@ Inherits Ark.IntegrationEngine
 		    End If
 		    
 		    If Self.mDoGuidedDeploy And FinishedValue.Length > 65535 Then
-		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, ",##0") + " characters, and Nitrado has a limit of 65,535 characters.")
+		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, "#,##0") + " characters, and Nitrado has a limit of 65,535 characters.")
 		      Self.SwitchToExpertMode(ConfigKey.Key, FinishedValue.Length)
 		      Return False
 		    End If
@@ -336,6 +336,10 @@ Inherits Ark.IntegrationEngine
 		        Profile.Name = Details.Value("name")
 		        Profile.ServiceID = Dict.Value("id")
 		        Profile.Address = Details.Value("address")
+		        
+		        If Profile.Name.BeginsWith("Gameserver - ") And Dict.HasKey("comment") And IsNull(Dict.Value("comment")) = False Then
+		          Profile.Name = Dict.Value("comment")
+		        End If
 		      Catch Err As RuntimeException
 		        Continue
 		      End Try
@@ -675,7 +679,7 @@ Inherits Ark.IntegrationEngine
 		      Self.State = Self.StateOther
 		      Self.SetError("The server is creating a backup.")
 		    Case "updating"
-		      Self.State = Self.StateOther
+		      Self.State = Self.StateStarting
 		      Self.SetError("The server is currently installing an update.")
 		    Else
 		      Self.State = Self.StateOther
@@ -1191,5 +1195,47 @@ Inherits Ark.IntegrationEngine
 	#tag EndConstant
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

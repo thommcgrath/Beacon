@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkDiscoveryView ArkLocalDiscoveryView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   396
    Index           =   -2147483648
@@ -44,7 +45,7 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       Scope           =   2
       SelectionLength =   0
       ShowInfoBar     =   False
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   123
@@ -53,15 +54,16 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       Width           =   560
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Next"
       Default         =   True
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -71,13 +73,12 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -85,15 +86,16 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -103,13 +105,12 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -117,15 +118,16 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton ChooseFileButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Select File"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -135,13 +137,12 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -149,16 +150,15 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       Width           =   93
    End
    Begin Shelf Switcher
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
       Height          =   60
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       IsVertical      =   False
@@ -173,25 +173,24 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   6
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   600
    End
    Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -204,23 +203,23 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   7
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   600
    End
-   Begin Label ExplanationLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel ExplanationLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   38
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -233,15 +232,13 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       Multiline       =   True
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   73
       Transparent     =   True
       Underline       =   False
@@ -260,8 +257,6 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
    Begin UITweaks.ResizedPopupMenu MapMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -279,7 +274,7 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       LockTop         =   False
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   9
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -299,7 +294,7 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -310,14 +305,14 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub DropObject(obj As DragItem, action As Integer)
+		Sub DropObject(obj As DragItem, action As DragItem.Types)
 		  #Pragma Unused Action
 		  Self.HandleDrop(Obj)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  RaiseEvent Open
 		  Self.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.ConfigArea.AcceptFileDrop(BeaconFileTypes.IniFile)
@@ -573,7 +568,7 @@ End
 
 #tag Events ConfigArea
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mSettingUp Then
 		    Var TextValue As String = Me.Text.Trim(Chr(0), Chr(10), Chr(13), Chr(32))
 		    Select Case Self.Switcher.SelectedIndex
@@ -618,7 +613,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Profile As New Ark.LocalServerProfile
 		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
 		  If Self.mGameIniFile <> Nil And Self.mGameUserSettingsIniFile <> Nil Then
@@ -637,14 +632,14 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ChooseFileButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mGameIniContent.Length > 0 And Self.mGameUserSettingsIniContent.Length > 0 And Self.ShowConfirm("Both files are already selected", "You can select another file if you really want to, but both Game.ini and GameUserSettings.ini files are already present.", "Add Another", "Cancel") = False Then
 		    Return
 		  End If
@@ -662,7 +657,7 @@ End
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
 		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
@@ -671,7 +666,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.RefreshContentArea(False)
 		End Sub
 	#tag EndEvent
@@ -686,7 +681,7 @@ End
 #tag EndEvents
 #tag Events MapMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Maps() As Ark.Map = Ark.Maps.All
 		  For Each Map As Ark.Map In Maps
 		    Me.AddRow(Map.Name, Map.Mask)
@@ -704,19 +699,19 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -748,8 +743,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -772,14 +767,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

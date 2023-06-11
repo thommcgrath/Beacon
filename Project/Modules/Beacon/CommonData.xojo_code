@@ -502,7 +502,7 @@ Inherits Beacon.DataSource
 		    Return Self.mSelectorCache.Value(NullUUID + ":" + SelectorUUID)
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, user_id, game_id, label, language, code FROM template_selectors WHERE object_id = :object_id AND (user_id = :user_id OR user_id = '" + NullUUID + "');")
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, user_id, game_id, label, language, code FROM template_selectors WHERE object_id = :object_id AND (user_id = :user_id OR user_id = :null_uuid);", SelectorUUID, UserId, NullUUID)
 		  If Rows.RowCount = 0 Then
 		    Return Nil
 		  End If
@@ -622,6 +622,12 @@ Inherits Beacon.DataSource
 		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM official_templates WHERE object_id = ?1;", TemplateUUID)
 		  Return Rows.RowCount = 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MainInstance() As Beacon.DataSource
+		  Return Self.Pool.Main()
 		End Function
 	#tag EndMethod
 

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkCraftingCostsEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   396
    Index           =   -2147483648
@@ -27,17 +28,16 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    Visible         =   True
    Width           =   650
    Begin StatusBar ListStatusBar
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -53,37 +53,40 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   375
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   250
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   1
-      ColumnsResizable=   False
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   293
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -96,22 +99,16 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   1
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   82
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   250
@@ -119,15 +116,14 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       _ScrollWidth    =   -1
    End
    Begin FadedSeparator ListSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   396
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   250
@@ -143,17 +139,16 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   1
    End
-   Begin PagePanel Panel
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel Panel
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   396
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   251
@@ -165,26 +160,27 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   399
       Begin ArkCraftingCostEditor Editor
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   396
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -193,27 +189,27 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   False
          Visible         =   True
          Width           =   399
       End
       Begin LogoFillCanvas FillCanvas
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   396
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -229,23 +225,22 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   399
       End
       Begin LogoFillCanvas LogoFillCanvas1
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "Multiple Selection"
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   396
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -261,9 +256,9 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   399
       End
@@ -301,7 +296,6 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -334,7 +328,6 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -359,6 +352,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       Width           =   250
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -376,6 +370,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       LockRight       =   False
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   9
@@ -387,13 +382,17 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       Transparent     =   False
       Visible         =   True
       Width           =   232
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SetListWidth(Self.ListMinWidth)
 		  Self.MinimumWidth = Self.ListMinWidth + Self.ListSeparator.Width + Self.Editor.MinimumWidth
 		End Sub
@@ -418,7 +417,7 @@ End
 		    NewCosts.Add(Config.Cost(Engram))
 		  Next
 		  
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateList(NewCosts)
 		  
 		  Return True
@@ -488,7 +487,7 @@ End
 		  
 		  Self.mCostMultiplier = Multiplier
 		  Self.mProgressWindow = New ProgressWindow("Calculating new costs")
-		  Self.mProgressWindow.ShowWithin(Self.TrueWindow)
+		  Self.mProgressWindow.Show(Self)
 		  Self.AdjusterThread.Start
 		End Sub
 	#tag EndMethod
@@ -506,7 +505,7 @@ End
 		  End If
 		  
 		  Self.mProgressWindow = New ProgressWindow("Setting up fibercraft config")
-		  Self.mProgressWindow.ShowWithin(Self.TrueWindow)
+		  Self.mProgressWindow.Show(Self)
 		  Self.FibercraftBuilderThread.Start
 		End Sub
 	#tag EndMethod
@@ -545,7 +544,7 @@ End
 		  If ArkSetupTransferrableElementDialog.Present(Self, Config, Self.Project.ContentPacks) Then
 		    Call Self.Config(True) // Forces adding the config to the file
 		    Self.UpdateList()
-		    Self.Changed = Config.Modified
+		    Self.Modified = Config.Modified
 		  End If
 		End Sub
 	#tag EndMethod
@@ -571,7 +570,7 @@ End
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -601,7 +600,7 @@ End
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -609,7 +608,7 @@ End
 		Private Sub UpdateList()
 		  Var Arr() As Ark.CraftingCost
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Not Self.List.Selected(I) Then
+		    If Not Self.List.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -642,7 +641,7 @@ End
 		    Var Cost As Ark.CraftingCost = Config.Cost(Engrams(Idx))
 		    Self.List.AddRow(Cost.Engram.Label)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
 		  Next Idx
 		  
 		  Self.List.Sort
@@ -671,7 +670,7 @@ End
 		  Var Noun As String = If(TotalItems = 1, "Engram", "Engrams")
 		  
 		  If SelectedItems > 0 Then
-		    Self.ListStatusBar.Caption = SelectedItems.ToString(Locale.Current, ",##0") + " of " + TotalItems.ToString(Locale.Current, ",##0") + " " + Noun + " Selected"
+		    Self.ListStatusBar.Caption = SelectedItems.ToString(Locale.Current, "#,##0") + " of " + TotalItems.ToString(Locale.Current, "#,##0") + " " + Noun + " Selected"
 		  Else
 		    Self.ListStatusBar.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
 		  End If
@@ -711,7 +710,7 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Me.SelectedRowCount = 1 Then
 		    Self.Editor.Target = Me.RowTagAt(Me.SelectedRowIndex)
 		  Else
@@ -744,7 +743,7 @@ End
 		  Var Costs() As Ark.CraftingCost
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -759,7 +758,7 @@ End
 		  For Each Cost As Ark.CraftingCost In Costs
 		    Config.Remove(Cost)
 		  Next
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -786,7 +785,7 @@ End
 		  Var Dicts() As Dictionary
 		  Var SelectedCosts() As Ark.CraftingCost
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -845,7 +844,7 @@ End
 		      Next
 		      
 		      Self.UpdateList(Costs)
-		      Self.Changed = True
+		      Self.Modified = True
 		    Catch Err As RuntimeException
 		      System.Beep
 		    End Try
@@ -862,14 +861,14 @@ End
 		    Self.List.SelectionChangeBlocked = True
 		    
 		    Var Cost As Ark.CraftingCost = Me.Target
-		    Self.List.CellValueAt(Self.List.SelectedRowIndex, 0) = Cost.Label
+		    Self.List.CellTextAt(Self.List.SelectedRowIndex, 0) = Cost.Label
 		    Self.List.RowTagAt(Self.List.SelectedRowIndex) = Cost
 		    Self.List.Sort
 		    
 		    Self.Config(True).Add(Cost)
 		    
 		    Self.List.SelectionChangeBlocked = Blocked
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1018,7 +1017,7 @@ End
 		    ReplacementConfig.Add(Cost)
 		    
 		    Self.mProgressWindow.Progress = NumProcessed / Engrams.Count
-		    Self.mProgressWindow.Detail = "Updated " + NumProcessed.ToString(Locale.Current, ",##0") + " of " + Engrams.Count.ToString(Locale.Current, ",##0")
+		    Self.mProgressWindow.Detail = "Updated " + NumProcessed.ToString(Locale.Current, "#,##0") + " of " + Engrams.Count.ToString(Locale.Current, "#,##0")
 		  Next
 		  
 		  Self.Project.AddConfigGroup(ReplacementConfig)
@@ -1047,7 +1046,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddEngramButton", "New Recipe", IconToolbarAdd, "Change the recipe for a new item."))
@@ -1087,6 +1086,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1128,14 +1143,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -1164,8 +1171,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1348,14 +1355,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

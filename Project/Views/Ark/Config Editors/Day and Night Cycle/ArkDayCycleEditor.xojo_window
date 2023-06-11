@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkDayCycleEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkDayCycleEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   438
    Index           =   -2147483648
@@ -33,14 +34,12 @@ Begin ArkConfigEditor ArkDayCycleEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -58,6 +57,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "1.0"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -65,7 +65,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   80
    End
@@ -76,14 +75,12 @@ Begin ArkConfigEditor ArkDayCycleEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -101,6 +98,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "1.0"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -108,15 +106,12 @@ Begin ArkConfigEditor ArkDayCycleEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel DayLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -137,21 +132,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Day Time:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   93
       Transparent     =   False
       Underline       =   False
-      Value           =   "Day Time:"
       Visible         =   True
       Width           =   94
    End
    Begin UITweaks.ResizedLabel NightLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -172,21 +165,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Night Time:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   127
       Transparent     =   False
       Underline       =   False
-      Value           =   "Night Time:"
       Visible         =   True
       Width           =   94
    End
    Begin UITweaks.ResizedLabel FullLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -207,21 +198,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Full Cycle:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   161
       Transparent     =   False
       Underline       =   False
-      Value           =   "Full Cycle:"
       Visible         =   True
       Width           =   94
    End
    Begin UITweaks.ResizedLabel DayEqualsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -242,21 +231,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "="
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   93
       Transparent     =   False
       Underline       =   False
-      Value           =   "="
       Visible         =   True
       Width           =   16
    End
    Begin UITweaks.ResizedLabel NightEqualsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -277,13 +264,13 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "="
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   127
       Transparent     =   False
       Underline       =   False
-      Value           =   "="
       Visible         =   True
       Width           =   16
    End
@@ -294,14 +281,12 @@ Begin ArkConfigEditor ArkDayCycleEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -319,6 +304,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "40"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -326,7 +312,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "40"
       Visible         =   True
       Width           =   80
    End
@@ -337,14 +322,12 @@ Begin ArkConfigEditor ArkDayCycleEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -362,6 +345,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "20"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -369,15 +353,12 @@ Begin ArkConfigEditor ArkDayCycleEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "20"
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel MinuteLabels
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -398,21 +379,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "minutes"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   93
       Transparent     =   False
       Underline       =   False
-      Value           =   "minutes"
       Visible         =   True
       Width           =   83
    End
    Begin UITweaks.ResizedLabel FullLengthField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -433,21 +412,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "60"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   161
       Transparent     =   False
       Underline       =   False
-      Value           =   "60"
       Visible         =   True
       Width           =   80
    End
-   Begin Label MultiplierLabel
+   Begin DesktopLabel MultiplierLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -468,21 +445,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Multiplier"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Multiplier"
       Visible         =   True
       Width           =   80
    End
-   Begin Label ResultLabel
+   Begin DesktopLabel ResultLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -503,17 +478,17 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Result"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Result"
       Visible         =   True
       Width           =   80
    End
-   Begin GroupBox AberrationSeasonsGroup
+   Begin DesktopGroupBox AberrationSeasonsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Aberration Seasons"
@@ -544,8 +519,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
       Begin UITweaks.ResizedLabel BalancedMinutesLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -566,21 +539,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Days Ending In 0, 1, 2, or 3:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   263
          Transparent     =   False
          Underline       =   False
-         Value           =   "Days Ending In 0, 1, 2, or 3:"
          Visible         =   True
          Width           =   194
       End
       Begin UITweaks.ResizedLabel WarmSeasonLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -601,21 +572,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Days Ending In 4, 5, or 6:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   297
          Transparent     =   False
          Underline       =   False
-         Value           =   "Days Ending In 4, 5, or 6:"
          Visible         =   True
          Width           =   194
       End
       Begin UITweaks.ResizedLabel ColdSeasonLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -636,13 +605,13 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Days Ending In 7, 8, or 9:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   331
          Transparent     =   False
          Underline       =   False
-         Value           =   "Days Ending In 7, 8, or 9:"
          Visible         =   True
          Width           =   194
       End
@@ -653,8 +622,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -679,6 +646,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "30"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -686,7 +654,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   "30"
          Visible         =   True
          Width           =   80
       End
@@ -697,8 +664,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -723,6 +688,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "54"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -730,7 +696,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   "54"
          Visible         =   True
          Width           =   80
       End
@@ -741,8 +706,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -767,6 +730,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "6"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -774,15 +738,12 @@ Begin ArkConfigEditor ArkDayCycleEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   "6"
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel MinuteLabels
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -803,21 +764,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "minutes"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   263
          Transparent     =   False
          Underline       =   False
-         Value           =   "minutes"
          Visible         =   True
          Width           =   57
       End
       Begin UITweaks.ResizedLabel MinuteLabels
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -838,21 +797,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "minutes"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   297
          Transparent     =   False
          Underline       =   False
-         Value           =   "minutes"
          Visible         =   True
          Width           =   57
       End
       Begin UITweaks.ResizedLabel MinuteLabels
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -873,13 +830,13 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "minutes"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   331
          Transparent     =   False
          Underline       =   False
-         Value           =   "minutes"
          Visible         =   True
          Width           =   57
       End
@@ -890,8 +847,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -916,6 +871,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "30"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -923,7 +879,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   "30"
          Visible         =   True
          Width           =   80
       End
@@ -934,8 +889,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -960,6 +913,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "6"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -967,7 +921,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   "6"
          Visible         =   True
          Width           =   80
       End
@@ -978,8 +931,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1004,6 +955,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "54"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1011,15 +963,12 @@ Begin ArkConfigEditor ArkDayCycleEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   "54"
          Visible         =   True
          Width           =   80
       End
-      Begin Label AberrationDayLabel
+      Begin DesktopLabel AberrationDayLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1040,21 +989,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Day"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   231
          Transparent     =   False
          Underline       =   False
-         Value           =   "Day"
          Visible         =   True
          Width           =   80
       End
-      Begin Label AberrationNightLabel
+      Begin DesktopLabel AberrationNightLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1075,21 +1022,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Night"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   231
          Transparent     =   False
          Underline       =   False
-         Value           =   "Night"
          Visible         =   True
          Width           =   80
       End
-      Begin Label AberrationCycleLabel
+      Begin DesktopLabel AberrationCycleLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1110,21 +1055,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Cycle"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   231
          Transparent     =   False
          Underline       =   False
-         Value           =   "Cycle"
          Visible         =   True
          Width           =   80
       End
-      Begin Label BalancedCycleField
+      Begin DesktopLabel BalancedCycleField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1145,21 +1088,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "60"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   263
          Transparent     =   False
          Underline       =   False
-         Value           =   "60"
          Visible         =   True
          Width           =   80
       End
-      Begin Label WarmCycleField
+      Begin DesktopLabel WarmCycleField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1180,21 +1121,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   16
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "60"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   297
          Transparent     =   False
          Underline       =   False
-         Value           =   "60"
          Visible         =   True
          Width           =   80
       End
-      Begin Label ColdCycleField
+      Begin DesktopLabel ColdCycleField
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1215,13 +1154,13 @@ Begin ArkConfigEditor ArkDayCycleEditor
          TabIndex        =   17
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "60"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   331
          Transparent     =   False
          Underline       =   False
-         Value           =   "60"
          Visible         =   True
          Width           =   80
       End
@@ -1229,8 +1168,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
    Begin UITweaks.ResizedLabel MinuteLabels
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1251,21 +1188,19 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "minutes"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   161
       Transparent     =   False
       Underline       =   False
-      Value           =   "minutes"
       Visible         =   True
       Width           =   83
    End
    Begin UITweaks.ResizedLabel MinuteLabels
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1286,13 +1221,13 @@ Begin ArkConfigEditor ArkDayCycleEditor
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "minutes"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   127
       Transparent     =   False
       Underline       =   False
-      Value           =   "minutes"
       Visible         =   True
       Width           =   83
    End
@@ -1305,7 +1240,6 @@ Begin ArkConfigEditor ArkDayCycleEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -1332,7 +1266,7 @@ Begin ArkConfigEditor ArkDayCycleEditor
       Width           =   714
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -1402,7 +1336,7 @@ End
 		    ColdCycleMinutes = ColdDayMinutes + ColdNightMinutes
 		  End If
 		  
-		  Var Focus As RectControl
+		  Var Focus As DesktopUIControl
 		  If Force = False Then
 		    Focus = Self.Focus
 		  End If
@@ -1487,14 +1421,14 @@ End
 
 #tag Events DayMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DaySpeedMultiplier = CDbl(Me.Text)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1502,14 +1436,14 @@ End
 #tag EndEvents
 #tag Events NightMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).NightSpeedMultiplier = CDbl(Me.Text)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1517,14 +1451,14 @@ End
 #tag EndEvents
 #tag Events DayLengthField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mOfficialDaySeconds)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1532,14 +1466,14 @@ End
 #tag EndEvents
 #tag Events NightLengthField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mOfficialNightSeconds)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1547,14 +1481,14 @@ End
 #tag EndEvents
 #tag Events BalancedDayMinutesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mBalancedDaySeconds)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1562,14 +1496,14 @@ End
 #tag EndEvents
 #tag Events WarmDayMinutesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mWarmDaySeconds)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1577,14 +1511,14 @@ End
 #tag EndEvents
 #tag Events ColdDayMinutesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mColdDaySeconds)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1592,14 +1526,14 @@ End
 #tag EndEvents
 #tag Events BalancedNightMinutesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mBalancedNightSeconds)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1607,14 +1541,14 @@ End
 #tag EndEvents
 #tag Events WarmNightMinutesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mWarmNightSeconds)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1622,14 +1556,14 @@ End
 #tag EndEvents
 #tag Events ColdNightMinutesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mColdNightSeconds)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
@@ -1637,12 +1571,28 @@ End
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1856,8 +1806,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1892,26 +1842,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

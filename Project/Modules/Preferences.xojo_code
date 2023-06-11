@@ -81,6 +81,11 @@ Protected Module Preferences
 		      Next Timestamp
 		      mManager.DictionaryValue("Project State") = Replacement
 		    End If
+		    
+		    Var NewestUsedBuild As Integer = NewestUsedBuild
+		    If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
+		      HardwareIdVersion = 4
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -100,21 +105,21 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub ListSortDirection(Key As String, Assigns Direction As Listbox.SortDirections)
+		Sub ListSortDirection(Key As String, Assigns Direction As DesktopListBox.SortDirections)
 		  Init
 		  mManager.IntegerValue(Key + " Sort Direction") = CType(Direction, Integer)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ListSortDirection(Key As String, Default As Listbox.SortDirections) As Listbox.SortDirections
+		Function ListSortDirection(Key As String, Default As DesktopListBox.SortDirections) As DesktopListbox.SortDirections
 		  Init
-		  Return CType(mManager.IntegerValue(Key + " Sort Direction", CType(Default, Integer)), Listbox.SortDirections)
+		  Return CType(mManager.IntegerValue(Key + " Sort Direction", CType(Default, Integer)), DesktopListbox.SortDirections)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub LoadWindowPosition(Extends Win As Window)
+		Sub LoadWindowPosition(Extends Win As DesktopWindow)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
 		  Init
@@ -151,6 +156,22 @@ Protected Module Preferences
 		    Win.Bounds = New Rect(Left, Top, Width, Height)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NewDeploySettings() As Beacon.DeploySettings
+		  Var Settings As New Beacon.DeploySettings
+		  If Preferences.DeployCreateBackup Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionBackup
+		  End If
+		  If Preferences.DeployReviewChanges Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionReview
+		  End If
+		  If Preferences.DeployRunAdvisor Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
+		  End If
+		  Return Settings
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -258,7 +279,7 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub SaveWindowPosition(Extends Win As Window)
+		Sub SaveWindowPosition(Extends Win As DesktopWindow)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
 		  Init
@@ -558,6 +579,22 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected EntryEditorSize As Size
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Hardware Id Version", 5)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Hardware Id Version") = Value
+			End Set
+		#tag EndSetter
+		Protected HardwareIdVersion As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

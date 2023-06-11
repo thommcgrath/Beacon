@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkAddSpawnPointDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -91,8 +91,6 @@ Begin BeaconDialog ArkAddSpawnPointDialog
    Begin UITweaks.ResizedLabel ModeLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -113,13 +111,13 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Mode:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   314
       Transparent     =   False
       Underline       =   False
-      Value           =   "Mode:"
       Visible         =   True
       Width           =   52
    End
@@ -135,8 +133,6 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Bold            =   False
       ColumnCount     =   1
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -146,8 +142,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   True
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -182,11 +177,9 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -207,21 +200,19 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Add Spawn Points"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Add Spawn Points"
       Visible         =   True
       Width           =   560
    End
    Begin UITweaks.ResizedLabel FilterLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -242,22 +233,20 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Filter:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "Filter:"
       Visible         =   True
       Width           =   52
    End
-   Begin CheckBox LoadDefaultsCheck
+   Begin DesktopCheckBox LoadDefaultsCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Load Simplified Default Spawns"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
@@ -285,7 +274,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       VisualState     =   0
       Width           =   270
    End
-   Begin RadioButton OverrideRadio
+   Begin DesktopRadioButton OverrideRadio
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Replace Default Spawns"
@@ -315,7 +304,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Visible         =   True
       Width           =   214
    End
-   Begin RadioButton AppendRadio
+   Begin DesktopRadioButton AppendRadio
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Add to Default Spawns"
@@ -345,7 +334,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Visible         =   True
       Width           =   214
    End
-   Begin RadioButton RemoveRadio
+   Begin DesktopRadioButton RemoveRadio
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Remove from Default Spawns"
@@ -376,6 +365,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Width           =   214
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -393,6 +383,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   2
@@ -404,6 +395,10 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Transparent     =   False
       Visible         =   True
       Width           =   284
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin BeaconSegmentedControl FilterSelector
       AllowAutoDeactivate=   True
@@ -413,7 +408,6 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -439,11 +433,11 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Width           =   200
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  If Self.mUIMode = Self.UIModeDuplicate Then
@@ -493,9 +487,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Ark.Project, UIMode As Integer = UIModeAdd) As Ark.SpawnPoint()
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, UIMode As Integer = UIModeAdd) As Ark.SpawnPoint()
 		  Var Win As New ArkAddSpawnPointDialog(Project, UIMode)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var SpawnPoints() As Ark.SpawnPoint = Win.mSelectedPoints
 		  Win.Close
@@ -627,7 +621,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Mode As Integer
 		  If Self.OverrideRadio.Value Then
 		    Mode = Ark.SpawnPoint.ModeOverride
@@ -639,7 +633,7 @@ End
 		  Var LoadDefaults As Boolean = Mode = Ark.SpawnPoint.ModeOverride And Self.LoadDefaultsCheck.Value = True
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Not Self.List.Selected(I) Then
+		    If Not Self.List.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -660,17 +654,17 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var SupportedModes As Integer = Ark.SpawnPoint.ModeOverride Or Ark.SpawnPoint.ModeAppend Or Ark.SpawnPoint.ModeRemove
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -710,21 +704,21 @@ End
 #tag EndEvents
 #tag Events OverrideRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AppendRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RemoveRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
@@ -738,7 +732,7 @@ End
 #tag EndEvents
 #tag Events FilterSelector
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  For Idx As Integer = 0 To Me.LastIndex
 		    If Me.Segment(Idx).Selected Then
 		      Self.FilterMode = Idx
@@ -748,7 +742,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Segment(0).Selected = True
 		End Sub
 	#tag EndEvent
@@ -867,8 +861,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -979,7 +973,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

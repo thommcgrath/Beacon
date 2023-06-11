@@ -838,10 +838,19 @@ Implements ObservationKit.Observable
 		  
 		  If (Self.mAccounts.GetByUUID(OldUUID) Is Nil) = False Then
 		    Self.mAccounts.Remove(OldUUID)
+		    Self.Modified = True
 		  End If
 		  If Self.mAccounts.GetByUUID(Account.UUID) Is Nil Then
 		    Self.mAccounts.Add(Account)
+		    Self.Modified = True
 		  End If
+		  
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    If Profile.ExternalAccountUUID = OldUUID Then
+		      Profile.ExternalAccountUUID = Account.UUID
+		      Self.Modified = True
+		    End If
+		  Next
 		  
 		  RaiseEvent AccountReplaced(OldUUID, Account.UUID)
 		End Sub
@@ -935,6 +944,16 @@ Implements ObservationKit.Observable
 		  Self.mServerProfiles(Idx) = Profile
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ServerProfile(ProfileId As String) As Beacon.ServerProfile
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    If Profile.ProfileID = ProfileId Then
+		      Return Profile
+		    End If
+		  Next
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

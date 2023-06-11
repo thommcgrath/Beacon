@@ -1,0 +1,28 @@
+@import "./color_schemes/dark";
+
+$body-background-color: #222831;
+$body-text-color: mix($body-background-color, #ffffff, 10%);
+
+$sidebar-color: $body-background-color;
+$border-color: mix($body-background-color, $body-text-color, 80%);
+
+$body-heading-color: #ffffff;
+$nav-child-link-color: $grey-dk-000;
+$search-result-preview-color: $grey-dk-000;
+
+$link-color: #85b4e9;
+$btn-primary-color: $blue-200;
+$base-button-color: $grey-dk-250;
+
+$code-background-color: $grey-dk-250;
+$search-background-color: $grey-dk-250;
+$table-background-color: $grey-dk-250;
+$feedback-color: darken($sidebar-color, 3%);
+
+.site-logo {
+	filter: brightness(0) invert(1);
+}
+
+.ui-keyword {
+	color: #A6B1E8;
+}

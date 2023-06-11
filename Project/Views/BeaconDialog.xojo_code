@@ -1,35 +1,41 @@
 #tag Class
 Protected Class BeaconDialog
-Inherits Window
+Inherits DesktopWindow
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  #if Not TargetMacOS
 		    Self.MenuBar = DialogMenuBar
 		  #endif
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub ShowModalWithin(ParentWindow As Window)
+		Sub Show(ParentWindow As DesktopWindow = Nil)
 		  Self.CorrectWindowPlacement(ParentWindow)
-		  Super.ShowModalWithin(ParentWindow)
-		  
+		  If (ParentWindow Is Nil) = False And ParentWindow IsA DesktopContainer Then
+		    Super.Show(DesktopContainer(ParentWindow).Window)
+		  Else
+		    Super.Show(ParentWindow)
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowWithin(ParentWindow As Window, Facing As Integer = -1)
+		Sub ShowModal(ParentWindow As DesktopWindow = Nil)
 		  Self.CorrectWindowPlacement(ParentWindow)
-		  Super.ShowWithin(ParentWindow, Facing)
-		  
+		  If (ParentWindow Is Nil) = False And ParentWindow IsA DesktopContainer Then
+		    Super.ShowModal(DesktopContainer(ParentWindow).Window)
+		  Else
+		    Super.ShowModal(ParentWindow)
+		  End If
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
@@ -147,8 +153,8 @@ Inherits Window
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -259,7 +265,7 @@ Inherits Window
 			Visible=true
 			Group="Menus"
 			InitialValue=""
-			Type="MenuBar"
+			Type="DesktopMenuBar"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

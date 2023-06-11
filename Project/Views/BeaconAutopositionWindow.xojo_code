@@ -9,9 +9,9 @@ Inherits BeaconWindow
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.LoadWindowPosition
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
@@ -28,7 +28,7 @@ Inherits BeaconWindow
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -183,8 +183,8 @@ Inherits BeaconWindow
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"
@@ -230,7 +230,7 @@ Inherits BeaconWindow
 			Visible=true
 			Group="Menus"
 			InitialValue=""
-			Type="MenuBar"
+			Type="DesktopMenuBar"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

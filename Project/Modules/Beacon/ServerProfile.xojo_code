@@ -282,15 +282,17 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
-		  // Doesn't normally do anything
-		  
-		  #Pragma Unused Profile
+		  RaiseEvent UpdateDetailsFrom(Profile)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
 		Event ReadFromDictionary(Dict As Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event UpdateDetailsFrom(Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -43,8 +43,25 @@ Protected Module Tests
 		    TestFilenames()
 		    TestIntervalParsing()
 		    TestIniValidation()
+		    TestArkClassStrings()
 		    App.Log("Tests complete")
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestArkClassStrings()
+		  Const NormalPath = "/Game/Aberration/CoreBlueprints/AB_DinoSpawnEntriesRockDrake.AB_DinoSpawnEntriesRockDrake_C"
+		  Const ScorpionPath = "/Game/Mods/LostIsland/Assets/Spawners/Scorpion/DinoSpawnEntriesCave2-LowSpiderScorp_C.DinoSpawnEntriesCave2-LowSpiderScorp_C"
+		  Const ReaperPath = "/Game/Genesis2/Dinos/BiomeVariants/Xenomorph_Character_Female_BP_Gen2.Xenomorph_Character_BP_Female_Gen2"
+		  
+		  Var NormalClass As String = Beacon.ClassStringFromPath(NormalPath)
+		  Var ScorpionClass As String = Beacon.ClassStringFromPath(ScorpionPath)
+		  Var ReaperClass As String = Beacon.ClassStringFromPath(ReaperPath)
+		  
+		  Call Assert(NormalClass = "AB_DinoSpawnEntriesRockDrake_C", "Class from path is wrong. Expected AB_DinoSpawnEntriesRockDrake_C, got " + NormalClass + ".")
+		  Call Assert(ScorpionClass = "DinoSpawnEntriesCave2-LowSpiderScorp_C_C", "Class from path is wrong. Expected DinoSpawnEntriesCave2-LowSpiderScorp_C_C, got " + ScorpionClass + ".")
+		  Call Assert(ReaperClass = "Xenomorph_Character_BP_Female_Gen2_C", "Class from path is wrong. Expected Xenomorph_Character_BP_Female_Gen2_C, got " + ReaperClass + ".")
 		End Sub
 	#tag EndMethod
 
@@ -555,10 +572,10 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestUUID()
-		  Var UUID As New v4UUID
+		  Var UUID As Beacon.UUID
 		  
 		  Try
-		    UUID = v4UUID.CreateNull
+		    UUID = Beacon.UUID.Null
 		    Call Assert(UUID = "00000000-0000-0000-0000-000000000000", "Null UUID is not correct")
 		    Call Assert(UUID = Nil, "Null UUID does not compare against Nil correctly")
 		  Catch Err As UnsupportedFormatException
@@ -581,8 +598,8 @@ Protected Module Tests
 		  End Try
 		  
 		  Try
-		    Var V As Variant = New v4UUID
-		    UUID = v4UUID(V.ObjectValue)
+		    Var V As Variant = Beacon.UUID.v4
+		    UUID = Beacon.UUID(V.ObjectValue)
 		  Catch Err As RuntimeException
 		    System.DebugLog("Unable to convert UUID in variant to UUID")
 		  End Try
@@ -594,10 +611,10 @@ Protected Module Tests
 		  End Try
 		  
 		  Try
-		    UUID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, "Frog Blast The Vent Core")
-		    Call Assert(UUID = "7e05d5d6-bf10-445d-9512-d3a650670061", "Incorrect UUID generated from MD5 hash")
+		    UUID = Beacon.UUID.v5("Frog Blast The Vent Core")
+		    Call Assert(UUID = "99fac599-25d2-595a-aea3-12f756d2961b", "Incorrect v5 UUID, computed " + UUID.StringValue)
 		  Catch Err As UnsupportedFormatException
-		    System.DebugLog("MD5UUID generated bad format")
+		    System.DebugLog("Incorrect v5 UUID, computed " + UUID.StringValue)
 		  End Try
 		End Sub
 	#tag EndMethod

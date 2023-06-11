@@ -2,16 +2,16 @@
 Protected Class IconCanvas
 Inherits ControlCanvas
 	#tag Event
-		Sub Activate()
-		  RaiseEvent Activate
-		  Self.Invalidate
+		Sub Activated()
+		  RaiseEvent Activated
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Deactivate()
-		  RaiseEvent Deactivate
-		  Self.Invalidate
+		Sub Deactivated()
+		  RaiseEvent Deactivated
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
@@ -26,7 +26,7 @@ Inherits ControlCanvas
 		  
 		  If Self.Enabled Then
 		    Self.mPressed = True
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		  
 		  Return True
@@ -39,12 +39,12 @@ Inherits ControlCanvas
 		  If IsInside Then
 		    If Self.mPressed = False Then
 		      Self.mPressed = True
-		      Self.Invalidate
+		      Self.Refresh
 		    End If
 		  Else
 		    If Self.mPressed Then
 		      Self.mPressed = False
-		      Self.Invalidate
+		      Self.Refresh
 		    End If
 		  End If
 		End Sub
@@ -55,16 +55,16 @@ Inherits ControlCanvas
 		  Var IsInside As Boolean = X >= 0 And Y >= 0 And X <= Self.Width And Y <= Self.Height
 		  If Self.mPressed Then
 		    Self.mPressed = False
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		  If IsInside Then
-		    RaiseEvent Action
+		    RaiseEvent Pressed
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused SafeArea
 		  
@@ -111,15 +111,15 @@ Inherits ControlCanvas
 
 
 	#tag Hook, Flags = &h0
-		Event Action()
+		Event Activated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Activate()
+		Event Deactivated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Deactivate()
+		Event Pressed()
 	#tag EndHook
 
 
@@ -137,7 +137,7 @@ Inherits ControlCanvas
 			Set
 			  If Self.mIcon <> Value Then
 			    Self.mIcon = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -154,7 +154,7 @@ Inherits ControlCanvas
 			Set
 			  If Self.mIconColor <> Value Then
 			    Self.mIconColor = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -431,22 +431,6 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

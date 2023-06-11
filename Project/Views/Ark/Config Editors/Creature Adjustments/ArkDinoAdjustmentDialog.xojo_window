@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkDinoAdjustmentDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,14 +27,14 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
    Title           =   "Edit Creature"
    Visible         =   True
    Width           =   626
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -51,25 +51,23 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Edit Creature"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   586
    End
-   Begin Label ExplanationLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel ExplanationLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   36
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -86,11 +84,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "From here you can adjust creature damage and resistance multipliers, replace the creature with another, or disable the creature completely."
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -98,13 +94,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Width           =   586
    End
    Begin UITweaks.ResizedLabel TargetDinoLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -121,24 +117,24 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Creature:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   120
    End
-   Begin RadioButton ModeMultipliersRadio
-      AutoDeactivate  =   True
+   Begin DesktopRadioButton ModeMultipliersRadio
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Change Multipliers"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -152,9 +148,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
@@ -162,13 +156,15 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Visible         =   True
       Width           =   140
    End
-   Begin RadioButton ModeReplaceRadio
-      AutoDeactivate  =   True
+   Begin DesktopRadioButton ModeReplaceRadio
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Replace Creature"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -182,9 +178,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
@@ -192,13 +186,15 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Visible         =   True
       Width           =   140
    End
-   Begin RadioButton ModeDisableRadio
-      AutoDeactivate  =   True
+   Begin DesktopRadioButton ModeDisableRadio
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Disable Creature"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -212,9 +208,7 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
@@ -223,13 +217,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Width           =   140
    End
    Begin UITweaks.ResizedLabel ModeLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -246,22 +240,19 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mode:"
-      TextAlign       =   2
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   120
    End
-   Begin PagePanel Pages
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel Pages
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   136
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -273,40 +264,41 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   158
       Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField
-         AcceptTabs      =   False
-         Alignment       =   2
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   152
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -314,25 +306,24 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
+         TextAlignment   =   2
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel WildDamageLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -349,11 +340,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Wild Damage:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -361,31 +350,30 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   120
       End
       Begin UITweaks.ResizedTextField WildResistanceField
-         AcceptTabs      =   False
-         Alignment       =   2
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   152
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -393,25 +381,24 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
+         TextAlignment   =   2
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   198
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel WildResistanceLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -428,11 +415,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Wild Resistance:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   198
          Transparent     =   False
          Underline       =   False
@@ -440,13 +425,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   120
       End
       Begin UITweaks.ResizedLabel WildDamageHelp
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   True
@@ -463,11 +448,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases wild creature damage"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -475,13 +458,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   362
       End
       Begin UITweaks.ResizedLabel WildResistanceHelp
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   True
@@ -498,11 +481,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Less than 1.0 increases amount of damage taken"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   198
          Transparent     =   False
          Underline       =   False
@@ -510,31 +491,30 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   362
       End
       Begin UITweaks.ResizedTextField TameDamageField
-         AcceptTabs      =   False
-         Alignment       =   2
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   152
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -542,25 +522,24 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
+         TextAlignment   =   2
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   232
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel TameDamageLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -577,11 +556,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Tame Damage:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   232
          Transparent     =   False
          Underline       =   False
@@ -589,31 +566,30 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   120
       End
       Begin UITweaks.ResizedTextField TameResistanceField
-         AcceptTabs      =   False
-         Alignment       =   2
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
-         HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   152
-         LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -621,25 +597,24 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
+         TextAlignment   =   2
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   266
          Transparent     =   False
          Underline       =   False
-         UseFocusRing    =   True
+         ValidationMask  =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel TameResistanceLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -656,11 +631,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Tame Resistance:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   266
          Transparent     =   False
          Underline       =   False
@@ -668,13 +641,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   120
       End
       Begin UITweaks.ResizedLabel TameDamageHelp
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   True
@@ -691,11 +664,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases tamed creature damage"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   232
          Transparent     =   False
          Underline       =   False
@@ -703,13 +674,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   362
       End
       Begin UITweaks.ResizedLabel TameResistanceHelp
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   True
@@ -726,11 +697,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Less than 1.0 increases amount of damage taken"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   266
          Transparent     =   False
          Underline       =   False
@@ -738,13 +707,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   362
       End
       Begin UITweaks.ResizedLabel ReplacementDinoLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -761,11 +730,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Replacement:"
-         TextAlign       =   2
+         TextAlignment   =   3
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -773,15 +740,16 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   120
       End
       Begin UITweaks.ResizedPushButton ChooseReplacementButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Choose…"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -791,13 +759,12 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -805,13 +772,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          Width           =   86
       End
       Begin UITweaks.ResizedLabel ReplacementDinoNameLabel
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   True
@@ -828,11 +795,9 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Not Selected"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -841,15 +806,16 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       End
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -859,13 +825,12 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   370
       Transparent     =   False
       Underline       =   False
@@ -873,15 +838,16 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -891,13 +857,12 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   370
       Transparent     =   False
       Underline       =   False
@@ -905,15 +870,16 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton ChooseTargetButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Choose…"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -923,13 +889,12 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
@@ -937,13 +902,13 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Width           =   86
    End
    Begin UITweaks.ResizedLabel TargetDinoNameLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   True
@@ -960,23 +925,19 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Not Selected"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   356
    End
-   Begin CheckBox PreventTransferCheck
+   Begin DesktopCheckBox PreventTransferCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Prevent Transfer"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1004,12 +965,10 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       VisualState     =   0
       Width           =   454
    End
-   Begin CheckBox PreventTamingCheck
+   Begin DesktopCheckBox PreventTamingCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Prevent Taming"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1038,11 +997,11 @@ Begin BeaconDialog ArkDinoAdjustmentDialog
       Width           =   454
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  Var One As Double = 1.0
@@ -1066,7 +1025,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, EditCreature As Ark.Creature, Config As Ark.Configs.DinoAdjustments, ContentPacks As Beacon.StringList) As Boolean
+		Shared Function Present(Parent As DesktopWindow, EditCreature As Ark.Creature, Config As Ark.Configs.DinoAdjustments, ContentPacks As Beacon.StringList) As Boolean
 		  // This one needs the whole config because there are a lot of factors to showing the creatures in the menus
 		  
 		  If Parent Is Nil Or Config Is Nil Then
@@ -1107,7 +1066,7 @@ End
 		      Win.PreventTransferCheck.Value = Behavior.ProhibitTransfer
 		    End If
 		  End If
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  If Win.Cancelled Then
 		    Win.Close
 		    Return False
@@ -1240,7 +1199,7 @@ End
 
 #tag Events ModeMultipliersRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageMultipliers
 		  End If
@@ -1249,7 +1208,7 @@ End
 #tag EndEvents
 #tag Events ModeReplaceRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageReplace
 		  End If
@@ -1258,7 +1217,7 @@ End
 #tag EndEvents
 #tag Events ModeDisableRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageDisable
 		  End If
@@ -1267,7 +1226,7 @@ End
 #tag EndEvents
 #tag Events Pages
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Var OriginalHeight As Integer = Me.Height
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageMultipliers
@@ -1284,7 +1243,7 @@ End
 #tag EndEvents
 #tag Events ChooseReplacementButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Exclude() As Ark.Creature
 		  If Not IsNull(Self.SelectedCreature) Then
 		    Exclude.Add(Self.SelectedCreature)
@@ -1302,7 +1261,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If IsNull(Self.SelectedCreature) Then
 		    Self.ShowAlert("You haven't selected a creature", "That's an important step, right?")
 		    Return
@@ -1339,7 +1298,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Cancelled = True
 		  Self.Hide
 		End Sub
@@ -1347,7 +1306,7 @@ End
 #tag EndEvents
 #tag Events ChooseTargetButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Exclude() As Ark.Creature
 		  For Each Creature As Ark.Creature In Self.ConfiguredCreatures
 		    Exclude.Add(Creature)
@@ -1490,8 +1449,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1594,7 +1553,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

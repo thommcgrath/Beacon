@@ -1,13 +1,13 @@
 #tag Menu
 Begin Menu MainMenuBar
-   Begin MenuItem FileMenu
+   Begin DesktopMenuItem FileMenu
       SpecialMenu = 0
       Index = -2147483648
       Text = "&File"
       AutoEnabled = True
       AutoEnable = True
       Visible = True
-      Begin MenuItem FileNew
+      Begin DesktopMenuItem FileNew
          SpecialMenu = 0
          Index = -2147483648
          Text = "New Project"
@@ -18,7 +18,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileNewPreset
+      Begin DesktopMenuItem FileNewPreset
          SpecialMenu = 0
          Index = -2147483648
          Text = "New Preset"
@@ -30,7 +30,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileOpen
+      Begin DesktopMenuItem FileOpen
          SpecialMenu = 0
          Index = -2147483648
          Text = "Open…"
@@ -41,7 +41,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileOpenRecent
+      Begin DesktopMenuItem FileOpenRecent
          SpecialMenu = 0
          Index = -2147483648
          Text = "Open Recent"
@@ -50,7 +50,7 @@ Begin Menu MainMenuBar
          SubMenu = True
          Visible = True
       End
-      Begin MenuItem FileClose
+      Begin DesktopMenuItem FileClose
          SpecialMenu = 0
          Index = -2147483648
          Text = "Close"
@@ -61,7 +61,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileImport
+      Begin DesktopMenuItem FileImport
          SpecialMenu = 0
          Index = -2147483648
          Text = "Import…"
@@ -69,7 +69,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem UntitledSeparator
+      Begin DesktopMenuItem UntitledSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -77,7 +77,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem FileSave
+      Begin DesktopMenuItem FileSave
          SpecialMenu = 0
          Index = -2147483648
          Text = "Save"
@@ -88,7 +88,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileSaveAs
+      Begin DesktopMenuItem FileSaveAs
          SpecialMenu = 0
          Index = -2147483648
          Text = "Save As…"
@@ -100,7 +100,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem UntitledSeparator4
+      Begin DesktopMenuItem UntitledSeparator4
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -108,7 +108,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem FileExport
+      Begin DesktopMenuItem FileExport
          SpecialMenu = 0
          Index = -2147483648
          Text = "Export…"
@@ -116,7 +116,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileDeploy
+      Begin DesktopMenuItem FileDeploy
          SpecialMenu = 0
          Index = -2147483648
          Text = "Deploy…"
@@ -124,7 +124,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem UntitledSeparator0
+      Begin DesktopMenuItem UntitledSeparator0
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -132,7 +132,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin QuitMenuItem FileQuit
+      Begin DesktopQuitMenuItem FileQuit
          SpecialMenu = 0
          Index = -2147483648
          Text = "#App.kFileQuit"
@@ -143,14 +143,14 @@ Begin Menu MainMenuBar
          Visible = True
       End
    End
-   Begin MenuItem EditMenu
+   Begin DesktopMenuItem EditMenu
       SpecialMenu = 0
       Index = -2147483648
       Text = "&Edit"
       AutoEnabled = True
       AutoEnable = True
       Visible = True
-      Begin MenuItem EditUndo
+      Begin DesktopMenuItem EditUndo
          SpecialMenu = 0
          Index = -2147483648
          Text = "&Undo"
@@ -161,7 +161,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditSeparator1
+      Begin DesktopMenuItem EditSeparator1
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -169,7 +169,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditCut
+      Begin DesktopMenuItem EditCut
          SpecialMenu = 0
          Index = -2147483648
          Text = "Cu&t"
@@ -180,7 +180,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem EditCopy
+      Begin DesktopMenuItem EditCopy
          SpecialMenu = 0
          Index = -2147483648
          Text = "&Copy"
@@ -191,7 +191,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem EditPaste
+      Begin DesktopMenuItem EditPaste
          SpecialMenu = 0
          Index = -2147483648
          Text = "&Paste"
@@ -202,7 +202,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem EditClear
+      Begin DesktopMenuItem EditClear
          SpecialMenu = 0
          Index = -2147483648
          Text = "#App.kEditClear"
@@ -210,7 +210,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem EditSeparator2
+      Begin DesktopMenuItem EditSeparator2
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -218,7 +218,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditSelectAll
+      Begin DesktopMenuItem EditSelectAll
          SpecialMenu = 0
          Index = -2147483648
          Text = "Select &All"
@@ -229,7 +229,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem EditPrefsSeparator
+      Begin DesktopMenuItem EditPrefsSeparator
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -237,7 +237,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin PrefsMenuItem EditPreferences
+      Begin DesktopPreferencesMenuItem EditPreferences
          SpecialMenu = 0
          Index = -2147483648
          Text = "#App.kEditPreferences"
@@ -249,14 +249,14 @@ Begin Menu MainMenuBar
          Visible = True
       End
    End
-   Begin MenuItem ViewMenu
+   Begin DesktopMenuItem ViewMenu
       SpecialMenu = 0
       Index = -2147483648
       Text = "View"
       AutoEnabled = True
       AutoEnable = True
       Visible = True
-      Begin MenuItem ViewDashboard
+      Begin DesktopMenuItem ViewDashboard
          SpecialMenu = 0
          Index = -2147483648
          Text = "Home"
@@ -268,7 +268,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem UntitledSeparator9
+      Begin DesktopMenuItem UntitledSeparator9
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -276,7 +276,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem ViewDocuments
+      Begin DesktopMenuItem ViewDocuments
          SpecialMenu = 0
          Index = -2147483648
          Text = "Projects"
@@ -287,7 +287,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem ViewEngrams
+      Begin DesktopMenuItem ViewEngrams
          SpecialMenu = 0
          Index = -2147483648
          Text = "Blueprints"
@@ -298,7 +298,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem ViewTemplates
+      Begin DesktopMenuItem ViewTemplates
          SpecialMenu = 0
          Index = -2147483648
          Text = "Templates"
@@ -309,7 +309,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem ViewHelp
+      Begin DesktopMenuItem ViewHelp
          SpecialMenu = 0
          Index = -2147483648
          Text = "Help"
@@ -320,7 +320,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem UntitledSeparator7
+      Begin DesktopMenuItem UntitledSeparator7
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -328,7 +328,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem ViewSwitchToBaseConfigSet
+      Begin DesktopMenuItem ViewSwitchToBaseConfigSet
          SpecialMenu = 0
          Index = -2147483648
          Text = "Switch to Base Config Set"
@@ -340,14 +340,14 @@ Begin Menu MainMenuBar
          Visible = True
       End
    End
-   Begin MenuItem WindowMenu
+   Begin DesktopMenuItem WindowMenu
       SpecialMenu = 0
       Index = -2147483648
       Text = "Window"
       AutoEnabled = True
       AutoEnable = True
       Visible = True
-      Begin MenuItem WindowMinimize
+      Begin DesktopMenuItem WindowMinimize
          SpecialMenu = 0
          Index = -2147483648
          Text = "Minimize"
@@ -358,7 +358,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem WindowZoom
+      Begin DesktopMenuItem WindowZoom
          SpecialMenu = 0
          Index = -2147483648
          Text = "Zoom"
@@ -366,7 +366,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem UntitledSeparator3
+      Begin DesktopMenuItem UntitledSeparator3
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -375,14 +375,14 @@ Begin Menu MainMenuBar
          Visible = True
       End
    End
-   Begin MenuItem HelpMenu
+   Begin DesktopMenuItem HelpMenu
       SpecialMenu = 0
       Index = -2147483648
       Text = "Help"
       AutoEnabled = True
       AutoEnable = True
       Visible = True
-      Begin ApplicationMenuItem HelpAboutBeacon
+      Begin DesktopApplicationMenuItem HelpAboutBeacon
          SpecialMenu = 0
          Index = -2147483648
          Text = "About Beacon"
@@ -390,7 +390,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin ApplicationMenuItem UntitledSeparator5
+      Begin DesktopApplicationMenuItem UntitledSeparator5
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -398,7 +398,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin ApplicationMenuItem HelpShowWhatsNewWindow
+      Begin DesktopApplicationMenuItem HelpShowWhatsNewWindow
          SpecialMenu = 0
          Index = -2147483648
          Text = "What's New in Beacon…"
@@ -406,7 +406,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin ApplicationMenuItem HelpCheckforUpdates
+      Begin DesktopApplicationMenuItem HelpCheckforUpdates
          SpecialMenu = 0
          Index = -2147483648
          Text = "Check for Beacon Updates…"
@@ -414,7 +414,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin ApplicationMenuItem HelpReleaseNotes
+      Begin DesktopApplicationMenuItem HelpReleaseNotes
          SpecialMenu = 0
          Index = -2147483648
          Text = "Release Notes…"
@@ -422,7 +422,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin ApplicationMenuItem HelpSeparator2
+      Begin DesktopApplicationMenuItem HelpSeparator2
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -430,7 +430,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpUpdateEngrams
+      Begin DesktopMenuItem HelpUpdateEngrams
          SpecialMenu = 0
          Index = -2147483648
          Text = "Update Blueprints"
@@ -438,7 +438,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem HelpRefreshBlueprints
+      Begin DesktopMenuItem HelpRefreshBlueprints
          SpecialMenu = 0
          Index = -2147483648
          Text = "Refresh Blueprints"
@@ -446,7 +446,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem HelpSyncCloudFiles
+      Begin DesktopMenuItem HelpSyncCloudFiles
          SpecialMenu = 0
          Index = -2147483648
          Text = "Sync Cloud Files"
@@ -454,7 +454,7 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem UntitledSeparator6
+      Begin DesktopMenuItem UntitledSeparator6
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -462,7 +462,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpAdminSpawnCodes
+      Begin DesktopMenuItem HelpAdminSpawnCodes
          SpecialMenu = 0
          Index = -2147483648
          Text = "Admin Spawn Codes"
@@ -470,7 +470,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpArkConfigFileReference
+      Begin DesktopMenuItem HelpArkConfigFileReference
          SpecialMenu = 0
          Index = -2147483648
          Text = "Ark Config File Reference"
@@ -478,7 +478,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem UntitledSeparator1
+      Begin DesktopMenuItem UntitledSeparator1
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -486,7 +486,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpCreateSupportTicket
+      Begin DesktopMenuItem HelpCreateSupportTicket
          SpecialMenu = 0
          Index = -2147483648
          Text = "Create Support Ticket…"
@@ -494,7 +494,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpOpenDataFolder
+      Begin DesktopMenuItem HelpOpenDataFolder
          SpecialMenu = 0
          Index = -2147483648
          Text = "Open Data Folder"
@@ -502,7 +502,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpCreateOfflineAuthorizationRequest
+      Begin DesktopMenuItem HelpCreateOfflineAuthorizationRequest
          SpecialMenu = 0
          Index = -2147483648
          Text = "Create Offline Authorization Request…"
@@ -510,7 +510,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem UntitledSeparator2
+      Begin DesktopMenuItem UntitledSeparator2
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"
@@ -518,7 +518,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpAPIGuide
+      Begin DesktopMenuItem HelpAPIGuide
          SpecialMenu = 0
          Index = -2147483648
          Text = "API Guide…"
@@ -526,7 +526,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpAPIBuilder
+      Begin DesktopMenuItem HelpAPIBuilder
          SpecialMenu = 0
          Index = -2147483648
          Text = "API Builder…"

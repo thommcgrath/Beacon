@@ -1,36 +1,53 @@
-#tag Window
+#tag DesktopWindow
 Begin DocumentImportView ArkImportView
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
+   AllowAutoDeactivate=   "True"
+   AllowFocus      =   "False"
+   AllowFocusRing  =   "False"
+   AllowTabs       =   "True"
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
-   Enabled         =   True
-   EraseBackground =   True
+   Composite       =   False
+   DefaultLocation =   2
+   DoubleBuffer    =   "False"
+   Enabled         =   "True"
+   EraseBackground =   "True"
+   FullScreen      =   False
    HasBackgroundColor=   False
-   Height          =   456
-   Index           =   -2147483648
+   HasCloseButton  =   True
+   HasFullScreenButton=   False
+   HasMaximizeButton=   True
+   HasMinimizeButton=   True
+   Height          =   480
+   ImplicitInstance=   True
+   Index           =   "-2147483648"
    InitialParent   =   ""
-   Left            =   0
-   LockBottom      =   False
-   LockLeft        =   False
-   LockRight       =   False
-   LockTop         =   False
-   TabIndex        =   0
-   TabPanelIndex   =   0
-   TabStop         =   True
+   Left            =   "0"
+   LockBottom      =   "False"
+   LockLeft        =   "False"
+   LockRight       =   "False"
+   LockTop         =   "False"
+   MacProcID       =   0
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
+   MenuBar         =   0
+   MenuBarVisible  =   False
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Resizeable      =   True
+   TabIndex        =   "0"
+   TabPanelIndex   =   "0"
+   TabStop         =   "True"
+   Title           =   "Untitled"
    Tooltip         =   ""
-   Top             =   0
-   Transparent     =   True
+   Top             =   "0"
+   Transparent     =   "True"
+   Type            =   0
    Visible         =   True
-   Width           =   600
-   Begin PagePanel Views
-      AutoDeactivate  =   True
+   Width           =   720
+   Begin DesktopPagePanel Views
+      AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   456
-      HelpTag         =   ""
+      Height          =   480
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -42,21 +59,25 @@ Begin DocumentImportView ArkImportView
       PanelCount      =   8
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   6
+      Value           =   1
       Visible         =   True
-      Width           =   600
-      Begin RadioButton SourceRadio
-         AutoDeactivate  =   True
+      Width           =   720
+      Begin DesktopRadioButton SourceRadio
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Nitrado"
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   0
          InitialParent   =   "Views"
          Italic          =   False
@@ -70,24 +91,22 @@ Begin DocumentImportView ArkImportView
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
-      Begin Label ImportSourceMessage
-         AutoDeactivate  =   True
+      Begin DesktopLabel ImportSourceMessage
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
@@ -104,24 +123,24 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Select Import Source"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
-      Begin RadioButton SourceRadio
-         AutoDeactivate  =   True
+      Begin DesktopRadioButton SourceRadio
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Server With FTP Access"
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   4
          InitialParent   =   "Views"
          Italic          =   False
@@ -135,23 +154,23 @@ Begin DocumentImportView ArkImportView
          TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   180
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
-      Begin RadioButton SourceRadio
-         AutoDeactivate  =   True
+      Begin DesktopRadioButton SourceRadio
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Single Player, Local Files, or Copy + Paste"
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   3
          InitialParent   =   "Views"
          Italic          =   False
@@ -165,42 +184,40 @@ Begin DocumentImportView ArkImportView
          TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   148
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin UITweaks.ResizedPushButton SourceCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   408
+         Left            =   528
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   244
          Transparent     =   False
          Underline       =   False
@@ -208,31 +225,31 @@ Begin DocumentImportView ArkImportView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton SourceActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Continue"
          Default         =   False
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   500
+         Left            =   620
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   8
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   244
          Transparent     =   False
          Underline       =   False
@@ -240,17 +257,16 @@ Begin DocumentImportView ArkImportView
          Width           =   80
       End
       Begin ArkNitradoDiscoveryView NitradoDiscoveryView1
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   456
-         HelpTag         =   ""
+         HasBackgroundColor=   False
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -263,24 +279,23 @@ Begin DocumentImportView ArkImportView
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   False
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
       Begin ArkFTPDiscoveryView FTPDiscoveryView1
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   456
-         HelpTag         =   ""
+         HasBackgroundColor=   False
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -293,24 +308,23 @@ Begin DocumentImportView ArkImportView
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   False
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
       Begin ArkLocalDiscoveryView LocalDiscoveryView1
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   456
-         HelpTag         =   ""
+         HasBackgroundColor=   False
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -323,20 +337,20 @@ Begin DocumentImportView ArkImportView
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   False
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
-      Begin Label StatusMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel StatusMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
@@ -353,88 +367,88 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "Import Status"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin UITweaks.ResizedPushButton StatusCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   500
+         Left            =   620
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   5
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   416
+         Tooltip         =   ""
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton StatusActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Import"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   408
+         Left            =   528
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   5
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   416
+         Tooltip         =   ""
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   False
          Width           =   80
       End
-      Begin RadioButton SourceRadio
-         AutoDeactivate  =   True
+      Begin DesktopRadioButton SourceRadio
+         AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Other Beacon project"
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   5
          InitialParent   =   "Views"
          Italic          =   False
@@ -448,24 +462,22 @@ Begin DocumentImportView ArkImportView
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   212
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
-      Begin Label OtherDocsMessageLabel
-         AutoDeactivate  =   True
+      Begin DesktopLabel OtherDocsMessageLabel
+         AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
@@ -482,76 +494,74 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   6
          TabStop         =   True
          Text            =   "Import from Other Documents"
-         TextAlign       =   0
+         TextAlignment   =   0
          TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
       Begin UITweaks.ResizedPushButton OtherDocsActionButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Continue"
          Default         =   True
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   500
+         Left            =   620
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   6
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   416
+         Tooltip         =   ""
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton OtherDocsCancelButton
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
          Bold            =   False
-         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Views"
          Italic          =   False
-         Left            =   408
+         Left            =   528
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   6
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   416
+         Tooltip         =   ""
+         Top             =   440
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -564,11 +574,10 @@ Begin DocumentImportView ArkImportView
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   456
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -585,9 +594,9 @@ Begin DocumentImportView ArkImportView
          Top             =   0
          Transparent     =   False
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
-      Begin RadioButton SourceRadio
+      Begin DesktopRadioButton SourceRadio
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Server with Beacon Connector"
@@ -615,33 +624,36 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Value           =   False
          Visible         =   False
-         Width           =   560
+         Width           =   680
       End
       Begin BeaconListbox StatusList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   1
-         ColumnsResizable=   False
          ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   40
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   336
-         HelpTag         =   ""
-         Hierarchical    =   False
+         Height          =   360
          Index           =   -2147483648
          InitialParent   =   "Views"
          InitialValue    =   ""
@@ -654,53 +666,50 @@ Begin DocumentImportView ArkImportView
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   0
-         ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   5
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
-         Width           =   560
+         Width           =   680
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox OtherDocsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
          AllowInfiniteScroll=   False
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          Bold            =   False
-         Border          =   True
          ColumnCount     =   2
-         ColumnsResizable=   False
          ColumnWidths    =   "26,*"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   26
          DefaultSortColumn=   0
          DefaultSortDirection=   0
+         DropIndicatorVisible=   False
          EditCaption     =   "Edit"
          Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   1
-         Height          =   336
-         HelpTag         =   ""
-         Hierarchical    =   False
+         Height          =   360
          Index           =   -2147483648
          InitialParent   =   "Views"
          InitialValue    =   ""
@@ -713,25 +722,19 @@ Begin DocumentImportView ArkImportView
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
+         RowSelectionType=   0
          Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   0
-         ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   6
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
+         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
-         UseFocusRing    =   True
          Visible         =   True
          VisibleRowCount =   0
-         Width           =   560
+         Width           =   680
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -742,11 +745,10 @@ Begin DocumentImportView ArkImportView
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   456
+         Height          =   480
          Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
@@ -763,9 +765,9 @@ Begin DocumentImportView ArkImportView
          Top             =   0
          Transparent     =   True
          Visible         =   True
-         Width           =   600
+         Width           =   720
       End
-      Begin RadioButton SourceRadio
+      Begin DesktopRadioButton SourceRadio
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "GameServerApp.com"
@@ -793,7 +795,7 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   560
+         Width           =   680
       End
    End
    Begin Timer DiscoveryWatcher
@@ -806,7 +808,7 @@ Begin DocumentImportView ArkImportView
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -818,7 +820,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  RaiseEvent Open
 		  
 		  Const FirstRadioIndex = 0
@@ -931,7 +933,7 @@ End
 		    Importer.Start
 		    Self.mImporters(I) = Importer
 		    
-		    Self.StatusList.CellValueAt(I, 0) = Data(I).Profile.Name + EndOfLine + "Starting parser…"
+		    Self.StatusList.CellTextAt(I, 0) = Data(I).Profile.Name + EndOfLine + "Starting parser…"
 		    Self.StatusList.RowTagAt(I) = Importer
 		  Next
 		  
@@ -1056,7 +1058,7 @@ End
 
 #tag Events Views
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageSources
 		    Self.SetPageHeight(Self.SourcesPageHeight)
@@ -1078,7 +1080,7 @@ End
 #tag EndEvents
 #tag Events SourceRadio
 	#tag Event
-		Sub Action(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  SourceActionButton.Enabled = SourceRadio(Self.RadioNitrado).Value Or SourceRadio(Self.RadioFTP).Value Or SourceRadio(Self.RadioLocal).Value Or (SourceRadio(Self.RadioProject).Value And SourceRadio(Self.RadioProject).Enabled And Self.mOtherProjects.Count > 0) Or SourceRadio(Self.RadioConnector).Value Or SourceRadio(Self.RadioGSA).Value
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
@@ -1086,14 +1088,14 @@ End
 #tag EndEvents
 #tag Events SourceCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Dismiss
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SourceActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Select Case True
 		  Case SourceRadio(Self.RadioNitrado).Value
 		    Views.SelectedPanelIndex = Self.PageNitrado
@@ -1105,7 +1107,7 @@ End
 		    Views.SelectedPanelIndex = Self.PageConnector
 		  Case SourceRadio(Self.RadioProject).Value
 		    OtherDocsList.RemoveAllRows
-		    OtherDocsList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		    OtherDocsList.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		    For Each Project As Ark.Project In Self.mOtherProjects
 		      OtherDocsList.AddRow("", Project.Title)
 		      OtherDocsList.RowTagAt(OtherDocsList.LastAddedRowIndex) = Project
@@ -1211,7 +1213,7 @@ End
 #tag EndEvents
 #tag Events StatusCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.QuickCancel Then
 		    Self.Close
 		  Else
@@ -1222,7 +1224,7 @@ End
 #tag EndEvents
 #tag Events OtherDocsActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Projects() As Beacon.Project
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
 		    If Not OtherDocsList.CellCheckBoxValueAt(I, 0) Then
@@ -1240,7 +1242,7 @@ End
 #tag EndEvents
 #tag Events OtherDocsCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Views.SelectedPanelIndex = Self.PageSources
 		End Sub
 	#tag EndEvent
@@ -1336,7 +1338,7 @@ End
 		  For I As Integer = 0 To Self.StatusList.LastRowIndex
 		    Var Importer As Ark.ImportThread = Self.StatusList.RowTagAt(I)
 		    AllFinished = AllFinished And Importer.Finished
-		    Self.StatusList.CellValueAt(I, 0) = Importer.Name + EndOfLine + Importer.Status
+		    Self.StatusList.CellTextAt(I, 0) = Importer.Name + EndOfLine + Importer.Status
 		    
 		    If Importer.Finished Then
 		      If Importer.Project Is Nil Then
@@ -1382,19 +1384,19 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1426,8 +1428,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1450,14 +1452,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -27,6 +27,40 @@ Inherits AnimationKit.DeltaTask
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
+		Private Sub ApplyRect(Target As DesktopUIControl, Rect As Rect)
+		  If Self.AnimateLeft Then
+		    Target.Left = Rect.Left
+		  End If
+		  If Self.AnimateTop Then
+		    Target.Top = Rect.Top
+		  End If
+		  If Self.AnimateWidth Then
+		    Target.Width = Rect.Width
+		  End If
+		  If Self.AnimateHeight Then
+		    Target.Height = Rect.Height
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
+		Private Sub ApplyRect(Target As DesktopWindow, Rect As Rect)
+		  If Self.AnimateLeft Then
+		    Target.Left = Rect.Left
+		  End If
+		  If Self.AnimateTop Then
+		    Target.Top = Rect.Top
+		  End If
+		  If Self.AnimateWidth Then
+		    Target.Width = Rect.Width
+		  End If
+		  If Self.AnimateHeight Then
+		    Target.Height = Rect.Height
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetIOS)
 		Private Sub ApplyRect(Target As iOSControl, Rect As Rect)
 		  // This is left in as a stub. iOSControl cannot move, so this entire
@@ -56,11 +90,11 @@ Inherits AnimationKit.DeltaTask
 		  End If
 		  
 		  #if TargetDesktop
-		    If Item IsA Window Then
-		      Self.ApplyRect(Window(Item), Rect)
+		    If Item IsA DesktopWindow Then
+		      Self.ApplyRect(DesktopWindow(Item), Rect)
 		      Return
-		    ElseIf Item IsA RectControl Then
-		      Self.ApplyRect(RectControl(Item), Rect)
+		    ElseIf Item IsA DesktopUIControl Then
+		      Self.ApplyRect(DesktopUIControl(Item), Rect)
 		      Return
 		    End If
 		  #elseif TargetiOS
@@ -72,45 +106,11 @@ Inherits AnimationKit.DeltaTask
 		  
 		  Var Err As New UnsupportedOperationException
 		  #if TargetDesktop
-		    Err.Message = "Item for AnimationKit.MoveTask must be a Window or RectControl."
+		    Err.Message = "Item for AnimationKit.MoveTask must be a DesktopWindow or DesktopUIControl."
 		  #elseif TargetiOS
 		    Err.Message = "Item for AnimationKit.MoveTask must be an iOSControl."
 		  #endif
 		  Raise Err
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Sub ApplyRect(Target As RectControl, Rect As Rect)
-		  If Self.AnimateLeft Then
-		    Target.Left = Rect.Left
-		  End If
-		  If Self.AnimateTop Then
-		    Target.Top = Rect.Top
-		  End If
-		  If Self.AnimateWidth Then
-		    Target.Width = Rect.Width
-		  End If
-		  If Self.AnimateHeight Then
-		    Target.Height = Rect.Height
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Sub ApplyRect(Target As Window, Rect As Rect)
-		  If Self.AnimateLeft Then
-		    Target.Left = Rect.Left
-		  End If
-		  If Self.AnimateTop Then
-		    Target.Top = Rect.Top
-		  End If
-		  If Self.AnimateWidth Then
-		    Target.Width = Rect.Width
-		  End If
-		  If Self.AnimateHeight Then
-		    Target.Height = Rect.Height
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -121,26 +121,26 @@ Inherits AnimationKit.DeltaTask
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1000, CompatibilityFlags = (TargetHasGUI)
+		Sub Constructor(Target As DesktopUIControl)
+		  Self.Constructor()
+		  Self.StartBounds = Nil
+		  Self.EndBounds = Self.CurrentRect(Target)
+		  Self.Item = Target
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1000, CompatibilityFlags = (TargetHasGUI)
+		Sub Constructor(Target As DesktopWindow)
+		  Self.Constructor()
+		  Self.StartBounds = Nil
+		  Self.EndBounds = Self.CurrentRect(Target)
+		  Self.Item = Target
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1000, CompatibilityFlags = (TargetIOS)
 		Sub Constructor(Target As iOSControl)
-		  Self.Constructor()
-		  Self.StartBounds = Nil
-		  Self.EndBounds = Self.CurrentRect(Target)
-		  Self.Item = Target
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1000, CompatibilityFlags = (TargetHasGUI)
-		Sub Constructor(Target As RectControl)
-		  Self.Constructor()
-		  Self.StartBounds = Nil
-		  Self.EndBounds = Self.CurrentRect(Target)
-		  Self.Item = Target
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1000, CompatibilityFlags = (TargetHasGUI)
-		Sub Constructor(Target As Window)
 		  Self.Constructor()
 		  Self.StartBounds = Nil
 		  Self.EndBounds = Self.CurrentRect(Target)
@@ -157,10 +157,10 @@ Inherits AnimationKit.DeltaTask
 		  End If
 		  
 		  #if TargetDesktop
-		    If Item IsA Window Then
-		      Return Self.CurrentRect(Window(Item))
-		    ElseIf Item IsA RectControl Then
-		      Return Self.CurrentRect(RectControl(Item))
+		    If Item IsA DesktopWindow Then
+		      Return Self.CurrentRect(DesktopWindow(Item))
+		    ElseIf Item IsA DesktopUIControl Then
+		      Return Self.CurrentRect(DesktopUIControl(Item))
 		    End If
 		  #elseif TargetiOS
 		    If Item IsA iOSControl Then
@@ -170,7 +170,7 @@ Inherits AnimationKit.DeltaTask
 		  
 		  Var Err As New UnsupportedOperationException
 		  #if TargetDesktop
-		    Err.Message = "Item for AnimationKit.MoveTask must be a Window or RectControl."
+		    Err.Message = "Item for AnimationKit.MoveTask must be a DesktopWindow or DesktopUIControl."
 		  #elseif TargetiOS
 		    Err.Message = "Item for AnimationKit.MoveTask must be an iOSControl."
 		  #endif
@@ -178,20 +178,20 @@ Inherits AnimationKit.DeltaTask
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
+		Private Function CurrentRect(Target As DesktopUIControl) As Xojo.Rect
+		  Return New Xojo.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
+		Private Function CurrentRect(Target As DesktopWindow) As Xojo.Rect
+		  Return New Xojo.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetIOS)
 		Private Function CurrentRect(Target As iOSControl) As Xojo.Rect
-		  Return New Xojo.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Function CurrentRect(Target As RectControl) As Xojo.Rect
-		  Return New Xojo.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Function CurrentRect(Target As Window) As Xojo.Rect
 		  Return New Xojo.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
 		End Function
 	#tag EndMethod
@@ -214,7 +214,7 @@ Inherits AnimationKit.DeltaTask
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI) or  (TargetIOS)
 		Function OriginalRect() As Rect
-		  If Self.StartBounds <> Nil Then
+		  If (Self.StartBounds Is Nil) = False Then
 		    Return CloneRect(Self.StartBounds)
 		  End If
 		End Function

@@ -1,16 +1,15 @@
-#tag Window
-Begin ContainerControl MapSelectionGrid
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+#tag DesktopWindow
+Begin DesktopContainer MapSelectionGrid
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
-   DoubleBuffer    =   False
+   BackgroundColor =   &cFFFFFF00
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   300
-   HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -21,20 +20,20 @@ Begin ContainerControl MapSelectionGrid
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   300
    Begin MapCheckBox Boxes
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Untitled"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   0
       InitialParent   =   ""
       Italic          =   False
@@ -46,26 +45,24 @@ Begin ContainerControl MapSelectionGrid
       LockTop         =   True
       Mask            =   ""
       Scope           =   2
-      State           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   6
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   0
       Width           =   140
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Maps() As Ark.Map = Ark.Maps.All
 		  Var OfficialMaps(), OtherMaps() As Ark.Map
 		  Var OfficialMasks(), OtherMasks() As UInt64
@@ -124,7 +121,7 @@ End
 		Function CheckedMask() As UInt64
 		  Var Combined As UInt64
 		  For Each Box As MapCheckBox In Self.mBoxes
-		    If Box.VisualState = CheckBox.VisualStates.Checked Then
+		    If Box.VisualState = DesktopCheckBox.VisualStates.Checked Then
 		      Combined = Combined Or Box.Mask
 		    End If
 		  Next
@@ -147,11 +144,11 @@ End
 		  For Each Box As MapCheckBox In Self.mBoxes
 		    Var Count As Integer = Dict.Lookup(Box.Mask, 0)
 		    If Count = 0 Then
-		      Box.VisualState = Checkbox.VisualStates.Unchecked
+		      Box.VisualState = DesktopCheckbox.VisualStates.Unchecked
 		    ElseIf Count = MaskCount Then
-		      Box.VisualState = Checkbox.VisualStates.Checked
+		      Box.VisualState = DesktopCheckbox.VisualStates.Checked
 		    Else
-		      Box.VisualState = Checkbox.VisualStates.Indeterminate
+		      Box.VisualState = DesktopCheckbox.VisualStates.Indeterminate
 		    End If
 		  Next
 		End Sub
@@ -161,7 +158,7 @@ End
 		Function UncheckedMask() As UInt64
 		  Var Combined As UInt64
 		  For Each Box As MapCheckBox In Self.mBoxes
-		    If Box.VisualState = CheckBox.VisualStates.Unchecked Then
+		    If Box.VisualState = DesktopCheckBox.VisualStates.Unchecked Then
 		      Combined = Combined Or Box.Mask
 		    End If
 		  Next
@@ -247,7 +244,7 @@ End
 
 #tag Events Boxes
 	#tag Event
-		Sub Action(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -269,6 +266,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -434,8 +439,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -470,26 +475,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

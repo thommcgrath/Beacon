@@ -1,8 +1,10 @@
 #tag Class
 Protected Class DelayedComboBox
-Inherits ComboBox
+Inherits DesktopComboBox
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  Self.FireTextChanged()
 		End Sub
 	#tag EndEvent
@@ -294,22 +296,6 @@ Inherits ComboBox
 			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"

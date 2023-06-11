@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconContainer ArkSpawnPointSetEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin BeaconContainer ArkSpawnPointSetEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   678
    Index           =   -2147483648
@@ -26,7 +27,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
    Transparent     =   True
    Visible         =   True
    Width           =   784
-   Begin GroupBox EntriesGroup
+   Begin DesktopGroupBox EntriesGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Creatures"
@@ -162,8 +163,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Bold            =   False
          ColumnCount     =   1
          ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   34
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -173,8 +172,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   False
          HasHorizontalScrollbar=   False
@@ -210,7 +208,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          _ScrollWidth    =   -1
       End
    End
-   Begin GroupBox ReplaceGroup
+   Begin DesktopGroupBox ReplaceGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Creature Replacement"
@@ -346,8 +344,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Bold            =   False
          ColumnCount     =   1
          ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   34
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -357,8 +353,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   False
          HasHorizontalScrollbar=   False
@@ -401,8 +396,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -444,8 +437,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
@@ -484,8 +475,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
    Begin UITweaks.ResizedLabel NameLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -519,8 +508,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
    Begin UITweaks.ResizedLabel WeightLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -551,9 +538,11 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Visible         =   True
       Width           =   71
    End
-   Begin UpDownArrows WeightStepper
+   Begin DesktopUpDownArrows WeightStepper
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   False
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -564,17 +553,21 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Visible         =   True
       Width           =   13
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin GroupBox AdvancedGroup
+   Begin DesktopGroupBox AdvancedGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Advanced (Optional)"
@@ -605,8 +598,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Begin UITweaks.ResizedLabel WaterMinHeightLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -640,8 +631,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Begin UITweaks.ResizedLabel SpreadRadiusLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -675,8 +664,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Begin UITweaks.ResizedLabel DistanceMultipliersLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -710,8 +697,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Begin UITweaks.ResizedLabel OffsetLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -749,8 +734,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -794,8 +777,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -839,8 +820,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -884,8 +863,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -929,8 +906,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -974,8 +949,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -1019,8 +992,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -1064,8 +1035,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
@@ -1102,12 +1071,10 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Visible         =   True
          Width           =   89
       End
-      Begin CheckBox OffsetBeforeMultiplierCheck
+      Begin DesktopCheckBox OffsetBeforeMultiplierCheck
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Add Level Offset Before Multiplier"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1135,11 +1102,9 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          VisualState     =   0
          Width           =   291
       End
-      Begin Label PlayerDistanceLabel
+      Begin DesktopLabel PlayerDistanceLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1170,11 +1135,9 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Visible         =   True
          Width           =   89
       End
-      Begin Label StructureDistanceLabel
+      Begin DesktopLabel StructureDistanceLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1205,11 +1168,9 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Visible         =   True
          Width           =   89
       End
-      Begin Label TameDistanceLabel
+      Begin DesktopLabel TameDistanceLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1243,8 +1204,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Begin UITweaks.ResizedPopupMenu ColorSetsMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1275,8 +1234,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Begin UITweaks.ResizedLabel ColorSetsLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1317,7 +1274,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -1344,11 +1300,11 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Width           =   784
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.NameLabel.SizeToFit
 		  Self.WeightLabel.SizeToFit
 		  BeaconUI.SizeToFit(Self.OffsetLabel, Self.SpreadRadiusLabel, Self.WaterMinHeightLabel, Self.DistanceMultipliersLabel, Self.ColorSetsLabel)
@@ -1465,7 +1421,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Sub SizeGroup(Group As GroupBox, List As Listbox, AddButton As PushButton, EditButton As PushButton, DeleteButton As PushButton, MajorMargin As Integer, MinorMargin As Integer)
+		Private Shared Sub SizeGroup(Group As DesktopGroupBox, List As DesktopListBox, AddButton As DesktopButton, EditButton As DesktopButton, DeleteButton As DesktopButton, MajorMargin As Integer, MinorMargin As Integer)
 		  Const DesiredButtonsWidth = 80
 		  
 		  List.Left = Group.Left + MajorMargin
@@ -1525,7 +1481,7 @@ End
 		  Var SelectedEntries() As String
 		  If SelectEntries = Nil Then
 		    For I As Integer = 0 To List.RowCount - 1
-		      If List.Selected(I) Then
+		      If List.RowSelectedAt(I) Then
 		        Var Entry As Ark.SpawnPointSetEntry = List.RowTagAt(I)
 		        SelectedEntries.Add(Entry.ID)
 		      End If
@@ -1565,8 +1521,8 @@ End
 		    End If
 		    
 		    List.RowTagAt(RowIndex) = Entry.MutableVersion
-		    List.CellValueAt(RowIndex, 0) = Label
-		    List.Selected(RowIndex) = SelectedEntries.IndexOf(Entry.ID) > -1
+		    List.CellTextAt(RowIndex, 0) = Label
+		    List.RowSelectedAt(RowIndex) = SelectedEntries.IndexOf(Entry.ID) > -1
 		  Next
 		  If List.DefaultRowHeight <> RowHeight Then
 		    List.DefaultRowHeight = RowHeight
@@ -1582,7 +1538,7 @@ End
 		  Var SelectedReplacements() As String
 		  If SelectCreatures = Nil Then
 		    For I As Integer = 0 To Self.ReplaceList.RowCount - 1
-		      If Self.ReplaceList.Selected(I) Then
+		      If Self.ReplaceList.RowSelectedAt(I) Then
 		        SelectedReplacements.Add(Self.ReplaceList.RowTagAt(I))
 		      End If
 		    Next
@@ -1619,9 +1575,9 @@ End
 		    Next
 		    ReplacementCreatureNames.Sort
 		    
-		    Self.ReplaceList.CellValueAt(RowIndex, 0) = ReplacedCreature.Label + EndOfLine + Language.EnglishOxfordList(ReplacementCreatureNames)
+		    Self.ReplaceList.CellTextAt(RowIndex, 0) = ReplacedCreature.Label + EndOfLine + Language.EnglishOxfordList(ReplacementCreatureNames)
 		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.ObjectID
-		    Self.ReplaceList.Selected(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.ObjectID) > -1
+		    Self.ReplaceList.RowSelectedAt(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.ObjectID) > -1
 		  Next
 		  Self.ReplaceList.SortingColumn = 0
 		  Self.ReplaceList.Sort
@@ -1745,7 +1701,7 @@ End
 
 #tag Events EntryAddButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Set As Ark.MutableSpawnPointSet = Self.SpawnSet
 		  Var Entry As Ark.MutableSpawnPointSetEntry = ArkSpawnPointCreatureDialog.Present(Self, Self.Project, Set)
 		  If Entry = Nil Then
@@ -1764,14 +1720,14 @@ End
 #tag EndEvents
 #tag Events EntryEditButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.EntriesList.DoEdit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EntryDeleteButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.EntriesList.DoClear
 		End Sub
 	#tag EndEvent
@@ -1797,7 +1753,7 @@ End
 		  Var Bound As Integer = Me.RowCount - 1
 		  Var EntriesToDelete() As Ark.SpawnPointSetEntry
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -1829,7 +1785,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Items() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      Items.Add(Ark.SpawnPointSetEntry(Me.RowTagAt(I)).SaveData)
 		    End If
 		  Next
@@ -1873,7 +1829,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.EntryDeleteButton.Enabled = Me.CanDelete
 		  Self.EntryEditButton.Enabled = Me.CanEdit
 		End Sub
@@ -1887,7 +1843,7 @@ End
 		Sub PerformEdit()
 		  Var Entries() As Ark.MutableSpawnPointSetEntry
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -1912,7 +1868,9 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  #Pragma Unused Column
+		  
 		  Var Entry1 As Ark.SpawnPointSetEntry = Me.RowTagAt(Row1)
 		  Var Entry2 As Ark.SpawnPointSetEntry = Me.RowTagAt(Row2)
 		  If Entry1 Is Nil Or Entry2 Is Nil Then
@@ -1926,7 +1884,7 @@ End
 #tag EndEvents
 #tag Events ReplaceAddButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Set As Ark.MutableSpawnPointSet = Self.SpawnSet
 		  
 		  Var Creature As Ark.Creature = ArkSpawnPointReplacementsDialog.Present(Self, Self.Project.ContentPacks, Set)
@@ -1944,14 +1902,14 @@ End
 #tag EndEvents
 #tag Events ReplaceEditButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ReplaceList.DoEdit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ReplaceDeleteButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ReplaceList.DoClear
 		End Sub
 	#tag EndEvent
@@ -1973,7 +1931,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.ReplaceDeleteButton.Enabled = Me.CanDelete
 		  Self.ReplaceEditButton.Enabled = Me.CanEdit
 		End Sub
@@ -1983,7 +1941,7 @@ End
 		  Var Bound As Integer = Me.RowCount - 1
 		  Var CreaturesToDelete() As Ark.Creature
 		  For I As Integer = Bound DownTo 0
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -2027,7 +1985,7 @@ End
 		  Var Items() As Dictionary
 		  Var Set As Ark.SpawnPointSet = Self.SpawnSet
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -2134,7 +2092,7 @@ End
 #tag EndEvents
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2179,7 +2137,7 @@ End
 #tag EndEvents
 #tag Events WeightStepper
 	#tag Event
-		Sub Down()
+		Sub DownPressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -2188,7 +2146,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
+		Sub UpPressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -2419,7 +2377,7 @@ End
 #tag EndEvents
 #tag Events OffsetBeforeMultiplierCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2434,7 +2392,9 @@ End
 #tag EndEvents
 #tag Events ColorSetsMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
 		    Return
 		  End If
@@ -2446,12 +2406,28 @@ End
 #tag EndEvents
 #tag Events SpawnSetToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("SetTitle", "Spawn Set Contents"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -2617,8 +2593,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -2653,26 +2629,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

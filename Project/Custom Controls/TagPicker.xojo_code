@@ -8,7 +8,7 @@ Inherits ControlCanvas
 		      If IsContextualClick = False Then
 		        Self.mMouseDownCellIndex = I
 		        Self.mMousePressedIndex = I
-		        Self.Invalidate
+		        Self.Refresh
 		        Self.ShowContextualMenu(I, X, Y)
 		        Self.mMouseDownCellIndex = -1
 		        Self.mMousePressedIndex = -1
@@ -17,7 +17,7 @@ Inherits ControlCanvas
 		      
 		      Self.mMouseDownCellIndex = I
 		      Self.mMousePressedIndex = I
-		      Self.Invalidate
+		      Self.Refresh
 		      Return True
 		    End If
 		  Next
@@ -39,12 +39,12 @@ Inherits ControlCanvas
 		    If Self.mCells(Self.mMouseDownCellIndex).Contains(X, Y) Then
 		      If Self.mMousePressedIndex <> Self.mMouseDownCellIndex Then
 		        Self.mMousePressedIndex = Self.mMouseDownCellIndex
-		        Self.Invalidate
+		        Self.Refresh
 		      End If
 		    Else
 		      If Self.mMousePressedIndex = Self.mMouseDownCellIndex Then
 		        Self.mMousePressedIndex = -1
-		        Self.Invalidate
+		        Self.Refresh
 		      End If
 		    End If
 		  End If
@@ -72,7 +72,7 @@ Inherits ControlCanvas
 		  
 		  Self.mMousePressedIndex = -1
 		  Self.mMouseDownCellIndex = -1
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
@@ -86,13 +86,13 @@ Inherits ControlCanvas
 		  Var ScrollPosition As Integer = Min(Max(Self.mScrollPosition + PixelsY, 0), Self.mOverflowHeight)
 		  If Self.mScrollPosition <> ScrollPosition Then
 		    Self.mScrollPosition = ScrollPosition
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mHiddenTags = Preferences.HiddenTags
 		  RaiseEvent Open()
 		  Self.AutoResize()
@@ -100,7 +100,7 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
 		  #Pragma Unused SafeArea
@@ -212,7 +212,7 @@ Inherits ControlCanvas
 		  If Changed Then
 		    If Thread.Current = Nil Then
 		      RaiseEvent TagsChanged
-		      Self.Invalidate
+		      Self.Refresh
 		    Else
 		      Call CallLater.Schedule(0, AddressOf TriggerChange)
 		    End If
@@ -251,7 +251,7 @@ Inherits ControlCanvas
 		  If Changed Then
 		    If Thread.Current = Nil Then
 		      RaiseEvent TagsChanged
-		      Self.Invalidate
+		      Self.Refresh
 		    Else
 		      Call CallLater.Schedule(0, AddressOf TriggerChange)
 		    End If
@@ -406,7 +406,7 @@ Inherits ControlCanvas
 		  If Changed Then
 		    If Thread.Current = Nil Then
 		      RaiseEvent TagsChanged
-		      Self.Invalidate
+		      Self.Refresh
 		    Else
 		      Call CallLater.Schedule(0, AddressOf TriggerChange)
 		    End If
@@ -420,7 +420,7 @@ Inherits ControlCanvas
 		    Var OriginalHeight As Integer = Self.Height
 		    RaiseEvent ShouldAdjustHeight(Delta)
 		    If Self.Height <> OriginalHeight Then
-		      Self.Invalidate()
+		      Self.Refresh()
 		    End If
 		  Catch Err As RuntimeException
 		    
@@ -469,7 +469,7 @@ Inherits ControlCanvas
 		  
 		  If Thread.Current = Nil Then
 		    RaiseEvent TagsChanged
-		    Self.Invalidate
+		    Self.Refresh
 		  Else
 		    Call CallLater.Schedule(0, AddressOf TriggerChange)
 		  End If
@@ -478,37 +478,37 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h21
 		Private Sub ShowContextualMenu(CellIndex As Integer, MouseX As Integer, MouseY As Integer)
-		  Var Base As New MenuItem
+		  Var Base As New DesktopMenuItem
 		  Var OffsetX, OffsetY As Integer
 		  
 		  If CellIndex > -1 Then
 		    Var Tag As String = Self.mTags(CellIndex)
 		    Var TagHuman As String = Tag.ReplaceAll("_", " ").Titlecase
 		    
-		    Var RequireItem As New MenuItem("Results Must Be Tagged With """ + TagHuman + """", "require:" + Tag)
+		    Var RequireItem As New DesktopMenuItem("Results Must Be Tagged With """ + TagHuman + """", "require:" + Tag)
 		    RequireItem.HasCheckMark = Self.mRequireTags.IndexOf(Tag) > -1
 		    If Self.RequireTagCaption.IsEmpty = False Then
 		      RequireItem.Text = Self.RequireTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
 		    
-		    Var ExcludeItem As New MenuItem("Do Not Show Results Tagged With """ + TagHuman + """", "exclude:" + Tag)
+		    Var ExcludeItem As New DesktopMenuItem("Do Not Show Results Tagged With """ + TagHuman + """", "exclude:" + Tag)
 		    ExcludeItem.HasCheckMark = Self.mExcludeTags.IndexOf(Tag) > -1
 		    If Self.ExcludeTagCaption.IsEmpty = False Then
 		      ExcludeItem.Text = Self.ExcludeTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
 		    
-		    Var NeutralItem As New MenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
+		    Var NeutralItem As New DesktopMenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
 		    NeutralItem.HasCheckMark = RequireItem.HasCheckMark = False And ExcludeItem.HasCheckMark = False
 		    If Self.NeutralTagCaption.IsEmpty = False Then
 		      NeutralItem.Text = Self.NeutralTagCaption.ReplaceAll("%%Tag%%", TagHuman)
 		    End If
 		    
-		    Var HideItem As New MenuItem("Hide """ + TagHuman + """ Tag", "hide:" + Tag)
+		    Var HideItem As New DesktopMenuItem("Hide """ + TagHuman + """ Tag", "hide:" + Tag)
 		    
 		    Base.AddMenu(RequireItem)
 		    Base.AddMenu(ExcludeItem)
 		    Base.AddMenu(NeutralItem)
-		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    Base.AddMenu(HideItem)
 		    
 		    OffsetX = Self.mCells(CellIndex).Left
@@ -518,11 +518,11 @@ Inherits ControlCanvas
 		    OffsetY = MouseY
 		  End If
 		  
-		  Var RestoreItem As New MenuItem("Restore Hidden Tags", "restore:")
+		  Var RestoreItem As New DesktopMenuItem("Restore Hidden Tags", "restore:")
 		  Base.AddMenu(RestoreItem)
 		  
-		  Var Position As Point = Self.Window.GlobalPosition
-		  Var Choice As MenuItem = Base.PopUp(Position.X + Self.Left + OffsetX, Position.Y + Self.Top + OffsetY)
+		  Var Position As Point = Self.GlobalPosition
+		  Var Choice As DesktopMenuItem = Base.PopUp(Position.X + OffsetX, Position.Y + OffsetY)
 		  If Choice Is Nil Then
 		    Return
 		  End If
@@ -547,12 +547,12 @@ Inherits ControlCanvas
 		    Self.mHiddenTags.Add(Tag)
 		    Preferences.HiddenTags = Self.mHiddenTags
 		    Self.AutoResize()
-		    Self.Invalidate
+		    Self.Refresh
 		  Case "restore"
 		    Self.mHiddenTags.ResizeTo(-1)
 		    Preferences.HiddenTags = Self.mHiddenTags
 		    Self.AutoResize()
-		    Self.Invalidate
+		    Self.Refresh
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -610,7 +610,7 @@ Inherits ControlCanvas
 		    End If
 		    
 		    Self.AutoResize()
-		    Self.Invalidate()
+		    Self.Refresh()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -618,7 +618,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h21
 		Private Sub TriggerChange()
 		  RaiseEvent TagsChanged
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -650,7 +650,7 @@ Inherits ControlCanvas
 			  End If
 			  
 			  Self.mBorder = Value
-			  Self.Invalidate
+			  Self.Refresh
 			End Set
 		#tag EndSetter
 		Border As Integer
@@ -997,22 +997,6 @@ Inherits ControlCanvas
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
-			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabPanelIndex"

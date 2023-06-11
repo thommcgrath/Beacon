@@ -1,13 +1,18 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconContainer ArkLootSimulatorView
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
+   AcceptFocus     =   "False"
+   AcceptTabs      =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
+   AutoDeactivate  =   "True"
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackColor    =   False
    Height          =   200
    HelpTag         =   ""
@@ -21,36 +26,40 @@ Begin BeaconContainer ArkLootSimulatorView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
+   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   250
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   1
-      ColumnsResizable=   False
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   137
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -63,22 +72,16 @@ Begin BeaconContainer ArkLootSimulatorView
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   42
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   250
@@ -86,15 +89,14 @@ Begin BeaconContainer ArkLootSimulatorView
       _ScrollWidth    =   -1
    End
    Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -110,24 +112,23 @@ Begin BeaconContainer ArkLootSimulatorView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   250
    End
    Begin StatusBar StatusBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -140,12 +141,12 @@ Begin BeaconContainer ArkLootSimulatorView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   179
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   250
    End
@@ -158,7 +159,6 @@ Begin BeaconContainer ArkLootSimulatorView
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -175,7 +175,7 @@ Begin BeaconContainer ArkLootSimulatorView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -185,7 +185,7 @@ Begin BeaconContainer ArkLootSimulatorView
       Width           =   250
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
@@ -197,6 +197,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Simulate()
+		  If Self.List Is Nil Then
+		    Return
+		  End If
+		  
 		  Self.List.RemoveAllRows()
 		  
 		  If IsNull(Self.mTarget)Then
@@ -214,6 +218,10 @@ End
 		  
 		  Var GroupedItems As New Dictionary
 		  For Each Selection As Ark.LootSimulatorSelection In Selections
+		    If Selection Is Nil Then
+		      Continue
+		    End If
+		    
 		    Var Description As String = Selection.Description
 		    Var Quantity As Integer
 		    If GroupedItems.HasKey(Description) Then
@@ -225,11 +233,11 @@ End
 		  For Each Item As DictionaryEntry In GroupedItems
 		    Var Description As String = Item.Key
 		    Var Quantity As Integer = Item.Value
-		    List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
+		    Self.List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		  
-		  Self.StatusBar1.Caption = List.RowCount.ToString(Locale.Current, ",##0") + " item" + If(List.RowCount = 1, "", "s")
-		  Self.UpdateNow()
+		  Self.StatusBar1.Caption = Self.List.RowCount.ToString(Locale.Current, "#,##0") + " item" + If(Self.List.RowCount = 1, "", "s")
+		  Self.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -274,7 +282,7 @@ End
 
 #tag Events SimulatorToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("Title", "Simulator"))
 		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("RefreshButton", "Reroll", IconToolbarRoll, "Re-run the simulator"))
@@ -321,19 +329,27 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -365,8 +381,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -389,14 +405,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -1,16 +1,15 @@
-#tag Window
-Begin ContainerControl ArkLootDropSettingsContainer
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+#tag DesktopWindow
+Begin DesktopContainer ArkLootDropSettingsContainer
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
-   DoubleBuffer    =   False
+   BackgroundColor =   &cFFFFFF00
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   96
-   HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -21,37 +20,36 @@ Begin ContainerControl ArkLootDropSettingsContainer
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   250
    Begin RangeField MinItemSetsField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   117
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -59,25 +57,24 @@ Begin ContainerControl ArkLootDropSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   50
    End
    Begin UITweaks.ResizedLabel MinItemSetsLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -94,11 +91,9 @@ Begin ContainerControl ArkLootDropSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Minimum Item Sets:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Underline       =   False
@@ -106,31 +101,30 @@ Begin ContainerControl ArkLootDropSettingsContainer
       Width           =   85
    End
    Begin RangeField MaxItemSetsField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   117
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -138,25 +132,24 @@ Begin ContainerControl ArkLootDropSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   26
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   50
    End
    Begin UITweaks.ResizedLabel MaxItemSetsLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -173,23 +166,22 @@ Begin ContainerControl ArkLootDropSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Maximum Item Sets:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   26
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   85
    End
-   Begin UpDownArrows MinItemSetsStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
+   Begin DesktopUpDownArrows MinItemSetsStepper
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   167
@@ -198,21 +190,27 @@ Begin ContainerControl ArkLootDropSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Visible         =   True
       Width           =   13
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin UpDownArrows MaxItemSetsStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
+   Begin DesktopUpDownArrows MaxItemSetsStepper
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   167
@@ -221,14 +219,19 @@ Begin ContainerControl ArkLootDropSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   26
       Transparent     =   False
       Visible         =   True
       Width           =   13
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin SwitchControl NoDuplicatesCheck
       AllowAutoDeactivate=   True
@@ -237,7 +240,6 @@ Begin ContainerControl ArkLootDropSettingsContainer
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -268,7 +270,6 @@ Begin ContainerControl ArkLootDropSettingsContainer
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -295,8 +296,6 @@ Begin ContainerControl ArkLootDropSettingsContainer
    Begin UITweaks.ResizedLabel NoDuplicatesLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -330,8 +329,6 @@ Begin ContainerControl ArkLootDropSettingsContainer
    Begin UITweaks.ResizedLabel AppendModeLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -369,7 +366,6 @@ Begin ContainerControl ArkLootDropSettingsContainer
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -394,11 +390,11 @@ Begin ContainerControl ArkLootDropSettingsContainer
       Width           =   250
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SetupUI()
 		  Self.mSettingUp = False
 		End Sub
@@ -426,13 +422,13 @@ End
 		  If Containers.Count = 0 Then
 		    Self.MinItemSetsField.Clear
 		    Self.MaxItemSetsField.Clear
-		    Self.NoDuplicatesCheck.VisualState(False) = CheckBox.VisualStates.Unchecked
-		    Self.AppendModeCheck.VisualState(False) = CheckBox.VisualStates.Unchecked
+		    Self.NoDuplicatesCheck.VisualState(False) = DesktopCheckBox.VisualStates.Unchecked
+		    Self.AppendModeCheck.VisualState(False) = DesktopCheckBox.VisualStates.Unchecked
 		  Else
 		    Var CommonMinItemSets As Integer = Containers(0).MinItemSets
 		    Var CommonMaxItemSets As Integer = Containers(0).MaxItemSets
-		    Var CommonNoDuplicates As CheckBox.VisualStates = If(Containers(0).PreventDuplicates, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
-		    Var CommonAppendMode As CheckBox.VisualStates = If(Containers(0).AppendMode, CheckBox.VisualStates.Checked, CheckBox.VisualStates.Unchecked)
+		    Var CommonNoDuplicates As DesktopCheckBox.VisualStates = If(Containers(0).PreventDuplicates, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked)
+		    Var CommonAppendMode As DesktopCheckBox.VisualStates = If(Containers(0).AppendMode, DesktopCheckBox.VisualStates.Checked, DesktopCheckBox.VisualStates.Unchecked)
 		    
 		    For Idx As Integer = 0 To Containers.LastIndex
 		      Self.mContainerRefs(Idx) = New WeakRef(Containers(Idx))
@@ -443,11 +439,11 @@ End
 		      If Containers(Idx).MaxItemSets <> CommonMaxItemSets Then
 		        CommonMaxItemSets = -1
 		      End If
-		      If If(Containers(Idx).PreventDuplicates, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
-		        CommonNoDuplicates = CheckBox.VisualStates.Indeterminate
+		      If If(Containers(Idx).PreventDuplicates, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
+		        CommonNoDuplicates = DesktopCheckBox.VisualStates.Indeterminate
 		      End If
-		      If If(Containers(Idx).AppendMode, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonAppendMode Then
-		        CommonAppendMode = CheckBox.VisualStates.Indeterminate
+		      If If(Containers(Idx).AppendMode, DesktopCheckBox.VisualStates.Checked, DesktopCheckbox.VisualStates.Unchecked) <> CommonAppendMode Then
+		        CommonAppendMode = DesktopCheckBox.VisualStates.Indeterminate
 		      End If
 		    Next
 		    
@@ -473,7 +469,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetFieldsEnabled()
-		  Var Enabled As Boolean = (Self.AppendModeCheck.VisualState = CheckBox.VisualStates.Unchecked)
+		  Var Enabled As Boolean = (Self.AppendModeCheck.VisualState = DesktopCheckBox.VisualStates.Unchecked)
 		  Self.MaxItemSetsField.Enabled = Enabled
 		  Self.MaxItemSetsLabel.Enabled = Enabled
 		  Self.MaxItemSetsStepper.Enabled = Enabled
@@ -630,7 +626,7 @@ End
 #tag EndEvents
 #tag Events MinItemSetsStepper
 	#tag Event
-		Sub Down()
+		Sub DownPressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -639,7 +635,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
+		Sub UpPressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -650,7 +646,7 @@ End
 #tag EndEvents
 #tag Events MaxItemSetsStepper
 	#tag Event
-		Sub Down()
+		Sub DownPressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -659,7 +655,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
+		Sub UpPressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -670,7 +666,7 @@ End
 #tag EndEvents
 #tag Events NoDuplicatesCheck
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -686,7 +682,7 @@ End
 #tag EndEvents
 #tag Events AppendModeCheck
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -704,19 +700,19 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -748,8 +744,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -916,14 +912,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

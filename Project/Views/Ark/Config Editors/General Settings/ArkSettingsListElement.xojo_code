@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ArkSettingsListElement
-Inherits ContainerControl
+Inherits DesktopContainer
 	#tag Event
 		Sub Resized()
 		  RaiseEvent Resize()
@@ -33,7 +33,7 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function DescriptionLabel() As Label
+		Protected Function DescriptionLabel() As DesktopLabel
 		  
 		End Function
 	#tag EndMethod
@@ -63,7 +63,7 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function NameLabel() As Label
+		Protected Function NameLabel() As DesktopLabel
 		  
 		End Function
 	#tag EndMethod
@@ -199,6 +199,14 @@ Inherits ContainerControl
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Composited"
+			Visible=true
+			Group="Window Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -364,8 +372,8 @@ Inherits ContainerControl
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"
@@ -400,26 +408,10 @@ Inherits ContainerControl
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Transparent"
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

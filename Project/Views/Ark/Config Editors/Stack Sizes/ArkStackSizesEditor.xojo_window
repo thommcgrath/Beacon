@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkStackSizesEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkStackSizesEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   468
    Index           =   -2147483648
@@ -27,56 +28,54 @@ Begin ArkConfigEditor ArkStackSizesEditor
    Visible         =   True
    Width           =   764
    Begin UITweaks.ResizedTextField GlobalMultiplierField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   "1.0 = Normal. Higher values increase stack sizes, smaller values decrease stack sizes."
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   209
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   53
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel GlobalMultiplierLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -89,15 +88,13 @@ Begin ArkConfigEditor ArkStackSizesEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Global Stack Size Multiplier:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   53
       Transparent     =   False
       Underline       =   False
@@ -105,15 +102,14 @@ Begin ArkConfigEditor ArkStackSizesEditor
       Width           =   177
    End
    Begin FadedSeparator FadedSeparator2
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -126,40 +122,43 @@ Begin ArkConfigEditor ArkStackSizesEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   87
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   764
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   2
-      ColumnsResizable=   False
       ColumnWidths    =   "*,150"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   380
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Engram	Stack Size"
@@ -172,22 +171,16 @@ Begin ArkConfigEditor ArkStackSizesEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   1
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   88
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   764
@@ -203,7 +196,6 @@ Begin ArkConfigEditor ArkStackSizesEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -220,7 +212,7 @@ Begin ArkConfigEditor ArkStackSizesEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   7
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -230,6 +222,7 @@ Begin ArkConfigEditor ArkStackSizesEditor
       Width           =   496
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -247,9 +240,10 @@ Begin ArkConfigEditor ArkStackSizesEditor
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -258,6 +252,10 @@ Begin ArkConfigEditor ArkStackSizesEditor
       Transparent     =   False
       Visible         =   True
       Width           =   250
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -266,7 +264,6 @@ Begin ArkConfigEditor ArkStackSizesEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -281,7 +278,7 @@ Begin ArkConfigEditor ArkStackSizesEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   9
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -291,7 +288,7 @@ Begin ArkConfigEditor ArkStackSizesEditor
       Width           =   269
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -312,7 +309,7 @@ End
 		  For Each Engram As Ark.Engram In Engrams
 		    Config.Override(Engram) = OtherConfig.Override(Engram)
 		  Next
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateList(Engrams)
 		  Return True
 		End Function
@@ -361,7 +358,7 @@ End
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -390,7 +387,7 @@ End
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -398,7 +395,7 @@ End
 		Private Sub UpdateList()
 		  Var Engrams() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Not Self.List.Selected(I) Then
+		    If Not Self.List.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -437,7 +434,7 @@ End
 		    Var Size As UInt64 = Config.Override(Engram)
 		    Self.List.AddRow(Engram.Label, Size.ToString(Locale.Current, Self.NumberFormat))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectEngrams.IndexOf(Engram.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = SelectEngrams.IndexOf(Engram.ObjectID) > -1
 		  Next Engram
 		  
 		  Self.List.SortingColumn = 0
@@ -457,7 +454,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.stacksize", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"\x2C##0", Scope = Private
+	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"#\x2C##0", Scope = Private
 	#tag EndConstant
 
 
@@ -465,7 +462,7 @@ End
 
 #tag Events GlobalMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -473,20 +470,20 @@ End
 		  Self.SettingUp = True
 		  Var Config As Ark.Configs.StackSizes = Self.Config(True)
 		  Config.GlobalMultiplier = CDbl(Me.Text)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(Self.ColumnStackSize) = Listbox.Alignments.Right
-		  Me.ColumnTypeAt(Self.ColumnStackSize) = Listbox.CellTypes.TextField
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnStackSize) = DesktopListbox.Alignments.Right
+		  Me.ColumnTypeAt(Self.ColumnStackSize) = DesktopListbox.CellTypes.TextField
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("Duplicate")
 		  If (DuplicateButton Is Nil) = False Then
 		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
@@ -499,19 +496,19 @@ End
 		    Return
 		  End If
 		  
-		  Var Size As UInt64 = CDbl(Me.CellValueAt(Row, Column))
+		  Var Size As UInt64 = CDbl(Me.CellTextAt(Row, Column))
 		  If Size > CType(Ark.Configs.StackSizes.MaximumQuantity, UInt64) Then
 		    Size = Ark.Configs.StackSizes.MaximumQuantity
 		    System.Beep
 		    Self.ShowAlert("Stack size too high", "Ark has a maximum stack size of " + Ark.Configs.StackSizes.MaximumQuantity.ToString(Locale.Current, Self.NumberFormat) + ".")
 		  End If
-		  Me.CellValueAt(Row, Column) = Size.ToString(Locale.Current, Self.NumberFormat)
+		  Me.CellTextAt(Row, Column) = Size.ToString(Locale.Current, Self.NumberFormat)
 		  
 		  Var Engram As Ark.Engram = Me.RowTagAt(Row)
 		  
 		  Var Config As Ark.Configs.StackSizes = Self.Config(True)
 		  Config.Override(Engram) = Size
-		  Self.Changed = True
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -533,7 +530,7 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var Engrams() As Ark.Engram
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) = False Then
+		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -551,7 +548,7 @@ End
 		  For Each Engram As Ark.Engram In Engrams
 		    Config.Override(Engram) = 0
 		  Next
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -560,7 +557,7 @@ End
 		  Var Items As New Dictionary
 		  Var Config As Ark.Configs.StackSizes = Self.Config(False)
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -597,7 +594,7 @@ End
 		      SelectEngrams.Add(UUID)
 		      Config.Override(Engram) = Size
 		    Next
-		    Self.Changed = True
+		    Self.Modified = True
 		    Self.UpdateList(SelectEngrams)
 		    Return
 		  End If
@@ -617,7 +614,7 @@ End
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AddEngram", "New Override", IconToolbarAdd, "Override the stack size of an engram."))
@@ -645,6 +642,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -686,14 +699,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -722,8 +727,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -906,14 +911,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

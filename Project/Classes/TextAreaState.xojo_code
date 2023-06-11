@@ -10,7 +10,7 @@ Protected Class TextAreaState
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ApplyTo(Area As TextArea)
+		Sub ApplyTo(Area As DesktopTextArea)
 		  Area.SelectionStart = Self.SelectionStart
 		  Area.SelectionLength = Self.SelectionLength
 		  Area.VerticalScrollPosition = Self.VerticalScrollPosition
@@ -34,7 +34,7 @@ Protected Class TextAreaState
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Area As TextArea)
+		Sub Constructor(Area As DesktopTextArea)
 		  Self.VerticalScrollPosition = Area.VerticalScrollPosition
 		  Self.SelectionStart = Area.SelectionStart
 		  Self.SelectionLength = Area.SelectionLength

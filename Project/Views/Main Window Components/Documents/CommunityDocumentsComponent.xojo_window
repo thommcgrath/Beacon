@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin DocumentsComponentView CommunityDocumentsComponent
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin DocumentsComponentView CommunityDocumentsComponent
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
+   DoubleBuffer    =   "True"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   520
    Index           =   -2147483648
@@ -33,10 +34,9 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       AllowTabs       =   True
       Backdrop        =   0
       BackgroundColor =   &cFFFFFF00
+      Composited      =   False
       ConsoleSafe     =   False
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   62
       Index           =   -2147483648
@@ -68,7 +68,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -104,8 +103,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       Bold            =   False
       ColumnCount     =   5
       ColumnWidths    =   "2*,*,100,*,125"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   "#ColumnDownloads"
       DefaultSortDirection=   -1
@@ -115,8 +112,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -159,7 +155,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -190,7 +186,7 @@ End
 		  
 		  Var SelectedDocuments() As String
 		  For I As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.Selected(I) Then
+		    If Self.List.RowSelectedAt(I) Then
 		      Var Document As BeaconAPI.Document = Self.List.RowTagAt(I)
 		      SelectedDocuments.Add(Document.ResourceURL)
 		    End If
@@ -201,13 +197,13 @@ End
 		    
 		    Self.List.AddRow("")
 		    Var Idx As Integer = Self.List.LastAddedRowIndex
-		    Self.List.CellValueAt(Idx, Self.ColumnName) = Document.Name
-		    Self.List.CellValueAt(Idx, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
-		    Self.List.CellValueAt(Idx, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
-		    Self.List.CellValueAt(Idx, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		    Self.List.CellValueAt(Idx, Self.ColumnDownloads) = Document.DownloadCount.ToString(Locale.Raw, ",##0")
+		    Self.List.CellTextAt(Idx, Self.ColumnName) = Document.Name
+		    Self.List.CellTextAt(Idx, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
+		    Self.List.CellTextAt(Idx, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
+		    Self.List.CellTextAt(Idx, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		    Self.List.CellTextAt(Idx, Self.ColumnDownloads) = Document.DownloadCount.ToString(Locale.Raw, "#,##0")
 		    Self.List.RowTagAt(Idx) = Document
-		    Self.List.Selected(Idx) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
+		    Self.List.RowSelectedAt(Idx) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
 		  Next
 		  
 		  Self.List.InvalidateScrollPosition
@@ -256,7 +252,7 @@ End
 
 #tag Events FilterBar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Mask = Ark.Maps.UniversalMask
 		End Sub
 	#tag EndEvent
@@ -321,7 +317,7 @@ End
 		    Params.Value("sort") = "download_count"
 		  End Select
 		  
-		  If Me.ColumnSortDirectionAt(Me.SortingColumn) = Listbox.SortDirections.Descending Then
+		  If Me.ColumnSortDirectionAt(Me.SortingColumn) = DesktopListbox.SortDirections.Descending Then
 		    Params.Value("direction") = "desc"
 		  Else
 		    Params.Value("direction") = "asc"
@@ -330,12 +326,6 @@ End
 		  Var Request As New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocuments)
 		  Self.APISocket.Start(Request)
 		End Sub
-	#tag EndEvent
-	#tag Event
-		Function SortColumn(column As Integer) As Boolean
-		  #Pragma Unused Column
-		  Return True
-		End Function
 	#tag EndEvent
 	#tag Event
 		Function HeaderPressed(column as Integer) As Boolean
@@ -354,7 +344,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  For Row As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Row) = False Then
+		    If Me.RowSelectedAt(Row) = False Then
 		      Continue
 		    End If
 		    
@@ -362,6 +352,12 @@ End
 		    Self.OpenDocument(Document.ResourceURL)
 		  Next
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ColumnSorted(column As Integer) As Boolean
+		  #Pragma Unused Column
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events APISocket
@@ -384,6 +380,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -597,8 +609,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -633,26 +645,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -98,6 +98,17 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function GameName(GameID As String) As String
+		  Select Case GameID
+		  Case Ark.Identifier
+		    Return "Ark: Survival Evolved"
+		  Else
+		    Return GameID
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(Config As Ark.ConfigGroup) As String
 		  Return Language.LabelForConfig(Config.InternalName)
 		End Function
@@ -150,7 +161,7 @@ Protected Module Language
 
 	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
-		  Return Quantity.ToString(Locale.Current, ",##0") + " " + If(Quantity = 1, Singular, Plural)
+		  Return Quantity.ToString(Locale.Current, "#,##0") + " " + If(Quantity = 1, Singular, Plural)
 		End Function
 	#tag EndMethod
 

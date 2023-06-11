@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl DocumentFilterControl
+#tag DesktopWindow
+Begin DesktopContainer DocumentFilterControl
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   62
    Index           =   -2147483648
@@ -27,6 +26,7 @@ Begin ContainerControl DocumentFilterControl
    Visible         =   True
    Width           =   758
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   True
@@ -44,6 +44,7 @@ Begin ContainerControl DocumentFilterControl
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   10
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   4
@@ -55,6 +56,10 @@ Begin ContainerControl DocumentFilterControl
       Transparent     =   False
       Visible         =   True
       Width           =   200
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin UITweaks.ResizedPushButton MapPickerButton
       AllowAutoDeactivate=   True
@@ -123,8 +128,6 @@ Begin ContainerControl DocumentFilterControl
    Begin UITweaks.ResizedPopupMenu OperatorMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -155,8 +158,6 @@ Begin ContainerControl DocumentFilterControl
    Begin UITweaks.ResizedPopupMenu ModRestrictionMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -185,13 +186,13 @@ Begin ContainerControl DocumentFilterControl
       Width           =   125
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mMask = Ark.Maps.UniversalMask
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
@@ -245,7 +246,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
@@ -381,7 +382,7 @@ End
 #tag EndEvents
 #tag Events MapPickerButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If (Self.mMapSelectionController Is Nil) = False And Self.mMapSelectionController.Visible Then
 		    Self.mMapSelectionController.Dismiss(False)
 		    Self.mMapSelectionController = Nil
@@ -400,14 +401,16 @@ End
 #tag EndEvents
 #tag Events NewDocumentButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  RaiseEvent NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events OperatorMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.mSilenceChangeEvents Then
 		    Return
 		  End If
@@ -422,7 +425,9 @@ End
 #tag EndEvents
 #tag Events ModRestrictionMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.mSilenceChangeEvents Then
 		    Return
 		  End If
@@ -436,6 +441,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -585,8 +598,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -669,14 +682,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="InitialParent"
 		Visible=false
 		Group="Position"
@@ -690,14 +695,6 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

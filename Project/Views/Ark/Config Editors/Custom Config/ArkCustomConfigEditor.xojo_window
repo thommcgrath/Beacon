@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   382
    Index           =   -2147483648
@@ -61,7 +62,6 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -88,17 +88,17 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
       Width           =   608
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, App.Notification_AppearanceChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
 		End Sub
 	#tag EndEvent
@@ -576,7 +576,7 @@ End
 
 #tag Events ConfigArea
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.UpdateTextColors()
 		  Self.UpdateAutoComplete()
 		  
@@ -596,15 +596,15 @@ End
 		  Select Case Self.ActiveButtonName
 		  Case "GameUserSettingsIniButton"
 		    Self.Config(True).GameUserSettingsIniContent = SanitizedText
-		    Self.Changed = True
+		    Self.Modified = True
 		  Case "GameIniButton"
 		    Self.Config(True).GameIniContent = SanitizedText
-		    Self.Changed = True
+		    Self.Modified = True
 		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub SelChange()
+		Sub SelectionChanged()
 		  Self.UpdateEncryptButton()
 		  Self.UpdateCommentButton()
 		  Self.UpdateAutoComplete()
@@ -675,7 +675,7 @@ End
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateTab("GameUserSettingsIniButton", "GameUserSettings.ini"))
@@ -724,6 +724,22 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
@@ -764,14 +780,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -800,8 +808,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -984,14 +992,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

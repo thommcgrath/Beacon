@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ServersConfigEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ServersConfigEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   506
    Index           =   -2147483648
@@ -27,31 +28,34 @@ Begin ArkConfigEditor ServersConfigEditor
    Visible         =   True
    Width           =   856
    Begin ServersListbox ServerList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   1
-      ColumnsResizable=   False
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   40
       DefaultSortColumn=   0
       DefaultSortDirection=   1
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
       Filter          =   ""
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   424
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -64,22 +68,16 @@ Begin ArkConfigEditor ServersConfigEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   1
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   82
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   299
@@ -87,15 +85,14 @@ Begin ArkConfigEditor ServersConfigEditor
       _ScrollWidth    =   -1
    End
    Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   506
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   299
@@ -111,9 +108,9 @@ Begin ArkConfigEditor ServersConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   1
    End
@@ -126,7 +123,6 @@ Begin ArkConfigEditor ServersConfigEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -143,7 +139,7 @@ Begin ArkConfigEditor ServersConfigEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -153,6 +149,7 @@ Begin ArkConfigEditor ServersConfigEditor
       Width           =   299
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -170,9 +167,10 @@ Begin ArkConfigEditor ServersConfigEditor
       LockRight       =   False
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -181,6 +179,10 @@ Begin ArkConfigEditor ServersConfigEditor
       Transparent     =   False
       Visible         =   True
       Width           =   280
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -189,7 +191,6 @@ Begin ArkConfigEditor ServersConfigEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -204,7 +205,7 @@ Begin ArkConfigEditor ServersConfigEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -214,7 +215,7 @@ Begin ArkConfigEditor ServersConfigEditor
       Width           =   299
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -227,7 +228,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ServerList.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -235,6 +236,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Self.ServerList.UpdateList()
+		  Self.UpdateRefreshButton()
 		End Sub
 	#tag EndEvent
 
@@ -283,7 +285,7 @@ End
 		    If Self.Project.ServerProfile(Idx).ProfileID <> CurrentProfileID And Self.Project.ServerProfile(Idx) IsA Ark.ServerProfile Then
 		      Ark.ServerProfile(Self.Project.ServerProfile(Idx)).MessageOfTheDay = Message.Clone
 		      Ark.ServerProfile(Self.Project.ServerProfile(Idx)).MessageDuration = Duration
-		      Self.Changed = Self.Changed Or Self.Project.Modified
+		      Self.Modified = Self.Modified Or Self.Project.Modified
 		    End If
 		  Next
 		  
@@ -300,16 +302,90 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Engine_Discovered(Sender As Ark.IntegrationEngine, Data() As Beacon.DiscoveredData)
+		  Var Profiles As New Dictionary
+		  Var AllProfiles() As Beacon.ServerProfile = Self.Project.ServerProfiles
+		  For Each Profile As Beacon.ServerProfile In AllProfiles
+		    Var ServiceId As Variant = Profile.ProviderServiceID
+		    If IsNull(ServiceId) Then
+		      Continue
+		    End If
+		    
+		    Profiles.Value(ServiceId) = Profile
+		  Next
+		  
+		  For Each DiscoveredData As Beacon.DiscoveredData In Data
+		    Var DiscoveredProfile As Beacon.ServerProfile = DiscoveredData.Profile
+		    Var ServiceId As Variant = DiscoveredProfile.ProviderServiceID
+		    If IsNull(ServiceId) Or Profiles.HasKey(ServiceId) = False Then
+		      Continue
+		    End If
+		    
+		    Var ProjectProfile As Beacon.ServerProfile = Profiles.Value(ServiceId)
+		    ProjectProfile.UpdateDetailsFrom(DiscoveredProfile)
+		  Next
+		  Self.Modified = Self.Project.Modified
+		  
+		  Var AllFinished As Boolean = True
+		  For Each Entry As DictionaryEntry In Self.mEngines
+		    Var Engine As Ark.IntegrationEngine = Entry.Value
+		    
+		    If Engine.Finished = False Then
+		      AllFinished = False
+		    End If
+		  Next
+		  
+		  If AllFinished Then
+		    Self.FinishRefreshingDetails()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Engine_Wait(Sender As Ark.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
+		  #Pragma Unused Sender
+		  
+		  Select Case Controller.Action
+		  Case "Auth External"
+		    Var Profile As Ark.ServerProfile = Sender.Profile
+		    Var Account As Beacon.ExternalAccount = Self.Project.Accounts.GetByUUID(Profile.ExternalAccountUUID)
+		    If (Account Is Nil) = False Then
+		      Self.ShowAlert("Authorization Expired", "Authorization for " + Account.Provider + " account '" + Account.Label + "' has expired. Please select a server which belongs to the account to refresh authorization.")
+		    Else
+		      Call ShowAlert("Authorization Expired", "The authorization for an unknown account has expired. It may be necessary to import again.")
+		    End If
+		  End Select
+		  
+		  Controller.ShouldResume = True
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub FinishRefreshingDetails()
+		  Self.mRefreshing = False
+		  Self.UpdateRefreshButton()
+		  Self.ServerList.UpdateList()
+		  
+		  Var Explanation As String = "The information shown in the list is the most up-to-date Beacon has available."
+		  If Self.Modified Then
+		    Explanation = Explanation + " Don't forget to save your project."
+		  End If 
+		  Self.ShowAlert("Server Refresh Finished", Explanation)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub HandleViewMenu(ItemRect As Rect)
-		  Var Base As New MenuItem
+		  Var Base As New DesktopMenuItem
 		  
-		  Var ViewFullNames As New MenuItem("Use Full Server Names", ServersListbox.NamesFull)
-		  Var ViewAbbreviatedNames As New MenuItem("Use Abbreviated Server Names", ServersListbox.NamesAbbreviated)
-		  Var SortByName As New MenuItem("Sort By Name", ServersListbox.SortByName)
-		  Var SortByAddress As New MenuItem("Sort By Address", ServersListbox.SortByAddress)
-		  Var SortByColor As New MenuItem("Sort By Color", ServersListbox.SortByColor)
-		  Var ShowServerIds As New MenuItem("Show Server Ids")
+		  Var ViewFullNames As New DesktopMenuItem("Use Full Server Names", ServersListbox.NamesFull)
+		  Var ViewAbbreviatedNames As New DesktopMenuItem("Use Abbreviated Server Names", ServersListbox.NamesAbbreviated)
+		  Var SortByName As New DesktopMenuItem("Sort By Name", ServersListbox.SortByName)
+		  Var SortByAddress As New DesktopMenuItem("Sort By Address", ServersListbox.SortByAddress)
+		  Var SortByColor As New DesktopMenuItem("Sort By Color", ServersListbox.SortByColor)
+		  Var ShowServerIds As New DesktopMenuItem("Show Server Ids")
 		  ViewFullNames.HasCheckMark = Preferences.ServersListNameStyle = ServersListbox.NamesFull
 		  ViewAbbreviatedNames.HasCheckMark = Preferences.ServersListNameStyle = ServersListbox.NamesAbbreviated
 		  SortByName.HasCheckMark = Preferences.ServersListSortedValue = ServersListbox.SortByName
@@ -318,15 +394,15 @@ End
 		  ShowServerIds.HasCheckMark = Preferences.ServersListShowIds
 		  Base.AddMenu(ViewFullNames)
 		  Base.AddMenu(ViewAbbreviatedNames)
-		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		  Base.AddMenu(SortByName)
 		  Base.AddMenu(SortByAddress)
 		  Base.AddMenu(SortByColor)
-		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		  Base.AddMenu(ShowServerIds)
 		  
-		  Var Position As Point = Self.GlobalPosition
-		  Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		  Var Position As Point = Self.ConfigToolbar.GlobalPosition
+		  Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		  If Choice Is Nil Then
 		    Return
 		  End If
@@ -351,9 +427,68 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub RefreshDetails()
+		  If Self.mRefreshing = True Then
+		    Return
+		  End If
+		  
+		  Var Accounts() As Beacon.ExternalAccount = Self.Project.Accounts.All
+		  Var Engines As New Dictionary
+		  For Each Account As Beacon.ExternalAccount In Accounts
+		    Var Engine As Ark.IntegrationEngine
+		    
+		    Select Case Account.Provider
+		    Case Beacon.ExternalAccount.ProviderNitrado
+		      Var Profile As New Ark.NitradoServerProfile
+		      Profile.ExternalAccountUUID = Account.UUID
+		      
+		      Engine = New Ark.NitradoIntegrationEngine(Profile)
+		    Case Beacon.ExternalAccount.ProviderGameServerApp
+		      Engine = New Ark.GSAIntegrationEngine(Account)
+		    End Select
+		    
+		    If Engine Is Nil Then
+		      Continue
+		    End If
+		    
+		    Engines.Value(Account.UUID.StringValue) = Engine
+		    AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		    AddHandler Engine.Wait, WeakAddressOf Engine_Wait
+		    Engine.BeginDiscovery(Self.Project)
+		  Next
+		  Self.mEngines = Engines
+		  Self.mRefreshing = True
+		  Self.UpdateRefreshButton()
+		  
+		  If Self.mEngines.KeyCount = 0 Then
+		    Self.FinishRefreshingDetails()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateRefreshButton()
+		  If Self.ConfigToolbar Is Nil Then
+		    Return
+		  End If
+		  
+		  Var RefreshButton As OmniBarItem = Self.ConfigToolbar.Item("RefreshButton")
+		  If RefreshButton Is Nil Then
+		    Return
+		  End If
+		  
+		  RefreshButton.HasProgressIndicator = Self.mRefreshing
+		  RefreshButton.Progress = OmniBarItem.ProgressIndeterminate
+		  RefreshButton.ActiveColor = If(Self.mRefreshing, OmniBarItem.ActiveColors.Blue, OmniBarItem.ActiveColors.Accent)
+		  RefreshButton.AlwaysUseActiveColor = Self.mRefreshing
+		  RefreshButton.Enabled = Self.mRefreshing = False And Self.Project.ServerProfileCount > 0
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
-		  Self.Changed = Sender.Changed
+		  Self.Modified = Sender.Modified
 		  Self.ServerList.UpdateList()
 		End Sub
 	#tag EndMethod
@@ -412,6 +547,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mEngines As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRefreshing As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mViews As Dictionary
 	#tag EndProperty
 
@@ -420,7 +563,7 @@ End
 
 #tag Events ServerList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Select Case Me.SelectedRowCount
 		  Case 0
 		    Self.CurrentProfileID = ""
@@ -456,7 +599,7 @@ End
 		    Var Profiles() As Ark.ServerProfile
 		    Var Parts() As String
 		    For Idx As Integer = 0 To Me.LastRowIndex
-		      If Not Me.Selected(Idx) Then
+		      If Not Me.RowSelectedAt(Idx) Then
 		        Continue
 		      End If
 		      
@@ -497,7 +640,7 @@ End
 		  End If
 		  
 		  For I As Integer = Me.LastRowIndex DownTo 0
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      Var Profile As Ark.ServerProfile = Me.RowTagAt(I)
 		      If Self.mViews.HasKey(Profile.ProfileID) Then
 		        If Self.CurrentProfileID = Profile.ProfileID Then
@@ -509,32 +652,34 @@ End
 		        Self.mViews.Remove(Profile.ProfileID)
 		      End If
 		      Self.Project.RemoveServerProfile(Profile)
-		      Self.Changed = True
+		      Self.Modified = True
 		      Me.RemoveRowAt(I)
 		    End If
 		  Next
+		  
+		  Self.UpdateRefreshButton()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var CopyProfileMenuItem As New MenuItem("Copy Profile ID")
+		  Var CopyProfileMenuItem As New DesktopMenuItem("Copy Profile ID")
 		  CopyProfileMenuItem.Enabled = False
 		  Base.AddMenu(CopyProfileMenuItem)
 		  
-		  Var DeployItem As MenuItem
+		  Var DeployItem As DesktopMenuItem
 		  If Me.SelectedRowCount > 1 Then
-		    DeployItem = New MenuItem("Deploy These Servers…")
+		    DeployItem = New DesktopMenuItem("Deploy These Servers…")
 		  Else
-		    DeployItem = New MenuItem("Deploy This Server…")
+		    DeployItem = New DesktopMenuItem("Deploy This Server…")
 		  End If
 		  Var DeployProfiles() As Beacon.ServerProfile
 		  Var NitradoProfiles() As Ark.NitradoServerProfile
 		  Var LocalProfiles() As Ark.LocalServerProfile
 		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Idx) = False Then
+		    If Me.RowSelectedAt(Idx) = False Then
 		      Continue
 		    End If
 		    Var Profile As Ark.ServerProfile = Me.RowTagAt(Idx)
@@ -552,17 +697,17 @@ End
 		  DeployItem.Tag = DeployProfiles
 		  Base.AddMenu(DeployItem)
 		  
-		  Var BackupsItem As New MenuItem("Show Config Backups")
+		  Var BackupsItem As New DesktopMenuItem("Show Config Backups")
 		  Base.AddMenu(BackupsItem)
 		  
 		  If NitradoProfiles.Count > 0 Then
-		    Base.AddMenu(New MenuItem("Open Nitrado Dashboard", NitradoProfiles))
+		    Base.AddMenu(New DesktopMenuItem("Open Nitrado Dashboard", NitradoProfiles))
 		  End If
 		  
 		  If LocalProfiles.Count > 0 Then
 		    #if Not TargetMacOS
 		      // Sandbox prevents this from working on macOS
-		      Base.AddMenu(New MenuItem("Show Config Files", LocalProfiles))
+		      Base.AddMenu(New DesktopMenuItem("Show Config Files", LocalProfiles))
 		    #endif
 		  End If
 		  
@@ -580,7 +725,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
 		  Select Case HitItem.Text
 		  Case "Show Config Backups"
 		    Var Folder As FolderItem = HitItem.Tag
@@ -627,12 +772,13 @@ End
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddServerButton", "New Server", IconToolbarAdd, "Add a new simple server."))
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
-		  Me.Append(OmniBarItem.CreateButton("ViewOptionsButton", "View Options", IconToolbarView, "Change server list view options."))
+		  Me.Append(OmniBarItem.CreateButton("RefreshButton", "Refresh", IconToolbarRefresh, "Refresh server details.", Self.Project.ServerProfileCount > 0))
+		  Me.Append(OmniBarItem.CreateButton("ViewOptionsButton", "View", IconToolbarView, "Change server list view options."))
 		  
 		  Me.Item("ConfigTitle").Priority = 5
 		  Me.Item("ConfigTitleSeparator").Priority = 5
@@ -647,8 +793,11 @@ End
 		    
 		    Self.Project.AddServerProfile(Profile)
 		    Self.ServerList.UpdateList(Profile, True)
+		    Self.UpdateRefreshButton()
 		  Case "ViewOptionsButton"
 		    Self.HandleViewMenu(ItemRect)
+		  Case "RefreshButton"
+		    Self.RefreshDetails()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -674,6 +823,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -715,14 +880,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -751,8 +908,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -935,14 +1092,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

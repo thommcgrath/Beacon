@@ -1,12 +1,12 @@
 #tag Class
 Protected Class BeaconWindow
-Inherits Window
+Inherits DesktopWindow
 	#tag Event
-		Sub Close()
-		  RaiseEvent Close
+		Sub Closing()
+		  RaiseEvent Closing
 		  
 		  If Self.mWindowMenuItem <> Nil Then
-		    Var WindowMenu As MenuItem = MainMenuBar.Child("WindowMenu")
+		    Var WindowMenu As DesktopMenuItem = MainMenuBar.Child("WindowMenu")
 		    For I As Integer = WindowMenu.Count - 1 DownTo 0
 		      If WindowMenu.MenuAt(I) = Self.mWindowMenuItem Then
 		        WindowMenu.RemoveMenuAt(I)
@@ -17,14 +17,14 @@ Inherits Window
 		      End If
 		    Next
 		    
-		    RemoveHandler Self.mWindowMenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
+		    RemoveHandler Self.mWindowMenuItem.MenuItemSelected, WeakAddressOf Self.mWindowMenuItem_MenuItemSelected
 		    Self.mWindowMenuItem = Nil
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuBarSelected()
 		  If Self.HasCloseButton Then
 		    FileClose.Enabled = True
 		  End If
@@ -38,7 +38,7 @@ Inherits Window
 		    Self.mWindowMenuItem.Enabled = True
 		  End If
 		  
-		  RaiseEvent EnableMenuItems
+		  RaiseEvent MenuBarSelected
 		End Sub
 	#tag EndEvent
 
@@ -51,15 +51,15 @@ Inherits Window
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var InitialWidth As Integer = Self.Width
 		  // Dumb workaround because contents are sizing 1 pixels too short.
 		  // A resize causes them to find their correct positions.
 		  Self.Width = InitialWidth + 1
 		  Self.Width = InitialWidth
 		  
-		  Var MenuItem As New MenuItem(Self.Title)
-		  AddHandler MenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
+		  Var MenuItem As New DesktopMenuItem(Self.Title)
+		  AddHandler MenuItem.MenuItemSelected, WeakAddressOf Self.mWindowMenuItem_MenuItemSelected
 		  
 		  If MenuItem <> Nil Then
 		    Self.mWindowMenuItem = MenuItem
@@ -68,11 +68,11 @@ Inherits Window
 		    MainMenuBar.Child("WindowMenu").AddMenu(MenuItem)
 		  End If
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  
 		  Self.mOpened = True
 		  RaiseEvent UpdateControlPositions
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
@@ -126,23 +126,24 @@ Inherits Window
 		    
 		    Var SharedApp As Ptr = SharedApplication(NSClassFromString("NSApplication"))
 		    ActivateIgnoringOtherApps(SharedApp, True)
+		    Self.Show()
+		    ActivateIgnoringOtherApps(SharedApp, False)
 		  #elseif TargetWin32
-		    Declare Function BringWindowToTop Lib "User32" (Target As Int32) As Boolean
-		    Call BringWindowToTop(Self.Handle)
+		    Self.ActivateWindowMBS
 		  #else
 		    #Pragma Warning "No code to bring a window to foreground on this platform."
+		    Self.Show()
 		  #endif
-		  
-		  Self.Show()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mWindowMenuItem_Action(Sender As MenuItem) As Boolean
+		Private Function mWindowMenuItem_MenuItemSelected(Sender As DesktopMenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
 		  Self.BringToFront()
 		  Return True
+		  
 		End Function
 	#tag EndMethod
 
@@ -163,11 +164,11 @@ Inherits Window
 
 
 	#tag Hook, Flags = &h0
-		Event Close()
+		Event Closing()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event EnableMenuItems()
+		Event MenuBarSelected()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -175,7 +176,7 @@ Inherits Window
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -191,12 +192,26 @@ Inherits Window
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.Changed
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.Changed = Value
+			End Set
+		#tag EndSetter
+		Modified As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mOpened As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWindowMenuItem As MenuItem
+		Private mWindowMenuItem As DesktopMenuItem
 	#tag EndProperty
 
 
@@ -347,8 +362,8 @@ Inherits Window
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"
@@ -394,7 +409,7 @@ Inherits Window
 			Visible=true
 			Group="Menus"
 			InitialValue=""
-			Type="MenuBar"
+			Type="DesktopMenuBar"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -435,6 +450,14 @@ Inherits Window
 			Group="OS X (Carbon)"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Modified"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

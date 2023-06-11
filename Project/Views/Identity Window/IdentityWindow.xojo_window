@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconAutopositionWindow IdentityWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -31,9 +31,8 @@ Begin BeaconAutopositionWindow IdentityWindow
       AllowTabs       =   True
       Backdrop        =   0
       BackgroundColor =   &cFFFFFF00
-      DoubleBuffer    =   False
+      Composited      =   False
       Enabled         =   True
-      EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   500
       Index           =   -2147483648
@@ -61,11 +60,11 @@ Begin BeaconAutopositionWindow IdentityWindow
       Width           =   864
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  #if TargetMacOS
 		    Var Win As NSWindowMBS = Self.NSWindowMBS
 		    Win.TitlebarAppearsTransparent = True
@@ -223,8 +222,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -270,7 +269,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

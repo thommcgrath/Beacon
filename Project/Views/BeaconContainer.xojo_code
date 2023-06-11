@@ -1,9 +1,9 @@
 #tag Class
 Protected Class BeaconContainer
-Inherits ContainerControl
+Inherits DesktopContainer
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  
 		  #if XojoVersion >= 2018.01
 		    Self.Composited = False
@@ -72,7 +72,11 @@ Inherits ContainerControl
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event ContentsChanged()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -96,22 +100,42 @@ Inherits ContainerControl
 		Private mLastWidth As Integer
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mModified
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mModified = Value
+			  
+			  RaiseEvent ContentsChanged
+			End Set
+		#tag EndSetter
+		Modified As Boolean
+	#tag EndComputedProperty
+
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Composited"
+			Visible=true
+			Group="Window Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -143,8 +167,8 @@ Inherits ContainerControl
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBackgroundColor"
@@ -283,14 +307,6 @@ Inherits ContainerControl
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
@@ -320,6 +336,14 @@ Inherits ContainerControl
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Modified"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

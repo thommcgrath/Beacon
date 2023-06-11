@@ -1,0 +1,190 @@
+@use "sass:map";
+
+.w-10 {
+	width: 10%;
+}
+
+.w-20 {
+	width: 20%;
+}
+
+.w-25 {
+	width: 25%;
+}
+
+.w-30 {
+	width: 30%;
+}
+
+.w-40 {
+	width: 40%;
+}
+
+.w-50 {
+	width: 50%;
+}
+
+.w-60 {
+	width: 60%;
+}
+
+.w-70 {
+	width: 70%;
+}
+
+.w-75 {
+	width: 75%;
+}
+
+.w-80 {
+	width: 80%;
+}
+
+.w-90 {
+	width: 90%;
+}
+
+$spacing: (
+	0: 0px,
+	1: 0.25rem,
+	2: 0.5rem,
+	3: 1rem,
+	4: 1.5rem,
+	5: 3rem
+);
+
+$margins: (
+	"margin": (
+		property: margin,
+		class: m,
+		values: $spacing
+	),
+	"margin-y": (
+		property: margin-top margin-bottom,
+		class: my,
+		values: $spacing
+	),
+	"margin-x": (
+		property: margin-left margin-right,
+		class: mx,
+		values: $spacing
+	),
+	"margin-top": (
+		property: margin-top,
+		class: mt,
+		values: $spacing
+	),
+	"margin-left": (
+		property: margin-left,
+		class: ml,
+		values: $spacing
+	),
+	"margin-right": (
+		property: margin-right,
+		class: mr,
+		values: $spacing
+	),
+	"margin-bottom": (
+		property: margin-bottom,
+		class: mb,
+		values: $spacing
+	)
+);
+
+$paddings: (
+	"padding": (
+		property: margin,
+		class: m,
+		values: $spacing
+	),
+	"margin-y": (
+		property: margin-top margin-bottom,
+		class: my,
+		values: $spacing
+	),
+	"margin-x": (
+		property: margin-left margin-right,
+		class: mx,
+		values: $spacing
+	),
+	"margin-top": (
+		property: margin-top,
+		class: mt,
+		values: $spacing
+	),
+	"margin-left": (
+		property: margin-left,
+		class: ml,
+		values: $spacing
+	),
+	"margin-right": (
+		property: margin-right,
+		class: mr,
+		values: $spacing
+	),
+	"margin-bottom": (
+		property: margin-bottom,
+		class: mb,
+		values: $spacing
+	)
+);
+
+$paddings: (
+	"padding": (
+		property: padding,
+		class: p,
+		values: $spacing
+	),
+	"padding-y": (
+		property: padding-top padding-bottom,
+		class: py,
+		values: $spacing
+	),
+	"padding-x": (
+		property: padding-left padding-right,
+		class: px,
+		values: $spacing
+	),
+	"padding-top": (
+		property: padding-top,
+		class: pt,
+		values: $spacing
+	),
+	"padding-left": (
+		property: padding-left,
+		class: pl,
+		values: $spacing
+	),
+	"padding-right": (
+		property: padding-right,
+		class: pr,
+		values: $spacing
+	),
+	"padding-bottom": (
+		property: padding-bottom,
+		class: pb,
+		values: $spacing
+	)
+);
+
+@mixin repeat($map) {
+	$class: map.get($map, "class");
+	$properties: map.get($map, "property");
+	$values: map.get($map, "values");
+	
+	@each $suffix, $value in $values {
+		.#{$class}-#{$suffix} {
+			@each $property in $properties {
+				#{$property}: $value !important;
+			}
+		}
+	}
+}
+
+@each $key, $map in $margins {
+	@include repeat($map);
+}
+
+@each $key, $map in $paddings {
+	@include repeat($map);
+}

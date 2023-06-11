@@ -159,7 +159,7 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub FixTabFont(Extends Panel As TabPanel)
+		Sub FixTabFont(Extends Panel As DesktopTabPanel)
 		  #if TargetCocoa
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
 		    Var NSFont As Ptr = objc_getClass("NSFont")
@@ -181,19 +181,43 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function GlobalizeCoordinate(Extends Target As RectControl, Coordinate As Xojo.Point) As Xojo.Point
-		  Var Globalized As New Xojo.Point(Target.Left + Coordinate.X, Target.Top + Coordinate.Y)
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function GlobalPosition(Extends Target As DesktopContainer) As Xojo.Point
+		  Var Offset As Xojo.Point
+		  Var Parent As Object = Target.Parent
 		  
-		  Var Parent As Window = Target.Window
-		  Do
-		    Globalized = New Xojo.Point(Globalized.X + Parent.Left, Globalized.Y + Parent.Top)
-		    If Parent IsA ContainerControl Then
-		      Parent = ContainerControl(Parent).Window
-		    Else
-		      Return Globalized
-		    End If
+		  Do Until (Parent IsA DesktopUIControl) = False
+		    Parent = DesktopUIControl(Parent).Parent
 		  Loop
+		  
+		  Select Case Parent
+		  Case IsA DesktopContainer
+		    Offset = DesktopContainer(Parent).GlobalPosition
+		  Case IsA DesktopWindow
+		    Offset = New Xojo.Point(DesktopWindow(Parent).Left, DesktopWindow(Parent).Top)
+		  End Select
+		  
+		  Return New Xojo.Point(Target.Left + Offset.X, Target.Top + Offset.Y)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function GlobalPosition(Extends Target As DesktopUIControl) As Xojo.Point
+		  Var Offset As Xojo.Point
+		  Var Parent As Object = Target.Parent
+		  
+		  Do Until (Parent IsA DesktopUIControl) = False
+		    Parent = DesktopUIControl(Parent).Parent
+		  Loop
+		  
+		  Select Case Parent
+		  Case IsA DesktopContainer
+		    Offset = DesktopContainer(Parent).GlobalPosition
+		  Case IsA DesktopWindow
+		    Offset = New Xojo.Point(DesktopWindow(Parent).Left, DesktopWindow(Parent).Top)
+		  End Select
+		  
+		  Return New Xojo.Point(Target.Left + Offset.X, Target.Top + Offset.Y)
 		End Function
 	#tag EndMethod
 
@@ -242,20 +266,14 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
-		Function IdealWidth(Extends Target As Label) As Integer
-		  Return IdealWidth(Target)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
-		Protected Function IdealWidth(ParamArray Targets() As Label) As Integer
+		Protected Function IdealWidth(ParamArray Targets() As DesktopLabel) As Integer
 		  Return IdealWidth(Targets)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function IdealWidth(Targets() As Label) As Integer
+		Protected Function IdealWidth(Targets() As DesktopLabel) As Integer
 		  Var MaxWidth As Integer
 		  Var Pic As New Picture(20, 20)
 		  Var G As Graphics = Pic.Graphics
@@ -278,6 +296,12 @@ Protected Module BeaconUI
 		  #else
 		    Return MaxWidth
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function IdealWidth(Extends Target As DesktopLabel) As Integer
+		  Return IdealWidth(Target)
 		End Function
 	#tag EndMethod
 
@@ -328,38 +352,15 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub RemoveAllRows(Extends Menu As MenuItem)
+		Sub RemoveAllRows(Extends Menu As DesktopMenuItem)
 		  For I As Integer = Menu.LastRowIndex DownTo 0
 		    Menu.RemoveMenuAt(I)
 		  Next
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target64Bit))
-		Sub ShowAlert(Extends Win As MobileScreen, Message As String, Explanation As String)
-		  Win.ShowAlert(Message, Explanation)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub ShowAlert(Extends Win As Window, Message As String, Explanation As String)
-		  ShowAlert(Win, Message, Explanation)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1, CompatibilityFlags = (TargetIOS and (Target64Bit))
-		Protected Sub ShowAlert(Win As MobileScreen = Nil, Message As String, Explanation As String)
-		  #Pragma Unused Win
-		  
-		  Var Dialog As New MobileMessageBox
-		  Dialog.Title = Message
-		  Dialog.Message = Explanation
-		  Dialog.Show
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Sub ShowAlert(Win As Window = Nil, Message As String, Explanation As String)
+		Protected Sub ShowAlert(Win As DesktopWindow = Nil, Message As String, Explanation As String)
 		  If (Thread.Current Is Nil) = False Then
 		    // Can't show the alert right now
 		    Var Dict As New Dictionary
@@ -396,10 +397,10 @@ Protected Module BeaconUI
 		    Dialog.Explanation = Explanation
 		    
 		    Try
-		      If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
+		      If Win = Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
 		        Call Dialog.ShowModal()
 		      Else
-		        Var FocusControl As RectControl = Win.Focus
+		        Var FocusControl As DesktopUIControl = Win.Focus
 		        Win.Focus = Nil
 		        Call Dialog.ShowModal(Win)
 		        Win.Focus = FocusControl
@@ -408,6 +409,29 @@ Protected Module BeaconUI
 		      Call Dialog.ShowModal()
 		    End Try
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub ShowAlert(Extends Win As DesktopWindow, Message As String, Explanation As String)
+		  ShowAlert(Win, Message, Explanation)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target64Bit))
+		Sub ShowAlert(Extends Win As MobileScreen, Message As String, Explanation As String)
+		  Win.ShowAlert(Message, Explanation)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetIOS and (Target64Bit))
+		Protected Sub ShowAlert(Win As MobileScreen = Nil, Message As String, Explanation As String)
+		  #Pragma Unused Win
+		  
+		  Var Dialog As New MobileMessageBox
+		  Dialog.Title = Message
+		  Dialog.Message = Explanation
+		  Dialog.Show
 		End Sub
 	#tag EndMethod
 
@@ -420,26 +444,8 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ShowConfirm(Extends Win As Window, Account As Beacon.ExternalAccount) As Boolean
-		  Return ShowConfirm(Win, Account)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
-		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateCaption As String) As BeaconUI.ConfirmResponses
-		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ShowConfirm(Win As Window = Nil, Account As Beacon.ExternalAccount) As Boolean
+		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Account As Beacon.ExternalAccount) As Boolean
 		  If Account Is Nil Then
 		    Return False
 		  End If
@@ -461,13 +467,13 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
+		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateAction As String) As BeaconUI.ConfirmResponses
+		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateAction As String) As BeaconUI.ConfirmResponses
 		  Try
 		    Win = Win.TrueWindow
 		  Catch Err As RuntimeException
@@ -531,10 +537,10 @@ Protected Module BeaconUI
 		    
 		    Var Result As MessageDialogButton
 		    Try
-		      If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
+		      If Win = Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
 		        Result = Dialog.ShowModal()
 		      Else
-		        Var FocusControl As RectControl = Win.Focus
+		        Var FocusControl As DesktopUIControl = Win.Focus
 		        Win.Focus = Nil
 		        Result = Dialog.ShowModal(Win)
 		        Win.Focus = FocusControl
@@ -556,19 +562,25 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ShowDeleteConfirmation(Extends Win As Window, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
-		  Return ShowDeleteConfirmation(Win, Items, SingularNoun, PluralNoun, Restore)
+		Function ShowConfirm(Extends Win As DesktopWindow, Account As Beacon.ExternalAccount) As Boolean
+		  Return ShowConfirm(Win, Account)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ShowDeleteConfirmation(Extends Win As Window, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
-		  Return ShowDeleteConfirmation(Win, Names, SingularNoun, PluralNoun, Restore)
+		Function ShowConfirm(Extends Win As DesktopWindow, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
+		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function ShowConfirm(Extends Win As DesktopWindow, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateCaption As String) As BeaconUI.ConfirmResponses
+		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
+		Protected Function ShowDeleteConfirmation(Win As DesktopWindow = Nil, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Var Names() As String
 		  For Each Item As Beacon.NamedItem In Items
 		    Names.Add(Item.Label)
@@ -578,7 +590,7 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
+		Protected Function ShowDeleteConfirmation(Win As DesktopWindow = Nil, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Var UniqueNames() As String
 		  Var UseGenericNames As Boolean
 		  For Each Name As String In Names
@@ -613,14 +625,31 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub SizeToFit(Extends Target As Label)
-		  SizeToFit(Target)
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function ShowDeleteConfirmation(Extends Win As DesktopWindow, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
+		  Return ShowDeleteConfirmation(Win, Items, SingularNoun, PluralNoun, Restore)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function ShowDeleteConfirmation(Extends Win As DesktopWindow, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
+		  Return ShowDeleteConfirmation(Win, Names, SingularNoun, PluralNoun, Restore)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub SizeColumnToFit(Extends List As DesktopListbox, ColumnIndex As Integer)
+		  Var TestPic As New Picture(10, 10)
+		  Var MaxWidth As Integer
+		   For Row As Integer = 0 To List.LastRowIndex
+		    MaxWidth = Max(MaxWidth, Ceiling(TestPic.Graphics.TextWidth(List.CellTextAt(Row, ColumnIndex)) + 30))
+		  Next
+		  List.ColumnAttributesAt(ColumnIndex).WidthExpression = MaxWidth.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub SizeToFit(Targets() As Label)
+		Protected Sub SizeToFit(Targets() As DesktopLabel)
 		  Var Width As Integer = IdealWidth(Targets)
 		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
 		    If Targets(Idx) Is Nil Then
@@ -633,8 +662,14 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub SizeToFit(ParamArray Targets() As Label)
+		Protected Sub SizeToFit(ParamArray Targets() As DesktopLabel)
 		  SizeToFit(Targets)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SizeToFit(Extends Target As DesktopLabel)
+		  SizeToFit(Target)
 		End Sub
 	#tag EndMethod
 

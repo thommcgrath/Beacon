@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ServerViewContainer LocalServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ServerViewContainer LocalServerView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   600
    Index           =   -2147483648
@@ -26,7 +27,7 @@ Begin ServerViewContainer LocalServerView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   559
@@ -41,13 +42,14 @@ Begin ServerViewContainer LocalServerView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin BeaconTextArea AdminNotesField
@@ -58,8 +60,6 @@ Begin ServerViewContainer LocalServerView
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -103,8 +103,39 @@ Begin ServerViewContainer LocalServerView
       Begin UITweaks.ResizedLabel GameUserSettingsIniPathLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "GameUserSettings.ini File"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   95
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   172
+      End
+      Begin UITweaks.ResizedLabel GameIniPathLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -125,48 +156,13 @@ Begin ServerViewContainer LocalServerView
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   95
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "GameUserSettings.ini File:"
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedLabel GameIniPathLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         TabStop         =   True
+         Text            =   "Game.ini File:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
-         Value           =   "Game.ini File:"
          Visible         =   True
          Width           =   172
       End
@@ -177,8 +173,6 @@ Begin ServerViewContainer LocalServerView
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -200,9 +194,10 @@ Begin ServerViewContainer LocalServerView
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -210,7 +205,6 @@ Begin ServerViewContainer LocalServerView
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   274
       End
@@ -221,8 +215,6 @@ Begin ServerViewContainer LocalServerView
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -244,9 +236,10 @@ Begin ServerViewContainer LocalServerView
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -254,7 +247,6 @@ Begin ServerViewContainer LocalServerView
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   274
       End
@@ -280,7 +272,7 @@ Begin ServerViewContainer LocalServerView
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -312,7 +304,7 @@ Begin ServerViewContainer LocalServerView
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -329,9 +321,8 @@ Begin ServerViewContainer LocalServerView
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   559
          Index           =   -2147483648
@@ -364,7 +355,6 @@ Begin ServerViewContainer LocalServerView
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -391,7 +381,7 @@ Begin ServerViewContainer LocalServerView
       Width           =   600
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -454,7 +444,7 @@ End
 
 #tag Events Pages
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  For Idx As Integer = 0 To Self.ControlToolbar.LastIndex
 		    Self.ControlToolbar.Item(Idx).Toggled = Me.SelectedPanelIndex = Idx
 		  Next
@@ -463,15 +453,15 @@ End
 #tag EndEvents
 #tag Events AdminNotesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Changed = Self.mProfile.Modified
+		  Self.Modified = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events GameUserSettingsIniChooseButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Ark.ConfigFileGameUserSettings
@@ -488,13 +478,13 @@ End
 		  
 		  Self.mProfile.GameUserSettingsIniFile = New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
 		  Self.GameUserSettingsIniPathField.Text = File.NativePath
-		  Self.Changed = Self.mProfile.Modified
+		  Self.Modified = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events GameIniChooseButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Ark.ConfigFileGame
@@ -511,19 +501,19 @@ End
 		  
 		  Self.mProfile.GameIniFile = New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
 		  Self.GameIniPathField.Text = File.NativePath
-		  Self.Changed = Self.mProfile.Modified
+		  Self.Modified = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SettingsView
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Profile = Self.mProfile
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ContentsChanged()
-		  Self.Changed = Me.Changed
+		  Self.Modified = Me.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -534,7 +524,7 @@ End
 #tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
 		  Me.Append(OmniBarItem.CreateTab("PageFiles", "Files"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
@@ -557,6 +547,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -770,8 +776,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -806,26 +812,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

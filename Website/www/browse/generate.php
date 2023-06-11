@@ -57,8 +57,8 @@ if ($mode === 'download') {
 	exit;
 }
 
-BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/clipboard-polyfill.js"></script>');
-BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/generator.js"></script>');
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('clipboard-polyfill.js'));
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 
 ?><h1>Your Game.ini</h1>
 <p class="text-center"><button id="copy_button">Copy</button></p>

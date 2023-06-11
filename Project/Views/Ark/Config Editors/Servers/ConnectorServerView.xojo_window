@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ServerViewContainer ConnectorServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ServerViewContainer ConnectorServerView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   600
    Index           =   -2147483648
@@ -47,7 +48,6 @@ Begin ServerViewContainer ConnectorServerView
       BorderTop       =   False
       Caption         =   "Untitled"
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       Index           =   -2147483648
@@ -80,7 +80,6 @@ Begin ServerViewContainer ConnectorServerView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -111,7 +110,6 @@ Begin ServerViewContainer ConnectorServerView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -142,14 +140,12 @@ Begin ServerViewContainer ConnectorServerView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -167,6 +163,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -174,15 +171,12 @@ Begin ServerViewContainer ConnectorServerView
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   438
    End
    Begin UITweaks.ResizedLabel ServerNameLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -203,21 +197,19 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Server Name:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   124
       Transparent     =   False
       Underline       =   False
-      Value           =   "Server Name:"
       Visible         =   True
       Width           =   110
    End
    Begin UITweaks.ResizedLabel ServerStatusField
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -238,21 +230,19 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Checking…"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Checking…"
       Visible         =   True
       Width           =   438
    End
    Begin UITweaks.ResizedLabel ServerStatusLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -273,13 +263,13 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Server Status:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Server Status:"
       Visible         =   True
       Width           =   110
    End
@@ -290,14 +280,12 @@ Begin ServerViewContainer ConnectorServerView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -315,6 +303,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -322,7 +311,6 @@ Begin ServerViewContainer ConnectorServerView
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   438
    End
@@ -333,14 +321,12 @@ Begin ServerViewContainer ConnectorServerView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -358,6 +344,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -365,7 +352,6 @@ Begin ServerViewContainer ConnectorServerView
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   100
    End
@@ -376,14 +362,12 @@ Begin ServerViewContainer ConnectorServerView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -401,6 +385,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -408,15 +393,12 @@ Begin ServerViewContainer ConnectorServerView
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   438
    End
    Begin UITweaks.ResizedLabel AddressLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -437,21 +419,19 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Address:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
       Transparent     =   False
       Underline       =   False
-      Value           =   "Address:"
       Visible         =   True
       Width           =   110
    End
    Begin UITweaks.ResizedLabel PortLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -472,21 +452,19 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Port:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
       Transparent     =   False
       Underline       =   False
-      Value           =   "Port:"
       Visible         =   True
       Width           =   110
    End
    Begin UITweaks.ResizedLabel KeyLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -507,13 +485,13 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Encryption Key:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   226
       Transparent     =   False
       Underline       =   False
-      Value           =   "Encryption Key:"
       Visible         =   True
       Width           =   110
    End
@@ -527,17 +505,17 @@ Begin ServerViewContainer ConnectorServerView
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  Self.ClientSocket.Close
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ControlToolbar.Caption = Self.mProfile.Name
 		  Self.ServerNameField.Text = Self.mProfile.Name
 		  Self.AddressField.Text = Self.mProfile.Address
@@ -694,7 +672,7 @@ End
 #tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("PowerButton", IconToolbarPower, False, "Start or stop the server."))
 		End Sub
 	#tag EndEvent
@@ -725,28 +703,28 @@ End
 #tag EndEvents
 #tag Events ServerNameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.Name = Me.Text
 		  Self.ControlToolbar.Caption = Me.Text
-		  Self.Changed = Self.mProfile.Modified
+		  Self.Modified = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AddressField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.Address = Me.Text.Trim
-		  Self.Changed = Self.mProfile.Modified
+		  Self.Modified = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PortField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If IsNumeric(Me.Text) Then
 		    Self.mProfile.Port = CDbl(Me.Text)
-		    Self.Changed = Self.mProfile.Modified
+		    Self.Modified = Self.mProfile.Modified
 		  End If
 		  Self.RefreshServerStatus()
 		End Sub
@@ -754,9 +732,9 @@ End
 #tag EndEvents
 #tag Events KeyField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.PreSharedKey = Me.Text.Trim
-		  Self.Changed = Self.mProfile.Modified
+		  Self.Modified = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
@@ -769,6 +747,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -982,8 +976,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1018,26 +1012,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

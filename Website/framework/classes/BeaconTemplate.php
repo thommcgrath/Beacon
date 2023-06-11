@@ -11,6 +11,7 @@ abstract class BeaconTemplate {
 	protected static $current_modal = null;
 	protected static $modals = [];
 	protected static $extra_vars = [];
+	protected static $globalize_loaded = false;
 	
 	protected static function CacheKey(): string {
 		return md5($_SERVER['REQUEST_URI']);
@@ -246,15 +247,37 @@ abstract class BeaconTemplate {
 <?php
 	}
 	
-	public static function SetVar(string $var_name, mixed $value): void {
-		static::$extra_vars[$var_name] = $value;
+	public static function SetVar(string $varName, mixed $value): void {
+		static::$extra_vars[$varName] = $value;
 	}
 	
-	public static function GetVar(string $var_name): mixed {
-		if (array_key_exists($var_name, static::$extra_vars)) {
-			return static::$extra_vars[$var_name];
+	public static function GetVar(string $varName): mixed {
+		if (array_key_exists($varName, static::$extra_vars)) {
+			return static::$extra_vars[$varName];
 		} else {
 			return null;
+		}
+	}
+
+	public static function LoadGlobalize() {
+		if (static::$globalize_loaded === true) {
+			return;
+		}
+		static::$globalize_loaded = true;
+		
+		$assets = [
+			'cldr.js',
+			'cldr/event.js',
+			'cldr/supplemental.js',
+			'globalize.js',
+			'globalize/number.js',
+			'globalize/plural.js',
+			'globalize/currency.js',
+			'currency.js'
+		];
+		
+		foreach ($assets as $asset) {
+			static::AddScript(BeaconCommon::AssetURI($asset));
 		}
 	}
 }

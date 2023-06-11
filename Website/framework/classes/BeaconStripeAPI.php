@@ -92,7 +92,28 @@ class BeaconStripeAPI {
 	}
 	
 	public function GetCustomersByEmail(string $customerEmail): ?array {
-		return $this->GetURL('https://api.stripe.com/v1/customers/search?query=' . urlencode("email:'$customerEmail'"));
+		return $this->GetURL('https://api.stripe.com/v1/customers/search?query=' . urlencode("email:'{$customerEmail}'"));
+	}
+	
+	public function GetProductByUUID(string $productId): ?array {
+		$results = $this->GetURL('https://api.stripe.com/v1/products/search?query=' . urlencode("metadata['beacon-uuid']:'{$productId}'"));
+		if (count($results['data']) > 0) {
+			return $results['data'][0];
+		} else {
+			return null;
+		}
+	}
+	
+	public function GetProductPrices(string $productCode, ?string $currency = null): ?array {
+		$query = "product:'{$productCode}'";
+		if (is_null($currency) === false) {
+			$query .= " AND currency:'{$currency}'";
+		}
+		$results = $this->GetURL('https://api.stripe.com/v1/prices/search?query=' . urlencode($query) . '&limit=100');
+		if ($results['has_more'] == true) {
+			echo "Partial results\n";
+		}
+		return $results['data'];
 	}
 	
 	public function GetBillingLocality(string $intentId): ?string {
@@ -264,6 +285,29 @@ class BeaconStripeAPI {
 		$response = $this->PostURL('https://api.stripe.com/v1/prices/' . $priceId, ['active' => 'false']);
 		
 		return $newPriceId;
+	}
+	
+	public function CreatePrice(string $product_code, string $currency, int $amount): string|bool {
+		$response = $this->PostURL('https://api.stripe.com/v1/prices', [
+			'unit_amount' => $amount,
+			'currency' => $currency,
+			'product' => $product_code,
+			'tax_behavior' => 'exclusive'
+		]);
+		
+		if (is_null($response)) {
+			return false;
+		}
+		
+		return $response['id'];
+	}
+	
+	public function EditPrice(string $price_id, array $changes): ?array {
+		return $this->PostURL('https://api.stripe.com/v1/prices/' . $price_id, $changes);
+	}
+	
+	public function EditProduct(string $product_code, array $changes): ?array {
+		return $this->PostURL('https://api.stripe.com/v1/products/' . $product_code, $changes);
 	}
 }
 

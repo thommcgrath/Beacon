@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
+   DoubleBuffer    =   "True"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   508
    Index           =   -2147483648
@@ -26,7 +27,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    Transparent     =   True
    Visible         =   True
    Width           =   804
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   508
@@ -41,17 +42,20 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       PanelCount      =   5
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   3
       Visible         =   True
       Width           =   804
-      Begin ProgressBar LoadingProgressBar
+      Begin DesktopProgressBar LoadingProgressBar
+         Active          =   False
          AllowAutoDeactivate=   True
+         AllowTabStop    =   True
          Enabled         =   True
          Height          =   20
          Indeterminate   =   True
@@ -64,22 +68,24 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          LockRight       =   False
          LockTop         =   True
          MaximumValue    =   0
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Tooltip         =   ""
          Top             =   256
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
          Width           =   250
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
-      Begin Label LoadingLabel
+      Begin DesktopLabel LoadingLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -100,13 +106,13 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Loading projects…"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   232
          Transparent     =   False
          Underline       =   False
-         Value           =   "Loading projects…"
          Visible         =   True
          Width           =   250
       End
@@ -117,10 +123,9 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
+         Composited      =   False
          ConsoleSafe     =   False
-         DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   62
          Index           =   -2147483648
@@ -157,8 +162,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          Bold            =   False
          ColumnCount     =   6
          ColumnWidths    =   "46,2*,*,100,70,220"
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   26
          DefaultSortColumn=   "#ColumnUpdated"
          DefaultSortDirection=   -1
@@ -168,8 +171,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   False
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -204,11 +206,9 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin Label LoginMessageLabel
+      Begin DesktopLabel LoginMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -271,11 +271,9 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          Visible         =   True
          Width           =   80
       End
-      Begin Label PermissionMessageLabel
+      Begin DesktopLabel PermissionMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -338,11 +336,9 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          Visible         =   True
          Width           =   80
       End
-      Begin Label ErrorMessageLabel
+      Begin DesktopLabel ErrorMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -405,11 +401,9 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          Visible         =   True
          Width           =   90
       End
-      Begin Label ErrorExplanationLabel
+      Begin DesktopLabel ErrorExplanationLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -447,7 +441,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
          Index           =   -2147483648
@@ -480,11 +473,11 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  If Self.mVersionProgressKey.IsEmpty = False Then
 		    CallLater.Cancel(Self.mVersionProgressKey)
 		    Self.mVersionProgressKey = ""
@@ -502,7 +495,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged, Preferences.Notification_OnlineStateChanged, Preferences.Notification_OnlineTokenChanged)
 		End Sub
 	#tag EndEvent
@@ -670,7 +663,7 @@ End
 		  Self.mVersionProgressKey = ""
 		  
 		  Var Progress As New ProgressWindow("Finding older versions…", "Just a moment…")
-		  Progress.ShowWithin(Self.TrueWindow)
+		  Progress.Show(Self)
 		  Self.mVersionProgress = Progress
 		End Sub
 	#tag EndMethod
@@ -679,7 +672,7 @@ End
 		Private Sub UpdateFilter()
 		  Var SelectedDocuments() As String
 		  For I As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.Selected(I) Then
+		    If Self.List.RowSelectedAt(I) Then
 		      Var Document As BeaconAPI.Document = Self.List.RowTagAt(I)
 		      SelectedDocuments.Add(Document.ResourceURL)
 		    End If
@@ -712,13 +705,13 @@ End
 		  For I As Integer = 0 To FilteredDocuments.LastIndex
 		    Var Document As BeaconAPI.Document = FilteredDocuments(I)
 		    
-		    Self.List.CellValueAt(I, Self.ColumnName) = Document.Name
-		    Self.List.CellValueAt(I, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
-		    Self.List.CellValueAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
-		    Self.List.CellValueAt(I, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		    Self.List.CellValueAt(I, Self.ColumnRevision) = Document.Revision.ToString(Locale.Current, ",##0")
+		    Self.List.CellTextAt(I, Self.ColumnName) = Document.Name
+		    Self.List.CellTextAt(I, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
+		    Self.List.CellTextAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
+		    Self.List.CellTextAt(I, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		    Self.List.CellTextAt(I, Self.ColumnRevision) = Document.Revision.ToString(Locale.Current, "#,##0")
 		    Self.List.RowTagAt(I) = Document
-		    Self.List.Selected(I) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
+		    Self.List.RowSelectedAt(I) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
 		  Next
 		  
 		  Self.List.Sort
@@ -818,7 +811,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Mask = Ark.Maps.UniversalMask
 		End Sub
 	#tag EndEvent
@@ -830,7 +823,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		Sub PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused BackgroundColor
 		  #Pragma Unused IsHighlighted
 		  
@@ -858,7 +851,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		Function PaintCellText(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 		  #Pragma Unused G
 		  #Pragma Unused Row
 		  #Pragma Unused Line
@@ -876,7 +869,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnUpdated
 		    Var Row1Document As BeaconAPI.Document = Me.RowTagAt(Row1)
@@ -916,7 +909,7 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var URLs() As Beacon.ProjectURL
 		  For Row As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Row) = False Then
+		    If Me.RowSelectedAt(Row) = False Then
 		      Continue
 		    End If
 		    
@@ -960,7 +953,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  For Row As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Row) = False Then
+		    If Me.RowSelectedAt(Row) = False Then
 		      Continue
 		    End If
 		    
@@ -970,11 +963,11 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var VersionsItem As New MenuItem("Older Versions…", "versions")
+		  Var VersionsItem As New DesktopMenuItem("Older Versions…", "versions")
 		  VersionsItem.Enabled = Me.SelectedRowCount = 1 And Preferences.OnlineToken.IsEmpty = False
 		  Base.AddMenu(VersionsItem)
 		  
@@ -982,7 +975,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
 		  If HitItem Is Nil Then
 		    Return False
 		  End If
@@ -1003,21 +996,21 @@ End
 #tag EndEvents
 #tag Events LoginActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  UserWelcomeWindow.Present(True)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PermissionActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  UserWelcomeWindow.Present(False)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ErrorActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.RefreshList()
 		End Sub
 	#tag EndEvent
@@ -1042,6 +1035,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1255,8 +1264,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1291,26 +1300,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

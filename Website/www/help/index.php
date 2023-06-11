@@ -10,7 +10,7 @@ ob_start();
 <h2>Some more personal help</h2>
 <div class="indent">
 	<p>Get in touch. If you need help, <a href="/help/contact">open a support ticket</a>.</p>
-	<p class="text-center"><a href="/discord"><img class="white-on-dark" height="64" src="/assets/images/discord-full-color.svg"></a></p>
+	<p class="text-center"><a href="/discord"><img class="white-on-dark" height="64" src="<?php echo BeaconCommon::AssetURI('discord-full-color.svg'); ?>"></a></p>
 	<p>Beacon has a <a href="/discord">Discord server</a>. Come ask questions, but realize that people need to sleep and may not be able to respond immediately.</p>
 </div>
 <h3>Bug Reports</h3>

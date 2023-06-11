@@ -64,17 +64,17 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function BytesToString(Bytes As Double, Locale As Locale = Nil) As String
 		  If Bytes < 1024 Then
-		    Return Bytes.ToString(Locale, ",##0") + " Bytes"
+		    Return Bytes.ToString(Locale, "#,##0") + " Bytes"
 		  End If
 		  
 		  Var Kibibytes As Double = Bytes / 1024
 		  If Kibibytes < 1024 Then
-		    Return Kibibytes.ToString(Locale, ",##0.00") + " KiB"
+		    Return Kibibytes.ToString(Locale, "#,##0.00") + " KiB"
 		  End If
 		  
 		  Var Mebibytes As Double = Kibibytes / 1024
 		  If Mebibytes < 1024 Then
-		    Return Mebibytes.ToString(Locale, ",##0.00") + " MiB"
+		    Return Mebibytes.ToString(Locale, "#,##0.00") + " MiB"
 		  End If
 		  
 		  // Let's be real, Beacon isn't going to be dealing with values greater than
@@ -82,29 +82,33 @@ Protected Module Beacon
 		  
 		  Var Gibibytes As Double = Mebibytes / 1024
 		  If Gibibytes < 1024 Then
-		    Return Gibibytes.ToString(Locale, ",##0.00") + " GiB"
+		    Return Gibibytes.ToString(Locale, "#,##0.00") + " GiB"
 		  End If
 		  
 		  Var Tebibytes As Double = Gibibytes / 1024
-		  Return Tebibytes.ToString(Locale, ",##0.00") + " TiB"
+		  Return Tebibytes.ToString(Locale, "#,##0.00") + " TiB"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ClassStringFromPath(Path As String) As String
-		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
-		    If Path.Right(2) = "_C" Then
-		      // Appears to be a BlueprintGeneratedClass Path
-		      Path = Path.Left(Path.Length - 2)
-		    End If
-		  Else
+		  If Path.Length <= 6 Or Path.Left(6) <> "/Game/" Then
 		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
 		  End If
 		  
 		  Var Components() As String = Path.Split("/")
 		  Var Tail As String = Components(Components.LastIndex)
 		  Components = Tail.Split(".")
-		  Return Components(Components.LastIndex) + "_C"
+		  
+		  Var FirstPart As String = Components(Components.FirstIndex)
+		  Var SecondPart As String = Components(Components.LastIndex)
+		  
+		  If SecondPart.EndsWith("_C") And FirstPart.EndsWith("_C") = False Then
+		    // Appears to be a BlueprintGeneratedClass Path
+		    SecondPart = SecondPart.Left(SecondPart.Length - 2)
+		  End If
+		  
+		  Return SecondPart + "_C"
 		End Function
 	#tag EndMethod
 
@@ -550,21 +554,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
-		Function GlobalPosition(Extends Target As Window) As Point
-		  Var Left As Integer = Target.Left
-		  Var Top As Integer = Target.Top
-		  
-		  While Target IsA ContainerControl
-		    Target = ContainerControl(Target).Window
-		    Left = Left + Target.Left
-		    Top = Top + Target.Top
-		  Wend
-		  
-		  Return New Point(Left, Top)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function GuessEncoding(Extends Value As String) As String
 		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
@@ -615,7 +604,13 @@ Protected Module Beacon
 		  #if TargetMacOS
 		    Return SystemInformationMBS.MacUUID.Lowercase
 		  #elseif TargetWindows Or TargetLinux
-		    Return v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey)
+		    Var Source As String = SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey
+		    Select Case Preferences.HardwareIdVersion
+		    Case 4
+		      Return v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Source)
+		    Else
+		      Return Beacon.UUID.v5(Source)
+		    End Select
 		  #elseif TargetiOS
 		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 		    
@@ -1103,6 +1098,34 @@ Protected Module Beacon
 		  #else
 		    Return Xojo.ParseJSON(Source)
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ParseQueryString(QueryString As String) As Dictionary
+		  // Does not handle multiple parameters of the same name
+		  
+		  QueryString = QueryString.Trim
+		  
+		  If QueryString.BeginsWith("?") Then
+		    QueryString = QueryString.Middle(1)
+		  End If
+		  
+		  Var Params As New Dictionary
+		  Var Parts() As String = QueryString.Split("&")
+		  For Each Part As String In Parts
+		    Var Pos As Integer = Part.IndexOf("=")
+		    If Pos = -1 Then
+		      Params.Value(DecodeURLComponent(Part)) = True
+		      Continue
+		    End If
+		    
+		    Var Key As String = DecodeURLComponent(Part.Left(Pos)).DefineEncoding(Encodings.UTF8)
+		    Var Value As String = DecodeURLComponent(Part.Middle(Pos + 1)).DefineEncoding(Encodings.UTF8)
+		    Params.Value(Key) = Value
+		  Next
+		  
+		  Return Params
 		End Function
 	#tag EndMethod
 

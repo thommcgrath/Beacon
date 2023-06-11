@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkLootDropsEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkLootDropsEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   436
    Index           =   -2147483648
@@ -27,15 +28,14 @@ Begin ArkConfigEditor ArkLootDropsEditor
    Visible         =   True
    Width           =   702
    Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   436
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   250
@@ -51,37 +51,40 @@ Begin ArkConfigEditor ArkLootDropsEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   1
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   2
-      ColumnsResizable=   False
       ColumnWidths    =   "50,*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   34
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   333
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -94,33 +97,26 @@ Begin ArkConfigEditor ArkLootDropsEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   1
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   82
       Transparent     =   True
       TypeaheadColumn =   1
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin PagePanel Panel
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel Panel
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   436
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   251
@@ -132,26 +128,27 @@ Begin ArkConfigEditor ArkLootDropsEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   451
       Begin ArkLootDropEditor Editor
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   436
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -160,27 +157,27 @@ Begin ArkConfigEditor ArkLootDropsEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   False
          Visible         =   True
          Width           =   451
       End
       Begin LogoFillCanvas LogoFillCanvas1
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   415
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -196,24 +193,23 @@ Begin ArkConfigEditor ArkLootDropsEditor
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   451
       End
       Begin StatusBar NoSelectionStatusBar
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
@@ -229,25 +225,24 @@ Begin ArkConfigEditor ArkLootDropsEditor
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   415
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   451
       End
    End
    Begin StatusBar StatusBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -260,12 +255,12 @@ Begin ArkConfigEditor ArkLootDropsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   415
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   250
    End
@@ -278,7 +273,6 @@ Begin ArkConfigEditor ArkLootDropsEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -295,7 +289,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   6
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -305,6 +299,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       Width           =   250
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -322,9 +317,10 @@ Begin ArkConfigEditor ArkLootDropsEditor
       LockRight       =   False
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -333,6 +329,10 @@ Begin ArkConfigEditor ArkLootDropsEditor
       Transparent     =   False
       Visible         =   True
       Width           =   232
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -341,7 +341,6 @@ Begin ArkConfigEditor ArkLootDropsEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -356,7 +355,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   8
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -366,7 +365,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       Width           =   250
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -414,7 +413,7 @@ End
 		  Next
 		  
 		  If AddedContainers.LastIndex > -1 Then
-		    Self.Changed = True
+		    Self.Modified = True
 		    Self.UpdateContainerList(AddedContainers)
 		  End If
 		  
@@ -505,7 +504,7 @@ End
 		    End If
 		    
 		    Config.Add(Container)
-		    Self.Changed = Self.Project.Modified
+		    Self.Modified = Self.Project.Modified
 		  Next
 		  
 		  Self.UpdateContainerList(Containers)
@@ -514,7 +513,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub BuildQuickDropMenu(Menu As MenuItem)
+		Private Sub BuildQuickDropMenu(Menu As DesktopMenuItem)
 		  Var Data As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  Var Containers() As Ark.LootContainer = Data.GetLootContainers("", Self.Project.ContentPacks, "", Preferences.ShowExperimentalLootSources)
 		  Var HasExperimentalContainers As Boolean = Data.HasExperimentalLootContainers(Self.Project.ContentPacks)
@@ -533,11 +532,11 @@ End
 		  Var Labels As Dictionary = Config.Containers.Disambiguate(Self.Project.MapMask)
 		  
 		  If Containers.LastIndex = -1 Then
-		    Var Warning As MenuItem
+		    Var Warning As DesktopMenuItem
 		    If Mask = CType(0, UInt64) Then
-		      Warning = New MenuItem("List is empty because no maps have been selected.")
+		      Warning = New DesktopMenuItem("List is empty because no maps have been selected.")
 		    Else
-		      Warning = New MenuItem("List is empty because all drops have been implemented.")
+		      Warning = New DesktopMenuItem("List is empty because all drops have been implemented.")
 		    End If
 		    Warning.Enabled = False
 		    Menu.AddMenu(Warning)
@@ -547,13 +546,13 @@ End
 		  Containers.Sort
 		  
 		  For Each Container As Ark.LootContainer In Containers
-		    Menu.AddMenu(New MenuItem(Labels.Lookup(Container.ObjectID, Container.Label), Container))
+		    Menu.AddMenu(New DesktopMenuItem(Labels.Lookup(Container.ObjectID, Container.Label), Container))
 		  Next
 		  
 		  If HasExperimentalContainers Then
-		    Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    
-		    Var ExpItem As New MenuItem("Show Experimental Containers", "toggle_experimental")
+		    Var ExpItem As New DesktopMenuItem("Show Experimental Containers", "toggle_experimental")
 		    ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
 		    Menu.AddMenu(ExpItem)
 		  End If
@@ -590,7 +589,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub HandleQuickDropMenu(ChosenItem As MenuItem)
+		Private Sub HandleQuickDropMenu(ChosenItem As DesktopMenuItem)
 		  Var Tag As Variant = ChosenItem.Tag
 		  If Tag.IsNull Then
 		    Return
@@ -631,12 +630,12 @@ End
 		  End If
 		  
 		  Self.UpdateContainerList()
-		  Self.Changed = Self.Changed Or Self.Project.Modified
+		  Self.Modified = Self.Modified Or Self.Project.Modified
 		  
 		  If NumChanges = 1 Then
 		    Self.ShowAlert("1 item set changed", "Rebuilding changed 1 item set to match its template.")
 		  Else
-		    Self.ShowAlert(NumChanges.ToString(Locale.Current, ",##0") + " item sets changed", "Rebuilding changed " + NumChanges.ToString(Locale.Current, ",##0") + " item sets to match their templates.")
+		    Self.ShowAlert(NumChanges.ToString(Locale.Current, "#,##0") + " item sets changed", "Rebuilding changed " + NumChanges.ToString(Locale.Current, "#,##0") + " item sets to match their templates.")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -696,7 +695,7 @@ End
 		      End If
 		    Next
 		    Self.UpdateContainerList(NewContainers)
-		    Self.Changed = Self.Project.Modified
+		    Self.Modified = Self.Project.Modified
 		    Self.Focus = Self.List
 		  End If
 		End Sub
@@ -716,7 +715,7 @@ End
 		  Else
 		    Var Bound As Integer = Self.List.RowCount - 1
 		    For I As Integer = 0 To Bound
-		      If Self.List.Selected(I) Then
+		      If Self.List.RowSelectedAt(I) Then
 		        SelectedClasses.Add(Ark.LootContainer(Self.List.RowTagAt(I)).ClassString)
 		      End If
 		    Next
@@ -728,13 +727,13 @@ End
 		  Var Selection() As Ark.LootContainer
 		  For I As Integer = 0 To VisibleContainers.LastIndex
 		    Self.List.RowTagAt(I) = VisibleContainers(I)
-		    Self.List.CellValueAt(I, 0) = "" // Causes a redraw of the cell
-		    Self.List.CellValueAt(I, 1) = Labels.Lookup(VisibleContainers(I).ObjectID, VisibleContainers(I).Label)
+		    Self.List.CellTextAt(I, 0) = "" // Causes a redraw of the cell
+		    Self.List.CellTextAt(I, 1) = Labels.Lookup(VisibleContainers(I).ObjectID, VisibleContainers(I).Label)
 		    If SelectedClasses.IndexOf(VisibleContainers(I).ClassString) > -1 Then
-		      Self.List.Selected(I) = True
+		      Self.List.RowSelectedAt(I) = True
 		      Selection.Add(VisibleContainers(I))
 		    Else
-		      Self.List.Selected(I) = False
+		      Self.List.RowSelectedAt(I) = False
 		    End If
 		  Next
 		  Self.mBlockSelectionChanged = False
@@ -759,9 +758,9 @@ End
 		  Var TotalCount As Integer = Self.List.RowCount
 		  Var SelectedCount As Integer = Self.List.SelectedRowCount
 		  
-		  Var Caption As String = TotalCount.ToString(Locale.Current, ",##0") + " " + If(TotalCount = 1, "Loot Drop", "Loot Drops")
+		  Var Caption As String = TotalCount.ToString(Locale.Current, "#,##0") + " " + If(TotalCount = 1, "Loot Drop", "Loot Drops")
 		  If SelectedCount > 0 Then
-		    Caption = SelectedCount.ToString(Locale.Current, ",##0") + " of " + Caption + " Selected"
+		    Caption = SelectedCount.ToString(Locale.Current, "#,##0") + " of " + Caption + " Selected"
 		  End If
 		  Self.StatusBar1.Caption = Caption
 		End Sub
@@ -794,7 +793,7 @@ End
 
 #tag Events List
 	#tag Event
-		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		Sub PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused BackgroundColor
 		  #Pragma Unused IsHighlighted
 		  #Pragma Unused TextColor
@@ -806,7 +805,7 @@ End
 		  If Column = 0 Then
 		    Var Container As Ark.LootContainer = Me.RowTagAt(Row)
 		    Var Icon As Picture
-		    If Me.Selected(Row) And IsHighlighted Then
+		    If Me.RowSelectedAt(Row) And IsHighlighted Then
 		      Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, TextColor, BackgroundColor)
 		    Else
 		      Icon = Ark.DataSource.Pool.Get(False).GetLootContainerIcon(Container, BackgroundColor)
@@ -839,7 +838,7 @@ End
 		  
 		  Var Containers() As Ark.LootContainer
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.Selected(I) = False Then
+		    If Self.List.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
@@ -855,7 +854,7 @@ End
 		    Config.Remove(Container)
 		  Next
 		  
-		  Self.Changed = Self.Project.Modified
+		  Self.Modified = Self.Project.Modified
 		  Self.UpdateContainerList()
 		End Sub
 	#tag EndEvent
@@ -868,7 +867,7 @@ End
 		  Var Dicts() As Dictionary
 		  Var Configs() As Ark.ConfigValue
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      Var Container As Ark.LootContainer = Me.RowTagAt(I)
 		      Dicts.Add(Container.SaveData)
 		      Ark.Configs.LootDrops.BuildOverrides(Container, Configs, Self.Project.Difficulty.DifficultyValue)
@@ -931,7 +930,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("DuplicateButton")
 		  If (DuplicateButton Is Nil) = False Then
 		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
@@ -943,7 +942,7 @@ End
 		  
 		  Var Containers() As Ark.LootContainer
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      Containers.Add(Me.RowTagAt(I))
 		    End If
 		  Next
@@ -966,7 +965,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -974,7 +973,7 @@ End
 		    If ArkAddLootDropDialog.Present(Self, Config, Self.Project.MapMask, Self.Project.ContentPacks, Me.RowTagAt(I)) Then
 		      Call Self.Config(True) // Actually saves the config to the document
 		      Self.UpdateContainerList()
-		      Self.Changed = True
+		      Self.Modified = True
 		    End If
 		    
 		    Return
@@ -982,7 +981,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
@@ -1006,7 +1005,7 @@ End
 		    Self.List.RowTagAt(RowIdx) = Map.Value(Container.ClassString)
 		  Next RowIdx
 		  
-		  Self.Changed = Self.Config(False).Modified
+		  Self.Modified = Self.Config(False).Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1020,14 +1019,14 @@ End
 		  If ArkAddLootDropDialog.Present(Self, Config, Self.Project.MapMask, Self.Project.ContentPacks, Container) Then
 		    Call Self.Config(True) // Actually saves the config to the document
 		    Self.UpdateContainerList()
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("Title", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddContainerButton", "New Drop", IconToolbarAddMenu, "Define an additional loot drop override. Hold to quickly add a container from a menu."))
@@ -1067,11 +1066,11 @@ End
 		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
 		  Select Case Item.Name
 		  Case "AddContainerButton"
-		    Var Base As New MenuItem
+		    Var Base As New DesktopMenuItem
 		    Self.BuildQuickDropMenu(Base)
 		    
-		    Var Position As Point = Me.Window.GlobalPosition
-		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		    If (Choice Is Nil) = False Then
 		      Call Self.HandleQuickDropMenu(Choice)
 		    End If
@@ -1092,6 +1091,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1133,14 +1148,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -1169,8 +1176,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1210,14 +1217,6 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

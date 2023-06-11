@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl ArkSettingsListContainer
+#tag DesktopWindow
+Begin DesktopContainer ArkSettingsListContainer
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   376
    Index           =   -2147483648
@@ -26,10 +25,12 @@ Begin ContainerControl ArkSettingsListContainer
    Transparent     =   True
    Visible         =   True
    Width           =   594
-   Begin ScrollBar Scroller
+   Begin DesktopScrollbar Scroller
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowLiveScrolling=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   376
       Index           =   -2147483648
@@ -44,16 +45,20 @@ Begin ContainerControl ArkSettingsListContainer
       MaximumValue    =   100
       MinimumValue    =   0
       PageStep        =   20
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   15
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin LogoFillCanvas FillCanvas
       AllowAutoDeactivate=   True
@@ -63,7 +68,6 @@ Begin ContainerControl ArkSettingsListContainer
       Backdrop        =   0
       Caption         =   "No Results"
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   376
       Index           =   -2147483648
@@ -88,11 +92,11 @@ Begin ContainerControl ArkSettingsListContainer
       Width           =   579
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function MouseWheel(X As Integer, Y As Integer, DeltaX as Integer, DeltaY as Integer) As Boolean
+		Function MouseWheel(x As Integer, y As Integer, deltaX As Integer, deltaY As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -470,6 +474,10 @@ End
 		      ElementIdx = ElementIdx + 1
 		    Next Member
 		  Next GroupIdx
+		  
+		  #if TargetWindows
+		    Self.Refresh(False)
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -605,12 +613,20 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LineStep = Self.ElementHeight
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -776,8 +792,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -812,26 +828,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

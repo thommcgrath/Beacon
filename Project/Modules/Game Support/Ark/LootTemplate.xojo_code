@@ -36,6 +36,10 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function BlueprintChanceMultiplier(TemplateSelector As Beacon.TemplateSelector) As Double
+		  If TemplateSelector Is Nil Then
+		    Return 1.0
+		  End If
+		  
 		  Return Self.BlueprintChanceMultiplier(TemplateSelector.UUID)
 		End Function
 	#tag EndMethod
@@ -183,6 +187,10 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function MaxQualityOffset(TemplateSelector As Beacon.TemplateSelector) As Integer
+		  If TemplateSelector Is Nil Then
+		    Return 1.0
+		  End If
+		  
 		  Return Self.MaxQualityOffset(TemplateSelector.UUID)
 		End Function
 	#tag EndMethod
@@ -206,6 +214,10 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function MinQualityOffset(TemplateSelector As Beacon.TemplateSelector) As Integer
+		  If TemplateSelector Is Nil Then
+		    Return 1.0
+		  End If
+		  
 		  Return Self.MinQualityOffset(TemplateSelector.UUID)
 		End Function
 	#tag EndMethod
@@ -257,6 +269,10 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function QuantityMultiplier(TemplateSelector As Beacon.TemplateSelector) As Double
+		  If TemplateSelector Is Nil Then
+		    Return 1.0
+		  End If
+		  
 		  Return Self.QuantityMultiplier(TemplateSelector.UUID)
 		End Function
 	#tag EndMethod
@@ -325,6 +341,27 @@ Implements Beacon.Countable,Iterable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WeightMultiplier(TemplateSelector As Beacon.TemplateSelector) As Double
+		  If TemplateSelector Is Nil Then
+		    Return 1.0
+		  End If
+		  
+		  Return Self.WeightMultiplier(TemplateSelector.UUID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function WeightMultiplier(TemplateSelectorId As String) As Double
+		  If Self.mModifierValues Is Nil Or Self.mModifierValues.HasKey(TemplateSelectorId) = False Then
+		    Return 1.0
+		  End If
+		  
+		  Var Dict As Dictionary = Self.mModifierValues.Value(TemplateSelectorId)
+		  Return Dict.Lookup(Self.ModifierWeight, 1.0)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h1
 		Protected mEntries() As Ark.LootTemplateEntry
@@ -357,6 +394,9 @@ Implements Beacon.Countable,Iterable
 	#tag EndConstant
 
 	#tag Constant, Name = ModifierQuantity, Type = String, Dynamic = False, Default = \"Quantity", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ModifierWeight, Type = String, Dynamic = False, Default = \"Weight", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"3", Scope = Public

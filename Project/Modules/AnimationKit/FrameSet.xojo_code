@@ -13,7 +13,7 @@ Implements Iterable
 		Private Sub CheckCurrentFrames()
 		  Var FirstFrame As AnimationKit.Frame
 		  For I As Integer = 0 To Self.Frames.LastIndex
-		    If Self.Frames(I) <> Nil Then
+		    If (Self.Frames(I) Is Nil) = False Then
 		      FirstFrame = Self.Frames(I)
 		      Exit For I
 		    End If
@@ -45,14 +45,14 @@ Implements Iterable
 		Shared Function CreateFromSpriteSheet(Sprites As iOSImage, RetinaSprites As iOSImage, CellWidth As Integer, CellHeight As Integer, Rows As Integer, Columns As Integer) As AnimationKit.FrameSet
 		  Var StandardCells() As iOSImage = SplitSprites(Sprites, CellWidth, CellHeight, Rows, Columns)
 		  Var RetinaCells() As iOSImage
-		  If RetinaSprites <> Nil Then
+		  If (RetinaSprites Is Nil) = False Then
 		    RetinaCells = SplitSprites(RetinaSprites, CellWidth * 2, CellHeight * 2, Rows, Columns)
 		  End If
 		  
 		  Var Set As New AnimationKit.FrameSet()
 		  Set.ResizeTo(StandardCells.LastIndex)
 		  For I As Integer = 0 To StandardCells.LastIndex
-		    If RetinaSprites <> Nil Then
+		    If (RetinaSprites Is Nil) = False Then
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), RetinaCells(I))
 		    Else
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), Nil)
@@ -66,14 +66,14 @@ Implements Iterable
 		Shared Function CreateFromSpriteSheet(Sprites As Picture, RetinaSprites As Picture, CellWidth As Integer, CellHeight As Integer, Rows As Integer, Columns As Integer) As AnimationKit.FrameSet
 		  Var StandardCells() As Picture = SplitSprites(Sprites, CellWidth, CellHeight, Rows, Columns)
 		  Var RetinaCells() As Picture
-		  If RetinaSprites <> Nil Then
+		  If (RetinaSprites Is Nil) = False Then
 		    RetinaCells = SplitSprites(RetinaSprites, CellWidth * 2, CellHeight * 2, Rows, Columns)
 		  End If
 		  
 		  Var Set As New AnimationKit.FrameSet()
 		  Set.ResizeTo(StandardCells.LastIndex)
 		  For I As Integer = 0 To StandardCells.LastIndex
-		    If RetinaSprites <> Nil Then
+		    If (RetinaSprites Is Nil) = False Then
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), RetinaCells(I))
 		    Else
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), Nil)

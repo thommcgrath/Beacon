@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkEngramControlPointOverrideWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
    Type            =   8
    Visible         =   True
    Width           =   400
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -49,13 +47,13 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Set Points for Level"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Set Points for Level"
       Visible         =   True
       Width           =   360
    End
@@ -130,8 +128,6 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -155,6 +151,7 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -162,7 +159,6 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   80
    End
@@ -173,8 +169,6 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -198,6 +192,7 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -205,15 +200,12 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel LevelLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -234,21 +226,19 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Level:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
-      Value           =   "Level:"
       Visible         =   True
       Width           =   55
    End
    Begin UITweaks.ResizedLabel PointsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -269,22 +259,22 @@ Begin BeaconDialog ArkEngramControlPointOverrideWindow
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Points:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   94
       Transparent     =   False
       Underline       =   False
-      Value           =   "Points:"
       Visible         =   True
       Width           =   55
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  If Self.mLevels.LastIndex = -1 Then
@@ -342,13 +332,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Ark.Project, Levels() As Integer) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, Levels() As Integer) As Boolean
 		  If Parent = Nil Then
 		    Return False
 		  End If
 		  
 		  Var Win As New ArkEngramControlPointOverrideWindow(Project, Levels)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -358,7 +348,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Project As Ark.Project, Level As Integer) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, Level As Integer) As Boolean
 		  Var Levels(0) As Integer
 		  Levels(0) = Level
 		  Return Present(Parent, Project, Levels)
@@ -391,7 +381,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Levels() As Integer
 		  If Self.mLevels.LastIndex = -1 Then
 		    Var Level As Integer = Round(CDbl(Self.LevelField.Text))
@@ -424,7 +414,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -432,14 +422,14 @@ End
 #tag EndEvents
 #tag Events LevelField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PointsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
@@ -558,8 +548,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -670,7 +660,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

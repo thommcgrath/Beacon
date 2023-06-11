@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog DocumentDownloadWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -28,15 +28,16 @@ Begin BeaconDialog DocumentDownloadWindow
    Visible         =   True
    Width           =   600
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -46,27 +47,26 @@ Begin BeaconDialog DocumentDownloadWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   116
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -83,25 +83,23 @@ Begin BeaconDialog DocumentDownloadWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Downloading…"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   560
    End
-   Begin Label URLLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel URLLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -118,22 +116,21 @@ Begin BeaconDialog DocumentDownloadWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "???"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   560
    End
-   Begin ProgressBar Bar
-      AutoDeactivate  =   True
+   Begin DesktopProgressBar Bar
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
       Indeterminate   =   False
       Index           =   -2147483648
       InitialParent   =   ""
@@ -143,19 +140,24 @@ Begin BeaconDialog DocumentDownloadWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Maximum         =   0
+      MaximumValue    =   100
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Value           =   0.0
       Visible         =   True
       Width           =   560
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
@@ -248,7 +250,7 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		End Sub
 	#tag EndEvent
@@ -383,8 +385,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -447,7 +449,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -51,7 +51,7 @@ Implements NotificationKit.Receiver
 		Sub Close()
 		  RaiseEvent Close()
 		  
-		  If (Self.mDatabase Is Nil) = false Then
+		  If (Self.mDatabase Is Nil) = False Then
 		    Try
 		      Self.mDatabase.ExecuteSQL("PRAGMA optimize;")
 		      Self.mDatabase.Close
@@ -244,12 +244,17 @@ Implements NotificationKit.Receiver
 		  // This way changing lots of engrams rapidly won't require a write to disk
 		  // after each action
 		  
-		  If Self.mExportCloudFilesCallbackKey.IsEmpty = False Then
-		    CallLater.Cancel(Self.mExportCloudFilesCallbackKey)
-		    Self.mExportCloudFilesCallbackKey = ""
+		  Var MainInstance As Beacon.DataSource = Self.MainInstance // Could be self
+		  If MainInstance Is Nil Then
+		    Return
 		  End If
 		  
-		  Self.mExportCloudFilesCallbackKey = CallLater.Schedule(250, AddressOf ExportCloudFiles_Delayed)
+		  If MainInstance.mExportCloudFilesCallbackKey.IsEmpty = False Then
+		    CallLater.Cancel(MainInstance.mExportCloudFilesCallbackKey)
+		    MainInstance.mExportCloudFilesCallbackKey = ""
+		  End If
+		  
+		  MainInstance.mExportCloudFilesCallbackKey = CallLater.Schedule(250, AddressOf MainInstance.ExportCloudFiles_Delayed)
 		End Sub
 	#tag EndMethod
 
@@ -507,6 +512,12 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MainInstance() As Beacon.DataSource
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function MassageValues(Values() As Variant) As Variant()
 		  Var FinalValues() As Variant
@@ -729,9 +740,17 @@ Implements NotificationKit.Receiver
 		    Self.SQLExecute("INSERT OR REPLACE INTO variables (key, value) VALUES (?1, ?2);", Key, Value)
 		    Self.CommitTransaction()
 		  Catch Err As RuntimeException
-		    Self.RollbackTransaction()
+		    If Self.InTransaction Then
+		      Self.RollbackTransaction()
+		    End If
 		  End Try
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Writeable() As Boolean
+		  Return mAllowWriting
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

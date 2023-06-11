@@ -146,7 +146,8 @@ BeaconErrors::StartWatching();
 			'allow-forms',
 			'allow-same-origin',
 			'allow-scripts',
-			'allow-downloads'
+			'allow-downloads',
+			'allow-popups'
 		],
 		'upgrade-insecure-requests' => []
 	];

@@ -37,25 +37,32 @@ codesign -s 'Developer ID Application: Thom McGrath' --timestamp "${OUTPUT}/${AP
 rm -rf "${OUTPUT}/${APPNAME}.sparseimage";
 
 echo "Uploading disk image for notarization. This can take a while.";
-APPLEID=$(security find-generic-password -s "App Notarization" | sed -n 's/^[[:space:]]*"acct"<blob>="\(.*\)"/\1/p');
-TEAMID=$(security find-generic-password -s "App Notarization" | sed -n 's/^[[:space:]]*"icmt"<blob>="\(.*\)"/\1/p');
-xcrun altool --notarize-app --file "${OUTPUT}/${APPNAME}.dmg" --primary-bundle-id com.thezaz.beacon --username "${APPLEID}" --password @keychain:"App Notarization" --asc-provider "${TEAMID}" > ${TMPDIR}notarize_output 2>&1 || { rm -f ${TMPDIR}notarize_output; echo "Failed to upload disk image for notarization"; exit $?; };
-REQUESTUUID=$(sed -n 's/RequestUUID = \(.*\)/\1/p' ${TMPDIR}notarize_output);
-echo "Disk image has been uploaded. Request UUID is ${REQUESTUUID}. Checking status every 10 seconds...";
-STATUS="in progress";
-while [ "${STATUS}" = "in progress" ]; do
-	sleep 10;
-	xcrun altool --notarization-info "${REQUESTUUID}" --username "${APPLEID}" --password @keychain:"App Notarization" --asc-provider "${TEAMID}" > ${TMPDIR}notarize_output 2>&1 || { rm -f ${TMPDIR}notarize_output; echo "Failed to check on notarization status."; exit $?; };
-	STATUS=$(sed -ne 's/^[[:space:]]*Status: \(.*\)$/\1/p' ${TMPDIR}notarize_output);
-done;
-rm -f ${TMPDIR}notarize_output;
-if [ "${STATUS}" = "success" ]; then
+NOTARIZE_LOG="${TMPDIR}notarize_output";
+xcrun notarytool submit "${OUTPUT}/${APPNAME}.dmg" --keychain-profile "Beacon" --wait 2>&1 | tee "${NOTARIZE_LOG}";
+NOTARIZE_RESULT=$?;
+/bin/sync;
+NOTARIZE_REQUEST_ID=$(sed -n 's/  id: \(.*\)/\1/p' "${NOTARIZE_LOG}" | head -n 1);
+NOTARIZE_STATUS=$(sed -n 's/  status: \(.*\)/\1/p' "${NOTARIZE_LOG}" | tail -n 1);
+if [ "${NOTARIZE_STATUS}" = "Accepted" ]; then
+	NOTARIZE_COMPLETE=1;
+	/bin/sync;
 	xcrun stapler staple -v "${OUTPUT}/${APPNAME}.dmg";
+	NOTARIZE_RESULT=$?;
+	if [ $NOTARIZE_RESULT -eq 0 ]; then
+		echo "Disk image is ready for shipping.";
+		rm -f "${NOTARIZE_LOG}";
+		/bin/sync;
+		NOTARIZE_COMPLETE=2;
+	else
+		echo "Failed to staple disk image.";
+		exit 1;
+	fi
 else
-	echo "Disk image was not notarized, status is ${STATUS}.";
-	echo "See 'xcrun altool --notarization-info \"${REQUESTUUID}\" --username \"${APPLEID}\" --password @keychain:\"App Notarization\" --asc-provider \"${TEAMID}\"'";
+	if [ ! -z $NOTARIZE_REQUEST_ID ]; then
+		xcrun notarytool log "${NOTARIZE_REQUEST_ID}" --keychain-profile "Beacon" 2>&1 | tee "${NOTARIZE_LOG}";
+	fi
+	echo "Notarization error. Log path is ${NOTARIZE_LOG}";
 	exit 1;
-fi;
+fi
 
-echo "Disk image is ready for shipping.";
 exit 0;

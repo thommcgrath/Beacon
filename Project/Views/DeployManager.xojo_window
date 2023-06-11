@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconAutopositionWindow DeployManager
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -36,8 +36,6 @@ Begin BeaconAutopositionWindow DeployManager
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   "22,*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -48,8 +46,7 @@ Begin BeaconAutopositionWindow DeployManager
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -91,7 +88,6 @@ Begin BeaconAutopositionWindow DeployManager
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   550
       Index           =   -2147483648
@@ -115,7 +111,7 @@ Begin BeaconAutopositionWindow DeployManager
       Visible         =   True
       Width           =   1
    End
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   550
@@ -130,6 +126,7 @@ Begin BeaconAutopositionWindow DeployManager
       PanelCount      =   5
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -139,11 +136,9 @@ Begin BeaconAutopositionWindow DeployManager
       Value           =   0
       Visible         =   True
       Width           =   499
-      Begin Label OptionsMessageLabel
+      Begin DesktopLabel OptionsMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -164,22 +159,20 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   "Choose Deploy Options"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   201
          Transparent     =   False
          Underline       =   False
-         Value           =   "Choose Deploy Options"
          Visible         =   True
          Width           =   459
       End
-      Begin CheckBox CreateBackupCheckbox
+      Begin DesktopCheckBox CreateBackupCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Back up Game.ini and GameUserSettings.ini before making changes"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -207,12 +200,10 @@ Begin BeaconAutopositionWindow DeployManager
          VisualState     =   0
          Width           =   459
       End
-      Begin CheckBox ReviewChangesCheckbox
+      Begin DesktopCheckBox ReviewChangesCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Allow me to review changes before updating server"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -272,12 +263,10 @@ Begin BeaconAutopositionWindow DeployManager
          Visible         =   True
          Width           =   80
       End
-      Begin CheckBox RunAdvisorCheckbox
+      Begin DesktopCheckBox RunAdvisorCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Run advisor on content before updating server"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -305,11 +294,9 @@ Begin BeaconAutopositionWindow DeployManager
          VisualState     =   0
          Width           =   459
       End
-      Begin Label LogsMessageLabel
+      Begin DesktopLabel LogsMessageLabel
          AllowAutoDeactivate=   True
          Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -330,17 +317,17 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   "Status Messages"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
-         Value           =   "Status Messages"
          Visible         =   True
          Width           =   459
       End
-      Begin TextArea LogsArea
+      Begin DesktopTextArea LogsArea
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   True
@@ -348,8 +335,6 @@ Begin BeaconAutopositionWindow DeployManager
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -378,6 +363,7 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -386,7 +372,6 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          UnicodeMode     =   0
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   459
       End
@@ -454,12 +439,10 @@ Begin BeaconAutopositionWindow DeployManager
          Visible         =   True
          Width           =   90
       End
-      Begin CheckBox ReviewConfirmationCheck
+      Begin DesktopCheckBox ReviewConfirmationCheck
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Both config files are correct"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -520,7 +503,6 @@ Begin BeaconAutopositionWindow DeployManager
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          DrawCaptions    =   True
          Enabled         =   True
          Height          =   72
@@ -554,7 +536,6 @@ Begin BeaconAutopositionWindow DeployManager
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
          Index           =   -2147483648
@@ -585,7 +566,6 @@ Begin BeaconAutopositionWindow DeployManager
          AllowTabs       =   False
          Backdrop        =   0
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
          Index           =   -2147483648
@@ -617,7 +597,6 @@ Begin BeaconAutopositionWindow DeployManager
          Backdrop        =   0
          Caption         =   "No Selection"
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   550
          Index           =   -2147483648
@@ -641,12 +620,10 @@ Begin BeaconAutopositionWindow DeployManager
          Visible         =   True
          Width           =   499
       End
-      Begin CheckBox NukeConfigCheckbox
+      Begin DesktopCheckBox NukeConfigCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Erase server Game.ini and GameUserSettings.ini files"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -674,6 +651,38 @@ Begin BeaconAutopositionWindow DeployManager
          VisualState     =   0
          Width           =   459
       End
+      Begin ReactionButton CopyTriggerButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Copy Trigger"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   321
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "Copies a link to perform this deploy using automation tools."
+         Top             =   510
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   113
+      End
    End
    Begin Timer DeployWatcher
       Enabled         =   True
@@ -692,11 +701,11 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function CancelClose(appQuitting as Boolean) As Boolean
+		Function CancelClosing(appQuitting As Boolean) As Boolean
 		  If Not Self.Working Then
 		    Return False
 		  End If
@@ -706,7 +715,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  If (Self.Engines Is Nil) Then
 		    Return
 		  End If
@@ -722,40 +731,22 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.Title = "Deploy: " + Self.Project.Title
 		  
-		  Self.CreateBackupCheckbox.Value = Preferences.DeployCreateBackup
-		  Self.ReviewChangesCheckbox.Value = Preferences.DeployReviewChanges
-		  Self.RunAdvisorCheckbox.Value = Preferences.DeployRunAdvisor
-		  
-		  
-		  
-		  // Var ProfileBound As Integer = Self.Project.ServerProfileCount - 1
-		  // For Idx As Integer = 0 To ProfileBound
-		  // Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
-		  // If Profile.DeployCapable = False Then
-		  // Continue
-		  // End If
-		  // 
-		  // Var Label As String = Profile.Name
-		  // If Profile.SecondaryName.Length > 0 Then
-		  // Label = Label + EndOfLine + Profile.SecondaryName
-		  // End If
-		  // Self.ServerList.AddRow("", Label)
-		  // Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
-		  // If Self.PreselectProfileUUIDs.Count = 0 Then
-		  // Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Profile.Enabled
-		  // Else
-		  // Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Self.PreselectProfileUUIDs.IndexOf(Profile.ProfileID) > -1
-		  // End If
-		  // Next
+		  Self.CreateBackupCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionBackup
+		  Self.ReviewChangesCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionReview
+		  Self.RunAdvisorCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionAdvise
 		  
 		  Self.ServerList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
-		  Self.ServerList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		  Self.ServerList.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		  Self.ServerList.UpdateList()
 		  
 		  Self.CheckOptionsActionEnabled
+		  
+		  If (Self.Settings.Options And Beacon.DeploySettings.OptionRunImmediately) = Beacon.DeploySettings.OptionRunImmediately Then
+		    Self.Begin()
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -763,7 +754,7 @@ End
 		Sub UpdateControlPositions()
 		  Const MaxOptionsWidth = 460
 		  
-		  Var OptionCheckboxes() As CheckBox = Array(Self.CreateBackupCheckbox, Self.NukeConfigCheckbox, Self.ReviewChangesCheckbox, Self.RunAdvisorCheckbox)
+		  Var OptionCheckboxes() As DesktopCheckBox = Array(Self.CreateBackupCheckbox, Self.NukeConfigCheckbox, Self.ReviewChangesCheckbox, Self.RunAdvisorCheckbox)
 		  For Idx As Integer = OptionCheckboxes.LastIndex DownTo OptionCheckboxes.FirstIndex
 		    If OptionCheckboxes(Idx).Visible = False Then
 		      OptionCheckboxes.RemoveAt(Idx)
@@ -871,7 +862,11 @@ End
 		      Continue
 		    End If
 		    
-		    StopMessage = StopMessageDialog.Present(Self)
+		    If (Self.Settings Is Nil) = False And Self.Settings.StopMessage.IsEmpty = False Then
+		      StopMessage = Self.Settings.StopMessage
+		    Else
+		      StopMessage = StopMessageDialog.Present(Self)
+		    End If
 		    If StopMessage.IsEmpty Then
 		      Return
 		    Else
@@ -884,7 +879,7 @@ End
 		  
 		  // Mark that we're doing something
 		  Self.Working = True
-		  Self.Changed = True
+		  Self.Modified = True
 		  
 		  // Watch for changes
 		  Self.DeployWatcher.RunMode = Timer.RunModes.Multiple
@@ -933,11 +928,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Project As Beacon.Project, PreselectServers() As Beacon.ServerProfile)
-		  Self.Project = Project
-		  For Each Profile As Beacon.ServerProfile In PreselectServers
-		    Self.PreselectProfileUUIDs.Add(Profile.ProfileID)
-		  Next Profile
+		Sub Constructor(ProjectController As Beacon.ProjectController, Settings As Beacon.DeploySettings)
+		  Self.Controller = ProjectController
+		  Self.Settings = Settings
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -1050,9 +1043,9 @@ End
 		        Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		      Else
 		        If OffendingKey.IsEmpty = False Then
-		          Explanation = "The config key '" + OffendingKey + "' needs " + ContentLength.ToString(Locale.Current, ",##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		          Explanation = "The config key '" + OffendingKey + "' needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
 		        Else
-		          Explanation = "There is a config key that needs " + ContentLength.ToString(Locale.Current, ",##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		          Explanation = "There is a config key that needs " + ContentLength.ToString(Locale.Current, "#,##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
 		        End If
 		        Explanation = Explanation + " In order to build your ini files correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		      End If
@@ -1210,6 +1203,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private Controller As Beacon.ProjectController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private DeployFinished As Boolean
 	#tag EndProperty
 
@@ -1221,12 +1218,17 @@ End
 		Private Engines As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private PreselectProfileUUIDs() As String
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.Controller.Project
+			End Get
+		#tag EndGetter
+		Private Project As Beacon.Project
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private Project As Beacon.Project
+		Private Settings As Beacon.DeploySettings
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1270,12 +1272,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.UpdateMainView()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.TypeaheadColumn = 1
 		  Me.SortingColumn = 1
 		End Sub
@@ -1287,22 +1289,30 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CustomizeProfileRow(Profile As Beacon.ServerProfile, RowIndex As Integer)
-		  If Self.PreselectProfileUUIDs.Count = 0 Then
+		  If Self.Settings.Servers.Count = 0 Then
 		    Me.CellCheckBoxValueAt(RowIndex, 0) = Profile.Enabled
-		  Else
-		    Me.CellCheckBoxValueAt(RowIndex, 0) = Self.PreselectProfileUUIDs.IndexOf(Profile.ProfileID) > -1
+		    Return
 		  End If
+		  
+		  For Each OtherProfile As Beacon.ServerProfile In Self.Settings.Servers
+		    If OtherProfile = Profile Then
+		      Me.CellCheckBoxValueAt(RowIndex, 0) = True
+		      Return
+		    End If
+		  Next
+		  
+		  Me.CellCheckBoxValueAt(RowIndex, 0) = False
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function BlockUpdate() As Boolean
-		  Return Me.ColumnAt(0).WidthActual = 0
+		  Return Me.ColumnAttributesAt(0).WidthActual = 0
 		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events CreateBackupCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.Opened Then
 		    Preferences.DeployCreateBackup = Me.Value
 		  End If
@@ -1314,7 +1324,7 @@ End
 #tag EndEvents
 #tag Events ReviewChangesCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.Opened Then
 		    Preferences.DeployReviewChanges = Me.Value
 		  End If
@@ -1323,14 +1333,14 @@ End
 #tag EndEvents
 #tag Events OptionsActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Begin()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RunAdvisorCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.Opened Then
 		    Preferences.DeployRunAdvisor = Me.Value
 		  End If
@@ -1339,7 +1349,7 @@ End
 #tag EndEvents
 #tag Events ReviewActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
 		  If Controller <> Nil Then
 		    Controller.Cancelled = False
@@ -1351,7 +1361,7 @@ End
 #tag EndEvents
 #tag Events ReviewCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
 		  If Controller <> Nil Then
 		    Controller.Cancelled = True
@@ -1363,7 +1373,7 @@ End
 #tag EndEvents
 #tag Events ReviewConfirmationCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.ReviewActionButton.Enabled = Me.Value
 		End Sub
 	#tag EndEvent
@@ -1382,7 +1392,7 @@ End
 #tag EndEvents
 #tag Events ReviewSwitcher
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
 		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
@@ -1391,7 +1401,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.UpdatingReviewContent Then
 		    Return
 		  End If
@@ -1419,10 +1429,61 @@ End
 #tag EndEvents
 #tag Events NukeConfigCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.CreateBackupCheckbox.Value = True
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CopyTriggerButton
+	#tag Event
+		Sub Pressed()
+		  Var Settings As New Beacon.DeploySettings
+		  Settings.Options = Beacon.DeploySettings.OptionRunImmediately
+		  If Self.CreateBackupCheckbox.Value Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionBackup
+		  End If
+		  If Self.NukeConfigCheckbox.Value Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionErase
+		  End If
+		  If Self.ReviewChangesCheckbox.Value Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionReview
+		  End If
+		  If Self.RunAdvisorCheckbox.Value Then
+		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
+		  End If
+		  
+		  Var UseStopMessage As Boolean
+		  For I As Integer = 0 To Self.ServerList.LastRowIndex
+		    If Not Self.ServerList.CellCheckBoxValueAt(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
+		    Settings.Servers.Add(Profile)
+		    UseStopMessage = UseStopMessage Or Profile.SupportsCustomStopMessage
+		  Next
+		  
+		  If UseStopMessage Then
+		    Var StopMessage As String = StopMessageDialog.Present(Self)
+		    If StopMessage.IsEmpty Then
+		      Return
+		    End If
+		    Settings.StopMessage = StopMessage
+		  End If
+		  
+		  Var TriggerURL As String
+		  Try
+		    TriggerURL = Self.Controller.BuildDeployURL(Settings)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Unable to Copy Trigger URL", Err.Message)
+		    Return
+		  End Try
+		  Var Board As New Clipboard
+		  Board.Text = TriggerURL
+		  
+		  Me.Caption = "Copied!"
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1458,18 +1519,18 @@ End
 		      
 		      AllFinished = AllFinished And Engine.Finished
 		      
-		      If Self.ServerList.Selected(I) Then
+		      If Self.ServerList.RowSelectedAt(I) Then
 		        Self.UpdateLogsView()
 		      End If
 		    End If
-		    If Self.ServerList.CellValueAt(I, 1) <> Label Then
-		      Self.ServerList.CellValueAt(I, 1) = Label
+		    If Self.ServerList.CellTextAt(I, 1) <> Label Then
+		      Self.ServerList.CellTextAt(I, 1) = Label
 		    End If
 		  Next
 		  
 		  If AllFinished Then
 		    Self.Working = False
-		    Self.Changed = False
+		    Self.Modified = False
 		    Self.DeployFinished = True
 		    Me.RunMode = Timer.RunModes.Off
 		    
@@ -1500,7 +1561,12 @@ End
 		      // What?
 		    End If
 		    
-		    Self.ShowAlert("The deploy process has finished.", Explanation)
+		    // If this was an auto-run, just close the deploy window.
+		    If (Self.Settings.Options And Beacon.DeploySettings.OptionRunImmediately) = Beacon.DeploySettings.OptionRunImmediately Then
+		      Self.Close
+		    Else
+		      Self.ShowAlert("The deploy process has finished.", Explanation)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1583,6 +1649,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false
@@ -1712,8 +1786,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1776,7 +1850,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

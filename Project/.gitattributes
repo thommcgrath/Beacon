@@ -1,0 +1,3 @@
+MBSKey.txt filter=git-crypt diff=git-crypt
+GSAID.txt filter=git-crypt diff=git-crypt
+

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkProjectSettingsEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   554
    Index           =   -2147483648
@@ -27,30 +28,29 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
    Visible         =   True
    Width           =   628
    Begin UITweaks.ResizedTextField TitleField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   132
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -58,25 +58,24 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   476
    End
    Begin UITweaks.ResizedLabel TitleLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -93,36 +92,36 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Title:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   100
    End
-   Begin TextArea DescriptionArea
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   True
-      BackColor       =   &cFFFFFF00
+   Begin DesktopTextArea DescriptionArea
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   True
+      AllowStyledText =   True
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       Height          =   311
-      HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
       Left            =   132
-      LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
       LockBottom      =   True
@@ -130,37 +129,33 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollbarVertical=   True
-      Styled          =   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   0
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   476
    End
    Begin UITweaks.ResizedLabel DescriptionLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -177,11 +172,9 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Description:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
@@ -197,7 +190,6 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -226,8 +218,6 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
    Begin UITweaks.ResizedLabel UWPModeLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -261,8 +251,6 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
    Begin UITweaks.ResizedPopupMenu UWPModeMenu
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -290,11 +278,9 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Visible         =   True
       Width           =   132
    End
-   Begin Label ConsoleModeLabel
+   Begin DesktopLabel ConsoleModeLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -325,11 +311,9 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Visible         =   True
       Width           =   249
    End
-   Begin Label CompressedLabel
+   Begin DesktopLabel CompressedLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -360,11 +344,9 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       Visible         =   True
       Width           =   249
    End
-   Begin Label AllowUCSLabel
+   Begin DesktopLabel AllowUCSLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -402,7 +384,6 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -433,7 +414,6 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -464,7 +444,6 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -490,7 +469,6 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
    End
    Begin Thread GFIComputeThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -498,10 +476,10 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -588,56 +566,58 @@ End
 
 #tag Events TitleField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Project.Title = Me.Text.Trim
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DescriptionArea
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Project.Description = Self.SanitizeText(Me.Text.Trim, False)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events UWPModeMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Project.UWPMode = CType(Me.SelectedRowIndex, Ark.Project.UWPCompatibilityModes)
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConsoleModeSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -654,35 +634,35 @@ End
 		    Next
 		  End If
 		  
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CompressedSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Project.UseCompression = Me.Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AllowUCSSwitch
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Project.AllowUCS2 = Me.Value
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
@@ -719,6 +699,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -760,14 +756,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -796,8 +784,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -980,14 +968,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

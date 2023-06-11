@@ -2,7 +2,14 @@
 Protected Class RangeField
 Inherits UITweaks.ResizedTextField
 	#tag Event
-		Function KeyDown(Key As String) As Boolean
+		Sub FocusLost()
+		  Self.CheckValue()
+		  RaiseEvent FocusLost
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function KeyDown(key As String) As Boolean
 		  If RaiseEvent KeyDown(Key) Then
 		    Return True
 		  End If
@@ -14,13 +21,6 @@ Inherits UITweaks.ResizedTextField
 		    Return True
 		  End Select
 		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub LostFocus()
-		  Self.CheckValue()
-		  RaiseEvent LostFocus
-		End Sub
 	#tag EndEvent
 
 
@@ -41,10 +41,10 @@ Inherits UITweaks.ResizedTextField
 		Private Shared Function Format(Value As Double) As String
 		  If Floor(Value) = Value Then
 		    // Integer
-		    Return Value.ToString(Locale.Current, ",##0")
+		    Return Value.ToString(Locale.Current, "#,##0")
 		  Else
 		    // Double
-		    Return Value.ToString(Locale.Current, ",##0.0####")
+		    Return Value.ToString(Locale.Current, "#,##0.0####")
 		  End If
 		End Function
 	#tag EndMethod
@@ -106,15 +106,15 @@ Inherits UITweaks.ResizedTextField
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event FocusLost()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event KeyDown(Key As String) As Boolean
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event LostFocus()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -211,8 +211,8 @@ Inherits UITweaks.ResizedTextField
 			Visible=true
 			Group="Appearance"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBorder"
@@ -322,22 +322,6 @@ Inherits UITweaks.ResizedTextField
 			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -480,8 +464,8 @@ Inherits UITweaks.ResizedTextField
 			Visible=true
 			Group="Appearance"
 			InitialValue="&h000000"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

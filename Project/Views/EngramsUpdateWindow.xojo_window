@@ -1,37 +1,35 @@
-#tag Window
-Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
-   BackColor       =   &cFFFFFF00
+#tag DesktopWindow
+Begin DesktopWindow EngramsUpdateWindow Implements NotificationKit.Receiver
    Backdrop        =   0
-   CloseButton     =   False
+   BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   Frame           =   0
+   DefaultLocation =   3
    FullScreen      =   False
-   FullScreenButton=   False
-   HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   124
    ImplicitInstance=   False
-   LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   False
-   MaxWidth        =   32000
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
-   MinimizeButton  =   False
-   MinWidth        =   64
-   Placement       =   3
-   Resizable       =   "True"
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    Resizeable      =   False
-   SystemUIVisible =   "True"
    Title           =   ""
+   Type            =   0
    Visible         =   False
    Width           =   450
-   Begin ProgressBar Indicator
-      AutoDeactivate  =   True
+   Begin DesktopProgressBar Indicator
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
       Indeterminate   =   False
       Index           =   -2147483648
       InitialParent   =   ""
@@ -41,25 +39,30 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Maximum         =   0
+      MaximumValue    =   100
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Value           =   0.0
       Visible         =   True
       Width           =   410
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -76,11 +79,9 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Updating Blueprint Definitions…"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -97,15 +98,16 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       TabPanelIndex   =   0
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -115,13 +117,12 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
@@ -129,17 +130,18 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped)
+		  mInstance = Nil
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped)
 		  
 		  DataUpdater.CheckNow(Self.mForceRefresh)
@@ -201,15 +203,21 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub SyncAndShowIfNecessary(ForceRefresh As Boolean)
-		  Var Win As New EngramsUpdateWindow(ForceRefresh)
 		  // Do not show it, the timer will do that
-		  #Pragma Unused Win
+		  
+		  If mInstance Is Nil Then
+		    mInstance = New EngramsUpdateWindow(ForceRefresh)
+		  End If
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
 		Private mForceRefresh As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mInstance As EngramsUpdateWindow
 	#tag EndProperty
 
 
@@ -232,7 +240,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  // Doesn't really cancel, just dismisses the window
 		  
 		  Self.Close()
@@ -449,8 +457,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -465,7 +473,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

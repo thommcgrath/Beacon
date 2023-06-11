@@ -1,14 +1,13 @@
-#tag Window
-Begin ContainerControl ModSelectionGrid Implements PopoverContainer
+#tag DesktopWindow
+Begin DesktopContainer ModSelectionGrid Implements PopoverContainer
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
    Enabled         =   True
-   EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   280
    Index           =   -2147483648
@@ -26,12 +25,10 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
    Transparent     =   True
    Visible         =   True
    Width           =   512
-   Begin CheckBox ModCheckbox
+   Begin DesktopCheckBox ModCheckbox
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Untitled"
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -60,6 +57,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Width           =   100
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -77,6 +75,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   3
@@ -88,6 +87,10 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Transparent     =   False
       Visible         =   True
       Width           =   200
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin UITweaks.ResizedPushButton NextPageButton
       AllowAutoDeactivate=   True
@@ -153,11 +156,9 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Visible         =   True
       Width           =   80
    End
-   Begin Label NoResultsLabel
+   Begin DesktopLabel NoResultsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -196,7 +197,6 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -222,11 +222,11 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Width           =   280
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.BuildCheckboxes()
 		  RaiseEvent Open
 		End Sub
@@ -288,7 +288,7 @@ End
 		  Var NextLeft As Integer = PaddingLeft
 		  Var NextTop As Integer = HeaderHeight
 		  For Idx As Integer = Packs.FirstIndex To Packs.LastIndex
-		    Var Check As CheckBox = New ModCheckbox
+		    Var Check As DesktopCheckBox = New ModCheckbox
 		    Check.Caption = Packs(Idx).Name
 		    Check.Width = CheckboxWidth
 		    Check.Left = NextLeft
@@ -429,7 +429,7 @@ End
 
 #tag Events ModCheckbox
 	#tag Event
-		Sub Action(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -452,7 +452,7 @@ End
 #tag EndEvents
 #tag Events NextPageButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mOffset = Self.mOffset + Self.ResultsPerPage
 		  Self.BuildCheckboxes()
 		End Sub
@@ -460,7 +460,7 @@ End
 #tag EndEvents
 #tag Events PrevPageButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mOffset = Self.mOffset - Self.ResultsPerPage
 		  Self.BuildCheckboxes
 		End Sub
@@ -468,7 +468,7 @@ End
 #tag EndEvents
 #tag Events ViewSelector
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -478,12 +478,20 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Segment(0).Selected = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -649,8 +657,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -685,26 +693,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

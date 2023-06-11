@@ -4,7 +4,7 @@ use BeaconAPI\v4\{Application, Session};
 
 $sessions = Session::Search(['userId' => $user->UserId()], true);
 
-BeaconTemplate::AddStyleSheet('/assets/css/flags.css');
+BeaconTemplate::AddStyleSheet(BeaconCommon::AssetURI('flags.css'));
 
 echo '<div class="visual-group">';
 echo '<h3>Active Sessions</h3>';

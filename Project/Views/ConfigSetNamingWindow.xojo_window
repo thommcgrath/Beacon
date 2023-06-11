@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ConfigSetNamingWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ConfigSetNamingWindow
    Type            =   8
    Visible         =   True
    Width           =   400
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -59,7 +57,7 @@ Begin BeaconDialog ConfigSetNamingWindow
       Visible         =   True
       Width           =   -567233
    End
-   Begin PushButton ActionButton
+   Begin DesktopButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -91,7 +89,7 @@ Begin BeaconDialog ConfigSetNamingWindow
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin DesktopButton CancelButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   True
@@ -123,15 +121,13 @@ Begin BeaconDialog ConfigSetNamingWindow
       Visible         =   True
       Width           =   80
    End
-   Begin TextField NameField
+   Begin DesktopTextField NameField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -167,11 +163,11 @@ Begin BeaconDialog ConfigSetNamingWindow
       Width           =   360
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If Self.mCurrentSetName.IsEmpty = False Then
 		    Self.MessageLabel.Text = "Edit Config Set Name"
 		    Self.NameField.Text = Self.mCurrentSetName
@@ -191,13 +187,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, CurrentSetName As String = "") As String
+		Shared Function Present(Parent As DesktopWindow, CurrentSetName As String = "") As String
 		  If Parent Is Nil Then
 		    Return ""
 		  End If
 		  
 		  Var Win As New ConfigSetNamingWindow(CurrentSetName)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var SetName As String = Win.mNewSetName
 		  Win.Close
@@ -220,7 +216,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mNewSetName = Self.NameField.Text.Trim
 		  Self.Hide
 		End Sub
@@ -228,14 +224,14 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Var SetName As String = Me.Text.Trim
 		  Self.ActionButton.Enabled = (SetName.IsEmpty = False)
 		End Sub
@@ -451,8 +447,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -467,7 +463,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

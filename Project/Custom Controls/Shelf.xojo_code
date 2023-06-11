@@ -3,16 +3,16 @@ Protected Class Shelf
 Inherits ControlCanvas
 Implements ObservationKit.Observer
 	#tag Event
-		Sub Activate()
-		  RaiseEvent Activate
-		  Self.Invalidate
+		Sub Activated()
+		  RaiseEvent Activated
+		  Self.Refresh(False)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Deactivate()
-		  RaiseEvent Deactivate
-		  Self.Invalidate
+		Sub Deactivated()
+		  RaiseEvent Deactivated
+		  Self.Refresh(False)
 		End Sub
 	#tag EndEvent
 
@@ -27,14 +27,14 @@ Implements ObservationKit.Observer
 		    If Self.mHitRects(I).Contains(Point) And (Self.RequiresSelection = False Or I <> Self.mSelectedIndex) Then
 		      Self.mMouseDownItem = I
 		      Self.mPressed = True
-		      Self.Invalidate
+		      Self.Refresh
 		      Return True
 		    End If
 		  Next
 		  
 		  Self.mMouseDownItem = -1
 		  Self.mPressed = False
-		  Self.Invalidate
+		  Self.Refresh
 		  Return True
 		End Function
 	#tag EndEvent
@@ -49,10 +49,10 @@ Implements ObservationKit.Observer
 		  Var TargetRect As BeaconUI.Rect = Self.mHitRects(Self.mMouseDownItem)
 		  If TargetRect.Contains(Point) = True And Self.mPressed = False Then
 		    Self.mPressed = True
-		    Self.Invalidate
+		    Self.Refresh
 		  ElseIf TargetRect.Contains(Point) = False And Self.mPressed = True Then
 		    Self.mPressed = False
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
@@ -72,7 +72,7 @@ Implements ObservationKit.Observer
 		    End If
 		    If Self.mHitRects(I).Contains(Point) Then
 		      CallLater.Cancel(Self.mHoverCallbackKey)
-		      Self.mHoverCallbackKey = CallLater.Schedule(1000, WeakAddressOf ShowHoverToolTip)
+		      Self.mHoverCallbackKey = CallLater.Schedule(1000, WeakAddressOf ShowHoverToolTip, Point)
 		      Return
 		    End If
 		  Next
@@ -100,14 +100,14 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.Transparent = True
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  Const CellCornerRadius = 6
 		  
 		  #Pragma Unused areas
@@ -276,7 +276,7 @@ Implements ObservationKit.Observer
 		  Self.mItems.Add(Item)
 		  Item.AddObserver(Self, "PulseAmount")
 		  Item.AddObserver(Self, "Loading")
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -302,7 +302,7 @@ Implements ObservationKit.Observer
 		Private Sub mLoadingAnimator_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -316,7 +316,7 @@ Implements ObservationKit.Observer
 		  
 		  Select Case Key
 		  Case "PulseAmount"
-		    Self.Invalidate
+		    Self.Refresh
 		  Case "Loading"
 		    Var RunLoadingAnimator As Boolean
 		    For Each Item As ShelfItem In Self.mItems
@@ -348,7 +348,7 @@ Implements ObservationKit.Observer
 		  Self.mItems(Index).RemoveObserver(Self, "PulseAmount")
 		  Self.mItems(Index).RemoveObserver(Self, "Loading")
 		  Self.mItems.RemoveAt(Index)
-		  Self.Invalidate
+		  Self.Refresh
 		End Sub
 	#tag EndMethod
 
@@ -363,8 +363,8 @@ Implements ObservationKit.Observer
 		  Value = Max(Min(Self.mItems.LastIndex, Value), If(Self.RequiresSelection, 0, -1))
 		  If Self.mSelectedIndex <> Value Then
 		    Self.mSelectedIndex = Value
-		    RaiseEvent Action
-		    Self.Invalidate
+		    RaiseEvent Pressed
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndMethod
@@ -396,13 +396,12 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowHoverToolTip()
-		  Var Point As New BeaconUI.Point(Self.MouseX, Self.MouseY)
+		Private Sub ShowHoverToolTip(Point As Variant)
 		  For I As Integer = 0 To Self.mHitRects.LastIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
 		    End If
-		    If Self.mHitRects(I).Contains(Point) Then
+		    If Self.mHitRects(I).Contains(BeaconUI.Point(Point)) Then
 		      App.ShowTooltip(Self.mItems(I).Caption, System.MouseX, System.MouseY + 16)
 		      Return
 		    End If
@@ -412,19 +411,19 @@ Implements ObservationKit.Observer
 
 
 	#tag Hook, Flags = &h0
-		Event Action()
+		Event Activated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Activate()
+		Event Deactivated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Deactivate()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Pressed()
 	#tag EndHook
 
 
@@ -438,7 +437,7 @@ Implements ObservationKit.Observer
 			Set
 			  If Self.mDrawCaptions <> Value Then
 			    Self.mDrawCaptions = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -527,14 +526,6 @@ Implements ObservationKit.Observer
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Tooltip"
 			Visible=true
 			Group="Appearance"
@@ -604,14 +595,6 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="72"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

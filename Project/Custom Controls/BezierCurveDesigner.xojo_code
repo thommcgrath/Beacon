@@ -75,7 +75,7 @@ Inherits ControlCanvas
 		    #endif
 		  End If
 		  #if Self.ShowCrosshair
-		    Self.Invalidate
+		    Self.Refresh
 		  #endif
 		End Sub
 	#tag EndEvent
@@ -90,7 +90,7 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
 		  #Pragma Unused SafeArea
@@ -251,7 +251,7 @@ Inherits ControlCanvas
 			  If Self.mCurve <> Value Then
 			    Self.mCurve = Value
 			    RaiseEvent Changed
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -307,14 +307,6 @@ Inherits ControlCanvas
 		#tag ViewProperty
 			Name="ScrollingEnabled"
 			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
@@ -390,14 +382,6 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

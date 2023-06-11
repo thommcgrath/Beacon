@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkExperienceWizard
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,14 +27,14 @@ Begin BeaconDialog ArkExperienceWizard
    Title           =   "Experience Wizard"
    Visible         =   True
    Width           =   651
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -51,25 +51,23 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Experience Wizard"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   611
    End
-   Begin Label ExplanationLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel ExplanationLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   80
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -86,25 +84,23 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "This wizard will help you define many level requirements in bulk. First, set the number of levels to add and the total experience to add for those levels. Then use the blue handles on the curve to define how rapidly the values should increase. The list will show the total experience required for each of the new levels."
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   611
    End
-   Begin Label NextLevelField
-      AutoDeactivate  =   True
+   Begin DesktopLabel NextLevelField
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -121,25 +117,23 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "2"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   144
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   200
    End
-   Begin Label NextLevelLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel NextLevelLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -156,11 +150,9 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Starting Level:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   144
       Transparent     =   False
       Underline       =   False
@@ -168,30 +160,29 @@ Begin BeaconDialog ArkExperienceWizard
       Width           =   115
    End
    Begin UITweaks.ResizedTextField LevelCountField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   147
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -199,25 +190,24 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   200
    End
-   Begin Label FinalLevelField
-      AutoDeactivate  =   True
+   Begin DesktopLabel FinalLevelField
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -234,25 +224,23 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "3"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   210
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   200
    End
-   Begin Label FinalLevelLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel FinalLevelLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -269,11 +257,9 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Ending Level:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   210
       Transparent     =   False
       Underline       =   False
@@ -281,30 +267,29 @@ Begin BeaconDialog ArkExperienceWizard
       Width           =   115
    End
    Begin UITweaks.ResizedTextField XPField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   147
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -312,25 +297,24 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "100"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   242
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   200
    End
    Begin UITweaks.ResizedLabel XPLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -347,11 +331,9 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Additional XP:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   242
       Transparent     =   False
       Underline       =   False
@@ -359,13 +341,13 @@ Begin BeaconDialog ArkExperienceWizard
       Width           =   115
    End
    Begin UITweaks.ResizedLabel LevelCountLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -382,11 +364,9 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Additional Levels:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Underline       =   False
@@ -394,15 +374,14 @@ Begin BeaconDialog ArkExperienceWizard
       Width           =   115
    End
    Begin BezierCurveDesigner Designer
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   272
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   359
@@ -418,37 +397,40 @@ Begin BeaconDialog ArkExperienceWizard
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   144
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   272
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   True
       ColumnCount     =   3
-      ColumnsResizable=   False
       ColumnWidths    =   "75,*,*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   174
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Level	Level XP	Total XP"
@@ -461,22 +443,16 @@ Begin BeaconDialog ArkExperienceWizard
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   276
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
       VisibleRowCount =   0
       Width           =   327
@@ -484,15 +460,16 @@ Begin BeaconDialog ArkExperienceWizard
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -502,13 +479,12 @@ Begin BeaconDialog ArkExperienceWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   470
       Transparent     =   False
       Underline       =   False
@@ -516,15 +492,16 @@ Begin BeaconDialog ArkExperienceWizard
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -534,13 +511,12 @@ Begin BeaconDialog ArkExperienceWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   470
       Transparent     =   False
       Underline       =   False
@@ -548,30 +524,29 @@ Begin BeaconDialog ArkExperienceWizard
       Width           =   80
    End
    Begin UITweaks.ResizedTextField PointFields
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   0
       Italic          =   False
       Left            =   359
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -579,42 +554,40 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   428
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   59
    End
    Begin UITweaks.ResizedTextField PointFields
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   1
       Italic          =   False
       Left            =   430
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -622,42 +595,40 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   428
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   59
    End
    Begin UITweaks.ResizedTextField PointFields
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   2
       Italic          =   False
       Left            =   501
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -665,42 +636,40 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   428
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   59
    End
    Begin UITweaks.ResizedTextField PointFields
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   3
       Italic          =   False
       Left            =   572
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -708,14 +677,13 @@ Begin BeaconDialog ArkExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   2
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   428
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   59
    End
@@ -728,8 +696,10 @@ Begin BeaconDialog ArkExperienceWizard
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin ProgressWheel ComputeSpinner
+   Begin DesktopProgressWheel ComputeSpinner
+      Active          =   False
       AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   16
       Index           =   -2147483648
@@ -740,21 +710,23 @@ Begin BeaconDialog ArkExperienceWizard
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   18
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   472
       Transparent     =   False
       Visible         =   False
       Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin Label ComputeMessage
+   Begin DesktopLabel ComputeMessage
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -786,11 +758,11 @@ Begin BeaconDialog ArkExperienceWizard
       Width           =   399
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mSettingUp = False
 		  
 		  Self.Designer.Curve = New Beacon.Curve(0, 0, 1, 1)
@@ -866,22 +838,22 @@ End
 		          LastXP = TotalXP
 		          
 		          Var DisplayLevel As Integer = (Level - 1) + Self.mStartingLevel
-		          Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
+		          Self.List.AddRow(DisplayLevel.ToString(Locale.Current, "#,##0"), LevelXP.ToString(Locale.Current, "#,##0"), TotalXP.ToString(Locale.Current, "#,##0"))
 		          Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
 		        Catch Err As RuntimeException
 		        End Try
 		      Next
 		      Self.List.ScrollPosition = Self.mLastScrollPosition
-		      Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
+		      Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, "#,##0")
 		    End Select
 		  Next Idx
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, StartingLevel As Integer, StartingXP As UInt64) As UInt64()
+		Shared Function Present(Parent As DesktopWindow, StartingLevel As Integer, StartingXP As UInt64) As UInt64()
 		  Var Win As New ArkExperienceWizard(StartingLevel, StartingXP)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Levels() As UInt64
 		  If Not Win.mCancelled Then
@@ -938,13 +910,13 @@ End
 		      LastXP = TotalXP
 		      
 		      Var DisplayLevel As Integer = (Level - 1) + StartingLevel
-		      Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
+		      Self.List.AddRow(DisplayLevel.ToString(Locale.Current, "#,##0"), LevelXP.ToString(Locale.Current, "#,##0"), TotalXP.ToString(Locale.Current, "#,##0"))
 		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
 		    Next
 		    Self.List.ScrollPosition = ScrollPosition
 		    
-		    Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
-		    Self.NextLevelField.Text = StartingLevel.ToString(Locale.Current, ",##0")
+		    Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, "#,##0")
+		    Self.NextLevelField.Text = StartingLevel.ToString(Locale.Current, "#,##0")
 		    Self.ActionButton.Enabled = Allowed
 		    Self.WarningLabel.Visible = Not Allowed
 		  #endif
@@ -997,7 +969,7 @@ End
 
 #tag Events LevelCountField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
@@ -1008,7 +980,7 @@ End
 #tag EndEvents
 #tag Events XPField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
@@ -1038,18 +1010,18 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(0) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Right
+		Sub Opening()
+		  Me.ColumnAlignmentAt(0) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(1) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(2) = DesktopListbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Not Self.mValidXPAmount Then
-		    Self.ShowAlert("XP total is too high", "Ark has a limit of " + Ark.Configs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, ",##0") + " total experience.")
+		    Self.ShowAlert("XP total is too high", "Ark has a limit of " + Ark.Configs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, "#,##0") + " total experience.")
 		    Return
 		  End If
 		  
@@ -1061,7 +1033,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CancelComputeThread()
 		  Self.mCancelled = True
 		  Self.Hide()
@@ -1070,7 +1042,7 @@ End
 #tag EndEvents
 #tag Events PointFields
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChanged(index as Integer)
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
@@ -1223,8 +1195,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1327,7 +1299,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

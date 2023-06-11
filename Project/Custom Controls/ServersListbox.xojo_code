@@ -2,12 +2,12 @@
 Protected Class ServersListbox
 Inherits BeaconListbox
 	#tag Event
-		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		Sub PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused Column
 		  #Pragma Unused BackgroundColor
 		  
 		  If Row >= Me.RowCount Or Column <> Self.SortingColumn Then
-		    RaiseEvent CellBackgroundPaint(G, Row, Column, BackgroundColor, TextColor, IsHighlighted)
+		    RaiseEvent PaintCellBackground(G, Row, Column, BackgroundColor, TextColor, IsHighlighted)
 		    Return
 		  End If
 		  
@@ -42,7 +42,7 @@ Inherits BeaconListbox
 		  End Select
 		  G.FillRectangle(G.Width - 3, 0, 3, G.Height)
 		  
-		  If Me.Selected(Row) And IsHighlighted Then
+		  If Me.RowSelectedAt(Row) And IsHighlighted Then
 		    G.DrawingColor = TextColor
 		    G.DrawLine(G.Width - 4, 0, G.Width - 4, G.Height)
 		  End If
@@ -50,7 +50,7 @@ Inherits BeaconListbox
 	#tag EndEvent
 
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column <> Self.SortingColumn Then
 		    Return RaiseEvent CompareRows(Row1, Row2, Column, Result)
 		  End If
@@ -99,7 +99,7 @@ Inherits BeaconListbox
 		  
 		  Var Profiles() As Beacon.ServerProfile
 		  For Idx As Integer = 0 To Self.LastRowIndex
-		    If Self.Selected(Idx) = False Then
+		    If Self.RowSelectedAt(Idx) = False Then
 		      Continue
 		    End If
 		    
@@ -155,8 +155,8 @@ Inherits BeaconListbox
 		      SortName = "color" + CType(Profile.ProfileColor, Integer).ToString(Locale.Raw, "00") + ":" + SortName
 		    End Select
 		    
-		    If Self.CellValueAt(Idx, Self.SortingColumn) <> Name Then
-		      Self.CellValueAt(Idx, Self.SortingColumn) = Name
+		    If Self.CellTextAt(Idx, Self.SortingColumn) <> Name Then
+		      Self.CellTextAt(Idx, Self.SortingColumn) = Name
 		    End If
 		    If Self.CellTagAt(Idx, Self.SortingColumn) <> SortName Then
 		      Self.CellTagAt(Idx, Self.SortingColumn) = SortName
@@ -164,8 +164,8 @@ Inherits BeaconListbox
 		    If Self.RowTagAt(Idx) <> Profile Then
 		      Self.RowTagAt(Idx) = Profile
 		    End If
-		    If Self.Selected(Idx) <> Selected Then
-		      Self.Selected(Idx) = Selected
+		    If Self.RowSelectedAt(Idx) <> Selected Then
+		      Self.RowSelectedAt(Idx) = Selected
 		    End If
 		    
 		    RaiseEvent CustomizeProfileRow(Profile, Idx)
@@ -191,10 +191,6 @@ Inherits BeaconListbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 	#tag EndHook
 
@@ -204,6 +200,10 @@ Inherits BeaconListbox
 
 	#tag Hook, Flags = &h0
 		Event GetProject() As Beacon.Project
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 	#tag EndHook
 
 
@@ -246,6 +246,20 @@ Inherits BeaconListbox
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="GridLineStyle"
+			Visible=true
+			Group="Appearance"
+			InitialValue="0"
+			Type="GridLineStyles"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Horizontal"
+				"2 - Vertical"
+				"3 - Both"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -375,38 +389,6 @@ Inherits BeaconListbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="GridLinesHorizontalStyle"
-			Visible=true
-			Group="Appearance"
-			InitialValue="0"
-			Type="Borders"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - None"
-				"2 - ThinDotted"
-				"3 - ThinSolid"
-				"4 - ThickSolid"
-				"5 - DoubleThinSolid"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GridLinesVerticalStyle"
-			Visible=true
-			Group="Appearance"
-			InitialValue="0"
-			Type="Borders"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - None"
-				"2 - ThinDotted"
-				"3 - ThinSolid"
-				"4 - ThickSolid"
-				"5 - DoubleThinSolid"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="HasHeader"
 			Visible=true
 			Group="Appearance"
@@ -509,22 +491,6 @@ Inherits BeaconListbox
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowAutoHideScrollbars"
@@ -700,14 +666,6 @@ Inherits BeaconListbox
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

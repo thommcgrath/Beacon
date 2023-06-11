@@ -29,6 +29,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mRespectQualityOffsets = True
 		  Self.mRespectQuantityMultipliers = True
 		  Self.mRespectBlueprintChanceMultipliers = True
+		  Self.mRespectWeightMultipliers = True
 		  Self.mUUID = New v4UUID
 		End Sub
 	#tag EndMethod
@@ -139,6 +140,12 @@ Implements Beacon.Countable,Iterable
 		    Entry.RespectBlueprintChanceMultipliers = Dict.Lookup("RespectBlueprintMultiplier", Entry.RespectBlueprintChanceMultipliers)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading RespectBlueprintMultiplier value")
+		  End Try
+		  
+		  Try
+		    Entry.RespectWeightMultipliers = Dict.Lookup("RespectWeightMultiplier", Entry.RespectWeightMultipliers)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading RespectWeightMultiplier value")
 		  End Try
 		  
 		  Try
@@ -417,6 +424,12 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RespectWeightMultipliers() As Boolean
+		  Return Self.mRespectWeightMultipliers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SafeForContentPacks(ContentPacks As Beacon.StringList) As Boolean
 		  // This method kind of sucks, but yes it is needed for preset generation.
 		  
@@ -454,6 +467,7 @@ Implements Beacon.Countable,Iterable
 		  Dict.Value("RespectBlueprintMultiplier") = Self.mRespectBlueprintChanceMultipliers
 		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityOffsets
 		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultipliers
+		  Dict.Value("RespectWeightMultiplier") = Self.mRespectWeightMultipliers
 		  Dict.Value("Weight") = Self.RawWeight
 		  Dict.Value("UUID") = Self.UUID
 		  Dict.Value("PreventGrinding") = Self.PreventGrinding
@@ -550,6 +564,10 @@ Implements Beacon.Countable,Iterable
 
 	#tag Property, Flags = &h1
 		Protected mRespectQuantityMultipliers As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRespectWeightMultipliers As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

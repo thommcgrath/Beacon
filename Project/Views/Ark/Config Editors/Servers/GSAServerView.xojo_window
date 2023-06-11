@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ServerViewContainer GSAServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ServerViewContainer GSAServerView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   600
    Index           =   -2147483648
@@ -26,7 +27,7 @@ Begin ServerViewContainer GSAServerView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin PagePanel Pages
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   559
@@ -41,6 +42,7 @@ Begin ServerViewContainer GSAServerView
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -58,8 +60,6 @@ Begin ServerViewContainer GSAServerView
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -107,9 +107,8 @@ Begin ServerViewContainer GSAServerView
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   559
          Index           =   -2147483648
@@ -142,7 +141,6 @@ Begin ServerViewContainer GSAServerView
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -169,7 +167,7 @@ Begin ServerViewContainer GSAServerView
       Width           =   600
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -203,7 +201,7 @@ End
 
 #tag Events Pages
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  For Idx As Integer = 0 To Self.ControlToolbar.LastIndex
 		    Self.ControlToolbar.Item(Idx).Toggled = Me.SelectedPanelIndex = Idx
 		  Next
@@ -212,21 +210,21 @@ End
 #tag EndEvents
 #tag Events AdminNotesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Changed = Self.mProfile.Modified
+		  Self.Modified = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SettingsView
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Profile = Self.mProfile
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ContentsChanged()
-		  Self.Changed = Me.Changed
+		  Self.Modified = Me.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -237,7 +235,7 @@ End
 #tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
 		  Me.Item("PageGeneral").Toggled = True
@@ -257,6 +255,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -470,8 +484,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -506,26 +520,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin DocumentEditorView ArkDocumentEditorView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin DocumentEditorView ArkDocumentEditorView
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
+   DoubleBuffer    =   "True"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   528
    Index           =   -2147483648
@@ -26,11 +27,10 @@ Begin DocumentEditorView ArkDocumentEditorView
    Transparent     =   True
    Visible         =   True
    Width           =   858
-   Begin PagePanel PagePanel1
-      AutoDeactivate  =   True
+   Begin DesktopPagePanel PagePanel1
+      AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   487
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   231
@@ -42,23 +42,24 @@ Begin DocumentEditorView ArkDocumentEditorView
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   627
-      Begin Canvas OmniNoticeBanner
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+      Begin DesktopCanvas OmniNoticeBanner
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   31
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   231
@@ -71,23 +72,22 @@ Begin DocumentEditorView ArkDocumentEditorView
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   41
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   False
          Width           =   627
       End
       Begin LogoFillCanvas LogoFillCanvas1
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "There was an error loading the editor"
          ContentHeight   =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   487
-         HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   231
@@ -103,9 +103,9 @@ Begin DocumentEditorView ArkDocumentEditorView
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   41
          Transparent     =   True
-         UseFocusRing    =   True
          Visible         =   True
          Width           =   627
       End
@@ -117,7 +117,6 @@ Begin DocumentEditorView ArkDocumentEditorView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   487
       Index           =   -2147483648
@@ -150,7 +149,6 @@ Begin DocumentEditorView ArkDocumentEditorView
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -183,9 +181,8 @@ Begin DocumentEditorView ArkDocumentEditorView
       AllowTabs       =   True
       Backdrop        =   0
       BackgroundColor =   &cFFFFFF00
-      DoubleBuffer    =   False
+      Composited      =   False
       Enabled         =   True
-      EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   446
       Index           =   -2147483648
@@ -214,7 +211,6 @@ Begin DocumentEditorView ArkDocumentEditorView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       Index           =   -2147483648
@@ -245,7 +241,6 @@ Begin DocumentEditorView ArkDocumentEditorView
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -270,17 +265,11 @@ Begin DocumentEditorView ArkDocumentEditorView
       Width           =   230
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Activate()
-		  Self.Changed = Self.Project.Modified
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Close()
+		Sub Closing()
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Cancel
 		    Self.mImportWindowRef = Nil
@@ -327,7 +316,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If (Self.Project Is Nil) = False Then
 		    Var UUID As String = Self.Project.UUID
 		    Var LastConfigName As String = Preferences.ProjectState(UUID, "Editor", "")
@@ -343,6 +332,26 @@ End
 		    Self.ActiveConfigSet = LastConfigSet
 		    Self.CurrentConfigName = LastConfigName
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub RunScriptAction(Action As Beacon.ScriptAction)
+		  Select Case Action.Action
+		  Case "Deploy"
+		    Var Settings As New Beacon.DeploySettings
+		    Settings.Options = UInt64.FromString(Action.Value("Options"), Locale.Raw)
+		    Settings.StopMessage = Action.Value("StopMessage")
+		    Var ProfileIds() As String = Action.Value("Servers").Split(",")
+		    For Each ProfileId As String In ProfileIds
+		      Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(ProfileId)
+		      If (Profile Is Nil) = False Then
+		        Settings.Servers.Add(Profile)
+		      End If
+		    Next
+		    
+		    Self.BeginDeploy(Settings)
+		  End Select
 		End Sub
 	#tag EndEvent
 
@@ -412,13 +421,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
-		  Var PreselectServers() As Beacon.ServerProfile
-		  Self.BeginDeploy(PreselectServers)
+		  Self.BeginDeploy(Preferences.NewDeploySettings)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub BeginDeploy(PreselectServers() As Beacon.ServerProfile)
+		Private Sub BeginDeploy(Settings As Beacon.DeploySettings)
 		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
 		    DeployManager(Self.mDeployWindow.Value).BringToFront()
 		  Else
@@ -437,10 +445,18 @@ End
 		      Var Validator As New Beacon.ProjectValidator
 		      AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
 		      AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Deploy
-		      Validator.StartValidation(Self.Project, PreselectServers)
+		      Validator.StartValidation(Self.Project, Settings)
 		      Self.mValidator = Validator
 		    End If
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BeginDeploy(PreselectServers() As Beacon.ServerProfile)
+		  Var Settings As Beacon.DeploySettings = Preferences.NewDeploySettings
+		  Settings.Servers = PreselectServers
+		  Self.BeginDeploy(Settings)
 		End Sub
 	#tag EndMethod
 
@@ -611,15 +627,15 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandleConfigPickerClick()
-		  Var Menu As New MenuItem
-		  Menu.AddMenu(New MenuItem("Create and switch to new config set…", "beacon:createandswitch"))
-		  Menu.AddMenu(New MenuItem("Manage config sets…", "beacon:manage"))
-		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Var Menu As New DesktopMenuItem
+		  Menu.AddMenu(New DesktopMenuItem("Create and switch to new config set…", "beacon:createandswitch"))
+		  Menu.AddMenu(New DesktopMenuItem("Manage config sets…", "beacon:manage"))
+		  Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		  
 		  Var SetNames() As String = Self.Project.ConfigSetNames
 		  SetNames.Sort
 		  For Each SetName As String In SetNames
-		    Var Item As New MenuItem(SetName, SetName)
+		    Var Item As New DesktopMenuItem(SetName, SetName)
 		    Item.HasCheckMark = SetName = Self.ActiveConfigSet
 		    If SetName = Beacon.Project.BaseConfigSetName Then
 		      Item.Shortcut = "B"
@@ -627,11 +643,12 @@ End
 		    Menu.AddMenu(Item)
 		  Next
 		  
-		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		  Menu.AddMenu(New MenuItem("Learn more about config sets…", "beacon:help"))
+		  Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Menu.AddMenu(New DesktopMenuItem("Learn more about config sets…", "beacon:help"))
 		  
-		  Var Origin As Point = Self.ConfigSetPicker.GlobalizeCoordinate(Self.mConfigPickerMenuOrigin)
-		  Var Choice As MenuItem = Menu.PopUp(Origin.X, Origin.Y)
+		  Var PickerOrigin As Point = Self.ConfigSetPicker.GlobalPosition
+		  Var Origin As Point = New Point(PickerOrigin.X + Self.mConfigPickerMenuOrigin.X, PickerOrigin.Y + Self.mConfigPickerMenuOrigin.Y)
+		  Var Choice As DesktopMenuItem = Menu.PopUp(Origin.X, Origin.Y)
 		  If (Choice Is Nil) = False Then
 		    If Choice.Tag.StringValue.BeginsWith("beacon:") Then
 		      Var Tag As String = Choice.Tag.StringValue.Middle(7)
@@ -694,7 +711,7 @@ End
 		Private Sub MapsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
 		    Self.Project.MapMask = MapSelectionGrid(Sender.Container).Mask
-		    Self.Changed = Self.Project.Modified
+		    Self.Modified = Self.Project.Modified
 		  End If
 		  
 		  If (Self.CurrentPanel Is Nil) = False Then
@@ -738,7 +755,7 @@ End
 		      Self.Project.ContentPackEnabled(Pack.UUID) = Editor.ModEnabled(Pack.UUID)
 		    Next
 		    
-		    Self.Changed = Self.Project.Modified
+		    Self.Modified = Self.Project.Modified
 		  End If
 		  
 		  If (Self.CurrentPanel Is Nil) = False Then
@@ -801,7 +818,7 @@ End
 		  If Results.Count > 0 Then
 		    Var Dialog As New ResolveIssuesDialog(Results)
 		    AddHandler Dialog.GoToIssue, WeakAddressOf mValidationResultsDialog_GoToIssue
-		    Dialog.ShowWithin(Self.TrueWindow)
+		    Dialog.Show(Self)
 		    Self.mValidationResultsDialog = New WeakRef(Dialog)
 		    Return False
 		  End If
@@ -816,13 +833,13 @@ End
 		    Return
 		  End If
 		  
-		  Var PreselectServers() As Beacon.ServerProfile
+		  Var Settings As Beacon.DeploySettings
 		  Try
-		    PreselectServers = UserData
+		    Settings = UserData
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Casting UserData into PreselectServers")
 		  End Try
-		  Var Win As DeployManager = New DeployManager(Self.Project, PreselectServers)
+		  Var Win As DeployManager = New DeployManager(Self.Controller, Settings)
 		  Self.mDeployWindow = New WeakRef(Win)
 		  Win.BringToFront()
 		End Sub
@@ -855,8 +872,8 @@ End
 		Private Sub Panel_ContentsChanged(Sender As ArkConfigEditor)
 		  #Pragma Unused Sender
 		  
-		  If Self.Changed <> Self.Project.Modified Then
-		    Self.Changed = Self.Project.Modified
+		  If Self.Modified <> Self.Project.Modified Then
+		    Self.Modified = Self.Project.Modified
 		  End If
 		  
 		  If Self.mUpdateUITag <> "" Then
@@ -914,7 +931,7 @@ End
 		      Self.CurrentConfigName = ConfigName
 		    End If
 		    
-		    Self.Changed = True
+		    Self.Modified = True
 		    Self.UpdateConfigList()
 		  End If
 		End Sub
@@ -1032,7 +1049,7 @@ End
 			  Self.CurrentConfigName = "" // To unload the current version
 			  
 			  Self.Project.ActiveConfigSet = Value
-			  Self.ConfigSetPicker.Invalidate
+			  Self.ConfigSetPicker.Refresh
 			  Self.UpdateConfigList
 			  
 			  If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
@@ -1276,7 +1293,7 @@ End
 
 #tag Events OmniNoticeBanner
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As Rect)
 		  #Pragma Unused Areas
 		  
 		  Var BaseColor As Color = SystemColors.SystemYellowColor
@@ -1302,28 +1319,28 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		Function MouseDown(x As Integer, y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
 		  Self.mDrawOmniBannerPressed = True
-		  Self.OmniNoticeBanner.Invalidate
+		  Self.OmniNoticeBanner.Refresh
 		  Return True
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
+		Sub MouseDrag(x As Integer, y As Integer)
 		  Var ShouldBePressed As Boolean = X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height
 		  If Self.mDrawOmniBannerPressed <> ShouldBePressed Then
 		    Self.mDrawOmniBannerPressed = ShouldBePressed
-		    Self.OmniNoticeBanner.Invalidate
+		    Self.OmniNoticeBanner.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
+		Sub MouseUp(x As Integer, y As Integer)
 		  Self.mDrawOmniBannerPressed = False
-		  Self.OmniNoticeBanner.Invalidate
+		  Self.OmniNoticeBanner.Refresh
 		  If X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height Then
 		    System.GotoURL(Beacon.WebURL("/omni"))
 		  End If
@@ -1332,7 +1349,7 @@ End
 #tag EndEvents
 #tag Events OmniBar1
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import config files"))
 		  Me.Append(OmniBarItem.CreateSpace())
 		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Save new config file"))
@@ -1388,23 +1405,23 @@ End
 		  Case "ToolsButton"
 		    Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
 		    Var LastEditor As String
-		    Var Base As New MenuItem
+		    Var Base As New DesktopMenuItem
 		    For Each Tool As Ark.ProjectTool In Tools
 		      If Tool.FirstGroup <> LastEditor Then
 		        If Base.Count > 0 Then
-		          Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		          Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		        End If
 		        
-		        Var Header As New MenuItem(Language.LabelForConfig(Tool.FirstGroup))
+		        Var Header As New DesktopMenuItem(Language.LabelForConfig(Tool.FirstGroup))
 		        Header.Enabled = False
 		        Base.AddMenu(Header)
 		        LastEditor = Tool.FirstGroup
 		      End If
-		      Base.AddMenu(New MenuItem(Tool.Caption, Tool))
+		      Base.AddMenu(New DesktopMenuItem(Tool.Caption, Tool))
 		    Next
 		    
-		    Var Position As Point = Me.Window.GlobalPosition
-		    Var Choice As MenuItem = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		    If Choice Is Nil Then
 		      Return
 		    End If
@@ -1443,7 +1460,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.UpdateConfigList()
 		End Sub
 	#tag EndEvent
@@ -1486,35 +1503,35 @@ End
 		    Config = Self.Project.ConfigGroup(ConfigName, False)
 		  End If
 		  
-		  Var Base As New MenuItem
-		  Var CopyItem As New MenuItem("Copy", CopyTag)
+		  Var Base As New DesktopMenuItem
+		  Var CopyItem As New DesktopMenuItem("Copy", CopyTag)
 		  CopyItem.Enabled = (ItemIndex > -1) And (Config Is Nil) = False And Config.IsImplicit = False
 		  Base.AddMenu(CopyItem)
 		  Var Board As New Clipboard
-		  Var PasteItem As New MenuItem("Paste", PasteTag)
+		  Var PasteItem As New DesktopMenuItem("Paste", PasteTag)
 		  PasteItem.Enabled = Board.RawDataAvailable(Self.kConfigGroupClipboardType) And (ItemIndex = -1 Or Board.RawData(Self.kConfigGroupClipboardType).IndexOf("""GroupName"":""" + ConfigName + """") > -1)
 		  Base.AddMenu(PasteItem)
 		  
 		  If ItemIndex > -1 Then
-		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
 		    For Each Tool As Ark.ProjectTool In Tools
 		      If Tool.IsRelevantForGroup(ConfigName) Then
-		        Base.AddMenu(New MenuItem(Tool.Caption, Tool.UUID))
+		        Base.AddMenu(New DesktopMenuItem(Tool.Caption, Tool.UUID))
 		      End If
 		    Next
 		    If Base.Count > 0 Then
-		      Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		      Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
 		    End If
-		    Base.AddMenu(New MenuItem("Restore """ + Item.Caption + """ to Default", RestoreTag))
+		    Base.AddMenu(New DesktopMenuItem("Restore """ + Item.Caption + """ to Default", RestoreTag))
 		  End If
 		  
-		  Var Position As Point = Me.Window.GlobalPosition
-		  Var Choice As MenuItem
+		  Var Position As Point = Me.GlobalPosition
+		  Var Choice As DesktopMenuItem
 		  If ItemRect Is Nil Then
-		    Choice = Base.PopUp(Position.X + Me.Left + MouseX, Position.Y + Me.Top + MouseY)
+		    Choice = Base.PopUp(Position.X + MouseX, Position.Y + MouseY)
 		  Else
-		    Choice = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		    Choice = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
 		  End If
 		  If Choice Is Nil Then
 		    Return
@@ -1539,7 +1556,7 @@ End
 		      Var NewConfig As Ark.ConfigGroup = Ark.Configs.CreateInstance(NewConfigName, NewConfigData, Nil)
 		      Self.Project.AddConfigGroup(NewConfig)
 		      Self.UpdateConfigList()
-		      Self.Changed = Self.Project.Modified
+		      Self.Modified = Self.Project.Modified
 		      
 		      If Me.SelectedRowIndex = ItemIndex Or (ItemIndex = -1 And Me.SelectedRowIndex > -1 And Me.Item(Me.SelectedRowIndex).Tag = NewConfigName) Then
 		        // Refresh
@@ -1564,7 +1581,7 @@ End
 #tag EndEvents
 #tag Events ConfigSetPicker
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused SafeArea
 		  
@@ -1607,7 +1624,7 @@ End
 		  
 		  If Self.mConfigPickerMouseDown = False Then
 		    Self.mConfigPickerMouseDown = True
-		    Me.Invalidate
+		    Me.Refresh
 		  End If
 		  Return True
 		End Function
@@ -1617,7 +1634,7 @@ End
 		  Var Pressed As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height)
 		  If Self.mConfigPickerMouseDown <> Pressed Then
 		    Self.mConfigPickerMouseDown = Pressed
-		    Me.Invalidate
+		    Me.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1625,7 +1642,7 @@ End
 		Sub MouseEnter()
 		  If Self.mConfigPickerMouseHover = False Then
 		    Self.mConfigPickerMouseHover = True
-		    Me.Invalidate
+		    Me.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1633,7 +1650,7 @@ End
 		Sub MouseExit()
 		  If Self.mConfigPickerMouseHover = True Then
 		    Self.mConfigPickerMouseHover = False
-		    Me.Invalidate
+		    Me.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1644,7 +1661,7 @@ End
 		  
 		  If Self.mConfigPickerMouseHover = False Then
 		    Self.mConfigPickerMouseHover = True
-		    Me.Invalidate
+		    Me.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1657,12 +1674,28 @@ End
 		  If Self.mConfigPickerMouseDown = True Or Self.mConfigPickerMouseHover <> Pressed Then
 		    Self.mConfigPickerMouseDown = False
 		    Self.mConfigPickerMouseHover = Pressed
-		    Me.Invalidate
+		    Me.Refresh
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1704,14 +1737,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -1740,8 +1765,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -1924,14 +1949,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

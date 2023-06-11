@@ -1,44 +1,40 @@
-#tag Window
-Begin Window ArkLootEntryMultiEditor
-   BackColor       =   &cFFFFFF00
+#tag DesktopWindow
+Begin DesktopWindow ArkLootEntryMultiEditor
    Backdrop        =   0
-   CloseButton     =   False
+   BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   1
    FullScreen      =   False
-   FullScreenButton=   False
-   HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   327
    ImplicitInstance=   False
-   LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   327
-   MaximizeButton  =   False
-   MaxWidth        =   550
+   MaximumHeight   =   327
+   MaximumWidth    =   550
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   327
-   MinimizeButton  =   False
-   MinWidth        =   550
-   Placement       =   1
-   Resizable       =   "True"
+   MinimumHeight   =   327
+   MinimumWidth    =   550
    Resizeable      =   False
-   SystemUIVisible =   "True"
    Title           =   "Set Entries"
+   Type            =   8
    Visible         =   True
    Width           =   550
    Begin ArkLootEntryPropertiesEditor Editor
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      BackgroundColor =   &cFFFFFF
+      Composited      =   False
       Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   275
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   10
@@ -51,22 +47,23 @@ Begin Window ArkLootEntryMultiEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   True
-      UseFocusRing    =   False
       Visible         =   True
       Width           =   530
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -76,13 +73,12 @@ Begin Window ArkLootEntryMultiEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   287
       Transparent     =   False
       Underline       =   False
@@ -90,15 +86,16 @@ Begin Window ArkLootEntryMultiEditor
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -108,13 +105,12 @@ Begin Window ArkLootEntryMultiEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   287
       Transparent     =   False
       Underline       =   False
@@ -122,21 +118,21 @@ Begin Window ArkLootEntryMultiEditor
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Sources() As Ark.LootItemSetEntry) As Ark.LootItemSetEntry()
+		Shared Function Present(Parent As DesktopWindow, Sources() As Ark.LootItemSetEntry) As Ark.LootItemSetEntry()
 		  Var Win As New ArkLootEntryMultiEditor
 		  Win.Editor.Setup(Sources)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
 		    Return Nil
@@ -170,7 +166,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Editor.CheckValues()
 		  Self.mCancelled = False
 		  Self.Hide
@@ -179,7 +175,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -315,8 +311,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -379,7 +375,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkExperienceLevelEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
@@ -27,14 +27,14 @@ Begin BeaconDialog ArkExperienceLevelEditor
    Title           =   "Set Experience for Level"
    Visible         =   True
    Width           =   382
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -51,25 +51,23 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Set Experience for Level"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   342
    End
-   Begin Label LevelField
-      AutoDeactivate  =   True
+   Begin DesktopLabel LevelField
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -86,25 +84,23 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "2"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   230
    End
-   Begin Label LevelLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel LevelLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -121,25 +117,23 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Level:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   100
    End
-   Begin Label MinXPLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MinXPLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -156,25 +150,23 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min XP:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   100
    End
-   Begin Label MinXPField
-      AutoDeactivate  =   True
+   Begin DesktopLabel MinXPField
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -191,25 +183,23 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "0"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   230
    End
-   Begin Label MaxXPLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel MaxXPLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -226,25 +216,23 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max XP:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   116
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   100
    End
-   Begin Label MaxXPField
-      AutoDeactivate  =   True
+   Begin DesktopLabel MaxXPField
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -261,11 +249,9 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "2,147,483,647"
-      TextAlign       =   0
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   116
       Transparent     =   False
       Underline       =   False
@@ -273,30 +259,29 @@ Begin BeaconDialog ArkExperienceLevelEditor
       Width           =   230
    End
    Begin UITweaks.ResizedTextField XPField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   132
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -304,25 +289,24 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   148
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   230
    End
    Begin UITweaks.ResizedLabel XPLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -339,11 +323,9 @@ Begin BeaconDialog ArkExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "XP For Level:"
-      TextAlign       =   2
+      TextAlignment   =   3
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   148
       Transparent     =   False
       Underline       =   False
@@ -351,15 +333,16 @@ Begin BeaconDialog ArkExperienceLevelEditor
       Width           =   100
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -369,13 +352,12 @@ Begin BeaconDialog ArkExperienceLevelEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   190
       Transparent     =   False
       Underline       =   False
@@ -383,15 +365,16 @@ Begin BeaconDialog ArkExperienceLevelEditor
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -401,13 +384,12 @@ Begin BeaconDialog ArkExperienceLevelEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   190
       Transparent     =   False
       Underline       =   False
@@ -415,15 +397,15 @@ Begin BeaconDialog ArkExperienceLevelEditor
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
-		  Self.LevelField.Text = Self.mEditingLevel.ToString(Locale.Current, ",##0")
-		  Self.MinXPField.Text = Self.mMinXP.ToString(Locale.Current, ",##0")
-		  Self.MaxXPField.Text = Self.mMaxXP.ToString(Locale.Current, ",##0")
-		  Self.XPField.Text = Self.mInitialXP.ToString(Locale.Current, ",##0")
+		Sub Opening()
+		  Self.LevelField.Text = Self.mEditingLevel.ToString(Locale.Current, "#,##0")
+		  Self.MinXPField.Text = Self.mMinXP.ToString(Locale.Current, "#,##0")
+		  Self.MaxXPField.Text = Self.mMaxXP.ToString(Locale.Current, "#,##0")
+		  Self.XPField.Text = Self.mInitialXP.ToString(Locale.Current, "#,##0")
 		  Self.XPField.SelectAll()
 		  
 		  Self.SwapButtons()
@@ -449,9 +431,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Level As Integer, ByRef LevelXP As UInt64, MinXP As UInt64, MaxXP As UInt64) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Level As Integer, ByRef LevelXP As UInt64, MinXP As UInt64, MaxXP As UInt64) As Boolean
 		  Var Win As New ArkExperienceLevelEditor(Level, LevelXP, MinXP, MaxXP)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
 		  If Not Cancelled Then
@@ -488,14 +470,14 @@ End
 
 #tag Events XPField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -503,7 +485,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -639,8 +621,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -743,7 +725,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

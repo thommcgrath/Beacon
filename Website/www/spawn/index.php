@@ -2,8 +2,10 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Item Spawn Codes');
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('clipboard-polyfill.js'));
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('spawncodes.scss'));
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('spawncodes.js'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('spawncodes.css'));
+$mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
+$database = BeaconCommon::Database();
 
 use BeaconAPI\v4\Ark\{Blueprint, ContentPack};
 

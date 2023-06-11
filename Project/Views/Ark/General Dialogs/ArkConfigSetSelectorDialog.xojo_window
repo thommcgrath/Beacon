@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkConfigSetSelectorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
    Type            =   8
    Visible         =   True
    Width           =   400
-   Begin Label InstructionsLabel
+   Begin DesktopLabel InstructionsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -46,16 +44,16 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       Multiline       =   True
       Scope           =   2
       Selectable      =   True
-      TabIndex        =   0
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Checked sets will be enabled. Drag sets to change priority. Highest priority is the top of the list."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   248
       Transparent     =   False
       Underline       =   False
-      Value           =   "Checked sets will be enabled. Drag sets to change priority. Highest priority is the top of the list."
       Visible         =   True
       Width           =   360
    End
@@ -71,8 +69,6 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   "24"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -82,8 +78,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   True
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -118,11 +113,9 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -140,16 +133,16 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Prioritize Config Sets"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Prioritize Config Sets"
       Visible         =   True
       Width           =   360
    End
@@ -175,7 +168,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -207,7 +200,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -218,7 +211,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -246,21 +239,21 @@ End
 		    Self.List.CellCheckBoxValueAt(Idx, 0) = State.Enabled
 		    
 		    If StateIdx = 0 Then
-		      Self.List.CellTypeAt(Idx, 0) = Listbox.CellTypes.Normal
+		      Self.List.CellTypeAt(Idx, 0) = DesktopListbox.CellTypes.Normal
 		    End If
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, States() As Beacon.ConfigSetState) As Beacon.ConfigSetState()
+		Shared Function Present(Parent As DesktopWindow, States() As Beacon.ConfigSetState) As Beacon.ConfigSetState()
 		  If Parent Is Nil Then
 		    Return States
 		  End If
 		  
 		  Var Win As New ArkConfigSetSelectorDialog
 		  Win.Choices = States
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  If Not Win.mCancelled Then
 		    States = Win.Choices
 		  End If
@@ -304,14 +297,14 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		Sub Opening()
+		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -319,7 +312,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -439,8 +432,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -551,7 +544,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

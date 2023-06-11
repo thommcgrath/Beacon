@@ -2,7 +2,14 @@
 Protected Class IntervalField
 Inherits UITweaks.ResizedTextField
 	#tag Event
-		Function KeyDown(Key As String) As Boolean
+		Sub FocusLost()
+		  Self.TestValue()
+		  RaiseEvent FocusLost()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function KeyDown(key As String) As Boolean
 		  If RaiseEvent KeyDown(Key) Then
 		    Return True
 		  End If
@@ -14,26 +21,19 @@ Inherits UITweaks.ResizedTextField
 	#tag EndEvent
 
 	#tag Event
-		Sub LostFocus()
-		  Self.TestValue()
-		  RaiseEvent LostFocus()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mMuteTextChanged Then
 		    Return
 		  End If
 		  
-		  RaiseEvent TextChange
+		  RaiseEvent TextChanged
 		  
 		  Self.mTested = False
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub ValidationError(InvalidText As String, StartPosition As Integer)
+		Sub ValidationFailed(invalidText As String, startPosition As Integer)
 		  #Pragma Unused InvalidText
 		  #Pragma Unused StartPosition
 		End Sub
@@ -48,8 +48,8 @@ Inherits UITweaks.ResizedTextField
 		  Var Interval As DateInterval = Beacon.ParseInterval(Self.Text)
 		  If Interval Is Nil Then
 		    If WasTested = False Then
-		      If IsEventImplemented("ValidationError") Then
-		        RaiseEvent ValidationError(Self.Text)
+		      If IsEventImplemented("ValidationFailed") Then
+		        RaiseEvent ValidationFailed(Self.Text)
 		      Else
 		        System.Beep
 		        Self.Window.ShowAlert("The value """ + Self.Text + """ is not clear.", "To specify an amount of time, use letters to tell Beacon what each number means. For example, use '5h' for 5 hours or '3d1m' for 3 days and 1 minute. You may also use full words, such as '30 seconds' if you prefer.")
@@ -73,19 +73,19 @@ Inherits UITweaks.ResizedTextField
 
 
 	#tag Hook, Flags = &h0
+		Event FocusLost()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event KeyDown(Key As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event LostFocus()
+		Event TextChanged()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TextChange()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ValidationError(InvalidText As String)
+		Event ValidationFailed(InvalidText As String)
 	#tag EndHook
 
 
@@ -140,8 +140,8 @@ Inherits UITweaks.ResizedTextField
 			Visible=true
 			Group="Appearance"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBorder"
@@ -251,22 +251,6 @@ Inherits UITweaks.ResizedTextField
 			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -409,8 +393,8 @@ Inherits UITweaks.ResizedTextField
 			Visible=true
 			Group="Appearance"
 			InitialValue="&h000000"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

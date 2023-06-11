@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog ArkBulkSpawnEditWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,11 +24,9 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
    Type            =   8
    Visible         =   True
    Width           =   700
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -59,7 +57,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       Visible         =   True
       Width           =   660
    End
-   Begin GroupBox CreaturesGroup
+   Begin DesktopGroupBox CreaturesGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Target Creatures"
@@ -87,7 +85,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       Underline       =   False
       Visible         =   True
       Width           =   314
-      Begin RadioButton AllCreaturesRadio
+      Begin DesktopRadioButton AllCreaturesRadio
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "All Creatures"
@@ -117,7 +115,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          Visible         =   True
          Width           =   274
       End
-      Begin RadioButton SelectedCreaturesRadio
+      Begin DesktopRadioButton SelectedCreaturesRadio
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "These Creatures:"
@@ -159,8 +157,6 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          Bold            =   False
          ColumnCount     =   1
          ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
          DefaultRowHeight=   -1
          DefaultSortColumn=   0
          DefaultSortDirection=   0
@@ -170,8 +166,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLineStyle   =   0
          HasBorder       =   True
          HasHeader       =   False
          HasHorizontalScrollbar=   False
@@ -303,7 +298,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       Visible         =   True
       Width           =   80
    End
-   Begin GroupBox ActionsGroup
+   Begin DesktopGroupBox ActionsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Actions"
@@ -331,12 +326,10 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       Underline       =   False
       Visible         =   True
       Width           =   334
-      Begin CheckBox ChangeColorsCheckbox
+      Begin DesktopCheckBox ChangeColorsCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Change Colors:"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -364,12 +357,10 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          VisualState     =   0
          Width           =   128
       End
-      Begin CheckBox SetLevelsCheckbox
+      Begin DesktopCheckBox SetLevelsCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Set Levels:"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -400,8 +391,6 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       Begin UITweaks.ResizedPopupMenu ColorsMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   False
          FontName        =   "System"
          FontSize        =   0.0
@@ -436,8 +425,6 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   False
          FontName        =   "System"
          FontSize        =   0.0
@@ -473,11 +460,9 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          Visible         =   True
          Width           =   60
       End
-      Begin Label LevelToLabel
+      Begin DesktopLabel LevelToLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   False
          FontName        =   "System"
          FontSize        =   0.0
@@ -515,8 +500,6 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   False
          FontName        =   "System"
          FontSize        =   0.0
@@ -565,8 +548,10 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       ThreadID        =   0
       ThreadState     =   0
    End
-   Begin ProgressWheel Spinner
+   Begin DesktopProgressWheel Spinner
+      Active          =   False
       AllowAutoDeactivate=   True
+      AllowTabStop    =   True
       Enabled         =   True
       Height          =   16
       Index           =   -2147483648
@@ -577,21 +562,23 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   412
       Transparent     =   False
       Visible         =   False
       Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin Label StatusLabel
+   Begin DesktopLabel StatusLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -623,7 +610,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
       Width           =   448
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -639,13 +626,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Config As Ark.Configs.SpawnPoints, Mods As Beacon.StringList, Mask As UInt64, DifficultyValue As Double) As Boolean
+		Shared Function Present(Parent As DesktopWindow, Config As Ark.Configs.SpawnPoints, Mods As Beacon.StringList, Mask As UInt64, DifficultyValue As Double) As Boolean
 		  If Parent Is Nil Then
 		    Return False
 		  End If
 		  
 		  Var Win As New ArkBulkSpawnEditWindow(Config, Mods, Mask, DifficultyValue)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -742,7 +729,7 @@ End
 
 #tag Events AllCreaturesRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.CreatureList.Enabled = False
 		  Self.ChooseCreaturesButton.Enabled = False
 		End Sub
@@ -750,7 +737,7 @@ End
 #tag EndEvents
 #tag Events SelectedCreaturesRadio
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.CreatureList.Enabled = True
 		  Self.ChooseCreaturesButton.Enabled = True
 		End Sub
@@ -767,7 +754,7 @@ End
 		  #Pragma Unused Warn
 		  
 		  For Idx As Integer = Self.CreatureList.LastRowIndex DownTo 0
-		    If Self.CreatureList.Selected(Idx) Then
+		    If Self.CreatureList.RowSelectedAt(Idx) Then
 		      Self.CreatureList.RemoveRowAt(Idx)
 		    End If
 		  Next Idx
@@ -776,7 +763,7 @@ End
 #tag EndEvents
 #tag Events ChooseCreaturesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var SelectedCreatures() As Ark.Creature
 		  For Idx As Integer = 0 To Self.CreatureList.LastRowIndex
 		    SelectedCreatures.Add(Self.CreatureList.RowTagAt(Idx))
@@ -793,7 +780,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Var MinLevel, MaxLevel As Integer
 		  
 		  If Self.ChangeColorsCheckbox.Value = False And Self.SetLevelsCheckbox.Value = False Then
@@ -870,7 +857,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -878,14 +865,14 @@ End
 #tag EndEvents
 #tag Events ChangeColorsCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.ColorsMenu.Enabled = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SetLevelsCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.MinLevelField.Enabled = Me.Value
 		  Self.LevelToLabel.Enabled = Me.Value
 		  Self.MaxLevelField.Enabled = Me.Value
@@ -894,7 +881,7 @@ End
 #tag EndEvents
 #tag Events ColorsMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.AddRow("No Color Override")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = ""
 		  
@@ -957,7 +944,7 @@ End
 		      Self.mConfig.Add(Mutable)
 		    Next Definition
 		    CreaturesProcessed = CreaturesProcessed + 1
-		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for " + CreaturesProcessed.ToString(Locale.Current, ",##0") + " of " + TotalCreaturesText + "…"))
+		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for " + CreaturesProcessed.ToString(Locale.Current, "#,##0") + " of " + TotalCreaturesText + "…"))
 		  Next Creature
 		  
 		  // Next, process everything
@@ -970,7 +957,7 @@ End
 		    Var Mutable As Ark.MutableSpawnPoint = Point.MutableVersion
 		    Self.ProcessSpawnPoint(Mutable)
 		    PointsProcessed = PointsProcessed + 1
-		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed " + PointsProcessed.ToString(Locale.Current, ",##0") + " of " + TotalPointsText + "…"))
+		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed " + PointsProcessed.ToString(Locale.Current, "#,##0") + " of " + TotalPointsText + "…"))
 		  Next Point
 		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Status": "Finished"))
@@ -1105,8 +1092,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1217,7 +1204,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

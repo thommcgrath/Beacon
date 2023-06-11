@@ -50,7 +50,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function Bottom(Extends Ctl As RectControl) As Integer
+		Function Bottom(Extends Ctl As DesktopUIControl) As Integer
 		  Return Ctl.Top + Ctl.Height
 		End Function
 	#tag EndMethod
@@ -161,13 +161,13 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
+		Sub CorrectWindowPlacement(Extends Win As DesktopWindow, Parent As DesktopWindow)
 		  #if TargetWindows
 		    If Win = Nil Or Parent = Nil Then
 		      Return
 		    End If
 		    
-		    If Win.DefaultLocation = Window.Locations.ParentWindow Then
+		    If Win.DefaultLocation = DesktopWindow.Locations.ParentWindow Then
 		      Win.Top = Parent.Top
 		      Win.Left = Parent.Left + ((Parent.Width - Win.Width) / 2)
 		    End If
@@ -176,6 +176,14 @@ Protected Module FrameworkExtensions
 		    #Pragma Unused Parent
 		  #endif
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DecodeBase64URL(Source As String) As String
+		  Source = Source.ReplaceAll("-", "+")
+		  Source = Source.ReplaceAll("_", "/")
+		  Return DecodeBase64(Source)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -209,6 +217,16 @@ Protected Module FrameworkExtensions
 		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, ResolveWithFirst As Boolean = False) As Double
 		  Var Value As Variant = Dict.Value(Key)
 		  Return VariantToDouble(Value, ResolveWithFirst)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EncodeBase64URL(Source As String) As String
+		  Var Encoded As String = EncodeBase64(Source, 0)
+		  Encoded = Encoded.ReplaceAll("+", "-")
+		  Encoded = Encoded.ReplaceAll("/", "_")
+		  Encoded = Encoded.ReplaceAll("=", "")
+		  Return Encoded
 		End Function
 	#tag EndMethod
 
@@ -438,10 +456,10 @@ Protected Module FrameworkExtensions
 		    Const ChunkSize = 256000
 		    
 		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
-		    Var Contents As New MemoryBlock(Stream.Length)
+		    Var Contents As New MemoryBlock(CType(Stream.Length, Integer))
 		    Var Offset As Integer = 0
 		    While Stream.EndOfFile = False
-		      Var ReadBytes As Integer = Min(ChunkSize, Stream.Length - Offset)
+		      Var ReadBytes As Integer = Min(ChunkSize, CType(Stream.Length, Integer) - Offset)
 		      Contents.StringValue(Offset, ReadBytes) = Stream.Read(ReadBytes, Nil)
 		      Offset = Offset + ReadBytes
 		    Wend
@@ -467,6 +485,12 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function Right(Extends Ctl As DesktopUIControl) As Integer
+		  Return Ctl.Left + Ctl.Width
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Right(Extends Source As MemoryBlock, Length As Integer) As MemoryBlock
 		  Return Source.Middle(Source.Size - Length, Length)
@@ -480,13 +504,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function Right(Extends Ctl As RectControl) As Integer
-		  Return Ctl.Left + Ctl.Width
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function SelectedRowTag(Extends Menu As PopupMenu) As Variant
+		Function SelectedRowTag(Extends Menu As DesktopPopupMenu) As Variant
 		  If Menu.SelectedRowIndex > -1 Then
 		    Return Menu.RowTagAt(Menu.SelectedRowIndex)
 		  End If
@@ -630,6 +648,16 @@ Protected Module FrameworkExtensions
 		  Var Now As DateTime = DateTime.Now(New TimeZone(0))
 		  Var Future As DateTime = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = API2Only and ( (TargetConsole and (Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) )
+		Function TrueWindow(Extends Win As DesktopWindow) As DesktopWindow
+		  If Win IsA DesktopContainer Then
+		    Return DesktopContainer(Win).Window
+		  Else
+		    Return Win
+		  End If
 		End Function
 	#tag EndMethod
 

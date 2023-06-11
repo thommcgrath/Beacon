@@ -65,18 +65,25 @@ Implements Iterable
 		      Raise Err
 		    End If
 		    
-		    Const MainThreadID = "Main"
-		    If Self.mInstances.HasKey(MainThreadID) = False Then
-		      Self.mInstances.Value(MainThreadID) = RaiseEvent NewInstance(False)
-		    End If
-		    Return Self.mInstances.Value(MainThreadID)
+		    Return Self.Main()
 		  End If
 		  
 		  Var CurrentThread As Global.Thread = Thread.Current
 		  Var CurrentThreadID As Integer = CurrentThread.ThreadID
 		  
 		  If Self.mInstances.HasKey(CurrentThreadID) = False Then
-		    Self.mInstances.Value(CurrentThreadID) = RaiseEvent NewInstance(Writeable)
+		    Var Instance As Beacon.DataSource = RaiseEvent NewInstance(Writeable)
+		    If Instance Is Nil Then
+		      Var Err As New NilObjectException
+		      Err.Message = "DataSourcePool.NewInstance returned nil"
+		      Raise Err
+		    ElseIf Writeable = True And Instance.Writeable = False Then
+		      Var Err As New UnsupportedOperationException
+		      Err.Message = "DataSourcePool.NewInstance returned a read-only database when a writeable database was requested."
+		      Raise Err
+		    End If
+		    
+		    Self.mInstances.Value(CurrentThreadID) = Instance
 		  End If
 		  
 		  If Self.mThreads.HasKey(CurrentThreadID) = False Then
@@ -96,6 +103,15 @@ Implements Iterable
 		    Items.Add(Entry.Value)
 		  Next
 		  Return New Beacon.GenericIterator(Items)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Main() As Beacon.DataSource
+		  If Self.mInstances.HasKey(MainThreadId) = False Then
+		    Self.mInstances.Value(MainThreadId) = RaiseEvent NewInstance(False)
+		  End If
+		  Return Self.mInstances.Value(MainThreadId)
 		End Function
 	#tag EndMethod
 
@@ -124,6 +140,10 @@ Implements Iterable
 	#tag Property, Flags = &h21
 		Private mThreads As Dictionary
 	#tag EndProperty
+
+
+	#tag Constant, Name = MainThreadId, Type = String, Dynamic = False, Default = \"Main", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior

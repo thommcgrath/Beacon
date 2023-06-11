@@ -1,6 +1,6 @@
 #tag Class
 Protected Class App
-Inherits Application
+Inherits DesktopApplication
 Implements NotificationKit.Receiver,Beacon.Application
 	#tag Event
 		Sub AppearanceChanged()
@@ -9,7 +9,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
+		Function AppleEventReceived(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
+		  If eventClass = "GURL" And eventID = "GURL" Then
+		    Var URL As String = theEvent.StringParam("----")
+		    Return Self.HandleURL(URL)
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub Closing()
 		  Try
 		    Self.UninstallTemporaryFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
 		  Catch Err As RuntimeException
@@ -50,7 +61,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub DocumentOpened(item As FolderItem)
+		  Self.OpenFile(Item, False)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MenuBarSelected()
 		  FileNew.Enabled = True
 		  FileNewPreset.Enabled = True
 		  FileOpen.Enabled = True
@@ -75,7 +92,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Var Counter As Integer = 1
 		  For I As Integer = 0 To WindowCount - 1
-		    Var Win As Window = Window(I)
+		    Var Win As DesktopWindow = Self.WindowAt(I)
 		    If Win IsA BeaconWindow Then
 		      BeaconWindow(Win).UpdateWindowMenu()
 		      Counter = Counter + 1
@@ -85,18 +102,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndEvent
 
 	#tag Event
-		Function HandleAppleEvent(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
-		  If eventClass = "GURL" And eventID = "GURL" Then
-		    Var URL As String = theEvent.StringParam("----")
-		    Return Self.HandleURL(URL)
-		  Else
-		    Return False
-		  End If
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mLogManager = New LogManager
 		  
 		  #if Not DebugBuild
@@ -134,7 +140,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    #if Not TargetMacOS
 		      Var StartTime As Double = System.Microseconds
 		      Var PushSocket As New IPCSocket
-		      PushSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
+		      PushSocket.Path = Self.GetIPCPath()
 		      PushSocket.Connect
 		      Do Until PushSocket.IsConnected Or System.Microseconds - StartTime > 5000000
 		        PushSocket.Poll
@@ -153,7 +159,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Else
 		    #if Not TargetMacOS
 		      Self.mHandoffSocket = New IPCSocket
-		      Self.mHandoffSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
+		      Self.mHandoffSocket.Path = Self.GetIPCPath()
 		      AddHandler Self.mHandoffSocket.DataAvailable, WeakAddressOf Self.mHandoffSocket_DataReceived
 		      AddHandler Self.mHandoffSocket.Error, WeakAddressOf Self.mHandoffSocket_Error
 		      Self.mHandoffSocket.Listen
@@ -230,12 +236,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.AllowAutoQuit = True
 		  
 		  Tests.RunTests()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub OpenDocument(item As FolderItem)
-		  Self.OpenFile(Item, False)
 		End Sub
 	#tag EndEvent
 
@@ -432,6 +432,24 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 
 	#tag Method, Flags = &h0
+		Function AffectedBy72314() As Boolean
+		  // https://tracker.xojo.com/xojoinc/xojo/-/issues/72314
+		  
+		  #if TargetMacOS And TargetX86 And XojoVersion < 2023.02
+		    Static IsAffected As Boolean
+		    Static Tested As Boolean
+		    
+		    If Tested = False Then
+		      IsAffected = SystemInformationMBS.IsVentura
+		      Tested = True
+		    End If
+		    
+		    Return IsAffected
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AppearanceChanged()
 		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
 		  OmniBar.RebuildColors()
@@ -556,6 +574,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function GetIPCPath() As String
+		  Return Self.ApplicationSupport.Child("ipc").NativePath
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function GetMutex() As Boolean
 		  Var MutexName As String = "com.thezaz.beacon"
 		  #if DebugBuild
@@ -641,7 +665,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If Thread.Current = Nil Then
+		  If Thread.Current Is Nil Then
 		    Self.PresentException(Error)
 		  Else
 		    Call CallLater.Schedule(0, AddressOf PresentException, Error)
@@ -680,8 +704,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      System.GotoURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
 		    Case "showapibuilder"
 		      APIBuilderWindow.Show()
-		    Case "shownewsletterprompt"
-		      SubscribeDialog.Present()
 		    Case "checkforupdate"
 		      Self.CheckForUpdates()
 		    Case "checkforengrams"
@@ -766,6 +788,40 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    If (FrontmostView Is Nil) = False Then
 		      FrontmostView.SwitchToEditor(ConfigName)
 		    End If
+		  ElseIf URL.Left(4) = "run/" Then
+		    Var SaveInfo As String = URL.Middle(4)
+		    Var QueryPos As Integer = SaveInfo.IndexOf("?")
+		    Var QueryString As String
+		    If QueryPos > -1 Then
+		      QueryString = SaveInfo.Middle(QueryPos + 1)
+		      SaveInfo = SaveInfo.Left(QueryPos)
+		    End If
+		    Try
+		      SaveInfo = Beacon.Decompress(DecodeBase64URL(SaveInfo))
+		    Catch Err As RuntimeException
+		      Self.Log(Err, CurrentMethodName, "Decoding deploy saveinfo")
+		      Return True
+		    End Try
+		    
+		    Var Action As Beacon.ScriptAction = Beacon.ScriptAction.FromQueryString(QueryString)
+		    If (Action Is Nil) = False Then
+		      Var Actions(0) As Beacon.ScriptAction
+		      Actions(0) = Action
+		      
+		      If SaveInfo.BeginsWith(Beacon.ProjectURL.TypeCloud + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeLocal + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeWeb + "://") Then
+		        Self.mMainWindow.Documents.OpenDocument(SaveInfo, Actions)
+		      Else
+		        Var File As BookmarkedFolderItem
+		        Try
+		          File = BookmarkedFolderItem.FromSaveInfo(SaveInfo, True)
+		        Catch Err As RuntimeException
+		          Self.Log(Err, CurrentMethodName, "Decoding save info")
+		        End Try
+		        If (File Is Nil) = False And File.Exists Then
+		          Self.mMainWindow.Documents.OpenDocument(File, Actions)
+		        End If
+		      End If
+		    End If
 		  Else
 		    Var LegacyURL As String = "thezaz.com/beacon/documents.php/"
 		    Var Idx As Integer = URL.IndexOf(LegacyURL)
@@ -777,6 +833,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Var FileURL As String = "https://" + URL
 		    Self.mMainWindow.Documents.OpenDocument(FileURL)
 		  End If
+		  
+		  Try
+		    If Self.WindowCount > 0 Then
+		      Var Frontview As DesktopWindow = Self.WindowAt(0)
+		      If Frontview IsA BeaconWindow Then
+		        BeaconWindow(Frontview).BringToFront()
+		      End If
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
 		  
 		  Return True
 		End Function
@@ -812,7 +878,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ImportIdentityFile(File As FolderItem, ParentWindow As Window = Nil)
+		Sub ImportIdentityFile(File As FolderItem, ParentWindow As DesktopWindow = Nil)
 		  If ParentWindow = Nil Then
 		    ParentWindow = MainWindow
 		  End If
@@ -1093,9 +1159,14 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Sub LogAPIException(Err As RuntimeException, Location As String, URL As String, HTTPStatus As Integer, RawContent As MemoryBlock)
-		  If Err = Nil Then
+		  If Err Is Nil Then
 		    Return
 		  End If
+		  
+		  If Self.AffectedBy72314() Then
+		    Return
+		  End If
+		  
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Base64 As String
 		  If RawContent <> Nil And RawContent.Size > 0 Then
@@ -1120,7 +1191,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Function MBSLicense() As String
 		  Const Chars = Self.MBSKey
-		  Return DefineEncoding(DecodeBase64(Chars.Middle(1, 1) + Chars.Middle(24, 1) + Chars.Middle(36, 1) + Chars.Middle(28, 1) + Chars.Middle(8, 1) + Chars.Middle(14, 1) + Chars.Middle(10, 1) + Chars.Middle(24, 1) + Chars.Middle(5, 1) + Chars.Middle(45, 1) + Chars.Middle(38, 1) + Chars.Middle(50, 1) + Chars.Middle(25, 1) + Chars.Middle(22, 1) + Chars.Middle(18, 1) + Chars.Middle(17, 1) + Chars.Middle(18, 1) + Chars.Middle(33, 1) + Chars.Middle(44, 1) + Chars.Middle(9, 1) + Chars.Middle(25, 1) + Chars.Middle(22, 1) + Chars.Middle(32, 1) + Chars.Middle(23, 1) + Chars.Middle(3, 1) + Chars.Middle(10, 1) + Chars.Middle(9, 1) + Chars.Middle(40, 1) + Chars.Middle(41, 1) + Chars.Middle(15, 1) + Chars.Middle(44, 1) + Chars.Middle(28, 1) + Chars.Middle(25, 1) + Chars.Middle(2, 1) + Chars.Middle(33, 1) + Chars.Middle(43, 1) + Chars.Middle(8, 1) + Chars.Middle(24, 1) + Chars.Middle(18, 1) + Chars.Middle(51, 1) + Chars.Middle(18, 1) + Chars.Middle(42, 1) + Chars.Middle(32, 1) + Chars.Middle(30, 1) + Chars.Middle(49, 1) + Chars.Middle(14, 1) + Chars.Middle(50, 1) + Chars.Middle(30, 1) + Chars.Middle(25, 1) + Chars.Middle(14, 1) + Chars.Middle(41, 1) + Chars.Middle(0, 1) + Chars.Middle(37, 1) + Chars.Middle(0, 1) + Chars.Middle(36, 1) + Chars.Middle(35, 1) + Chars.Middle(3, 1) + Chars.Middle(33, 1) + Chars.Middle(13, 1) + Chars.Middle(40, 1) + Chars.Middle(3, 1) + Chars.Middle(14, 1) + Chars.Middle(21, 1) + Chars.Middle(50, 1) + Chars.Middle(8, 1) + Chars.Middle(2, 1) + Chars.Middle(7, 1) + Chars.Middle(33, 1) + Chars.Middle(16, 1) + Chars.Middle(2, 1) + Chars.Middle(41, 1) + Chars.Middle(0, 1) + Chars.Middle(52, 1) + Chars.Middle(19, 1) + Chars.Middle(36, 1) + Chars.Middle(33, 1) + Chars.Middle(1, 1) + Chars.Middle(53, 1) + Chars.Middle(32, 1) + Chars.Middle(46, 1) + Chars.Middle(8, 1) + Chars.Middle(45, 1) + Chars.Middle(10, 1) + Chars.Middle(34, 1) + Chars.Middle(18, 1) + Chars.Middle(29, 1) + Chars.Middle(9, 1) + Chars.Middle(24, 1) + Chars.Middle(13, 1) + Chars.Middle(4, 1) + Chars.Middle(18, 1) + Chars.Middle(34, 1) + Chars.Middle(13, 1) + Chars.Middle(4, 1) + Chars.Middle(13, 1) + Chars.Middle(51, 1) + Chars.Middle(18, 1) + Chars.Middle(42, 1) + Chars.Middle(35, 1) + Chars.Middle(33, 1) + Chars.Middle(8, 1) + Chars.Middle(45, 1) + Chars.Middle(33, 1) + Chars.Middle(30, 1) + Chars.Middle(5, 1) + Chars.Middle(19, 1) + Chars.Middle(18, 1) + Chars.Middle(17, 1) + Chars.Middle(18, 1) + Chars.Middle(6, 1) + Chars.Middle(50, 1) + Chars.Middle(22, 1) + Chars.Middle(49, 1) + Chars.Middle(33, 1) + Chars.Middle(18, 1) + Chars.Middle(34, 1) + Chars.Middle(22, 1) + Chars.Middle(33, 1) + Chars.Middle(18, 1) + Chars.Middle(47, 1) + Chars.Middle(3, 1) + Chars.Middle(31, 1) + Chars.Middle(16, 1) + Chars.Middle(46, 1) + Chars.Middle(23, 1) + Chars.Middle(53, 1) + Chars.Middle(16, 1) + Chars.Middle(37, 1) + Chars.Middle(25, 1) + Chars.Middle(38, 1) + Chars.Middle(38, 1) + Chars.Middle(2, 1) + Chars.Middle(5, 1) + Chars.Middle(47, 1) + Chars.Middle(38, 1) + Chars.Middle(4, 1) + Chars.Middle(25, 1) + Chars.Middle(34, 1) + Chars.Middle(36, 1) + Chars.Middle(11, 1) + Chars.Middle(5, 1) + Chars.Middle(6, 1) + Chars.Middle(46, 1) + Chars.Middle(42, 1) + Chars.Middle(49, 1) + Chars.Middle(6, 1) + Chars.Middle(16, 1) + Chars.Middle(34, 1) + Chars.Middle(26, 1) + Chars.Middle(41, 1) + Chars.Middle(16, 1) + Chars.Middle(15, 1) + Chars.Middle(23, 1) + Chars.Middle(28, 1) + Chars.Middle(46, 1) + Chars.Middle(54, 1) + Chars.Middle(10, 1) + Chars.Middle(29, 1) + Chars.Middle(38, 1) + Chars.Middle(27, 1) + Chars.Middle(44, 1) + Chars.Middle(47, 1) + Chars.Middle(8, 1) + Chars.Middle(12, 1) + Chars.Middle(52, 1) + Chars.Middle(14, 1) + Chars.Middle(12, 1) + Chars.Middle(14, 1) + Chars.Middle(35, 1) + Chars.Middle(2, 1) + Chars.Middle(13, 1) + Chars.Middle(43, 1) + Chars.Middle(10, 1) + Chars.Middle(2, 1) + Chars.Middle(46, 1) + Chars.Middle(49, 1) + Chars.Middle(13, 1) + Chars.Middle(48, 1) + Chars.Middle(38, 1) + Chars.Middle(4, 1) + Chars.Middle(49, 1) + Chars.Middle(33, 1) + Chars.Middle(30, 1) + Chars.Middle(34, 1) + Chars.Middle(41, 1) + Chars.Middle(29, 1) + Chars.Middle(25, 1) + Chars.Middle(34, 1) + Chars.Middle(16, 1) + Chars.Middle(26, 1) + Chars.Middle(38, 1) + Chars.Middle(51, 1) + Chars.Middle(23, 1) + Chars.Middle(15, 1) + Chars.Middle(49, 1) + Chars.Middle(0, 1) + Chars.Middle(39, 1) + Chars.Middle(3, 1) + Chars.Middle(20, 1) + Chars.Middle(20, 1)),Encodings.UTF8)
+		  Return DefineEncoding(DecodeBase64(Chars.Middle(51, 1) + Chars.Middle(43, 1) + Chars.Middle(10, 1) + Chars.Middle(27, 1) + Chars.Middle(1, 1) + Chars.Middle(38, 1) + Chars.Middle(4, 1) + Chars.Middle(37, 1) + Chars.Middle(0, 1) + Chars.Middle(31, 1) + Chars.Middle(50, 1) + Chars.Middle(43, 1) + Chars.Middle(14, 1) + Chars.Middle(2, 1) + Chars.Middle(21, 1) + Chars.Middle(44, 1) + Chars.Middle(35, 1) + Chars.Middle(40, 1) + Chars.Middle(1, 1) + Chars.Middle(7, 1) + Chars.Middle(1, 1) + Chars.Middle(38, 1) + Chars.Middle(4, 1) + Chars.Middle(24, 1) + Chars.Middle(48, 1) + Chars.Middle(52, 1) + Chars.Middle(24, 1) + Chars.Middle(27, 1) + Chars.Middle(46, 1) + Chars.Middle(49, 1) + Chars.Middle(21, 1) + Chars.Middle(48, 1) + Chars.Middle(1, 1) + Chars.Middle(21, 1) + Chars.Middle(11, 1) + Chars.Middle(6, 1) + Chars.Middle(13, 1) + Chars.Middle(46, 1) + Chars.Middle(20, 1) + Chars.Middle(42, 1) + Chars.Middle(14, 1) + Chars.Middle(25, 1) + Chars.Middle(9, 1) + Chars.Middle(45, 1) + Chars.Middle(17, 1) + Chars.Middle(38, 1) + Chars.Middle(10, 1) + Chars.Middle(27, 1) + Chars.Middle(1, 1) + Chars.Middle(38, 1) + Chars.Middle(4, 1) + Chars.Middle(30, 1) + Chars.Middle(29, 1) + Chars.Middle(46, 1) + Chars.Middle(11, 1) + Chars.Middle(23, 1) + Chars.Middle(29, 1) + Chars.Middle(46, 1) + Chars.Middle(13, 1) + Chars.Middle(18, 1) + Chars.Middle(1, 1) + Chars.Middle(36, 1) + Chars.Middle(8, 1) + Chars.Middle(27, 1) + Chars.Middle(1, 1) + Chars.Middle(49, 1) + Chars.Middle(37, 1) + Chars.Middle(38, 1) + Chars.Middle(24, 1) + Chars.Middle(43, 1) + Chars.Middle(47, 1) + Chars.Middle(5, 1) + Chars.Middle(14, 1) + Chars.Middle(31, 1) + Chars.Middle(37, 1) + Chars.Middle(30, 1) + Chars.Middle(14, 1) + Chars.Middle(52, 1) + Chars.Middle(50, 1) + Chars.Middle(6, 1) + Chars.Middle(35, 1) + Chars.Middle(40, 1) + Chars.Middle(1, 1) + Chars.Middle(53, 1) + Chars.Middle(1, 1) + Chars.Middle(38, 1) + Chars.Middle(10, 1) + Chars.Middle(27, 1) + Chars.Middle(1, 1) + Chars.Middle(2, 1) + Chars.Middle(50, 1) + Chars.Middle(41, 1) + Chars.Middle(0, 1) + Chars.Middle(52, 1) + Chars.Middle(18, 1) + Chars.Middle(43, 1) + Chars.Middle(35, 1) + Chars.Middle(28, 1) + Chars.Middle(9, 1) + Chars.Middle(45, 1) + Chars.Middle(15, 1) + Chars.Middle(45, 1) + Chars.Middle(10, 1) + Chars.Middle(43, 1) + Chars.Middle(9, 1) + Chars.Middle(5, 1) + Chars.Middle(1, 1) + Chars.Middle(6, 1) + Chars.Middle(9, 1) + Chars.Middle(5, 1) + Chars.Middle(9, 1) + Chars.Middle(53, 1) + Chars.Middle(1, 1) + Chars.Middle(38, 1) + Chars.Middle(10, 1) + Chars.Middle(27, 1) + Chars.Middle(1, 1) + Chars.Middle(33, 1) + Chars.Middle(11, 1) + Chars.Middle(18, 1) + Chars.Middle(0, 1) + Chars.Middle(2, 1) + Chars.Middle(18, 1) + Chars.Middle(26, 1) + Chars.Middle(14, 1) + Chars.Middle(38, 1) + Chars.Middle(1, 1) + Chars.Middle(7, 1) + Chars.Middle(1, 1) + Chars.Middle(38, 1) + Chars.Middle(4, 1) + Chars.Middle(17, 1) + Chars.Middle(24, 1) + Chars.Middle(2, 1) + Chars.Middle(34, 1) + Chars.Middle(40, 1) + Chars.Middle(9, 1) + Chars.Middle(37, 1) + Chars.Middle(4, 1) + Chars.Middle(47, 1) + Chars.Middle(12, 1) + Chars.Middle(37, 1) + Chars.Middle(50, 1) + Chars.Middle(32, 1) + Chars.Middle(13, 1) + Chars.Middle(22, 1) + Chars.Middle(26, 1) + Chars.Middle(20, 1) + Chars.Middle(14, 1) + Chars.Middle(16, 1) + Chars.Middle(21, 1) + Chars.Middle(31, 1) + Chars.Middle(9, 1) + Chars.Middle(49, 1) + Chars.Middle(20, 1) + Chars.Middle(18, 1) + Chars.Middle(13, 1) + Chars.Middle(21, 1) + Chars.Middle(10, 1) + Chars.Middle(6, 1) + Chars.Middle(11, 1) + Chars.Middle(52, 1) + Chars.Middle(54, 1) + Chars.Middle(23, 1) + Chars.Middle(46, 1) + Chars.Middle(18, 1) + Chars.Middle(32, 1) + Chars.Middle(23, 1) + Chars.Middle(14, 1) + Chars.Middle(33, 1) + Chars.Middle(47, 1) + Chars.Middle(1, 1) + Chars.Middle(46, 1) + Chars.Middle(5, 1) + Chars.Middle(22, 1) + Chars.Middle(25, 1) + Chars.Middle(40, 1) + Chars.Middle(2, 1) + Chars.Middle(44, 1) + Chars.Middle(40, 1) + Chars.Middle(48, 1) + Chars.Middle(22, 1) + Chars.Middle(50, 1) + Chars.Middle(41, 1) + Chars.Middle(40, 1) + Chars.Middle(22, 1) + Chars.Middle(18, 1) + Chars.Middle(39, 1) + Chars.Middle(48, 1) + Chars.Middle(52, 1) + Chars.Middle(6, 1) + Chars.Middle(54, 1) + Chars.Middle(20, 1) + Chars.Middle(49, 1) + Chars.Middle(42, 1) + Chars.Middle(2, 1) + Chars.Middle(24, 1) + Chars.Middle(24, 1) + Chars.Middle(54, 1) + Chars.Middle(7, 1) + Chars.Middle(13, 1) + Chars.Middle(28, 1) + Chars.Middle(13, 1) + Chars.Middle(21, 1) + Chars.Middle(32, 1) + Chars.Middle(37, 1) + Chars.Middle(42, 1) + Chars.Middle(31, 1) + Chars.Middle(11, 1) + Chars.Middle(24, 1) + Chars.Middle(34, 1) + Chars.Middle(3, 1) + Chars.Middle(9, 1) + Chars.Middle(19, 1) + Chars.Middle(6, 1) + Chars.Middle(34, 1) + Chars.Middle(1, 1) + Chars.Middle(45, 1) + Chars.Middle(47, 1) + Chars.Middle(34, 1)),Encodings.UTF8)
 		End Function
 	#tag EndMethod
 
@@ -1173,7 +1244,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mOpenRecent_ClearMenu(Sender As MenuItem) As Boolean
+		Private Function mOpenRecent_ClearMenu(Sender As DesktopMenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
 		  Var Projects() As Beacon.ProjectURL
@@ -1183,7 +1254,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
+		Private Function mOpenRecent_OpenFile(Sender As DesktopMenuItem) As Boolean
 		  If (Self.mMainWindow Is Nil) = False Then
 		    Var Project As Beacon.ProjectURL = Sender.Tag
 		    Self.mMainWindow.Documents.OpenDocument(Project)
@@ -1341,21 +1412,21 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Var Projects() As Beacon.ProjectURL = Preferences.RecentDocuments
 		  For Each Project As Beacon.ProjectURL In Projects
-		    Var Item As New MenuItem(Project.Name)
+		    Var Item As New DesktopMenuItem(Project.Name)
 		    Item.Tag = Project
 		    Item.Enabled = True
-		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
+		    AddHandler Item.MenuItemSelected, WeakAddressOf mOpenRecent_OpenFile
 		    FileOpenRecent.AddMenu(Item)
 		  Next
 		  If Projects.LastIndex > -1 Then
-		    FileOpenRecent.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    FileOpenRecent.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
-		    Var Item As New MenuItem("Clear Menu")
+		    Var Item As New DesktopMenuItem("Clear Menu")
 		    Item.Enabled = True
-		    AddHandler Item.Action, WeakAddressOf mOpenRecent_ClearMenu
+		    AddHandler Item.MenuItemSelected, WeakAddressOf mOpenRecent_ClearMenu
 		    FileOpenRecent.AddMenu(Item)
 		  Else
-		    Var Item As New MenuItem("No Items")
+		    Var Item As New DesktopMenuItem("No Items")
 		    Item.Enabled = False
 		    FileOpenRecent.AddMenu(Item)
 		  End If
@@ -1412,7 +1483,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowOpenDocument(Parent As Window = Nil)
+		Sub ShowOpenDocument(Parent As DesktopWindow = Nil)
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
 		  
@@ -1618,6 +1689,150 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=false
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoQuit"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowHiDPI"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BugVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Copyright"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Description"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastWindowIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MajorVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinorVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="NonReleaseVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RegionCode"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StageCode"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Version"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="string"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_CurrentEventTime"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

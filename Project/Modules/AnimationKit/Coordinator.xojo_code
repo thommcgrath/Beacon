@@ -43,7 +43,7 @@ Protected Class Coordinator
 
 	#tag Method, Flags = &h21
 		Private Sub Destructor()
-		  If Self.ThreadedAnimator <> Nil Then
+		  If (Self.ThreadedAnimator Is Nil) = False Then
 		    Self.ThreadedAnimator.Stop
 		  End If
 		End Sub
@@ -82,7 +82,7 @@ Protected Class Coordinator
 		      RemovedTasks.Add(Task)
 		      Self.Tasks.RemoveAt(I)
 		      
-		      If Task.NextTask <> Nil Then
+		      If (Task.NextTask Is Nil) = False Then
 		        Self.AddTask(Task.NextTask)
 		        AddedTasks.Add(Task.NextTask)
 		      End If

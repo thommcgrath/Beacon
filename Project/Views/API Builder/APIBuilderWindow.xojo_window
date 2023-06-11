@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconAutopositionWindow APIBuilderWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -31,9 +31,8 @@ Begin BeaconAutopositionWindow APIBuilderWindow
       AllowTabs       =   True
       Backdrop        =   0
       BackgroundColor =   &cFFFFFF00
-      DoubleBuffer    =   False
+      Composited      =   False
       Enabled         =   True
-      EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   500
       Index           =   -2147483648
@@ -61,7 +60,7 @@ Begin BeaconAutopositionWindow APIBuilderWindow
       Width           =   800
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 #tag EndWindowCode
@@ -213,8 +212,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -260,7 +259,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -18,29 +18,33 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
 	exit;
 }
 
-$email = strtolower(trim($_POST['email'] ?? ''));
-if (empty($email) || BeaconEmail::IsEmailValid($email) === false) {
+if ($_SERVER['HTTP_CONTENT_TYPE'] !== 'application/json') {
 	http_response_code(400);
-	echo json_encode(['error' => true, 'message' => 'Missing email parameter.'], JSON_PRETTY_PRINT);
-	exit;
-}
-$currency = 'USD';
-
-$ark_qty = (isset($_POST['ark']) && filter_var($_POST['ark'], FILTER_VALIDATE_BOOLEAN) === true) ? 1 : 0;
-$ark_gift_qty = isset($_POST['ark_gift']) ? min(intval($_POST['ark_gift']), 10) : 0;
-$ark2_qty = (isset($_POST['ark2']) && filter_var($_POST['ark2'], FILTER_VALIDATE_BOOLEAN) === true) ? 1 : 0;
-$ark2_gift_qty = isset($_POST['ark2_gift']) ? min(intval($_POST['ark2_gift']), 10) : 0;
-$stw_qty = isset($_POST['stw']) ? min(intval($_POST['stw']), 10) : 0;
-if ($ark_qty + $ark_gift_qty + $ark2_qty + $ark2_gift_qty + $stw_qty === 0) {
-	http_response_code(400);
-	echo json_encode(['error' => true, 'message' => 'Did not choose anything to purchase.'], JSON_PRETTY_PRINT);
+	echo json_encode(['error' => true, 'message' => 'This endpoint expects a JSON body.'], JSON_PRETTY_PRINT);
 	exit;
 }
 
+$cart = json_decode(file_get_contents('php://input'), true);
+if ($cart === false) {
+	http_response_code(400);
+	echo json_encode(['error' => true, 'message' => 'There was a JSON parse error.'], JSON_PRETTY_PRINT);
+	exit;
+}
+
+$email = strtolower(trim($cart['email']));
+$bundles = $cart['items'];
+$currency = BeaconShop::GetCurrency();
+
+if (count($bundles) === 0) {
+	http_response_code(400);
+	echo json_encode(['error' => true, 'message' => 'The cart is empty.'], JSON_PRETTY_PRINT);
+	exit;
+}
+
+$database = BeaconCommon::Database();
 if (isset($_COOKIE['beacon_affiliate'])) {
 	$client_reference_id = $_COOKIE['beacon_affiliate'];
 	
-	$database = BeaconCommon::Database();
 	$rows = $database->Query('SELECT purchase_id, code FROM affiliate_tracking WHERE client_reference_id = $1;', $client_reference_id);
 	if ($rows->RecordCount() === 1 && is_null($rows->Field('purchase_id')) === false) {
 		// need a new id
@@ -50,16 +54,27 @@ if (isset($_COOKIE['beacon_affiliate'])) {
 	$client_reference_id = BeaconCommon::GenerateUUID();
 }
 
+$payment_methods = ['card', 'link'];
+switch ($currency) {
+case 'EUR':
+	$payment_methods[] = 'ideal';
+	$payment_methods[] = 'giropay';
+	$payment_methods[] = 'bancontact';
+	$payment_methods[] = 'p24';
+	$payment_methods[] = 'eps';
+	break;
+case 'PLN':
+	$payment_methods[] = 'p24';
+	break;
+case 'USD':
+	$payment_methods[] = 'cashapp';
+	break;
+}
+
 $payment = [
 	'client_reference_id' => $client_reference_id,
-	'payment_method_types' => [
-		'card',
-		'ideal',
-		'giropay',
-		'bancontact',
-		'p24',
-		'eps'
-	],
+	'customer_email' => $email,
+	'payment_method_types' => $payment_methods,
 	'mode' => 'payment',
 	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/'),
 	'cancel_url' => BeaconCommon::AbsoluteURL('/omni/#checkout'),
@@ -74,8 +89,13 @@ if ($ark_qty > 0 && BeaconShop::EmailOwns($email, BeaconShop::ARK_PRODUCT_ID)) {
 }
 
 $user = null;
+$licenses = [];
 try {
 	$user = User::Fetch($email);
+	if (is_null($user) === false) {
+		$payment['metadata']['Beacon User UUID'] = $user->UserID();
+		$licenses = $user->Licenses();
+	}
 } catch (Exception $err) {
 }
 
@@ -119,24 +139,118 @@ try {
 	$payment['customer_email'] = $email;
 }
 
-$items = [
-	BeaconShop::ARK_PRODUCT_ID => $ark_qty,
-	BeaconShop::ARK_GIFT_ID => $ark_gift_qty,
-	BeaconShop::ARK2_PRODUCT_ID => $ark2_qty,
-	BeaconShop::ARK2_GIFT_ID => $ark2_gift_qty,
-	BeaconShop::STW_ID => $stw_qty
-];
-foreach ($items as $uuid => $quantity) {
-	$line_item = createLineItem($uuid, $currency, $quantity);
-	if (is_null($line_item) === false) {
-		$payment['line_items'][] = $line_item;
+$results = $database->Query('SELECT products.game_id, products.tag, products.product_id, product_prices.price_id FROM public.products INNER JOIN public.product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1 AND products.active = TRUE;', $currency);
+$product_map = [];
+$products = [];
+while (!$results->EOF()) {
+	$product_id = $results->Field('product_id');
+	$price_id = $results->Field('price_id');
+	$game_id = $results->Field('game_id');
+	$tag = $results->Field('tag');
+	
+	$product_map[$product_id] = [
+		'PriceId' => $price_id,
+		'GameId' => $game_id,
+		'Tag' => $tag
+	];
+	
+	$products[$game_id][$tag] = [
+		'ProductId' => $product_id,
+		'PriceId' => $price_id
+	];
+	
+	$results->MoveNext();
+}
+
+$includeArk = isset($products['Ark']['Base']);
+$includeArkSA = isset($products['ArkSA']['Base']);
+
+$lines = [];
+foreach ($bundles as $bundle) {
+	$bundle = new CartBundle($bundle);
+	
+	$wantsArk = $includeArk ? $bundle->getQuantity($products['Ark']['Base']['ProductId']) > 0 : false;
+	$wantsArkSAYears = $includeArkSA ? $bundle->getQuantity($products['ArkSA']['Base']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Upgrade']['ProductId']) + $bundle->getQuantity($products['ArkSA']['Renewal']['ProductId']) : 0;
+	
+	if ($bundle->isGift()) {
+		if ($wantsArk) {
+			$lines[$products['Ark']['Base']['PriceId']] = ($lines[$products['Ark']['Base']['PriceId']] ?? 0) + 1;
+		}
+		
+		if ($wantsArkSAYears > 0) {
+			if ($wantsArk) {
+				$lines[$products['ArkSA']['Upgrade']['PriceId']] = ($lines[$products['ArkSA']['Upgrade']['PriceId']] ?? 0) + 1;
+			} else {
+				$lines[$products['ArkSA']['Base']['PriceId']] = ($lines[$products['ArkSA']['Base']['PriceId']] ?? 0) + 1;
+			}
+			if ($wantsArkSAYears > 1) {
+				$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + ($wantsArkSAYears - 1);
+			}
+		}
+	} else {
+		$ownsArk = $includeArk && findLicense($licenses, $products['Ark']['Base']['ProductId']) !== null;
+		$ownsArkSA = $includeArkSA && findLicense($licenses, $products['ArkSA']['Base']['ProductId']) !== null;
+		
+		if ($wantsArk && !$ownsArk) {
+			$lines[$products['Ark']['Base']['PriceId']] = ($lines[$products['Ark']['Base']['PriceId']] ?? 0) + 1;
+		}
+		
+		if ($wantsArkSAYears > 0) {
+			if ($ownsArkSA) {
+				$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + $wantsArkSAYears;
+			} else {
+				if ($ownsArk) {
+					$lines[$products['ArkSA']['Upgrade']['PriceId']] = ($lines[$products['ArkSA']['Upgrade']['PriceId']] ?? 0) + 1;
+				} else {
+					$lines[$products['ArkSA']['Base']['PriceId']] = ($lines[$products['ArkSA']['Base']['PriceId']] ?? 0) + 1;
+				}
+				if ($wantsArkSAYears > 1) {
+					$lines[$products['ArkSA']['Renewal']['PriceId']] = ($lines[$products['ArkSA']['Renewal']['PriceId']] ?? 0) + ($wantsArkSAYears - 1);
+				}
+			}
+		}
 	}
 }
+foreach ($lines as $priceId => $quantity) {
+	$payment['line_items'][] = [
+		'price' => $priceId,
+		'quantity' => $quantity
+	];
+}
+
+$encoded_cart = BeaconCommon::Base64UrlEncode(gzencode(json_encode($bundles)));
+if (strlen($encoded_cart) > 500) {
+	http_response_code(400);
+	echo json_encode(['error' => true, 'message' => 'Cart is too large.'], JSON_PRETTY_PRINT);
+	exit;
+}
+$payment['metadata']['Beacon Cart'] = $encoded_cart;
 
 $session = $api->CreateCheckoutSession($payment);
 if (is_null($session)) {
 	http_response_code(400);
 	echo json_encode(['error' => true, 'message' => 'Was not able to create the checkout session.'], JSON_PRETTY_PRINT);
+	
+	$attachments = [
+		[
+			'title' => 'Cart Details',
+			'fields' => [
+				[
+					'title' => 'Currency',
+					'value' => $currency,
+					'short' => true
+				],
+				[
+					'title' => 'Bundles',
+					'value' => '```' . json_encode($bundles, JSON_PRETTY_PRINT) . '```'
+				]
+			],
+			'ts' => time()
+		]
+	];
+	
+	BeaconCommon::PostSlackRaw(json_encode(['text' => 'There was an error starting a checkout session.', 'attachments' => $attachments]));
+	
 	exit;
 }
 
@@ -162,6 +276,35 @@ function createLineItem(string $uuid, string $currency, int $quantity) {
 		'price' => $rows->Field('price_id'),
 		'quantity' => $quantity
 	];
+}
+
+class CartBundle {
+	protected $source;
+	
+	public function __construct(array $source) {
+		$this->source = $source;
+	}
+	
+	public function getQuantity(string $productId): int {
+		if (array_key_exists($productId, $this->source['products'])) {
+			return $this->source['products'][$productId];
+		} else {
+			return 0;
+		}
+	}
+	
+	public function isGift(): bool {
+		return $this->source['isGift'];
+	}
+}
+
+function findLicense(array $licenses, string $productId): ?array {
+	foreach ($licenses as $license) {
+		if ($license['product_id'] === $productId) {
+			return $license;
+		}
+	}
+	return null;
 }
 
 ?>

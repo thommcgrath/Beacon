@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconPagedSubview DocumentsComponent
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin BeaconPagedSubview DocumentsComponent
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   True
+   Composited      =   False
+   DoubleBuffer    =   "True"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   570
    Index           =   -2147483648
@@ -35,7 +36,6 @@ Begin BeaconPagedSubview DocumentsComponent
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -61,7 +61,7 @@ Begin BeaconPagedSubview DocumentsComponent
       Visible         =   True
       Width           =   896
    End
-   Begin PagePanel Views
+   Begin DesktopPagePanel Views
       AllowAutoDeactivate=   True
       Enabled         =   True
       Height          =   532
@@ -76,6 +76,7 @@ Begin BeaconPagedSubview DocumentsComponent
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -92,9 +93,8 @@ Begin BeaconPagedSubview DocumentsComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
          Index           =   -2147483648
@@ -128,9 +128,8 @@ Begin BeaconPagedSubview DocumentsComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
          Index           =   -2147483648
@@ -164,9 +163,8 @@ Begin BeaconPagedSubview DocumentsComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         Composited      =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
          Index           =   -2147483648
@@ -204,17 +202,17 @@ Begin BeaconPagedSubview DocumentsComponent
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Function GetPagePanel() As PagePanel
+		Function GetPagePanel() As DesktopPagePanel
 		  Return Self.Views
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.AppendPage(Self.RecentDocumentsComponent1)
 		  Self.AppendPage(Self.CloudDocumentsComponent1)
 		  Self.AppendPage(Self.CommunityDocumentsComponent1)
@@ -264,16 +262,32 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Controller_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project)
+		Private Function CheckGameDatabase(GameID As String) As Boolean
+		  Var DataSource As Beacon.DataSource = App.DataSourceForGame(GameID)
+		  If DataSource Is Nil Or DataSource.HasContent = False Then
+		    Var GameName As String = Language.GameName(GameID)
+		    BeaconUI.ShowAlert("Game database is not ready", "Sit tight a few moments while Beacon prepares its database for " + GameName + ".")
+		    
+		    App.SyncGamedata(False, False)
+		    
+		    Return False
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Controller_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project, Actions() As Beacon.ScriptAction)
 		  #Pragma Unused Project
 		  
 		  Self.DetachControllerEvents(Sender)
 		  
 		  Var View As DocumentEditorView = DocumentEditorView.Create(Sender)
-		  View.Changed = Sender.Project.Modified
+		  View.Modified = Sender.Project.Modified
 		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Hash)
 		  View.LinkedOmniBarItem.CanBeClosed = True
-		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Changed
+		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Modified
 		  
 		  Select Case Sender.URL.Scheme
 		  Case Beacon.ProjectURL.TypeCloud
@@ -288,6 +302,8 @@ End
 		  
 		  Self.AppendPage(View)
 		  Self.CurrentPage = View
+		  
+		  View.RunScriptActions(Actions)
 		End Sub
 	#tag EndMethod
 
@@ -454,14 +470,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mAutosaveController_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project)
+		Private Sub mAutosaveController_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project, Actions() As Beacon.ScriptAction)
 		  RemoveHandler Sender.Loaded, AddressOf mAutosaveController_Loaded
 		  
 		  // Create a modified transient document
 		  Project.Modified = True
 		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity)
 		  Controller.AutosaveURL = Sender.URL
-		  Self.OpenController(Controller, False)
+		  Self.OpenController(Controller, False, Actions)
 		End Sub
 	#tag EndMethod
 
@@ -496,6 +512,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewDocument(GameID As String)
+		  If Self.CheckGameDatabase(GameID) = False Then
+		    Return
+		  End If
+		  
 		  Var Project As Beacon.Project = Beacon.Project.CreateForGameID(GameID)
 		  
 		  Static NewDocumentNumber As Integer = 1
@@ -508,14 +528,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub OpenController(Controller As Beacon.ProjectController, AddToRecents As Boolean = True)
+		Private Sub OpenController(Controller As Beacon.ProjectController, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
+		  If Self.CheckGameDatabase(Controller.GameID) = False Then
+		    Return
+		  End If
+		  
 		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
 		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
 		  Self.AttachControllerEvents(Controller)
 		  
-		  Controller.Load()
+		  Controller.Load(Actions)
 		  
 		  If AddToRecents Then
 		    Preferences.AddToRecentDocuments(Controller.URL)
@@ -526,7 +550,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean = True)
+		Sub OpenDocument(URL As Beacon.ProjectURL)
+		  Var Actions() As Beacon.ScriptAction
+		  Self.OpenDocument(URL, True, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(URL As Beacon.ProjectURL, Actions() As Beacon.ScriptAction)
+		  Self.OpenDocument(URL, True, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean)
+		  Var Actions() As Beacon.ScriptAction
+		  Self.OpenDocument(URL, AddToRecents, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
 		  Var Hash As String = URL.Hash
 		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
 		  If (NavItem Is Nil) = False Then
@@ -535,22 +579,50 @@ End
 		      Var Page As BeaconSubview = Self.Page(Idx)
 		      If Page.LinkedOmniBarItem = NavItem Then
 		        Self.CurrentPage = Page
+		        
+		        If Page IsA DocumentEditorView Then
+		          Var Controller As Beacon.ProjectController = DocumentEditorView(Page).Controller
+		          If Controller.AddActions(Actions) = False Then
+		            // Returns false when the controller did not accept the actions
+		            Page.RunScriptActions(Actions)
+		          End If
+		        End If
+		        
 		        Return
 		      End If
 		    Next
-		    
 		    Return
 		  End If
 		  
 		  Var Controller As New Beacon.ProjectController(URL, App.IdentityManager.CurrentIdentity)
-		  Self.OpenController(Controller, AddToRecents)
+		  Self.OpenController(Controller, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean = True)
+		Sub OpenDocument(File As FolderItem)
+		  Var Actions() As Beacon.ScriptAction
+		  Self.OpenDocument(File, True, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(File As FolderItem, Actions() As Beacon.ScriptAction)
+		  Self.OpenDocument(File, True, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean)
+		  Var Actions() As Beacon.ScriptAction
+		  Self.OpenDocument(File, AddToRecents, Actions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
 		  Var URL As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(File))
-		  Self.OpenDocument(URL, AddToRecents)
+		  Self.OpenDocument(URL, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
@@ -613,7 +685,7 @@ End
 
 #tag Events Nav
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Recents As OmniBarItem = OmniBarItem.CreateTab("NavRecents", "Recents")
 		  Var Cloud As OmniBarItem = OmniBarItem.CreateTab("NavCloud", "Cloud")
 		  Var Community As OmniBarItem = OmniBarItem.CreateTab("NavCommunity", "Community")
@@ -656,7 +728,7 @@ End
 #tag EndEvents
 #tag Events Views
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Var CurrentPage As BeaconSubview = Self.CurrentPage
 		  Var CurrentItemName As String
 		  If (CurrentPage Is Nil) = False And (CurrentPage.LinkedOmniBarItem Is Nil) = False Then
@@ -731,6 +803,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -904,8 +992,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -972,14 +1060,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="InitialParent"
 		Visible=false
 		Group="Position"
@@ -993,14 +1073,6 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

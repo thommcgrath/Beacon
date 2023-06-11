@@ -2,7 +2,7 @@
 Protected Class ControlGroup
 Implements Iterable
 	#tag Method, Flags = &h0
-		Sub Append(Ctl As RectControl)
+		Sub Append(Ctl As DesktopUIControl)
 		  If Self.IndexOf(Ctl) = -1 Then
 		    Self.mMembers.Add(New WeakRef(Ctl))
 		    Self.UpdateBounds()
@@ -11,8 +11,8 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ParamArray Controls() As RectControl)
-		  For Each Ctl As RectControl In Controls
+		Sub Constructor(ParamArray Controls() As DesktopUIControl)
+		  For Each Ctl As DesktopUIControl In Controls
 		    Self.mVisible = Self.mVisible Or Ctl.Visible
 		    Self.mMembers.Add(New WeakRef(Ctl))
 		  Next
@@ -27,7 +27,7 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Ctl As RectControl) As Integer
+		Function IndexOf(Ctl As DesktopUIControl) As Integer
 		  For I As Integer = 0 To Self.mMembers.LastIndex
 		    If Self.mMembers(I).Value = Ctl Then
 		      Return I
@@ -39,7 +39,7 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Ctl As RectControl)
+		Sub Insert(Index As Integer, Ctl As DesktopUIControl)
 		  If Self.IndexOf(Ctl) = -1 Then
 		    Self.mMembers.AddAt(Index, New WeakRef(Ctl))
 		    Self.UpdateBounds()
@@ -62,13 +62,13 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Member(Index As Integer) As RectControl
-		  Return RectControl(Self.mMembers(Index).Value)
+		Function Member(Index As Integer) As DesktopUIControl
+		  Return DesktopUIControl(Self.mMembers(Index).Value)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Member(Index As Integer, Assigns Ctl As RectControl)
+		Sub Member(Index As Integer, Assigns Ctl As DesktopUIControl)
 		  Self.mMembers(Index) = New WeakRef(Ctl)
 		  Self.UpdateBounds()
 		End Sub
@@ -81,7 +81,7 @@ Implements Iterable
 		      Continue
 		    End If
 		    
-		    Var Ctl As RectControl = RectControl(Ref.Value)
+		    Var Ctl As DesktopUIControl = DesktopUIControl(Ref.Value)
 		    Ctl.Top = Ctl.Top + Y
 		    Ctl.Left = Ctl.Left + X
 		  Next
@@ -90,13 +90,13 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As RectControl
+		Function Operator_Subscript(Index As Integer) As DesktopUIControl
 		  Return Self.Member(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Ctl As RectControl)
+		Sub Operator_Subscript(Index As Integer, Assigns Ctl As DesktopUIControl)
 		  Self.Member(Index) = Ctl
 		End Sub
 	#tag EndMethod
@@ -118,7 +118,7 @@ Implements Iterable
 		  Var Top, Left, Bottom, Right As Integer
 		  Var First As Boolean = True
 		  For I As Integer = 0 To Self.mMembers.LastIndex
-		    Var Ctl As RectControl = RectControl(Self.mMembers(I).Value)
+		    Var Ctl As DesktopUIControl = DesktopUIControl(Self.mMembers(I).Value)
 		    If Ctl = Nil Then
 		      Continue
 		    End If
@@ -236,7 +236,7 @@ Implements Iterable
 			      Continue
 			    End If
 			    
-			    Var Ctl As RectControl = RectControl(Ref.Value)
+			    Var Ctl As DesktopUIControl = DesktopUIControl(Ref.Value)
 			    Ctl.Visible = Value
 			  Next
 			End Set

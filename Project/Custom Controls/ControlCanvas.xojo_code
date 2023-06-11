@@ -1,9 +1,9 @@
 #tag Class
 Protected Class ControlCanvas
-Inherits Canvas
+Inherits DesktopCanvas
 Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		Function MouseDown(x As Integer, y As Integer) As Boolean
 		  If Not Self.mPainted Then
 		    Return False
 		  End If
@@ -29,7 +29,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag EndEvent
 
 	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
+		Sub MouseDrag(x As Integer, y As Integer)
 		  Self.AdjustMouseCoordinates(X, Y)
 		  
 		  If Self.mMouseDownInTrack = False Then
@@ -83,7 +83,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag EndEvent
 
 	#tag Event
-		Sub MouseMove(X As Integer, Y As Integer)
+		Sub MouseMove(x As Integer, y As Integer)
 		  If Self.mPainted = False Or Self.mMouseDownInTrack Then
 		    Return
 		  End If
@@ -98,7 +98,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag EndEvent
 
 	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
+		Sub MouseUp(x As Integer, y As Integer)
 		  Self.AdjustMouseCoordinates(X, Y)
 		  
 		  If Self.mMouseDownInTrack = False Then
@@ -126,7 +126,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag EndEvent
 
 	#tag Event
-		Function MouseWheel(X As Integer, Y As Integer, deltaX as Integer, deltaY as Integer) As Boolean
+		Function MouseWheel(x As Integer, y As Integer, deltaX As Integer, deltaY As Integer) As Boolean
 		  If Not Self.mPainted Then
 		    Return False
 		  End If
@@ -144,12 +144,12 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  #if XojoVersion >= 2022.01
 		    Self.AllowFocusRing = False
 		  #endif
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  
 		  #if XojoVersion >= 2018.01
 		    Self.Transparent = True
@@ -162,7 +162,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As Rect)
 		  Var WithScroller As Boolean = Self.ScrollingEnabled And Self.ScrollMaximum > 0
 		  Var NeedsRedraw As Boolean = True
 		  While NeedsRedraw
@@ -225,7 +225,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		  Select Case Identifier
 		  Case "Scroll Opacity"
 		    Self.mScrollOpacity = Value
-		    Self.Invalidate(Self.Width - ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth), 0, ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth), Self.Height)
+		    Self.Refresh(Self.Width - ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth), 0, ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth), Self.Height)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -241,57 +241,10 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Invalidate(eraseBackground As Boolean = True)
-		  #if XojoVersion >= 2018.01
-		    Super.Invalidate(EraseBackground)
-		  #else
-		    #Pragma Unused eraseBackground
-		    Super.Invalidate(Self.EraseBackground)
-		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Invalidate(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
-		  #if XojoVersion >= 2018.01
-		    Super.Invalidate(X, Y, Width, Height, EraseBackground)
-		  #else
-		    #Pragma Unused eraseBackground
-		    Super.Invalidate(X, Y, Width, Height, Self.EraseBackground)
-		  #endif
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Shared Function LimitScrollOffset(Offset As Double, ContentHeight As Integer, ViewportHeight As Integer) As Double
 		  Return Min(Max(Offset, 0), Max(ContentHeight - ViewportHeight, 0))
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Refresh(eraseBackground As Boolean = True)
-		  #if XojoVersion >= 2018.01
-		    Super.Refresh(EraseBackground)
-		  #else
-		    #Pragma Unused eraseBackground
-		    Super.Refresh(Self.EraseBackground)
-		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Refresh(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
-		  // Calling the overridden superclass method.
-		  #if XojoVersion >= 2020.01
-		    Super.Refresh(X, Y, Width, Height, EraseBackground)
-		  #elseif XojoVersion >= 2018.01
-		    Super.RefreshRect(X, Y, Width, Height, EraseBackground)
-		  #else
-		    #Pragma Unused eraseBackground
-		    Super.RefreshRect(X, Y, Width, Height, Self.EraseBackground)
-		  #endif
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -341,7 +294,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		  Value = Self.LimitScrollOffset(Value, Self.mContentHeight, Self.Height)
 		  If Self.mScrollOffset <> Value Then
 		    Self.mScrollOffset = Value
-		    Self.Invalidate
+		    Self.Refresh
 		  End If
 		End Sub
 	#tag EndMethod
@@ -409,11 +362,11 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		Event Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 	#tag EndHook
 
 
@@ -434,7 +387,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 			  End If
 			  
 			  Self.mContentHeight = Value
-			  Self.Invalidate()
+			  Self.Refresh()
 			End Set
 		#tag EndSetter
 		ContentHeight As Integer
@@ -531,7 +484,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 			Set
 			  If Self.mScrollingEnabled <> Value Then
 			    Self.mScrollingEnabled = Value
-			    Self.Invalidate
+			    Self.Refresh
 			  End If
 			End Set
 		#tag EndSetter
@@ -749,22 +702,6 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

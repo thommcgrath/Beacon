@@ -1,8 +1,8 @@
 #tag Class
 Protected Class CodeArea
-Inherits TextArea
+Inherits DesktopTextArea
 	#tag Event
-		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		Function ConstructContextualMenu(base As DesktopMenuItem, x As Integer, y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -19,7 +19,7 @@ Inherits TextArea
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  RaiseEvent Open
 		  Self.FontUnit = FontUnits.Point
 		  Self.FontName = "Source Code Pro"
@@ -76,7 +76,7 @@ Inherits TextArea
 			Visible=true
 			Group="Selection Behavior"
 			InitialValue="0"
-			Type="TextArea.UnicodeModes"
+			Type="DesktopTextArea.UnicodeModes"
 			EditorType="Enum"
 			#tag EnumValues
 				"0 - Native"
@@ -209,8 +209,8 @@ Inherits TextArea
 			Visible=true
 			Group="Appearance"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBorder"
@@ -265,8 +265,8 @@ Inherits TextArea
 			Visible=true
 			Group="Appearance"
 			InitialValue="&h000000"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -378,22 +378,6 @@ Inherits TextArea
 			InitialValue=""
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataSource"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			InitialValue=""
-			Type="String"
-			EditorType="DataField"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowTabs"

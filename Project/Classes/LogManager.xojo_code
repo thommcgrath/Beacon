@@ -131,14 +131,17 @@ Protected Class LogManager
 		  End If
 		  
 		  #if TargetDesktop
-		    Var Stack() As StackFrame = Err.StackFrames
-		    While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
-		      Stack.RemoveAt(0)
-		    Wend
-		    
 		    Var Origin As String = "Unknown"
-		    If Stack.LastIndex >= 0 Then
-		      Origin = Stack(0).Name
+		    
+		    If App.AffectedBy72314 = False Then
+		      Var Stack() As StackFrame = Err.StackFrames
+		      While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		        Stack.RemoveAt(0)
+		      Wend
+		      
+		      If Stack.LastIndex >= 0 Then
+		        Origin = Stack(0).Name
+		      End If
 		    End If
 		    
 		    Self.Log("Unhandled " + Info.FullName + " in " + Origin + ", caught in " + Location + If(MoreDetail.IsEmpty = False, " (" + MoreDetail + ")", "") + ": " + Err.Message)

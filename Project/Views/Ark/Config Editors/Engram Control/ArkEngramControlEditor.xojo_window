@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin ArkConfigEditor ArkEngramControlEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
@@ -6,9 +6,10 @@ Begin ArkConfigEditor ArkEngramControlEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   672
    Index           =   -2147483648
@@ -35,7 +36,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
       Index           =   -2147483648
@@ -66,7 +66,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   672
       Index           =   -2147483648
@@ -99,7 +98,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
       Index           =   -2147483648
@@ -135,8 +133,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Bold            =   False
       ColumnCount     =   3
       ColumnWidths    =   "2*,2*,*"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -146,8 +142,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -194,8 +189,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -205,8 +198,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -250,7 +242,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -285,7 +276,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -312,6 +302,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Width           =   300
    End
    Begin DelayedSearchField EngramFilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -329,6 +320,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   11
@@ -340,6 +332,10 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Transparent     =   False
       Visible         =   True
       Width           =   200
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator EngramFilterFieldSeparator
       AllowAutoDeactivate=   True
@@ -348,7 +344,6 @@ Begin ArkConfigEditor ArkEngramControlEditor
       AllowTabs       =   False
       Backdrop        =   0
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -373,11 +368,11 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Width           =   220
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MinimumWidth = 601
 		End Sub
 	#tag EndEvent
@@ -399,7 +394,7 @@ End
 		  Self.Project.AddConfigGroup(MergedGroup)
 		  Self.InvalidateConfigRef()
 		  Self.SetupUI()
-		  Self.Changed = True
+		  Self.Modified = True
 		  Self.ProcessEngramComparison(OldEngramRows)
 		  Return True
 		End Function
@@ -457,7 +452,7 @@ End
 		  Var OldEngramRows As New Dictionary
 		  For Idx As Integer = 0 To Self.EngramList.LastRowIndex
 		    Var Engram As Ark.Engram = Self.EngramList.RowTagAt(Idx)
-		    OldEngramRows.Value(Engram.ObjectID) = Self.EngramList.CellValueAt(Idx, 1)
+		    OldEngramRows.Value(Engram.ObjectID) = Self.EngramList.CellTextAt(Idx, 1)
 		  Next Idx
 		  Return OldEngramRows
 		End Function
@@ -468,7 +463,7 @@ End
 		  Var SelectEngrams() As Ark.Engram
 		  For Idx As Integer = 0 To Self.EngramList.LastRowIndex
 		    Var Engram As Ark.Engram = Self.EngramList.RowTagAt(Idx)
-		    If OldEngramRows.HasKey(Engram.ObjectID) = False Or OldEngramRows.Value(Engram.ObjectID).StringValue <> Self.EngramList.CellValueAt(Idx, 1) Then
+		    If OldEngramRows.HasKey(Engram.ObjectID) = False Or OldEngramRows.Value(Engram.ObjectID).StringValue <> Self.EngramList.CellTextAt(Idx, 1) Then
 		      SelectEngrams.Add(Engram)
 		    End If
 		  Next Idx
@@ -485,7 +480,7 @@ End
 		    Config.OnlyAllowSpecifiedEngrams = ArkEngramControlSettingsView(Sender.Container).OnlyAllowSpecifiedEngrams
 		    Config.AutoUnlockAllEngrams = ArkEngramControlSettingsView(Sender.Container).AutoUnlockEngrams
 		    Self.SetupEngramsList
-		    Self.Changed = Self.Project.Modified
+		    Self.Modified = Self.Project.Modified
 		  End If
 		  
 		  Self.EngramToolbar.Item("SettingsButton").Toggled = False
@@ -517,7 +512,7 @@ End
 		  If SelectEngrams = Nil Then
 		    Var Bound As Integer = Self.EngramList.LastRowIndex
 		    For Idx As Integer = 0 To Bound
-		      If Self.EngramList.Selected(Idx) Then
+		      If Self.EngramList.RowSelectedAt(Idx) Then
 		        Selected.Add(Ark.Engram(Self.EngramList.RowTagAt(Idx)).ObjectID)
 		      End If
 		    Next
@@ -533,11 +528,11 @@ End
 		    Var Engram As Ark.Engram = Engrams(Idx)
 		    Self.EngramList.RowTagAt(Idx) = Engram
 		    If LabelCounts.Lookup(Engram.Label, 0) > 1 Then
-		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label.Disambiguate(Engram.ContentPackName)
+		      Self.EngramList.CellTextAt(Idx, 0) = Engram.Label.Disambiguate(Engram.ContentPackName)
 		    Else
-		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label
+		      Self.EngramList.CellTextAt(Idx, 0) = Engram.Label
 		    End If
-		    Self.EngramList.CellValueAt(Idx, 2) = Engram.ContentPackName
+		    Self.EngramList.CellTextAt(Idx, 2) = Engram.ContentPackName
 		    
 		    Var Behaviors() As String
 		    
@@ -593,8 +588,8 @@ End
 		      End If
 		    End If
 		    
-		    Self.EngramList.CellValueAt(Idx, 1) = Behaviors.Join("; ")
-		    Self.EngramList.Selected(Idx) = Selected.IndexOf(Engram.ObjectID) > -1
+		    Self.EngramList.CellTextAt(Idx, 1) = Behaviors.Join("; ")
+		    Self.EngramList.RowSelectedAt(Idx) = Selected.IndexOf(Engram.ObjectID) > -1
 		  Next
 		  
 		  Self.EngramList.Sort()
@@ -608,7 +603,7 @@ End
 		  Var Config As Ark.Configs.EngramControl = Self.Config(False)
 		  Var Selected() As Integer
 		  For I As Integer = 0 To Self.PointsList.LastRowIndex
-		    If Self.PointsList.Selected(I) Then
+		    If Self.PointsList.RowSelectedAt(I) Then
 		      Selected.Add(Self.PointsList.RowTagAt(I).IntegerValue)
 		    End If
 		  Next
@@ -626,9 +621,9 @@ End
 		      PointsActual = PointsForLevel.IntegerValue
 		    End If
 		    
-		    Self.PointsList.CellValueAt(Idx, 0) = Level.ToString
-		    Self.PointsList.CellValueAt(Idx, 1) = PointsActual.ToString
-		    Self.PointsList.Selected(Idx) = Selected.IndexOf(Level) > -1
+		    Self.PointsList.CellTextAt(Idx, 0) = Level.ToString
+		    Self.PointsList.CellTextAt(Idx, 1) = PointsActual.ToString
+		    Self.PointsList.RowSelectedAt(Idx) = Selected.IndexOf(Level) > -1
 		    Self.PointsList.RowTagAt(Idx) = Level
 		  Next
 		  
@@ -644,7 +639,7 @@ End
 		  If Self.EngramList.SelectedRowCount = 0 Then
 		    Self.EngramListStatus.Caption = Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides")
 		  Else
-		    Self.EngramListStatus.Caption = Self.EngramList.SelectedRowCount.ToString(Locale.Current, ",##0") + " of " + Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides") + " Selected"
+		    Self.EngramListStatus.Caption = Self.EngramList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides") + " Selected"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -654,7 +649,7 @@ End
 		  If Self.PointsList.SelectedRowCount = 0 Then
 		    Self.PointsListStatus.Caption = Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels")
 		  Else
-		    Self.PointsListStatus.Caption = Self.PointsList.SelectedRowCount.ToString(Locale.Current, ",##0") + " of " + Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels") + " Selected"
+		    Self.PointsListStatus.Caption = Self.PointsList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels") + " Selected"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -676,27 +671,7 @@ End
 
 #tag Events EngramList
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  If Column <> 1 Then
-		    Return False
-		  End If
-		  
-		  Var Value1 As Integer = Me.CellTagAt(Row1, Column)
-		  Var Value2 As Integer = Me.CellTagAt(Row2, Column)
-		  If Value1 > Value2 Then
-		    Result = 1
-		  ElseIf Value1 < Value2 Then
-		    Result = -1
-		  Else
-		    Var Engram1 As Ark.Engram = Me.RowTagAt(Row1)
-		    Var Engram2 As Ark.Engram = Me.RowTagAt(Row2)
-		    Result = Engram1.Label.Compare(Engram2.Label, ComparisonOptions.CaseInsensitive, Locale.Current)
-		  End If
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var EditButton As OmniBarItem = Self.EngramToolbar.Item("EditButton")
 		  If (EditButton Is Nil) = False Then
 		    EditButton.Enabled = Me.CanEdit
@@ -713,7 +688,7 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var Members() As Ark.Engram
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      Members.Add(Me.RowTagAt(I))
 		    End If
 		  Next
@@ -728,7 +703,7 @@ End
 		  Next
 		  
 		  Self.SetupUI
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -740,7 +715,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Engrams() As Ark.Engram
 		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Idx) = False Then
+		    If Me.RowSelectedAt(Idx) = False Then
 		      Continue
 		    End If
 		    
@@ -796,7 +771,7 @@ End
 		  If Changed Then
 		    Call Self.Config(True) // Will cause the previous retreival to become permanent since we still have a reference
 		    Self.SetupUI
-		    Self.Changed = Config.Modified
+		    Self.Modified = Config.Modified
 		    Self.ProcessEngramComparison(OldEngramRows)
 		  Else
 		    Self.Parse("", InputString, "clipboard")
@@ -807,7 +782,7 @@ End
 		Sub PerformEdit()
 		  Var Engrams() As Ark.Engram
 		  For I As Integer = 0 To Me.LastRowIndex
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -816,7 +791,7 @@ End
 		  
 		  Engrams = ArkEngramControlEngramOverrideWizard.Present(Self, Self.Project, Engrams)
 		  If Engrams <> Nil And Engrams.LastIndex > -1 Then
-		    Self.Changed = True
+		    Self.Modified = True
 		    Self.SetupEngramsList(Engrams)
 		  End If
 		End Sub
@@ -826,32 +801,36 @@ End
 		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
+	#tag Event
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  If Column <> 1 Then
+		    Return False
+		  End If
+		  
+		  Var Value1 As Integer = Me.CellTagAt(Row1, Column)
+		  Var Value2 As Integer = Me.CellTagAt(Row2, Column)
+		  If Value1 > Value2 Then
+		    Result = 1
+		  ElseIf Value1 < Value2 Then
+		    Result = -1
+		  Else
+		    Var Engram1 As Ark.Engram = Me.RowTagAt(Row1)
+		    Var Engram2 As Ark.Engram = Me.RowTagAt(Row2)
+		    Result = Engram1.Label.Compare(Engram2.Label, ComparisonOptions.CaseInsensitive, Locale.Current)
+		  End If
+		  Return True
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events PointsList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var EditButton As OmniBarItem = Self.PointsToolbar.Item("EditButton")
 		  If (EditButton Is Nil) = False Then
 		    EditButton.Enabled = Me.SelectedRowCount > 0
 		  End If
 		  Self.UpdatePointsListStatus()
 		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  Var Value1 As Integer = Me.CellValueAt(Row1, Column).ToInteger
-		  Var Value2 As Integer = Me.CellValueAt(Row2, Column).ToInteger
-		  
-		  If Value1 > Value2 Then
-		    Result = 1
-		  ElseIf Value1 < Value2 Then
-		    Result = -1
-		  Else
-		    Result = 0
-		  End If
-		  
-		  Return True
-		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
@@ -867,7 +846,7 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var Names() As String
 		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(Idx) Then
+		    If Me.RowSelectedAt(Idx) Then
 		      Names.Add(Me.RowTagAt(Idx).IntegerValue.ToString)
 		    End If
 		  Next
@@ -878,7 +857,7 @@ End
 		  
 		  Var Config As Ark.Configs.EngramControl = Self.Config(True)
 		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Not Me.Selected(Idx) Then
+		    If Not Me.RowSelectedAt(Idx) Then
 		      Continue
 		    End If
 		    
@@ -887,7 +866,7 @@ End
 		  Next
 		  
 		  Self.SetupUI
-		  Self.Changed = Config.Modified
+		  Self.Modified = Config.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -900,7 +879,7 @@ End
 		  Var Dicts() As Variant
 		  Var Config As Ark.Configs.EngramControl = Self.Config(False)
 		  For I As Integer = 0 To Me.LastRowIndex
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -975,21 +954,21 @@ End
 		    Self.SetupUI
 		  End If
 		  If Config <> Nil Then
-		    Self.Changed = Config.Modified
+		    Self.Modified = Config.Modified
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignmentAt(0) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
+		Sub Opening()
+		  Me.ColumnAlignmentAt(0) = DesktopListbox.Alignments.Right
+		  Me.ColumnAlignmentAt(1) = DesktopListbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
 		  Var Levels() As Integer
 		  For I As Integer = 0 To Me.LastRowIndex
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      Levels.Add(Me.RowTagAt(I))
 		    End If
 		  Next
@@ -1000,14 +979,30 @@ End
 		  
 		  If ArkEngramControlPointOverrideWindow.Present(Self, Self.Project, Levels) Then
 		    Self.SetupPointsList()
-		    Self.Changed = True
+		    Self.Modified = True
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Var Value1 As Integer = Me.CellTextAt(Row1, Column).ToInteger
+		  Var Value2 As Integer = Me.CellTextAt(Row2, Column).ToInteger
+		  
+		  If Value1 > Value2 Then
+		    Result = 1
+		  ElseIf Value1 < Value2 Then
+		    Result = -1
+		  Else
+		    Result = 0
+		  End If
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramToolbar
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Engram", IconToolbarAdd, "Inform Beacon of an unlockable engram that it does not already know about."))
@@ -1031,7 +1026,7 @@ End
 		  Case "WizardButton"
 		    If ArkEngramControlWizard.Present(Self, Self.Project) Then
 		      Self.SetupUI()
-		      Self.Changed = Self.Config(False).Modified
+		      Self.Modified = Self.Config(False).Modified
 		    End If
 		  Case "SettingsButton"
 		    If (Self.mSettingsPopoverController Is Nil) = False And Self.mSettingsPopoverController.Visible Then
@@ -1066,7 +1061,7 @@ End
 		    Var Levels() As Integer
 		    If ArkEngramControlPointOverrideWindow.Present(Self, Self.Project, Levels) Then
 		      Self.SetupPointsList()
-		      Self.Changed = True
+		      Self.Modified = True
 		    End If
 		  Case "EditButton"
 		    Self.PointsList.DoEdit
@@ -1074,7 +1069,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", "Unlock Points"))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Level", IconToolbarAdd, "Define a new level to override engram points."))
@@ -1090,6 +1085,22 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true
@@ -1303,8 +1314,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1339,26 +1350,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

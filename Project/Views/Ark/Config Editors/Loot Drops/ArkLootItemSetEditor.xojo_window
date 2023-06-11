@@ -1,13 +1,18 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconContainer ArkLootItemSetEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
+   AcceptFocus     =   "False"
+   AcceptTabs      =   "True"
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
+   AutoDeactivate  =   "True"
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   Composited      =   False
+   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   True
+   EraseBackground =   "True"
    HasBackColor    =   False
    Height          =   428
    HelpTag         =   ""
@@ -21,36 +26,40 @@ Begin BeaconContainer ArkLootItemSetEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
+   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   560
    Begin BeaconListbox EntryList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
       AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   False
       ColumnCount     =   4
-      ColumnsResizable=   False
       ColumnWidths    =   "*,80,120,140"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   22
       DefaultSortColumn=   0
       DefaultSortDirection=   0
+      DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   1
-      GridLinesVertical=   1
-      HasHeading      =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   343
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Description	Quantity	Quality	Figures"
@@ -63,22 +72,16 @@ Begin BeaconContainer ArkLootItemSetEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
+      RowSelectionType=   1
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      ShowDropIndicator=   False
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   64
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
       VisibleRowCount =   0
       Width           =   560
@@ -86,17 +89,16 @@ Begin BeaconContainer ArkLootItemSetEditor
       _ScrollWidth    =   -1
    End
    Begin ArkLootItemSetSettingsContainer Settings
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      BackgroundColor =   &cFFFFFF
+      Composited      =   False
       Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   23
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -106,27 +108,26 @@ Begin BeaconContainer ArkLootItemSetEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   True
-      UseFocusRing    =   False
       Visible         =   True
       Width           =   560
    End
    Begin StatusBar StatusBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -139,12 +140,12 @@ Begin BeaconContainer ArkLootItemSetEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   407
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   560
    End
@@ -157,7 +158,6 @@ Begin BeaconContainer ArkLootItemSetEditor
       Backdrop        =   0
       BackgroundColor =   ""
       ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -174,7 +174,7 @@ Begin BeaconContainer ArkLootItemSetEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -184,7 +184,7 @@ Begin BeaconContainer ArkLootItemSetEditor
       Width           =   560
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
@@ -224,7 +224,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mCompactSortDirection = Listbox.SortDirections.Ascending
+		  Self.mCompactSortDirection = DesktopListbox.SortDirections.Ascending
 		End Sub
 	#tag EndMethod
 
@@ -232,7 +232,7 @@ End
 		Private Sub EditSelectedEntries(Prefilter As String = "")
 		  Var Sources() As Ark.LootItemSetEntry
 		  For I As Integer = 0 To EntryList.RowCount - 1
-		    If Not EntryList.Selected(I) Then
+		    If Not EntryList.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -329,7 +329,7 @@ End
 		  End If
 		  
 		  For I As Integer = EntryList.RowCount - 1 DownTo 0
-		    If Not EntryList.Selected(I) Then
+		    If Not EntryList.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    
@@ -369,7 +369,7 @@ End
 		    ScrollToSelection = True
 		  Else
 		    For I As Integer = 0 To EntryList.RowCount - 1
-		      If EntryList.Selected(I) Then
+		      If EntryList.RowSelectedAt(I) Then
 		        Var Entry As Ark.LootItemSetEntry = EntryList.RowTagAt(I)
 		        Selected.Add(Entry.UUID)
 		      End If
@@ -422,9 +422,9 @@ End
 		    Var WeightText As String
 		    Var Weight As Double = Entry.RawWeight
 		    If Floor(Weight) = Weight Then
-		      WeightText = Weight.ToString(Locale.Current, ",##0")
+		      WeightText = Weight.ToString(Locale.Current, "#,##0")
 		    Else
-		      WeightText = Weight.ToString(Locale.Current, ",##0.0####")
+		      WeightText = Weight.ToString(Locale.Current, "#,##0.0####")
 		    End If
 		    
 		    Var BlueprintText As String = BlueprintChance.ToString(Locale.Current, "0%")
@@ -455,17 +455,17 @@ End
 		    
 		    EntryList.AddRow("")
 		    Var Idx As Integer = EntryList.LastAddedRowIndex
-		    EntryList.CellValueAt(Idx, Self.ColumnLabel) = MainColumnText
+		    EntryList.CellTextAt(Idx, Self.ColumnLabel) = MainColumnText
 		    If Self.mUsingCompactMode Then
 		    Else
-		      EntryList.CellValueAt(Idx, Self.ColumnQuality) = QualityText
-		      EntryList.CellValueAt(Idx, Self.ColumnQuantity) = QuantityText
-		      EntryList.CellValueAt(Idx, Self.ColumnFigures) = FiguresText
+		      EntryList.CellTextAt(Idx, Self.ColumnQuality) = QualityText
+		      EntryList.CellTextAt(Idx, Self.ColumnQuantity) = QuantityText
+		      EntryList.CellTextAt(Idx, Self.ColumnFigures) = FiguresText
 		    End If
 		    
 		    EntryList.CellTagAt(Idx, Self.ColumnLabel) = MainColumnTag
 		    EntryList.RowTagAt(Idx) = Entry
-		    EntryList.Selected(Idx) = Selected.IndexOf(Entry.UUID) > -1
+		    EntryList.RowSelectedAt(Idx) = Selected.IndexOf(Entry.UUID) > -1
 		  Next
 		  
 		  Self.EntryList.Sort
@@ -491,9 +491,9 @@ End
 		  Var TotalCount As Integer = Self.EntryList.RowCount
 		  Var SelectedCount As Integer = Self.EntryList.SelectedRowCount
 		  
-		  Var Caption As String = TotalCount.ToString(Locale.Current, ",##0") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
+		  Var Caption As String = TotalCount.ToString(Locale.Current, "#,##0") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
 		  If SelectedCount > 0 Then
-		    Caption = SelectedCount.ToString(Locale.Current, ",##0") + " of " + Caption + " Selected"
+		    Caption = SelectedCount.ToString(Locale.Current, "#,##0") + " of " + Caption + " Selected"
 		  End If
 		  Self.StatusBar1.Caption = Caption
 		End Sub
@@ -510,7 +510,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCompactSortDirection As Listbox.SortDirections
+		Private mCompactSortDirection As DesktopListbox.SortDirections
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -518,7 +518,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExpandedSortDirection As Listbox.SortDirections
+		Private mExpandedSortDirection As DesktopListbox.SortDirections
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -573,7 +573,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Var Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) Then
+		    If Me.RowSelectedAt(I) Then
 		      Entries.Add(Ark.LootItemSetEntry(Me.RowTagAt(I)).SaveData)
 		    End If
 		  Next
@@ -640,18 +640,18 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		Function ConstructContextualMenu(Base As DesktopMenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Var CreateBlueprintItem As New MenuItem("Create Blueprint Entry", "createblueprintentry")
+		  Var CreateBlueprintItem As New DesktopMenuItem("Create Blueprint Entry", "createblueprintentry")
 		  CreateBlueprintItem.Enabled = Me.SelectedRowCount > 0
 		  Base.AddMenu(CreateBlueprintItem)
 		  
-		  Var SplitEngramsItem As New MenuItem("Split Engrams", "splitengrams")
+		  Var SplitEngramsItem As New DesktopMenuItem("Split Engrams", "splitengrams")
 		  SplitEngramsItem.Enabled = False
 		  For I As Integer = 0 To Me.LastRowIndex
-		    If Not Me.Selected(I) Then
+		    If Not Me.RowSelectedAt(I) Then
 		      Continue
 		    End If
 		    Var Entry As Ark.LootItemSetEntry = Me.RowTagAt(I)
@@ -662,7 +662,7 @@ End
 		  Next
 		  Base.AddMenu(SplitEngramsItem)
 		  
-		  Var MergeEngramsItem As New MenuItem("Merge Engrams", "mergeengrams")
+		  Var MergeEngramsItem As New DesktopMenuItem("Merge Engrams", "mergeengrams")
 		  MergeEngramsItem.Enabled = Me.SelectedRowCount > 1
 		  Base.AddMenu(MergeEngramsItem)
 		  
@@ -670,12 +670,12 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
+		Function ContextualMenuItemSelected(HitItem As DesktopMenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
 		    Var Entries() As Ark.MutableLootItemSetEntry
 		    For Idx As Integer = 0 To Me.LastRowIndex
-		      If Me.Selected(Idx) Then
+		      If Me.RowSelectedAt(Idx) Then
 		        Entries.Add(Ark.LootItemSetEntry(Me.RowTagAt(Idx)).MutableClone)
 		      End If
 		    Next Idx
@@ -696,7 +696,7 @@ End
 		    
 		    Var Entries() As Ark.LootItemSetEntry
 		    For I As Integer = 0 To Me.LastRowIndex
-		      If Me.Selected(I) And Ark.LootItemSetEntry(Me.RowTagAt(I)).Count > 1 Then
+		      If Me.RowSelectedAt(I) And Ark.LootItemSetEntry(Me.RowTagAt(I)).Count > 1 Then
 		        Entries.Add(Me.RowTagAt(I))
 		      End If
 		    Next
@@ -728,7 +728,7 @@ End
 		    
 		    Var Entries() As Ark.LootItemSetEntry
 		    For I As Integer = 0 To Me.LastRowIndex
-		      If Me.Selected(I) Then
+		      If Me.RowSelectedAt(I) Then
 		        Entries.Add(Me.RowTagAt(I))
 		      End If
 		    Next
@@ -754,7 +754,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Var EditButton As OmniBarItem = Self.EditorToolbar.Item("EditEntryButton")
 		  If (EditButton Is Nil) = False Then
 		    EditButton.Enabled = Me.CanEdit
@@ -763,7 +763,17 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  Self.EditSelectedEntries()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Var Entry1 As Ark.LootItemSetEntry = Me.RowTagAt(Row1)
 		  Var Entry2 As Ark.LootItemSetEntry = Me.RowTagAt(Row2)
 		  
@@ -802,16 +812,6 @@ End
 		  End If
 		  Return True
 		End Function
-	#tag EndEvent
-	#tag Event
-		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount > 0
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub PerformEdit()
-		  Self.EditSelectedEntries()
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Settings
@@ -861,7 +861,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("Title", "Item Set Entries"))
 		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddEntryButton", "New Entry", IconToolbarAdd, "Add engrams to this item set."))
@@ -874,19 +874,27 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Index"
 		Visible=true
 		Group="ID"
 		InitialValue="-2147483648"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -918,8 +926,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"
@@ -942,14 +950,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog DocumentVersionListWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -88,11 +88,9 @@ Begin BeaconDialog DocumentVersionListWindow
       Visible         =   True
       Width           =   80
    End
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -123,11 +121,9 @@ Begin BeaconDialog DocumentVersionListWindow
       Visible         =   True
       Width           =   560
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -170,8 +166,6 @@ Begin BeaconDialog DocumentVersionListWindow
       Bold            =   False
       ColumnCount     =   2
       ColumnWidths    =   "*,100"
-      DataField       =   ""
-      DataSource      =   ""
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   -1
@@ -181,8 +175,7 @@ Begin BeaconDialog DocumentVersionListWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLineStyle   =   0
       HasBorder       =   True
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -203,7 +196,6 @@ Begin BeaconDialog DocumentVersionListWindow
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
-      SelectionChangeBlocked=   "False"
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -219,7 +211,7 @@ Begin BeaconDialog DocumentVersionListWindow
       _ScrollWidth    =   -1
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
@@ -235,7 +227,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Versions() As Dictionary)
+		Shared Sub Present(Parent As DesktopWindow, Versions() As Dictionary)
 		  If Parent Is Nil Then
 		    Return
 		  End If
@@ -260,7 +252,7 @@ End
 		  End If
 		  
 		  Win.List.Sort
-		  Win.ShowWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		End Sub
 	#tag EndMethod
 
@@ -269,14 +261,14 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.List.CanEdit Then
 		    Self.List.DoEdit
 		  End If
@@ -285,7 +277,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.ActionButton.Enabled = Me.CanEdit
 		End Sub
 	#tag EndEvent
@@ -416,8 +408,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -528,7 +520,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconWindow PreferencesWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -24,7 +24,7 @@ Begin BeaconWindow PreferencesWindow
    Type            =   0
    Visible         =   True
    Width           =   320
-   Begin GroupBox SoundsGroup
+   Begin DesktopGroupBox SoundsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Notification Sounds"
@@ -52,12 +52,10 @@ Begin BeaconWindow PreferencesWindow
       Underline       =   False
       Visible         =   True
       Width           =   280
-      Begin CheckBox ImportSoundCheck
+      Begin DesktopCheckBox ImportSoundCheck
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Play Sound After Import"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -85,12 +83,10 @@ Begin BeaconWindow PreferencesWindow
          VisualState     =   0
          Width           =   240
       End
-      Begin CheckBox DeploySoundCheck
+      Begin DesktopCheckBox DeploySoundCheck
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Play Sound After Deploy"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -118,12 +114,10 @@ Begin BeaconWindow PreferencesWindow
          VisualState     =   0
          Width           =   240
       End
-      Begin CheckBox UpdateSoundCheck
+      Begin DesktopCheckBox UpdateSoundCheck
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Play Sound When Update Is Ready"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -152,7 +146,7 @@ Begin BeaconWindow PreferencesWindow
          Width           =   240
       End
    End
-   Begin GroupBox ConnectionsGroup
+   Begin DesktopGroupBox ConnectionsGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Connection Performance"
@@ -187,8 +181,6 @@ Begin BeaconWindow PreferencesWindow
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -227,8 +219,6 @@ Begin BeaconWindow PreferencesWindow
       Begin UITweaks.ResizedLabel MaxConnectionsLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -260,7 +250,7 @@ Begin BeaconWindow PreferencesWindow
          Width           =   148
       End
    End
-   Begin GroupBox UpdatesGroup
+   Begin DesktopGroupBox UpdatesGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Software Updates"
@@ -291,8 +281,6 @@ Begin BeaconWindow PreferencesWindow
       Begin UITweaks.ResizedPopupMenu ChannelMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -323,8 +311,6 @@ Begin BeaconWindow PreferencesWindow
       Begin UITweaks.ResizedLabel ChannelLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -355,12 +341,10 @@ Begin BeaconWindow PreferencesWindow
          Visible         =   True
          Width           =   66
       End
-      Begin CheckBox AutoupdateCheckbox
+      Begin DesktopCheckBox AutoupdateCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
          Caption         =   "Automatically Download Updates"
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -376,7 +360,6 @@ Begin BeaconWindow PreferencesWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   1
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
@@ -386,10 +369,11 @@ Begin BeaconWindow PreferencesWindow
          Underline       =   False
          Value           =   True
          Visible         =   True
+         VisualState     =   1
          Width           =   240
       End
    End
-   Begin GroupBox AppearanceGroup
+   Begin DesktopGroupBox AppearanceGroup
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Appearance"
@@ -420,8 +404,6 @@ Begin BeaconWindow PreferencesWindow
       Begin UITweaks.ResizedPopupMenu DarkModeMenu
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -452,8 +434,6 @@ Begin BeaconWindow PreferencesWindow
       Begin UITweaks.ResizedLabel DarkModeLabel
          AllowAutoDeactivate=   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -486,11 +466,11 @@ Begin BeaconWindow PreferencesWindow
       End
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  If mInstance = Self Then
 		    mInstance = Nil
 		  End If
@@ -498,7 +478,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Var Delta As Integer
 		  
 		  #if UpdatesKit.UseSparkle
@@ -560,12 +540,12 @@ End
 
 #tag Events ImportSoundCheck
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Value = Preferences.PlaySoundAfterImport
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -576,7 +556,7 @@ End
 #tag EndEvents
 #tag Events DeploySoundCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -585,19 +565,19 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Value = Preferences.PlaySoundAfterDeploy
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events UpdateSoundCheck
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Value = Preferences.PlaySoundForUpdate
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -613,7 +593,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -637,7 +617,24 @@ End
 #tag EndEvents
 #tag Events ChannelMenu
 	#tag Event
-		Sub Change()
+		Sub Opening()
+		  Var Channel As Integer = Preferences.UpdateChannel
+		  Select Case Channel
+		  Case 0
+		    Me.SelectedRowIndex = 0
+		  Case 1
+		    Me.SelectedRowIndex = 3
+		  Case 2
+		    Me.SelectedRowIndex = 2
+		  Case 3
+		    Me.SelectedRowIndex = 1
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -654,21 +651,6 @@ End
 		  End Select
 		End Sub
 	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var Channel As Integer = Preferences.UpdateChannel
-		  Select Case Channel
-		  Case 0
-		    Me.SelectedRowIndex = 0
-		  Case 1
-		    Me.SelectedRowIndex = 3
-		  Case 2
-		    Me.SelectedRowIndex = 2
-		  Case 3
-		    Me.SelectedRowIndex = 1
-		  End Select
-		End Sub
-	#tag EndEvent
 #tag EndEvents
 #tag Events ChannelLabel
 	#tag Event
@@ -681,7 +663,7 @@ End
 #tag EndEvents
 #tag Events AutoupdateCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -690,14 +672,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Value = Preferences.AutomaticallyDownloadsUpdates
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DarkModeMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.RemoveAllRows
 		  Me.AddRow("Match System", Preferences.DarkModeOptions.FollowSystem)
 		  Me.AddRow("Light", Preferences.DarkModeOptions.ForceLight)
@@ -713,7 +695,9 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -887,8 +871,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -934,7 +918,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

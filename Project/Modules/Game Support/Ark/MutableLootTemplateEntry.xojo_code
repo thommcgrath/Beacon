@@ -155,6 +155,15 @@ Inherits Ark.LootTemplateEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RespectWeightMultipliers(Assigns Value As Boolean)
+		  If Self.mRespectWeightMultipliers <> Value Then 
+		    Self.mRespectWeightMultipliers = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SingleItemQuantity(Assigns Value As Boolean)
 		  Self.mSingleItemQuantity = Value
 		  Self.Modified = True
@@ -191,5 +200,47 @@ Inherits Ark.LootTemplateEntry
 	#tag EndMethod
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

@@ -3,8 +3,8 @@ Protected Class BeaconSubview
 Inherits BeaconContainer
 Implements ObservationKit.Observable
 	#tag Event
-		Sub Close()
-		  RaiseEvent Close
+		Sub Closing()
+		  RaiseEvent Closing
 		  Self.mClosed = True
 		End Sub
 	#tag EndEvent
@@ -15,21 +15,15 @@ Implements ObservationKit.Observable
 		  RaiseEvent OwnerModifiedHook
 		  
 		  If (Self.mLinkedOmniBarItem Is Nil) = False Then
-		    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Changed
+		    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Modified
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
-		  // The parent view will call down to the EnableMenuItems method
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.Progress = Self.ProgressNone
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
@@ -40,7 +34,7 @@ Implements ObservationKit.Observable
 		    Return False
 		  End If
 		  
-		  If Self.Changed Then
+		  If Self.Modified Then
 		    RaiseEvent ShouldSave(False)
 		  End If
 		End Function
@@ -127,7 +121,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub DiscardChanges()
 		  RaiseEvent CleanupDiscardedChanges()
-		  Self.Changed = False
+		  Self.Modified = False
 		End Sub
 	#tag EndMethod
 
@@ -147,7 +141,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function HasModifications() As Boolean
-		  Return Self.Changed
+		  Return Self.Modified
 		End Function
 	#tag EndMethod
 
@@ -214,6 +208,18 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RunScriptActions(Actions() As Beacon.ScriptAction)
+		  For Each Action As Beacon.ScriptAction In Actions
+		    Try
+		      RaiseEvent RunScriptAction(Action)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Running script action")
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SwitchedFrom()
 		  Self.mIsFrontmost = False
 		  RaiseEvent Hidden
@@ -262,7 +268,7 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Close()
+		Event Closing()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -278,11 +284,15 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event OwnerModifiedHook()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event RunScriptAction(Action As Beacon.ScriptAction)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -326,7 +336,7 @@ Implements ObservationKit.Observable
 			    Self.Progress = Self.Progress
 			    Self.ViewTitle = Self.ViewTitle
 			    Self.ViewIcon = Self.ViewIcon
-			    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Changed
+			    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Modified
 			  End If
 			End Set
 		#tag EndSetter
@@ -507,6 +517,22 @@ Implements ObservationKit.Observable
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Modified"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Composited"
+			Visible=true
+			Group="Window Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -655,8 +681,8 @@ Implements ObservationKit.Observable
 			Visible=true
 			Group="Background"
 			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBackgroundColor"
@@ -736,22 +762,6 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="Picture"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

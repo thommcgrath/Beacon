@@ -1,4 +1,4 @@
-#tag Window
+#tag DesktopWindow
 Begin BeaconDialog StopMessageDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
@@ -31,14 +31,12 @@ Begin BeaconDialog StopMessageDialog
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -56,6 +54,7 @@ Begin BeaconDialog StopMessageDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -63,15 +62,12 @@ Begin BeaconDialog StopMessageDialog
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   460
    End
-   Begin Label MessageLabel
+   Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -92,21 +88,19 @@ Begin BeaconDialog StopMessageDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Set Stop Message"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Set Stop Message"
       Visible         =   True
       Width           =   460
    End
-   Begin Label ExplanationLabel
+   Begin DesktopLabel ExplanationLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -127,13 +121,13 @@ Begin BeaconDialog StopMessageDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "This message should be displayed to players before the server stops."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "This message should be displayed to players before the server stops."
       Visible         =   True
       Width           =   460
    End
@@ -202,7 +196,7 @@ Begin BeaconDialog StopMessageDialog
       Width           =   80
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
@@ -214,13 +208,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As String
+		Shared Function Present(Parent As DesktopWindow) As String
 		  If Parent = Nil Then
 		    Return Preferences.LastStopMessage
 		  End If
 		  
 		  Var Win As New StopMessageDialog(Preferences.LastStopMessage)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Win.ShowModal(Parent)
 		  
 		  Var Message As String = Win.mReturnMessage
 		  If Message <> "" And Message <> Preferences.LastStopMessage Then
@@ -242,14 +236,14 @@ End
 
 #tag Events MessageField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.ActionButton.Enabled = Me.Text.Trim <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mReturnMessage = Self.MessageField.Text.Trim
 		  Self.Hide
 		End Sub
@@ -257,7 +251,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -376,8 +370,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -488,7 +482,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

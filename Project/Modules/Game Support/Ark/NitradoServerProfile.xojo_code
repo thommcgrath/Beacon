@@ -13,6 +13,19 @@ Inherits Ark.ServerProfile
 	#tag EndEvent
 
 	#tag Event
+		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  If Not (Profile IsA Ark.NitradoServerProfile) Then
+		    Return
+		  End If
+		  
+		  Var NitradoProfile As Ark.NitradoServerProfile = Ark.NitradoServerProfile(Profile)
+		  Self.Address = NitradoProfile.Address
+		  Self.ConfigPath = NitradoProfile.ConfigPath
+		  Self.Mask = NitradoProfile.Mask
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  Dict.Value("Address") = Self.Address
 		  Dict.Value("Path") = Self.ConfigPath
@@ -55,21 +68,6 @@ Inherits Ark.ServerProfile
 		Function SupportsRestart() As Boolean
 		  Return True
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UpdateDetailsFrom(Profile As Ark.ServerProfile)
-		  Super.UpdateDetailsFrom(Profile)
-		  
-		  If Not (Profile IsA Ark.NitradoServerProfile) Then
-		    Return
-		  End If
-		  
-		  Var NitradoProfile As Ark.NitradoServerProfile = Ark.NitradoServerProfile(Profile)
-		  Self.Address = NitradoProfile.Address
-		  Self.ConfigPath = NitradoProfile.ConfigPath
-		  Self.Mask = NitradoProfile.Mask
-		End Sub
 	#tag EndMethod
 
 

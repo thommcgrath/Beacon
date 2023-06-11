@@ -1,5 +1,5 @@
-#tag Window
-Begin Window WhatsNewWindow
+#tag DesktopWindow
+Begin DesktopWindow WhatsNewWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -24,11 +24,12 @@ Begin Window WhatsNewWindow
    Type            =   0
    Visible         =   False
    Width           =   660
-   Begin HTMLViewer Viewer
-      AllowAutoDeactivate=   True
+   Begin DesktopHTMLViewer Viewer
+      AutoDeactivate  =   True
       Enabled         =   True
       Height          =   414
       Index           =   -2147483648
+      InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
@@ -47,7 +48,6 @@ Begin Window WhatsNewWindow
    End
    Begin URLConnection PreflightSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -55,11 +55,11 @@ Begin Window WhatsNewWindow
       TabPanelIndex   =   0
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mTopMargin = 20
 		  Self.mLeftMargin = 20
 		  Self.mBottomMargin = 20
@@ -206,8 +206,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(errorNumber as Integer, errorMessage as String)
-		  App.Log("Unable to load welcome content: " + ErrorNumber.ToString("0") + ", " + ErrorMessage)
+		Sub Error(error As RuntimeException)
+		  App.Log("Unable to load welcome content: " + Error.ErrorNumber.ToString("0") + ", " + Error.Message)
 		  
 		  Self.Close
 		End Sub
@@ -455,8 +455,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -471,7 +471,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
