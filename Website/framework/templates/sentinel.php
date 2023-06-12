@@ -54,7 +54,7 @@ $sidebar_items = [
 		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
 		<meta name="theme-color" content="#9c0fb0">
 		<meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
-		<link href="<?php echo BeaconCommon::AssetURI('sentinel.scss'); ?>" rel="stylesheet" type="text/css">
+		<link href="<?php echo BeaconCommon::AssetURI('sentinel.css'); ?>" rel="stylesheet" type="text/css">
 		<script nonce="<?php echo htmlentities($_SERVER['CSP_NONCE']); ?>">
 		window.browserSupported = false;
 		</script>

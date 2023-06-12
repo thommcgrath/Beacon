@@ -4,7 +4,7 @@ use BeaconAPI\v4\{Application, ApplicationAuthFlow, Session};
 
 class BeaconLogin {
 	public static function Show(array $params): void {
-		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('login.scss'));
+		BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('login.css'));
 		BeaconTemplate::AddScript(BeaconCommon::AssetURI('login.js'));
 		
 		$deviceId = BeaconCommon::DeviceId();

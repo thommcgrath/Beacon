@@ -1,9 +1,8 @@
 <?php
 
 $database = BeaconCommon::Database();
-$licenses = $database->Query('SELECT licenses.purchase_id, licenses.product_id, products.product_name, purchases.purchase_date, EXTRACT(epoch FROM licenses.expiration) AS expiration FROM public.licenses INNER JOIN public.products ON (licenses.product_id = products.product_id) INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = $1 AND purchases.refunded = FALSE ORDER BY products.product_name;', $user->EmailId());
-$has_purchased = $licenses->RecordCount() > 0;
-$purchases = $database->Query('SELECT purchase_id, EXTRACT(epoch FROM purchase_date) AS purchase_date, total_paid, currency, refunded FROM purchases WHERE purchaser_email = $1 ORDER BY purchase_date DESC;', $user->EmailID());
+$licenses = $user->Licenses();
+$has_purchased = count($licenses) > 0;
 
 if (!$has_purchased) {
 	echo '<p class="text-center">You have not purchased Beacon Omni.<br><a href="/omni/">Learn more about Beacon Omni here.</a></p>';
@@ -97,11 +96,11 @@ function ShowLicenses() {
 	echo '<div id="section-licenses" class="visual-group">';
 	echo '<h3>Licenses</h3>';
 	echo '<table class="generic"><thead><tr><th class="w-50">Product</th><th class="low-priority w-30">Updates Until</th><th class="low-priority w-20">Actions</th></thead>';
-	while ($licenses->EOF() === false) {
-		$purchase_id = $licenses->Field('purchase_id');
-		$product_id = $licenses->Field('product_id');
-		$product_name = $licenses->Field('product_name');
-		$expiration_seconds = $licenses->Field('expiration');
+	foreach ($licenses as $license) {
+		$purchaseId = $license->PurchaseId();
+		$productId = $license->ProductId();
+		$productName = $license->ProductName();
+		$expiration = $license->Expiration();
 		$actions = [
 			'View' => '/account/purchase/' . $purchaseId
 		];
@@ -109,19 +108,10 @@ function ShowLicenses() {
 		if (is_null($expiration)) {
 			$expirationText = 'Forever';
 		} else {
-			$expired = $expiration_seconds < time();
-			$expiration_str = '<time class="no-localize' . ($expired ? ' text-red' : '') . '" datetime="' . date('Y-m-d H:i:s.000O', $expiration_seconds) . '">' . htmlentities(date('F jS Y', $expiration_seconds)) . '</time>';
-			if ($expired) {
-				$newest_build = BeaconCommon::NewestBuildForExpiration($expiration_seconds, true);
-				$newest_version = BeaconCommon::BuildNumberToVersion($newest_build);
-				$expiration_str .= '<br class="large-only"><span class="small-only">, </span>Version ' . $newest_version;
-				
-				$tokenSecret = BeaconCommon::GetGlobal('Legacy Download Secret');
-				$tokenExpires = time() + 300;
-				$token = BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$newest_build}:{$tokenExpires}:{$tokenSecret}", true));
-				
-				$actions['Download'] = "/download/{$newest_build}?token={$token}&expires={$tokenExpires}";
-			}
+			$exp = new DateTime($expiration);
+			$expirationText = '<time datetime="' . htmlentities($exp->format('Y-m-d H:i:s.000O')) . '">' . htmlentities($exp->format('F jS Y')) . '</time>';
+			$renew_caption = ($exp->getTimestamp() < time() ? 'Renew' : 'Extend');
+			$actions[$renew_caption] = '/omni/buy/' . $productId;
 		}
 		
 		$actionHtmlMembers = [];
@@ -129,10 +119,8 @@ function ShowLicenses() {
 			$actionHtmlMembers[] = '<a class="action-link" href="' . htmlentities($url) . '">' . htmlentities($text) . '</a>';
 		}
 		$actionsHtml = implode(' ', $actionHtmlMembers);
-		
-		echo '<tr><td class="w-50">' . htmlentities($product_name) . '<div class="row-details"><span class="detail">Receives updates until ' . $expiration_str . '</span><span class="detail">Actions: ' . $actions_html . '</div></td><td class="low-priority w-30 smaller">' . $expiration_str . '</td><td class="low-priority w-20 text-center">' . $actions_html . '</td></tr>';
-		
-		$licenses->MoveNext();
+	
+		echo '<tr><td class="w-50">' . htmlentities($productName) . '<div class="row-details"><span class="detail">Receives updates through ' . $expirationText . '</span><span class="detail">Actions: ' . $actionsHtml . '</div></td><td class="low-priority w-30 smaller">' . $expirationText . '</td><td class="low-priority w-20 text-center">' . $actionsHtml . '</td></tr>';
 	}
 	echo '</table>';
 	echo '</div>';

@@ -5,7 +5,7 @@ if ($user->IsChildAccount()) {
 	return;
 }
 
-BeaconTemplate::AddStylesheet('/account/assets/team.scss');
+BeaconTemplate::AddStylesheet('/account/assets/team.css');
 BeaconTemplate::AddScript('/account/assets/team.js');
 
 echo '<div class="child_seat_status">';
