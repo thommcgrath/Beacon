@@ -83,11 +83,6 @@ $payment = [
 	'line_items' => [],
 ];
 
-if ($ark_qty > 0 && BeaconShop::EmailOwns($email, BeaconShop::ARK_PRODUCT_ID)) {
-	echo json_encode(['error' => true, 'message' => 'User already owns Omni.'], JSON_PRETTY_PRINT);
-	exit;
-}
-
 $user = null;
 $licenses = [];
 try {
@@ -130,13 +125,10 @@ try {
 	if (is_null($customers) === false && is_array($customers) && array_key_exists('data', $customers) && count($customers['data']) >= 1) {
 		$customer = $customers['data'][0];
 		$payment['customer'] = $customer['id'];
-	} else {
-		$customerId = $api->CreateCustomer($email);
-		$payment['customer'] = $customerId;
+		$payment['customer_update'] = ['address' => 'auto', 'name' => 'auto'];
+		unset($payment['customer_email']);
 	}
-	$payment['customer_update'] = ['address' => 'auto', 'name' => 'auto'];
 } catch (Exception $err) {
-	$payment['customer_email'] = $email;
 }
 
 $results = $database->Query('SELECT products.game_id, products.tag, products.product_id, product_prices.price_id FROM public.products INNER JOIN public.product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1 AND products.active = TRUE;', $currency);
