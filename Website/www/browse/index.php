@@ -85,8 +85,8 @@ foreach ($maps as $map) {
 				<td class="label">Require</td>
 				<td>
 					<div class="option_group">
-						<div class="input-radio"><input type="radio" name="maps_operator" value="any" id="map_operator_radio_any"<?php if ($map_operator === 'any') { echo ' checked'; } ?>><label for="map_operator_radio_any">Any Selected Map</label></div>
-						<div class="input-radio"><input type="radio" name="maps_operator" value="all" id="map_operator_radio_all"<?php if ($map_operator === 'all') { echo ' checked'; } ?>><label for="map_operator_radio_all">All Selected Maps</label></div>
+						<div class="input-radio"><input type="radio" name="maps_operator" value="any" id="map_operator_radio_any"<?php if ($mapOperator === 'any') { echo ' checked'; } ?>><label for="map_operator_radio_any">Any Selected Map</label></div>
+						<div class="input-radio"><input type="radio" name="maps_operator" value="all" id="map_operator_radio_all"<?php if ($mapOperator === 'all') { echo ' checked'; } ?>><label for="map_operator_radio_all">All Selected Maps</label></div>
 					</div>
 				</td>
 			</tr>

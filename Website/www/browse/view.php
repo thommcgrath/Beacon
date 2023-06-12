@@ -25,7 +25,7 @@ if ($mapFilter === false) {
 }
 
 BeaconTemplate::SetTitle($project->Title());
-BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('generator.scss'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('generator.css'));
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 
 $authorId = $project->UserId();
