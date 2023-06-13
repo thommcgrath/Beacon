@@ -1,8 +1,8 @@
 <?php
 
-use BeaconAPI\v4\{Core, User, Response};
+use BeaconAPI\v4\{Application, Core, User, Response};
 
-$requiredScopes[] = Application::kScopeUserRead;
+$requiredScopes[] = Application::kScopeUsersRead;
 
 function handleRequest(array $context): Response {
 	$identifier = $context['pathParameters']['userId'];

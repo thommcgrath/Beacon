@@ -13,6 +13,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 	protected array $scopes = [];
 	protected array $callbacks = [];
 	protected int $rateLimit = 50;
+	protected bool $isOfficial = false;
 	
 	const kScopeCommon = 'common';
 	const kScopeAppsCreate = 'apps:create';
@@ -23,6 +24,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 	const kScopeUsersRead = 'users:read';
 	const kScopeUsersUpdate = 'users:update';
 	const kScopeUsersDelete = 'users:delete';
+	const kScopeUserPrivateKey = 'user:private_key';
 	const kScopeSentinelLogsRead = 'sentinel_logs:read';
 	const kScopeSentinelLogsUpdate = 'sentinel_logs:update';
 	const kScopeSentinelPlayersRead = 'sentinel_players:read';
@@ -43,6 +45,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeUsersRead,
 			self::kScopeUsersUpdate,
 			self::kScopeUsersDelete,
+			self::kScopeUserPrivateKey,
 			self::kScopeSentinelLogsRead,
 			self::kScopeSentinelLogsUpdate,
 			self::kScopeSentinelPlayersRead,
@@ -59,6 +62,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeUsersCreate,
 			self::kScopeUsersUpdate,
 			self::kScopeUsersDelete,
+			self::kScopeUserPrivateKey,
 			self::kScopeAppsCreate,
 			self::kScopeAppsRead,
 			self::kScopeAppsUpdate,
@@ -81,6 +85,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$this->scopes = explode(' ', $row->Field('scopes'));
 		$this->callbacks = json_decode($row->Field('callbacks'), true);
 		$this->rateLimit = filter_var($row->Field('rate_limit'), FILTER_VALIDATE_INT);
+		$this->isOfficial = filter_var($row->Field('is_official'), FILTER_VALIDATE_BOOL);
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -93,7 +98,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('iconFilename', ['columnName' => 'icon_filename']),
 			new DatabaseObjectProperty('scopes'),
 			new DatabaseObjectProperty('callbacks', ['columnName' => 'callbacks', 'accessor' => "(SELECT COALESCE(array_to_json(array_agg(callbacks_template.url)), '[]') FROM (SELECT url FROM application_callbacks WHERE application_id = applications.application_id ORDER BY url) AS callbacks_template)"]),
-			new DatabaseObjectProperty('rate_limit', ['columnName' => 'rate_limit'])
+			new DatabaseObjectProperty('rateLimit', ['columnName' => 'rate_limit']),
+			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official'])
 		]);
 	}
 	
@@ -389,6 +395,10 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return is_null($this->secret) === false;
 	}
 	
+	public function IsOfficial(): bool {
+		return $this->isOfficial;
+	}
+	
 	public function jsonSerialize(): mixed {
 		return [
 			'applicationId' => $this->applicationId,
@@ -398,7 +408,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 			'website' => $this->website,
 			'scopes' => $this->scopes,
 			'callbacks' => $this->callbacks,
-			'rateLimit' => $this->rateLimit
+			'rateLimit' => $this->rateLimit,
+			'isOfficial' => $this->isOfficial
 		];
 	}
 }

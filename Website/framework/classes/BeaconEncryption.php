@@ -139,7 +139,7 @@ abstract class BeaconEncryption {
 	public static function GenerateKeyPair(&$public_key, &$private_key): void {
 		$handle = openssl_pkey_new([
 			'digest_alg' => 'sha512',
-			'private_key_bits' => 2048,
+			'private_key_bits' => 4096,
 			'private_key_type' => OPENSSL_KEYTYPE_RSA
 		]);
 		openssl_pkey_export($handle, $private_key);

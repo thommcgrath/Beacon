@@ -154,11 +154,22 @@ class Core {
 		}
 		
 		$disallowedScopes = array_diff($requestedScopes, $supportedScopes);
-		$missingScopes = array_diff($requestedScopes, $requiredScopes);
+		$missingScopes = array_diff($requiredScopes, $requestedScopes);
 		$hasScopeViolations = count($disallowedScopes) > 0 || count($missingScopes) > 0;
 		$httpStatus = ($hasScopeViolations) ? 403 : 401;
 		$message = $httpStatus === 401 ? 'Unauthorized' : 'Forbidden';
 		$authStatus = self::kUnauthorized;
+			
+		/*echo "Requested:\n";
+		var_dump($requestedScopes);
+		echo "Supported:\n";
+		var_dump($supportedScopes);
+		echo "Required:\n";
+		var_dump($requiredScopes);
+		echo "Disallowed:\n";
+		var_dump($disallowedScopes);
+		echo "Missing:\n";
+		var_dump($missingScopes);*/
 			
 		$realm = 'Beacon API';
 		$authParams = [$scheme, 'realm="' . $realm . '"'];
@@ -380,7 +391,7 @@ class Core {
 		$requestRoute = '/' . $_GET['route'];
 		
 		if (preg_match('/^\/user(\/.+)?$/', $requestRoute)) {
-			static::Authorize(self::kAuthSchemeBearer, 'user:read');
+			static::Authorize(self::kAuthSchemeBearer, 'users:read');
 			$requestRoute = str_replace('/user', '/users/' . static::UserId(), $requestRoute);
 		} else if (preg_match('/^\/session(\/.+)?$/', $requestRoute)) {
 			static::Authorize(self::kAuthSchemeBearer, 'common');

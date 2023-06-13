@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconRecordSet, DateTime, Exception, JsonSerializable;
+use BeaconCommon, BeaconEncryption, BeaconRecordSet, DateTime, Exception, JsonSerializable;
 
 class ApplicationAuthFlow extends DatabaseObject {
 	protected $flowId = null;
@@ -16,6 +16,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 	protected $expired = null;
 	protected $codeVerifierHash = null;
 	protected $codeVerifierMethod = null;
+	protected $privateKeyEncrypted = null;
 	
 	public function __construct(BeaconRecordSet $row) {
 		$this->flowId = $row->Field('flow_id');
@@ -28,6 +29,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		$this->expired = $row->Field('expiration');
 		$this->codeVerifierHash = $row->Field('verifier_hash');
 		$this->codeVerifierMethod = $row->Field('verifier_hash_algorithm');
+		$this->privateKeyEncrypted = $row->Field('private_key_encrypted');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -41,7 +43,8 @@ class ApplicationAuthFlow extends DatabaseObject {
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('expired', ['columnName' => 'expiration', 'accessor' => "(%%TABLE%%.%%COLUMN%% < CURRENT_TIMESTAMP)::BOOLEAN"]),
 			new DatabaseObjectProperty('codeVerifierHash', ['columnName' => 'verifier_hash']),
-			new DatabaseObjectProperty('codeVerifierMethod', ['columnName' => 'verifier_hash_algorithm'])
+			new DatabaseObjectProperty('codeVerifierMethod', ['columnName' => 'verifier_hash_algorithm']),
+			new DatabaseObjectProperty('privateKeyEncrypted', ['columnName' => 'private_key_encrypted'])
 		]);
 	}
 	
@@ -109,6 +112,10 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return $this->scopes;
 	}
 	
+	public function HasScope(string $scope): bool {
+		return in_array($scope, $this->scopes);	
+	}
+	
 	public function Callback(): string {
 		return $this->callback;
 	}
@@ -142,22 +149,37 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return base64_encode(hash('sha3-512', $challengeRaw, true));
 	}
 	
-	public function Authorize(string $deviceId, string $challenge, int $expiration, User $user): string {
+	public function Authorize(string $deviceId, string $challenge, int $expiration, User $user, ?string $userPassword = null): string {
 		if ($this->IsCompleted()) {
-			throw new Error('Authorization has already been completed');
+			throw new Exception('This authorization has already been completed. Start a new login process to try again.');
 		}
 		
 		$correctChallenge = $this->NewChallenge($deviceId, $user, $expiration);
 		if ($expiration < time() || $challenge !== $correctChallenge) {
-			throw new Error('Incorrect challenge');
+			throw new Exception('Authorization could not be completed because a challenge response was not correct. Start a new login process to try again.');
+		}
+		
+		$privateKey = null;
+		if ($this->HasScope(Application::kScopeUserPrivateKey)) {
+			try {
+				if (is_string($userPassword)) {
+					$privateKey = $user->DecryptPrivateKey($userPassword);
+				}
+			} catch (Exception $err) {
+			}
+			if (is_null($privateKey)) {
+				throw new Exception('The provided password is not correct. Please try again with the correct password.');
+			}
 		}
 		
 		$code = BeaconCommon::GenerateUUID();
+		if (is_null($privateKey) === false) {
+			$privateKey = base64_encode(BeaconEncryption::SymmetricEncrypt($code, $privateKey, false));
+		}
 		$codeHash = static::PrepareCodeHash($this->applicationId, $this->Application()->Secret(), $this->callback, $code);
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("DELETE FROM public.application_auth_flows WHERE expiration < CURRENT_TIMESTAMP;");
-		$database->Query("UPDATE public.application_auth_flows SET code_hash = $2, user_id = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL WHERE flow_id = $1 AND expiration > CURRENT_TIMESTAMP AND code_hash IS NULL;", $this->flowId, $codeHash, $user->UserId());
+		$database->Query("UPDATE public.application_auth_flows SET code_hash = $2, user_id = $3, expiration = CURRENT_TIMESTAMP(0) + '5 minutes'::INTERVAL, private_key_encrypted = $4 WHERE flow_id = $1 AND expiration > CURRENT_TIMESTAMP AND code_hash IS NULL;", $this->flowId, $codeHash, $user->UserId(), $privateKey);
 		$database->Commit();
 		
 		$this->codeHash = $codeHash;
@@ -173,10 +195,10 @@ class ApplicationAuthFlow extends DatabaseObject {
 	public static function Redeem(string $applicationId, ?string $applicationSecret, string $redirectUri, string $code, string $codeVerifier): Session {
 		$app = Application::Fetch($applicationId);
 		if (is_null($app)) {
-			throw new Exception('Invalid client');
+			throw new Exception('Invalid client id.');
 		}
 		if (is_null($applicationSecret) && $app->IsConfidential()) {
-			throw new Exception('Invalid client');
+			throw new Exception('Invalid client secret.');
 		} else if (is_null($applicationSecret) === false && $app->IsConfidential() === false) {
 			// Ignore a secret if provided
 			$applicationSecret = null;
@@ -185,18 +207,26 @@ class ApplicationAuthFlow extends DatabaseObject {
 		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $redirectUri, $code);
 		$flows = static::Search(['codeHash' => $codeHash], true);
 		if (count($flows) !== 1) {
-			throw new Exception('Authorization flow not found');
+			throw new Exception('Authorization flow not found.');
 		}
 		$flow = $flows[0];
 		
 		if ($flow->CheckCodeVerifier($codeVerifier) !== true) {
-			throw new Exception('Invalid code verifier');
+			throw new Exception('Invalid code verifier.');
+		}
+		
+		if (is_null($flow->privateKeyEncrypted) === false) {
+			try {
+				$privateKey = BeaconEncryption::SymmetricDecrypt($code, base64_decode($flow->privateKeyEncrypted));
+			} catch (Exception $err) {
+				throw new Exception('Could not decrypt private key.');
+			}	
 		}
 		
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$session = Session::Create($flow->User(), $flow->Application(), $flow->scopes);
-		$database->Query("DELETE FROM public.application_auth_flows WHERE flow_id = $1 OR expiration < CURRENT_TIMESTAMP;", $flow->FlowId());
+		$session = Session::Create($flow->User(), $flow->Application(), $flow->scopes, $privateKey);
+		$database->Query("DELETE FROM public.application_auth_flows WHERE flow_id = $1;", $flow->FlowId());
 		$database->Commit();
 		return $session;
 	}

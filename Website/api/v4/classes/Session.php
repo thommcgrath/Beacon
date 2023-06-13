@@ -4,8 +4,10 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconEncryption, BeaconRecordSet, DateTime, Exception;
 
 class Session extends DatabaseObject implements \JsonSerializable {
+	protected string $accessTokenEncrypted = '';
 	protected string $accessTokenHash = '';
 	protected string $accessToken = '';
+	protected string $refreshTokenEncrypted = '';
 	protected string $refreshTokenHash = '';
 	protected string $refreshToken = '';
 	protected int $accessTokenExpiration = 0;
@@ -18,8 +20,12 @@ class Session extends DatabaseObject implements \JsonSerializable {
 	protected string $applicationName = '';
 	protected string $applicationWebsite = '';
 	protected array $scopes = [];
+	protected string $privateKey = '';
+	protected ?string $privateKeyEncrypted = null;
 	
 	protected function __construct(BeaconRecordSet $row) {
+		$this->accessTokenEncrypted = $row->Field('access_token_encrypted');
+		$this->refreshTokenEncrypted = $row->Field('refresh_token_encrypted');
 		$this->accessTokenHash = $row->Field('access_token_hash');
 		$this->refreshTokenHash = $row->Field('refresh_token_hash');
 		$this->accessTokenExpiration = filter_var($row->Field('access_token_expiration'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? time();
@@ -32,21 +38,15 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		$this->applicationName = $row->Field('application_name');
 		$this->applicationWebsite = $row->Field('application_website');
 		$this->scopes = explode(' ', $row->Field('scopes'));
-		
-		if (is_null($row->Field('encrypted_tokens')) === false) {
-			try {
-				$tokens = json_decode(BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), base64_decode($row->Field('encrypted_tokens'))), true);
-				$this->accessToken = $tokens['access_token'];
-				$this->refreshToken = $tokens['refresh_token'];
-			} catch (Exception $err) {
-			}
-		}
+		$this->privateKeyEncrypted = $row->Field('private_key_encrypted');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('public', 'access_tokens', [
 			new DatabaseObjectProperty('accessToken', ['primaryKey' => true, 'columnName' => 'access_token_hash']),
 			new DatabaseObjectProperty('refreshToken', ['columnName' => 'refresh_token_hash']),
+			new DatabaseObjectProperty('accessTokenEncrypted', ['columnName' => 'access_token_encrypted']),
+			new DatabaseObjectProperty('refreshTokenEncrypted', ['columnName' => 'refresh_token_encrypted']),
 			new DatabaseObjectProperty('accessTokenExpiration', ['columnName' => 'access_token_expiration', 'accessor' => "EXTRACT(EPOCH FROM DATE_TRUNC('second', %%TABLE%%.%%COLUMN%%))::INTEGER"]),
 			new DatabaseObjectProperty('refreshTokenExpiration', ['columnName' => 'refresh_token_expiration', 'accessor' => "EXTRACT(EPOCH FROM DATE_TRUNC('second', %%TABLE%%.%%COLUMN%%))::INTEGER"]),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
@@ -57,7 +57,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('applicationName', ['columnName' => 'application_name', 'accessor' => 'applications.name']),
 			new DatabaseObjectProperty('applicationWebsite', ['columnName' => 'application_website', 'accessor' => 'applications.website']),
 			new DatabaseObjectProperty('scopes'),
-			new DatabaseObjectProperty('encryptedTokens', ['columnName' => 'encrypted_tokens'])
+			new DatabaseObjectProperty('privateKeyEncrypted', ['columnName' => 'private_key_encrypted'])
 		], [
 			'LEFT JOIN public.applications ON (access_tokens.application_id = applications.application_id)'
 		]);
@@ -92,12 +92,20 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		return $this->accessTokenHash;
 	}
 	
+	public function AccessTokenEncrypted(): string {
+		return $this->accessTokenEncrypted;
+	}
+	
 	public function RefreshToken(): string {
 		return $this->refreshToken;
 	}
 	
 	public function RefreshTokenHash(): string {
 		return $this->refreshTokenHash;
+	}
+	
+	public function RefreshTokenEncrypted(): string {
+		return $this->refreshTokenEncrypted;
 	}
 	
 	public function UserId(): string {
@@ -149,6 +157,14 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		return Application::Fetch($this->applicationId);
 	}
 	
+	public function PrivateKey(): ?string {
+		return $this->privateKey;
+	}
+	
+	public function PrivateKeyEncrypted(): ?string {
+		return $this->privateKeyEncrypted;
+	}
+	
 	protected static function PrepareHash(string $token, bool $legacy = false): string {
 		if ($legacy) {
 			return strtolower(hash('sha512', $token, false));
@@ -157,7 +173,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		}
 	}
 	
-	public static function Create(User $user, Application|string $app, ?array $scopes = null): static {
+	public static function Create(User $user, Application|string $app, ?array $scopes = null, ?string $privateKey = null): static {
 		if (is_string($app)) {
 			if (BeaconCommon::IsUUID($app) === false) {
 				throw new Exception('Application ID is not a UUID');
@@ -171,23 +187,23 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		$schema = static::DatabaseSchema();
 		$table = $schema->WriteableTable();
 		$accessToken = BeaconCommon::GenerateUUID();
-		$accessTokenHash = static::PrepareHash($accessToken);
 		$refreshToken = BeaconCommon::GenerateUUID();
+		$accessTokenHash = static::PrepareHash($accessToken);
 		$refreshTokenHash = static::PrepareHash($refreshToken);
+		$accessTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($refreshToken, $accessToken, false));
+		$refreshTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($accessToken, $refreshToken, false));
 		if (is_null($scopes)) {
 			$scopes = $app->Scopes();
 		} else if (count($scopes) === 0) {
 			throw new Exception('Must request at least one scope');
 		}
 		sort($scopes);
-		$encryptedTokens = base64_encode(BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Auth Encryption Key'), json_encode([
-			'access_token' => $accessToken,
-			'refresh_token' => $refreshToken
-		])));
 			
 		$values = [
 			$accessTokenHash,
 			$refreshTokenHash,
+			$accessTokenEncrypted,
+			$refreshTokenEncrypted,
 			'1 hour',
 			'30 days',
 			$user->UserId(),
@@ -196,13 +212,17 @@ class Session extends DatabaseObject implements \JsonSerializable {
 			BeaconCommon::RemoteCountry(),
 			(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : ''),
 			implode(' ', $scopes),
-			$encryptedTokens
+			null
 		];
+		
+		if (in_array(Application::kScopeUserPrivateKey, $scopes) && is_null($privateKey) === false) {
+			$values[12] = base64_encode(BeaconEncryption::SymmetricEncrypt($accessToken, $privateKey, false));
+		}
 		
 		$database = BeaconCommon::Database();
 		try {
 			$database->BeginTransaction();
-			$database->Query("INSERT INTO {$table} (access_token_hash, refresh_token_hash, access_token_expiration, refresh_token_expiration, user_id, application_id, remote_ip, remote_country, remote_agent, scopes, encrypted_tokens) VALUES ($1, $2, CURRENT_TIMESTAMP(0) + $3::INTERVAL, CURRENT_TIMESTAMP(0) + $4::INTERVAL, $5, $6, $7, $8, $9, $10, $11);", $values);
+			$database->Query("INSERT INTO {$table} (access_token_hash, refresh_token_hash, access_token_encrypted, refresh_token_encrypted, access_token_expiration, refresh_token_expiration, user_id, application_id, remote_ip, remote_country, remote_agent, scopes, private_key_encrypted) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP(0) + $5::INTERVAL, CURRENT_TIMESTAMP(0) + $6::INTERVAL, $7, $8, $9, $10, $11, $12, $13);", $values);
 			$session = static::Fetch($accessToken);
 			if (is_null($session)) {
 				throw new Exception('Could not retrieve new session');
@@ -216,38 +236,69 @@ class Session extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public static function Fetch(string $token): ?static {
-		$hashes = [];
 		if (BeaconCommon::IsUUID($token)) {
-			$hashes[] = static::PrepareHash($token, false);
-			$hashes[] = static::PrepareHash($token, true);
+			$hash = static::PrepareHash($token);
 		} else {
-			$hashes[] = $token;
+			$hash = $token;
 		}
 		
-		foreach ($hashes as $hash) {
-			$sessions = static::Search(['accessToken|refreshToken' => $hash], true);
-			if (count($sessions) === 1) {
-				$session = $sessions[0];
-				if (BeaconCommon::IsUUID($token)) {
-					if ($session->accessTokenHash === $hash) {
-						$session->accessToken = $token;
-					}
-					if ($session->refreshTokenHash === $hash) {
-						$session->refreshToken = $token;
-					}
-				}
-				return $session;
-			}
+		$sessions = static::Search(['accessToken|refreshToken' => $hash], true);
+		if (count($sessions) === 1) {
+			$session = $sessions[0];
+			$session->Decrypt($token);
+			return $session;
 		}
 		
 		return null;
 	}
 	
+	protected function Decrypt(string $token): bool {
+		if (BeaconCommon::IsUUID($token) === false) {
+			return false;
+		}
+		
+		if (empty($this->accessToken) === false && empty($this->refreshToken) === false) {
+			return true;
+		}
+		
+		try {
+			$accessToken = BeaconEncryption::SymmetricDecrypt($token, base64_decode($this->accessTokenEncrypted));
+			if (is_null($this->privateKeyEncrypted) === false) {
+				$this->privateKey = BeaconEncryption::SymmetricDecrypt($accessToken, base64_decode($this->privateKeyEncrypted));
+			}
+			$this->accessToken = $accessToken;
+			$this->refreshToken = $token;
+			return true;
+		} catch (Exception $err) {
+		}
+		
+		try {
+			$refreshToken = BeaconEncryption::SymmetricDecrypt($token, base64_decode($this->refreshTokenEncrypted));
+			if (is_null($this->privateKeyEncrypted) === false) {
+				$this->privateKey = BeaconEncryption::SymmetricDecrypt($token, base64_decode($this->privateKeyEncrypted));
+			}
+			$this->refreshToken = $refreshToken;
+			$this->accessToken = $token;
+			return true;
+		} catch (Exception $err) {
+		}
+		
+		return false;
+	}
+	
+	public function IsDecrypted(): bool {
+		return empty($this->accessToken) === false && empty($this->refreshToken) === false;
+	}
+	
 	public function Renew(bool $force = false): Session {
+		if ($this->IsDecrypted() === false) {
+			throw new Exception('Session is not decrypted.');
+		}
+		
 		if ($force === true || $this->ShouldRenew()) {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
-			$newSession = static::Create($this->User(), $this->Application(), $this->Scopes());
+			$newSession = static::Create($this->User(), $this->Application(), $this->Scopes(), $this->PrivateKey());
 			$this->Delete();
 			$database->Commit();
 			

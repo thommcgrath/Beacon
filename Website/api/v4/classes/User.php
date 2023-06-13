@@ -378,33 +378,41 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 		return $this->requirePasswordChange;
 	}
 	
-	public function TestPassword(string $password): bool {
+	public function DecryptPrivateKey(string $password): string {
 		$privateKeySalt = hex2bin($this->privateKeySalt);
 		$privateKeyIterations = $this->privateKeyIterations;
 		$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
-		$privateKeyPem = null;
 		try {
 			$privateKeyPem = BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($this->privateKey));
+				
+			if (strtolower(substr($privateKeyPem, 0, 4)) === '8a01') {
+				$privateKeySalt = BeaconEncryption::GenerateSalt();
+				$privateKeyIterations = rand(100000, 111111);
+				$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
+				$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
+					
+				$changes = [
+					'privateKey' => bin2hex($encryptedPrivateKey),
+					'privateKeySalt' => bin2hex($privateKeySalt),
+					'privateKeyIterations' => $privateKeyIterations
+				];
+				
+				$this->Edit($changes);
+			}
+			
+			return $privateKeyPem;
+		} catch (Exception $err) {
+			throw new Exception('Incorrect password');
+		}
+	}
+	
+	public function TestPassword(string $password): bool {
+		try {
+			$this->DecryptPrivateKey($password);
+			return true;
 		} catch (Exception $err) {
 			return false;
 		}
-		
-		if (strtolower(substr($privateKeyPem, 0, 4)) === '8a01') {
-			$privateKeySalt = BeaconEncryption::GenerateSalt();
-			$privateKeyIterations = rand(100000, 111111);
-			$privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
-			$encryptedPrivateKey = BeaconEncryption::SymmetricEncrypt($privateKeySecret, $privateKeyPem, false);
-				
-			$changes = [
-				'privateKey' => bin2hex($encryptedPrivateKey),
-				'privateKeySalt' => bin2hex($privateKeySalt),
-				'privateKeyIterations' => $privateKeyIterations
-			];
-			
-			$this->Edit($changes);
-		}
-		
-		return true;
 	}
 	
 	/* !User Lookup */

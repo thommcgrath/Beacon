@@ -190,29 +190,34 @@ class BeaconDialog {
 	}
 	
 	static hideModal() {
-		if (!this.activeModal) {
-			return;
-		}
-		
-		const overlay = document.getElementById('overlay');
-		const modal = document.getElementById(this.activeModal);
-		if (!(overlay && modal)) {
-			return;
-		}
-		
-		if (this.viewportWatcher) {
-			clearInterval(this.viewportWatcher);
-			this.viewportWatcher = null;
-		}
-		
-		overlay.classList.remove('visible');
-		modal.classList.remove('visible');
-		
-		setTimeout(() => {
-			overlay.classList.remove('exist');
-			modal.classList.remove('exist');
-			this.activeModal = null;
-		}, 300);
+		return new Promise((resolve, reject) => {
+			if (!this.activeModal) {
+				reject();
+				return;
+			}
+			
+			const overlay = document.getElementById('overlay');
+			const modal = document.getElementById(this.activeModal);
+			if (!(overlay && modal)) {
+				reject();
+				return;
+			}
+			
+			if (this.viewportWatcher) {
+				clearInterval(this.viewportWatcher);
+				this.viewportWatcher = null;
+			}
+			
+			overlay.classList.remove('visible');
+			modal.classList.remove('visible');
+			
+			setTimeout(() => {
+				overlay.classList.remove('exist');
+				modal.classList.remove('exist');
+				this.activeModal = null;
+				resolve();
+			}, 300);
+		});
 	}
 }
 

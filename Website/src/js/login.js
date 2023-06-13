@@ -104,6 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		storedRemember = (storedEmail !== null);
 	}
 	
+	if (sessionStorage) {
+		const userPassword = sessionStorage.getItem('account_password');
+		if (userPassword) {
+			sessionStorage.removeItem('account_password');
+			loginParams.userPassword = userPassword;
+		}
+	}
+	
 	// !Login Page
 	if (loginEmailField) {
 		if (explicitEmail) {
@@ -152,6 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				deviceId: loginParams.deviceId,
 				loginId: loginParams.loginId
 			};
+			if (loginParams.flowId) {
+				sessionBody.flowId = loginParams.flowId;
+			}
 			const totpCode = totpCodeField.value.trim();
 			if (Boolean(totpCode) === true) {
 				sessionBody.verificationCode = totpCode;
@@ -177,6 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 					url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
 					url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
+					
+					if (loginParams.flowRequiresPassword && sessionStorage) {
+						sessionStorage.setItem('account_password', sessionBody.password);	
+					}
 					
 					window.location = url;
 				} catch (e) {
@@ -591,25 +606,82 @@ document.addEventListener('DOMContentLoaded', () => {
 				challengeExpiration: loginParams.challengeExpiration
 			};
 			
-			BeaconWebRequest.post('/account/auth/authorize', authorizationBody).then((response) => {
-				try {
-					const obj = JSON.parse(response.body);
-					const callback = obj.callback;
-					window.location = callback;
-				} catch (e) {
-					console.log(e);
-					BeaconDialog.show('Unexpected error', `There was an error: ${e.message}`);
-				}
-			}).catch((error) => {
-				console.log(JSON.stringify(error));
-				try {
-					const obj = JSON.parse(error.body);
-					const errorExplanation = obj.message ?? `There was a ${error.status} error`;
-					BeaconDialog.show('Unable to authorize app', errorExplanation);
-				} catch (e) {
-					console.log(e);
-					BeaconDialog.show('Unexpected error', `There was an error: ${e.message}`);
-				}
+			let authPromise = null;
+			if (loginParams.userPassword) {
+				authorizationBody.password = loginParams.userPassword;
+				authPromise = new Promise((resolve, reject) => {
+					resolve();
+				});
+			} else {
+				// Need to ask for password
+				authPromise = new Promise((resolve, reject) => {
+					const authorizePasswordFieldGroup = document.getElementById('authorizePasswordFieldGroup');
+					const authorizePasswordField = document.getElementById('authorizePasswordField');
+					const authorizePasswordActionButton = document.getElementById('authorizePasswordActionButton');
+					const authorizePasswordCancelButton = document.getElementById('authorizePasswordCancelButton');
+					
+					const authorizePasswordActionFunction = (ev) => {
+						ev.preventDefault();
+						
+						if (authorizePasswordField.value.length < 8) {
+							authorizePasswordFieldGroup.classList.add('shake');
+							setTimeout(() => {
+								authorizePasswordFieldGroup.classList.remove('shake');
+							}, 400);
+							return;
+						}
+						
+						authorizationBody.password = authorizePasswordField.value;
+						authorizePasswordActionButton.removeEventListener('click', authorizePasswordActionFunction);
+						
+						BeaconDialog.hideModal().then(() => {
+							authorizePasswordField.value = '';
+							resolve();
+						});
+					};
+					
+					const authorizePasswordCancelFunction = (ev) => {
+						ev.preventDefault();
+						
+						authorizationBody.password = null;
+						authorizePasswordCancelButton.removeEventListener('click', authorizePasswordCancelFunction);
+						
+						BeaconDialog.hideModal().then(() => {
+							authorizePasswordField.value = '';
+							reject();
+						});
+					};
+					
+					authorizePasswordActionButton.addEventListener('click', authorizePasswordActionFunction);
+					authorizePasswordCancelButton.addEventListener('click', authorizePasswordCancelFunction);
+					authorizePasswordField.value = '';
+					
+					BeaconDialog.showModal('authorizePasswordDialog');
+				});
+			}
+			
+			authPromise.then(() => {
+				BeaconWebRequest.post('/account/auth/authorize', authorizationBody).then((response) => {
+					try {
+						const obj = JSON.parse(response.body);
+						const callback = obj.callback;
+						window.location = callback;
+					} catch (e) {
+						console.log(e);
+						BeaconDialog.show('Unexpected error', `There was an error: ${e.message}`);
+					}
+				}).catch((error) => {
+					console.log(JSON.stringify(error));
+					try {
+						const obj = JSON.parse(error.body);
+						const errorExplanation = obj.message ?? `There was a ${error.status} error`;
+						BeaconDialog.show('Unable to authorize app', errorExplanation);
+					} catch (e) {
+						console.log(e);
+						BeaconDialog.show('Unexpected error', `There was an error: ${e.message}`);
+					}
+				});
+			}).catch(() => {
 			});
 		});
 	}

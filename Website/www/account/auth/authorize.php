@@ -17,6 +17,7 @@ $deviceId = $obj['deviceId'] ?? '';
 $flowId = $obj['flowId'] ?? null;
 $challenge = $obj['challenge'] ?? null;
 $challengeExpiration = $obj['challengeExpiration'] ?? 0;
+$userPassword = $obj['password'] ?? null;
 
 if (empty($flowId) || is_null($flow = ApplicationAuthFlow::Fetch($flowId)) || $flow->IsCompleted()) {
 	Response::NewJsonError('This authentication flow has already been completed', ['code' => 'COMPLETED'], 400)->Flush();
@@ -24,11 +25,11 @@ if (empty($flowId) || is_null($flow = ApplicationAuthFlow::Fetch($flowId)) || $f
 }
 
 try {
-	$callback = $flow->Authorize($deviceId, $challenge, $challengeExpiration, $session->User());
+	$callback = $flow->Authorize($deviceId, $challenge, $challengeExpiration, $session->User(), $userPassword);
 	http_response_code(200);
 	echo json_encode(['callback' => $callback], JSON_PRETTY_PRINT);
 } catch (Exception $err) {
-	Response::NewJsonError('Authorization could not be completed. It may have expired. Please try again.', ['code' => 'EXPIRED', 'exception' => $err->getMessage()], 400)->Flush();
+	Response::NewJsonError($err->getMessage(), ['code' => 'FAILED_AUTHORIZE'], 400)->Flush();
 }
 
 ?>

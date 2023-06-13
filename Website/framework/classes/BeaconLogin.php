@@ -10,24 +10,28 @@ class BeaconLogin {
 		$deviceId = BeaconCommon::DeviceId();
 		$params['apiDomain'] = BeaconCommon::APIDomain();
 		$params['deviceId'] = $deviceId;
+		$params['flowRequiresPassword'] = false;
 		
 		$session = BeaconCommon::GetSession();
 		$flowId = $params['flowId'] ?? null;
-		$flow = null;
 		$params['challengeExpiration'] = time() + 300;
-		if (is_null($session) === false) {
-			if (is_null($flowId)) {
-				// We're not authorizing an app, so there's nothing to do here.
-				BeaconCommon::Redirect($params['return']);
-				return;
-			}
-			
+		
+		$flow = null;
+		if (is_null($flowId) === false) {
 			$flow = ApplicationAuthFlow::Fetch($flowId);
 			if (is_null($flow) || $flow->IsCompleted()) {
 				// Show an error
 				echo '<h1>Expired Login Request</h1>';
 				echo '<p>This login request has expired or has already been completed. Please request a new login from your app.</p>';
 				echo '<p class="text-center"><a class="button" href="/account/">Account Home</a></p>';
+				return;
+			}
+		}
+		
+		if (is_null($session) === false) {
+			if (is_null($flow)) {
+				// We're not authorizing an app, so there's nothing to do here.
+				BeaconCommon::Redirect($params['return']);
 				return;
 			}
 			
@@ -41,24 +45,34 @@ class BeaconLogin {
 			$params['challenge'] = base64_encode(hash('sha3-512', $challengeRaw, true));
 		}
 		
+		$flowRequiresPassword = false;
+		if (is_null($flow) === false) {
+			$flowRequiresPassword = $flow->HasScope(Application::kScopeUserPrivateKey);
+			$params['flowRequiresPassword'] = $flowRequiresPassword;
+		}
+		
 		BeaconTemplate::StartScript();
 		echo "<script>\n";
 		echo "const loginParams = " . json_encode($params, JSON_PRETTY_PRINT) . ";\n";
 		echo "</script>";
 		BeaconTemplate::FinishScript();
 			
-		if (is_null($flow) === false) {
+		if (is_null($session) === false && is_null($flow) === false) {
 			$app = $flow->Application();
 			?><div id="page_authorize">
 				<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services?</h3>
 				<div class="app_id">
 					<div class="app_id_avatar"><?php echo $app->IconHtml(64); ?></div>
-					<div class="api_id_namecard"><span class="bold larger"><?php echo htmlentities($app->Name()); ?></span><br>Website: <a href="<?php echo htmlentities($app->Website()); ?>" target="_top"><?php echo htmlentities($app->Website()); ?></a></div>
+					<div class="api_id_namecard"><span class="bold larger"><?php echo htmlentities($app->Name()); ?></span><br>Website: <a href="<?php echo htmlentities($app->Website()); ?>" target="_blank"><?php echo htmlentities($app->Website()); ?></a></div>
 				</div>
-				<p class="explanation smaller italic">This is a unofficial application and not affiliated with Beacon / The ZAZ Studios. Only allow access to applications you trust. This permission can be revoked in your account control panel.</p>
+				<?php if ($app->IsOfficial() === false) { ?><p class="explanation smaller italic">This is a unofficial application and not affiliated with Beacon / The ZAZ Studios. Only allow access to applications you trust. This permission can be revoked in your account control panel.</p><?php } ?>
 				<p class="explanation"><?php echo htmlentities($app->Name()); ?> will be able to:</p>
 				<ul>
 					<?php
+					
+					if ($flowRequiresPassword) {
+						echo '<li>Decrypt user files and project data.</li>';
+					}
 					
 					define('kBitCreate', 1);
 					define('kBitRead', 2);
@@ -107,6 +121,10 @@ class BeaconLogin {
 							$permissionWords[] = 'delete';
 						}
 						$permissionPhrase = ucfirst(BeaconCommon::ArrayToEnglish($permissionWords));
+							
+						if (count($permissionWords) === 0) {
+							continue;
+						}
 						
 						$message = '';
 						switch ($feature) {
@@ -137,7 +155,7 @@ class BeaconLogin {
 				</ul>
 				<p class="explanation"><?php echo htmlentities($app->Name()); ?> will <strong>not</strong> be able to:</p>
 				<ul>
-					<li>Decrypt user files and project data.</li>
+					<?php if ($flowRequiresPassword === false) { ?><li>Decrypt user files and project data.</li><?php } ?>
 					<li>Know your account email or password.</li>
 					<li><?php
 					
@@ -156,6 +174,28 @@ class BeaconLogin {
 				</ul>
 				<ul class="buttons"><li><button class="default" id="authorize_action_button">Allow</button></li><li><button id="authorize_cancel_button">Cancel</button></li></ul>
 			</div><?php
+			
+			BeaconTemplate::StartModal('authorizePasswordDialog');
+			?>
+			<div class="modal-content">
+				<div class="title-bar">Confirm Password</div>
+				<div class="content">
+					<p>To authorize this app, please confirm your password.</p>
+					<p><div class="floating-label" id="authorizePasswordFieldGroup"><input type="password" id="authorizePasswordField" placeholder="Confirm Password" class="text-field" autocomplete="current-password"><label for="authorizePasswordField">Confirm Password</label></div></p>
+				</div>
+				<div class="button-bar">
+					<div class="left"&nbsp;</div>
+					<div class="middle">&nbsp;</div>
+					<div class="right">
+						<div class="button-group">
+							<button id="authorizePasswordCancelButton">Cancel</button>
+							<button id="authorizePasswordActionButton" class="default">Continue</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<?php
+			BeaconTemplate::FinishModal();
 			return;
 		}
 		
@@ -172,8 +212,8 @@ class BeaconLogin {
 </div>
 <div id="page_login">
 	<form id="login_form_intro" action="check" method="post">
-		<p class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" required><label for="login_email_field">E-Mail Address</label></p>
-		<p class="floating-label"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></p>
+		<p class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email" required><label for="login_email_field">E-Mail Address</label></p>
+		<p class="floating-label"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></p>
 		<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
 		<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button">Cancel</button></li><?php } ?></ul>
 	</form>
@@ -181,7 +221,7 @@ class BeaconLogin {
 <div id="page_totp">
 	<form id="login_form_totp" method="post">
 		<p>Your account is protected by two step authentication. Please enter the code generated by your authenticator app.</p>
-		<p class="floating-label"><input class="text-field" type="text" name="totp_code" placeholder="Two Step Verification Code" id="totp_code_field" required minlength="6" maxlength="6" title="Enter the six character code created by your authenticator app."><label for="totp_code_field">Two Step Verification Code</label></p>
+		<p class="floating-label"><input class="text-field" type="text" name="totp_code" placeholder="Two Step Verification Code" id="totp_code_field" autocomplete="one-time-code" required minlength="6" maxlength="6" title="Enter the six character code created by your authenticator app."><label for="totp_code_field">Two Step Verification Code</label></p>
 		<p><label class="checkbox"><input type="checkbox" id="totp_remember_check"><span></span>Don't ask for codes on this device</label></p>
 		<ul class="buttons"><li><input id="totp_action_button" type="submit" value="Verify"></li><li><button id="totp_cancel_button">Cancel</button></li></ul>
 	</form>
@@ -189,7 +229,7 @@ class BeaconLogin {
 <div id="page_recover">
 	<p class="explanation">To create a new Beacon Account or recover an existing Beacon Account, enter your email address.</p>
 	<form id="login_recover_form">
-		<p class="floating-label"><input class="text-field" type="email" id="recover_email_field" placeholder="E-Mail Address" required><label for="recover_email_field">E-Mail Address</label></p>
+		<p class="floating-label"><input class="text-field" type="email" id="recover_email_field" placeholder="E-Mail Address" autocomplete="email" required><label for="recover_email_field">E-Mail Address</label></p>
 		<ul class="buttons"><li><input type="submit" id="recover_action_button" value="Continue"></li><li><a id="recover_cancel_button" class="button" href="#<?php echo BeaconCommon::GenerateRandomKey(6); ?>">Cancel</a></li></ul>
 	</form>
 </div>
@@ -207,11 +247,11 @@ class BeaconLogin {
 	<form id="login_password_form">
 		<div class="hidden"><input type="hidden" id="password_email_field" value=""><input type="hidden" id="password_code_field" value=""></div>
 		<div class="new-user-part">
-			<p class="floating-label mb-1"><input class="text-field" type="text" id="username_field" placeholder="Username" minlength="1"><label for="username_field">Username</label></p>
+			<p class="floating-label mb-1"><input class="text-field" type="text" id="username_field" placeholder="Username" autocomplete="username" minlength="1"><label for="username_field">Username</label></p>
 			<p class="smaller mt-1">Perhaps <a href="#" id="suggested-username-link" class="username-suggestion" beacon-username="<?php echo htmlentities($default_username); ?>"><?php echo htmlentities($default_username); ?></a> has a nice ring to it? Or maybe <a href="#" id="new-suggestion-link">another suggestion</a>?</p>
 		</div>
-		<p class="floating-label"><input class="text-field" type="password" id="password_initial_field" placeholder="Password" minlength="8"><label for="password_initial_field">Password</label></p>
-		<p class="floating-label"><input class="text-field" type="password" id="password_confirm_field" placeholder="Confirm Password" minlength="8"><label for="password_confirm_field">Confirm Password</label></p>
+		<p class="floating-label"><input class="text-field" type="password" id="password_initial_field" placeholder="Password" autocomplete="new-password" minlength="8"><label for="password_initial_field">Password</label></p>
+		<p class="floating-label"><input class="text-field" type="password" id="password_confirm_field" placeholder="Confirm Password" autocomplete="new-password" minlength="8"><label for="password_confirm_field">Confirm Password</label></p>
 		<p id="password_totp_paragraph" class="hidden floating-label"><input class="text-field" type="text" id="password_totp_field" placeholder="Two Step Verification Code"><label id="password_totp_label" for="password_totp_field">Two Step Verification Code</label></p>
 		<ul class="buttons"><li><input type="submit" id="password_action_button" value="Finish"></li><li><a id="password_cancel_button" class="button" href="#<?php echo BeaconCommon::GenerateRandomKey(6); ?>">Cancel</a></li></ul>
 	</form>
