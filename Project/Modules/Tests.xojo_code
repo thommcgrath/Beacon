@@ -543,33 +543,21 @@ Protected Module Tests
 		  Var TestValue As MemoryBlock = Crypto.GenerateRandomBytes(33) // Use a strange number that will always require padding
 		  Var Encrypted, Decrypted As MemoryBlock
 		  
-		  Try
-		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 2)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric encrypt test value")
-		  End Try
-		  
-		  Try
-		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric decrypt encrypted test value")
-		  End Try
-		  
-		  Call Assert(TestValue = Decrypted, "Symmetric decrypted value does not match original")
-		  
-		  Try
-		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 1)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric(legacy) encrypt test value")
-		  End Try
-		  
-		  Try
-		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric(legacy) decrypt encrypted test value")
-		  End Try
-		  
-		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
+		  For Version As Integer = 1 To 3
+		    Try
+		      Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, Version)
+		    Catch Err As RuntimeException
+		      System.DebugLog("Unable to symmetric(v" + Version.ToString + ") encrypt test value with a " + KeyLength.ToString + " byte key")
+		    End Try
+		    
+		    Try
+		      Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		    Catch Err As RuntimeException
+		      System.DebugLog("Unable to symmetric(v" + Version.ToString + ") decrypt encrypted test value with a " + KeyLength.ToString + " byte key")
+		    End Try
+		    
+		    Call Assert(TestValue = Decrypted, "Symmetric v" + Version.ToString + " decrypted value does not match original")
+		  Next
 		End Sub
 	#tag EndMethod
 
