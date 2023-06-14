@@ -20,10 +20,8 @@ Private Class SymmetricHeader
 		    Raise Err
 		  End If
 		  
-		  Var Cipher As CipherMBS = BeaconEncryption.SetupCipher(Version)
-		  
 		  Self.mVersion = Version
-		  Self.mVector = Crypto.GenerateRandomBytes(Cipher.IVLength)
+		  Self.mVector = Crypto.GenerateRandomBytes(If(Version = 2, 16, 8))
 		  Self.mLength = Payload.Size
 		  Self.mChecksum = BeaconEncryption.CRC32(Payload)
 		End Sub
@@ -45,17 +43,19 @@ Private Class SymmetricHeader
 
 	#tag Method, Flags = &h0
 		Function EncryptedLength() As Int32
-		  Var Cipher As CipherMBS = BeaconEncryption.SetupCipher(Self.mVersion)
-		  If Cipher.Padding = False Then
-		    Return Self.mLength
-		  End If
+		  Var Factor As Int8
+		  Select Case Self.mVersion
+		  Case 1
+		    Factor = 8
+		  Case 2
+		    Factor = 16
+		  End Select
 		  
-		  Var BlockSize As Int8 = Cipher.BlockSize
-		  Var Blocks As Int32 = Ceiling(Self.mLength / BlockSize)
-		  If Self.mLength Mod BlockSize = CType(0, Int32) Then
+		  Var Blocks As Int32 = Ceiling(Self.mLength / Factor)
+		  If Self.mLength Mod Factor = CType(0, Int32) Then
 		    Blocks = Blocks + CType(1, Int32)
 		  End If
-		  Return Blocks * BlockSize
+		  Return Blocks * Factor
 		End Function
 	#tag EndMethod
 
@@ -75,9 +75,19 @@ Private Class SymmetricHeader
 		    // Not one of our payloads
 		    Return Nil
 		  End If
+		  If Version > 2 Then
+		    // Too new
+		    Return Nil
+		  End If
 		  
-		  Var Cipher As CipherMBS = BeaconEncryption.SetupCipher(Version)
-		  Var VectorSize As UInt8 = Cipher.IVLength
+		  Var VectorSize As UInt8
+		  Select Case Version
+		  Case 1
+		    VectorSize = 8
+		  Case 2
+		    VectorSize = 16
+		  End Select
+		  
 		  Var Vector As MemoryBlock = Clone.Middle(2, VectorSize)
 		  Var Length As Int32 = Clone.Int32Value(2 + VectorSize)
 		  Var Checksum As UInt32 = Clone.UInt32Value(6 + VectorSize)

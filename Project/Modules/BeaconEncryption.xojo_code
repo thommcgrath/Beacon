@@ -11,6 +11,21 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function FixSymmetricKey(Key As MemoryBlock, DesiredLength As Integer) As MemoryBlock
+		  If Key Is Nil Then
+		    Return Nil
+		  ElseIf Key.Size = DesiredLength Then
+		    Return Key
+		  End If
+		  
+		  Var Temp As New MemoryBlock(DesiredLength)
+		  Temp.LittleEndian = Key.LittleEndian
+		  Temp.StringValue(0, Min(Key.Size, DesiredLength)) = Key.StringValue(0, Min(Key.Size, DesiredLength))
+		  Return Temp
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function GenerateSymmetricKey(Bits As Integer = 256) As MemoryBlock
 		  Return Crypto.GenerateRandomBytes(Bits / 8)
 		End Function
@@ -125,53 +140,12 @@ Protected Module BeaconEncryption
 	#tag Method, Flags = &h0
 		Function Process(Extends Cipher As CipherMBS, Data As MemoryBlock) As MemoryBlock
 		  #Pragma BreakOnExceptions Off
-		  If Cipher.BlockSize = 1 Then
-		    Return Cipher.ProcessMemory(Data)
+		  Var Initial As MemoryBlock = Cipher.ProcessMemory(Data)
+		  If Initial Is Nil Then
+		    Return Cipher.FinalizeAsMemory
 		  Else
-		    Var Initial As MemoryBlock = Cipher.ProcessMemory(Data)
-		    If Initial Is Nil Then
-		      Return Cipher.FinalizeAsMemory
-		    Else
-		      Return Initial + Cipher.FinalizeAsMemory
-		    End If
+		    Return Initial + Cipher.FinalizeAsMemory
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function SetupCipher(Version As Integer) As CipherMBS
-		  Select Case Version
-		  Case 3
-		    Return CipherMBS.aes_256_gcm
-		  Case 2
-		    Return CipherMBS.aes_256_cbc
-		  Case 1
-		    Return CipherMBS.bf_cbc
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function SetupCipher(Version As Integer, Key As MemoryBlock) As CipherMBS
-		  Select Case Version
-		  Case 3
-		    Var Crypt As CipherMBS = CipherMBS.aes_256_gcm
-		    Var DesiredLength As Integer = Crypt.KeyLength
-		    Var ChunkSize As Integer = Min(Key.Size, DesiredLength)
-		    Var Chunk As MemoryBlock = Key.Left(ChunkSize)
-		    Key.Size = DesiredLength
-		    For Offset As Integer = 0 To DesiredLength - ChunkSize Step ChunkSize
-		      Key.StringValue(Offset, ChunkSize) = Chunk
-		    Next
-		    Return Crypt
-		  Case 2
-		    Var Crypt As CipherMBS = CipherMBS.aes_256_cbc
-		    Var DesiredLength As Integer = Crypt.KeyLength
-		    Key.Size = DesiredLength
-		    Return Crypt
-		  Case 1
-		    Return CipherMBS.bf_cbc
-		  End Select
 		End Function
 	#tag EndMethod
 
@@ -261,8 +235,15 @@ Protected Module BeaconEncryption
 		  
 		  Data = Data.Middle(Header.Size, Data.Size - Header.Size)
 		  
-		  Key = Key.Clone
-		  Var Crypt As CipherMBS = SetupCipher(Header.Version, Key)
+		  Var Crypt As CipherMBS
+		  Select Case Header.Version
+		  Case 2
+		    Crypt = CipherMBS.aes_256_cbc
+		    Key = FixSymmetricKey(Key, Crypt.KeyLength)
+		  Case 1
+		    Crypt = CipherMBS.bf_cbc
+		  End Select
+		  
 		  If Not Crypt.DecryptInit(Key, Header.Vector) Then
 		    Var Err As New CryptoException
 		    Err.Message = "Incorrect key or vector length"
@@ -288,14 +269,25 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h1
 		Protected Function SymmetricEncrypt(Key As MemoryBlock, Data As MemoryBlock, Version As Integer = 2) As MemoryBlock
-		  If Data Is Nil Or Data.Size = 0 Then
+		  If Data = "" Then
 		    Return ""
 		  End If
 		  
 		  Var Header As New BeaconEncryption.SymmetricHeader(Data, Version)
 		  
-		  Key = Key.Clone
-		  Var Crypt As CipherMBS = SetupCipher(Version, Key)
+		  Var Crypt As CipherMBS
+		  Select Case Version
+		  Case 2
+		    Crypt = CipherMBS.aes_256_cbc
+		    Key = FixSymmetricKey(Key, Crypt.KeyLength)
+		  Case 1
+		    Crypt = CipherMBS.bf_cbc
+		  Else
+		    Var Err As New CryptoException
+		    Err.Message = "Unknown symmetric version " + Version.ToString
+		    Raise Err
+		  End Select
+		  
 		  If Not Crypt.EncryptInit(Key, Header.Vector) Then
 		    Var Err As New CryptoException
 		    Err.Message = "Incorrect key or vector length"

@@ -676,8 +676,8 @@ Implements ObservationKit.Observable
 		  Var ExpectedHash As String = SecureDict.Lookup("Hash", "")
 		  Var Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
 		  Var Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
-		  Var Crypt As CipherMBS = BeaconEncryption.SetupCipher(2, Key)
-		  If Not Crypt.DecryptInit(Key, Vector) Then
+		  Var Crypt As CipherMBS = CipherMBS.aes_256_cbc
+		  If Not Crypt.DecryptInit(BeaconEncryption.FixSymmetricKey(Key, Crypt.KeyLength), Vector) Then
 		    Return Nil
 		  End If
 		  
