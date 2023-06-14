@@ -389,13 +389,14 @@ class Core {
 	
 	public static function HandleRequest(string $root): void {
 		$requestRoute = '/' . $_GET['route'];
-		
+		$replaceUserPlaceholder = false;
+		$replaceSessionPlaceholder = false;
 		if (preg_match('/^\/user(\/.+)?$/', $requestRoute)) {
-			static::Authorize(self::kAuthSchemeBearer, 'users:read');
-			$requestRoute = str_replace('/user', '/users/' . static::UserId(), $requestRoute);
+			$requestRoute = str_replace('/user', '/users/d34c7c10-657f-4bc7-a97b-83fef4476bd7', $requestRoute);
+			$replaceUserPlaceholder = true;
 		} else if (preg_match('/^\/session(\/.+)?$/', $requestRoute)) {
-			static::Authorize(self::kAuthSchemeBearer, 'common');
-			$requestRoute = str_replace('/session', '/sessions/' . static::SessionId(), $requestRoute);
+			$requestRoute = str_replace('/session', '/sessions/603bc7b9-b300-4b0f-bac5-c586a367b47b', $requestRoute);
+			$replaceSessionPlaceholder = true;
 		}
 		
 		foreach (static::$routes as $route => $routeInfo) {
@@ -444,6 +445,22 @@ class Core {
 			
 			static::Authorize($authScheme, ...$requiredScopes);
 			static::ManageRateLimit(false); // Check the limit, but don't increment yet
+			
+			if ($replaceSessionPlaceholder) {
+				$requestRoute = str_replace('603bc7b9-b300-4b0f-bac5-c586a367b47b', static::SessionId(), $requestRoute);
+				$sessionIdKey = array_search('603bc7b9-b300-4b0f-bac5-c586a367b47b', $matches);
+				if ($sessionIdKey) {
+					$matches[$sessionIdKey] = static::SessionId();
+				}
+			}
+			
+			if ($replaceUserPlaceholder) {
+				$requestRoute = str_replace('d34c7c10-657f-4bc7-a97b-83fef4476bd7', static::UserId(), $requestRoute);
+				$userIdKey = array_search('d34c7c10-657f-4bc7-a97b-83fef4476bd7', $matches);
+				if ($userIdKey) {
+					$matches[$userIdKey] = static::UserId();
+				}
+			}
 			
 			$routeKey = $requestMethod . ' ' . $route;
 			$pathParameters = [];

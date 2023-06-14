@@ -16,6 +16,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 	protected $expired = null;
 	protected $codeVerifierHash = null;
 	protected $codeVerifierMethod = null;
+	protected $publicKey = null;
 	protected $privateKeyEncrypted = null;
 	
 	public function __construct(BeaconRecordSet $row) {
@@ -29,6 +30,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		$this->expired = $row->Field('expiration');
 		$this->codeVerifierHash = $row->Field('verifier_hash');
 		$this->codeVerifierMethod = $row->Field('verifier_hash_algorithm');
+		$this->publicKey = $row->Field('public_key');
 		$this->privateKeyEncrypted = $row->Field('private_key_encrypted');
 	}
 	
@@ -44,6 +46,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 			new DatabaseObjectProperty('expired', ['columnName' => 'expiration', 'accessor' => "(%%TABLE%%.%%COLUMN%% < CURRENT_TIMESTAMP)::BOOLEAN"]),
 			new DatabaseObjectProperty('codeVerifierHash', ['columnName' => 'verifier_hash']),
 			new DatabaseObjectProperty('codeVerifierMethod', ['columnName' => 'verifier_hash_algorithm']),
+			new DatabaseObjectProperty('publicKey', ['columnName' => 'public_key']),
 			new DatabaseObjectProperty('privateKeyEncrypted', ['columnName' => 'private_key_encrypted'])
 		]);
 	}
@@ -63,32 +66,48 @@ class ApplicationAuthFlow extends DatabaseObject {
 		return $flow;
 	}
 	
-	public static function Create(Application $app, array $scopes, string $callback, string $state, ?string $codeVerifierHash, ?string $codeVerifierMethod): static {
+	public static function Create(Application $app, array $scopes, string $callback, string $state, ?string $codeVerifierHash, ?string $codeVerifierMethod, ?string $publicKey): static {
 		if ($app->CallbackAllowed($callback) === false) {
-			throw new Exception('Redirect uri is not whitelisted');
+			throw new Exception('Redirect uri is not whitelisted.');
 		}
 		
 		if (in_array(Application::kScopeCommon, $scopes) === false) {
 			$scopes[] = Application::kScopeCommon;
 		}
 		if ($app->HasScopes($scopes) === false) {
-			throw new Exception('Application is not authorized for all requested scopes');
+			throw new Exception('Application is not authorized for all requested scopes.');
 		}
 		sort($scopes);
 		
 		if (is_null($codeVerifierHash) === false || is_null($codeVerifierMethod) === false) {
 			if (is_null($codeVerifierMethod) || $codeVerifierMethod !== 'S256') {
-				throw new Exception('Unsupported code verifier has method');
+				throw new Exception('Unsupported code verifier has method.');
 			}
 			if (is_null($codeVerifierHash) || strlen($codeVerifierHash) !== 43) {
 				throw new Exception('Verifier hash should be 43 base64url characters.');
 			}
 		}
 		
+		if (in_array(Application::kScopeUserPrivateKey, $scopes)) {
+			if (is_null($publicKey)) {
+				throw new Exception('An RSA public key must be included when using the ' . Application::kScopeUserPrivateKey . ' scope.');
+			}
+			
+			// Do a test encrypt to make sure the key is valid
+			try {
+				$publicKey = BeaconEncryption::PublicKeyToPEM($publicKey);
+				BeaconEncryption::RSAEncrypt($publicKey, 'testing');
+			} catch (Exception $err) {
+				throw new Exception('The supplied public key is not valid for encryption.');
+			}
+		} else {
+			$publicKey = null;
+		}
+		
 		$flowId = BeaconCommon::GenerateUUID();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.application_auth_flows (flow_id, application_id, scopes, callback, state, verifier_hash, verifier_hash_algorithm) VALUES ($1, $2, $3, $4, $5, $6, $7);", $flowId, $app->ApplicationId(), implode(' ', $scopes), $callback, $state, $codeVerifierHash, $codeVerifierMethod);
+		$database->Query("INSERT INTO public.application_auth_flows (flow_id, application_id, scopes, callback, state, verifier_hash, verifier_hash_algorithm, public_key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);", $flowId, $app->ApplicationId(), implode(' ', $scopes), $callback, $state, $codeVerifierHash, $codeVerifierMethod, $publicKey);
 		$database->Commit();
 		return static::Fetch($flowId);
 	}
@@ -174,7 +193,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		
 		$code = BeaconCommon::GenerateUUID();
 		if (is_null($privateKey) === false) {
-			$privateKey = base64_encode(BeaconEncryption::SymmetricEncrypt($code, $privateKey, false));
+			$privateKey = BeaconEncryption::RSAEncryptLargeMessage($this->publicKey, $privateKey);
 		}
 		$codeHash = static::PrepareCodeHash($this->applicationId, $this->Application()->Secret(), $this->callback, $code);
 		$database = BeaconCommon::Database();
@@ -215,17 +234,9 @@ class ApplicationAuthFlow extends DatabaseObject {
 			throw new Exception('Invalid code verifier.');
 		}
 		
-		if (is_null($flow->privateKeyEncrypted) === false) {
-			try {
-				$privateKey = BeaconEncryption::SymmetricDecrypt($code, base64_decode($flow->privateKeyEncrypted));
-			} catch (Exception $err) {
-				throw new Exception('Could not decrypt private key.');
-			}	
-		}
-		
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$session = Session::Create($flow->User(), $flow->Application(), $flow->scopes, $privateKey);
+		$session = Session::Create($flow->User(), $flow->Application(), $flow->scopes, $flow->privateKeyEncrypted);
 		$database->Query("DELETE FROM public.application_auth_flows WHERE flow_id = $1;", $flow->FlowId());
 		$database->Commit();
 		return $session;

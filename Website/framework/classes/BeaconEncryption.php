@@ -16,46 +16,82 @@ abstract class BeaconEncryption {
 		return hash_pbkdf2('sha512', $password, $salt, $iterations, 56, true);
 	}
 	
-	public static function RSAEncrypt(string $public_key, string $data, bool $oaep_padding = true): string {
-		$flags = ($oaep_padding ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING);
-		if (@openssl_public_encrypt($data, $result, $public_key, $flags)) {
+	public static function RSAEncrypt(string $publicKey, string $data, bool $useOAEPPadding = true): string {
+		$flags = ($useOAEPPadding ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING);
+		if (@openssl_public_encrypt($data, $result, $publicKey, $flags)) {
 			return $result;
 		} else {
 			throw new Exception('Unable to encrypt: ' . openssl_error_string());
 		}
 	}
 	
-	public static function RSADecrypt(string $private_key, string $data, bool $oaep_padding = true): string {
-		$flags = ($oaep_padding ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING);
-		if (@openssl_private_decrypt($data, $result, $private_key, $flags)) {
+	public static function RSADecrypt(string $privateKey, string $data, bool $useOAEPPadding = true): string {
+		$flags = ($useOAEPPadding ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING);
+		if (@openssl_private_decrypt($data, $result, $privateKey, $flags)) {
 			return $result;
 		} else {
 			throw new Exception('Unable to decrypt: ' . openssl_error_string());
 		}
 	}
 	
-	public static function RSASign(string $private_key, string $data): string {
+	public static function RSASign(string $privateKey, string $data): string {
 		$signature = null;
-		if (@openssl_sign($data, $signature, $private_key, OPENSSL_ALGO_SHA1)) {
+		if (@openssl_sign($data, $signature, $privateKey, OPENSSL_ALGO_SHA1)) {
 			return $signature;
 		} else {
 			throw new Exception('Unable to create signature: ' . openssl_error_string());
 		}
 	}
 	
-	public static function RSAVerify(string $public_key, string $data, string $signature): bool {
-		$status = @openssl_verify($data, $signature, $public_key, OPENSSL_ALGO_SHA1);
+	public static function RSAVerify(string $publicKey, string $data, string $signature): bool {
+		$status = @openssl_verify($data, $signature, $publicKey, OPENSSL_ALGO_SHA1);
 		if ($status == -1) {
 			throw new Exception('Unable to verify signature');
 		}
 		return $status == 1;
 	}
 	
+	// Encrypts using a symmetric key intermediate
+	public static function RSAEncryptLargeMessage(string $publicKey, string $data, bool $raw = false): string|array {
+		$key = static::GenerateKey(256);
+		$dataEncrypted = static::SymmetricEncrypt($key, $data, false);
+		$keyEncrypted = static::RSAEncrypt($publicKey, $key, true);
+		$dict = [
+			'version' => 1,
+			'key' => base64_encode($keyEncrypted),
+			'message' => base64_encode($dataEncrypted)
+		];
+		if ($raw) {
+			return $dict;
+		} else {
+			return json_encode($dict);
+		}
+	}
+	
+	public static function RSADecryptLargeMessage(string $privateKey, string|array $dict): string {
+		if (is_string($dict)) {
+			$dict = json_decode($dict, true);
+		}
+		
+		$version = $dict['version'];
+		if ($version != 1) {
+			throw new Exception('Incompatible message version');
+		}
+		
+		$keyEncrypted = base64_decode($dict['key']);
+		$dataEncrypted = base64_decode($dict['message']);
+		
+		$key = static::RSADecrypt($privateKey, $keyEncrypted);
+		$data = static::SymmetricDecrypt($key, $dataEncrypted);
+		
+		return $data;
+	}
+	
 	public static function SymmetricEncrypt(string $key, string $data, bool $legacy = true): string {
 		$cipher = $legacy ? 'bf-cbc' : 'aes-256-cbc';
 		$version = $legacy ? 1 : 2;
-		$iv_size = openssl_cipher_iv_length($cipher);
-		$iv = random_bytes($iv_size);
+		$ivSize = openssl_cipher_iv_length($cipher);
+		$iv = random_bytes($ivSize);
 		$encrypted = openssl_encrypt($data, $cipher, $key, OPENSSL_RAW_DATA, $iv);
 		if ($encrypted === false) {
 			throw new Exception('Unable to encrypt: ' . openssl_error_string());
@@ -64,16 +100,16 @@ abstract class BeaconEncryption {
 	}
 	
 	public static function SymmetricDecrypt(string $key, string $data): string {
-		$magic_byte = unpack('C', $data[0])[1];
+		$magicByte = unpack('C', $data[0])[1];
 		$version = unpack('C', $data[1])[1];
-		$iv_size = ($version == 2) ? 16 : 8;
-		$iv = substr($data, 2, $iv_size);
-		$len = self::UnpackUInt32(substr($data, 2 + $iv_size, 4));
-		$expected_checksum = self::UnpackUInt32(substr($data, 6 + $iv_size, 4));
-		$data = substr($data, 10 + $iv_size);
+		$ivSize = ($version == 2) ? 16 : 8;
+		$iv = substr($data, 2, $ivSize);
+		$len = self::UnpackUInt32(substr($data, 2 + $ivSize, 4));
+		$expectedChecksum = self::UnpackUInt32(substr($data, 6 + $ivSize, 4));
+		$data = substr($data, 10 + $ivSize);
 		
-		if ($magic_byte != self::SymmetricMagicByte) {
-			throw new Exception('Data not encrypted properly: ' . bin2hex($magic_byte) . '(' . strlen($magic_byte) . ')');
+		if ($magicByte != self::SymmetricMagicByte) {
+			throw new Exception('Data not encrypted properly: ' . bin2hex($magicByte) . '(' . strlen($magicByte) . ')');
 		}
 		if ($version > self::SymmetricVersion) {
 			throw new Exception('Encryption is too new');
@@ -85,12 +121,12 @@ abstract class BeaconEncryption {
 		}
 		$decrypted = substr($decrypted, 0, $len);
 		if (PHP_INT_SIZE <= 4) {
-			$computed_checksum = sprintf('%u', crc32($decrypted));
+			$computedChecksum = sprintf('%u', crc32($decrypted));
 		} else {
-			$computed_checksum = crc32($decrypted);
+			$computedChecksum = crc32($decrypted);
 		}
-		if ($computed_checksum != $expected_checksum) {
-			throw new Exception('CRC32 checksum failed on decrypted data: ' . $expected_checksum . ' expected, ' . $computed_checksum . ' computed');
+		if ($computedChecksum != $expectedChecksum) {
+			throw new Exception('CRC32 checksum failed on decrypted data: ' . $expectedChecksum . ' expected, ' . $computedChecksum . ' computed');
 		}
 		return $decrypted;
 	}
@@ -103,28 +139,28 @@ abstract class BeaconEncryption {
 		return static::SymmetricEncrypt($key, $data);
 	}
 	
-	public static function PublicKeyToPEM(string $public_key): string {
-		if (str_starts_with($public_key, '-----BEGIN PUBLIC KEY-----') === false) {
-			$public_key = @hex2bin($public_key);
-			if ($public_key === false) {
+	public static function PublicKeyToPEM(string $publicKey): string {
+		if (str_starts_with($publicKey, '-----BEGIN PUBLIC KEY-----') === false) {
+			$publicKey = @hex2bin($publicKey);
+			if ($publicKey === false) {
 				throw new Exception('Invalid hex input');
 			}
-			$public_key = trim(chunk_split(base64_encode($public_key), 64, "\n"));
-			$public_key = "-----BEGIN PUBLIC KEY-----\n$public_key\n-----END PUBLIC KEY-----";
+			$publicKey = trim(chunk_split(base64_encode($publicKey), 64, "\n"));
+			$publicKey = "-----BEGIN PUBLIC KEY-----\n$publicKey\n-----END PUBLIC KEY-----";
 		}
-		return $public_key;
+		return $publicKey;
 	}
 	
-	public static function PrivateKeyToPEM(string $private_key): string {
-		if (str_starts_with($private_key, '-----BEGIN RSA PRIVATE KEY-----') === false) {
-			$private_key = @hex2bin($private_key);
-			if ($private_key === false) {
+	public static function PrivateKeyToPEM(string $privateKey): string {
+		if (str_starts_with($privateKey, '-----BEGIN RSA PRIVATE KEY-----') === false) {
+			$privateKey = @hex2bin($privateKey);
+			if ($privateKey === false) {
 				throw new Exception('Invalid hex input');
 			}
-			$private_key = trim(chunk_split(base64_encode($private_key), 64, "\n"));
-			$private_key = "-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----";
+			$privateKey = trim(chunk_split(base64_encode($privateKey), 64, "\n"));
+			$privateKey = "-----BEGIN RSA PRIVATE KEY-----\n$privateKey\n-----END RSA PRIVATE KEY-----";
 		}
-		return $private_key;
+		return $privateKey;
 	}
 	
 	private static function UnpackUInt32(string $bin): int {
@@ -136,19 +172,19 @@ abstract class BeaconEncryption {
 		}
 	}
 	
-	public static function GenerateKeyPair(&$public_key, &$private_key): void {
+	public static function GenerateKeyPair(&$publicKey, &$privateKey, int $keySize = 4096): void {
 		$handle = openssl_pkey_new([
 			'digest_alg' => 'sha512',
-			'private_key_bits' => 4096,
+			'private_key_bits' => $keySize,
 			'private_key_type' => OPENSSL_KEYTYPE_RSA
 		]);
-		openssl_pkey_export($handle, $private_key);
-		$public_key = openssl_pkey_get_details($handle);
-		$public_key = $public_key['key'];
+		openssl_pkey_export($handle, $privateKey);
+		$publicKey = openssl_pkey_get_details($handle);
+		$publicKey = $publicKey['key'];
 	}
 	
-	public static function ExtractPublicKey(string $private_key): ?string {
-		$handle = @openssl_pkey_get_private($private_key);
+	public static function ExtractPublicKey(string $privateKey): ?string {
+		$handle = @openssl_pkey_get_private($privateKey);
 		$details = @openssl_pkey_get_details($handle);
 		if (is_array($details) && array_key_exists('key', $details)) {
 			return $details['key'];
@@ -167,21 +203,21 @@ abstract class BeaconEncryption {
 		return (unpack('C', $data[0])[1] === self::SymmetricMagicByte);
 	}
 	
-	public static function HeaderBytes(string $data, bool $path_mode = false): ?string {
-		if ($path_mode) {
+	public static function HeaderBytes(string $data, bool $pathMode = false): ?string {
+		if ($pathMode) {
 			$path = $data;
 			$handle = fopen($path, 'rb');
 			$data = fread($handle, 32);
 			fclose($handle);
 		}
 		
-		$magic_byte = unpack('C', $data[0])[1];
-		if ($magic_byte !== self::SymmetricMagicByte) {
+		$magicByte = unpack('C', $data[0])[1];
+		if ($magicByte !== self::SymmetricMagicByte) {
 			return null;
 		}
 		$version = unpack('C', $data[1])[1];
-		$iv_size = ($version == 2) ? 16 : 8;
-		return substr($data, 0, 10 + $iv_size);
+		$ivSize = ($version == 2) ? 16 : 8;
+		return substr($data, 0, 10 + $ivSize);
 	}
 }
 

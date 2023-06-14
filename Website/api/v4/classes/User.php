@@ -587,13 +587,9 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 			'username' => $this->Username(false),
 			'usernameFull' => $this->Username(true),
 			'publicKey' => $this->publicKey,
-			'privateKey' => $this->privateKey,
-			'privateKeySalt' => $this->privateKeySalt,
-			'privateKeyIterations' => $this->privateKeyIterations,
 			'banned' => $this->banned,
 			'signatures' => $this->signatures,
-			'licenses' => $this->licenses,
-			'cloudKey' => $this->cloudKey
+			'licenses' => $this->licenses
 		];
 		if (empty($this->expiration) === false) {
 			$json['expiration'] = $this->expiration;

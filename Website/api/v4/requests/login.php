@@ -34,9 +34,11 @@ function handleRequest(array $context): Response {
 			$state = $_GET['state'];
 			$codeVerifierHash = $_GET['code_challenge'];
 			$codeVerifierMethod = $_GET['code_challenge_method'];
+			$publicKey = $_GET['public_key'] ?? null;
 			
-			$flow = ApplicationAuthFlow::Create($application, $scopes, $redirect_uri, $state, $codeVerifierHash, $codeVerifierMethod);
+			$flow = ApplicationAuthFlow::Create($application, $scopes, $redirect_uri, $state, $codeVerifierHash, $codeVerifierMethod, $publicKey);
 		} catch (Exception $err) {
+			return Response::NewJSONError($err->getMessage(), null, 400);
 		}
 		if (is_null($flow)) {
 			return Response::NewJsonError('Invalid scope or redirect_uri', null, 400);
