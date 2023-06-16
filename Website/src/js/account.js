@@ -577,7 +577,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const revokeAction = (event) => {
 		event.preventDefault();
 		
-		
 		BeaconWebRequest.delete(`https://${apiDomain}/v4/sessions/${encodeURIComponent(event.target.getAttribute('sessionHash'))}`, { Authorization: `Bearer ${sessionId}` }).then((response) => {
 			BeaconDialog.show('Session revoked', 'Be aware that any enabled user with a copy of your account\'s private key can start a new session.').then(() => {
 				window.location.reload(true);
@@ -599,5 +598,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const revokeLinks = document.querySelectorAll('#panel-account div[page="sessions"] a.revokeLink');
 	for (const link of revokeLinks) {
 		link.addEventListener('click', revokeAction);
+	}
+	
+	/* ! Apps */
+	
+	const editAppAction = (event) => {
+		event.preventDefault();
+		
+		const applicationId = event.currentTarget.getAttribute('beacon-app-id');
+		BeaconWebRequest.get(`https://${apiDomain}/v4/applications/${encodeURIComponent(applicationId)}`, { Authorization: `Bearer ${sessionId}` }).then((response) => {
+			const parsed = JSON.parse(response.body);
+			
+		}).catch((error) => {
+			BeaconDialog.show('Could not retrieve application info');
+		});
+	};
+	
+	const editAppButtons = document.querySelectorAll('#panel-account div[page="apps"] button.apps-edit-button');
+	for (const button of editAppButtons) {
+		button.addEventListener('click', editAppAction);	
 	}
 });

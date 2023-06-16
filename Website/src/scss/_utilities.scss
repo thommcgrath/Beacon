@@ -1,5 +1,9 @@
 @use "sass:map";
 
+.w-0 {
+	width: 0%;
+}
+
 .w-10 {
 	width: 10%;
 }
@@ -42,6 +46,10 @@
 
 .w-90 {
 	width: 90%;
+}
+
+.w-100 {
+	width: 100%;
 }
 
 $spacing: (
