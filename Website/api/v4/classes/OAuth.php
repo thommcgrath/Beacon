@@ -11,7 +11,7 @@ class OAuth implements JsonSerializable {
 	protected $provider = null;
 	protected $accessToken = null;
 	protected $refreshToken = null;
-	protected $validUntil = null;
+	protected $expiration = null;
 	protected $returnUrl = null;
 	
 	public static function RedirectURI(): string {
@@ -27,7 +27,7 @@ class OAuth implements JsonSerializable {
 		}
 	}
 	
-	public static function ClientID(string $provider): string {
+	public static function ClientId(string $provider): string {
 		switch ($provider) {
 		case self::ProviderNitrado:
 			return BeaconCommon::GetGlobal('Nitrado_Client_ID');
@@ -45,35 +45,35 @@ class OAuth implements JsonSerializable {
 		}
 	}
 	
-	protected function __construct(string $userId, string $provider, string $accessToken, string $refreshToken, int $validUntil) {
+	protected function __construct(string $userId, string $provider, string $accessToken, string $refreshToken, int $expiration) {
 		$this->userId = $userId;
 		$this->provider = $provider;
 		$this->accessToken = $accessToken;
 		$this->refreshToken = $refreshToken;
-		$this->validUntil = $validUntil;
+		$this->expiration = $expiration;
 	}
 	
 	public static function Lookup(string $userId, string $provider): ?OAuth {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT access_token, EXTRACT(EPOCH FROM valid_until) AS valid_until, refresh_token FROM sentinel.oauth_tokens WHERE user_id = $1 AND provider = $2;', $userId, $provider);
+		$results = $database->Query('SELECT access_token, EXTRACT(EPOCH FROM expiration) AS expiration, refresh_token FROM public.oauth_tokens WHERE user_id = $1 AND provider = $2;', $userId, $provider);
 		if ($results->RecordCount() !== 1) {
 			return null;
 		}
 		
 		$accessToken = null;
 		$refreshToken = null;
-		$validUntil = null;
+		$expiration = null;
 		
 		try {
-			$key = BeaconCommon::GetGlobal('Sentinel OAuth Key');
+			$key = BeaconCommon::GetGlobal('OAuth Encryption Key');
 			$accessToken = BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('access_token')));
 			$refreshToken = BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('refresh_token')));
-			$validUntil = intval($results->Field('valid_until'));
+			$expiration = intval($results->Field('expiration'));
 		} catch (Exception $err) {
 			return null;
 		}
 		
-		return new static($userId, $provider, $accessToken, $refreshToken, $validUntil);
+		return new static($userId, $provider, $accessToken, $refreshToken, $expiration);
 	}
 	
 	public static function Begin(string $provider, string $state): string {
@@ -84,16 +84,18 @@ class OAuth implements JsonSerializable {
 			throw new Exception("Unknown provider $provider.");
 		}
 		
+		$clientId = static::ClientId($provider);
+		
 		switch ($provider) {
 		case self::ProviderNitrado:
-			return 'https://oauth.nitrado.net/oauth/v2/auth?redirect_uri=' . urlencode(static::RedirectURI()) . '&client_id=' . urlencode(BeaconCommon::GetGlobal('Nitrado_Client_ID')) . '&response_type=code&scope=service&state=' . urlencode($state);
+			return 'https://oauth.nitrado.net/oauth/v2/auth?redirect_uri=' . urlencode(static::RedirectURI()) . '&client_id=' . urlencode($clientId) . '&response_type=code&scope=service&state=' . urlencode($state);
 		}
 	}
 	
 	public static function Complete(string $userId, string $provider, string $code): OAuth {
 		$fields = [
 			'grant_type=authorization_code',
-			'client_id=' . urlencode(static::ClientID($provider)),
+			'client_id=' . urlencode(static::ClientId($provider)),
 			'client_secret=' . urlencode(static::ClientSecret($provider)),
 			'code=' . urlencode($code)
 		];
@@ -105,18 +107,18 @@ class OAuth implements JsonSerializable {
 	
 	public static function RefreshExpiring(): void {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT user_id, provider, access_token, EXTRACT(EPOCH FROM valid_until) AS valid_until, refresh_token FROM sentinel.oauth_tokens WHERE valid_until < CURRENT_TIMESTAMP + $1::INTERVAL;', "${self::ExpirationBuffer} seconds");
+		$results = $database->Query('SELECT user_id, provider, access_token, EXTRACT(EPOCH FROM expiration) AS expiration, refresh_token FROM public.oauth_tokens WHERE expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', "${self::ExpirationBuffer} seconds");
 		
 		while (!$results->EOF()) {
 			try {
-				$key = BeaconCommon::GetGlobal('Sentinel OAuth Key');
+				$key = BeaconCommon::GetGlobal('OAuth Encryption Key');
 				$userId = $results->Field('user_id');
 				$provider = $results->Field('provider');
 				$accessToken = BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('access_token')));
 				$refreshToken = BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('refresh_token')));
-				$validUntil = intval($results->Field('valid_until'));
+				$expiration = intval($results->Field('expiration'));
 				
-				$oauth = new static($userId, $provider, $accessToken, $refreshToken, $validUntil);
+				$oauth = new static($userId, $provider, $accessToken, $refreshToken, $expiration);
 				$oauth->Refresh(true);
 			} catch (Exception $err) {
 			}
@@ -140,16 +142,16 @@ class OAuth implements JsonSerializable {
 		return $this->refreshToken;
 	}
 	
-	public function ValidUntil(): int {
-		return $this->validUntil;
+	public function Expiration(): int {
+		return $this->expiration;
 	}
 	
 	public function IsExpiring(): bool {
-		return $this->validUntil < time() + self::ExpirationBuffer;
+		return $this->expiration < time() + self::ExpirationBuffer;
 	}
 	
 	public function IsExpired(): bool {
-		return $this->validUntil < time();
+		return $this->expiration < time();
 	}
 	
 	public function jsonSerialize(): mixed {
@@ -158,7 +160,7 @@ class OAuth implements JsonSerializable {
 			'provider' => $this->provider,
 			'accessToken' => $this->accessToken,
 			'refreshToken' => $this->refreshToken,
-			'validUntil' => $this->validUntil,
+			'expiration' => $this->expiration,
 			'expired' => $this->IsExpired()
 		];
 	}
@@ -225,7 +227,7 @@ class OAuth implements JsonSerializable {
 		if ($status === 204) {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
-			$database->Query('DELETE FROM sentinel.oauth_tokens WHERE user_id = $1 AND provider = $2;', $this->userId, $this->provider);
+			$database->Query('DELETE FROM public.oauth_tokens WHERE user_id = $1 AND provider = $2;', $this->userId, $this->provider);
 			$database->Commit();
 		}
 	}
@@ -251,7 +253,7 @@ class OAuth implements JsonSerializable {
 		
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query('INSERT INTO sentinel.oauth_tokens (user_id, provider, access_token, valid_until, refresh_token) VALUES ($1, $2, $3, CURRENT_TIMESTAMP(0) + $4::INTERVAL, $5) ON CONFLICT (user_id, provider) DO UPDATE SET access_token = EXCLUDED.access_token, valid_until = EXCLUDED.valid_until, refresh_token = EXCLUDED.refresh_token;', $userId, $provider, $accessToken, "$expiresIn seconds", $refreshToken);
+		$database->Query('INSERT INTO public.oauth_tokens (user_id, provider, access_token, expiration, refresh_token) VALUES ($1, $2, $3, CURRENT_TIMESTAMP(0) + $4::INTERVAL, $5) ON CONFLICT (user_id, provider) DO UPDATE SET access_token = EXCLUDED.access_token, expiration = EXCLUDED.expiration, refresh_token = EXCLUDED.refresh_token;', $userId, $provider, $accessToken, "$expiresIn seconds", $refreshToken);
 		$database->Commit();
 	}
 }

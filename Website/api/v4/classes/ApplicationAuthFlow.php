@@ -88,9 +88,9 @@ class ApplicationAuthFlow extends DatabaseObject {
 			}
 		}
 		
-		if (in_array(Application::kScopeUserPrivateKey, $scopes)) {
+		if (in_array(Application::kScopeUsersPrivateKeyRead, $scopes)) {
 			if (is_null($publicKey)) {
-				throw new Exception('An RSA public key must be included when using the ' . Application::kScopeUserPrivateKey . ' scope.');
+				throw new Exception('An RSA public key must be included when using the ' . Application::kScopeUsersPrivateKeyRead . ' scope.');
 			}
 			
 			// Do a test encrypt to make sure the key is valid
@@ -179,7 +179,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		}
 		
 		$privateKey = null;
-		if ($this->HasScope(Application::kScopeUserPrivateKey)) {
+		if ($this->HasScope(Application::kScopeUsersPrivateKeyRead)) {
 			try {
 				if (is_string($userPassword)) {
 					$privateKey = $user->DecryptPrivateKey($userPassword);

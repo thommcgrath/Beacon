@@ -210,7 +210,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 			null
 		];
 		
-		if (in_array(Application::kScopeUserPrivateKey, $scopes)) {
+		if (in_array(Application::kScopeUsersPrivateKeyRead, $scopes)) {
 			$values[12] = $privateKey;
 		}
 		

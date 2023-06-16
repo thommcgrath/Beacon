@@ -24,15 +24,15 @@ class Application extends DatabaseObject implements JsonSerializable {
 	const kScopeUsersRead = 'users:read';
 	const kScopeUsersUpdate = 'users:update';
 	const kScopeUsersDelete = 'users:delete';
-	const kScopeUserPrivateKey = 'user:private_key';
-	const kScopeSentinelLogsRead = 'sentinel_logs:read';
-	const kScopeSentinelLogsUpdate = 'sentinel_logs:update';
-	const kScopeSentinelPlayersRead = 'sentinel_players:read';
-	const kScopeSentinelPlayersUpdate = 'sentinel_players:update';
-	const kScopeSentinelServicesCreate = 'sentinel_services:create';
-	const kScopeSentinelServicesRead = 'sentinel_services:read';
-	const kScopeSentinelServicesUpdate = 'sentinel_services:update';
-	const kScopeSentinelServicesDelete = 'sentinel_services:delete';
+	const kScopeUsersPrivateKeyRead = 'users.private_key:read';
+	const kScopeSentinelLogsRead = 'sentinel.logs:read';
+	const kScopeSentinelLogsUpdate = 'sentinel.logs:update';
+	const kScopeSentinelPlayersRead = 'sentinel.players:read';
+	const kScopeSentinelPlayersUpdate = 'sentinel.players:update';
+	const kScopeSentinelServicesCreate = 'sentinel.services:create';
+	const kScopeSentinelServicesRead = 'sentinel.services:read';
+	const kScopeSentinelServicesUpdate = 'sentinel.services:update';
+	const kScopeSentinelServicesDelete = 'sentinel.services:delete';
 	
 	public static function ValidScopes(): array {
 		return [
@@ -45,7 +45,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeUsersRead,
 			self::kScopeUsersUpdate,
 			self::kScopeUsersDelete,
-			self::kScopeUserPrivateKey,
+			self::kScopeUsersPrivateKeyRead,
 			self::kScopeSentinelLogsRead,
 			self::kScopeSentinelLogsUpdate,
 			self::kScopeSentinelPlayersRead,
@@ -62,7 +62,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 			self::kScopeUsersCreate,
 			self::kScopeUsersUpdate,
 			self::kScopeUsersDelete,
-			self::kScopeUserPrivateKey,
+			self::kScopeUsersPrivateKeyRead,
 			self::kScopeAppsCreate,
 			self::kScopeAppsRead,
 			self::kScopeAppsUpdate,

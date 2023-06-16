@@ -47,7 +47,7 @@ class BeaconLogin {
 		
 		$flowRequiresPassword = false;
 		if (is_null($flow) === false) {
-			$flowRequiresPassword = $flow->HasScope(Application::kScopeUserPrivateKey);
+			$flowRequiresPassword = $flow->HasScope(Application::kScopeUsersPrivateKeyRead);
 			$params['flowRequiresPassword'] = $flowRequiresPassword;
 		}
 		
