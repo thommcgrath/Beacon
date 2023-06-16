@@ -459,8 +459,9 @@ class User implements \JsonSerializable {
 			return false;
 		}
 		
-		if (\BeaconAPI::UsesLegacyEncryption() === false && strtolower(substr($decrypted, 0, 4)) === '8a01') {
+		if (\BeaconAPI::UsesLegacyEncryption() === false && strtolower(substr($this->private_key, 0, 4)) === '8a01') {
 			$this->SetDecryptedPrivateKey($password, $decrypted, \BeaconAPI::UsesLegacyEncryption());
+			$this->Commit();
 		}
 		
 		return true;
