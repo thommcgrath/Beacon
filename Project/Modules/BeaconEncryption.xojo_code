@@ -242,6 +242,7 @@ Protected Module BeaconEncryption
 		    Key = FixSymmetricKey(Key, Crypt.KeyLength)
 		  Case 1
 		    Crypt = CipherMBS.bf_cbc
+		    Crypt.ZeroPaddingKey = False
 		  End Select
 		  
 		  If Not Crypt.DecryptInit(Key, Header.Vector) Then
@@ -282,6 +283,7 @@ Protected Module BeaconEncryption
 		    Key = FixSymmetricKey(Key, Crypt.KeyLength)
 		  Case 1
 		    Crypt = CipherMBS.bf_cbc
+		    Crypt.ZeroPaddingKey = False
 		  Else
 		    Var Err As New CryptoException
 		    Err.Message = "Unknown symmetric version " + Version.ToString
