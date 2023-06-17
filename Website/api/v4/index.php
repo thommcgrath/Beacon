@@ -75,6 +75,14 @@ Core::RegisterRoutes(
 		'/projects/{projectId}/Game.ini' => [
 			'GET' => 'projects/generate'
 		],
+		'/projects/{projectId}/guests' => [
+			'GET' => 'projects/guests/list'
+		],
+		'/projects/{projectId}/guests/{userId}' => [
+			'GET' => 'projects/guests/get',
+			'PUT' => 'projects/guests/create',
+			'DELETE' => 'projects/guests/delete'
+		],
 		'/projects/{projectId}/metadata' => [
 			'GET' => 'projects/get'
 		],

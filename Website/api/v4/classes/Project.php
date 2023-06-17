@@ -493,42 +493,6 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$ownerId = $user->UserId();
 		}
 		
-		$guest_ids_to_add = [];
-		$guest_ids_to_remove = [];
-		if (isset($project['EncryptionKeys']) && is_array($project['EncryptionKeys']) && BeaconCommon::IsAssoc($project['EncryptionKeys'])) {
-			$encryption_keys = $project['EncryptionKeys'];
-			$allowed_users_ids = array_keys($encryption_keys);
-			
-			$desired_guest_ids = [];
-			foreach ($allowed_user_ids as $allowed_user_id) {
-				if (strtolower($allowed_user_id) === strtolower($ownerId)) {
-					continue;
-				}
-				
-				$allowed_user = User::Fetch($allowed_user_id);
-				if (is_null($allowed_user)) {
-					continue;
-				}
-				
-				$desired_guest_ids[] = $allowed_user->UserId();
-			}
-			
-			$current_guest_ids = [];
-			$results = $database->Query('SELECT user_id FROM ' . $schema->Schema() . '.guest_projects WHERE project_id = $1;', $projectId);
-			while (!$results->EOF()) {
-				$current_guest_ids[] = $results->Field('user_id');
-				$results->MoveNext();
-			}
-			
-			$guest_ids_to_add = array_diff($desired_guest_ids, $current_guest_ids);
-			$guest_ids_to_remove = array_diff($current_guest_ids, $desired_guest_ids);
-			
-			if ($role !== 'Owner' && (count($guest_ids_to_add) > 0 || count($guest_ids_to_remove) > 0)) {
-				$reason = 'Only the owner may add or remove users.';
-				return false;
-			}
-		}
-		
 		if (BeaconCloudStorage::PutFile($storagePath, $contents) === false) {
 			$reason = 'Unable to upload project to cloud storage platform.';
 			return false;
@@ -570,12 +534,6 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				}
 				
 				$database->Query('UPDATE ' . $schema->Table() . ' SET ' . implode(', ', $assignments) . ' WHERE project_id = $1 AND user_id = $2;', $values);
-			}
-			foreach ($guest_ids_to_add as $guest_id) {
-				$database->Query('INSERT INTO ' . $schema->Schema() . '.guest_projects (project_id, user_id) VALUES ($1, $2);', $projectId, $guest_id);
-			}
-			foreach ($guest_ids_to_remove as $guest_id) {
-				$database->Query('DELETE FROM ' . $schema->Schema() . '.guest_projects WHERE project_id = $1 AND user_id = $2;', $projectId, $guest_id);
 			}
 			$database->Commit();
 		} catch (Exception $err) {
