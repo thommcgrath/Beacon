@@ -2699,6 +2699,11 @@ input.no-stepper {
 	}
 }
 
+.beacon-engram-mod-name {
+	font-size: $font-size-sm;
+	color: rgba($foreground-color, 50%);
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;
