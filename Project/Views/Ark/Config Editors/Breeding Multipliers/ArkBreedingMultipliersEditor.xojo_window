@@ -2189,12 +2189,40 @@ End
 		    End If
 		  Case "ShareLinkButton"
 		    Var Config As Ark.Configs.BreedingMultipliers = Self.Config(False)
+		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    Var Format As String = "0.0#######"
-		    Var MatureSpeedMultiplier As String = Config.BabyMatureSpeedMultiplier.ToString(Format)
-		    Var IncubationSpeedMultiplier As String = Config.EggHatchSpeedMultiplier.ToString(Format)
-		    Var ImprintPeriodMultiplier As String = Config.BabyCuddleIntervalMultiplier.ToString(Format)
-		    Var ImprintAmountMultiplier As String = Config.BabyImprintAmountMultiplier.ToString(Format)
-		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier) + "&iam=" + EncodeURLComponent(ImprintAmountMultiplier)))
+		    Var Components As New Beacon.StringList
+		    If Config.BabyMatureSpeedMultiplier <> 1.0 Then
+		      Components.Append("msm=" + EncodeURLComponent(Config.BabyMatureSpeedMultiplier.ToString(Format)))
+		    End If
+		    If Config.EggHatchSpeedMultiplier <> 1.0 Then
+		      Components.Append("ism=" + EncodeURLComponent(Config.EggHatchSpeedMultiplier.ToString(Format)))
+		    End If
+		    If Config.BabyCuddleIntervalMultiplier <> 1.0 Then
+		      Components.Append("ipm=" + EncodeURLComponent(Config.BabyCuddleIntervalMultiplier.ToString(Format)))
+		    End If
+		    If Config.BabyImprintAmountMultiplier <> 1.0 Then
+		      Components.Append("iam=" + EncodeURLComponent(Config.BabyImprintAmountMultiplier.ToString(Format)))
+		    End If
+		    
+		    Var ContentPackIds As Beacon.StringList = Self.Project.ContentPacks
+		    Var SteamIds As New Beacon.StringList
+		    For Each ContentPackId As String In ContentPackIds
+		      Var ContentPack As Ark.ContentPack = DataSource.GetContentPackWithUUID(ContentPackId)
+		      If ContentPack.IsLocal = False And ContentPack.Type = Ark.ContentPack.Types.Steam And (ContentPack.WorkshopID Is Nil) = False Then
+		        SteamIds.Append(ContentPack.WorkshopID)
+		      End If
+		    Next
+		    If SteamIds.Count > 0 Then
+		      Components.Append("m=" + EncodeURLComponent(SteamIds.Join(",")))
+		    End If
+		    
+		    Var Url As String = Beacon.WebURL("/tools/breeding")
+		    If Components.Count > 0 Then
+		      Url = Url + "?" + Components.Join("&")
+		    End If
+		    
+		    LinkSharingDialog.Present(Self, Url)
 		  Case "BaselineButton"
 		    Var Base As New DesktopMenuItem
 		    

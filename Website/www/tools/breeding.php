@@ -9,6 +9,15 @@ $ipm = isset($_GET['ipm']) ? floatval($_GET['ipm']) : 1.0;
 $ism = isset($_GET['ism']) ? floatval($_GET['ism']) : 1.0;
 $iam = isset($_GET['iam']) ? floatval($_GET['iam']) : 1.0;
 
+$steamIds = [];
+$m = isset($_GET['m']) ? explode(',', $_GET['m']) : [];
+for ($idx = 0; $idx < count($m); $idx++) {
+	$id = filter_var($m[$idx], FILTER_VALIDATE_INT);
+	if ($id !== false) {
+		$steamIds[] = $id;
+	}
+}
+
 $msm = ($msm > 0) ? $msm : 1.0;
 $ipm = ($ipm > 0) ? $ipm : 1.0;
 $ism = ($ism > 0) ? $ism : 1.0;
@@ -60,8 +69,8 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 	<tbody>
 		<?php
 			
-		$cache_key = 'breeding:msm=' . number_format($msm, 8) . ';ipm=' . number_format($ipm, 8) . ';ism=' . number_format($ism, 8) . ';iam=' . number_format($iam, 8);
-		$cached = BeaconCache::Get($cache_key);
+		$cache_key = 'breeding:msm=' . number_format($msm, 8) . ';ipm=' . number_format($ipm, 8) . ';ism=' . number_format($ism, 8) . ';iam=' . number_format($iam, 8) . ';m=' . implode(',', $steamIds);
+		$cached = null;//BeaconCache::Get($cache_key);
 		
 		if (is_null($cached)) {
 			ob_start();
@@ -70,7 +79,9 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 			$min_version = $results->Field('newest_build');
 			
 			$officialPacks = ContentPack::Search(['minVersion' => $min_version, 'isOfficial' => true], true);
-			$creatures = Creature::Search(['minVersion' => $min_version, 'contentPackId' => $officialPacks], true);
+			$showModNames = count($steamIds) > 0;
+			$combinedPacks = array_merge($officialPacks, $steamIds);
+			$creatures = Creature::Search(['minVersion' => $min_version, 'contentPackId' => $combinedPacks], true);
 			foreach ($creatures as $creature) {
 				if (is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
 					continue;
@@ -95,9 +106,14 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 					$cuddle_text = number_format($per_cuddle * 100, 0) . '% ea / ' . $max_cuddles . ' total';
 				}
 				
-				$incubation_text = BeaconCommon::SecondsToEnglish($incubation_seconds, true);
-				$mature_text = BeaconCommon::SecondsToEnglish($mature_seconds, true);
-				echo '<tr><td>' . htmlentities($creature->Label()) . '<span class="narrow-only text-lighter"><br><strong>Incubation Time:</strong> ' . htmlentities($incubation_text) . '<br><strong>Mature Time:</strong> ' . htmlentities($mature_text) . '<br><strong>Imprinting:</strong> ' . htmlentities($cuddle_text) . '</span></td><td class="wide-only">' . htmlentities($incubation_text) . '</td><td class="wide-only">' . htmlentities($mature_text) . '</td><td class="wide-only">' . htmlentities($cuddle_text) . '</td></tr>';
+				$label = htmlentities($creature->Label());
+				if ($showModNames) {
+					$label .= '<span class="beacon-engram-mod-name"><br>' . htmlentities($creature->ContentPackName()) . '</span>';
+				}
+				
+				$incubation_text = BeaconCommon::SecondsToEnglish(round($incubation_seconds), true);
+				$mature_text = BeaconCommon::SecondsToEnglish(round($mature_seconds), true);
+				echo '<tr><td>' . $label . '<span class="narrow-only text-lighter"><br><strong>Incubation Time:</strong> ' . htmlentities($incubation_text) . '<br><strong>Mature Time:</strong> ' . htmlentities($mature_text) . '<br><strong>Imprinting:</strong> ' . htmlentities($cuddle_text) . '</span></td><td class="wide-only">' . htmlentities($incubation_text) . '</td><td class="wide-only">' . htmlentities($mature_text) . '</td><td class="wide-only">' . htmlentities($cuddle_text) . '</td></tr>';
 			}
 			
 			$cached = ob_get_contents();

@@ -287,8 +287,8 @@ class Generator {
 			sprintf('MaxQuantity=%u', $max_quantity),
 			sprintf('bForceBlueprint=%s', $blueprint_chance >= 1 ? 'true' : 'false'),
 			sprintf('ChanceToBeBlueprintOverride=%F', $blueprint_chance),
-			sprintf('MinQuality=%F', $this->QualityTagToValue($min_quality_tag, $source->MultiplierMin())),
-			sprintf('MaxQuality=%F', $this->QualityTagToValue($max_quality_tag, $source->MultiplierMax())),
+			sprintf('MinQuality=%F', $this->QualityTagToValue($min_quality_tag, $source->MultiplierMin() ?? 1.0)),
+			sprintf('MaxQuality=%F', $this->QualityTagToValue($max_quality_tag, $source->MultiplierMax() ?? 1.0)),
 			sprintf('ItemClassStrings=(%s)', implode(',', $classes)),
 			sprintf('ItemsWeights=(%s)', implode(',', $relative_weights))
 		];
