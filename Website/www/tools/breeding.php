@@ -120,8 +120,8 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 					$label .= '<span class="beacon-engram-mod-name"><br>' . htmlentities($creature->ModName()) . '</span>';
 				}
 				
-				$incubation_text = BeaconCommon::SecondsToEnglish($incubation_seconds, true);
-				$mature_text = BeaconCommon::SecondsToEnglish($mature_seconds, true);
+				$incubation_text = BeaconCommon::SecondsToEnglish(round($incubation_seconds), true);
+				$mature_text = BeaconCommon::SecondsToEnglish(round($mature_seconds), true);
 				echo '<tr><td>' . $label . '<span class="narrow-only text-lighter"><br><strong>Incubation Time:</strong> ' . htmlentities($incubation_text) . '<br><strong>Mature Time:</strong> ' . htmlentities($mature_text) . '<br><strong>Imprinting:</strong> ' . htmlentities($cuddle_text) . '</span></td><td class="wide-only">' . htmlentities($incubation_text) . '</td><td class="wide-only">' . htmlentities($mature_text) . '</td><td class="wide-only">' . htmlentities($cuddle_text) . '</td></tr>';
 			}
 			
