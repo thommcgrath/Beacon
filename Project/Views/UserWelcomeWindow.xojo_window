@@ -2081,7 +2081,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function IsPresent() As Boolean
-		  Return (mInstance Is Nil) = False
+		  Return mIsPresent
 		End Function
 	#tag EndMethod
 
@@ -2116,13 +2116,14 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(LoginOnly As Boolean, ExecuteAfterPresent As UserWelcomeWindow.ExecuteAfterPresentDelegate = Nil)
-		  If (mInstance Is Nil) = False Or (Thread.Current Is Nil) = False Then
+		  If mIsPresent = True Or (Thread.Current Is Nil) = False Then
 		    Return
 		  End If
 		  
-		  mInstance = New UserWelcomeWindow(LoginOnly, ExecuteAfterPresent)
-		  mInstance.ShowModal()
-		  mInstance = Nil
+		  mIsPresent = True
+		  Var Win As New UserWelcomeWindow(LoginOnly, ExecuteAfterPresent)
+		  Win.ShowModal()
+		  mIsPresent = False
 		End Sub
 	#tag EndMethod
 
@@ -2323,7 +2324,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared mInstance As UserWelcomeWindow
+		Private Shared mIsPresent As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

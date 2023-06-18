@@ -176,6 +176,9 @@ Protected Module Tests
 		  TestSymmetricEncryption(32) // Too much for blowfish, perfect for aes
 		  TestSymmetricEncryption(40) // Too much for both
 		  
+		  // These values come from from Beacon with a small key size
+		  TestEncryptionPortability("beacon-small-key", "MTIzNDU2Nzg=", "a49cca4c-e54e-409e-8ff2-bfb975880277", "igFksmQ/OMMlfAAAACSrekGOXwt+4f3YWLm++2XmjFken3KKQ5UpTvfs/YFow5rKlFbNcJbYjo+tgA==", "igKD8tXIBZlOmV2wcHDRjX6jAAAAJKt6QY4hPbD7RIv9ExD9QrJE2C5NCr5KexWjY8nIsvooO6CW8wacFrOYI0WGdTmUyXDydbs=")
+		  
 		  // These values come from PHP
 		  TestEncryptionPortability("php", "xNPUcwVM+TrisKjmQtYb6hQoYG+6LnCZYp2qZYgtqRSLSBSDOCZBvw==", "ecf83b98-8285-418f-88f8-5b789392b30b", "igHRJFCVtL2H3AAAACS1SWEOrO2a2eul3N+cB4GhmCOETi4lqt/z8vyQfP6uWxRvnYsDDd5O9dHe1A==", "igLzyZkDYLaDRNUhYYWH0X12AAAAJLVJYQ7pVEuanCARqgMPPGVcQkKvdS3HXW461MbYN9/ooG88LzXClOHYRUE8arDyI7mhhEQ=")
 		  
