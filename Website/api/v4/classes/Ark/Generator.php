@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\Project;
-use BeaconCommon;
+use BeaconCommon, Exception;
 
 class Generator {
 	protected Project $project;

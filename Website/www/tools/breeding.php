@@ -70,7 +70,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 		<?php
 			
 		$cache_key = 'breeding:msm=' . number_format($msm, 8) . ';ipm=' . number_format($ipm, 8) . ';ism=' . number_format($ism, 8) . ';iam=' . number_format($iam, 8) . ';m=' . implode(',', $steamIds);
-		$cached = null;//BeaconCache::Get($cache_key);
+		$cached = BeaconCache::Get($cache_key);
 		
 		if (is_null($cached)) {
 			ob_start();

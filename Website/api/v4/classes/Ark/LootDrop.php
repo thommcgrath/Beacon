@@ -5,19 +5,19 @@ use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchPa
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
 class LootDrop extends Blueprint {
-	protected $multiplierMin;
-	protected $multiplierMax;
-	protected $uiColor;
-	protected $iconId;
-	protected $sortOrder;
-	protected $experimental;
-	protected $notes;
-	protected $requirements = '{}';
-	protected $simpleLabel;
-	protected $minItemSets = 1;
-	protected $maxItemSets = 1;
-	protected $preventDuplicates = true;
-	protected $itemSets = null;
+	protected float $multiplierMin = 1.0;
+	protected float $multiplierMax = 1.0;
+	protected string $uiColor = 'FFFFFF00';
+	protected string $iconId = '84d76c41-4386-467d-83e7-841dcaa4007d';
+	protected int $sortOrder = 999;
+	protected bool $experimental = false;
+	protected string $notes = '';
+	protected string $requirements = '{}';
+	protected ?string $simpleLabel = null;
+	protected in $minItemSets = 1;
+	protected in $maxItemSets = 1;
+	protected bool $preventDuplicates = true;
+	protected ?array $itemSets = null;
 	
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
