@@ -1,50 +1,45 @@
 <?php
 
-if (empty($_REQUEST['document_id'])) {
+if (empty($_REQUEST['projectId'])) {
 	header('Location: /browse/');
 	exit;
 }
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
-$project_id = $_REQUEST['document_id'];
-$search_keys = array(
-	'public' => true,
-	'document_id' => $project_id
-);
+use BeaconAPI\v4\Project;
+use BeaconAPI\v4\Ark\Generator;
 
-$projects = \Ark\Project::Search($search_keys);
-if (count($projects) != 1) {
+$projectId = $_REQUEST['projectId'];
+$project = Project::Fetch($projectId);
+if (is_null($project) || $project->IsPublic() === false) {
 	http_response_code(404);
-	BeaconTemplate::SetTitle('Document Not Found');
-	echo '<h1>Document not found</h1><p><a href="/browse/">Browse community documents</a></p>';
+	BeaconTemplate::SetTitle('Project Not Found');
+	echo '<h1>Project not found</h1><p><a href="/browse/">Browse community projects</a></p>';
 	exit;
 }
 
-$project = $projects[0];
-
-$generator = new \Ark\Generator($project);
-if (array_key_exists('quality_scale', $_REQUEST)) {
-	$generator->SetQualityScale(floatval($_REQUEST['quality_scale']));
+$generator = new Generator($project);
+if (array_key_exists('qualityScale', $_REQUEST)) {
+	$generator->SetQualityScale(floatval($_REQUEST['qualityScale']));
 }
-if (array_key_exists('difficulty_value', $_REQUEST)) {
-	$generator->SetDifficultyValue(floatval($_REQUEST['difficulty_value']));
+if (array_key_exists('difficultyValue', $_REQUEST)) {
+	$generator->SetDifficultyValue(floatval($_REQUEST['difficultyValue']));
 }
-if (array_key_exists('map_mask', $_REQUEST)) {
-	$generator->SetMapMask(intval($_REQUEST['map_mask']));
+if (array_key_exists('mapMask', $_REQUEST)) {
+	$generator->SetMapMask(intval($_REQUEST['mapMask']));
 }
 
-$original_ini = '';
+$originalIni = '';
 if (isset($_FILES['content'])) {
 	if (is_uploaded_file($_FILES['content']['tmp_name'])) {
-		$original_ini = file_get_contents($_FILES['content']['tmp_name']);
+		$originalIni = file_get_contents($_FILES['content']['tmp_name']);
 	}
 } elseif (isset($_POST['content'])) {
-	$original_ini = $_POST['content'];
+	$originalIni = $_POST['content'];
 }
 
-$output = $generator->Generate($original_ini);
-
+$output = $generator->Generate($originalIni);
 $mode = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : 'inline';
 
 if ($mode === 'download') {
@@ -57,7 +52,6 @@ if ($mode === 'download') {
 	exit;
 }
 
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('clipboard-polyfill.js'));
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 
 ?><h1>Your Game.ini</h1>

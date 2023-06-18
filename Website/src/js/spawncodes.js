@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			
 			try {
-				clipboard.writeText(row.getAttribute('beacon-spawn-code'));
+				navigator.clipboard.writeText(row.getAttribute('beacon-spawn-code'));
 				
 				event.target.innerText = 'Copied!';
 				event.target.disabled = true;

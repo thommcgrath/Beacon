@@ -1,52 +1,45 @@
 <?php
 
-BeaconAPI::Authorize(true);
+use BeaconAPI\v4\{Core, Project, Response};
+use BeaconAPI\v4\Ark\Generator;
 
 function handleRequest(array $context): Response {
-	$project_id = $context['pathParameters']['project_id'];
-	if (\BeaconCommon::IsUUID($project_id) === false) {
-		BeaconAPI::ReplyError('Request a specific project', null, 400);
+	$projectId = $context['pathParameters']['projectId'];
+	if (BeaconCommon::IsUUID($projectId) === false) {
+		return Response::NewJsonError('Request a specific project.', null, 400);
 	}
 	
-	$projects = Ark\Project::GetByDocumentID($project_id);
-	if (count($projects) != 1) {
-		BeaconAPI::ReplyError('Project not found', null, 404);
+	$project = Project::Fetch($projectId);
+	if (is_null($project) || ($project->IsPublic() === false && $project->UserId() !== Core::UserID())) {
+		return Response::NewJsonError('Project not found.', null, 404);
 	}
-	$project = $projects[0];
-	
-	if ($project->IsPublic() && $project->UserID() !== BeaconAPI::UserID()) {
-		header('WWW-Authenticate: Basic realm="Beacon API"');
-		BeaconAPI::ReplyError('Unauthorized', null, 401);
+	if ($project->GameId() !== 'Ark') {
+		return Response::NewJsonError('Project is not an Ark project.', null, 400);
 	}
 	
-	$generator = new Ark\Generator($project);
-	if (isset($_REQUEST['quality_scale'])) {
-		$generator->SetQualityScale(floatval($_REQUEST['quality_scale']));
+	$generator = new Generator($project);
+	if (isset($_REQUEST['qualityScale'])) {
+		$generator->SetQualityScale(floatval($_REQUEST['qualityScale']));
 	}
-	if (isset($_REQUEST['difficulty_value'])) {
-		$generator->SetDifficultyValue(floatval($_REQUEST['difficulty_value']));
+	if (isset($_REQUEST['difficultyValue'])) {
+		$generator->SetDifficultyValue(floatval($_REQUEST['difficultyValue']));
 	}
-	if (isset($_REQUEST['map_mask'])) {
-		$generator->SetMapMask(intval($_REQUEST['map_mask']));
+	if (isset($_REQUEST['mapMask'])) {
+		$generator->SetMapMask(intval($_REQUEST['mapMask']));
 	}
 	
-	$original_ini = '';
-	if ($context['routeKey'] === 'POST /ark/generate/{project_id}') {
-		if (BeaconAPI::ContentType() === 'application/x-www-form-urlencoded' || BeaconAPI::ContentType() === 'multipart/form-data') {
+	$originalIni = '';
+	if ($context['routeKey'] === 'PUT /ark/projects/{projectId}/Game.ini') {
+		if (Core::ContentType() === 'application/x-www-form-urlencoded' || Core::ContentType() === 'multipart/form-data') {
 			if (isset($_POST['content'])) {
-				$original_ini = $_POST['content'];
+				$originalIni = $_POST['content'];
 			}
 		} else {
-			$original_ini = BeaconAPI::Body();
+			$originalIni = Core::Body();
 		}
 	}
 	
-	$output = $generator->Generate($original_ini);
-	
-	http_response_code(200);
-	header('Content-Type: text/plain');
-	header('Content-MD5: ' . md5($output));
-	ob_clean();
-	echo $output;
+	$output = $generator->Generate($originalIni);
+	return new Response(200, $output, ['Content-Type' => 'text/plain', 'Content-MD5' => md5($output)]);
 }
 

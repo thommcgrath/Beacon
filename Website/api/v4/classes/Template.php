@@ -46,7 +46,7 @@ class Template extends DatabaseObject implements \JsonSerializable {
 			'label' => $this->label,
 			'minVersion' => $this->minVersion,
 			'lastUpdate' => $this->lastUpdate,
-			'contents' => $this->contents
+			'contents' => base64_encode(gzencode($this->contents))
 		];
 	}
 	

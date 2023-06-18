@@ -1,6 +1,6 @@
 <?php
 
-if (empty($_GET['document_id'])) {
+if (empty($_GET['projectId'])) {
 	header('Location: /browse/');
 	exit;
 }
@@ -10,7 +10,7 @@ require(dirname(__FILE__, 3) . '/framework/loader.php');
 use BeaconAPI\v4\Ark\{Map, Project};
 use BeaconAPI\v4\User;
 
-$projectId = $_GET['projectId'] ?? $_GET['document_id'];
+$projectId = $_GET['projectId'] ?? $_GET['projectId'];
 $project = Project::Fetch($projectId);
 if (is_null($project) || $project->IsPublic() === false) {
 	http_response_code(404);
@@ -136,7 +136,7 @@ $baseUrl = BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->Pro
 	<p>Create a customized Game.ini from this project.</p>
 	<div id="mode_tabs"><div id="mode_tabs_new" class="selected">Create New</div><div id="mode_tabs_paste">Paste Text</div><div id="mode_tabs_upload">Upload File</div></div>
 	<div id="mode_customizations">
-		<input type="hidden" id="map_mask" name="map_mask" value="<?php echo ($mapFilter & $project->MapMask()); ?>">
+		<input type="hidden" id="map_mask" name="mapMask" value="<?php echo ($mapFilter & $project->MapMask()); ?>">
 		<table id="options_table">
 		<?php if (count($maps) > 1) { ?><tr><td class="label">Include Maps:</td><td><?php
 		
@@ -155,8 +155,8 @@ $baseUrl = BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->Pro
 		<div id="mode_view_new">
 			<p>This option creates a new Game.ini from scratch. Use this if your server has no customizations.</p>
 			<form action="generate" method="get">
-				<input type="hidden" name="document_id" value="<?php echo htmlentities($project->ProjectID()); ?>">
-				<input type="hidden" name="difficulty_value" value="" id="create_difficulty_value">
+				<input type="hidden" name="projectId" value="<?php echo htmlentities($project->ProjectID()); ?>">
+				<input type="hidden" name="difficultyValue" value="" id="create_difficulty_value">
 				<p class="text-center">
 					<div class="input-radio"><input type="radio" name="mode" value="inline" id="create_inline_check" checked><label for="create_inline_check">Show new Game.ini in browser</label></div>
 					<div class="input-radio"><input type="radio" name="mode" value="download" id="create_download_check"><label for="create_download_check">Download new Game.ini</label></div>
@@ -167,9 +167,9 @@ $baseUrl = BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->Pro
 		<div id="mode_view_paste">
 			<p>Paste your current Game.ini here and a customized version will be produced for you.</p>
 			<form action="generate" method="post">
-				<input type="hidden" name="document_id" value="<?php echo htmlentities($project->ProjectID()); ?>">
+				<input type="hidden" name="projectId" value="<?php echo htmlentities($project->ProjectID()); ?>">
 				<input type="hidden" name="mode" value="inline">
-				<input type="hidden" name="difficulty_value" value="" id="paste_difficulty_value">
+				<input type="hidden" name="difficultyValue" value="" id="paste_difficulty_value">
 				<textarea name="content" rows="20" wrap="off"></textarea>
 				<p class="text-center"><input type="submit" value="Generate"></p>
 			</form>
@@ -177,9 +177,9 @@ $baseUrl = BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->Pro
 		<div id="mode_view_upload">
 			<p>Upload your current Game.ini to download a customized version.</p>
 			<form action="generate" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="document_id" value="<?php echo htmlentities($project->ProjectID()); ?>">
+				<input type="hidden" name="projectId" value="<?php echo htmlentities($project->ProjectID()); ?>">
 				<input type="hidden" name="mode" value="download">
-				<input type="hidden" name="difficulty_value" value="" id="upload_difficulty_value">
+				<input type="hidden" name="difficultyValue" value="" id="upload_difficulty_value">
 				<input type="file" name="content" accept=".ini" id="upload_file_selector">
 				<p class="text-center"><input type="submit" id="upload_file_selector_button" value="Choose File"></p>
 			</form>

@@ -18,15 +18,12 @@ Core::RegisterRoutes(
 		'/applications/{applicationId}/avatar' => [
 			'PUT' => 'applications/avatar'
 		],
-		'/ark/projects/{projectId}/generatedLines' => [
+		'/ark/contentPacks/{contentPackId}/confirm' => [
+			'GET' => 'ark/confirmContentPack'
+		],
+		'/ark/projects/{projectId}/Game.ini' => [
 			'GET' => 'ark/generate',
-			'POST' => 'ark/generate'
-		],
-		'/ark/mods/{modId}/checkConfirmation' => [
-			'GET' => 'ark/mods/confirm'
-		],
-		'/ark/mods/{modId}/engrams' => [
-			'GET' => 'ark/engrams/list'
+			'PUT' => 'ark/generate'
 		],
 		'/authenticators' => [
 			'POST' => 'authenticators/create',
@@ -71,9 +68,6 @@ Core::RegisterRoutes(
 			'PATCH' => 'projects/edit',
 			'DELETE' => 'projects/delete',
 			'HEAD' => 'projects/exists'
-		],
-		'/projects/{projectId}/Game.ini' => [
-			'GET' => 'projects/generate'
 		],
 		'/projects/{projectId}/guests' => [
 			'GET' => 'projects/guests/list'
@@ -124,9 +118,6 @@ Core::RegisterRoutes(
 		],
 		'/users/{userId}/merge' => [
 			'POST' => 'users/merge'
-		],
-		'/users/{userId}/ark/mods' => [
-			'GET' => 'ark/mods/list'
 		],
 		'/users/{userId}/projects' => [
 			'GET' => 'projects/list'

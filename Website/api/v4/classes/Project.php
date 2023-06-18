@@ -317,7 +317,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		return $content_key;
 	}	
 	
-	public function Content(bool $compressed = false, bool $parsed = true, $version_id = null): string {
+	public function Content(bool $compressed = false, bool $parsed = true, $version_id = null): string|array {
 		try {
 			$content_key = $this->PreloadContent($version_id);
 		} catch (Exception $err) {

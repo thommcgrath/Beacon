@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			var cell = document.getElementById('content_output');
 			if (cell) {
 				try {
-					clipboard.writeText(cell.value);
+					navigator.clipboard.writeText(cell.value);
 					event.target.innerText = 'Copied!';
 					event.target.disabled = true;
 					setTimeout(function() {
