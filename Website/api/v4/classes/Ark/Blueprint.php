@@ -5,9 +5,9 @@ use BeaconAPI\v4\{DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParamete
 use BeaconCommon, BeaconRecordSet, DateTime;
 
 class Blueprint extends GenericObject {
-	protected $availability;
-	protected $path;
-	protected $classString;
+	protected int $availability;
+	protected string $path;
+	protected string $classString;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
@@ -202,7 +202,7 @@ class Blueprint extends GenericObject {
 		return $class . '_C';
 	}
 	
-	public function RelatedObjectIDs(): array {
+	public function RelatedObjectIds(): array {
 		return [];
 	}
 	

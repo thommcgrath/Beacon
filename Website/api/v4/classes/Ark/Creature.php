@@ -5,12 +5,12 @@ use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema};
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
 class Creature extends Blueprint {
-	protected $incubationTime = null;
-	protected $matureTime = null;
-	protected $stats = null;
-	protected $usedStats = 0;
-	protected $minMatingInterval = null;
-	protected $maxMatingInterval = null;
+	protected ?int $incubationTime;
+	protected ?int $matureTime;
+	protected ?array $stats;
+	protected ?int $usedStats;
+	protected ?int $minMatingInterval;
+	protected ?int $maxMatingInterval;
 	
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
@@ -236,7 +236,7 @@ class Creature extends Blueprint {
 		return 'cheat spawndino ' . $this->classString . ' 1 1 1 30';
 	}
 	
-	public function RelatedObjectIDs(): array {
+	public function RelatedObjectIds(): array {
 		$database = BeaconCommon::Database();
 		$arr = [];
 		$results = $database->Query('SELECT engram_id FROM ark.creature_engrams WHERE creature_id = $1;', $this->UUID());

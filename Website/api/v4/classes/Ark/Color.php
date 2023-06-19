@@ -2,13 +2,13 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
-use BeaconCommon, BeaconRecordSet, DateTime;
+use BeaconCommon, BeaconRecordSet, DateTime, JsonSerializable;
 
-class Color extends DatabaseObject implements \JsonSerializable {
-	protected $colorId;
-	protected $name;
-	protected $code;
-	protected $lastUpdate;
+class Color extends DatabaseObject implements JsonSerializable {
+	protected int $colorId;
+	protected string $name;
+	protected string $code;
+	protected string $lastUpdate;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->colorId = intval($row->Field('color_id'));

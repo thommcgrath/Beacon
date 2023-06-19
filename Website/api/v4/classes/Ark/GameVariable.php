@@ -2,11 +2,11 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSearchParameters, DatabaseSchema};
-use BeaconRecordSet;
+use BeaconRecordSet, JsonSerializable;
 
-class GameVariable extends DatabaseObject implements \JsonSerializable {
-	protected $key;
-	protected $value;
+class GameVariable extends DatabaseObject implements JsonSerializable {
+	protected string $key;
+	protected string $value;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->key = $row->Field('key');

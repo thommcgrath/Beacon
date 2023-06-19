@@ -23,22 +23,22 @@ class ConfigOption extends GenericObject {
 	const NITRADO_DEPLOY_EXPERT = 'Expert'; // Should only be set during expert deploys
 	const NITRADO_DEPLOY_BOTH   = 'Both';   // Should be set during any deploy
 	
-	protected $nativeEditorVersion = null;
-	protected $file = '';
-	protected $header = '';
-	protected $key = '';
-	protected $valueType = '';
-	protected $maxAllowed = null;
-	protected $description = '';
-	protected $defaultValue = '';
-	protected $nitradoPath = null;
-	protected $nitradoFormat = null;
-	protected $nitradoDeployStyle = null;
-	protected $uiGroup = null;
-	protected $constraints = null;
-	protected $customSort = null;
-	protected $gsaPlaceholder = null;
-	protected $uwpChanges = null;
+	protected ?int $nativeEditorVersion;
+	protected string $file;
+	protected string $header;
+	protected string $key;
+	protected string $valueType;
+	protected ?int $maxAllowed;
+	protected string $description;
+	protected mixed $defaultValue;
+	protected ?string $nitradoPath;
+	protected ?string $nitradoFormat;
+	protected ?string $nitradoDeployStyle;
+	protected ?string $uiGroup;
+	protected ?array $constraints;
+	protected ?string $customSort;
+	protected ?string $gsaPlaceholder;
+	protected ?array $uwpChanges;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
@@ -281,11 +281,11 @@ class ConfigOption extends GenericObject {
 		return $this->valueType;
 	}
 	
-	public function MaxAllowed(): int {
+	public function MaxAllowed(): ?int {
 		return $this->maxAllowed;
 	}
 	
-	public function Description(): string {
+	public function Description(): ?string {
 		return $this->description;
 	}
 	
@@ -293,11 +293,11 @@ class ConfigOption extends GenericObject {
 		return $this->defaultValue;
 	}
 	
-	public function UIGroup(): string {
+	public function UIGroup(): ?string {
 		return $this->uiGroup;
 	}
 	
-	public function CustomSort(): string {
+	public function CustomSort(): ?string {
 		return $this->customSort;
 	}
 	

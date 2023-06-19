@@ -5,7 +5,7 @@ use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchPa
 use BeaconRecordSet;
 
 class LootDropIcon extends GenericObject {
-	private $iconData;
+	private string $iconData;
 	
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);

@@ -2,22 +2,22 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
-use BeaconCommon, BeaconRecordSet, BeaconWorkshopItem;
+use BeaconCommon, BeaconRecordSet, BeaconWorkshopItem, JsonSerializable;
 
-class ContentPack extends DatabaseObject implements \JsonSerializable {
-	protected $contentPackId = '';
-	protected $steamId = '';
-	protected $userId = '';
-	protected $name = '';
-	protected $isConfirmed = false;
-	protected $confirmationCode = '';
-	protected $isConsoleSafe = false;
-	protected $isDefaultEnabled = false;
-	protected $minVersion = 0;
-	protected $lastUpdate = null;
-	protected $isOfficial = false;
-	protected $isIncludedInDeltas = false;
-	protected $isApp = false;
+class ContentPack extends DatabaseObject implements JsonSerializable {
+	protected string $contentPackId;
+	protected int $steamId;
+	protected string $userId;
+	protected string $name;
+	protected bool $isConfirmed;
+	protected string $confirmationCode;
+	protected bool $isConsoleSafe;
+	protected bool $isDefaultEnabled;
+	protected int $minVersion;
+	protected ?string $lastUpdate;
+	protected bool $isOfficial;
+	protected bool $isIncludedInDeltas;
+	protected bool $isApp;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->contentPackId = $row->Field('mod_id');

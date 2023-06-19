@@ -5,9 +5,9 @@ use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema};
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
 class SpawnPoint extends Blueprint {
-	protected $groups = null;
-	protected $limits = null;
-	protected $populations = null;
+	protected ?array $groups;
+	protected ?array $limits;
+	protected ?array $populations;
 	
 	public function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);

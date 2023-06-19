@@ -6,9 +6,9 @@ use BeaconCommon, Exception;
 
 class Generator {
 	protected Project $project;
-	protected float $qualityScale = 1.0;
-	protected int $mapMask = 1;
-	protected float $difficultyValue = 1.0;
+	protected float $qualityScale;
+	protected int $mapMask;
+	protected float $difficultyValue;
 	
 	public function __construct(Project $project) {
 		$this->project = $project;
@@ -82,16 +82,9 @@ class Generator {
 				continue;
 			}
 			if (is_null($definition)) {
-				$definition = new LootDrop();
-				if (BeaconCommon::HasAllKeys($json, 'Multiplier_Min', 'Multiplier_Max', 'Availability')) {
-					$definition->SetMultiplierMin($json['Multiplier_Min']);
-					$definition->SetMultiplierMax($json['Multiplier_Max']);
-					$definition->SetAvailability($json['Availability']);
-				} else {
-					$definition->SetAvailability($this->mapMask);
-				}
+				continue;
 			}
-			if ($definition->AvailableTo($this->mapMask) == false) {
+			if ($definition->AvailableTo($this->mapMask) === false) {
 				continue;
 			}
 			

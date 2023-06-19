@@ -5,13 +5,13 @@ use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema};
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
 class Engram extends Blueprint {
-	protected $recipe = null;
-	protected $entryString = null;
-	protected $requiredPoints = null;
-	protected $requiredLevel = null;
-	protected $stackSize = null;
-	protected $itemId = null;
-	protected $gfi = null;
+	protected ?array $recipe;
+	protected ?string $entryString;
+	protected ?int $requiredPoints;
+	protected ?int $requiredLevel;
+	protected ?int $stackSize;
+	protected ?int $itemId;
+	protected ?string $gfi;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);

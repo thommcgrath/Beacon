@@ -2,19 +2,19 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
-use BeaconCommon, BeaconDatabase, BeaconRecordSet, DateTime, Exception;
+use BeaconCommon, BeaconDatabase, BeaconRecordSet, DateTime, Exception, JsonSerializable;
 
-class GenericObject extends DatabaseObject implements \JsonSerializable {
-	protected $objectId;
-	protected $objectGroup;
-	protected $label;
-	protected $alternateLabel;
-	protected $minVersion = 0;
-	protected $contentPackId;
-	protected $contentPackName;
-	protected $contentPackSteamId;
-	protected $tags = [];
-	protected $lastUpdate = 0;
+class GenericObject extends DatabaseObject implements JsonSerializable {
+	protected string $objectId;
+	protected string $objectGroup;
+	protected string $label;
+	protected ?string $alternateLabel;
+	protected int $minVersion;
+	protected string $contentPackId;
+	protected string $contentPackName;
+	protected string $contentPackSteamId;
+	protected array $tags;
+	protected string $lastUpdate;
 	
 	//const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
 	
@@ -509,7 +509,7 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		return $obj;
 	}*/
 	
-	public static function LastUpdate(int $min_version = -1) {
+	public static function LastUpdate(int $min_version = -1): DateTime {
 		$database = BeaconCommon::Database();
 		$schema = static::SchemaName();
 		$table = static::TableName();
@@ -538,7 +538,7 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		return ($change_time >= $delete_time) ? $change_time : $delete_time;
 	}
 	
-	public static function Deletions(int $min_version = -1, DateTime $since = null) {
+	public static function Deletions(int $min_version = -1, DateTime $since = null): array {
 		if ($since === null) {
 			$since = new DateTime('2000-01-01');
 		}
@@ -559,7 +559,7 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		} else {
 			$results = $database->Query("SELECT {$columns} FROM {$schema}.deletions WHERE min_version <= $1 AND action_time > $2 AND from_table = $3;", $min_version, $since->format('Y-m-d H:i:sO'), $table);
 		}
-		$arr = array();
+		$arr = [];
 		while (!$results->EOF()) {
 			$arr[] = [
 				'objectId' => $results->Field('object_id'),
@@ -634,24 +634,24 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		return $this->contentPackSteamId;
 	}
 	
-	public static function NormalizeTag(string $tag) {
+	public static function NormalizeTag(string $tag): string {
 		$tag = strtolower($tag);
 		$tag = preg_replace('/[^\w]/', '', $tag);
 		return $tag;
 	}
 	
-	public function Tags() {
+	public function Tags(): array {
 		return $this->tags;
 	}
 	
-	public function AddTag(string $tag) {
+	public function AddTag(string $tag): void {
 		$tag = self::NormalizeTag($tag);
 		if (!in_array($tag, $this->tags)) {
 			$this->tags[] = $tag;
 		}
 	}
 	
-	public function RemoveTag(string $tag) {
+	public function RemoveTag(string $tag): void {
 		$tag = self::NormalizeTag($tag);
 		if (in_array($tag, $this->tags)) {
 			$arr = array();
@@ -664,11 +664,11 @@ class GenericObject extends DatabaseObject implements \JsonSerializable {
 		}
 	}
 	
-	public function IsTagged(string $tag) {
+	public function IsTagged(string $tag): bool {
 		return in_array(self::NormalizeTag($tag), $this->tags);
 	}
 	
-	public static function DeleteObjects(string $object_id, string $user_id) {
+	public static function DeleteObjects(string $object_id, string $user_id): bool {
 		$database = BeaconCommon::Database();
 		$escaped_schema = $database->EscapeIdentifier(static::SchemaName());
 		$escaped_table = $database->EscapeIdentifier(static::TableName());

@@ -2,16 +2,16 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
-use BeaconCommon, BeaconRecordSet;
+use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
-class Event extends DatabaseObject implements \JsonSerializable {
-	protected $eventId;
-	protected $name;
-	protected $arkCode;
-	protected $rates = [];
-	protected $colors = [];
-	protected $engrams = [];
-	protected $lastUpdate = null;
+class Event extends DatabaseObject implements JsonSerializable {
+	protected string $eventId;
+	protected string $name;
+	protected string $arkCode;
+	protected array $rates;
+	protected array $colors;
+	protected array $engrams;
+	protected string $lastUpdate;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->eventId = $row->Field('event_id');
@@ -133,15 +133,15 @@ class Event extends DatabaseObject implements \JsonSerializable {
 		return $this->ak_code;
 	}
 	
-	public function Rates(): ?array {
+	public function Rates(): array {
 		return $this->rates;
 	}
 	
-	public function Colors(): ?array {
+	public function Colors(): array {
 		return $this->colors;
 	}
 	
-	public function Engrams(): ?array {
+	public function Engrams(): array {
 		return $this->engrams;
 	}
 }

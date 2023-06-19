@@ -2,18 +2,18 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
-use BeaconCommon, BeaconRecordSet;
+use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
-class Map extends DatabaseObject implements \JsonSerializable {
-	protected $mapId = null;
-	protected $contentPackId = null;
-	protected $label = null;
-	protected $arkIdentifier = null;
-	protected $difficultyScale = null;
-	protected $isOfficial = null;
-	protected $mask = null;
-	protected $sortOrder = null;
-	protected $lastUpdate = null;
+class Map extends DatabaseObject implements JsonSerializable {
+	protected string $mapId;
+	protected string $contentPackId;
+	protected string $label;
+	protected string $arkIdentifier;
+	protected float $difficultyScale;
+	protected bool $isOfficial;
+	protected int $mask;
+	protected int $sortOrder;
+	protected string $lastUpdate;
 	
 	public function __construct(BeaconRecordSet $row) {
 		$this->mapId = $row->Field('map_id');
