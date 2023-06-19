@@ -122,7 +122,11 @@ class DatabaseSchema {
 			}
 		}
 		
-		return $column->Accessor($this->table) . ' ' . $operator . ' ' . $column->Setter($placeholder);
+		if (is_int($placeholder)) {
+			$placeholder = '$' . $placeholder;
+		}
+		
+		return $column->Accessor($this->table) . ' ' . $operator . ' ' . $placeholder;
 	}
 	
 	public function AddColumn(string|DatabaseObjectProperty $column): void {

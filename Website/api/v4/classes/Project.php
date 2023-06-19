@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCloudStorage, BeaconCommon, BeaconRecordSet, BeaconSearch, DateTime, Exception, JsonSerializable;
+use BeaconCloudStorage, BeaconCommon, BeaconRecordSet, BeaconSearch, Exception, JsonSerializable;
 
 abstract class Project extends DatabaseObject implements JsonSerializable {
 	public const kPublishStatusPrivate = 'Private';
@@ -10,20 +10,20 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	public const kPublishStatusApprovedPrivate = 'Approved But Private';
 	public const kPublishStatusDenied = 'Denied';
 	
-	protected $projectId = '';
-	protected $gameId = '';
-	protected $gameSpecific = [];
-	protected $userId = '';
-	protected $ownerId = '';
-	protected $title = '';
-	protected $description = '';
-	protected $consoleSafe = true;
-	protected $lastUpdate = null;
-	protected $revision = 1;
-	protected $downloadCount = 0;
-	protected $published = self::kPublishStatusPrivate;
-	protected $content = [];
-	protected $storagePath = null;
+	protected string $projectId;
+	protected string $gameId;
+	protected array $gameSpecific;
+	protected string $userId;
+	protected string $ownerId;
+	protected string $title;
+	protected string $description;
+	protected bool $consoleSafe;
+	protected int $lastUpdate;
+	protected int $revision;
+	protected int $downloadCount;
+	protected string $published;
+	protected string $storagePath;
+	protected array $content = [];
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->projectId = $row->Field('project_id');
@@ -32,7 +32,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$this->description = $row->Field('description');
 		$this->revision = intval($row->Field('revision'));
 		$this->downloadCount = intval($row->Field('download_count'));
-		$this->lastUpdate = new DateTime($row->Field('last_update'));
+		$this->lastUpdate = round($row->Field('last_update'));
 		$this->userId = $row->Field('user_id');
 		$this->ownerId = $row->Field('owner_id');
 		$this->published = $row->Field('published');
@@ -51,7 +51,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('title'),
 			new DatabaseObjectProperty('description'),
 			new DatabaseObjectProperty('consoleSafe', ['columnName' => 'console_safe']),
-			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update']),
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('revision'),
 			new DatabaseObjectProperty('downloadCount', ['columnName' => 'download_count']),
 			new DatabaseObjectProperty('published'),
@@ -159,7 +159,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			'description' => $this->description,
 			'revision' => $this->revision,
 			'downloadCount' => $this->downloadCount,
-			'lastUpdated' => $this->lastUpdate->format('Y-m-d H:i:sO'),
+			'lastUpdate' => $this->lastUpdate,
 			'consoleSafe' => $this->consoleSafe,
 			'published' => $this->published
 		];
@@ -200,7 +200,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		return $this->consoleSafe;
 	}
 	
-	public function LastUpdated(): DateTime {
+	public function LastUpdate(): int {
 		return $this->lastUpdate;
 	}
 	

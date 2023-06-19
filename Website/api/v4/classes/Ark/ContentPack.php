@@ -14,7 +14,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 	protected bool $isConsoleSafe;
 	protected bool $isDefaultEnabled;
 	protected int $minVersion;
-	protected ?string $lastUpdate;
+	protected int $lastUpdate;
 	protected bool $isOfficial;
 	protected bool $isIncludedInDeltas;
 	protected bool $isApp;
@@ -29,7 +29,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$this->isConsoleSafe = filter_var($row->Field('console_safe'), FILTER_VALIDATE_BOOL);
 		$this->isDefaultEnabled = filter_var($row->Field('default_enabled'), FILTER_VALIDATE_BOOL);
 		$this->minVersion = intval($row->Field('min_version'));
-		$this->lastUpdate = $row->Field('last_update');
+		$this->lastUpdate = round($row->Field('last_update'));
 		$this->isOfficial = filter_var($row->Field('is_official'), FILTER_VALIDATE_BOOL);
 		$this->isIncludedInDeltas = filter_var($row->Field('include_in_deltas'), FILTER_VALIDATE_BOOL);
 		$this->isApp = filter_var($row->Field('is_app'), FILTER_VALIDATE_BOOL);
@@ -46,7 +46,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('isConsoleSafe', ['columnName' => 'console_safe']),
 			new DatabaseObjectProperty('isDefaultEnabled', ['columnName' => 'default_enabled']),
 			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
-			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update']),
+			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official']),
 			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas']),
 			new DatabaseObjectProperty('isApp', ['columnName' => 'is_app'])

@@ -14,7 +14,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 	protected string $contentPackName;
 	protected string $contentPackSteamId;
 	protected array $tags;
-	protected string $lastUpdate;
+	protected int $lastUpdate;
 	
 	//const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
 	
@@ -36,7 +36,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$this->contentPackName = $row->Field('mod_name');
 		$this->contentPackSteamId = $row->Field('mod_workshop_id');
 		$this->tags = array_values($tags);
-		$this->lastUpdate = $row->Field('last_update');
+		$this->lastUpdate = round($row->Field('last_update'));
 	}
 	
 	protected static function CustomVariablePrefix(): string {
@@ -55,7 +55,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('contentPackId', ['accessor' => 'mods.mod_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'mod_id']),
 			new DatabaseObjectProperty('contentPackName', ['accessor' => 'mods.name', 'columnName' => 'mod_name']),
 			new DatabaseObjectProperty('contentPackSteamId', ['accessor' => 'ABS(mods.workshop_id)', 'columnName' => 'mod_workshop_id']),
-			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => "%%TABLE%%.%%COLUMN%% AT TIME ZONE 'UTC'"])
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)'])
 		], [
 			'INNER JOIN ark.mods ON (%%TABLE%%.mod_id = mods.mod_id)'
 		]);
@@ -67,7 +67,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		$prefix = static::CustomVariablePrefix();
-		
+			
 		if (isset($filters['contentPackId'])) {
 			if (is_array($filters['contentPackId'])) {
 				$packs = $filters['contentPackId'];

@@ -7,17 +7,19 @@ use BeaconRecordSet, JsonSerializable;
 class GameVariable extends DatabaseObject implements JsonSerializable {
 	protected string $key;
 	protected string $value;
+	protected int $lastUpdate;
 
 	public function __construct(BeaconRecordSet $row) {
 		$this->key = $row->Field('key');
 		$this->value = $row->Field('value');
+		$this->lastUpdate = round($row->Field('last_update'));
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'game_variables', [
 			new DatabaseObjectProperty('key', ['primaryKey' => true]),
 			new DatabaseObjectProperty('value'),
-			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => "%%TABLE%%.%%COLUMN%% AT TIME ZONE 'UTC'"])
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)'])
 		]);
 	}
 	
@@ -31,7 +33,8 @@ class GameVariable extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'key' => $this->key,
-			'value' => $this->value
+			'value' => $this->value,
+			'lastUpdate' => $this->lastUpdate
 		];
 	}
 	

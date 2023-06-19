@@ -8,13 +8,13 @@ class Color extends DatabaseObject implements JsonSerializable {
 	protected int $colorId;
 	protected string $name;
 	protected string $code;
-	protected string $lastUpdate;
+	protected int $lastUpdate;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->colorId = intval($row->Field('color_id'));
 		$this->name = $row->Field('color_name');
 		$this->code = $row->Field('color_code');
-		$this->lastUpdate = $row->Field('last_update');
+		$this->lastUpdate = round($row->Field('last_update'));
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -22,7 +22,7 @@ class Color extends DatabaseObject implements JsonSerializable {
 			New DatabaseObjectProperty('colorId', ['primaryKey' => true, 'columnName' => 'color_id']),
 			New DatabaseObjectProperty('name', ['columnName' => 'color_name']),
 			New DatabaseObjectProperty('code', ['columnName' => 'color_code']),
-			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update'])
+			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)'])
 		]);
 	}
 	

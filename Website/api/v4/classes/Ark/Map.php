@@ -13,7 +13,7 @@ class Map extends DatabaseObject implements JsonSerializable {
 	protected bool $isOfficial;
 	protected int $mask;
 	protected int $sortOrder;
-	protected string $lastUpdate;
+	protected int $lastUpdate;
 	
 	public function __construct(BeaconRecordSet $row) {
 		$this->mapId = $row->Field('map_id');
@@ -24,7 +24,7 @@ class Map extends DatabaseObject implements JsonSerializable {
 		$this->isOfficial = filter_var($row->Field('official'), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? false;
 		$this->mask = filter_var($row->Field('mask'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 0;
 		$this->sortOrder = filter_var($row->Field('sort'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? 999;
-		$this->lastUpdate = $row->Field('last_update');
+		$this->lastUpdate = round($row->Field('last_update'));
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -37,7 +37,7 @@ class Map extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'official']),
 			new DatabaseObjectProperty('mask'),
 			new DatabaseObjectProperty('sortOrder', ['columnName' => 'sort']),
-			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update'])
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)'])
 		]);	
 	}
 	

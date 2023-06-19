@@ -1,22 +1,22 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconRecordSet, DateTime;
+use BeaconCommon, BeaconRecordSet, DateTime, JsonSerializable;
 
-class Template extends DatabaseObject implements \JsonSerializable {
-	protected $templateId;
-	protected $gameId;
-	protected $label;
-	protected $minVersion;
-	protected $lastUpdate;
-	protected $contents;
+class Template extends DatabaseObject implements JsonSerializable {
+	protected string $templateId;
+	protected string $gameId;
+	protected string $label;
+	protected int $minVersion;
+	protected int $lastUpdate;
+	protected string $contents;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->templateId = $row->Field('object_id');
 		$this->gameId = $row->Field('game_id');
 		$this->label = $row->Field('label');
 		$this->minVersion = $row->Field('min_version');
-		$this->lastUpdate = $row->Field('last_update');
+		$this->lastUpdate = round($row->Field('last_update'));
 		$this->contents = $row->Field('contents');
 	}
 	
@@ -26,7 +26,7 @@ class Template extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
 			new DatabaseObjectProperty('label'),
 			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
-			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update']),
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('contents')
 		]);
 	}

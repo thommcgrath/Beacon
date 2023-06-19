@@ -4,20 +4,20 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet, DateTime;
 
 class TemplateSelector extends DatabaseObject implements \JsonSerializable {
-	protected $templateSelectorId;
-	protected $gameId;
-	protected $label;
-	protected $minVersion;
-	protected $lastUpdate;
-	protected $language;
-	protected $code;
+	protected string $templateSelectorId;
+	protected string $gameId;
+	protected string $label;
+	protected int $minVersion;
+	protected int $lastUpdate;
+	protected string $language;
+	protected string $code;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->templateSelectorId = $row->Field('object_id');
 		$this->gameId = $row->Field('game_id');
 		$this->label = $row->Field('label');
 		$this->minVersion = $row->Field('min_version');
-		$this->lastUpdate = $row->Field('last_update');
+		$this->lastUpdate = round($row->Field('last_update'));
 		$this->language = $row->Field('language');
 		$this->code = $row->Field('code');
 	}
@@ -28,7 +28,7 @@ class TemplateSelector extends DatabaseObject implements \JsonSerializable {
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
 			new DatabaseObjectProperty('label'),
 			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
-			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update']),
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('language'),
 			new DatabaseObjectProperty('code')
 		]);
