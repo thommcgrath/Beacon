@@ -2,31 +2,6 @@
 Protected Class Project
 Inherits Beacon.Project
 	#tag Event
-		Sub AddCloudSaveData(Dict As Dictionary)
-		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.BaseConfigSetName, True))
-		  Dict.Value("difficulty") = Difficulty.DifficultyValue
-		  
-		  Dict.Value("map") = Self.MapMask
-		  
-		  Var ConfigSets() As String = Self.ConfigSetNames
-		  Var Editors() As String
-		  For Each ConfigSet As String In ConfigSets
-		    Var SetDict As Dictionary = Self.ConfigSet(ConfigSet)
-		    For Each Entry As DictionaryEntry In SetDict
-		      Var ConfigName As String = Entry.Key.StringValue
-		      If Editors.IndexOf(ConfigName) = -1 Then
-		        Editors.Add(ConfigName)
-		      End If
-		    Next Entry
-		  Next ConfigSet
-		  Editors.Sort
-		  Dict.Value("editors") = String.FromArray(Editors, ",")
-		  
-		  Dict.Value("mods") = Self.ContentPacks.Join(",")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub AddingProfile(Profile As Beacon.ServerProfile)
 		  If Profile.IsConsole Then
 		    Self.ConsoleSafe = True
@@ -42,14 +17,32 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Sub AddSaveData(PlainData As Dictionary, EncryptedData As Dictionary)
+		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
 		  
-		  PlainData.Value("AllowUCS") = Self.AllowUCS2
-		  PlainData.Value("IsConsole") = Self.ConsoleSafe
-		  PlainData.Value("Map") = Self.MapMask
-		  PlainData.Value("ModSelections") = Self.mContentPacks
-		  PlainData.Value("UWPCompatibilityMode") = CType(Self.UWPMode, Integer)
+		  ManifestData.Value("AllowUCS") = Self.AllowUCS2
+		  ManifestData.Value("IsConsole") = Self.ConsoleSafe
+		  ManifestData.Value("Map") = Self.MapMask
+		  ManifestData.Value("ModSelections") = Self.mContentPacks
+		  ManifestData.Value("UWPCompatibilityMode") = CType(Self.UWPMode, Integer)
+		  
+		  Var ConfigSets() As String = Self.ConfigSetNames
+		  Var Editors() As String
+		  For Each ConfigSet As String In ConfigSets
+		    Var SetDict As Dictionary = Self.ConfigSet(ConfigSet)
+		    For Each Entry As DictionaryEntry In SetDict
+		      Var ConfigName As String = Entry.Key.StringValue
+		      If Editors.IndexOf(ConfigName) = -1 Then
+		        Editors.Add(ConfigName)
+		      End If
+		    Next Entry
+		  Next ConfigSet
+		  Editors.Sort
+		  ManifestData.Value("Editors") = Editors
+		  
+		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.BaseConfigSetName, True))
+		  ManifestData.Value("Difficulty") = Difficulty.DifficultyValue
 		End Sub
 	#tag EndEvent
 
@@ -107,15 +100,15 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
-		Function ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
+		Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
 		  #Pragma Unused EncryptedData
 		  #Pragma Unused SaveDataVersion
 		  #Pragma Unused SavedWithVersion
-		  #Pragma Unused FailureReason
 		  
 		  If SaveDataVersion < 2 Then
-		    FailureReason = "This project is too old to be opened with this version of Beacon."
-		    Return False
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "This project is too old to be opened with this version of Beacon."
+		    Raise Err
 		  ElseIf SaveDataVersion = 2 And PlainData.HasAllKeys("DifficultyValue", "LootSources") Then
 		    Var DifficultyValue As Double = PlainData.Value("DifficultyValue")
 		    Var LootSources() As Variant = PlainData.Value("LootSources")
@@ -186,9 +179,7 @@ Inherits Beacon.Project
 		      Self.mContentPacks = Selections
 		    End If
 		  End If
-		  
-		  Return True
-		End Function
+		End Sub
 	#tag EndEvent
 
 	#tag Event

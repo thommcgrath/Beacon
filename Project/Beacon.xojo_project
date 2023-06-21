@@ -594,6 +594,7 @@ Class=ScriptAction;Modules/Beacon/ScriptAction.xojo_code;&h000000003F52C7FF;&h00
 Class=UUID;Modules/Beacon/UUID.xojo_code;&h000000001966DFFF;&h0000000055ADDFFF;false
 DesktopWindow=FTPSettingsView;Views/FTPSettingsView.xojo_window;&h000000006DA57FFF;&h0000000008A387FF;false
 Class=Archive;Modules/Beacon/Archive.xojo_code;&h0000000056677FFF;&h0000000055ADDFFF;false
+Class=ProjectLoadException;Modules/Beacon/ProjectLoadException.xojo_code;&h00000000234D4FFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=6

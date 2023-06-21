@@ -14,12 +14,9 @@ Inherits Thread
 		    Var Compress As Boolean = False
 		    If Self.mSource <> Nil Then
 		      Source = Self.mSource
-		    ElseIf (Self.mSourceProject Is Nil) = False And (Self.mSourceIdentity Is Nil) = False Then
-		      Source = Self.mSourceProject.SaveData(Self.mSourceIdentity)
-		      Compress = Self.mSourceProject.UseCompression
 		    Else
 		      Var Err As New NilObjectException
-		      Err.Message = "No source dictionary or document."
+		      Err.Message = "No source dictionary."
 		      Raise Err
 		    End If
 		    
@@ -45,15 +42,6 @@ Inherits Thread
 		  #if Not TargetiOS
 		    Self.mLock = New CriticalSection
 		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Project As Beacon.Project, Identity As Beacon.Identity, Destination As FolderItem)
-		  Self.Constructor()
-		  Self.mSourceProject = Project
-		  Self.mSourceIdentity = Identity
-		  Self.mDestination = Destination
 		End Sub
 	#tag EndMethod
 
@@ -143,10 +131,6 @@ Inherits Thread
 
 	#tag Property, Flags = &h21
 		Private mSourceIdentity As Beacon.Identity
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSourceProject As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

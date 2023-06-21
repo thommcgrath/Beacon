@@ -100,36 +100,11 @@ Implements ObservationKit.Observable
 		  // in the parsed JSON.
 		  
 		  Try
-		    Var Dict As Dictionary = Self.SaveData(Identity)
-		    Var JSONValue As String = Beacon.GenerateJSON(Dict, False)
-		    Var FailureReason As String
-		    Return FromSaveData(JSONValue, Identity, FailureReason)
+		    Var SaveData As MemoryBlock = Self.SaveData(Identity)
+		    Return FromSaveData(SaveData, Identity)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function CloudSaveData() As Dictionary
-		  // Make sure all values are strings
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("version") = Self.SaveDataVersion.ToString(Locale.Raw, "0")
-		  Dict.Value("uuid") = Self.mUUID
-		  Dict.Value("description") = Self.mDescription
-		  Dict.Value("title") = Self.mTitle
-		  Dict.Value("game_id") = Self.GameID()
-		  
-		  Var Keys() As String
-		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
-		    Keys.Add(Entry.Key.StringValue + ":" + Entry.Value.StringValue)
-		  Next
-		  Dict.Value("keys") = Keys.Join(",")
-		  
-		  RaiseEvent AddCloudSaveData(Dict)
-		  
-		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -316,23 +291,25 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Project
+		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity) As Beacon.Project
 		  Var Version As Integer = SaveData.Lookup("Version", 0).IntegerValue
 		  Var MinVersion As Integer = SaveData.Lookup("MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
 		  Var SavedWithVersion As Integer = SaveData.Lookup("SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
 		  Var GameID As String = SaveData.Lookup("Game", Ark.Identifier).StringValue
 		  Var UUID As String
-		  If SaveData.HasKey("Identifier") Then
+		  If SaveData.HasKey("ProjectId") Then
+		    UUID = SaveData.Value("ProjectId").StringValue
+		  ElseIf SaveData.HasKey("Identifier") Then
 		    UUID = SaveData.Value("Identifier").StringValue
 		  End If
 		  If v4UUID.IsValid(UUID) = False Then
-		    UUID = New v4UUID
+		    UUID = Beacon.UUID.v4
 		  End If
 		  
 		  If MinVersion > Beacon.Project.SaveDataVersion Then
-		    FailureReason = "Unable to load project because the version is " + Version.ToString + " but this version of Beacon only supports up to version " + MinVersion.ToString + "."
-		    App.Log(FailureReason)
-		    Return Nil
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "This is a v" + Version.ToString(Locale.Raw, "0") + " project, but this version of Beacon only supports up to v" + MinVersion.ToString(Locale.Raw, "0") + " projects. There may be an update available."
+		    Raise Err
 		  End If
 		  
 		  Var Project As Beacon.Project
@@ -340,22 +317,23 @@ Implements ObservationKit.Observable
 		  Case Ark.Identifier
 		    Project = New Ark.Project
 		  Else
-		    FailureReason = "Unknown game " + GameID + "."
-		    App.Log(FailureReason)
-		    Return Nil
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "Unknown game " + GameID + "."
+		    Raise Err
 		  End Select
 		  
 		  Project.mUUID = UUID
 		  If SaveData.HasKey("Description") Then
 		    Project.mDescription = SaveData.Value("Description")
 		  End If
-		  If SaveData.HasKey("Title") Then
+		  If SaveData.HasKey("Name") THen
+		    Project.mTitle = SaveData.Value("Name")
+		  ElseIf SaveData.HasKey("Title") Then
 		    Project.mTitle = SaveData.Value("Title")
 		  End If
-		  If SaveData.HasKey("UseCompression") Then
-		    Project.mUseCompression = SaveData.Value("UseCompression")
-		  End If
-		  If SaveData.HasKey("Trust") Then
+		  If SaveData.HasKey("LegacyTrustKey") Then
+		    Project.mLegacyTrustKey = SaveData.Value("LegacyTrustKey")
+		  ElseIf SaveData.HasKey("Trust") Then
 		    Project.mLegacyTrustKey = SaveData.Value("Trust")
 		  End If
 		  
@@ -496,10 +474,7 @@ Implements ObservationKit.Observable
 		    Project.ConfigSet(BaseConfigSetName) = Project.LoadConfigSet(SaveData.Value("Configs"), Nil)
 		  End If
 		  
-		  If Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion, FailureReason) = False Then
-		    App.Log(FailureReason)
-		    Return Nil
-		  End If
+		  Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion)
 		  
 		  Project.Modified = Version < Beacon.Project.SaveDataVersion
 		  
@@ -508,7 +483,53 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As String, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Project
+		Shared Function FromSaveData(SaveData As MemoryBlock, Identity As Beacon.Identity) As Beacon.Project
+		  If SaveData Is Nil Or SaveData.Size = 0 Then
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "File is empty."
+		    Raise Err
+		  End If
+		  
+		  Var UseCompression As Boolean
+		  Var ProjectDict As Dictionary
+		  If SaveData.Size >= 8 And (SaveData.UInt64Value(0) = CType(Beacon.Project.BinaryFormatBEBOM, UInt64) Or SaveData.UInt64Value(0) = CType(Beacon.Project.BinaryFormatLEBOM, UInt64)) Then
+		    SaveData = SaveData.Middle(8, SaveData.Size - 8)
+		    
+		    Var Archive As Beacon.Archive = Beacon.Archive.Open(SaveData)
+		    Var ManifestData As Dictionary = Beacon.ParseJSON(Archive.GetFile("Manifest.json"))
+		    Var Version As Integer = ManifestData.Value("Version")
+		    Var ProjectData As Dictionary = Beacon.ParseJSON(Archive.GetFile("v" + Version.ToString(Locale.Raw, "0") + ".json"))
+		    
+		    For Each Entry As DictionaryEntry In ManifestData
+		      ProjectData.Value(Entry.Key) = Entry.Value
+		    Next
+		    
+		    ProjectDict = ProjectData
+		    UseCompression = True
+		  Else
+		    If SaveData.Size >= 2 And SaveData.UInt8Value(0) = &h1F And SaveData.UInt8Value(1) = &h8B Then
+		      Var Decompressed As String = Beacon.Decompress(SaveData)
+		      If Decompressed.IsEmpty = False Then
+		        SaveData = Decompressed.DefineEncoding(Encodings.UTF8)
+		        UseCompression = True
+		      Else
+		        Var Err As New Beacon.ProjectLoadException
+		        Err.Message = "Failed to decompress project."
+		        Raise Err
+		      End If
+		    End If
+		    
+		    ProjectDict = Beacon.ParseJSON(SaveData)
+		  End If
+		  
+		  ProjectDict.Value("UseCompression") = UseCompression
+		  
+		  Return FromSaveData(ProjectDict, Identity)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated )  Shared Function FromSaveData(SaveData As String, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Project
 		  If Beacon.IsCompressed(SaveData) Then
 		    SaveData = Beacon.Decompress(SaveData)
 		  End If
@@ -523,10 +544,10 @@ Implements ObservationKit.Observable
 		  End Try
 		  
 		  Try
-		    Return FromSaveData(Parsed, Identity, FailureReason)
+		    Return FromSaveData(Parsed, Identity)
 		  Catch Err As RuntimeException
 		    FailureReason = "Untrapped error inside project loader"
-		    App.Log(Err, CurrentMethodName, FailureReason)
+		    App.Log(Err, CurrentMethodName, "")
 		    Return Nil
 		  End Try
 		End Function
@@ -712,15 +733,9 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SavedDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
-		  Try
-		    Return RaiseEvent ReadSaveData(PlainData, EncryptedData, SavedDataVersion, SavedWithVersion, FailureReason)
-		  Catch Err As RuntimeException
-		    FailureReason = "Untrapped exception in raised event ReadSaveData"
-		    App.Log(Err, CurrentMethodName, FailureReason)
-		    Return False
-		  End Try
-		End Function
+		Protected Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SavedDataVersion As Integer, SavedWithVersion As Integer)
+		  RaiseEvent ReadSaveData(PlainData, EncryptedData, SavedDataVersion, SavedWithVersion)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -857,28 +872,32 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(Identity As Beacon.Identity) As Dictionary
+		Function SaveData(Identity As Beacon.Identity) As MemoryBlock
 		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserID) Then
 		    Self.AddUser(Identity.UserID, Identity.PublicKey)
 		  End If
 		  
-		  Var Dict As New Dictionary
-		  Dict.Value("Version") = Self.SaveDataVersion
-		  Dict.Value("MinVersion") = 6
-		  Dict.Value("Identifier") = Self.mUUID
-		  Dict.Value("Title") = Self.mTitle
-		  Dict.Value("Game") = Self.GameID
-		  Dict.Value("SavedWith") = App.BuildNumber
-		  Dict.Value("EncryptionKeys") = Self.mEncryptedPasswords
-		  Dict.Value("UseCompression") = Self.mUseCompression
-		  Dict.Value("Timestamp") = DateTime.Now.SQLDateTimeWithOffset
-		  Dict.Value("Description") = Self.mDescription
+		  Var Manifest, ProjectData As Dictionary = New Dictionary // Intentionally assigning both to the same dictionary
+		  If Self.mUseCompression Then
+		    ProjectData = New Dictionary
+		  End If
+		  
+		  Manifest.Value("Version") = Self.SaveDataVersion
+		  Manifest.Value("MinVersion") = 7
+		  Manifest.Value("ProjectId") = Self.mUUID
+		  Manifest.Value("UserId") = Identity.UserId
+		  Manifest.Value("Name") = Self.mTitle
+		  Manifest.Value("Description") = Self.mDescription
+		  Manifest.Value("GameId") = Self.GameID()
+		  Manifest.Value("EncryptionKeys") = Self.mEncryptedPasswords
+		  Manifest.Value("SavedWidth") = App.BuildNumber
+		  Manifest.Value("Timestamp") = DateTime.Now.SecondsFrom1970
 		  If Self.mLegacyTrustKey.IsEmpty = False Then
-		    Dict.Value("Trust") = Self.mLegacyTrustKey
+		    Manifest.Value("LegacyTrustKey") = Self.mLegacyTrustKey
 		  End If
 		  
 		  Var EncryptedData As New Dictionary
-		  RaiseEvent AddSaveData(Dict, EncryptedData)
+		  RaiseEvent AddSaveData(Manifest, ProjectData, EncryptedData)
 		  
 		  If Self.mAccounts.Count > 0 Then
 		    EncryptedData.Value("ExternalAccounts") = Self.mAccounts.AsDictionary
@@ -908,7 +927,7 @@ Implements ObservationKit.Observable
 		      End If
 		    End If
 		  Next
-		  Dict.Value("Config Sets") = Sets
+		  ProjectData.Value("Config Sets") = Sets
 		  If EncryptedSets.KeyCount > 0 Then
 		    EncryptedData.Value("Config Sets") = EncryptedSets
 		  End If
@@ -917,7 +936,7 @@ Implements ObservationKit.Observable
 		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
 		    States.Add(State.SaveData)
 		  Next
-		  Dict.Value("Config Set Priorities") = States
+		  ProjectData.Value("Config Set Priorities") = States
 		  
 		  If EncryptedData.KeyCount > 0 Then
 		    Var Content As String = Beacon.GenerateJSON(EncryptedData, False)
@@ -926,10 +945,21 @@ Implements ObservationKit.Observable
 		      Self.mLastSecureData = Self.Encrypt(Content)
 		      Self.mLastSecureHash = Hash
 		    End If
-		    Dict.Value("EncryptedData") = Self.mLastSecureData
+		    ProjectData.Value("EncryptedData") = Self.mLastSecureData
 		  End If
 		  
-		  Return Dict
+		  If Self.mUseCompression Then
+		    Var Archive As Beacon.Archive = Beacon.Archive.Create()
+		    Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, True))
+		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", Beacon.GenerateJSON(ProjectData, True))
+		    Var ArchiveData As MemoryBlock = Archive.Finalize
+		    Var BOM As New MemoryBlock(8)
+		    BOM.LittleEndian = ArchiveData.LittleEndian
+		    BOM.UInt64Value(0) = If(ArchiveData.LittleEndian, Beacon.Project.BinaryFormatLEBOM, Beacon.Project.BinaryFormatBEBOM)
+		    Return BOM + ArchiveData
+		  Else
+		    Return Beacon.GenerateJSON(ProjectData, True)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1030,15 +1060,11 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event AddCloudSaveData(Dict As Dictionary)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event AddingProfile(Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event AddSaveData(PlainData As Dictionary, EncryptedData As Dictionary)
+		Event AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -1046,7 +1072,7 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
+		Event ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -1136,7 +1162,7 @@ Implements ObservationKit.Observable
 	#tag Constant, Name = BinaryFormatLEBOM, Type = Double, Dynamic = False, Default = \"2916000471902660912", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SaveDataVersion, Type = Double, Dynamic = False, Default = \"6", Scope = Protected
+	#tag Constant, Name = SaveDataVersion, Type = Double, Dynamic = False, Default = \"7", Scope = Protected
 	#tag EndConstant
 
 

@@ -347,31 +347,19 @@ Protected Class ProjectController
 		    Return
 		  End Select
 		  
-		  If FileContent = Nil Then
+		  If FileContent Is Nil Then
 		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "File is empty")
 		    Return
 		  End If
 		  
-		  If FileContent.Size >= 8 And (FileContent.UInt64Value(0) = CType(Beacon.Project.BinaryFormatBEBOM, UInt64) Or FileContent.UInt64Value(0) = CType(Beacon.Project.BinaryFormatLEBOM, UInt64)) Then
-		    // New binary project format
-		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Project format is newer than this version of Beacon understands")
+		  Var Project As Beacon.Project
+		  Try
+		    Project = Beacon.Project.FromSaveData(FileContent, Self.mIdentity)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Loading project")
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, Err.Message)
 		    Return
-		  ElseIf FileContent.Size >= 2 And FileContent.UInt8Value(0) = &h1F And FileContent.UInt8Value(1) = &h8B Then
-		    Var Decompressed As String = Beacon.Decompress(FileContent)
-		    If Decompressed.IsEmpty = False Then
-		      FileContent = Decompressed.DefineEncoding(Encodings.UTF8)
-		    Else
-		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to decompress file")
-		      Return
-		    End If
-		  End If
-		  
-		  Var FailureReason As String
-		  Var Project As Beacon.Project = Beacon.Project.FromSaveData(FileContent, Self.mIdentity, FailureReason)
-		  If Project = Nil Then
-		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, FailureReason)
-		    Return
-		  End If
+		  End Try
 		  
 		  If Project.Title.Trim = "" Then
 		    Project.Title = Self.Name
@@ -387,27 +375,65 @@ Protected Class ProjectController
 		Private Sub Thread_Upload(Sender As Thread)
 		  #Pragma Unused Sender
 		  
-		  Var EOL As String = EndOfLine.Windows
-		  Var Parts() As String
-		  Parts.Add("Content-Disposition: form-data; name=""contents""; filename=""" + Self.mProject.UUID + ".beacon""" + EOL + "Content-Type: application/octet-stream" + EOL + EOL + Beacon.Compress(Beacon.GenerateJSON(Self.mProject.SaveData(Self.mIdentity), False)))
+		  Var SaveData As MemoryBlock
+		  Var Saved As Boolean
+		  Var Message As String
+		  Try
+		    SaveData = Self.mProject.SaveData(Self.mIdentity)
+		    
+		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
+		      Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		      Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
+		      Socket.SetRequestContent(SaveData, "application/x-beacon-project")
+		      Socket.Send("POST", BeaconAPI.URL("/projects"))
+		      Saved = Socket.LastHTTPStatus = 200 Or Socket.LastHTTPStatus = 201
+		      Message = Self.ErrorMessageFromSocket(Socket)
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Uploading cloud project")
+		    Message = Err.Message
+		  End Try
 		  
-		  Var SaveData As Dictionary = Self.mProject.CloudSaveData()
-		  For Each Entry As DictionaryEntry In SaveData
-		    Parts.Add("Content-Disposition: form-data; name=""" + Entry.Key.StringValue + """;" + EOL + EOL + Entry.Value.StringValue)
-		  Next
-		  
-		  Var Boundary As String = new v4UUID
-		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
-		  Socket.SetRequestContent("--" + Boundary + EOL + Parts.Join(EOL + "--" + Boundary + EOL) + EOL + "--" + Boundary + "--", "multipart/form-data; charset=utf-8; boundary=" + Boundary)
-		  Socket.Send("POST", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Writing))
-		  If Socket.LastHTTPStatus = 200 Or Socket.LastHTTPStatus = 201 Then
+		  If Saved Then
 		    If Self.mClearModifiedOnWrite Then
 		      Self.mProject.Modified = False
 		    End If
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteSuccess)
 		  Else
-		    Var Message As String = Self.ErrorMessageFromSocket(Socket)
+		    If Message.IsEmpty Then
+		      Message = "Unknown error"
+		    End If
+		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_Write(Sender As Thread)
+		  #Pragma Unused Sender
+		  
+		  Var SaveData As MemoryBlock
+		  Var Saved As Boolean
+		  Var Message As String
+		  Try
+		    SaveData = Self.mProject.SaveData(Self.mIdentity)
+		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
+		      Saved = Self.mDestination.File.Write(SaveData)
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Writing save data to disk")
+		    Message = Err.Message
+		  End Try
+		  
+		  If Saved Then
+		    If Self.mClearModifiedOnWrite Then
+		      Self.mProject.Modified = False
+		    End If
+		    Call CallLater.Schedule(0, AddressOf TriggerWriteSuccess)
+		  Else
+		    If Message.IsEmpty Then
+		      Message = "Unknown error"
+		    End If
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
 		  End If
 		End Sub
@@ -517,6 +543,7 @@ Protected Class ProjectController
 		  End If
 		  
 		  Self.mClearModifiedOnWrite = ClearModified
+		  Self.mDestination = Destination
 		  
 		  Select Case Destination.Scheme
 		  Case Beacon.ProjectURL.TypeCloud
@@ -525,9 +552,10 @@ Protected Class ProjectController
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Start
 		  Case Beacon.ProjectURL.TypeLocal
-		    Var Writer As New Beacon.JSONWriter(Self.mProject, Self.mIdentity, Destination.File)
-		    AddHandler Writer.Finished, AddressOf Writer_Finished
-		    Writer.Start
+		    Self.mActiveThread = New Thread
+		    Self.mActiveThread.Priority = Thread.LowestPriority
+		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Write
+		    Self.mActiveThread.Start
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -580,6 +608,10 @@ Protected Class ProjectController
 
 	#tag Property, Flags = &h21
 		Private mClearModifiedOnWrite As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDestination As Beacon.ProjectURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
