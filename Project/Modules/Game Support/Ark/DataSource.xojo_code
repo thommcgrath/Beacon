@@ -1002,18 +1002,22 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateLocalContentPack(PackName As String, WorkshopID As NullableString) As Ark.ContentPack
-		  Var PackUUID As String = New v4UUID
-		  Var WorkshopIDVar As Variant
-		  If (WorkshopID Is Nil) = False Then
-		    WorkshopIDVar = WorkshopID.StringValue
+		Function CreateLocalContentPack(PackName As String, WorkshopId As NullableString) As Ark.ContentPack
+		  Var ContentPackId As String
+		  Var WorkshopIdVar As Variant
+		  If (WorkshopId Is Nil) = False Then
+		    WorkshopIdVar = WorkshopId.StringValue
+		    ContentPackId = Beacon.UUID.v5(WorkshopIdVar)
+		  Else
+		    ContentPackId = Beacon.UUID.v4
 		  End If
-		  Var Details As New Ark.ContentPack(PackUUID, PackName, True, False, True, WorkshopID)
+		  
+		  Var ContentPack As New Ark.ContentPack(ContentPackId, PackName, True, False, True, WorkshopId)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, workshop_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, WorkshopIDVar, PackName, Details.ConsoleSafe, Details.DefaultEnabled, Details.IsLocal)
+		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, workshop_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", ContentPackId, WorkshopIdVar, PackName, ContentPack.ConsoleSafe, ContentPack.DefaultEnabled, ContentPack.IsLocal)
 		  Self.CommitTransaction()
 		  Self.ExportCloudFiles()
-		  Return Details
+		  Return ContentPack
 		End Function
 	#tag EndMethod
 
