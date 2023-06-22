@@ -53,6 +53,7 @@ Protected Class ServerProfile
 		  End If
 		  
 		  Self.Name = Dict.Value("Name")
+		  Self.NickName = Dict.Lookup("Nickname", "")
 		  Self.Enabled = Dict.Value("Enabled")
 		  Self.mProfileID = Dict.Value("Profile ID")
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
@@ -105,6 +106,17 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function DeployCapable() As Boolean
 		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DisplayName() As String
+		  Var Nickname As String = Self.Nickname
+		  If Nickname.IsEmpty = False Then
+		    Return Nickname
+		  End If
+		  
+		  Return Self.Name
 		End Function
 	#tag EndMethod
 
@@ -214,6 +226,7 @@ Protected Class ServerProfile
 		    Raise Err
 		  End If
 		  Dict.Value("Name") = Self.Name
+		  Dict.Value("Nickname") = Self.Nickname
 		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
 		  Dict.Value("Enabled") = Self.Enabled
 		  Dict.Value("Platform") = Self.mPlatform
@@ -365,6 +378,10 @@ Protected Class ServerProfile
 		Private mName As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mNickname As String
+	#tag EndProperty
+
 	#tag Property, Flags = &h0
 		Modified As Boolean
 	#tag EndProperty
@@ -408,6 +425,25 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		Name As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mNickname.Trim
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Value = Value.Trim
+			  
+			  If Self.Nickname.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mNickname = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		Nickname As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

@@ -119,14 +119,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Config Sets:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   88
+      Top             =   122
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -152,14 +152,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Base"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   88
+      Top             =   122
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -187,11 +187,11 @@ Begin BeaconContainer CommonServerSettingsView
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   88
+      Top             =   122
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -217,14 +217,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Message of the Day:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   152
+      Top             =   186
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -252,11 +252,11 @@ Begin BeaconContainer CommonServerSettingsView
       LockTop         =   True
       RTFData         =   ""
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   152
+      Top             =   186
       Transparent     =   True
       Visible         =   True
       Width           =   460
@@ -281,14 +281,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Message Duration:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   309
+      Top             =   343
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -322,14 +322,14 @@ Begin BeaconContainer CommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   309
+      Top             =   343
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -356,14 +356,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   14
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Seconds"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   309
+      Top             =   343
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -396,14 +396,14 @@ Begin BeaconContainer CommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   342
+      Top             =   376
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -437,14 +437,14 @@ Begin BeaconContainer CommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   20
+      TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   376
+      Top             =   410
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -478,14 +478,14 @@ Begin BeaconContainer CommonServerSettingsView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   23
+      TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   410
+      Top             =   444
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -512,14 +512,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   15
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Admin Password:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   342
+      Top             =   376
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -546,11 +546,11 @@ Begin BeaconContainer CommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   16
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   343
+      Top             =   377
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -575,14 +575,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   18
+      TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Password:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   376
+      Top             =   410
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -608,14 +608,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   21
+      TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Spectator Password:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   410
+      Top             =   444
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -642,11 +642,11 @@ Begin BeaconContainer CommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   19
+      TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   377
+      Top             =   411
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -672,11 +672,11 @@ Begin BeaconContainer CommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   22
+      TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   411
+      Top             =   445
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -701,14 +701,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Build Config For:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   120
+      Top             =   154
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -734,11 +734,11 @@ Begin BeaconContainer CommonServerSettingsView
       LockTop         =   True
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   8
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   120
+      Top             =   154
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -764,14 +764,14 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Does not change the map"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   120
+      Top             =   154
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -798,11 +798,11 @@ Begin BeaconContainer CommonServerSettingsView
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   88
       Transparent     =   True
       Visible         =   True
       Width           =   220
@@ -827,18 +827,91 @@ Begin BeaconContainer CommonServerSettingsView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Color:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
+      Top             =   88
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   136
+   End
+   Begin UITweaks.ResizedLabel ServerNicknameLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Nickname:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   "#TooltipNickname"
       Top             =   54
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   136
+   End
+   Begin UITweaks.ResizedTextField ServerNicknameField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   "#TooltipNickname"
+      Top             =   54
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   460
    End
 End
 #tag EndDesktopWindow
@@ -901,6 +974,7 @@ End
 		  Self.mSettingUp = True
 		  
 		  Self.ServerNameField.Text = Profile.Name
+		  Self.ServerNicknameField.Text = Profile.Nickname
 		  
 		  Var MOTD As Ark.ArkML
 		  If (Profile.MessageOfTheDay Is Nil) = False Then
@@ -1030,6 +1104,10 @@ End
 		#tag EndSetter
 		ShowsMapMenu As Boolean
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = TooltipNickname, Type = String, Dynamic = False, Default = \"The server nickname is only used by Beacon to help you organize.", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -1248,6 +1326,20 @@ End
 		  
 		  For Each Profile As Ark.ServerProfile In Self.mProfiles
 		    Profile.ProfileColor = Me.SelectedColor
+		  Next
+		  Self.Modified = Self.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServerNicknameField
+	#tag Event
+		Sub TextChanged()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Ark.ServerProfile In Self.mProfiles
+		    Profile.Nickname = Me.Text
 		  Next
 		  Self.Modified = Self.Modified
 		End Sub

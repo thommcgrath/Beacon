@@ -1086,13 +1086,13 @@ Implements ObservationKit.Observable
 		  Filter = Filter.Trim
 		  
 		  Var Results() As Beacon.ServerProfile
-		  For Idx As Integer = Self.mServerProfiles.FirstIndex To Self.mServerProfiles.LastIndex
-		    If Filter.IsEmpty = False And Self.mServerProfiles(Idx).Name.IndexOf(Filter) = -1 And Self.mServerProfiles(Idx).SecondaryName.IndexOf(Filter) = -1 Then
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    If Filter.IsEmpty = False And Profile.Name.IndexOf(Filter) = -1 And Profile.SecondaryName.IndexOf(Filter) = -1 And Profile.Nickname.IndexOf(Filter) = -1 Then
 		      Continue
 		    End If
 		    
-		    Results.Add(Self.mServerProfiles(Idx))
-		  Next Idx
+		    Results.Add(Profile)
+		  Next
 		  Return Results
 		End Function
 	#tag EndMethod

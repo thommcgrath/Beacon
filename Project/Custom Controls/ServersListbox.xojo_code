@@ -72,7 +72,9 @@ Inherits BeaconListbox
 		  Profiles.ResizeTo(Bound)
 		  For Idx As Integer = 0 To Bound
 		    Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
-		    Names(Idx) = Profile.Name
+		    If Profile.Nickname.IsEmpty Then
+		      Names(Idx) = Profile.Name
+		    End If
 		    Profiles(Idx) = Profile
 		  Next Idx
 		  If Preferences.ServersListNameStyle = Self.NamesAbbreviated Then
@@ -81,7 +83,7 @@ Inherits BeaconListbox
 		  
 		  Var Lookup As New Dictionary
 		  For Idx As Integer = 0 To Bound
-		    Lookup.Value(Profiles(Idx).ProfileID) = If(Names(Idx).IsEmpty = False, Names(Idx), Profiles(Idx).Name)
+		    Lookup.Value(Profiles(Idx).ProfileID) = If(Names(Idx).IsEmpty = False, Names(Idx), Profiles(Idx).DisplayName)
 		  Next Idx
 		  Return Lookup
 		End Function
