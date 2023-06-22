@@ -338,7 +338,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDeletedSetNames() As String
+		Private mDeletedSets() As Beacon.ConfigSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNewSets() As Beacon.ConfigSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -353,26 +357,32 @@ End
 		Sub Pressed()
 		  // Do the work here
 		  
-		  // Delete sets here
-		  For Each SetName As String In Self.mDeletedSetNames
-		    Self.mProject.RemoveConfigSet(SetName)
+		  Var OriginalSets() As Beacon.ConfigSet = Self.mProject.ConfigSets
+		  Var SetsMap As New Dictionary
+		  For Each Set As Beacon.ConfigSet In OriginalSets
+		    SetsMap.Value(Set.ConfigSetId) = Set
 		  Next
 		  
-		  // Rename or add sets
+		  // Delete sets here
+		  For Each Set As Beacon.ConfigSet In Self.mDeletedSets
+		    Self.mProject.RemoveConfigSet(Set)
+		  Next
+		  
+		  // Rename sets
 		  For Idx As Integer = 0 To Self.SetList.LastRowIndex
-		    Var SetName As String = Self.SetList.CellTextAt(Idx, 0)
-		    Var OriginalName As String = Self.SetList.RowTagAt(Idx)
+		    Var Set As Beacon.ConfigSet = Self.SetList.RowTagAt(Idx)
 		    
-		    If OriginalName.IsEmpty = False Then
-		      // Possible rename
-		      If OriginalName.Compare(SetName, ComparisonOptions.CaseSensitive) <> 0 Then
-		        // Rename
-		        Self.mProject.RenameConfigSet(OriginalName, SetName)
+		    If SetsMap.HasKey(Set.ConfigSetId) Then
+		      Var OriginalSet As Beacon.ConfigSet = SetsMap.Value(Set.ConfigSetId)
+		      If Set.Name.Compare(OriginalSet.Name, ComparisonOptions.CaseSensitive) <> 0 Then
+		        Self.mProject.RenameConfigSet(OriginalSet, Set.Name)
 		      End If
-		    Else
-		      // New set
-		      Self.mProject.AddConfigSet(SetName)
 		    End If
+		  Next
+		  
+		  // Add sets
+		  For Each Set As Beacon.ConfigSet In Self.mNewSets
+		    Self.mProject.AddConfigSet(Set)
 		  Next
 		  
 		  Self.mCancelled = False
@@ -397,12 +407,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount = 1 And Me.CellTextAt(Me.SelectedRowIndex, 0) <> Beacon.Project.BaseConfigSetName
+		  Return Me.SelectedRowCount = 1 And Beacon.ConfigSet(Me.RowTagAt(Me.SelectedRowIndex)).IsBase = False
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1 And Me.CellTextAt(Me.SelectedRowIndex, 0) <> Beacon.Project.BaseConfigSetName
+		  Return Me.SelectedRowCount = 1 And Beacon.ConfigSet(Me.RowTagAt(Me.SelectedRowIndex)).IsBase = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -416,78 +426,64 @@ End
 		    End If
 		  End If
 		  
-		  Var OriginalSetName As String = Me.RowTagAt(Me.SelectedRowIndex)
-		  If OriginalSetName.IsEmpty = False And Self.mDeletedSetNames.IndexOf(OriginalSetName) = -1 Then
-		    Self.mDeletedSetNames.Add(OriginalSetName)
-		  End If
+		  Var Set As Beacon.ConfigSet = Beacon.ConfigSet(Me.RowTagAt(Me.SelectedRowIndex))
 		  Me.RemoveRowAt(Me.SelectedRowIndex)
+		  
+		  // If it's a new set, just remove it from the array and don't add it to deleted
+		  For Idx As Integer = 0 To Self.mNewSets.LastIndex
+		    If Self.mNewSets(Idx) = Set Then
+		      Self.mNewSets.RemoveAt(Idx)
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mDeletedSets.Add(Set)
+		  
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
-		  Me.CellTagAt(Me.SelectedRowIndex, 0) = Me.CellTextAt(Me.SelectedRowIndex, 0)
-		  Me.EditCellAt(Me.SelectedRowIndex, 0)
+		  Var Set As Beacon.ConfigSet = Beacon.ConfigSet(Me.RowTagAt(Me.SelectedRowIndex))
+		  Var NewSetName As String = ConfigSetNamingWindow.Present(Self, Set.Name)
+		  If NewSetName.IsEmpty Then
+		    Return
+		  End If
+		  
+		  For Idx As Integer = 0 To Me.LastRowIndex
+		    Var RowSet As Beacon.ConfigSet = Beacon.ConfigSet(Me.RowTagAt(Idx))
+		    If RowSet.Name = NewSetName And RowSet <> Set Then
+		      Self.ShowAlert("There is already a config set named " + NewSetName + ". Please choose another.", "More than one config set of the same name would get confusing.")
+		      Return
+		    End If
+		  Next
+		  
+		  Set.Name = NewSetName
+		  Me.CellTextAt(Me.SelectedRowIndex, 0) = Set.Name
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.TextField
-		  
 		  Var Counts As New Dictionary
 		  Var ProfileBound As Integer = Self.mProject.ServerProfileCount - 1
 		  For Idx As Integer = 0 To ProfileBound
 		    Var Profile As Beacon.ServerProfile = Self.mProject.ServerProfile(Idx)
 		    Var States() As Beacon.ConfigSetState = Profile.ConfigSetStates
 		    If States Is Nil Or States.Count = 0 Then
-		      Counts.Value(Beacon.Project.BaseConfigSetName) = Counts.Lookup(Beacon.Project.BaseConfigSetName, 0).IntegerValue + 1
+		      Counts.Value(Beacon.ConfigSet.BaseConfigSetId) = Counts.Lookup(Beacon.ConfigSet.BaseConfigSetId, 0).IntegerValue + 1
 		      Continue
 		    End If
 		    For Each State As Beacon.ConfigSetState In States
 		      If State.Enabled Then
-		        Counts.Value(State.Name) = Counts.Lookup(State.Name, 0).IntegerValue + 1
+		        Counts.Value(State.ConfigSetId) = Counts.Lookup(State.ConfigSetId, 0).IntegerValue + 1
 		      End If
 		    Next
 		  Next
 		  
-		  Var SetNames() As String = Self.mProject.ConfigSetNames
-		  For Each SetName As String In SetNames
-		    Me.AddRow(SetName, Language.NounWithQuantity(Counts.Lookup(SetName, 0).IntegerValue, "Server", "Servers"))
-		    Me.RowTagAt(Me.LastAddedRowIndex) = SetName
-		    
-		    If SetName = Beacon.Project.BaseConfigSetName Then
-		      Me.CellTypeAt(Me.LastAddedRowIndex, 0) = DesktopListbox.CellTypes.Normal
-		    End If
+		  Var Sets() As Beacon.ConfigSet = Self.mProject.ConfigSets
+		  For Each Set As Beacon.ConfigSet In Sets
+		    Me.AddRow(Set.Name, Language.NounWithQuantity(Counts.Lookup(Set.ConfigSetId, 0).IntegerValue, "Server", "Servers"))
+		    Me.RowTagAt(Me.LastAddedRowIndex) = Set
 		  Next
-		  Me.Sort
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
-		  #Pragma Unused Column
-		  
-		  Var NewValue As String = Me.CellTextAt(Row, Column)
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Idx = Row Then
-		      Continue
-		    End If
-		    
-		    If Me.CellTextAt(Idx, 0) = NewValue Then
-		      // Duplicate!
-		      Var Original As String = Me.CellTagAt(Row, 0)
-		      If Original.IsEmpty Then
-		        Original = Me.RowTagAt(Row)
-		        If Original.IsEmpty Then
-		          Original = "New Config Set"
-		        End If
-		      End If
-		      System.Beep
-		      Me.CellTextAt(Row, Column) = Original
-		      Return
-		    End If
-		  Next
-		  
-		  Me.CellTagAt(Row, Column) = NewValue
 		  Me.Sort
 		End Sub
 	#tag EndEvent
@@ -495,11 +491,19 @@ End
 #tag Events NewButton
 	#tag Event
 		Sub Pressed()
-		  Self.SetList.AddRow("New Config Set", "0 Servers")
+		  Var NewSetName As String = ConfigSetNamingWindow.Present(Self)
+		  If NewSetName.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var Set As New Beacon.ConfigSet(NewSetName)
+		  Self.mNewSets.Add(Set)
+		  
+		  Self.SetList.AddRow(Set.Name, "0 Servers")
+		  Self.SetList.RowTagAt(Self.SetList.LastAddedRowIndex) = Set
 		  Self.SetList.CellTagAt(Self.SetList.LastAddedRowIndex, 1) = 0
 		  Self.SetList.SelectedRowIndex = Self.SetList.LastAddedRowIndex
 		  Self.SetList.Sort
-		  Self.SetList.DoEdit()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

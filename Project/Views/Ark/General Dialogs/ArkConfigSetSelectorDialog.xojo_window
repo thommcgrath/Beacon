@@ -215,51 +215,26 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Function Choices() As Beacon.ConfigSetState()
-		  Var States() As Beacon.ConfigSetState
-		  For Idx As Integer = Self.List.LastRowIndex DownTo 0
-		    States.Add(Self.List.RowTagAt(Idx))
-		  Next
-		  Return States
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Choices(Assigns States() As Beacon.ConfigSetState)
-		  // Zero is the lowest priority, so this needs to happen in reverse.
-		  
-		  Self.List.RemoveAllRows()
-		  
-		  For StateIdx As Integer = States.LastIndex DownTo 0
-		    Var State As Beacon.ConfigSetState = States(StateIdx)
-		    
-		    Self.List.AddRow("", State.Name)
-		    Var Idx As Integer = Self.List.LastAddedRowIndex
-		    Self.List.RowTagAt(Idx) = State
-		    Self.List.CellCheckBoxValueAt(Idx, 0) = State.Enabled
-		    
-		    If StateIdx = 0 Then
-		      Self.List.CellTypeAt(Idx, 0) = DesktopListbox.CellTypes.Normal
-		    End If
-		  Next
+		Private Sub Constructor(Sets() As Beacon.ConfigSet, States() As Beacon.ConfigSetState)
+		  Self.mSets = Sets
+		  Self.mStates = States
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, States() As Beacon.ConfigSetState) As Beacon.ConfigSetState()
+		Shared Function Present(Parent As DesktopWindow, Sets() As Beacon.ConfigSet, States() As Beacon.ConfigSetState) As Boolean
 		  If Parent Is Nil Then
-		    Return States
+		    Return False
 		  End If
 		  
-		  Var Win As New ArkConfigSetSelectorDialog
-		  Win.Choices = States
+		  Var Cancelled As Boolean
+		  Var Win As New ArkConfigSetSelectorDialog(Sets, States)
 		  Win.ShowModal(Parent)
-		  If Not Win.mCancelled Then
-		    States = Win.Choices
-		  End If
+		  Cancelled = Win.mCancelled
 		  Win.Close
 		  
-		  Return States
+		  Return Not Cancelled
 		End Function
 	#tag EndMethod
 
@@ -268,21 +243,18 @@ End
 		Private mCancelled As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSets() As Beacon.ConfigSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStates() As Beacon.ConfigSetState
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
 #tag Events List
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  If Row = Me.LastRowIndex Or Column <> 0 Then
-		    Return
-		  End If
-		  
-		  Var State As Beacon.ConfigSetState = Me.RowTagAt(Row)
-		  State = New Beacon.ConfigSetState(State.Name, Me.CellCheckBoxValueAt(Row, Column))
-		  Me.RowTagAt(Row) = State
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Function DragReorderRows(newPosition as Integer, parentRow as Integer) As Boolean
 		  // What a stupid event this is. It doesn't even tell us *what* changed.
@@ -299,12 +271,58 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
+		  
+		  Var SetsMap As New Dictionary
+		  For Each Set As Beacon.ConfigSet In Self.mSets
+		    SetsMap.Value(Set.ConfigSetId) = Set
+		  Next
+		  
+		  // Zero is the lowest priority, so this needs to happen in reverse.
+		  For Idx As Integer = Self.mStates.LastIndex DownTo 0
+		    Var State As Beacon.ConfigSetState = Self.mStates(Idx)
+		    If SetsMap.HasKey(State.ConfigSetId) = False Then
+		      Continue
+		    End If
+		    
+		    Var Set As Beacon.ConfigSet = SetsMap.Value(State.ConfigSetId)
+		    Self.List.AddRow("", Set.Name)
+		    Var RowIdx As Integer = Self.List.LastAddedRowIndex
+		    Self.List.RowTagAt(RowIdx) = Set
+		    Self.List.CellCheckBoxValueAt(RowIdx, 0) = State.Enabled
+		    
+		    If Set.IsBase Then
+		      Self.List.CellTypeAt(RowIdx, 0) = DesktopListbox.CellTypes.Normal
+		    End If
+		    
+		    SetsMap.Remove(State.ConfigSetId)
+		  Next
+		  
+		  // What's left of SetsMap still needs to be added
+		  For Each Entry As DictionaryEntry In SetsMap
+		    Var Set As Beacon.ConfigSet = Entry.Value
+		    Self.List.AddRowAt(0, "")
+		    Var RowIdx As Integer = Self.List.LastAddedRowIndex
+		    Self.List.CellTextAt(RowIdx, 1) = Set.Name
+		    Self.List.RowTagAt(RowIdx) = Set
+		    
+		    If Set.IsBase Then
+		      Self.List.CellTypeAt(RowIdx, 0) = DesktopListbox.CellTypes.Normal
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
+		  Self.mStates.ResizeTo(-1)
+		  
+		  For RowIdx As Integer = Self.List.LastRowIndex DownTo 0
+		    Var Checked As Boolean = Self.List.CellCheckBoxValueAt(RowIdx, 0)
+		    Var Set As Beacon.ConfigSet = Self.List.RowTagAt(RowIdx)
+		    Self.mStates.Add(New Beacon.ConfigSetState(Set, Checked))
+		  Next
+		  
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub

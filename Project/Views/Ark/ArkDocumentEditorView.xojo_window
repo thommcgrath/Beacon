@@ -287,7 +287,7 @@ End
 		    FileExport.Enabled = True
 		  End If
 		  
-		  If Self.Project.ActiveConfigSet <> Ark.Project.BaseConfigSetName Then
+		  If Self.Project.ActiveConfigSet.IsBase = False Then
 		    ViewSwitchToBaseConfigSet.Enabled = True
 		  End If
 		  
@@ -320,14 +320,14 @@ End
 		  If (Self.Project Is Nil) = False Then
 		    Var UUID As String = Self.Project.UUID
 		    Var LastConfigName As String = Preferences.ProjectState(UUID, "Editor", "")
-		    Var LastConfigSet As String = Preferences.ProjectState(UUID, "Config Set", "")
-		    If LastConfigName.IsEmpty Or LastConfigSet.IsEmpty Then
+		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(UUID, "Config Set", "").StringValue)
+		    If LastConfigName.IsEmpty Or LastConfigSet Is Nil Then
 		      If Self.URL.Scheme = Beacon.ProjectURL.TypeWeb Then
 		        LastConfigName = Ark.Configs.NameMetadataPsuedo
 		      Else
 		        LastConfigName = Ark.Configs.NameLootDrops
 		      End If
-		      LastConfigSet = Beacon.Project.BaseConfigSetName
+		      LastConfigSet = Beacon.ConfigSet.BaseConfigSet
 		    End If
 		    Self.ActiveConfigSet = LastConfigSet
 		    Self.CurrentConfigName = LastConfigName
@@ -413,7 +413,7 @@ End
 		    Return False
 		  End If
 		  
-		  Self.ActiveConfigSet = Beacon.Project.BaseConfigSetName
+		  Self.ActiveConfigSet = Beacon.ConfigSet.BaseConfigSet
 		  Return True
 		End Function
 	#tag EndMenuHandler
@@ -630,32 +630,40 @@ End
 		  Var Menu As New DesktopMenuItem
 		  Menu.AddMenu(New DesktopMenuItem("Create and switch to new config set…", "beacon:createandswitch"))
 		  Menu.AddMenu(New DesktopMenuItem("Manage config sets…", "beacon:manage"))
-		  Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Menu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		  
-		  Var SetNames() As String = Self.Project.ConfigSetNames
-		  SetNames.Sort
-		  For Each SetName As String In SetNames
-		    Var Item As New DesktopMenuItem(SetName, SetName)
-		    Item.HasCheckMark = SetName = Self.ActiveConfigSet
-		    If SetName = Beacon.Project.BaseConfigSetName Then
+		  Var Sets() As Beacon.ConfigSet = Self.Project.ConfigSets
+		  Var SetsMap As New Dictionary
+		  Var SetNames() As String
+		  For Each Set As Beacon.ConfigSet In Sets
+		    SetsMap.Value(Set.Name) = Set
+		    SetNames.Add(Set.Name)
+		  Next
+		  SetNames.SortWith(Sets)
+		  
+		  For Each Set As Beacon.ConfigSet In Sets
+		    Var Item As New DesktopMenuItem(Set.Name, Set)
+		    Item.HasCheckMark = Set = Self.ActiveConfigSet
+		    If Set.IsBase Then
 		      Item.Shortcut = "B"
 		    End If
 		    Menu.AddMenu(Item)
 		  Next
 		  
-		  Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Menu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		  Menu.AddMenu(New DesktopMenuItem("Learn more about config sets…", "beacon:help"))
 		  
 		  Var PickerOrigin As Point = Self.ConfigSetPicker.GlobalPosition
 		  Var Origin As Point = New Point(PickerOrigin.X + Self.mConfigPickerMenuOrigin.X, PickerOrigin.Y + Self.mConfigPickerMenuOrigin.Y)
 		  Var Choice As DesktopMenuItem = Menu.PopUp(Origin.X, Origin.Y)
 		  If (Choice Is Nil) = False Then
-		    If Choice.Tag.StringValue.BeginsWith("beacon:") Then
+		    If Choice.Tag.Type = Variant.TypeString And Choice.Tag.StringValue.BeginsWith("beacon:") Then
 		      Var Tag As String = Choice.Tag.StringValue.Middle(7)
 		      Select Case Tag
 		      Case "manage"
 		        If ConfigSetManagerWindow.Present(Self, Self.Project) Then
 		          Self.ActiveConfigSet = Self.ActiveConfigSet
+		          Self.Modified = Self.Project.Modified
 		        End If
 		      Case "help"
 		        Var HelpURL As String = Beacon.HelpURL("config_sets")
@@ -679,17 +687,19 @@ End
 		          Return
 		        End If
 		        
-		        If Self.Project.HasConfigSet(NewSetName) Then
-		          Self.ActiveConfigSet = NewSetName
+		        If SetsMap.HasKey(NewSetName) Then
+		          Self.ActiveConfigSet = SetsMap.Value(NewSetName)
 		          Self.ShowAlert("You have been switched to the " + NewSetName + " config set.", "This project already has a " + NewSetName + " config set, so it has been switched to.")
 		          Return
 		        End If
 		        
-		        Self.Project.AddConfigSet(NewSetName)
-		        Self.ActiveConfigSet = NewSetName
+		        Var Set As New Beacon.ConfigSet(NewSetName)
+		        Self.Project.AddConfigSet(Set)
+		        Self.ActiveConfigSet = Set
+		        Self.Modified = Self.Project.Modified
 		      End Select
-		    Else
-		      Self.ActiveConfigSet = Choice.Tag.StringValue
+		    ElseIf Choice.Tag.Type = Variant.TypeObject And Choice.Tag.ObjectValue IsA Beacon.ConfigSet Then
+		      Self.ActiveConfigSet = Beacon.ConfigSet(Choice.Tag)
 		    End If
 		  End If
 		End Sub
@@ -786,7 +796,7 @@ End
 		  
 		  Var ConfigSet As String = Parts(0)
 		  Var ConfigName As String = Parts(1)
-		  Self.ActiveConfigSet = ConfigSet
+		  Self.ActiveConfigSet = Self.Project.FindConfigSet(ConfigSet)
 		  Self.CurrentConfigName = ConfigName
 		  Self.CurrentPanel.GoToIssue(Issue)
 		End Sub
@@ -924,7 +934,7 @@ End
 		    
 		    Self.Project.RemoveConfigGroup(ConfigName)
 		    
-		    Var CacheKey As String = Self.ActiveConfigSet + ":" + ConfigName
+		    Var CacheKey As String = Self.ActiveConfigSet.ConfigSetId + ":" + ConfigName
 		    Self.DiscardConfigPanel(CacheKey)
 		    
 		    If IsSelected Then
@@ -981,8 +991,8 @@ End
 		Private Sub UpdateConfigList()
 		  Var Labels(), Tags() As String
 		  
-		  Var ActiveConfigSet As String = Self.ActiveConfigSet
-		  Var IsBase As Boolean = ActiveConfigSet = Beacon.Project.BaseConfigSetName
+		  Var ActiveConfigSet As Beacon.ConfigSet = Self.ActiveConfigSet
+		  Var IsBase As Boolean = ActiveConfigSet.IsBase
 		  If IsBase Then
 		    Var PsuedoTags() As String = Array(Ark.Configs.NameMetadataPsuedo, Ark.Configs.NameAccountsPsuedo)
 		    // Show everything
@@ -1042,7 +1052,7 @@ End
 		#tag Setter
 			Set
 			  Var ConfigName As String = Self.CurrentConfigName
-			  If Value <> Ark.Project.BaseConfigSetName And Ark.Configs.SupportsConfigSets(ConfigName) = False Then
+			  If Value.IsBase = False And Ark.Configs.SupportsConfigSets(ConfigName) = False Then
 			    // If switching from base and on an editor that won't exist in the desired set, switch to something else
 			    ConfigName = Ark.Configs.NameLootDrops
 			  End If
@@ -1053,13 +1063,13 @@ End
 			  Self.UpdateConfigList
 			  
 			  If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
-			    Preferences.ProjectState(Self.Project.UUID, "Config Set") = Value
+			    Preferences.ProjectState(Self.Project.UUID, "Config Set") = Value.Name
 			  End If
 			  
 			  Self.CurrentConfigName = ConfigName
 			End Set
 		#tag EndSetter
-		ActiveConfigSet As String
+		ActiveConfigSet As Beacon.ConfigSet
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -1074,8 +1084,8 @@ End
 			    Return
 			  End If
 			  
-			  If (Value = Ark.Configs.NameAccountsPsuedo Or Value = Ark.Configs.NameServersPseudo Or Value = Ark.Configs.NameMetadataPsuedo) And Self.ActiveConfigSet <> Beacon.Project.BaseConfigSetName Then
-			    Self.ActiveConfigSet = Beacon.Project.BaseConfigSetName
+			  If (Value = Ark.Configs.NameAccountsPsuedo Or Value = Ark.Configs.NameServersPseudo Or Value = Ark.Configs.NameMetadataPsuedo) And Self.ActiveConfigSet.IsBase = False Then
+			    Self.ActiveConfigSet = Beacon.ConfigSet.BaseConfigSet
 			  End If
 			  
 			  Self.mCurrentConfigName = Value
@@ -1083,7 +1093,7 @@ End
 			  Var NewPanel As ArkConfigEditor
 			  Var Embed As Boolean
 			  If Value.IsEmpty = False Then
-			    Var CacheKey As String = Self.ActiveConfigSet + ":" + Value
+			    Var CacheKey As String = Self.ActiveConfigSet.ConfigSetId + ":" + Value
 			    
 			    If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
 			      Preferences.ProjectState(Self.Project.UUID, "Editor") = Value
@@ -1585,7 +1595,7 @@ End
 		  #Pragma Unused Areas
 		  #Pragma Unused SafeArea
 		  
-		  Var Caption As String = "Config Set: " + Self.ActiveConfigSet
+		  Var Caption As String = "Config Set: " + Self.ActiveConfigSet.Name
 		  Var CaptionBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
 		  Var CaptionLeft As Double = G.Height - CaptionBaseline
 		  
@@ -1954,14 +1964,6 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="CurrentConfigName"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ActiveConfigSet"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""

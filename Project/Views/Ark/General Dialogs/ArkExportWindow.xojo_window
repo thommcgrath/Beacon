@@ -624,6 +624,7 @@ Begin BeaconDialog ArkExportWindow
    End
    Begin Ark.Rewriter SharedRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""
@@ -995,11 +996,11 @@ End
 		    End If
 		    
 		    If Self.ConfigSetsOverrideCheck.Value Then
-		      Profile.ConfigSetStates = Self.mProject.ConfigSetStates
+		      Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		    End If
 		  ElseIf Self.MapMenu.SelectedRowIndex > -1 Then
 		    Profile = New Ark.GenericServerProfile(Self.mProject.Title, Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex))
-		    Profile.ConfigSetStates = Self.mProject.ConfigSetStates
+		    Profile.ConfigSetStates = Self.mProject.ConfigSetPriorities
 		  Else
 		    Return
 		  End If
@@ -1042,17 +1043,15 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateConfigSetControls()
 		  If Self.mProject.ConfigSetCount > 1 Then
-		    Var States() As Beacon.ConfigSetState = Self.mProject.ConfigSetStates
+		    Var Sets() As Beacon.ConfigSet = Beacon.ConfigSetState.FilterSets(Self.mProject.ConfigSetPriorities, Self.mProject.ConfigSets)
 		    Var EnabledSets() As String
-		    For Each State As Beacon.ConfigSetState In States
-		      If State.Enabled Then
-		        EnabledSets.Add(State.Name)
-		      End If
+		    For Each Set As Beacon.ConfigSet In Sets
+		      EnabledSets.Add(Set.Name)
 		    Next
 		    
 		    Self.ConfigSetsField.Text = EnabledSets.EnglishOxfordList()
 		  Else
-		    Self.ConfigSetsField.Text = Ark.Project.BaseConfigSetName
+		    Self.ConfigSetsField.Text = Beacon.ConfigSet.BaseConfigSet.Name
 		    Self.ConfigSetsField.Enabled = False
 		    Self.ConfigSetsButton.Enabled = False
 		    Self.ConfigSetsLabel.Enabled = False
@@ -1318,7 +1317,12 @@ End
 #tag Events ConfigSetsButton
 	#tag Event
 		Sub Pressed()
-		  Self.mProject.ConfigSetStates = ArkConfigSetSelectorDialog.Present(Self, Self.mProject.ConfigSetStates)
+		  Var Sets() As Beacon.ConfigSet = Self.mProject.ConfigSets
+		  Var States() As Beacon.ConfigSetState = Self.mProject.ConfigSetPriorities
+		  If ArkConfigSetSelectorDialog.Present(Self, Sets, States) Then
+		    Self.mProject.ConfigSetPriorities = States
+		  End If
+		  
 		  Self.UpdateConfigSetControls()
 		  Self.Setup()
 		End Sub

@@ -254,7 +254,7 @@ End
 		  End If
 		  Var Count As Integer = FoundInDocuments.Count
 		  Var AlreadyInDestination As Boolean
-		  If FoundInDocuments.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet) > -1 Then
+		  If FoundInDocuments.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1 Then
 		    AlreadyInDestination = True
 		  End If
 		  If FoundInDocuments.IndexOf(ConfigItem.SourceKey) > -1 Then
@@ -324,7 +324,7 @@ End
 		  End If
 		  
 		  Var Count As Integer = FoundInDocuments.Count
-		  Var AlreadyInDestination As Boolean = FoundInDocuments.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet) > -1
+		  Var AlreadyInDestination As Boolean = FoundInDocuments.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1
 		  
 		  If FoundInDocuments.IndexOf(ConfigItem.SourceKey) > -1 Then
 		    Count = Count - 1
@@ -395,7 +395,7 @@ End
 		    End If
 		  Next SourceProject
 		  
-		  Var ActiveConfigSet As String = DestinationProject.ActiveConfigSet
+		  Var ActiveConfigSet As Beacon.ConfigSet = DestinationProject.ActiveConfigSet
 		  Var MergeItems() As Beacon.DocumentMergeItem
 		  Var DesiredArkMask As UInt64
 		  Var UniqueContentPacks As New Dictionary
@@ -404,21 +404,21 @@ End
 		      Var ArkProject As Ark.Project = Ark.Project(SourceProject)
 		      
 		      // Config Groups
-		      Var SetNames() As String = SourceProject.ConfigSetNames
-		      For Each SetName As String In SetNames
-		        Var Configs() As Ark.ConfigGroup = ArkProject.ImplementedConfigs(SetName)
+		      Var Sets() As Beacon.ConfigSet = SourceProject.ConfigSets
+		      For Each Set As Beacon.ConfigSet In Sets
+		        Var Configs() As Ark.ConfigGroup = ArkProject.ImplementedConfigs(Set)
 		        For Each Config As Ark.ConfigGroup In Configs
-		          Var MergeItem As New Ark.DocumentMergeConfigGroupItem(Config, ArkProject, SetName)
+		          Var MergeItem As New Ark.DocumentMergeConfigGroupItem(Config, ArkProject, Set)
 		          If ShowConfigSetNames Then
-		            MergeItem.Label = SetName + ": " + MergeItem.Label
+		            MergeItem.Label = Set.Name + ": " + MergeItem.Label
 		          End If
 		          If UseServerNames Then
 		            MergeItem.Label = MergeItem.Label + EndOfLine + "From " + ArkProject.Title
 		          End If
 		          MergeItem.DestinationConfigSet = ActiveConfigSet
 		          MergeItems.Add(MergeItem)
-		        Next Config
-		      Next SetName
+		        Next
+		      Next
 		      
 		      // Maps to be handled after the loop
 		      DesiredArkMask = DesiredArkMask Or ArkProject.MapMask
@@ -552,11 +552,11 @@ End
 		  
 		  Var ConfigMap As New Dictionary
 		  If Self.mDestination IsA Ark.Project Then
-		    Var ConfigSets() As String = Self.mDestination.ConfigSetNames
-		    For Each ConfigSet As String In ConfigSets
+		    Var ConfigSets() As Beacon.ConfigSet = Self.mDestination.ConfigSets
+		    For Each ConfigSet As Beacon.ConfigSet In ConfigSets
 		      Var Groups() As Ark.ConfigGroup = Ark.Project(Self.mDestination).ImplementedConfigs(ConfigSet)
 		      For Each Group As Ark.ConfigGroup In Groups
-		        ConfigMap.Value(ConfigSet + ":" + Group.InternalName) = Array(Self.mDestination.UUID + ":" + ConfigSet)
+		        ConfigMap.Value(ConfigSet.ConfigSetId + ":" + Group.InternalName) = Array(Self.mDestination.UUID + ":" + ConfigSet.ConfigSetId)
 		      Next
 		    Next
 		    For RowIndex As Integer = 0 To Self.List.LastRowIndex
@@ -610,7 +610,7 @@ End
 		      Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
 		      Var Key As String = ConfigItem.OrganizationKey
 		      If Ark.Configs.SupportsConfigSets(ConfigItem.Group.InternalName) Then
-		        Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ConfigItem.DestinationConfigSet
+		        Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ConfigItem.DestinationConfigSet.Name
 		      Else
 		        Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ""
 		      End If
@@ -619,7 +619,7 @@ End
 		      If ConfigMap.HasKey(Key) Then
 		        Map = ConfigMap.Value(Key)
 		      End If
-		      ShowAsReplace = Map.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet) > -1
+		      ShowAsReplace = Map.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1
 		    Else
 		      Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ""
 		    End If
@@ -782,9 +782,9 @@ End
 		      Return True
 		    End If
 		    
-		    Var ConfigSets() As String = Self.mDestination.ConfigSetNames
-		    For Each ConfigSet As String In ConfigSets
-		      Var Item As New DesktopMenuItem(ConfigSet, ConfigSet)
+		    Var ConfigSets() As Beacon.ConfigSet = Self.mDestination.ConfigSets
+		    For Each ConfigSet As Beacon.ConfigSet In ConfigSets
+		      Var Item As New DesktopMenuItem(ConfigSet.Name, ConfigSet)
 		      Item.HasCheckMark = (Ark.DocumentMergeConfigGroupItem(MergeItem).DestinationConfigSet = ConfigSet)
 		      Base.AddMenu(Item)
 		    Next
@@ -813,7 +813,7 @@ End
 		  Case Self.ColumnMergeMode
 		    MergeItem.Mode = Choice.Tag.IntegerValue
 		  Case Self.ColumnConfigSet
-		    Ark.DocumentMergeConfigGroupItem(MergeItem).DestinationConfigSet = Choice.Tag.StringValue
+		    Ark.DocumentMergeConfigGroupItem(MergeItem).DestinationConfigSet = Beacon.ConfigSet(Choice.Tag.ObjectValue)
 		    Var NewMode As Integer = Self.BestModeForItem(MergeItem)
 		    If MergeItem.Mode <> NewMode Then
 		      MergeItem.Mode = NewMode
@@ -868,7 +868,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var OriginalConfigSet As String = Self.mDestination.ActiveConfigSet
+		  Var OriginalConfigSet As Beacon.ConfigSet = Self.mDestination.ActiveConfigSet
 		  
 		  For RowIdx As Integer = 0 To Self.List.LastRowIndex
 		    Try

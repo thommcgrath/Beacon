@@ -27,10 +27,10 @@ Inherits Beacon.Project
 		  ManifestData.Value("ModSelections") = Self.mContentPacks
 		  ManifestData.Value("UWPCompatibilityMode") = CType(Self.UWPMode, Integer)
 		  
-		  Var ConfigSets() As String = Self.ConfigSetNames
+		  Var ConfigSets() As Beacon.ConfigSet = Self.ConfigSets
 		  Var Editors() As String
-		  For Each ConfigSet As String In ConfigSets
-		    Var SetDict As Dictionary = Self.ConfigSet(ConfigSet)
+		  For Each ConfigSet As Beacon.ConfigSet In ConfigSets
+		    Var SetDict As Dictionary = Self.ConfigSetData(ConfigSet)
 		    For Each Entry As DictionaryEntry In SetDict
 		      Var ConfigName As String = Entry.Key.StringValue
 		      If Editors.IndexOf(ConfigName) = -1 Then
@@ -41,7 +41,7 @@ Inherits Beacon.Project
 		  Editors.Sort
 		  ManifestData.Value("Editors") = Editors
 		  
-		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.BaseConfigSetName, True))
+		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Beacon.ConfigSet.BaseConfigSet, True))
 		  ManifestData.Value("Difficulty") = Difficulty.DifficultyValue
 		End Sub
 	#tag EndEvent
@@ -128,7 +128,7 @@ Inherits Beacon.Project
 		    ConfigSet.Value(Ark.Configs.NameDifficulty) = New Ark.Configs.Difficulty(DifficultyValue)
 		    ConfigSet.Value(Ark.Configs.NameLootDrops) = Loot
 		    
-		    Self.ConfigSet(BaseConfigSetName) = ConfigSet
+		    Self.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  End If
 		  
 		  Self.AllowUCS2 = PlainData.Lookup("AllowUCS", Self.AllowUCS2).BooleanValue
@@ -208,13 +208,13 @@ Inherits Beacon.Project
 		    Issues.Add(New Beacon.Issue("MapMask", "No map has been selected."))
 		  End If
 		  
-		  Var SetNames() As String = Self.ConfigSetNames()
-		  For Each SetName As String In SetNames
-		    Var Configs() As Ark.ConfigGroup = Self.ImplementedConfigs(SetName)
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets()
+		  For Each Set As Beacon.ConfigSet In Sets
+		    Var Configs() As Ark.ConfigGroup = Self.ImplementedConfigs(Set)
 		    For Each Config As Ark.ConfigGroup In Configs
-		      Config.Validate(SetName, Issues, Self)
-		    Next Config
-		  Next SetName
+		      Config.Validate(Set.ConfigSetId, Issues, Self)
+		    Next
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -226,13 +226,13 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As Ark.ConfigGroup, SetName As String)
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Sub AddConfigGroup(Group As Ark.ConfigGroup, Set As Beacon.ConfigSet)
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		  If SetDict Is Nil Then
 		    SetDict = New Dictionary
 		  End If
 		  SetDict.Value(Group.InternalName) = Group
-		  Self.ConfigSet(SetName) = SetDict
+		  Self.ConfigSetData(Set) = SetDict
 		End Sub
 	#tag EndMethod
 
@@ -258,34 +258,18 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfig(GroupName As String, States() As Beacon.ConfigSetState) As Ark.ConfigGroup
-		  Var SetNames() As String
-		  If States Is Nil Then
-		    SetNames.Add(Self.BaseConfigSetName)
-		  Else
-		    For Each State As Beacon.ConfigSetState In States
-		      If State.Enabled Then
-		        SetNames.Add(State.Name)
-		      End If
-		    Next
-		  End If
-		  Return Self.CombinedConfig(GroupName, SetNames)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function CombinedConfig(GroupName As String, SetNames() As String) As Ark.ConfigGroup
-		  If SetNames Is Nil Then
-		    SetNames = Array(Self.BaseConfigSetName)
-		  ElseIf SetNames.Count = 0 Then
-		    SetNames.Add(Self.BaseConfigSetName)
+		Function CombinedConfig(GroupName As String, Sets() As Beacon.ConfigSet) As Ark.ConfigGroup
+		  If Sets Is Nil Then
+		    Sets = Array(Beacon.ConfigSet.BaseConfigSet)
+		  ElseIf Sets.Count = 0 Then
+		    Sets.Add(Beacon.ConfigSet.BaseConfigSet)
 		  End If
 		  
 		  Var Siblings() As Ark.ConfigGroup
-		  For Idx As Integer = 0 To SetNames.LastIndex
-		    Var SetName As String = SetNames(Idx)
-		    Var SetDict As Dictionary = Self.ConfigSet(SetName)
-		    If SetDict Is Nil Or SetDict.HasKey(SetName) = False Then
+		  For Idx As Integer = 0 To Sets.LastIndex
+		    Var Set As Beacon.ConfigSet = Sets(Idx)
+		    Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		    If SetDict Is Nil Or SetDict.HasKey(GroupName) = False Then
 		      Continue
 		    End If
 		    
@@ -298,33 +282,24 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Ark.ConfigGroup()
-		  Var Names() As String
-		  If States Is Nil Then
-		    Names.Add(Self.BaseConfigSetName)
-		  Else
-		    For Each State As Beacon.ConfigSetState In States
-		      If State.Enabled Then
-		        Names.Add(State.Name)
-		      End If
-		    Next
-		  End If
-		  Return Self.CombinedConfigs(Names)
+		Function CombinedConfig(GroupName As String, States() As Beacon.ConfigSetState) As Ark.ConfigGroup
+		  Var Sets() As Beacon.ConfigSet = Beacon.ConfigSetState.FilterSets(States, Self.ConfigSets)
+		  Return Self.CombinedConfig(GroupName, Sets)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfigs(SetNames() As String) As Ark.ConfigGroup()
-		  If SetNames Is Nil Then
-		    SetNames = Array(Self.BaseConfigSetName)
-		  ElseIf SetNames.Count = 0 Then
-		    SetNames.Add(Self.BaseConfigSetName)
+		Function CombinedConfigs(Sets() As Beacon.ConfigSet) As Ark.ConfigGroup()
+		  If Sets Is Nil Then
+		    Sets = Array(Beacon.ConfigSet.BaseConfigSet)
+		  ElseIf Sets.Count = 0 Then
+		    Sets.Add(Beacon.ConfigSet.BaseConfigSet)
 		  End If
 		  
 		  Var Instances As New Dictionary
-		  For Idx As Integer = 0 To SetNames.LastIndex
-		    Var SetName As String = SetNames(Idx)
-		    Var Groups() As Ark.ConfigGroup = Self.ImplementedConfigs(SetName)
+		  For Idx As Integer = 0 To Sets.LastIndex
+		    Var Set As Beacon.ConfigSet = Sets(Idx)
+		    Var Groups() As Ark.ConfigGroup = Self.ImplementedConfigs(Set)
 		    For Each Group As Ark.ConfigGroup In Groups
 		      Var Siblings() As Ark.ConfigGroup
 		      If Instances.HasKey(Group.InternalName) Then
@@ -348,14 +323,15 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigGroup(InternalName As String, Create As Boolean = False) As Ark.ConfigGroup
-		  Return Self.ConfigGroup(InternalName, Self.ActiveConfigSet, Create)
+		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Ark.ConfigGroup()
+		  Var Sets() As Beacon.ConfigSet = Beacon.ConfigSetState.FilterSets(States, Self.ConfigSets)
+		  Return Self.CombinedConfigs(Sets)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigGroup(InternalName As String, SetName As String, Create As Boolean = False) As Ark.ConfigGroup
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Function ConfigGroup(InternalName As String, Set As Beacon.ConfigSet, Create As Boolean = False) As Ark.ConfigGroup
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		  If (SetDict Is Nil) = False And SetDict.HasKey(InternalName) Then
 		    Return SetDict.Value(InternalName)
 		  End If
@@ -364,13 +340,13 @@ Inherits Beacon.Project
 		    Var Group As Ark.ConfigGroup = Ark.Configs.CreateInstance(InternalName)
 		    If (Group Is Nil) = False Then
 		      Group.IsImplicit = True
-		      Self.AddConfigGroup(Group, SetName)
+		      Self.AddConfigGroup(Group, Set)
 		    End If
 		    Return Group
-		  ElseIf SetName <> BaseConfigSetName And InternalName = Ark.Configs.NameDifficulty Then
+		  ElseIf Set.IsBase = False And InternalName = Ark.Configs.NameDifficulty Then
 		    // Create is false, we're not in the base config set, and we're looking for difficulty.
 		    // Return a *clone* of the base difficulty, but don't add it to the config set.
-		    Var BaseDifficulty As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, BaseConfigSetName, False)
+		    Var BaseDifficulty As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, Beacon.ConfigSet.BaseConfigSet, False)
 		    Var Clone As Ark.ConfigGroup
 		    If BaseDifficulty Is Nil Then
 		      // Should never happen, but just in case
@@ -382,6 +358,12 @@ Inherits Beacon.Project
 		    End If
 		    Return Clone
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigGroup(InternalName As String, Create As Boolean = False) As Ark.ConfigGroup
+		  Return Self.ConfigGroup(InternalName, Self.ActiveConfigSet, Create)
 		End Function
 	#tag EndMethod
 
@@ -740,7 +722,7 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function Difficulty() As Ark.Configs.Difficulty
-		  Var Group As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.ActiveConfigSet = Self.BaseConfigSetName)
+		  Var Group As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.ActiveConfigSet.IsBase)
 		  If Group Is Nil Then
 		    Return Nil
 		  End If
@@ -761,8 +743,8 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasConfigGroup(InternalName As String, SetName As String) As Boolean
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Function HasConfigGroup(InternalName As String, Set As Beacon.ConfigSet) As Boolean
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		  If (SetDict Is Nil) = False Then
 		    Return SetDict.HasKey(InternalName)
 		  End If
@@ -771,10 +753,10 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function ImplementedConfigs() As Ark.ConfigGroup()
-		  Var Names() As String = Self.ConfigSetNames
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
 		  Var Groups() As Ark.ConfigGroup
-		  For Each SetName As String In Names
-		    Var SetGroups() As Ark.ConfigGroup = Self.ImplementedConfigs(SetName)
+		  For Each Set As Beacon.ConfigSet In Sets
+		    Var SetGroups() As Ark.ConfigGroup = Self.ImplementedConfigs(Set)
 		    For Each Group As Ark.ConfigGroup In SetGroups
 		      Groups.Add(Group)
 		    Next
@@ -784,13 +766,13 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImplementedConfigs(SetName As String) As Ark.ConfigGroup()
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Function ImplementedConfigs(Set As Beacon.ConfigSet) As Ark.ConfigGroup()
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		  Var Groups() As Ark.ConfigGroup
 		  If (SetDict Is Nil) = False Then
 		    For Each Entry As DictionaryEntry In SetDict
 		      Var Group As Ark.ConfigGroup = Entry.Value
-		      If Group.IsImplicit = False Or SetName = Self.BaseConfigSetName Then
+		      If Group.IsImplicit = False Or Set.IsBase Then
 		        Groups.Add(Group)
 		      End If
 		    Next
@@ -836,9 +818,9 @@ Inherits Beacon.Project
 		    Return True
 		  End If
 		  
-		  Var ConfigSetNames() As String = Self.ConfigSetNames
-		  For Each ConfigSetName As String In ConfigSetNames
-		    Var SetDict As Dictionary = Self.ConfigSet(ConfigSetName)
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		  For Each Set As Beacon.ConfigSet In Sets
+		    Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		    If SetDict Is Nil Then
 		      Continue
 		    End If
@@ -847,8 +829,8 @@ Inherits Beacon.Project
 		      If Group.Modified Then
 		        Return True
 		      End If
-		    Next GroupEntry
-		  Next ConfigSetName
+		    Next
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -857,17 +839,17 @@ Inherits Beacon.Project
 		  Super.Modified = Value
 		  
 		  If Value = False Then
-		    Var ConfigSetNames() As String = Self.ConfigSetNames
-		    For Each ConfigSetName As String In ConfigSetNames
-		      Var SetDict As Dictionary = Self.ConfigSet(ConfigSetName)
+		    Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		    For Each Set As Beacon.ConfigSet In Sets
+		      Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		      If SetDict Is Nil Then
 		        Continue
 		      End If
 		      For Each GroupEntry As DictionaryEntry In SetDict
 		        Var Group As Ark.ConfigGroup = GroupEntry.Value
 		        Group.Modified = False
-		      Next GroupEntry
-		    Next ConfigSetName
+		      Next
+		    Next
 		  End If
 		End Sub
 	#tag EndMethod
@@ -883,12 +865,12 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigGroup(Group As Ark.ConfigGroup, SetName As String)
+		Sub RemoveConfigGroup(Group As Ark.ConfigGroup, Set As Beacon.ConfigSet)
 		  If Group Is Nil Then
 		    Return
 		  End If
 		  
-		  Self.RemoveConfigGroup(Group.InternalName, SetName)
+		  Self.RemoveConfigGroup(Group.InternalName, Set)
 		End Sub
 	#tag EndMethod
 
@@ -899,11 +881,11 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigGroup(InternalName As String, SetName As String)
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Sub RemoveConfigGroup(InternalName As String, Set As Beacon.ConfigSet)
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
 		  If (SetDict Is Nil) = False And SetDict.HasKey(InternalName) Then
 		    SetDict.Remove(InternalName)
-		    Self.ConfigSet(SetName) = SetDict
+		    Self.ConfigSetData(Set) = SetDict
 		  End If
 		End Sub
 	#tag EndMethod

@@ -2,18 +2,14 @@
 Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.ServerProfile
-		  Return Beacon.ServerProfile.FromSaveData(Self.SaveData())
+		  // The project is not necessary since SaveData will always be modern
+		  Return Beacon.ServerProfile.FromSaveData(Self.SaveData(), Nil)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ConfigSetStates() As Beacon.ConfigSetState()
-		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
-		  Var Clone() As Beacon.ConfigSetState
-		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    Clone.Add(State)
-		  Next
-		  Return Clone
+		  Return Beacon.ConfigSetState.CloneArray(Self.mConfigSetStates)
 		End Function
 	#tag EndMethod
 
@@ -22,26 +18,11 @@ Protected Class ServerProfile
 		  // First decide if the States() array is different from the mConfigSetStates() array. Then, 
 		  // update mConfigSetStates() to match. Do not need to clone the members since they are immutable.
 		  
-		  Var Different As Boolean
-		  If Self.mConfigSetStates.Count <> States.Count Then
-		    Different = True
-		  Else
-		    For Idx As Integer = 0 To States.LastIndex
-		      If Self.mConfigSetStates(Idx) <> States(Idx) Then
-		        Different = True
-		        Exit
-		      End If
-		    Next
-		  End If
-		  
-		  If Not Different Then
+		  If Beacon.ConfigSetState.AreArraysEqual(Self.mConfigSetStates, States) Then
 		    Return
 		  End If
 		  
-		  Self.mConfigSetStates.ResizeTo(States.LastIndex)
-		  For Idx As Integer = 0 To States.LastIndex
-		    Self.mConfigSetStates(Idx) = States(Idx)
-		  Next
+		  Self.mConfigSetStates = Beacon.ConfigSetState.CloneArray(States)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -49,34 +30,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function ConfigSetStates(ForProject As Beacon.Project) As Beacon.ConfigSetState()
 		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
-		  Var States(0) As Beacon.ConfigSetState
-		  States(0) = New Beacon.ConfigSetState(Beacon.Project.BaseConfigSetName, True)
-		  
-		  Var Names() As String = ForProject.ConfigSetNames
-		  Var Filter As New Dictionary
-		  For Each Name As String In Names
-		    If Name = Beacon.Project.BaseConfigSetName Then
-		      Continue
-		    End If
-		    
-		    Filter.Value(Name) = True
-		  Next
-		  
-		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    If Filter.HasKey(State.Name) = False Then
-		      Continue
-		    End If
-		    
-		    States.Add(State)
-		    
-		    Filter.Remove(State.Name)
-		  Next
-		  
-		  For Each Entry As DictionaryEntry In Filter
-		    States.Add(New Beacon.ConfigSetState(Entry.Key, False))
-		  Next
-		  
-		  Return States
+		  Return Beacon.ConfigSetState.FilterStates(Self.mConfigSetStates, ForProject.ConfigSets)
 		End Function
 	#tag EndMethod
 
@@ -89,7 +43,9 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Dict As Dictionary)
+		Sub Constructor(Dict As Dictionary, Project As Beacon.Project = Nil)
+		  // Optional project is needed to correctly restore legacy config set states
+		  
 		  If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
 		    Var Err As New KeyNotFoundException
 		    Err.Message = "Incomplete server profile"
@@ -108,17 +64,35 @@ Protected Class ServerProfile
 		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
 		  End If
 		  
-		  If Dict.HasKey("Config Sets") Then
-		    Var Sets() As Dictionary
+		  If Dict.HasKey("Config Set Priorities") Then
+		    Self.mConfigSetStates = Beacon.ConfigSetState.DecodeArray(Dict.Value("Config Set Priorities"))
+		  ElseIf Dict.HasKey("Config Sets") Then
+		    Var States() As Dictionary
 		    Try
-		      Sets = Dict.Value("Config Sets").DictionaryArrayValue
+		      States = Dict.Value("Config Sets").DictionaryArrayValue
 		    Catch Err As RuntimeException
 		    End Try
-		    For Each Set As Dictionary In Sets
-		      Var State As Beacon.ConfigSetState = Beacon.ConfigSetState.FromSaveData(Set)
-		      If (State Is Nil) = False Then
-		        Self.mConfigSetStates.Add(State)
-		      End If
+		    
+		    Var Sets() As Beacon.ConfigSet
+		    If (Project Is Nil) = False Then
+		      Sets = Project.ConfigSets
+		    End If
+		    Var SetsMap As New Dictionary
+		    For Each Set As Beacon.ConfigSet In Sets
+		      SetsMap.Value(Set.Name) = Set
+		    Next
+		    
+		    Self.mConfigSetStates.ResizeTo(-1)
+		    For Each State As Dictionary In States
+		      Try
+		        Var SetName As String = State.Value("Name").StringValue
+		        If SetsMap.HasKey(SetName) = False Then
+		          Continue
+		        End If
+		        Var Set As Beacon.ConfigSet = SetsMap.Value(SetName)
+		        Self.mConfigSetStates.Add(New Beacon.ConfigSetState(Set, State.Value("Enabled").BooleanValue))
+		      Catch Err As RuntimeException
+		      End Try
 		    Next
 		  End If
 		  
@@ -135,7 +109,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Beacon.ServerProfile
+		Shared Function FromSaveData(Dict As Dictionary, Project As Beacon.Project) As Beacon.ServerProfile
 		  // This isn't a great design because the factory needs to know about all its subclasses, but
 		  // there aren't better alternatives. Xojo's dead code stripping prevents a lookup from working.
 		  
@@ -149,15 +123,15 @@ Protected Class ServerProfile
 		  Case Ark.Identifier
 		    Select Case Provider
 		    Case "Nitrado"
-		      Return New Ark.NitradoServerProfile(Dict)
+		      Return New Ark.NitradoServerProfile(Dict, Project)
 		    Case "FTP"
-		      Return New Ark.FTPServerProfile(Dict)
+		      Return New Ark.FTPServerProfile(Dict, Project)
 		    Case "Connector"
-		      Return New Ark.ConnectorServerProfile(Dict)
+		      Return New Ark.ConnectorServerProfile(Dict, Project)
 		    Case "Local", "Simple"
-		      Return New Ark.LocalServerProfile(Dict)
+		      Return New Ark.LocalServerProfile(Dict, Project)
 		    Case "GameServerApp"
-		      Return New Ark.GSAServerProfile(Dict)
+		      Return New Ark.GSAServerProfile(Dict, Project)
 		    End Select
 		  End Select
 		End Function
@@ -249,11 +223,7 @@ Protected Class ServerProfile
 		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
 		  End If
 		  If Self.mConfigSetStates.Count > 0 Then
-		    Var Priorities() As Dictionary
-		    For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		      Priorities.Add(State.SaveData)
-		    Next
-		    Dict.Value("Config Sets") = Priorities
+		    Dict.Value("Config Set Priorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetStates)
 		  End If
 		  If IsNull(Self.mProviderServiceID) = False Then
 		    Dict.Value("Provider Service ID") = Self.mProviderServiceID

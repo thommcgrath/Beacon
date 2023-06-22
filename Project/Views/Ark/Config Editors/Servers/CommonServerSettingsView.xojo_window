@@ -971,22 +971,17 @@ End
 		  Var Project As Ark.Project = Self.Project
 		  
 		  If Project.ConfigSetCount > 1 Then
-		    Var States() As Beacon.ConfigSetState
-		    Var Profile As Ark.ServerProfile = Self.Profile
-		    If (Profile Is Nil) = False Then
-		      States = Profile.ConfigSetStates(Project)
-		    End If
+		    Var Sets() As Beacon.ConfigSet = Beacon.ConfigSetState.FilterSets(Self.Profile.ConfigSetStates, Project.ConfigSets)
+		    
 		    Var EnabledSets() As String
-		    For Each State As Beacon.ConfigSetState In States
-		      If State.Enabled Then
-		        EnabledSets.Add(State.Name)
-		      End If
+		    For Each Set As Beacon.ConfigSet In Sets
+		      EnabledSets.Add(Set.Name)
 		    Next
 		    
 		    Self.ConfigSetField.Text = EnabledSets.EnglishOxfordList()
 		    Self.ConfigSetChooseButton.Enabled = True
 		  Else
-		    Self.ConfigSetField.Text = Ark.Project.BaseConfigSetName
+		    Self.ConfigSetField.Text = Beacon.ConfigSet.BaseConfigSet.Name
 		    Self.ConfigSetChooseButton.Enabled = False
 		  End If
 		End Sub
@@ -1061,11 +1056,12 @@ End
 		    Return
 		  End If
 		  
+		  Var Sets() As Beacon.ConfigSet = Self.Project.ConfigSets
 		  Var States() As Beacon.ConfigSetState = MainProfile.ConfigSetStates(Self.Project)
-		  Var ChangedStates() As Beacon.ConfigSetState = ArkConfigSetSelectorDialog.Present(Self, States)
-		  For Each Profile As Ark.ServerProfile In Self.mProfiles
-		    Profile.ConfigSetStates = ChangedStates
-		  Next
+		  If ArkConfigSetSelectorDialog.Present(Self, Sets, States) Then
+		    Profile.ConfigSetStates = States
+		  End If
+		  
 		  Self.UpdateConfigSetUI()
 		  Self.Modified = Self.Modified
 		End Sub

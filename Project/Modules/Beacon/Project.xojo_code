@@ -8,28 +8,46 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ActiveConfigSet() As String
+		Function ActiveConfigSet() As Beacon.ConfigSet
 		  Return Self.mActiveConfigSet
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ActiveConfigSet(Assigns SetName As String)
-		  If Self.mConfigSets.HasKey(SetName) Then
-		    Self.mActiveConfigSet = SetName
+		Sub ActiveConfigSet(Assigns Set As Beacon.ConfigSet)
+		  If Set Is Nil Then
+		    Set = Beacon.ConfigSet.BaseConfigSet
+		  End If
+		  
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  If Idx = -1 Then
+		    Self.mActiveConfigSet = Beacon.ConfigSet.BaseConfigSet
 		  Else
-		    Self.mActiveConfigSet = Self.BaseConfigSetName
+		    Self.mActiveConfigSet = Self.mConfigSets(Idx)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigSet(SetName As String)
-		  If Self.mConfigSets.HasKey(SetName) = False Then
-		    Self.mConfigSets.Value(SetName) = New Dictionary
-		    Self.mConfigSetStates.Add(New Beacon.ConfigSetState(SetName, False))
-		    Self.Modified = True
+		Sub AddConfigSet(Set As Beacon.ConfigSet)
+		  If Set Is Nil Then
+		    Return
 		  End If
+		  
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  If Idx > -1 Then
+		    Return
+		  End If
+		  
+		  If Self.HasConfigSet(Set.Name) Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "There is already a config set named " + Set.Name + "."
+		    Raise Err
+		  End If
+		  
+		  Self.mConfigSets.Add(Set)
+		  Self.mConfigSetData.Value(Set.ConfigSetId) = New Dictionary
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -108,133 +126,96 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ConfigSetCount() As Integer
+		  Return Self.mConfigSets.Count
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
-		Protected Function ConfigSet(SetName As String) As Dictionary
-		  If SetName.IsEmpty Then
-		    SetName = Self.ActiveConfigSet
+		Protected Function ConfigSetData(Set As Beacon.ConfigSet) As Dictionary
+		  If Set Is Nil Then
+		    Set = Self.ActiveConfigSet
 		  End If
 		  
-		  If Self.mConfigSets.HasKey(SetName) Then
-		    Return Self.mConfigSets.Value(SetName)
+		  If Self.mConfigSetData.HasKey(Set.ConfigSetId) Then
+		    Return Self.mConfigSetData.Value(Set.ConfigSetId)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ConfigSet(SetName As String, Assigns Dict As Dictionary)
-		  If SetName.IsEmpty Then
-		    SetName = Self.ActiveConfigSet
+		Protected Sub ConfigSetData(Set As Beacon.ConfigSet, Assigns Dict As Dictionary)
+		  If Set Is Nil Then
+		    Set = Self.ActiveConfigSet
 		  End If
 		  
-		  // Empty sets are valid
+		  // Nil dict should remove the config set
 		  If Dict Is Nil Then
-		    If Self.mConfigSets.HasKey(SetName) Then
-		      Self.mConfigSets.Remove(SetName)
-		      For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 1
-		        If Self.mConfigSetStates(Idx).Name = SetName Then
-		          Self.mConfigSetStates.RemoveAt(Idx)
-		        End If
-		      Next
-		      Self.Modified = True
+		    If Self.mConfigSetData.HasKey(Set.ConfigSetId) Then
+		      Self.mConfigSetData.Remove(Set.ConfigSetId)
 		    End If
-		    Return
-		  End If
-		  
-		  If Self.mConfigSets.HasKey(SetName) = False Then
-		    Var Add As Boolean = True
-		    For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
-		      If Self.mConfigSetStates(Idx).Name = SetName Then
-		        Add = False
+		    
+		    Var Idx As Integer = Self.IndexOf(Set)
+		    If Idx > -1 Then
+		      Self.mConfigSets.RemoveAt(Idx)
+		    End If
+		    
+		    For Idx = 0 To Self.mConfigSetPriorities.LastIndex
+		      If Self.mConfigSetPriorities(Idx) = Set Then
+		        Self.mConfigSetPriorities.RemoveAt(Idx)
 		        Exit
 		      End If
 		    Next
-		    If Add Then
-		      Self.mConfigSetStates.Add(New Beacon.ConfigSetState(SetName, False))
-		    End If
+		    
+		    Self.Modified = True
+		    Return
 		  End If
-		  Self.mConfigSets.Value(SetName) = Dict
+		  
+		  // Set will not be added unless necessary
+		  Self.AddConfigSet(Set)
+		  
+		  Self.mConfigSetData.Value(Set.ConfigSetId) = Dict
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigSetCount() As Integer
-		  Return Self.mConfigSets.KeyCount
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ConfigSetNames() As String()
 		  Var Names() As String
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    Names.Add(Entry.Key)
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    Names.Add(Set.Name)
 		  Next
 		  Return Names
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigSetStates() As Beacon.ConfigSetState()
-		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
-		  Var Clone(0) As Beacon.ConfigSetState
-		  
-		  // First should always be an enabled base
-		  Clone(0) = New Beacon.ConfigSetState(Self.BaseConfigSetName, True)
-		  
-		  Var Names() As String = Array(Self.BaseConfigSetName)
-		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    // Do not include any states for sets that don't exist. Should be zero, but just to be sure.
-		    If Self.mConfigSets.HasKey(State.Name) = False Then
-		      Continue
-		    End If
-		    
-		    // Do not include duplicate states
-		    If Names.IndexOf(State.Name) > -1 Then
-		      Continue
-		    End If
-		    
-		    Clone.Add(State)
-		    Names.Add(State.Name)
-		  Next
-		  
-		  // Make sure any new sets have a state
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    If Names.IndexOf(Entry.Key.StringValue) = -1 Then
-		      Clone.Add(New Beacon.ConfigSetState(Entry.Key.StringValue, False))
-		    End If
-		  Next
-		  
-		  Return Clone
+		Function ConfigSetPriorities() As Beacon.ConfigSetState()
+		  Return Beacon.ConfigSetState.CloneArray(Self.mConfigSetPriorities)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ConfigSetStates(Assigns States() As Beacon.ConfigSetState)
-		  // First decide if the States() array is different from the mConfigSetStates() array. Then, 
-		  // update mConfigSetStates() to match. Do not need to clone the members since they are immutable.
-		  
-		  Var Different As Boolean
-		  If Self.mConfigSetStates.Count <> States.Count Then
-		    Different = True
-		  Else
-		    For Idx As Integer = 0 To States.LastIndex
-		      If Self.mConfigSetStates(Idx) <> States(Idx) Then
-		        Different = True
-		        Exit
-		      End If
-		    Next
-		  End If
-		  
-		  If Not Different Then
+		Sub ConfigSetPriorities(Assigns List() As Beacon.ConfigSetState)
+		  If Beacon.ConfigSetState.AreArraysEqual(Self.mConfigSetPriorities, List) Then
 		    Return
 		  End If
 		  
-		  Self.mConfigSetStates.ResizeTo(States.LastIndex)
-		  For Idx As Integer = 0 To States.LastIndex
-		    Self.mConfigSetStates(Idx) = States(Idx)
-		  Next
+		  Self.mConfigSetPriorities = Beacon.ConfigSetState.CloneArray(List)
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigSets() As Beacon.ConfigSet()
+		  // Make sure to return a clone of the array.
+		  Var Clone() As Beacon.ConfigSet
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    Clone.Add(New Beacon.ConfigSet(Set))
+		  Next
+		  Return Clone
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -245,9 +226,14 @@ Implements ObservationKit.Observable
 		  Self.mEncryptedPasswords = New Dictionary
 		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
 		  Self.mUUID = New v4UUID
-		  Self.mConfigSets = New Dictionary
-		  Self.mConfigSets.Value(Self.BaseConfigSetName) = New Dictionary
-		  Self.mActiveConfigSet = Self.BaseConfigSetName
+		  
+		  Self.mConfigSetData = New Dictionary
+		  Var BaseSet As Beacon.ConfigSet = Beacon.ConfigSet.BaseConfigSet
+		  Self.AddConfigSet(BaseSet)
+		  Self.mActiveConfigSet = BaseSet
+		  Self.mConfigSetPriorities.ResizeTo(0)
+		  Self.mConfigSetPriorities(0) = New Beacon.ConfigSetState(BaseSet, True)
+		  
 		  Self.mUseCompression = True
 		End Sub
 	#tag EndMethod
@@ -287,6 +273,17 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function Encrypt(Data As String) As String
 		  Return EncodeBase64(BeaconEncryption.SymmetricEncrypt(Self.mProjectPassword, Data), 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FindConfigSet(NameOrId As String) As Beacon.ConfigSet
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    If Set.Name = NameOrId Or Set.ConfigSetId = NameOrId Then
+		      Return Set
+		    End If
+		  Next
+		  Return Nil
 		End Function
 	#tag EndMethod
 
@@ -410,25 +407,49 @@ Implements ObservationKit.Observable
 		    SecureDict = New Dictionary
 		  End If
 		  
-		  If SecureDict.HasKey("Servers") And SecureDict.Value("Servers").IsArray Then
-		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
-		    For Each ServerDict As Variant In ServerDicts
+		  If SaveData.HasKey("Config Set Data") Then
+		    Project.mConfigSets.ResizeTo(-1)
+		    Var Definitions() As Variant = SaveData.Value("Config Sets")
+		    For Each Definition As Variant In Definitions
+		      If Definition.Type = Variant.TypeObject And Definition.ObjectValue IsA Dictionary Then
+		        Var ConfigSet As Beacon.ConfigSet = Beacon.ConfigSet.FromSaveData(Dictionary(Definition.ObjectValue))
+		        Project.mConfigSets.Add(ConfigSet)
+		      End If
+		    Next
+		    
+		    Project.mConfigSetPriorities = Beacon.ConfigSetState.DecodeArray(SaveData.Value("Config Set Priorities"))
+		    
+		    Var SetDicts As Dictionary = SaveData.Value("Config Set Data")
+		    Var EncryptedDicts As Dictionary
+		    If SecureDict.HasKey("Config Set Data") Then
 		      Try
-		        Var Dict As Dictionary = ServerDict
-		        Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromSaveData(Dict)
-		        If Profile Is Nil Then
-		          Continue
-		        End If
-		        
-		        // Something about migrating the nitrado account?
-		        
-		        Project.mServerProfiles.Add(Profile)
+		        EncryptedDicts = SecureDict.Value("Config Set Data")
 		      Catch Err As RuntimeException
 		      End Try
-		    Next ServerDict
-		  End If
-		  
-		  If SaveData.HasKey("Config Sets") Then
+		    End If
+		    If EncryptedDicts Is Nil Then
+		      EncryptedDicts = New Dictionary
+		    End If
+		    
+		    Project.mConfigSetData = New Dictionary
+		    For Each Entry As DictionaryEntry In SetDicts
+		      Var SetId As String = Entry.Key
+		      
+		      If Entry.Value IsA Dictionary Then
+		        Var EncryptedSetData As Dictionary
+		        If EncryptedDicts.HasKey(SetId) Then
+		          Try
+		            EncryptedSetData = EncryptedDicts.Value(SetId)
+		          Catch Err As RuntimeException
+		          End Try
+		        End If
+		        
+		        Project.mConfigSetData.Value(SetId) = Project.LoadConfigSet(Dictionary(Entry.Value), EncryptedSetData)
+		      Else
+		        Project.mConfigSetData.Value(SetId) = New Dictionary
+		      End If
+		    Next
+		  ElseIf SaveData.HasKey("Config Sets") Then
 		    Var Sets As Dictionary = SaveData.Value("Config Sets")
 		    Var EncryptedSets As Dictionary
 		    If SecureDict.HasKey("Config Sets") Then
@@ -441,8 +462,20 @@ Implements ObservationKit.Observable
 		      EncryptedSets = New Dictionary
 		    End If
 		    
+		    Project.mConfigSets.ResizeTo(-1)
+		    Project.mConfigSetData = New Dictionary
+		    Project.mConfigSetPriorities.ResizeTo(-1)
+		    Var SetsMap As New Dictionary
 		    For Each Entry As DictionaryEntry In Sets
 		      Var SetName As String = Entry.Key
+		      Var Set As Beacon.ConfigSet
+		      If SetName = "Base" Then
+		        Set = Beacon.ConfigSet.BaseConfigSet
+		      Else
+		        Set = New Beacon.ConfigSet(SetName)
+		      End If
+		      SetsMap.Value(Set.Name) = Set
+		      Project.mConfigSets.Add(Set)
 		      
 		      If Entry.Value IsA Dictionary Then
 		        Var EncryptedSetData As Dictionary
@@ -453,25 +486,56 @@ Implements ObservationKit.Observable
 		          End Try
 		        End If
 		        
-		        Project.ConfigSet(SetName) = Project.LoadConfigSet(Dictionary(Entry.Value), EncryptedSetData)
+		        Project.mConfigSetData.Value(Set.ConfigSetId) = Project.LoadConfigSet(Dictionary(Entry.Value), EncryptedSetData)
 		      Else
-		        Project.ConfigSet(SetName) = New Dictionary
+		        Project.mConfigSetData.Value(Set.ConfigSetId) = New Dictionary
 		      End If
 		    Next
 		    
-		    // Doc.ConfigSet will add the states. We don't need them.
-		    Project.mConfigSetStates.ResizeTo(-1)
 		    If SaveData.HasKey("Config Set Priorities") Then
-		      Try
-		        Var States() As Variant = SaveData.Value("Config Set Priorities")
-		        For Each State As Dictionary In States
-		          Project.mConfigSetStates.Add(Beacon.ConfigSetState.FromSaveData(State))
-		        Next
-		      Catch Err As RuntimeException
-		      End Try
+		      Var States() As Variant = SaveData.Value("Config Set Priorities")
+		      For Each State As Variant In States
+		        Try
+		          If State.Type = Variant.TypeObject And State.ObjectValue IsA Dictionary Then
+		            Var StateDict As Dictionary = Dictionary(State.ObjectValue)
+		            Var Name As String = StateDict.Value("Name")
+		            Var Enabled As Boolean = StateDict.Value("Enabled")
+		            If SetsMap.HasKey(Name) = False Then
+		              Continue
+		            End If
+		            Var Set As Beacon.ConfigSet = SetsMap.Value(Name)
+		            
+		            Project.mConfigSetPriorities.Add(New Beacon.ConfigSetState(Set, Enabled))
+		          End If
+		        Catch Err As RuntimeException
+		        End Try
+		      Next
 		    End If
 		  ElseIf SaveData.HasKey("Configs") Then
-		    Project.ConfigSet(BaseConfigSetName) = Project.LoadConfigSet(SaveData.Value("Configs"), Nil)
+		    Project.mConfigSets.ResizeTo(0)
+		    Project.mConfigSets(0) = Beacon.ConfigSet.BaseConfigSet
+		    Project.mConfigSetPriorities.ResizeTo(0)
+		    Project.mConfigSetPriorities(0) = New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True)
+		    Project.mConfigSetData = New Dictionary
+		    Project.mConfigSetData.Value(Beacon.ConfigSet.BaseConfigSetId) = Project.LoadConfigSet(SaveData.Value("Configs"), Nil)
+		  End If
+		  
+		  If SecureDict.HasKey("Servers") And SecureDict.Value("Servers").IsArray Then
+		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
+		    For Each ServerDict As Variant In ServerDicts
+		      Try
+		        Var Dict As Dictionary = ServerDict
+		        Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromSaveData(Dict, Project)
+		        If Profile Is Nil Then
+		          Continue
+		        End If
+		        
+		        // Something about migrating the nitrado account?
+		        
+		        Project.mServerProfiles.Add(Profile)
+		      Catch Err As RuntimeException
+		      End Try
+		    Next ServerDict
 		  End If
 		  
 		  Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion)
@@ -554,7 +618,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Function GameId() As String
 		  Var Err As New UnsupportedOperationException
 		  Err.Message = "Project.GameID not overridden"
 		  Raise Err
@@ -572,14 +636,39 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasConfigSet(SetName As String) As Boolean
-		  Return Self.mConfigSets.HasKey(SetName)
+		Function HasConfigSet(Set As Beacon.ConfigSet) As Boolean
+		  Return Self.IndexOf(Set) > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasConfigSet(Named As String) As Boolean
+		  For Idx As Integer = 0 To Self.mConfigSets.LastIndex
+		    If Self.mConfigSets(Idx).Name = Named Then
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function HasUser(UserID As String) As Boolean
 		  Return Self.mEncryptedPasswords.HasKey(UserID.Lowercase)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IndexOf(Set As Beacon.ConfigSet) As Integer
+		  If Set Is Nil Then
+		    Return -1
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.mConfigSets.LastIndex
+		    If Self.mConfigSets(Idx) = Set Then
+		      Return Idx
+		    End If
+		  Next
+		  Return -1
 		End Function
 	#tag EndMethod
 
@@ -615,6 +704,12 @@ Implements ObservationKit.Observable
 		    End If
 		  Next Profile
 		  
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    If Set.Modified Then
+		      Return True
+		    End If
+		  Next
+		  
 		  Return False
 		End Function
 	#tag EndMethod
@@ -628,6 +723,10 @@ Implements ObservationKit.Observable
 		      Profile.Modified = False
 		    Next Profile
 		    
+		    For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		      Set.Modified = False
+		    Next
+		    
 		    If (Self.mAccounts Is Nil) = False Then
 		      Self.mAccounts.Modified = False
 		    End If
@@ -637,7 +736,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub NewIdentifier()
-		  Self.mUUID = New v4UUID
+		  Self.mUUID = Beacon.UUID.v4
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -739,19 +838,19 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigSet(SetName As String)
-		  If SetName.IsEmpty Or SetName = Self.BaseConfigSetName Then
+		Sub RemoveConfigSet(Set As Beacon.ConfigSet)
+		  If Set Is Nil Or Set.IsBase Then
 		    Return
 		  End If
 		  
-		  For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 1
-		    If Self.mConfigSetStates(Idx).Name = SetName Then
-		      Self.mConfigSetStates.RemoveAt(Idx)
-		      Self.Modified = True
-		    End If
-		  Next
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  If Idx = -1 Then
+		    Return
+		  End If
 		  
-		  Self.ConfigSet(SetName) = Nil
+		  Self.mConfigSets.RemoveAt(Idx)
+		  Self.mConfigSetData.Remove(Set.ConfigSetId)
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -803,33 +902,24 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RenameConfigSet(OldName As String, NewName As String)
-		  If Self.mConfigSets.HasKey(OldName) = False Then
+		Sub RenameConfigSet(Set As Beacon.ConfigSet, NewName As String)
+		  Var OldNameIdx As Integer = Self.IndexOf(Set)
+		  If OldNameIdx = -1 Then
 		    Return
 		  End If
 		  
-		  For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
-		    If Self.mConfigSetStates(Idx).Name = OldName Then
-		      Self.mConfigSetStates(Idx) = New Beacon.ConfigSetState(NewName, Self.mConfigSetStates(Idx).Enabled)
-		    End If
-		  Next
+		  Set = Self.mConfigSets(OldNameIdx)
+		  If Set.Name = NewName Then
+		    Return
+		  End If
 		  
-		  Var OldSet As Dictionary = Self.mConfigSets.Value(OldName)
-		  Self.ConfigSet(OldName) = Nil
-		  Self.ConfigSet(NewName) = OldSet
+		  If Self.HasConfigSet(NewName) Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "There is already a config set named " + NewName + "."
+		    Raise Err
+		  End If
 		  
-		  For Idx As Integer = 0 To Self.mServerProfiles.LastIndex
-		    Var Profile As Beacon.ServerProfile = Self.mServerProfiles(Idx)
-		    Var ConfigSets() As Beacon.ConfigSetState = Profile.ConfigSetStates
-		    For SetIdx As Integer = 0 To ConfigSets.LastIndex
-		      If ConfigSets(SetIdx).Name = OldName Then
-		        ConfigSets(SetIdx) = New Beacon.ConfigSetState(NewName, ConfigSets(SetIdx).Enabled)
-		      End If
-		    Next
-		    Profile.ConfigSetStates = ConfigSets
-		  Next
-		  
-		  Self.Modified = True
+		  Set.Name = NewName
 		End Sub
 	#tag EndMethod
 
@@ -913,30 +1003,29 @@ Implements ObservationKit.Observable
 		  
 		  Var Sets As New Dictionary
 		  Var EncryptedSets As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    Var SetName As String = Entry.Key
-		    Var SetDict As Dictionary = Entry.Value
+		  Var Definitions() As Dictionary
+		  For Each Set As Beacon.ConfigSet In Self.mConfigSets
+		    Definitions.Add(Set.SaveData)
+		    
+		    Var SetDict As Dictionary = Self.mConfigSetData.Value(Set.ConfigSetId)
 		    Var SetPlainData As New Dictionary
 		    Var SetEncryptedData As New Dictionary
 		    RaiseEvent SaveConfigSet(SetDict, SetPlainData, SetEncryptedData)
 		    
 		    If SetPlainData.KeyCount > 0 Then
-		      Sets.Value(SetName) = SetPlainData
+		      Sets.Value(Set.ConfigSetId) = SetPlainData
 		      If SetEncryptedData.KeyCount > 0 Then
-		        EncryptedSets.Value(SetName) = SetEncryptedData
+		        EncryptedSets.Value(Set.ConfigSetId) = SetEncryptedData
 		      End If
 		    End If
 		  Next
-		  ProjectData.Value("Config Sets") = Sets
-		  If EncryptedSets.KeyCount > 0 Then
-		    EncryptedData.Value("Config Sets") = EncryptedSets
-		  End If
+		  ProjectData.Value("Config Sets") = Definitions
+		  ProjectData.Value("Config Set Priorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetPriorities)
 		  
-		  Var States() As Dictionary
-		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    States.Add(State.SaveData)
-		  Next
-		  ProjectData.Value("Config Set Priorities") = States
+		  ProjectData.Value("Config Set Data") = Sets
+		  If EncryptedSets.KeyCount > 0 Then
+		    EncryptedData.Value("Config Sets Data") = EncryptedSets
+		  End If
 		  
 		  If EncryptedData.KeyCount > 0 Then
 		    Var Content As String = Beacon.GenerateJSON(EncryptedData, False)
@@ -1093,15 +1182,19 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mActiveConfigSet As String
+		Private mActiveConfigSet As Beacon.ConfigSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigSets As Dictionary
+		Private mConfigSetData As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigSetStates() As Beacon.ConfigSetState
+		Private mConfigSetPriorities() As Beacon.ConfigSetState
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigSets() As Beacon.ConfigSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1153,7 +1246,7 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 
-	#tag Constant, Name = BaseConfigSetName, Type = String, Dynamic = False, Default = \"Base", Scope = Public
+	#tag Constant, Name = BaseConfigSetName, Type = String, Dynamic = False, Default = \"Base", Scope = Public, Attributes = \"Deprecated"
 	#tag EndConstant
 
 	#tag Constant, Name = BinaryFormatBEBOM, Type = Double, Dynamic = False, Default = \"3470482855257601832", Scope = Public
