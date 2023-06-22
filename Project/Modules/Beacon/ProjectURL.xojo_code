@@ -134,6 +134,24 @@ Protected Class ProjectURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HumanPath() As String
+		  // Not suitable for restoring a file, just a visual reference
+		  
+		  Select Case Self.Scheme
+		  Case TypeLocal
+		    Var File As FolderItem = Self.File
+		    If (File Is Nil) = False Then
+		      Return File.NativePath
+		    End If
+		    
+		    Return "Invalid Path"
+		  Case TypeWeb, TypeCloud
+		    Return Self.URL(URLTypes.Reading)
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Name() As String
 		  Var Name As String
 		  

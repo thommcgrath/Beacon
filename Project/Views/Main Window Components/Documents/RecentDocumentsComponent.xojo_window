@@ -37,8 +37,8 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   "46,*"
+      ColumnCount     =   4
+      ColumnWidths    =   "46,*,200,*"
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -50,14 +50,14 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       FontUnit        =   0
       GridLineStyle   =   0
       HasBorder       =   False
-      HasHeader       =   False
+      HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   311
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
+      InitialValue    =   " 	Name	Game	Path"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -203,6 +203,9 @@ End
 		    For Idx As Integer = 0 To Recents.LastIndex
 		      Var URL As Beacon.ProjectURL = Recents(Idx)
 		      Self.List.CellTextAt(Idx, Self.ColumnName) = URL.Name
+		      Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(URL.GameID)
+		      Self.List.CellTextAt(Idx, Self.ColumnPath) = URL.HumanPath
+		      Self.List.CellTooltipAt(Idx, Self.ColumnPath) = Self.List.CellTextAt(Idx, Self.ColumnPath)
 		      Self.List.RowTagAt(Idx) = URL
 		      Self.List.RowSelectedAt(Idx) = SelectedURLs.IndexOf(URL) > -1
 		    Next
@@ -213,23 +216,32 @@ End
 		        Continue
 		      End If
 		      
-		      Self.List.AddRow("", URL.Name)
+		      Self.List.AddRow("")
 		      Var Idx As Integer = Self.List.LastAddedRowIndex
+		      Self.List.CellTextAt(Idx, Self.ColumnName) = URL.Name
+		      Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(URL.GameID)
+		      Self.List.CellTextAt(Idx, Self.ColumnPath) = URL.HumanPath
+		      Self.List.CellTooltipAt(Idx, Self.ColumnPath) = Self.List.CellTextAt(Idx, Self.ColumnPath)
 		      Self.List.RowTagAt(Idx) = URL
 		      Self.List.RowSelectedAt(Idx) = SelectedURLs.IndexOf(URL) > -1
 		    Next
 		  End If
 		  
 		  
-		  
 		End Sub
 	#tag EndMethod
 
+
+	#tag Constant, Name = ColumnGame, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ColumnIcon, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnPath, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
