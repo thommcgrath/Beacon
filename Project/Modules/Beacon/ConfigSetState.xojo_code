@@ -9,6 +9,23 @@ Protected Class ConfigSetState
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Sub Cleanup(States() As Beacon.ConfigSetState)
+		  If States.LastIndex < 0 Then
+		    States.Add(New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True))
+		  ElseIf States(0) Is Nil Or States(0).ConfigSetId <> Beacon.ConfigSet.BaseConfigSetId Then
+		    For Idx As Integer = States.LastIndex DownTo 0
+		      If States(Idx).ConfigSetId = Beacon.ConfigSet.BaseConfigSetId Then
+		        States.RemoveAt(Idx)
+		      End If
+		    Next
+		    States.AddAt(0, New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True))
+		  ElseIf States(0).Enabled = False Then
+		    States(0) = New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSet, True)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CloneArray(States() As Beacon.ConfigSetState) As Beacon.ConfigSetState()
 		  // Need a new array, but states are immutable so no need to copy them
 		  
