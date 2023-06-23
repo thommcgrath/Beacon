@@ -76,67 +76,67 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Var File As BookmarkedFolderItem = Self.AutosaveFile(True)
-		  If (File Is Nil) = False And (Self.mController.SaveACopy(Beacon.ProjectURL.URLForFile(File)) Is Nil) = False  Then
-		    Self.mAutosaveTimer.Reset
+		  If Self.mAutosaveURL Is Nil Then
+		    Var AutosaveFolder As FolderItem = App.AutosaveFolder(True)
+		    Var AutosaveFile As New BookmarkedFolderItem(AutosaveFolder.Child(Self.Project.UUID + Beacon.FileExtensionProject))
+		    If AutosaveFile.Exists = False Then
+		      Call AutosaveFile.Write("")
+		    End If
+		    
+		    Self.mAutosaveURL = Beacon.ProjectURL.URLForFile(AutosaveFile)
+		  End If
+		  
+		  Var AutosaveController As Beacon.ProjectController = Self.mController.SaveACopy(Self.mAutosaveURL)
+		  If (AutosaveController Is Nil) = False Then
+		    System.DebugLog("Autosaved")
+		    Self.mAutoSaveTimer.Reset
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function AutosaveFile(CreateFolder As Boolean = False) As BookmarkedFolderItem
-		  If Self.Project Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  If Self.mAutosaveFile Is Nil Or Not Self.mAutosaveFile.Exists Then
-		    If (Self.mController.AutosaveURL Is Nil) = False Then
-		      Try
-		        Self.mAutosaveFile = Self.mController.AutosaveURL.File
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
-		    
-		    If Self.mAutosaveFile Is Nil Or Not Self.mAutosaveFile.Exists Then
-		      Var Folder As FolderItem = App.AutosaveFolder(CreateFolder)
-		      If Folder = Nil Then
-		        Return Nil
-		      End If
-		      Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Project.UUID + Beacon.FileExtensionProject))
-		    End If
-		  End If
-		  
-		  Return Self.mAutosaveFile
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub CleanupAutosave()
-		  Var AutosaveFile As FolderItem = Self.AutosaveFile()
-		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
-		    Try
-		      AutosaveFile.Remove
-		    Catch Err As IOException
-		      App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString + ")")
-		      Try
-		        Var Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
-		        If Not Destination.Exists Then
-		          Destination.CreateFolder
-		        End If
-		        Destination = Destination.Child(v4UUID.Create + ".beacon")
-		        AutosaveFile.MoveTo(Destination)
-		      Catch DeeperError As RuntimeException
-		        App.Log("And unable to move the file to system temp for cleanup later: " + DeeperError.Message + " (code: " + DeeperError.ErrorNumber.ToString + ")")
-		      End Try
-		    End Try
-		    Self.mAutosaveFile = Nil
+		  If Self.mAutosaveURL Is Nil Then
+		    Return
 		  End If
+		  
+		  Var AutosaveFile As BookmarkedFolderItem = Self.mAutosaveURL.File
+		  If AutosaveFile Is Nil Or AutosaveFile.Exists = False Then
+		    Return
+		  End If
+		  
+		  Try
+		    AutosaveFile.Remove
+		  Catch Err As IOException
+		    App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString + ")")
+		    
+		    Try
+		      Var Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
+		      If Not Destination.Exists Then
+		        Destination.CreateFolder
+		      End If
+		      Destination = Destination.Child(Beacon.UUID.v4.StringValue + ".beacon")
+		      AutosaveFile.MoveTo(Destination)
+		    Catch DeeperError As RuntimeException
+		      App.Log("And unable to move the file to system temp for cleanup later: " + DeeperError.Message + " (code: " + DeeperError.ErrorNumber.ToString + ")")
+		    End Try
+		  End Try
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Controller As Beacon.ProjectController)
 		  Self.mController = Controller
+		  If (Self.mController.AutosaveURL Is Nil) = False Then
+		    Var Title As String = Self.mController.Project.Title
+		    If Title.EndsWith("(Recovered)") = False Then
+		      Title = Title + " (Recovered)"
+		      Self.mController.Project.Title = Title
+		    End If
+		    Self.mAutosaveURL = Self.mController.AutosaveURL
+		    Self.mController.AutosaveURL = Nil
+		  End If
+		  
 		  AddHandler Self.mController.WriteError, WeakAddressOf mController_WriteError
 		  AddHandler Self.mController.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  Self.ViewTitle = Controller.Name
@@ -283,7 +283,9 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    End If
 		    
 		    Self.Project.NewIdentifier()
-		    Self.mController.SaveAs(Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(File)))
+		    Call File.Write("")
+		    Var Url As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(File))
+		    Self.mController.SaveAs(Url)
 		    Self.ViewTitle = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  End Select
@@ -360,11 +362,11 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 
 	#tag Property, Flags = &h21
-		Private mAutosaveFile As BookmarkedFolderItem
+		Private mAutoSaveTimer As Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAutoSaveTimer As Timer
+		Private mAutosaveURL As Beacon.ProjectURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

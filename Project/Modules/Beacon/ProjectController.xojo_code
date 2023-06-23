@@ -231,7 +231,7 @@ Protected Class ProjectController
 		  
 		  Var Controller As New Beacon.ProjectController(Self.mProject, Self.mIdentity)
 		  Controller.mProjectURL = Destination
-		  If Self.mProject.Title <> "" Then
+		  If Self.mProject.Title.IsEmpty = False Then
 		    Destination.Name = Self.mProject.Title
 		  End If
 		  Controller.WriteTo(Destination, False)
