@@ -9,6 +9,18 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function ConfigSetStates() As Beacon.ConfigSetState()
+		  If Self.mConfigSetStates.LastIndex < 0 Then
+		    Self.mConfigSetStates.Add(New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True))
+		  ElseIf Self.mConfigSetStates(0) Is Nil Or Self.mConfigSetStates(0).ConfigSetId <> Beacon.ConfigSet.BaseConfigSetId Then
+		    For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 0
+		      If Self.mConfigSetStates(Idx).ConfigSetId = Beacon.ConfigSet.BaseConfigSetId Then
+		        Self.mConfigSetStates.RemoveAt(Idx)
+		      End If
+		    Next
+		    Self.mConfigSetStates.AddAt(0, New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True))
+		  ElseIf Self.mConfigSetStates(0).Enabled = False Then
+		    Self.mConfigSetStates(0) = New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True)
+		  End If
 		  Return Beacon.ConfigSetState.CloneArray(Self.mConfigSetStates)
 		End Function
 	#tag EndMethod
@@ -17,6 +29,19 @@ Protected Class ServerProfile
 		Sub ConfigSetStates(Assigns States() As Beacon.ConfigSetState)
 		  // First decide if the States() array is different from the mConfigSetStates() array. Then, 
 		  // update mConfigSetStates() to match. Do not need to clone the members since they are immutable.
+		  
+		  If States.LastIndex < 0 Then
+		    States.Add(New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True))
+		  ElseIf States(0) Is Nil Or States(0).ConfigSetId <> Beacon.ConfigSet.BaseConfigSetId Then
+		    For Idx As Integer = States.LastIndex DownTo 0
+		      If States(Idx).ConfigSetId = Beacon.ConfigSet.BaseConfigSetId Then
+		        States.RemoveAt(Idx)
+		      End If
+		    Next
+		    States.AddAt(0, New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSetId, True))
+		  ElseIf States(0).Enabled = False Then
+		    States(0) = New Beacon.ConfigSetState(Beacon.ConfigSet.BaseConfigSet, True)
+		  End If
 		  
 		  If Beacon.ConfigSetState.AreArraysEqual(Self.mConfigSetStates, States) Then
 		    Return
@@ -30,7 +55,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function ConfigSetStates(ForProject As Beacon.Project) As Beacon.ConfigSetState()
 		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
-		  Return Beacon.ConfigSetState.FilterStates(Self.mConfigSetStates, ForProject.ConfigSets)
+		  Return Beacon.ConfigSetState.FilterStates(Self.ConfigSetStates, ForProject.ConfigSets)
 		End Function
 	#tag EndMethod
 
@@ -615,6 +640,14 @@ Protected Class ServerProfile
 				"10 - Teal"
 				"11 - Yellow"
 			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Nickname"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

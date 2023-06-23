@@ -70,6 +70,7 @@ Begin ArkConfigEditor ServersConfigEditor
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
+      SingleLineMode  =   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
