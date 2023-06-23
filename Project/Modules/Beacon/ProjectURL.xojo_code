@@ -175,23 +175,7 @@ Protected Class ProjectURL
 
 	#tag Method, Flags = &h0
 		Sub Name(Assigns Value As String)
-		  If Value = "" Then
-		    If Self.mQueryParams.HasKey("name") Then
-		      Self.mQueryParams.Remove("name")
-		    End If
-		  Else
-		    Self.mQueryParams.Value("name") = Value
-		  End If
-		  
-		  Self.mQueryString = SimpleHTTP.BuildFormData(Self.mQueryParams)
-		  
-		  Var Pos As Integer = Self.mOriginalURL.IndexOf("?")
-		  If Pos > -1 Then
-		    Self.mOriginalURL = Self.mOriginalURL.Left(Pos)
-		  End If
-		  If Self.mQueryString <> "" Then
-		    Self.mOriginalURL = Self.mOriginalURL + "?" + Self.mQueryString
-		  End If
+		  Self.Param("name") = Value
 		End Sub
 	#tag EndMethod
 
@@ -227,6 +211,28 @@ Protected Class ProjectURL
 		  
 		  Return Self.mQueryParams.Value(Key.Lowercase)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Param(Key As String, Assigns Value As String)
+		  If Value.IsEmpty Then
+		    If Self.mQueryParams.HasKey(Key) Then
+		      Self.mQueryParams.Remove(Key)
+		    End If
+		  Else
+		    Self.mQueryParams.Value(Key) = Value
+		  End If
+		  
+		  Self.mQueryString = SimpleHTTP.BuildFormData(Self.mQueryParams)
+		  
+		  Var Pos As Integer = Self.mOriginalURL.IndexOf("?")
+		  If Pos > -1 Then
+		    Self.mOriginalURL = Self.mOriginalURL.Left(Pos)
+		  End If
+		  If Self.mQueryString <> "" Then
+		    Self.mOriginalURL = Self.mOriginalURL + "?" + Self.mQueryString
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

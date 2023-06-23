@@ -292,6 +292,13 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity) As Beacon.Project
+		  Var AdditionalProperties As New Dictionary
+		  Return FromSaveData(SaveData, Identity, AdditionalProperties)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity, AdditionalProperties As Dictionary) As Beacon.Project
 		  Var Version As Integer = SaveData.Lookup("Version", 0).IntegerValue
 		  Var MinVersion As Integer = SaveData.Lookup("MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
 		  Var SavedWithVersion As Integer = SaveData.Lookup("SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
@@ -543,6 +550,13 @@ Implements ObservationKit.Observable
 		  
 		  Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion)
 		  
+		  If SaveData.HasKey("Other Properties") And (AdditionalProperties Is Nil) = False Then
+		    Var Dict As Dictionary = SaveData.Value("Other Properties")
+		    For Each Entry As DictionaryEntry In Dict
+		      AdditionalProperties.Value(Entry.Key) = Entry.Value
+		    Next
+		  End If
+		  
 		  Project.Modified = Version < Beacon.Project.SaveDataVersion
 		  
 		  Return Project
@@ -551,6 +565,13 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As MemoryBlock, Identity As Beacon.Identity) As Beacon.Project
+		  Var AdditionalProperties As New Dictionary
+		  Return FromSaveData(SaveData, Identity, AdditionalProperties)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(SaveData As MemoryBlock, Identity As Beacon.Identity, AdditionalProperties As Dictionary) As Beacon.Project
 		  If SaveData Is Nil Or SaveData.Size = 0 Then
 		    Var Err As New Beacon.ProjectLoadException
 		    Err.Message = "File is empty."
@@ -591,32 +612,7 @@ Implements ObservationKit.Observable
 		  
 		  ProjectDict.Value("UseCompression") = UseCompression
 		  
-		  Return FromSaveData(ProjectDict, Identity)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Shared Function FromSaveData(SaveData As String, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Project
-		  If Beacon.IsCompressed(SaveData) Then
-		    SaveData = Beacon.Decompress(SaveData)
-		  End If
-		  
-		  Var Parsed As Dictionary
-		  Try
-		    Parsed = Beacon.ParseJSON(SaveData)
-		  Catch Err As RuntimeException
-		    FailureReason = "JSON parse error"
-		    App.Log(Err, CurrentMethodName, "Failed to parse JSON")
-		    Return Nil
-		  End Try
-		  
-		  Try
-		    Return FromSaveData(Parsed, Identity)
-		  Catch Err As RuntimeException
-		    FailureReason = "Untrapped error inside project loader"
-		    App.Log(Err, CurrentMethodName, "")
-		    Return Nil
-		  End Try
+		  Return FromSaveData(ProjectDict, Identity, AdditionalProperties)
 		End Function
 	#tag EndMethod
 
@@ -965,7 +961,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(Identity As Beacon.Identity) As MemoryBlock
+		Function SaveData(Identity As Beacon.Identity, AdditionalProperties As Dictionary = Nil) As MemoryBlock
 		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserID) Then
 		    Self.AddUser(Identity.UserID, Identity.PublicKey)
 		  End If
@@ -1038,6 +1034,10 @@ Implements ObservationKit.Observable
 		      Self.mLastSecureHash = Hash
 		    End If
 		    ProjectData.Value("EncryptedData") = Self.mLastSecureData
+		  End If
+		  
+		  If (AdditionalProperties Is Nil) = False And AdditionalProperties.KeyCount > 0 Then
+		    ProjectData.Value("Other Properties") = AdditionalProperties
 		  End If
 		  
 		  If Self.mUseCompression Then

@@ -84,11 +84,14 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    End If
 		    
 		    Self.mAutosaveURL = Beacon.ProjectURL.URLForFile(AutosaveFile)
+		    Self.mAutosaveURL.Param("autosave") = "true"
 		  End If
 		  
 		  Var AutosaveController As Beacon.ProjectController = Self.mController.SaveACopy(Self.mAutosaveURL)
 		  If (AutosaveController Is Nil) = False Then
-		    System.DebugLog("Autosaved")
+		    #if DebugBuild
+		      System.DebugLog("Autosaved")
+		    #endif
 		    Self.mAutoSaveTimer.Reset
 		  End If
 		End Sub
@@ -128,11 +131,6 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		Protected Sub Constructor(Controller As Beacon.ProjectController)
 		  Self.mController = Controller
 		  If (Self.mController.AutosaveURL Is Nil) = False Then
-		    Var Title As String = Self.mController.Project.Title
-		    If Title.EndsWith("(Recovered)") = False Then
-		      Title = Title + " (Recovered)"
-		      Self.mController.Project.Title = Title
-		    End If
 		    Self.mAutosaveURL = Self.mController.AutosaveURL
 		    Self.mController.AutosaveURL = Nil
 		  End If

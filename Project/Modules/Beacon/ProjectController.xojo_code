@@ -83,8 +83,12 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Project As Beacon.Project, WithIdentity As Beacon.Identity)
-		  Self.mProjectURL = Beacon.ProjectURL.TypeTransient + "://" + Project.UUID + "?name=" + EncodeURLComponent(Project.Title) + "&game=" + EncodeURLComponent(Project.GameID.Lowercase)
+		Sub Constructor(Project As Beacon.Project, WithIdentity As Beacon.Identity, CustomProjectUrl As Beacon.ProjectURL = Nil)
+		  If (CustomProjectUrl Is Nil) = False Then
+		    Self.mProjectURL = CustomProjectUrl
+		  Else
+		    Self.mProjectURL = Beacon.ProjectURL.TypeTransient + "://" + Project.UUID + "?name=" + EncodeURLComponent(Project.Title) + "&game=" + EncodeURLComponent(Project.GameID.Lowercase)
+		  End If
 		  Self.mLoaded = True
 		  Self.mProject = Project
 		  Self.mIdentity = WithIdentity
@@ -231,6 +235,9 @@ Protected Class ProjectController
 		  
 		  Var Controller As New Beacon.ProjectController(Self.mProject, Self.mIdentity)
 		  Controller.mProjectURL = Destination
+		  If Destination.HasParam("autosave") And Destination.Param("autosave") = "true" Then
+		    Controller.mOriginalUrl = Self.mProjectURL
+		  End If
 		  If Self.mProject.Title.IsEmpty = False Then
 		    Destination.Name = Self.mProject.Title
 		  End If
@@ -353,8 +360,9 @@ Protected Class ProjectController
 		  End If
 		  
 		  Var Project As Beacon.Project
+		  Var AdditionalProperties As New Dictionary
 		  Try
-		    Project = Beacon.Project.FromSaveData(FileContent, Self.mIdentity)
+		    Project = Beacon.Project.FromSaveData(FileContent, Self.mIdentity, AdditionalProperties)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Loading project")
 		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, Err.Message)
@@ -363,6 +371,15 @@ Protected Class ProjectController
 		  
 		  If Project.Title.Trim = "" Then
 		    Project.Title = Self.Name
+		  End If
+		  
+		  If AdditionalProperties.HasKey("OriginalUrl") Then
+		    Try
+		      Var OriginalUrl As New Beacon.ProjectURL(AdditionalProperties.Value("OriginalUrl"))
+		      Self.mProjectURL = OriginalUrl
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Restoring original url")
+		    End Try
 		  End If
 		  
 		  Self.mProject = Project
@@ -416,7 +433,12 @@ Protected Class ProjectController
 		  Var Saved As Boolean
 		  Var Message As String
 		  Try
-		    SaveData = Self.mProject.SaveData(Self.mIdentity)
+		    Var AdditionalProperties As New Dictionary
+		    If (Self.mOriginalUrl Is Nil) = False Then
+		      AdditionalProperties.Value("OriginalUrl") = Self.mOriginalUrl.URL(Beacon.ProjectURL.URLTypes.Storage)
+		    End If
+		    
+		    SaveData = Self.mProject.SaveData(Self.mIdentity, AdditionalProperties)
 		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
 		      Saved = Self.mDestination.File.Write(SaveData)
 		    End If
@@ -628,6 +650,10 @@ Protected Class ProjectController
 
 	#tag Property, Flags = &h21
 		Private mLoadStartedCallbackKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOriginalUrl As Beacon.ProjectURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

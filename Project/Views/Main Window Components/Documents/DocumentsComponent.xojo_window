@@ -108,6 +108,7 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -143,6 +144,7 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -178,6 +180,7 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -472,17 +475,21 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mAutosaveController_Loaded(Sender As Beacon.ProjectController, Project As Beacon.Project, Actions() As Beacon.ScriptAction)
 		  RemoveHandler Sender.Loaded, AddressOf mAutosaveController_Loaded
+		  RemoveHandler Sender.LoadError, AddressOf mAutosaveController_LoadError
 		  
 		  // Create a modified transient document
 		  Project.Modified = True
-		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity)
-		  Controller.AutosaveURL = Sender.URL
+		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity, Sender.URL)
+		  Controller.AutosaveURL = Sender.AutosaveURL
 		  Self.OpenController(Controller, False, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub mAutosaveController_LoadError(Sender As Beacon.ProjectController, Reason As String)
+		  RemoveHandler Sender.Loaded, AddressOf mAutosaveController_Loaded
+		  RemoveHandler Sender.LoadError, AddressOf mAutosaveController_LoadError
+		  
 		  App.Log("Failed to restore autosave file: " + Reason)
 		  Sender.Delete
 		End Sub
@@ -653,6 +660,7 @@ End
 		      App.Log("Attempting to restore autosave " + FileURL.URL(Beacon.ProjectURL.URLTypes.Reading))
 		      
 		      Var Controller As New Beacon.ProjectController(FileURL, App.IdentityManager.CurrentIdentity)
+		      Controller.AutosaveURL = FileURL
 		      AddHandler Controller.Loaded, AddressOf mAutosaveController_Loaded
 		      AddHandler Controller.LoadError, AddressOf mAutosaveController_LoadError
 		      Controller.Load()
