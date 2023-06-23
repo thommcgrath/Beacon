@@ -138,9 +138,12 @@ Implements ObservationKit.Observable
 		    Set = Self.ActiveConfigSet
 		  End If
 		  
-		  If Self.mConfigSetData.HasKey(Set.ConfigSetId) Then
-		    Return Self.mConfigSetData.Value(Set.ConfigSetId)
+		  If Self.mConfigSetData.HasKey(Set.ConfigSetId) = False Then
+		    Self.mConfigSetData.Value(Set.ConfigSetId) = New Dictionary
+		    Self.Modified = True
 		  End If
+		  
+		  Return Self.mConfigSetData.Value(Set.ConfigSetId)
 		End Function
 	#tag EndMethod
 

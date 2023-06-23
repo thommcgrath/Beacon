@@ -98,8 +98,8 @@ Begin BeaconDialog ConfigSetManagerWindow
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   "*,100"
+      ColumnCount     =   1
+      ColumnWidths    =   "*"
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -118,7 +118,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Height          =   236
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Set Name	Server Count"
+      InitialValue    =   "Set Name"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -140,7 +140,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   560
+      Width           =   329
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -306,14 +306,100 @@ Begin BeaconDialog ConfigSetManagerWindow
       Visible         =   True
       Width           =   80
    End
+   Begin ServersListbox ServersList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowInfiniteScroll=   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
+      Bold            =   False
+      ColumnCount     =   2
+      ColumnWidths    =   "22,*"
+      DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
+      Enabled         =   True
+      Filter          =   ""
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   236
+      Index           =   -2147483648
+      InitialValue    =   " 	Servers"
+      Italic          =   False
+      Left            =   361
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      PreferencesKey  =   ""
+      RequiresSelection=   False
+      RowSelectionType=   0
+      Scope           =   2
+      SingleLineMode  =   True
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   104
+      Transparent     =   False
+      TypeaheadColumn =   1
+      Underline       =   False
+      Visible         =   True
+      VisibleRowCount =   0
+      Width           =   219
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  Self.Resize()
+		  Self.mBlockServersUpdate = False
+		  Self.ServersList.UpdateList()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Project As Beacon.Project)
 		  // Calling the overridden superclass constructor.
 		  Self.mProject = Project
+		  Self.mBlockServersUpdate = True
+		  
+		  Self.mProfileSets = New Dictionary
+		  Var Profiles() As Beacon.ServerProfile = Project.ServerProfiles()
+		  For Each Profile As Beacon.ServerProfile In Profiles
+		    Self.mProfileSets.Value(Profile.ProfileId) = Profile.ConfigSetStates
+		  Next
+		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -332,6 +418,24 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Resize()
+		  Const ServersListPercent = 0.5
+		  
+		  Var AvailableWidth As Integer = Self.Width - 52
+		  Var ServersListWidth As Integer = Round(AvailableWidth * ServersListPercent)
+		  Var SetsListWidth As Integer = AvailableWidth - ServersListWidth
+		  
+		  Self.SetList.Width = SetsListWidth
+		  Self.ServersList.Left = Self.SetList.Right + 12
+		  Self.ServersList.Width = ServersListWidth
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mBlockServersUpdate As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -343,6 +447,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mNewSets() As Beacon.ConfigSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProfileSets As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -385,6 +493,13 @@ End
 		    Self.mProject.AddConfigSet(Set)
 		  Next
 		  
+		  // Set states
+		  Var Profiles() As Beacon.ServerProfile = Self.mProject.ServerProfiles
+		  For Each Profile As Beacon.ServerProfile In Profiles
+		    Var States() As Beacon.ConfigSetState = Self.mProfileSets.Value(Profile.ProfileId)
+		    Profile.ConfigSetStates = States
+		  Next
+		  
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -403,6 +518,37 @@ End
 		Sub SelectionChanged()
 		  Self.EditButton.Enabled = Me.CanEdit
 		  Self.DeleteButton.Enabled = Me.CanDelete
+		  
+		  Var SelectedSet As Beacon.ConfigSet
+		  If Me.SelectedRowCount = 1 Then
+		    SelectedSet = Me.RowTagAt(Me.SelectedRowIndex)
+		  End If
+		  
+		  If Self.mBlockServersUpdate Then
+		    Return
+		  End If
+		  
+		  Self.mBlockServersUpdate = True
+		  Self.ServersList.ColumnTypeAt(0) = If((SelectedSet Is Nil) = False And SelectedSet.IsBase = False, DesktopListBox.CellTypes.CheckBox, DesktopListBox.CellTypes.Normal)
+		  Self.ServersList.UpdateList()
+		  
+		  If Self.ServersList.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox Then
+		    For Idx As Integer = 0 To Self.ServersList.LastRowIndex
+		      Var Profile As Beacon.ServerProfile = Self.ServersList.RowTagAt(Idx)
+		      Var States() As Beacon.ConfigSetState = Self.mProfileSets.Value(Profile.ProfileId)
+		      
+		      Var Checked As Boolean
+		      For Each State As Beacon.ConfigSetState In States
+		        If State.ConfigSetId = SelectedSet.ConfigSetId And State.Enabled Then
+		          Checked = True
+		          Exit
+		        End If
+		      Next
+		      
+		      Self.ServersList.CellCheckBoxValueAt(Idx, 0) = Checked
+		    Next
+		  End If
+		  Self.mBlockServersUpdate = False
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -463,25 +609,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Var Counts As New Dictionary
-		  Var ProfileBound As Integer = Self.mProject.ServerProfileCount - 1
-		  For Idx As Integer = 0 To ProfileBound
-		    Var Profile As Beacon.ServerProfile = Self.mProject.ServerProfile(Idx)
-		    Var States() As Beacon.ConfigSetState = Profile.ConfigSetStates
-		    If States Is Nil Or States.Count = 0 Then
-		      Counts.Value(Beacon.ConfigSet.BaseConfigSetId) = Counts.Lookup(Beacon.ConfigSet.BaseConfigSetId, 0).IntegerValue + 1
-		      Continue
-		    End If
-		    For Each State As Beacon.ConfigSetState In States
-		      If State.Enabled Then
-		        Counts.Value(State.ConfigSetId) = Counts.Lookup(State.ConfigSetId, 0).IntegerValue + 1
-		      End If
-		    Next
-		  Next
-		  
 		  Var Sets() As Beacon.ConfigSet = Self.mProject.ConfigSets
 		  For Each Set As Beacon.ConfigSet In Sets
-		    Me.AddRow(Set.Name, Language.NounWithQuantity(Counts.Lookup(Set.ConfigSetId, 0).IntegerValue, "Server", "Servers"))
+		    Me.AddRow(Set.Name)
 		    Me.RowTagAt(Me.LastAddedRowIndex) = Set
 		  Next
 		  Me.Sort
@@ -518,6 +648,50 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.SetList.DoClear
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServersList
+	#tag Event
+		Function GetProject() As Beacon.Project
+		  Return Self.mProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.TypeaheadColumn = 1
+		  Me.SortingColumn = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function BlockUpdate() As Boolean
+		  Return Self.mBlockServersUpdate
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  If Self.mBlockServersUpdate Or Self.SetList.SelectedRowCount <> 1 Then
+		    Return
+		  End If
+		  
+		  Var SelectedSet As Beacon.ConfigSet = Self.SetList.RowTagAt(Self.SetList.SelectedRowIndex)
+		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Row)
+		  Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
+		  Var States() As Beacon.ConfigSetState = Self.mProfileSets.Value(Profile.ProfileId)
+		  Var Found As Boolean
+		  For Idx As Integer = 0 To States.LastIndex
+		    If States(Idx).ConfigSetId = SelectedSet.ConfigSetId Then
+		      If States(Idx).Enabled <> Checked Then
+		        States(Idx) = New Beacon.ConfigSetState(SelectedSet, Checked)
+		        Found = True
+		      End If
+		      Exit
+		    End If
+		  Next
+		  If Not Found Then
+		    States.Add(New Beacon.ConfigSetState(SelectedSet, Checked))
+		  End If
+		  Self.mProfileSets.Value(Profile.ProfileId) = States
 		End Sub
 	#tag EndEvent
 #tag EndEvents
