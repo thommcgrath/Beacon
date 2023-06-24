@@ -17,9 +17,9 @@ if (is_null($session)) {
 	BeaconCommon::Redirect('/account/login/?return=' . urlencode($_SERVER['REQUEST_URI']));
 }
 
-$provider = OAuth::CleanupProvider($_GET['provider']);
-$token = OAuth::Lookup($session->UserId(), $provider);
-if (is_null($token) === false) {
+$tokenId = OAuth::CleanupProvider($_GET['token']);
+$token = OAuth::Fetch($tokenId);
+if (is_null($token) === false && $token->UserId() === $session->UserId()) {
 	$token->Delete();
 }
 BeaconCommon::Redirect('/account/#oauth');

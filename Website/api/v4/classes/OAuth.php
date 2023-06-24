@@ -1,13 +1,14 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
+use BeaconCommon, BeaconEncryption, BeaconRecordSet, BeaconUUID, Exception, JsonSerializable;
 
 class OAuth implements JsonSerializable {
 	final const ProviderNitrado = 'Nitrado';
 	final const ExpirationBuffer = 86400;
-	private const SelectColumns = 'user_id, provider, access_token, EXTRACT(EPOCH FROM access_token_expiration) AS access_token_expiration, refresh_token, EXTRACT(EPOCH FROM refresh_token_expiration) AS refresh_token_expiration, provider_specific, user_encryption_key, system_encryption_key';
+	private const SelectColumns = 'oauth_token_id, user_id, provider, access_token, EXTRACT(EPOCH FROM access_token_expiration) AS access_token_expiration, refresh_token, EXTRACT(EPOCH FROM refresh_token_expiration) AS refresh_token_expiration, provider_specific, user_encryption_key, system_encryption_key';
 	
+	protected string $tokenId;
 	protected string $userId;
 	protected string $provider;
 	protected string $accessToken;
@@ -20,7 +21,7 @@ class OAuth implements JsonSerializable {
 	protected array $providerSpecific;
 	
 	public static function RedirectURI(string $provider): string {
-		return 'https://' . BeaconCommon::Domain() . '/account/oauth/v4/' . strtolower($provider) . '/redeem';
+		return 'https://' . BeaconCommon::Domain() . '/account/oauth/v4/redeem/' . strtolower($provider);
 	}
 	
 	public static function CleanupProvider(string $provider): string {
@@ -59,6 +60,7 @@ class OAuth implements JsonSerializable {
 	}
 	
 	protected function __construct(BeaconRecordSet $row) {
+		$this->tokenId = $row->Field('oauth_token_id');
 		$this->userId = $row->Field('user_id');
 		$this->provider = $row->Field('provider');
 		$this->accessTokenEncrypted = $row->Field('access_token');
@@ -81,6 +83,15 @@ class OAuth implements JsonSerializable {
 			}
 		}
 		
+		$uuidParts = [
+			$user->UserId(),
+			$provider
+		];
+		if ($provider === self::ProviderNitrado) {
+			$uuidParts[] = $providerSpecific['user']['id'];
+		}
+		$accessTokenId = BeaconUUID::v5(implode('|', $uuidParts));
+		
 		$encryptionKey = BeaconEncryption::GenerateKey(256);
 		$userEncryptionKey = base64_encode(BeaconEncryption::RSAEncrypt($user->PublicKey(), $encryptionKey));
 		$systemEncryptionKey = base64_encode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $encryptionKey));
@@ -89,25 +100,42 @@ class OAuth implements JsonSerializable {
 			
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.oauth_tokens (user_id, provider, access_token, refresh_token, access_token_expiration, refresh_token_expiration, provider_specific, user_encryption_key, system_encryption_key) VALUES ($1, $2, $3, $4, TO_TIMESTAMP($5), TO_TIMESTAMP($6), $7, $8, $9) ON CONFLICT (user_id, provider)  DO UPDATE SET access_token = EXCLUDED.access_token, access_token_expiration = EXCLUDED.access_token_expiration, refresh_token_expiration = EXCLUDED.refresh_token_expiration, provider_specific = EXCLUDED.provider_specific, refresh_token = EXCLUDED.refresh_token, user_encryption_key = EXCLUDED.user_encryption_key, system_encryption_key = EXCLUDED.system_encryption_key;", $user->UserId(), $provider, $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific), $userEncryptionKey, $systemEncryptionKey);
+		$database->Query("INSERT INTO public.oauth_tokens (oauth_token_id, user_id, provider, access_token, refresh_token, access_token_expiration, refresh_token_expiration, provider_specific, user_encryption_key, system_encryption_key) VALUES ($1, $2, $3, $4, $5, TO_TIMESTAMP($6), TO_TIMESTAMP($7), $8, $9, $10) ON CONFLICT (oauth_token_id) DO UPDATE SET user_id = EXCLUDED.user_id, provider = EXCLUDED.provider, access_token = EXCLUDED.access_token, access_token_expiration = EXCLUDED.access_token_expiration, refresh_token_expiration = EXCLUDED.refresh_token_expiration, provider_specific = EXCLUDED.provider_specific, refresh_token = EXCLUDED.refresh_token, user_encryption_key = EXCLUDED.user_encryption_key, system_encryption_key = EXCLUDED.system_encryption_key;", $accessTokenId, $user->UserId(), $provider, $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific), $userEncryptionKey, $systemEncryptionKey);
 		$database->Commit();
 		
-		return static::Lookup($user->UserId(), $provider);
+		return static::Fetch($accessTokenId);
 	}
 	
-	public static function Lookup(string $userId, string $provider): ?static {
+	public static function Fetch(string $tokenId): ?static {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.oauth_tokens WHERE user_id = $1 AND provider = $2;', $userId, $provider);
-		if ($results->RecordCount() !== 1) {
+		$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.oauth_tokens WHERE oauth_token_id = $1;', $tokenId);
+		if ($rows->RecordCount() !== 1) {
 			return null;
 		}
 		
 		try {
-			$token = new static($results);
-			return $token;
+			return new static($rows);
 		} catch (Exception $err) {
 			return null;
 		}
+	}
+	
+	public static function Lookup(string $userId, ?string $provider = null): array {
+		$database = BeaconCommon::Database();
+		if (is_null($provider)) {
+			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.oauth_tokens WHERE user_id = $1;', $userId);
+		} else {
+			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.oauth_tokens WHERE user_id = $1 AND provider = $2;', $userId, $provider);
+		}
+		$tokens = [];
+		while (!$rows->EOF()) {
+			try {
+				$tokens[] = new static($rows);
+			} catch (Exception $err) {
+			}
+			$rows->MoveNext();
+		}
+		return $tokens;
 	}
 	
 	public static function Begin(string $provider, string $state): string {
@@ -126,7 +154,7 @@ class OAuth implements JsonSerializable {
 		}
 	}
 	
-	public static function Complete(string $userId, string $provider, string $code): OAuth {
+	public static function Complete(string $userId, string $provider, string $code): ?static {
 		$fields = [
 			'grant_type=authorization_code',
 			'client_id=' . urlencode(static::ClientId($provider)),
@@ -134,9 +162,7 @@ class OAuth implements JsonSerializable {
 			'code=' . urlencode($code)
 		];
 		
-		static::Redeem($userId, $provider, $fields);
-		
-		return static::Lookup($userId, $provider);
+		return static::Redeem($userId, $provider, $fields);
 	}
 	
 	public static function RefreshExpiring(): void {
@@ -151,6 +177,10 @@ class OAuth implements JsonSerializable {
 			}
 			$results->MoveNext();
 		}
+	}
+	
+	public function TokenId(): string {
+		return $this->tokenId;
 	}
 	
 	public function UserId(): string {
@@ -191,6 +221,7 @@ class OAuth implements JsonSerializable {
 	
 	public function JSON(bool $decrypted): array {
 		$json = [
+			'tokenId' => $this->tokenId,
 			'userId' => $this->userId,
 			'provider' => $this->provider,
 			'accessToken' => $this->AccessToken($decrypted),
@@ -271,7 +302,7 @@ class OAuth implements JsonSerializable {
 		if ($status === 200 || $status === 204) {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
-			$database->Query('DELETE FROM public.oauth_tokens WHERE user_id = $1 AND provider = $2;', $this->userId, $this->provider);
+			$database->Query('DELETE FROM public.oauth_tokens WHERE oauth_token_id = $1;', $this->tokenId);
 			$database->Commit();
 			return true;
 		}

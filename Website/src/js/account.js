@@ -624,12 +624,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		event.preventDefault();
 		
 		const provider = event.currentTarget.getAttribute('beacon-provider');
-		const status = event.currentTarget.getAttribute('beacon-status');
+		const tokenId = event.currentTarget.getAttribute('beacon-token-id');
 		
-		if (status === 'connected') {
-			window.location = `/account/oauth/v4/${provider}/revoke`;
+		if (tokenId === '') {
+			window.location = `/account/oauth/v4/begin/${provider}`;
 		} else {
-			window.location = `/account/oauth/v4/${provider}/begin`;
+			window.location = `/account/oauth/v4/revoke/${tokenId}`;
 		}
 	};
 	

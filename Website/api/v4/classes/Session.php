@@ -1,9 +1,9 @@
 <?php
 	
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconEncryption, BeaconRecordSet, DateTime, Exception;
+use BeaconCommon, BeaconEncryption, BeaconRecordSet, DateTime, Exception, JsonSerializable;
 
-class Session extends DatabaseObject implements \JsonSerializable {
+class Session extends DatabaseObject implements JsonSerializable {
 	protected string $accessTokenEncrypted = '';
 	protected string $accessTokenHash = '';
 	protected string $accessToken = '';
@@ -181,8 +181,8 @@ class Session extends DatabaseObject implements \JsonSerializable {
 		
 		$schema = static::DatabaseSchema();
 		$table = $schema->WriteableTable();
-		$accessToken = BeaconCommon::GenerateUUID();
-		$refreshToken = BeaconCommon::GenerateUUID();
+		$accessToken = base64_encode(BeaconEncryption::GenerateKey(1024));
+		$refreshToken = base64_encode(BeaconEncryption::GenerateKey(1024));
 		$accessTokenHash = static::PrepareHash($accessToken);
 		$refreshTokenHash = static::PrepareHash($refreshToken);
 		$accessTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($refreshToken, $accessToken, false));
@@ -231,7 +231,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	public static function Fetch(string $token): ?static {
-		if (BeaconCommon::IsUUID($token)) {
+		if (strlen($token) !== 88) {
 			$hash = static::PrepareHash($token);
 		} else {
 			$hash = $token;
@@ -248,7 +248,7 @@ class Session extends DatabaseObject implements \JsonSerializable {
 	}
 	
 	protected function Decrypt(string $token): bool {
-		if (BeaconCommon::IsUUID($token) === false) {
+		if (strlen($token) === 88) {
 			return false;
 		}
 		

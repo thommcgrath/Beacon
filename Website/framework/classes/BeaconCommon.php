@@ -17,11 +17,9 @@ abstract class BeaconCommon {
 	protected static array $versions = [];
 	protected static ?Session $session = null;
 	
+	// deprecated
 	public static function GenerateUUID(): string {
-		$data = random_bytes(16);
-		$data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
-		$data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
-		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+		return BeaconUUID::v4();
 	}
 	
 	public static function StartSession(): bool {
@@ -173,21 +171,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function IsUUID(&$input): bool {
-		if (!is_string($input)) {
-			return false;
-		}
-		
-		$cleaned = preg_replace('/\s+/', '', $input);
-		if ($cleaned === '00000000-0000-0000-0000-000000000000') {
-			return true;
-		}
-		
-		if (preg_match('/^([0-9A-F]{8})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{12})$/i', $cleaned, $matches) === 1) {
-			$input = strtolower($matches[1] . '-' . $matches[2] . '-' . $matches[3] . '-' . $matches[4] . '-' . $matches[5]);
-			return true;
-		} else {
-			return false;
-		}
+		return BeaconUUID::Validate($input);
 	}
 	
 	public static function IsAssoc(array $arr): bool {

@@ -105,6 +105,9 @@ Core::RegisterRoutes(
 		'/templates/{templateId}' => [
 			'GET' => 'templates/get'
 		],
+		'/tokens/{tokenId}' => [
+			'GET' => 'tokens/get'
+		],
 		'/users' => [
 			'POST' => 'users/create'
 		],
@@ -118,8 +121,8 @@ Core::RegisterRoutes(
 		'/users/{userId}/projects' => [
 			'GET' => 'projects/list'
 		],
-		'/users/{userId}/oauth/{provider}' => [
-			'GET' => 'users/oauth'
+		'/users/{userId}/tokens' => [
+			'GET' => 'tokens/list'
 		]
 	]
 );
