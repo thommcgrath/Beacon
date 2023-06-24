@@ -55,17 +55,13 @@ Core::RegisterRoutes(
 		'/now' => [
 			'GET' => 'now'
 		],
-		'/oauth/{provider}' => [
-			'GET' => 'oauth'
-		],
 		'/projects' => [
 			'GET' => 'projects/list',
-			'POST' => 'projects/create',
 			'DELETE' => 'projects/delete'
 		],
 		'/projects/{projectId}' => [
 			'GET' => 'projects/get',
-			'PATCH' => 'projects/edit',
+			'POST' => 'projects/write',
 			'DELETE' => 'projects/delete',
 			'HEAD' => 'projects/exists'
 		],
@@ -121,6 +117,9 @@ Core::RegisterRoutes(
 		],
 		'/users/{userId}/projects' => [
 			'GET' => 'projects/list'
+		],
+		'/users/{userId}/oauth/{provider}' => [
+			'GET' => 'users/oauth'
 		]
 	]
 );

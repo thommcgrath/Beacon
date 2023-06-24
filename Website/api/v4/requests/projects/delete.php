@@ -4,15 +4,15 @@ use BeaconAPI\v4\{Response, BatchResponse, Core, Project, User};
 	
 function handleRequest(array $context): Response {
 	if ($context['routeKey'] === 'DELETE /projects') {
-		$project_ids = Core::BodyAsJSON();
-		if (is_array($project_ids) === false || BeaconCommon::IsAssoc($project_ids)) {
-			return Response::NewJsonError('Send an array of project uuids', $project_ids, 400);
+		$projectIds = Core::BodyAsJSON();
+		if (is_array($projectIds) === false || BeaconCommon::IsAssoc($projectIds)) {
+			return Response::NewJsonError('Send an array of project uuids', $projectIds, 400);
 		}
 		
-		$user_id = Core::UserId();
-		$responses = new BatchResponse('project_id');
-		foreach ($project_ids as $project_id) {
-			$responses->AddResponse($project_id, DeleteProject($project_id, $user_id));
+		$userId = Core::UserId();
+		$responses = new BatchResponse('projectId');
+		foreach ($projectIds as $projectId) {
+			$responses->AddResponse($projectId, DeleteProject($projectId, $userId));
 		}
 		return $responses;
 	} else {
@@ -20,17 +20,17 @@ function handleRequest(array $context): Response {
 	}
 }
 
-function DeleteProject(string $project_id, string $user_id): Response {
-	if (!BeaconCommon::IsUUID($project_id)) {
+function DeleteProject(string $projectId, string $userId): Response {
+	if (!BeaconCommon::IsUUID($projectId)) {
 		return Response::NewJsonError('Must use a v4 UUID', null, 400);
 	}
 	
-	$project = Project::Fetch($project_id);
+	$project = Project::Fetch($projectId);
 	if (is_null($project)) {
 		return Response::NewJsonError('Project not found', null, 404);
 	}
 	
-	if ($project->UserId() !== $user_id) {
+	if ($project->UserId() !== $userId) {
 		return Response::NewJsonError('Forbidden', null, 403);
 	}
 	

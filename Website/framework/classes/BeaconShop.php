@@ -224,7 +224,7 @@ abstract class BeaconShop {
 				'domain' => '',
 				'secure' => true,
 				'httponly' => true,
-				'samesite' => 'Strict'
+				'samesite' => 'Lax'
 			]);
 		}
 		

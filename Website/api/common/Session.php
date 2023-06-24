@@ -146,7 +146,7 @@ class Session implements \JsonSerializable {
 			'domain' =>'',
 			'secure' => true,
 			'httponly' =>true,
-			'samesite' => 'Strict'
+			'samesite' => 'Lax'
 		]);
 	}
 	
@@ -157,7 +157,7 @@ class Session implements \JsonSerializable {
 			'domain' => '',
 			'secure' => true,
 			'httponly' =>true,
-			'samesite' => 'Strict'
+			'samesite' => 'Lax'
 		]);
 	}
 	

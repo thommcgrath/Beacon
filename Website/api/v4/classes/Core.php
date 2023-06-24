@@ -244,6 +244,9 @@ class Core {
 		if (is_null($session)) {
 			return self::kAuthErrorInvalidToken;
 		}
+		if ($session->IsAccessTokenExpired()) {
+			return self::kUnauthorized;
+		}
 		if ($session->HasScopes($requestedScopes) === false) {
 			return self::kAuthErrorRestrictedScope;
 		}

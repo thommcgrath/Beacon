@@ -15,7 +15,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	protected array $gameSpecific;
 	protected string $userId;
 	protected string $ownerId;
-	protected string $title;
+	protected string $name;
 	protected string $description;
 	protected bool $consoleSafe;
 	protected int $lastUpdate;
@@ -28,7 +28,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	protected function __construct(BeaconRecordSet $row) {
 		$this->projectId = $row->Field('project_id');
 		$this->gameId = $row->Field('game_id');
-		$this->title = $row->Field('title');
+		$this->name = $row->Field('title');
 		$this->description = $row->Field('description');
 		$this->revision = intval($row->Field('revision'));
 		$this->downloadCount = intval($row->Field('download_count'));
@@ -48,7 +48,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('ownerId', ['columnName' => 'owner_id']),
-			new DatabaseObjectProperty('title'),
+			new DatabaseObjectProperty('name', ['columnName' => 'title']),
 			new DatabaseObjectProperty('description'),
 			new DatabaseObjectProperty('consoleSafe', ['columnName' => 'console_safe']),
 			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
@@ -107,7 +107,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				$sort_column = $schema->Accessor('downloadCount');
 				break;
 			case 'name':
-				$sort_column = $schema->Accessor('title');
+				$sort_column = $schema->Accessor('name');
 				break;
 			case 'console_safe':
 			case 'consoleSafe':
@@ -132,6 +132,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'published');
 		$parameters->AddFromFilter($schema, $filters, 'consoleSafe');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
+		$parameters->AddFromFilter($schema, $filters, 'name');
 		
 		if (isset($filters['search']) && empty($filters['search']) === false) {
 			$search = new BeaconSearch();
@@ -155,7 +156,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			'gameId' => $this->gameId,
 			'userId' => $this->userId,
 			'ownerId' => $this->ownerId,
-			'name' => $this->title,
+			'name' => $this->name,
 			'description' => $this->description,
 			'revision' => $this->revision,
 			'downloadCount' => $this->downloadCount,
@@ -188,8 +189,13 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		return $this->ownerId;
 	}
 	
+	public function Name(): string {
+		return $this->name;
+	}
+	
+	// Deprecated
 	public function Title(): string {
-		return $this->title;
+		return $this->name;
 	}
 	
 	public function Description(): string {
@@ -242,8 +248,8 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 					$new_status = self::kPublishStatusDenied;
 				} else {
 					$new_status = self::kPublishStatusRequested;
-					$attachment = array(
-						'title' => $this->title,
+					$attachment = [
+						'title' => $this->name,
 						'text' => $this->description,
 						'fallback' => 'Unable to show response buttons.',
 						'callback_id' => 'publish_document:' . $this->projectId,
@@ -269,8 +275,8 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 								]
 							]
 						],
-						'fields' => array()
-					);
+						'fields' => []
+					];
 					
 					$user = User::Fetch($this->userId);
 					if (is_null($user) === false) {
@@ -347,7 +353,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public static function SaveFromMultipart(User $user, string &$reason): bool {
-		$required_vars = ['keys', 'title', 'uuid', 'version'];
+		$required_vars = ['keys', 'name', 'uuid', 'version'];
 		if (static::ValidateMultipart($required_vars, $reason) === false) {
 			return false;
 		}
@@ -412,7 +418,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$project = [
 			'Version' => intval($_POST['version']),
 			'Identifier' => $_POST['uuid'],
-			'Title' => $_POST['title'],
+			'Name' => $_POST['name'],
 			'Description' => $_POST['description']
 		];
 		$keys_members = explode(',', $_POST['keys']);
@@ -467,7 +473,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$reason = 'Project identifier is not a v4 UUID.';
 			return false;
 		}
-		$title = isset($project['Title']) ? $project['Title'] : '';
+		$name = isset($project['Title']) ? $project['Title'] : '';
 		$description = isset($project['Description']) ? $project['Description'] : '';
 		$gameId = isset($project['GameID']) ? $project['GameID'] : 'Ark';
 		
@@ -500,7 +506,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		
 		try {
 			$row_values = [
-				'title' => $title,
+				'title' => $name,
 				'description' => $description,
 				'console_safe' => true,
 				'game_specific' => '{}',

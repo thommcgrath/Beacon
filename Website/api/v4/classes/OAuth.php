@@ -1,21 +1,34 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconEncryption, Exception, JsonSerializable;
+use BeaconCommon, BeaconEncryption, BeaconRecordSet, Exception, JsonSerializable;
 
 class OAuth implements JsonSerializable {
-	const ProviderNitrado = 'Nitrado';
-	const ExpirationBuffer = 86400;
+	final const ProviderNitrado = 'Nitrado';
+	final const ExpirationBuffer = 86400;
+	private const SelectColumns = 'user_id, provider, access_token, EXTRACT(EPOCH FROM access_token_expiration) AS access_token_expiration, refresh_token, EXTRACT(EPOCH FROM refresh_token_expiration) AS refresh_token_expiration, provider_specific, user_encryption_key, system_encryption_key';
 	
-	protected $userId = null;
-	protected $provider = null;
-	protected $accessToken = null;
-	protected $refreshToken = null;
-	protected $expiration = null;
-	protected $returnUrl = null;
+	protected string $userId;
+	protected string $provider;
+	protected string $accessToken;
+	protected string $refreshToken;
+	protected string $accessTokenEncrypted;
+	protected string $refreshTokenEncrypted;
+	protected int $accessTokenExpiration;
+	protected int $refreshTokenExpiration;
+	protected string $userEncryptionKey;
+	protected array $providerSpecific;
 	
-	public static function RedirectURI(): string {
-		return 'https://' . BeaconCommon::APIDomain() . '/oauth/callback.php';
+	public static function RedirectURI(string $provider): string {
+		return 'https://' . BeaconCommon::Domain() . '/account/oauth/v4/' . strtolower($provider) . '/redeem';
+	}
+	
+	public static function CleanupProvider(string $provider): string {
+		switch (strtolower($provider)) {
+		case strtolower(self::ProviderNitrado):
+			return self::ProviderNitrado;
+		}
+		return $provider;	
 	}
 	
 	public static function ProviderEndpoint(string $provider): string {
@@ -45,35 +58,56 @@ class OAuth implements JsonSerializable {
 		}
 	}
 	
-	protected function __construct(string $userId, string $provider, string $accessToken, string $refreshToken, int $expiration) {
-		$this->userId = $userId;
-		$this->provider = $provider;
-		$this->accessToken = $accessToken;
-		$this->refreshToken = $refreshToken;
-		$this->expiration = $expiration;
+	protected function __construct(BeaconRecordSet $row) {
+		$this->userId = $row->Field('user_id');
+		$this->provider = $row->Field('provider');
+		$this->accessTokenEncrypted = $row->Field('access_token');
+		$this->refreshTokenEncrypted = $row->Field('refresh_token');
+		$this->accessTokenExpiration = intval($row->Field('access_token_expiration'));
+		$this->refreshTokenExpiration = intval($row->Field('refresh_token_expiration'));
+		$this->userEncryptionKey = $row->Field('user_encryption_key');
+		$this->providerSpecific = json_decode($row->Field('provider_specific'), true);
+		
+		$encryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($row->Field('system_encryption_key')));
+		$this->accessToken = BeaconEncryption::SymmetricDecrypt($encryptionKey, base64_decode($row->Field('access_token')));
+		$this->refreshToken = BeaconEncryption::SymmetricDecrypt($encryptionKey, base64_decode($row->Field('refresh_token')));
 	}
 	
-	public static function Lookup(string $userId, string $provider): ?OAuth {
+	public static function Store(string|User $user, string $provider, string $accessToken, string $refreshToken, int $accessTokenExpiration, int $refreshTokenExpiration, array $providerSpecific): ?static {
+		if (is_string($user)) {
+			$user = User::Fetch($user);
+			if (is_null($user)) {
+				throw new Exception('Could not find user');
+			}
+		}
+		
+		$encryptionKey = BeaconEncryption::GenerateKey(256);
+		$userEncryptionKey = base64_encode(BeaconEncryption::RSAEncrypt($user->PublicKey(), $encryptionKey));
+		$systemEncryptionKey = base64_encode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $encryptionKey));
+		$accessTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($encryptionKey, $accessToken, false));
+		$refreshTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($encryptionKey, $refreshToken, false));
+			
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT access_token, EXTRACT(EPOCH FROM expiration) AS expiration, refresh_token FROM public.oauth_tokens WHERE user_id = $1 AND provider = $2;', $userId, $provider);
+		$database->BeginTransaction();
+		$database->Query("INSERT INTO public.oauth_tokens (user_id, provider, access_token, refresh_token, access_token_expiration, refresh_token_expiration, provider_specific, user_encryption_key, system_encryption_key) VALUES ($1, $2, $3, $4, TO_TIMESTAMP($5), TO_TIMESTAMP($6), $7, $8, $9) ON CONFLICT (user_id, provider)  DO UPDATE SET access_token = EXCLUDED.access_token, access_token_expiration = EXCLUDED.access_token_expiration, refresh_token_expiration = EXCLUDED.refresh_token_expiration, provider_specific = EXCLUDED.provider_specific, refresh_token = EXCLUDED.refresh_token, user_encryption_key = EXCLUDED.user_encryption_key, system_encryption_key = EXCLUDED.system_encryption_key;", $user->UserId(), $provider, $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific), $userEncryptionKey, $systemEncryptionKey);
+		$database->Commit();
+		
+		return static::Lookup($user->UserId(), $provider);
+	}
+	
+	public static function Lookup(string $userId, string $provider): ?static {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.oauth_tokens WHERE user_id = $1 AND provider = $2;', $userId, $provider);
 		if ($results->RecordCount() !== 1) {
 			return null;
 		}
 		
-		$accessToken = null;
-		$refreshToken = null;
-		$expiration = null;
-		
 		try {
-			$key = BeaconCommon::GetGlobal('OAuth Encryption Key');
-			$accessToken = BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('access_token')));
-			$refreshToken = BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('refresh_token')));
-			$expiration = intval($results->Field('expiration'));
+			$token = new static($results);
+			return $token;
 		} catch (Exception $err) {
 			return null;
 		}
-		
-		return new static($userId, $provider, $accessToken, $refreshToken, $expiration);
 	}
 	
 	public static function Begin(string $provider, string $state): string {
@@ -88,7 +122,7 @@ class OAuth implements JsonSerializable {
 		
 		switch ($provider) {
 		case self::ProviderNitrado:
-			return 'https://oauth.nitrado.net/oauth/v2/auth?redirect_uri=' . urlencode(static::RedirectURI()) . '&client_id=' . urlencode($clientId) . '&response_type=code&scope=service&state=' . urlencode($state);
+			return 'https://oauth.nitrado.net/oauth/v2/auth?redirect_uri=' . urlencode(static::RedirectURI($provider)) . '&client_id=' . urlencode($clientId) . '&response_type=code&scope=service&state=' . urlencode($state);
 		}
 	}
 	
@@ -107,19 +141,12 @@ class OAuth implements JsonSerializable {
 	
 	public static function RefreshExpiring(): void {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT user_id, provider, access_token, EXTRACT(EPOCH FROM expiration) AS expiration, refresh_token FROM public.oauth_tokens WHERE expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', "${self::ExpirationBuffer} seconds");
+		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.oauth_tokens WHERE access_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
 		
 		while (!$results->EOF()) {
 			try {
-				$key = BeaconCommon::GetGlobal('OAuth Encryption Key');
-				$userId = $results->Field('user_id');
-				$provider = $results->Field('provider');
-				$accessToken = BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('access_token')));
-				$refreshToken = BeaconEncryption::SymmetricDecrypt($key, base64_decode($results->Field('refresh_token')));
-				$expiration = intval($results->Field('expiration'));
-				
-				$oauth = new static($userId, $provider, $accessToken, $refreshToken, $expiration);
-				$oauth->Refresh(true);
+				$token = new static($results);
+				$token->Refresh(true);
 			} catch (Exception $err) {
 			}
 			$results->MoveNext();
@@ -134,35 +161,52 @@ class OAuth implements JsonSerializable {
 		return $this->provider;
 	}
 	
-	public function AccessToken(): string {
-		return $this->accessToken;
+	public function AccessToken(bool $decrypted = false): string {
+		return $decrypted ? $this->accessToken : $this->accessTokenEncrypted;
 	}
 	
-	public function RefreshToken(): string {
-		return $this->refreshToken;
+	public function RefreshToken(bool $decrypted = false): string {
+		return $decrypted ? $this->refreshToken : $this->refreshTokenEncrypted;
 	}
 	
-	public function Expiration(): int {
-		return $this->expiration;
+	public function AccessTokenExpiration(): int {
+		return $this->accessTokenExpiration;
+	}
+	
+	public function RefreshTokenExpiration(): int {
+		return $this->refreshTokenExpiration;
 	}
 	
 	public function IsExpiring(): bool {
-		return $this->expiration < time() + self::ExpirationBuffer;
+		return $this->accessTokenExpiration < time() + self::ExpirationBuffer;
 	}
 	
 	public function IsExpired(): bool {
-		return $this->expiration < time();
+		return $this->accessTokenExpiration < time();
+	}
+	
+	public function ProviderSpecific(): array {
+		return $this->providerSpecific;
+	}
+	
+	public function JSON(bool $decrypted): array {
+		$json = [
+			'userId' => $this->userId,
+			'provider' => $this->provider,
+			'accessToken' => $this->AccessToken($decrypted),
+			'refreshToken' => $this->RefreshToken($decrypted),
+			'accessTokenExpiration' => $this->accessTokenExpiration,
+			'refreshTokenExpiration' => $this->refreshTokenExpiration,
+			'expired' => $this->IsExpired()
+		];
+		if ($decrypted === false) {
+			$json['encryptionKey'] = $this->userEncryptionKey;
+		}
+		return $json;
 	}
 	
 	public function jsonSerialize(): mixed {
-		return [
-			'userId' => $this->userId,
-			'provider' => $this->provider,
-			'accessToken' => $this->accessToken,
-			'refreshToken' => $this->refreshToken,
-			'expiration' => $this->expiration,
-			'expired' => $this->IsExpired()
-		];
+		return $this->JSON(false);
 	}
 	
 	public function Test(bool $autorefresh = true): bool {
@@ -183,7 +227,7 @@ class OAuth implements JsonSerializable {
 			$endpoint = 'https://oauth.nitrado.net/token';
 			break;
 		default:
-			throw new Exception("Unknown provider ${this->provider}");
+			throw new Exception("Unknown provider {$this->provider}");
 		}
 		
 		$curl = curl_init($endpoint);
@@ -207,13 +251,13 @@ class OAuth implements JsonSerializable {
 			'grant_type=refresh_token',
 			'client_id=' . urlencode(static::ClientID($this->provider)),
 			'refresh_token=' . urlencode($this->refreshToken),
-			'redirect_url=' . urlencode(static::RedirectURI())
+			'redirect_url=' . urlencode(static::RedirectURI($this->provider))
 		];
 		
 		static::Redeem($this->userId, $this->provider, $fields);
 	}
 	
-	public function Delete(): void {
+	public function Delete(): bool {
 		$curl = curl_init(static::ProviderEndpoint($this->provider));
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
 		curl_setopt($curl, CURLOPT_HTTPHEADER, [
@@ -224,15 +268,18 @@ class OAuth implements JsonSerializable {
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
 		
-		if ($status === 204) {
+		if ($status === 200 || $status === 204) {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
 			$database->Query('DELETE FROM public.oauth_tokens WHERE user_id = $1 AND provider = $2;', $this->userId, $this->provider);
 			$database->Commit();
+			return true;
 		}
+		
+		return false;
 	}
 	
-	protected static function Redeem(string $userId, string $provider, array $fields) {
+	protected static function Redeem(string $userId, string $provider, array $fields): ?static {
 		$curl = curl_init(static::ProviderEndpoint($provider));
 		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, implode('&', $fields));
@@ -246,15 +293,33 @@ class OAuth implements JsonSerializable {
 		}
 		
 		$response = json_decode($response, true);
-		$key = BeaconCommon::GetGlobal('Sentinel OAuth Key');
-		$accessToken = base64_encode(BeaconEncryption::SymmetricEncrypt($key, $response['access_token'], false));
-		$refreshToken = base64_encode(BeaconEncryption::SymmetricEncrypt($key, $response['refresh_token'], false));
-		$expiresIn = $response['expires_in'];
+		$accessToken = $response['access_token'];
+		$refreshToken = $response['refresh_token'];
+		$accessTokenExpiration = time();
+		$refreshTokenExpiration = time();
 		
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('INSERT INTO public.oauth_tokens (user_id, provider, access_token, expiration, refresh_token) VALUES ($1, $2, $3, CURRENT_TIMESTAMP(0) + $4::INTERVAL, $5) ON CONFLICT (user_id, provider) DO UPDATE SET access_token = EXCLUDED.access_token, expiration = EXCLUDED.expiration, refresh_token = EXCLUDED.refresh_token;', $userId, $provider, $accessToken, "$expiresIn seconds", $refreshToken);
-		$database->Commit();
+		$providerSpecific = [];
+		if ($provider === self::ProviderNitrado) {
+			$curl = curl_init('https://api.nitrado.net/token');
+			curl_setopt($curl, CURLOPT_HTTPHEADER, [
+			  'Authorization: Bearer ' . $accessToken,
+			]);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($curl);
+			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+			curl_close($curl);
+			
+			if ($status !== 200) {
+				throw new Exception('Invalid access token.');
+			}
+			
+			$response = json_decode($response, true);
+			$providerSpecific['user'] = $response['data']['token']['user'];
+			$accessTokenExpiration = $response['data']['token']['expires_at'];
+			$refreshTokenExpiration = $accessTokenExpiration + 2592000; // This is a guess
+		}
+		
+		return static::Store($userId, $provider, $accessToken, $refreshToken, $accessTokenExpiration, $refreshTokenExpiration, $providerSpecific);
 	}
 }
 

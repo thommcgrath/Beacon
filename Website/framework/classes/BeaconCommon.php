@@ -889,7 +889,7 @@ abstract class BeaconCommon {
 			'expires' => 2147483647,
 			'secure' => true,
 			'httponly' => true,
-			'samesite' => 'Strict'
+			'samesite' => 'Lax'
 		]);
 		$_COOKIE['beacon_device_id'] = $device_id;
 		
@@ -1019,7 +1019,7 @@ abstract class BeaconCommon {
 				'domain' => '',
 				'secure' => true,
 				'httponly' =>true,
-				'samesite' => 'Strict'
+				'samesite' => 'Lax'
 			]);
 			self::$session = null;
 			return;
@@ -1040,7 +1040,7 @@ abstract class BeaconCommon {
 			'domain' =>'',
 			'secure' => true,
 			'httponly' =>true,
-			'samesite' => 'Strict'
+			'samesite' => 'Lax'
 		]);
 		
 		self::$session = $session;

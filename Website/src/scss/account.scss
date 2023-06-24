@@ -111,3 +111,46 @@ h1 span.tag {
 		margin-top: 10px;
 	}
 }
+
+.services-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	
+	.service {
+		width: 175px;
+		border-radius: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem;
+		box-sizing: border-box;
+		background-color: white;
+		
+		.service-logo {
+			img {
+				width: 100%;
+				height: auto;
+				display: block;
+			}
+			
+			flex: 1 1 auto;
+		}
+		
+		.service-name {
+			font-weight: bold;
+			word-break: break-all;
+			text-align: center;
+		}
+		
+		.service-action {
+			
+		}
+	}
+	
+	.service-nitrado {
+		background-color: black;
+		color: white;
+	}
+}

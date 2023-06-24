@@ -2,8 +2,6 @@
 
 use BeaconAPI\v4\{Response, Core};
 
-Core::Authorize('common');
-
 function handleRequest(array $context): Response {
 	$version = false;
 	if (isset($context['pathParameters']['version'])) {

@@ -618,4 +618,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	for (const button of editAppButtons) {
 		button.addEventListener('click', editAppAction);	
 	}
+	
+	/* ! OAuth */
+	const connectedServiceButtonAction = (event) => {
+		event.preventDefault();
+		
+		const provider = event.currentTarget.getAttribute('beacon-provider');
+		const status = event.currentTarget.getAttribute('beacon-status');
+		
+		if (status === 'connected') {
+			window.location = `/account/oauth/v4/${provider}/revoke`;
+		} else {
+			window.location = `/account/oauth/v4/${provider}/begin`;
+		}
+	};
+	
+	const connectedServiceActionButtons = document.querySelectorAll('#panel-account div[page="oauth"] .service-action button');
+	for (const button of connectedServiceActionButtons) {
+		button.addEventListener('click', connectedServiceButtonAction);
+	}
 });
