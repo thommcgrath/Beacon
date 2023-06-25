@@ -6,7 +6,7 @@ use BeaconCommon, BeaconEncryption, BeaconRecordSet, BeaconUUID, Exception, Json
 class OAuth implements JsonSerializable {
 	final const ProviderNitrado = 'Nitrado';
 	final const ExpirationBuffer = 86400;
-	private const SelectColumns = 'oauth_token_id, user_id, provider, access_token, EXTRACT(EPOCH FROM access_token_expiration) AS access_token_expiration, refresh_token, EXTRACT(EPOCH FROM refresh_token_expiration) AS refresh_token_expiration, provider_specific, user_encryption_key, system_encryption_key';
+	private const SelectColumns = 'oauth_token_id, user_id, provider, access_token, EXTRACT(EPOCH FROM access_token_expiration) AS access_token_expiration, refresh_token, EXTRACT(EPOCH FROM refresh_token_expiration) AS refresh_token_expiration, provider_specific, encryption_key';
 	
 	protected string $tokenId;
 	protected string $userId;
@@ -17,7 +17,7 @@ class OAuth implements JsonSerializable {
 	protected string $refreshTokenEncrypted;
 	protected int $accessTokenExpiration;
 	protected int $refreshTokenExpiration;
-	protected string $userEncryptionKey;
+	protected string $encryptionKey;
 	protected array $providerSpecific;
 	
 	public static function RedirectURI(string $provider): string {
@@ -67,12 +67,11 @@ class OAuth implements JsonSerializable {
 		$this->refreshTokenEncrypted = $row->Field('refresh_token');
 		$this->accessTokenExpiration = intval($row->Field('access_token_expiration'));
 		$this->refreshTokenExpiration = intval($row->Field('refresh_token_expiration'));
-		$this->userEncryptionKey = $row->Field('user_encryption_key');
 		$this->providerSpecific = json_decode($row->Field('provider_specific'), true);
 		
-		$encryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($row->Field('system_encryption_key')));
-		$this->accessToken = BeaconEncryption::SymmetricDecrypt($encryptionKey, base64_decode($row->Field('access_token')));
-		$this->refreshToken = BeaconEncryption::SymmetricDecrypt($encryptionKey, base64_decode($row->Field('refresh_token')));
+		$this->encryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($row->Field('encryption_key')));
+		$this->accessToken = BeaconEncryption::SymmetricDecrypt($this->encryptionKey, base64_decode($row->Field('access_token')));
+		$this->refreshToken = BeaconEncryption::SymmetricDecrypt($this->encryptionKey, base64_decode($row->Field('refresh_token')));
 	}
 	
 	public static function Store(string|User $user, string $provider, string $accessToken, string $refreshToken, int $accessTokenExpiration, int $refreshTokenExpiration, array $providerSpecific): ?static {
@@ -92,15 +91,24 @@ class OAuth implements JsonSerializable {
 		}
 		$accessTokenId = BeaconUUID::v5(implode('|', $uuidParts));
 		
-		$encryptionKey = BeaconEncryption::GenerateKey(256);
-		$userEncryptionKey = base64_encode(BeaconEncryption::RSAEncrypt($user->PublicKey(), $encryptionKey));
-		$systemEncryptionKey = base64_encode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $encryptionKey));
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT encryption_key FROM public.oauth_tokens WHERE oauth_token_id = $1;', $accessTokenId);
+		$isUpdate = ($rows->RecordCount() === 1);
+		if ($isUpdate) {
+			$encryptionKey = BeaconEncryption::RSADecrypt(BeaconCommon::GetGlobal('Beacon_Private_Key'), base64_decode($rows->Field('encryption_key')));
+		} else {
+			$encryptionKey = BeaconEncryption::GenerateKey(256);
+			$encryptedEncryptionKey = base64_encode(BeaconEncryption::RSAEncrypt(BeaconEncryption::ExtractPublicKey(BeaconCommon::GetGlobal('Beacon_Private_Key')), $encryptionKey));
+		}
 		$accessTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($encryptionKey, $accessToken, false));
 		$refreshTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($encryptionKey, $refreshToken, false));
 			
-		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO public.oauth_tokens (oauth_token_id, user_id, provider, access_token, refresh_token, access_token_expiration, refresh_token_expiration, provider_specific, user_encryption_key, system_encryption_key) VALUES ($1, $2, $3, $4, $5, TO_TIMESTAMP($6), TO_TIMESTAMP($7), $8, $9, $10) ON CONFLICT (oauth_token_id) DO UPDATE SET user_id = EXCLUDED.user_id, provider = EXCLUDED.provider, access_token = EXCLUDED.access_token, access_token_expiration = EXCLUDED.access_token_expiration, refresh_token_expiration = EXCLUDED.refresh_token_expiration, provider_specific = EXCLUDED.provider_specific, refresh_token = EXCLUDED.refresh_token, user_encryption_key = EXCLUDED.user_encryption_key, system_encryption_key = EXCLUDED.system_encryption_key;", $accessTokenId, $user->UserId(), $provider, $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific), $userEncryptionKey, $systemEncryptionKey);
+		if ($isUpdate) {
+			$database->Query("UPDATE public.oauth_tokens SET access_token = $2, refresh_token = $3, access_token_expiration = TO_TIMESTAMP($4), refresh_token_expiration = TO_TIMESTAMP($5), provider_specific = $6 WHERE oauth_token_id = $1;", $accessTokenId, $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific));
+		} else {
+			$database->Query("INSERT INTO public.oauth_tokens (oauth_token_id, user_id, provider, access_token, refresh_token, access_token_expiration, refresh_token_expiration, provider_specific, encryption_key) VALUES ($1, $2, $3, $4, $5, TO_TIMESTAMP($6), TO_TIMESTAMP($7), $8, $9);", $accessTokenId, $user->UserId(), $provider, $accessTokenEncrypted, $refreshTokenEncrypted, $accessTokenExpiration, $refreshTokenExpiration, json_encode($providerSpecific), $encryptedEncryptionKey);
+		}
 		$database->Commit();
 		
 		return static::Fetch($accessTokenId);
@@ -228,11 +236,10 @@ class OAuth implements JsonSerializable {
 			'refreshToken' => $this->RefreshToken($decrypted),
 			'accessTokenExpiration' => $this->accessTokenExpiration,
 			'refreshTokenExpiration' => $this->refreshTokenExpiration,
-			'expired' => $this->IsExpired(),
 			'providerSpecific' => $this->providerSpecific
 		];
-		if ($decrypted === false) {
-			$json['encryptionKey'] = $this->userEncryptionKey;
+		if ($decrypted) {
+			$json['encryptionKey'] = base64_encode($this->encryptionKey);
 		}
 		return $json;
 	}
