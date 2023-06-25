@@ -9,6 +9,7 @@ function handleRequest(array $context): Response {
 	$tokens = OAuth::Lookup($userId);
 	$json = [];
 	foreach ($tokens as $token) {
+		$token->Refresh();
 		$json[] = $token->JSON($authenticatedAsUser);
 	}
 	return Response::NewJson($json, 200);

@@ -11,6 +11,8 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('Token not found', $tokenId, 404);
 	}
 	
+	$token->Refresh();
+	
 	return Response::NewJson($token->JSON($authenticatedAsUser), 200);
 }
 
