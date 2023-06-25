@@ -156,5 +156,14 @@ h1 span.tag {
 	.service-nitrado {
 		background-color: black;
 		color: white;
+		
+		&.inactive {
+			background-color: white;
+			color: black;
+			
+			.service-logo img {
+				filter: brightness(0%);
+			}
+		}
 	}
 }

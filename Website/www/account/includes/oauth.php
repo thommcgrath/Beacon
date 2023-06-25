@@ -35,7 +35,7 @@ if (count($connectedServices) > 0) {
 		<div class="service service-nitrado inactive">
 			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('nitrado-color.svg'); ?>" alt="Nitrado"></div>
 			<div class="service-name">Nitrado</div>
-			<div class="service-action"><button class="yellow" beacon-provider="nitrado" beacon-token-id="">Connect</button></div>
+			<div class="service-action"><button beacon-provider="nitrado" beacon-token-id="">Connect</button></div>
 		</div>
 	</div>
 </div>
