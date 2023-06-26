@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCloudStorage, BeaconCommon, BeaconRecordSet, BeaconSearch, Exception, JsonSerializable;
+use BeaconCloudStorage, BeaconCommon, BeaconRecordSet, BeaconSearch, BeaconUUID, DateTime, Exception, JsonSerializable, PharData;
 
 abstract class Project extends DatabaseObject implements JsonSerializable {
 	public const kPublishStatusPrivate = 'Private';
@@ -86,7 +86,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$sql .= ' AND ' . $schema->Accessor('userId') . ' = ' . $schema->Accessor('ownerId') . ';';
 		}
 		
-		header('Fetch: ' . $sql);
+		//header('Fetch: ' . $sql);
 		$rows = $database->Query($sql, $values);
 		if (is_null($rows) || $rows->RecordCount() !== 1) {
 			return null;
@@ -125,6 +125,8 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		
 		if (isset($filters['userId']) && empty($filters['userId']) === false) {
 			$parameters->AddFromFilter($schema, $filters, 'userId');
+		} else if (isset($filters['ownerId']) && empty($filters['ownerId']) === false) {
+			$parameters->AddFromFilter($schema, $filters, 'ownerId');
 		} else {
 			$parameters->clauses[] = $schema->Accessor('userId') . ' = ' . $schema->Accessor('ownerId');
 		}
@@ -219,10 +221,10 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public function IncrementDownloadCount(bool $autosave = true): void {
-		$this->SetProperty('download_count', $this->downloadCount + 1);
-		if ($autosave) {
-			$this->Save();
-		}
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query("UPDATE public.projects SET download_count = download_count + 1 WHERE project_id = $1;", $this->projectId);
+		$database->Commit();
 	}
 	
 	public function IsPublic(): bool {
@@ -321,9 +323,13 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		
 		$this->content[$content_key] = BeaconCloudStorage::GetFile($this->CloudStoragePath(), true, $version_id);
 		return $content_key;
-	}	
+	}
 	
-	public function Content(bool $compressed = false, bool $parsed = true, $version_id = null): string|array {
+	public static function IsBinaryProjectFormat(string $content): bool {
+		return bin2hex(substr($content, 0, 8)) === '3029a1c4fab67728';
+	}
+	
+	public function Content(bool $compressOutput = false, bool $parsed = true, $version_id = null): string|array {
 		try {
 			$content_key = $this->PreloadContent($version_id);
 		} catch (Exception $err) {
@@ -331,12 +337,26 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		}
 		
 		$content = $this->content[$content_key];
-		$compressed = $compressed && ($parsed == false);
-		$is_compressed = BeaconCommon::IsCompressed($content);
-		if ($is_compressed == true && $compressed == false) {
-			$content = gzdecode($content);
-		} elseif ($is_compressed == false && $compressed == true) {
-			return gzencode($content);
+		$compressOutput = $compressOutput && ($parsed === false);
+		if (static::IsBinaryProjectFormat($content)) {
+			// v7+ project
+			if ($parsed === true) {
+				$archivePath = tempnam(sys_get_temp_dir(), $this->projectId . '.tar.gz');
+				file_put_contents($archivePath, substr($content, 8));
+				$archive = new PharData($archivePath);
+				$manifest = json_decode($archive['Manifest.json']->getContent(), true);
+				$version = $manifest['Version'];
+				$content = $archive['v ' . $version . '.json']->getContent();
+				$archive = null;
+				unlink($archivePath);
+			}
+		} else {
+			$isCompressed = BeaconCommon::IsCompressed($content);
+			if ($isCompressed === true && $compressOutput === false) {
+				$content = gzdecode($content);
+			} elseif ($isCompressed === false && $compressOutput === true) {
+				return gzencode($content);
+			}
 		}
 		if ($parsed) {
 			return json_decode($content, true);
@@ -352,202 +372,106 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		return $this->storagePath;
 	}
 	
-	public static function SaveFromMultipart(User $user, string &$reason): bool {
-		$required_vars = ['keys', 'name', 'uuid', 'version'];
-		if (static::ValidateMultipart($required_vars, $reason) === false) {
-			return false;
-		}
-		$missing_vars = [];
-		foreach ($required_vars as $var) {
-			if (isset($_POST[$var]) === false || empty($_POST[$var]) === true) {
-				$missing_vars[] = $var;
-			}
-		}
-		if (isset($_POST['description']) === false) {
-			// description is allowed to be empty
-			$missing_vars[] = 'description';
-		}
-		if (isset($_FILES['contents']) === false) {
-			$missing_vars[] = 'contents';
-			sort($missing_vars);
-		}
-		if (count($missing_vars) > 0) {
-			$reason = 'The following parameters are missing: `' . implode('`, `', $missing_vars) . '`';
-			return false;
+	public static function Save(User $user, array $manifest): ?static {
+		$projectId = $manifest['ProjectId'] ?? '';
+		if (BeaconUUID::Validate($projectId) === false) {
+			throw new Exception('ProjectId should be a UUID.', 400);
 		}
 		
-		$upload_status = $_FILES['contents']['error'];
-		switch ($upload_status) {
-		case UPLOAD_ERR_OK:
-			break;
-		case UPLOAD_ERR_NO_FILE:
-			$reason = 'No file included.';
-			break;
-		case UPLOAD_ERR_INI_SIZE:
-		case UPLOAD_ERR_FORM_SIZE:
-			$reason = 'Exceeds maximum file size.';
+		$project = static::Fetch($projectId);
+		$ownerId = $user->UserId();
+		if (is_null($project) === false) {
+			$ownerId = $project->OwnerId();
+			if ($project->UserId() !== $user->UserId()) {
+				throw new Exception('You are not authorized to write to this project.', 403);
+			}
+		}
+		
+		$projectName = $manifest['Name'] ?? '';
+		$errorDetails['name'] = $projectName;
+		if (empty($projectName)) {
+			throw new Exception('Project name should not be empty.', 400);
+		}
+		
+		$existingProjects = static::Search(['name' => $projectName, 'ownerId' => $ownerId], true);
+		if (count($existingProjects) > 0) {
+			$nameError = true;
+			if (is_null($project) === false) {
+				foreach ($existingProjects as $existingProject) {
+					if ($existingProject->ProjectId() === $projectId) {
+						$nameError = false;
+						break;
+					}
+				}
+			}
+			if ($nameError) {
+				throw new Exception('There is already a project with this name. Please choose another.', 400);
+			}
+		}
+		
+		$now = new DateTime();
+		$description = $manifest['Description'] ?? '';
+		$gameId = $manifest['GameId'] ?? '';
+		$columns = [
+			'title' => $projectName,
+			'description' => $description,
+			'console_safe' => $manifest['IsConsole'] ?? false,
+			'game_specific' => [],
+			'deleted' => false,
+			'last_update' => $now->format('Y-m-d H:i:s.uO')
+		];
+		if (is_null($project)) {
+			$columns['project_id'] = $projectId;
+			$columns['game_id'] = $gameId;
+			$columns['user_id'] = $ownerId;
+			$columns['storage_path'] = '/Projects/' . $projectId . '.beacon';
+			$columns['revision'] = 1;
+		} else {
+			$columns['revision'] = $project->Revision() + 1;
+		}
+		
+		switch ($gameId) {
+		case 'Ark':
+			$columns['game_specific']['map'] = $manifest['Map'] ?? 1;
+			$columns['game_specific']['difficulty'] = $manifest['Difficulty'] ?? 4.0;
+			$columns['game_specific']['include_editors'] = $manifest['Editors'] ?? [];
+			
+			$mods = $manifest['ModSelections'] ?? [];
+			$enabledModIds = [];
+			foreach ($mods as $modId => $enabled) {
+				if ($enabled === false) {
+					continue;
+				}
+				
+				$enabledModIds[] = $modId;
+				if ($columns['console_safe'] !== true) {
+					continue;
+				}
+				
+				$mod = Ark\ContentPack::Fetch($modId);
+				if (is_null($mod) || $mod->ConsoleSafe() === true) {
+					continue;
+				}
+				
+				$columns['console_safe'] = false;
+			}
+			
 			break;
 		default:
-			$reason = 'Other error ' . $upload_status . '.';
-			break;
+			throw new Exception('Unknown game ' . $gameId . '.', 400);
 		}
 		
-		if (BeaconCommon::IsCompressed($_FILES['contents']['tmp_name'], true) === false) {
-			$source = $_FILES['contents']['tmp_name'];
-			$destination = $source . '.gz';
-			if ($read_handle = fopen($source, 'rb')) {
-				if ($write_handle = gzopen($destination, 'wb9')) {
-					while (!feof($read_handle)) {
-						gzwrite($write_handle, fread($read_handle, 524288));
-					}
-					gzclose($write_handle);
-				} else {
-					fclose($read_handle);
-					$reason = 'Could not create compressed file.';
-					return false;
-				}
-				fclose($read_handle);
-			} else {
-				$reason = 'Could not read uncompressed file.';
-				return false;
-			}
-			unlink($source);
-			rename($destination, $source);
-		}
-		
-		$project = [
-			'Version' => intval($_POST['version']),
-			'Identifier' => $_POST['uuid'],
-			'Name' => $_POST['name'],
-			'Description' => $_POST['description']
-		];
-		$keys_members = explode(',', $_POST['keys']);
-		$keys = [];
-		foreach ($keys_members as $member) {
-			$pos = strpos($member, ':');
-			if ($pos === false) {
-				$reason = 'Parameter `keys` expects a comma-separated list of key:value pairs.';
-				return false;
-			}
-			$key = substr($member, 0, $pos);
-			if (BeaconCommon::IsUUID($key) === false) {
-				$reason = 'Key `' . $key . '` is not a v4 UUID.';
-				return false;
-			}
-			$value = substr($member, $pos + 1);
-			$keys[$key] = $value;
-		}
-		$project['EncryptionKeys'] = $keys;
-		
-		if (static::MultipartAddProjectValues($project, $reason) === false) {
-			return false;
-		}
-		
-		return self::SaveFromArray($project, $user, $_FILES['contents'], $reason);
-	}
-	
-	protected static function ValidateMultipart(array &$required_vars, string &$reason): bool {
-		return true;
-	}
-	
-	protected static function MultipartAddProjectValues(array &$project, string &$reason): bool {
-		return true;
-	}
-	
-	protected static function AddColumnValues(array $project, array &$row_values): bool {
-		return true;
-	}
-	
-	protected static function SaveFromArray(array $project, User $user, $contents, string &$reason): bool {
-		$project_version = filter_var($project['Version'], FILTER_VALIDATE_INT);
-		if ($project_version === false || $project_version < 2) {
-			$reason = 'Version 1 projects are no longer not accepted.';
-			return false;
-		}
-		
-		$schema = static::DatabaseSchema();
-		
+		$columns['game_specific'] = json_encode($columns['game_specific']);
 		$database = BeaconCommon::Database();
-		$projectId = $project['Identifier'];
-		if (BeaconCommon::IsUUID($projectId) === false) {
-			$reason = 'Project identifier is not a v4 UUID.';
-			return false;
-		}
-		$name = isset($project['Title']) ? $project['Title'] : '';
-		$description = isset($project['Description']) ? $project['Description'] : '';
-		$gameId = isset($project['GameID']) ? $project['GameID'] : 'Ark';
-		
-		// check if the project already exists
-		$results = $database->Query('SELECT project_id, storage_path FROM ' . $schema->Table() . ' WHERE project_id = $1;', $projectId);
-		$new_project = $results->RecordCount() == 0;
-		$storagePath = null;
-		
-		// confirm write permission of the project
-		if ($new_project == false) {
-			$storagePath = $results->Field('storage_path');
-			
-			$results = $database->Query('SELECT role, owner_id FROM ' . $schema->Table() . ' WHERE project_id = $1 AND user_id = $2;', $projectId, $user->UserId());
-			if ($results->RecordCount() == 0) {
-				$reason = 'Access denied for project ' . $projectId . '.';
-				return false;
-			}
-			$role = $results->Field('role');
-			$ownerId = $results->Field('owner_id');
+		$database->BeginTransaction();
+		if (is_null($project)) {
+			$database->Insert('public.projects', $columns);
 		} else {
-			$storagePath = static::CloudStoragePath($projectId);
-			$role = 'Owner';
-			$ownerId = $user->UserId();
+			$database->Update('public.projects', $columns, ['project_id' => $projectId]);
 		}
+		$database->Commit();
 		
-		if (BeaconCloudStorage::PutFile($storagePath, $contents) === false) {
-			$reason = 'Unable to upload project to cloud storage platform.';
-			return false;
-		}
-		
-		try {
-			$row_values = [
-				'title' => $name,
-				'description' => $description,
-				'console_safe' => true,
-				'game_specific' => '{}',
-				'game_id' => $gameId
-			];
-			static::AddColumnValues($project, $row_values);
-			
-			$placeholder = 3;
-			$values = [$projectId, $ownerId];
-			
-			$database->BeginTransaction();
-			if ($new_project) {
-				$columns = ['project_id', 'user_id', 'last_update', 'storage_path'];
-				$values[] = $storagePath;
-				$placeholders = ['$1', '$2', 'CURRENT_TIMESTAMP', '$3'];
-				$placeholder++;
-				foreach ($row_values as $column => $value) {
-					$columns[] = $database->EscapeIdentifier($column);
-					$values[] = $value;
-					$placeholders[] = '$' . strval($placeholder);
-					$placeholder++;
-				}
-				
-				$database->Query('INSERT INTO ' . $schema->Table() . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
-			} else {
-				$assignments = ['revision = revision + 1', 'last_update = CURRENT_TIMESTAMP', 'deleted = FALSE'];
-				foreach ($row_values as $column => $value) {
-					$assignments[] = $database->EscapeIdentifier($column) . ' = $' . strval($placeholder);
-					$values[] = $value;
-					$placeholder++;
-				}
-				
-				$database->Query('UPDATE ' . $schema->Table() . ' SET ' . implode(', ', $assignments) . ' WHERE project_id = $1 AND user_id = $2;', $values);
-			}
-			$database->Commit();
-		} catch (Exception $err) {
-			$reason = 'Database error: ' . $err->getMessage();
-			return false;
-		}
-		
-		return true;
+		return static::Fetch($projectId);
 	}
 	
 	public function Versions(): array {

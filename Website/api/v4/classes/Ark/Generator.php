@@ -49,7 +49,9 @@ class Generator {
 		
 		$version = $contents['Version'];
 		if (isset($contents['Config Sets'])) {
-			if (isset($contents['Config Sets']['Base']['LootDrops']['Contents'])) {
+			if (isset($contents['Config Sets']['94c9797d-857d-574a-bdb9-30ee6543ed12']['LootDrops']['Contents'])) {
+				$lootSourcesJson = $contents['Config Sets']['94c9797d-857d-574a-bdb9-30ee6543ed12']['LootDrops']['Contents'];
+			} elseif (isset($contents['Config Sets']['Base']['LootDrops']['Contents'])) {
 				$lootSourcesJson = $contents['Config Sets']['Base']['LootDrops']['Contents'];
 			} else {
 				$lootSourcesJson = [];

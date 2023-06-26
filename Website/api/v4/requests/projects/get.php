@@ -60,16 +60,19 @@ function HandleDocumentDataRequest(Project $project, $versionId = null): Respons
 	
 	try {
 		$project->PreloadContent($versionId); // If there is an error, this one will fire the exception
-		$compressed = ($bestOption == 'gzip');
+		$compressOutput = ($bestOption == 'gzip');
+		$content = $project->Content($compressOutput, false, $versionId);
+		$compressed = BeaconCommon::IsCompressed($content);
+		$isBinaryFormat = Project::IsBinaryProjectFormat($content);
 		$headers = [
-			'Content-Type' => 'application/octet-stream',
-			'Content-Disposition' => 'attachment; filename="' . preg_replace('/[^a-z09\-_ \(\)]/i', '', $project->Title()) . '.beacon"',
+			'Content-Type' => $isBinaryFormat ? 'application/x-beacon-project' : 'application/octet-stream',
+			'Content-Disposition' => 'attachment; filename="' . preg_replace('/[^a-z09\-_ \(\)]/i', '', $project->Name()) . '.beacon"',
 		];
 		if ($compressed) {
 			$headers['Content-Encoding'] = 'gzip';
 		}
 		
-		return new Response(200, $project->Content($compressed, false, $versionId), $headers);
+		return new Response(200, $content, $headers);
 	} catch (Exception $err) {
 		return Response::NewJsonError($err->getMessage(), null, 500);
 	}
