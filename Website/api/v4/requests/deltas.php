@@ -2,6 +2,9 @@
 
 use BeaconAPI\v4\{Response, Core};
 
+$requiredScopes = [];
+$authScheme = Core::kAuthSchemeNone;
+
 function handleRequest(array $context): Response {
 	$version = false;
 	if (isset($context['pathParameters']['version'])) {

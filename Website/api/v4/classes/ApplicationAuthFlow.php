@@ -165,7 +165,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 	public function NewChallenge(string $deviceId, User $user, int $expiration): string {
 		$challengeSecret = $this->Application()->Secret() ?? '';
 		$challengeRaw = $deviceId . $expiration . $challengeSecret . $this->flowId . $user->UserId();
-		return base64_encode(hash('sha3-512', $challengeRaw, true));
+		return BeaconCommon::Base64UrlEncode(hash('sha3-512', $challengeRaw, true));
 	}
 	
 	public function Authorize(string $deviceId, string $challenge, int $expiration, User $user, ?string $userPassword = null): string {
@@ -191,7 +191,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 			}
 		}
 		
-		$code = BeaconCommon::GenerateUUID();
+		$code = BeaconEncryption::GenerateKey(256);
 		if (is_null($privateKey) === false) {
 			$privateKey = BeaconEncryption::RSAEncryptLargeMessage($this->publicKey, $privateKey);
 		}
@@ -206,7 +206,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 		$this->user = $user;
 		
 		return $this->callback . (str_contains($this->callback, '?') ? '&' : '?') . http_build_query([
-			'code' => $code,
+			'code' => BeaconCommon::Base64UrlEncode($code),
 			'state' => $this->state
 		]);
 	}
@@ -223,7 +223,7 @@ class ApplicationAuthFlow extends DatabaseObject {
 			$applicationSecret = null;
 		}
 		
-		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $redirectUri, $code);
+		$codeHash = static::PrepareCodeHash($applicationId, $applicationSecret, $redirectUri, BeaconCommon::Base64UrlDecode($code));
 		$flows = static::Search(['codeHash' => $codeHash], true);
 		if (count($flows) !== 1) {
 			throw new Exception('Authorization flow not found.');
@@ -246,17 +246,13 @@ class ApplicationAuthFlow extends DatabaseObject {
 		if (is_null($applicationSecret) === false) {
 			$applicationId = "{$applicationId}.{$applicationSecret}";
 		}
-		return base64_encode(hash('sha3-512', "{$applicationId}.{$redirectUri}.{$code}", true));
+		return BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$applicationId}.{$redirectUri}.{$code}", true));
 	}
 	
 	protected function CheckCodeVerifier(string $codeVerifier): bool {
 		switch ($this->codeVerifierMethod) {
 		case 'S256':
-			$base64 = base64_encode(hash('sha256', $codeVerifier, true));
-			if ($base64 === false) {
-				return false;
-			}
-			return $this->codeVerifierHash === str_replace(['+', '/', '='], ['-', '_', ''], $base64);
+			return $this->codeVerifierHash === BeaconCommon::Base64UrlEncode(hash('sha256', $codeVerifier, true));
 			break;
 		default:
 			return false;

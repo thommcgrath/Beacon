@@ -35,6 +35,9 @@ function handleRequest(array $context): Response {
 			$codeVerifierHash = $_GET['code_challenge'];
 			$codeVerifierMethod = $_GET['code_challenge_method'];
 			$publicKey = $_GET['public_key'] ?? null;
+			if (is_null($publicKey) === false) {
+				$publicKey = BeaconEncryption::PublicKeyToPEM($publicKey);
+			}
 			
 			$flow = ApplicationAuthFlow::Create($application, $scopes, $redirect_uri, $state, $codeVerifierHash, $codeVerifierMethod, $publicKey);
 		} catch (Exception $err) {

@@ -4,6 +4,8 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconEncryption, BeaconRecordSet, DateTime, Exception, JsonSerializable;
 
 class Session extends DatabaseObject implements JsonSerializable {
+	private const TokenLength = 32;
+	
 	protected string $accessTokenEncrypted = '';
 	protected string $accessTokenHash = '';
 	protected string $accessToken = '';
@@ -160,12 +162,8 @@ class Session extends DatabaseObject implements JsonSerializable {
 		return $this->privateKeyEncrypted;
 	}
 	
-	protected static function PrepareHash(string $token, bool $legacy = false): string {
-		if ($legacy) {
-			return strtolower(hash('sha512', $token, false));
-		} else {
-			return base64_encode(hash('sha3-512', $token, true));
-		}
+	protected static function PrepareHash(string $token): string {
+		return BeaconCommon::Base64UrlEncode(hash('sha3-512', $token, true));
 	}
 	
 	public static function Create(User $user, Application|string $app, ?array $scopes = null, ?string $privateKey = null): static {
@@ -181,12 +179,12 @@ class Session extends DatabaseObject implements JsonSerializable {
 		
 		$schema = static::DatabaseSchema();
 		$table = $schema->WriteableTable();
-		$accessToken = base64_encode(BeaconEncryption::GenerateKey(1024));
-		$refreshToken = base64_encode(BeaconEncryption::GenerateKey(1024));
+		$accessToken = BeaconEncryption::GenerateKey(self::TokenLength * 8);
+		$refreshToken = BeaconEncryption::GenerateKey(self::TokenLength * 8);
 		$accessTokenHash = static::PrepareHash($accessToken);
 		$refreshTokenHash = static::PrepareHash($refreshToken);
-		$accessTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($refreshToken, $accessToken, false));
-		$refreshTokenEncrypted = base64_encode(BeaconEncryption::SymmetricEncrypt($accessToken, $refreshToken, false));
+		$accessTokenEncrypted = BeaconCommon::Base64UrlEncode(BeaconEncryption::SymmetricEncrypt($refreshToken, $accessToken, false));
+		$refreshTokenEncrypted = BeaconCommon::Base64UrlEncode(BeaconEncryption::SymmetricEncrypt($accessToken, $refreshToken, false));
 		if (is_null($scopes)) {
 			$scopes = $app->Scopes();
 		} else if (count($scopes) === 0) {
@@ -231,10 +229,22 @@ class Session extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public static function Fetch(string $token): ?static {
-		if (strlen($token) !== 88) {
+		switch (strlen($token)) {
+		case ceil((self::TokenLength / 3) * 4):
+			// raw token that is base64-encoded
+			$token = BeaconCommon::Base64UrlDecode($token);
 			$hash = static::PrepareHash($token);
-		} else {
+			break;
+		case self::TokenLength:
+			// raw token
+			$hash = static::PrepareHash($token);
+			break;
+		case 86:
+			// token hash
 			$hash = $token;
+			break;
+		default:
+			return null;
 		}
 		
 		$sessions = static::Search(['accessToken|refreshToken' => $hash], true);
@@ -248,7 +258,7 @@ class Session extends DatabaseObject implements JsonSerializable {
 	}
 	
 	protected function Decrypt(string $token): bool {
-		if (strlen($token) === 88) {
+		if (strlen($token) !== self::TokenLength) {
 			return false;
 		}
 		
@@ -257,15 +267,15 @@ class Session extends DatabaseObject implements JsonSerializable {
 		}
 		
 		try {
-			$this->accessToken = BeaconEncryption::SymmetricDecrypt($token, base64_decode($this->accessTokenEncrypted));
-			$this->refreshToken = $token;
+			$this->accessToken = BeaconCommon::Base64UrlEncode(BeaconEncryption::SymmetricDecrypt($token, BeaconCommon::Base64UrlDecode($this->accessTokenEncrypted)));
+			$this->refreshToken = BeaconCommon::Base64UrlEncode($token);
 			return true;
 		} catch (Exception $err) {
 		}
 		
 		try {
-			$this->refreshToken = BeaconEncryption::SymmetricDecrypt($token, base64_decode($this->refreshTokenEncrypted));
-			$this->accessToken = $token;
+			$this->refreshToken = BeaconCommon::Base64UrlEncode(BeaconEncryption::SymmetricDecrypt($token, BeaconCommon::Base64UrlDecode($this->refreshTokenEncrypted)));
+			$this->accessToken = BeaconCommon::Base64UrlEncode($token);
 			return true;
 		} catch (Exception $err) {
 		}
