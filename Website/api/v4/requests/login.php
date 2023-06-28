@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Application, ApplicationAuthFlow, Core, Response, Session};
+use BeaconAPI\v4\{Application, ApplicationAuthFlow, Core, Response, Session, User};
 
 $requiredScopes = [];
 $authScheme = Core::kAuthSchemeNone;
@@ -8,38 +8,56 @@ $authScheme = Core::kAuthSchemeNone;
 function handleRequest(array $context): Response {
 	switch ($context['routeKey']) {
 	case 'GET /login':
-		if (BeaconCommon::HasAllKeys($_GET, 'client_id', 'redirect_uri', 'state', 'response_type', 'scope', 'code_challenge', 'code_challenge_method') === false) {
+		$clientId = $_GET['client_id'] ?? '';
+		$scopes = empty($_GET['scope']) ? [] : explode(' ', $_GET['scope']);
+		$redirectUri = $_GET['redirect_uri'] ?? '';
+		$state = $_GET['state'] ?? '';
+		$responseType = $_GET['response_type'] ?? '';
+		$codeVerifierHash = $_GET['code_challenge'] ?? '';
+		$codeVerifierMethod = $_GET['code_challenge_method'] ?? '';
+		$publicKey = $_GET['public_key'] ?? null;
+		$userId = $_GET['user_id'] ?? '';
+		$signature = $_GET['signature'] ?? '';
+		$expiration = $_GET['expiration'] ?? '';
+		$application = null;
+		
+		if (empty($clientId) || empty($scopes)) {
 			return Response::NewJsonError('Missing parameters', null, 400);
 		}
 		
-		if ($_GET['response_type'] !== 'code') {
+		$response = HandlePublicKeyAuth($clientId, $application, $publicKey, $scopes, $userId, $signature, $expiration);
+		if (is_null($response) === false) {
+			return $response;
+		}
+		
+		if (empty($redirectUri) || empty($state) || empty($responseType) || empty($codeVerifierHash) || empty($codeVerifierMethod)) {
+			return Response::NewJsonError('Missing parameters', null, 400);
+		}
+		
+		if ($responseType !== 'code') {
 			return Response::NewJsonError('Response type should be code', null, 400);
 		}
-		if ($_GET['code_challenge_method'] !== 'S256') {
+		if ($codeVerifierMethod !== 'S256') {
 			return Response::NewJsonError('This API does not support the supplied code challenge method', null, 400);
 		}
-		if (strlen($_GET['code_challenge']) !== 43) {
+		if (strlen($codeVerifierHash) !== 43) {
 			return Response::NewJsonError('The code challenge should be exactly 43 characters when Base64URL encoded', null, 400);
 		}
 		
-		$application = Application::Fetch($_GET['client_id']);
 		if (is_null($application)) {
-			return Response::NewJsonError('Invalid client id', null, 400);
+			$application = Application::Fetch($clientId);
+			if (is_null($application)) {
+				return Response::NewJsonError('Invalid client id', null, 400);
+			}
 		}
 		
 		$flow = null;
 		try {
-			$redirect_uri = $_GET['redirect_uri'];
-			$scopes = explode(' ', $_GET['scope']);
-			$state = $_GET['state'];
-			$codeVerifierHash = $_GET['code_challenge'];
-			$codeVerifierMethod = $_GET['code_challenge_method'];
-			$publicKey = $_GET['public_key'] ?? null;
 			if (is_null($publicKey) === false) {
 				$publicKey = BeaconEncryption::PublicKeyToPEM($publicKey);
 			}
 			
-			$flow = ApplicationAuthFlow::Create($application, $scopes, $redirect_uri, $state, $codeVerifierHash, $codeVerifierMethod, $publicKey);
+			$flow = ApplicationAuthFlow::Create($application, $scopes, $redirectUri, $state, $codeVerifierHash, $codeVerifierMethod, $publicKey);
 		} catch (Exception $err) {
 			return Response::NewJSONError($err->getMessage(), null, 400);
 		}
@@ -106,6 +124,59 @@ function handleRequest(array $context): Response {
 		}
 	default:
 		return Response::NewJsonError('Unknown route', null, 500);
+	}
+}
+
+function HandlePublicKeyAuth(string $clientId, &$application, &$publicKey, array $scopes, string $userId, string $signature, string $expiration): ?Response {
+	if (empty($userId) || empty($publicKey) || empty($signature) || empty($expiration) || empty($scopes) || in_array(Application::kScopeAuthPublicKey, $scopes) === false) {
+		return null;
+	}
+	
+	$application = Application::Fetch($clientId);
+	if (is_null($application)) {
+		return Response::NewJsonError('Invalid client id', null, 400);;
+	}
+	if ($application->HasScope(Application::kScopeAuthPublicKey) === false) {
+		return null;
+	}
+	
+	$user = User::Fetch($userId);
+	if (is_null($user)) {
+		$publicKey = BeaconEncryption::PublicKeyToPEM($publicKey);
+	} else {
+		if ($user->IsAnonymous() === false) {
+			return null;
+		}
+		$publicKey = $user->PublicKey();
+	}
+	$stringToSign = $userId . ';' . $expiration;
+	$expiration = intval($expiration);
+	if ($expiration < time() || $expiration > time() + 90) {
+		return Response::NewJsonError('Signature has expired or is too far in the future.', null, 400);
+	}
+	$verified = BeaconEncryption::RSAVerify($publicKey, $stringToSign, BeaconCommon::Base64UrlDecode($signature));
+	if (!$verified) {
+		return Response::NewJsonError('Incorrect signature', null, 400);
+	}
+		
+	$database = BeaconCommon::Database();
+	$database->BeginTransaction();
+	try {
+		if (is_null($user)) {
+			$user = User::Create([
+				'userId' => $userId,
+				'publicKey' => $publicKey,
+				'cloudKey' => bin2hex(BeaconEncryption::RSAEncrypt($publicKey, User::GenerateCloudKey()))
+			]);
+		}
+		
+		$session = Session::Create($user, $application, $scopes);
+		Core::SetSession($session);
+		return Response::NewJson($session->OAuthResponse(), 201);
+	} catch (Exception $err) {
+		// Do nothing
+		$database->Rollback();
+		return Response::NewJsonError($err->getMessage(), null, 400);
 	}
 }
 
