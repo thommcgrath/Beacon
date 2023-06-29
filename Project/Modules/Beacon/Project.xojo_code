@@ -1047,7 +1047,7 @@ Implements ObservationKit.Observable
 		    Var ArchiveData As MemoryBlock = Archive.Finalize
 		    Var BOM As New MemoryBlock(8)
 		    BOM.LittleEndian = ArchiveData.LittleEndian
-		    BOM.UInt64Value(0) = If(ArchiveData.LittleEndian, Beacon.Project.BinaryFormatLEBOM, Beacon.Project.BinaryFormatBEBOM)
+		    BOM.UInt64Value(0) = If(ArchiveData.LittleEndian, CType(Beacon.Project.BinaryFormatLEBOM, UInt64), CType(Beacon.Project.BinaryFormatBEBOM, UInt64))
 		    Return BOM + ArchiveData
 		  Else
 		    Return Beacon.GenerateJSON(ProjectData, True)

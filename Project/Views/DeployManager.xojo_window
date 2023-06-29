@@ -695,6 +695,7 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
    Begin Beacon.OAuth2Client Authorizer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -734,9 +735,9 @@ End
 		Sub Opening()
 		  Self.Title = "Deploy: " + Self.Project.Title
 		  
-		  Self.CreateBackupCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionBackup
-		  Self.ReviewChangesCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionReview
-		  Self.RunAdvisorCheckbox.Value = (Self.Settings.Options And Beacon.DeploySettings.OptionBackup) = Beacon.DeploySettings.OptionAdvise
+		  Self.CreateBackupCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionBackup, UInt64)
+		  Self.ReviewChangesCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionReview, UInt64)
+		  Self.RunAdvisorCheckbox.Value = (Self.Settings.Options And CType(Beacon.DeploySettings.OptionBackup, UInt64)) = CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  
 		  Self.ServerList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
 		  Self.ServerList.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
@@ -744,7 +745,7 @@ End
 		  
 		  Self.CheckOptionsActionEnabled
 		  
-		  If (Self.Settings.Options And Beacon.DeploySettings.OptionRunImmediately) = Beacon.DeploySettings.OptionRunImmediately Then
+		  If (Self.Settings.Options And CType(Beacon.DeploySettings.OptionRunImmediately, UInt64)) = CType(Beacon.DeploySettings.OptionRunImmediately, UInt64) Then
 		    Self.Begin()
 		  End If
 		End Sub
@@ -1442,16 +1443,16 @@ End
 		  Var Settings As New Beacon.DeploySettings
 		  Settings.Options = Beacon.DeploySettings.OptionRunImmediately
 		  If Self.CreateBackupCheckbox.Value Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionBackup
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
 		  End If
 		  If Self.NukeConfigCheckbox.Value Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionErase
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionErase, UInt64)
 		  End If
 		  If Self.ReviewChangesCheckbox.Value Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionReview
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionReview, UInt64)
 		  End If
 		  If Self.RunAdvisorCheckbox.Value Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  End If
 		  
 		  Var UseStopMessage As Boolean
@@ -1562,7 +1563,7 @@ End
 		    End If
 		    
 		    // If this was an auto-run, just close the deploy window.
-		    If (Self.Settings.Options And Beacon.DeploySettings.OptionRunImmediately) = Beacon.DeploySettings.OptionRunImmediately Then
+		    If (Self.Settings.Options And CType(Beacon.DeploySettings.OptionRunImmediately, UInt64)) = CType(Beacon.DeploySettings.OptionRunImmediately, UInt64) Then
 		      Self.Close
 		    Else
 		      Self.ShowAlert("The deploy process has finished.", Explanation)
@@ -1722,8 +1723,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

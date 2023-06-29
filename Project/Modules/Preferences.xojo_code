@@ -162,13 +162,13 @@ Protected Module Preferences
 		Protected Function NewDeploySettings() As Beacon.DeploySettings
 		  Var Settings As New Beacon.DeploySettings
 		  If Preferences.DeployCreateBackup Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionBackup
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionBackup, UInt64)
 		  End If
 		  If Preferences.DeployReviewChanges Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionReview
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionReview, UInt64)
 		  End If
 		  If Preferences.DeployRunAdvisor Then
-		    Settings.Options = Settings.Options Or Beacon.DeploySettings.OptionAdvise
+		    Settings.Options = Settings.Options Or CType(Beacon.DeploySettings.OptionAdvise, UInt64)
 		  End If
 		  Return Settings
 		End Function

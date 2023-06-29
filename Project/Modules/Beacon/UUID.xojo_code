@@ -29,7 +29,7 @@ Protected Class UUID
 		  
 		  Var Value As Byte = Pointer.Byte(6)
 		  Value = Value And CType(&b00001111, Byte)
-		  Value = Value Or CType(Bitwise.ShiftLeft(Version, 4, 8), Byte)
+		  Value = Value Or CType(Bitwise.ShiftLeft(CType(Version, UInt64), 4, 8), Byte)
 		  Pointer.Byte(6) = Value
 		  
 		  Value = Pointer.Byte(8)
