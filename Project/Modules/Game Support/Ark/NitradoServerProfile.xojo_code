@@ -130,6 +130,14 @@ Inherits Ark.ServerProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Nickname"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Mask"
 			Visible=false
 			Group="Behavior"

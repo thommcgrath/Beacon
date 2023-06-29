@@ -625,6 +625,7 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin Thread RunThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -638,6 +639,7 @@ Begin BeaconDialog ModDiscoveryDialog
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
+      Enabled         =   True
       ExecuteMode     =   2
       ExitCode        =   0
       Index           =   -2147483648
@@ -660,6 +662,7 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin TCPSocket RunSocket
       Address         =   "127.0.0.1"
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -1413,8 +1416,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

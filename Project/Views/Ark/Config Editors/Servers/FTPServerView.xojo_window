@@ -176,14 +176,20 @@ Begin ServerViewContainer FTPServerView
             Enabled         =   True
             HasBackgroundColor=   False
             Height          =   294
+            Host            =   ""
             Index           =   -2147483648
             InitialParent   =   "ConnectionGroup"
+            InternalizeKey  =   False
             Left            =   20
             LockBottom      =   True
             LockedInPosition=   False
             LockLeft        =   True
             LockRight       =   True
             LockTop         =   True
+            Mode            =   ""
+            Modified        =   False
+            Password        =   ""
+            Port            =   0
             Scope           =   2
             TabIndex        =   0
             TabPanelIndex   =   2
@@ -191,6 +197,9 @@ Begin ServerViewContainer FTPServerView
             Tooltip         =   ""
             Top             =   77
             Transparent     =   True
+            UsePublicKeyAuth=   False
+            Username        =   ""
+            VerifyTLSCertificate=   False
             Visible         =   True
             Width           =   560
          End

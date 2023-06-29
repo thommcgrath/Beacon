@@ -119,6 +119,7 @@ Begin ServerViewContainer GSAServerView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          SettingUp       =   False
          ShowsMapMenu    =   True

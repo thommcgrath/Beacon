@@ -108,6 +108,7 @@ Begin BeaconPagedSubview TemplatesComponent
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -143,6 +144,7 @@ Begin BeaconPagedSubview TemplatesComponent
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Modified        =   False
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0

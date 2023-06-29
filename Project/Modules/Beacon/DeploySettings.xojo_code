@@ -78,6 +78,14 @@ Protected Class DeploySettings
 			Type="UInt64"
 			EditorType=""
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StopMessage"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

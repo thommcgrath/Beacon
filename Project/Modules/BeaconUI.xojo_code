@@ -641,7 +641,7 @@ Protected Module BeaconUI
 		Sub SizeColumnToFit(Extends List As DesktopListbox, ColumnIndex As Integer)
 		  Var TestPic As New Picture(10, 10)
 		  Var MaxWidth As Integer
-		   For Row As Integer = 0 To List.LastRowIndex
+		  For Row As Integer = 0 To List.LastRowIndex
 		    MaxWidth = Max(MaxWidth, Ceiling(TestPic.Graphics.TextWidth(List.CellTextAt(Row, ColumnIndex)) + 30))
 		  Next
 		  List.ColumnAttributesAt(ColumnIndex).WidthExpression = MaxWidth.ToString(Locale.Raw, "0")

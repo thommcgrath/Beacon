@@ -225,7 +225,7 @@ Inherits UITweaks.ResizedTextField
 			Visible=true
 			Group="Behavior"
 			InitialValue="False"
-			Type="boolean"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

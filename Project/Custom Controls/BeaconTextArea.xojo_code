@@ -375,7 +375,7 @@ Inherits DesktopTextArea
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
-			Type="boolean"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

@@ -46,6 +46,7 @@ Begin BeaconAutopositionWindow IdentityWindow
       LockTop         =   True
       MinimumHeight   =   300
       MinimumWidth    =   400
+      Modified        =   False
       Progress        =   0.0
       Scope           =   2
       TabIndex        =   0
@@ -76,6 +77,14 @@ End
 #tag EndWindowCode
 
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Modified"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
 		Visible=true
@@ -165,8 +174,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
