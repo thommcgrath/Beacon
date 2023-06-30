@@ -285,7 +285,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.mController.Project.NewIdentifier
-		  Var NewURL As String = Beacon.ProjectURL.TypeCloud + "://" + BeaconAPI.URL("project/" + Self.mController.Project.UUID).Middle(8)
+		  Var NewURL As String = Beacon.ProjectURL.TypeCloud + "://" + BeaconAPI.URL("projects/" + Self.mController.Project.UUID).Middle(8)
 		  Self.mController.Project.Title = Self.TitleField.Text
 		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved

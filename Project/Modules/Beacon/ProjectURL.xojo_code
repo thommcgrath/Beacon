@@ -262,7 +262,7 @@ Protected Class ProjectURL
 		  End If
 		  
 		  Var UUID As String = Matches.SubExpressionString(8)
-		  Var Path As String = "project/" + UUID.Lowercase
+		  Var Path As String = "projects/" + UUID.Lowercase
 		  
 		  Select Case Purpose
 		  Case Beacon.ProjectURL.URLTypes.Reading

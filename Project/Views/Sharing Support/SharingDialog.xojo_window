@@ -725,7 +725,7 @@ End
 #tag Events DownloadLinkLabel
 	#tag Event
 		Sub Opening()
-		  Me.Text = BeaconAPI.URL("project/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
+		  Me.Text = BeaconAPI.URL("projects/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -771,7 +771,7 @@ End
 		  Var Payload As New Dictionary
 		  Payload.Value("status") = DesiredStatus
 		  
-		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("project/" + Self.mProject.UUID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("projects/" + Self.mProject.UUID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
 		  APISocket.Start(Request)
 		  
 		  Me.Enabled = False
@@ -782,12 +782,12 @@ End
 #tag Events StatusCheckTimer
 	#tag Event
 		Sub Action()
-		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("project/" + Self.mProject.UUID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("projects/" + Self.mProject.UUID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
 		  APISocket.Start(Request)
 		  
 		  Var Users() As String = Self.mProject.GetUsers
 		  If Users.LastIndex > -1 Then
-		    Var UsersLookup As New BeaconAPI.Request(BeaconAPI.URL("user/" + EncodeURLComponent(Users.Join(","))), "GET", AddressOf UserLookupReplyCallback)
+		    Var UsersLookup As New BeaconAPI.Request(BeaconAPI.URL("users/" + EncodeURLComponent(Users.Join(","))), "GET", AddressOf UserLookupReplyCallback)
 		    APISocket.Start(UsersLookup)
 		    Self.UsernameLookupSpinner.Visible = True
 		  End If

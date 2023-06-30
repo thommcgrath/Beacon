@@ -12,6 +12,86 @@ Protected Module BeaconAPI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function SendSync(Request As BeaconAPI.Request) As BeaconAPI.Response
+		  If Thread.Current Is Nil Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Do not use SendSync on the main thread"
+		    Raise Err
+		  End If
+		  
+		  Var AuthHeader As String
+		  If Request.RequiresAuthentication Then
+		    If Request.RequestHeader("Authorization").IsEmpty = False Then
+		      AuthHeader = Request.RequestHeader("Authorization")
+		    Else
+		      Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
+		      If (Token Is Nil) = False Then
+		        If Token.AccessTokenExpired Then
+		          Var Params As New Dictionary
+		          Params.Value("grant_type") = "refresh_token"
+		          Params.Value("client_id") = BeaconAPI.ClientId
+		          Params.Value("refresh_token") = Token.RefreshToken
+		          Params.Value("scope") = Token.Scope
+		          
+		          Var RefreshSocket As New URLConnection
+		          RefreshSocket.SetRequestContent(SimpleHTTP.BuildFormData(Params), "application/x-www-form-urlencoded")
+		          
+		          Var RefreshResponse As String = RefreshSocket.SendSync("POST", BeaconAPI.URL("/login"))
+		          If RefreshSocket.HTTPStatusCode = 201 Then
+		            Token = BeaconAPI.OAuthToken.Load(RefreshResponse)
+		            Preferences.BeaconAuth = Token
+		          End If
+		        End If
+		        
+		        AuthHeader = Token.AuthHeaderValue
+		      End If
+		    End If
+		  End If
+		  
+		  Var Socket As New URLConnection
+		  Var URL As String = SetupSocket(Socket, Request, AuthHeader)
+		  Var ResponseBody As String = Socket.SendSync(Request.Method, URL)
+		  Var ResponseHeaders As New Dictionary
+		  For Each Header As Pair In Socket.ResponseHeaders
+		    ResponseHeaders.Value(Header.Left) = Header.Right
+		  Next
+		  Return New BeaconAPI.Response(URL, Socket.HTTPStatusCode, ResponseBody, ResponseHeaders)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SetupSocket(Socket As URLConnection, Request As BeaconAPI.Request, AuthHeader As String) As String
+		  Var URL As String = Request.URL
+		  Var Headers() As String = Request.RequestHeaders
+		  For Each Header As String In Headers
+		    Socket.RequestHeader(Header) = Request.RequestHeader(Header)
+		  Next
+		  Socket.RequestHeader("Cache-Control") = "no-cache"
+		  Socket.RequestHeader("User-Agent") = App.UserAgent
+		  If AuthHeader.IsEmpty = False Then
+		    Socket.RequestHeader("Authorization") = AuthHeader
+		  End If
+		  
+		  If Request.Method = "GET" Then
+		    Var Query As String = Request.Query
+		    If Query <> "" Then
+		      URL = URL + "?" + Query
+		    End If
+		    #if DebugBuild
+		      App.Log("GET " + URL)
+		    #endif
+		  Else
+		    Socket.SetRequestContent(Request.Payload, Request.ContentType)
+		    #if DebugBuild
+		      App.Log(Request.Method + " " + URL)
+		    #endif
+		  End If
+		  
+		  Return URL
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function URL(Path As String = "/", Versioned As Boolean = True) As String
 		  #if DebugBuild And App.ForceLiveData = False
 		    Var Domain As String = "https://local-api.usebeacon.app"

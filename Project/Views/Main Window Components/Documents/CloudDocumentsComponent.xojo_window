@@ -935,7 +935,6 @@ End
 		  End If
 		  
 		  Var ShouldRefresh As Boolean
-		  Var Token As String = Preferences.OnlineToken
 		  For Each URL As Beacon.ProjectURL In URLs
 		    If Self.CloseDocument(URL) = False Then
 		      Continue
@@ -969,7 +968,7 @@ End
 		  #Pragma Unused Y
 		  
 		  Var VersionsItem As New DesktopMenuItem("Older Versions…", "versions")
-		  VersionsItem.Enabled = Me.SelectedRowCount = 1 And Preferences.OnlineToken.IsEmpty = False
+		  VersionsItem.Enabled = Me.SelectedRowCount = 1 And (Preferences.BeaconAuth Is Nil) = False
 		  Base.AddMenu(VersionsItem)
 		  
 		  Return True
@@ -984,7 +983,7 @@ End
 		  If HitItem.Tag.IsNull = False And HitItem.Tag.Type = Variant.TypeString And HitItem.Tag.StringValue = "versions" Then
 		    If Me.SelectedRowCount = 1 Then
 		      Var Document As BeaconAPI.Document = Me.RowTagAt(Me.SelectedRowIndex)
-		      Var Request As New BeaconAPI.Request("project/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
+		      Var Request As New BeaconAPI.Request("projects/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
 		      BeaconAPI.Send(Request)
 		      
 		      Self.mVersionProgressKey = CallLater.Schedule(2000, WeakAddressOf ShowVersionProgress)

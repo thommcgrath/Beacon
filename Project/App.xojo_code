@@ -717,7 +717,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "signin"
 		      UserWelcomeWindow.Present(True)
 		    Case "showaccount"
-		      System.GotoURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
+		      System.GotoURL(Beacon.WebURL("/account/"))
 		    Case "spawncodes"
 		      Self.ShowSpawnCodes()
 		    Case "reportproblem", "newhelpticket"
@@ -725,9 +725,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "exit"
 		      Quit
 		    Case "signout"
-		      Var Token As String = Preferences.OnlineToken
-		      If Token.IsEmpty = False Then
-		        Var Request As New BeaconAPI.Request("/session/" + EncodeURLComponent(Token), "DELETE", Nil)
+		      Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
+		      If (Token Is Nil) = False Then
+		        Var Request As New BeaconAPI.Request("/session", "DELETE")
+		        Request.ForceAuthorize(Token)
 		        BeaconAPI.Send(Request)
 		      End If
 		      
@@ -824,7 +825,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Var Idx As Integer = URL.IndexOf(LegacyURL)
 		    If Idx > -1 Then
 		      Var DocID As String = URL.Middle(Idx + LegacyURL.Length)
-		      URL = BeaconAPI.URL("/project/" + DocID)
+		      URL = BeaconAPI.URL("/projects/" + DocID)
 		    End If
 		    
 		    Var FileURL As String = "https://" + URL

@@ -128,6 +128,28 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Function ErrorMessageFromResponse(Response As BeaconAPI.Response) As String
+		  Var Message As String = "The error reason is unknown"
+		  If (Response.Content Is Nil) = False Then
+		    Try
+		      Message = Response.Content
+		      Var Dict As Dictionary = Beacon.ParseJSON(Message)
+		      If Dict.HasKey("message") Then
+		        Message = Dict.Value("message")
+		      ElseIf Dict.HasKey("description") Then
+		        Message = Dict.Value("description")
+		      End If
+		    Catch Err As RuntimeException
+		      
+		    End Try
+		  ElseIf Response.Message.IsEmpty = False Then
+		    Message = Response.Message
+		  End If
+		  Return Message
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Shared Function ErrorMessageFromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As String
 		  Var Message As String = "The error reason is unknown"
 		  If (Socket.LastContent Is Nil) = False Then
@@ -268,13 +290,11 @@ Protected Class ProjectController
 		  
 		  Select Case Self.mProjectURL.Scheme
 		  Case Beacon.ProjectURL.TypeCloud
-		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
-		    Socket.Send("DELETE", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Writing))
-		    If Socket.LastHTTPStatus = 200 Then
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Writing), "DELETE"))
+		    If Response.HTTPStatus = 200 Then
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		    Else
-		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
+		      Var Message As String = Self.ErrorMessageFromResponse(Response)
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Message)
 		    End If
 		  Case Beacon.ProjectURL.TypeLocal
@@ -303,22 +323,17 @@ Protected Class ProjectController
 		  Select Case Self.mProjectURL.Scheme
 		  Case Beacon.ProjectURL.TypeCloud
 		    // authenticated api request
-		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		    Socket.RequestHeader("Accept-Encoding") = "gzip=1.0, identity=0.5"
-		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
-		    Socket.RequestHeader("Cache-Control") = "no-cache"
-		    Socket.Send("GET", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading))
-		    If Socket.LastHTTPStatus >= 200 And Socket.LastHTTPStatus < 300 Then
-		      FileContent = Socket.LastContent
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading), "GET"))
+		    If Response.HTTPStatus >= 200 And Response.HTTPStatus < 300 Then
+		      FileContent = Response.Content
 		    Else
-		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
+		      Var Message As String = Self.ErrorMessageFromResponse(Response)
 		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
 		      Return
 		    End If
 		  Case Beacon.ProjectURL.TypeWeb
 		    // basic https request
 		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		    Socket.RequestHeader("Accept-Encoding") = "gzip=1.0, identity=0.5"
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading))
 		    If Socket.LastHTTPStatus >= 200 Then
@@ -399,12 +414,9 @@ Protected Class ProjectController
 		    SaveData = Self.mProject.SaveData(Self.mIdentity)
 		    
 		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
-		      Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		      Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
-		      Socket.SetRequestContent(SaveData, "application/x-beacon-project")
-		      Socket.Send("POST", BeaconAPI.URL("/projects"))
-		      Saved = Socket.LastHTTPStatus = 200 Or Socket.LastHTTPStatus = 201
-		      Message = Self.ErrorMessageFromSocket(Socket)
+		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request("/projects", "POST", SaveData, "application/x-beacon-project"))
+		      Saved = Response.HTTPStatus = 200 Or Response.HTTPStatus = 201
+		      Message = Self.ErrorMessageFromResponse(Response)
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Uploading cloud project")

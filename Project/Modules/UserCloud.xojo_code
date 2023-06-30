@@ -468,17 +468,17 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Sub Sync(NoWait As Boolean = False)
-		  If Preferences.OnlineEnabled = False Or Preferences.OnlineToken = "" Then
+		  If Preferences.OnlineEnabled = False Or Preferences.BeaconAuth Is Nil Then
 		    Return
 		  End If
 		  If IsBusy Then
-		    If SyncKey = "" Then
+		    If SyncKey.IsEmpty Then
 		      SyncWhenFinished = True
 		    End If
 		    Return
 		  End If
 		  
-		  If SyncKey <> "" Then
+		  If SyncKey.IsEmpty = False Then
 		    CallLater.Cancel(SyncKey)
 		    SyncKey = ""
 		  End If

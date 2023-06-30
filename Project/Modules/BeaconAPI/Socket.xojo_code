@@ -10,21 +10,25 @@ Protected Class Socket
 		  Var Request As BeaconAPI.Request = Self.Queue(0)
 		  Var AuthHeader As String
 		  If Request.RequiresAuthentication Then
-		    Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
-		    If (Token Is Nil) = False Then
-		      If Token.AccessTokenExpired Then
-		        // insert a new refresh request
-		        Var Params As New Dictionary
-		        Params.Value("grant_type") = "refresh_token"
-		        Params.Value("client_id") = BeaconAPI.ClientId
-		        Params.Value("refresh_token") = Token.RefreshToken
-		        Params.Value("scope") = Token.Scope
-		        
-		        Request = New BeaconAPI.Request("/login", "POST", Params, AddressOf APICallback_RefreshToken)
-		        Request.RequiresAuthentication = False
-		        Self.Queue.AddAt(0, Request)
-		      Else
-		        AuthHeader = Token.AuthHeaderValue
+		    If Request.RequestHeader("Authorization").IsEmpty = False Then
+		      AuthHeader = Request.RequestHeader("Authorization")
+		    Else
+		      Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
+		      If (Token Is Nil) = False Then
+		        If Token.AccessTokenExpired Then
+		          // insert a new refresh request
+		          Var Params As New Dictionary
+		          Params.Value("grant_type") = "refresh_token"
+		          Params.Value("client_id") = BeaconAPI.ClientId
+		          Params.Value("refresh_token") = Token.RefreshToken
+		          Params.Value("scope") = Token.Scope
+		          
+		          Request = New BeaconAPI.Request("/login", "POST", Params, AddressOf APICallback_RefreshToken)
+		          Request.RequiresAuthentication = False
+		          Self.Queue.AddAt(0, Request)
+		        Else
+		          AuthHeader = Token.AuthHeaderValue
+		        End If
 		      End If
 		    End If
 		  End If
@@ -34,33 +38,8 @@ Protected Class Socket
 		  
 		  Self.Constructor()
 		  
-		  Var URL As String = Request.URL
-		  Var Headers() As String = Request.RequestHeaders
-		  For Each Header As String In Headers
-		    Self.Socket.RequestHeader(Header) = Request.RequestHeader(Header)
-		  Next
-		  Self.Socket.RequestHeader("Cache-Control") = "no-cache"
-		  Self.Socket.RequestHeader("User-Agent") = App.UserAgent
-		  If AuthHeader.IsEmpty = False Then
-		    Self.Socket.RequestHeader("Authorization") = AuthHeader
-		  End If
-		  
-		  If Request.Method = "GET" Then
-		    Var Query As String = Request.Query
-		    If Query <> "" Then
-		      URL = URL + "?" + Query
-		    End If
-		    #if DebugBuild
-		      App.Log("GET " + URL)
-		    #endif
-		    Self.Socket.Send("GET", URL)
-		  Else
-		    Self.Socket.SetRequestContent(Request.Payload, Request.ContentType)
-		    #if DebugBuild
-		      App.Log(Request.Method + " " + URL)
-		    #endif
-		    Self.Socket.Send(Request.Method, URL)
-		  End If
+		  Var URL As String = SetupSocket(Self.Socket, Request, AuthHeader)
+		  Self.Socket.Send(Request.Method, URL)
 		End Sub
 	#tag EndMethod
 
@@ -98,8 +77,6 @@ Protected Class Socket
 
 	#tag Method, Flags = &h21
 		Private Sub Socket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
-		  #Pragma Unused URL
-		  
 		  Var Headers As New Dictionary
 		  For Each Header As Pair In Sender.ResponseHeaders
 		    Headers.Value(Header.Left) = Header.Right

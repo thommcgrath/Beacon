@@ -1,19 +1,19 @@
 #tag Class
 Protected Class Request
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, Method As String, Callback As BeaconAPI.Request.ReplyCallback)
+		Sub Constructor(Path As String, Method As String, Callback As BeaconAPI.Request.ReplyCallback = Nil)
 		  Self.Constructor(Path, Method, New Dictionary, Callback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, Method As String, Payload As Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
+		Sub Constructor(Path As String, Method As String, Payload As Dictionary, Callback As BeaconAPI.Request.ReplyCallback = Nil)
 		  Self.Constructor(Path, Method, SimpleHTTP.BuildFormData(Payload), "application/x-www-form-urlencoded", Callback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, Method As String, Payload As MemoryBlock, ContentType As String, Callback As BeaconAPI.Request.ReplyCallback)
+		Sub Constructor(Path As String, Method As String, Payload As MemoryBlock, ContentType As String, Callback As BeaconAPI.Request.ReplyCallback = Nil)
 		  If Path.IndexOf("://") = -1 Then
 		    Path = BeaconAPI.URL(Path)
 		  End If
@@ -60,6 +60,17 @@ Protected Class Request
 		  Var Request As New BeaconAPI.Request(Path, Method, Body, "application/json", Callback)
 		  Return Request
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ForceAuthorize(Token As BeaconAPI.OAuthToken)
+		  If Token Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RequiresAuthentication = True
+		  Self.RequestHeader("Authorization") = Token.AuthHeaderValue
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -146,10 +157,6 @@ Protected Class Request
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h0
-		HasBeenRetried As Boolean
-	#tag EndProperty
-
 	#tag Property, Flags = &h1
 		Protected mCallback As ReplyCallback
 	#tag EndProperty
@@ -233,18 +240,10 @@ Protected Class Request
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="HasBeenRetried"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="RequiresAuthentication"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

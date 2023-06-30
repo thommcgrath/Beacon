@@ -131,7 +131,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  End If
 		  
 		  #if TargetMacOS
-		    Self.Window.NSWindowMBS.Movable = True
+		    Try
+		      Self.Window.NSWindowMBS.Movable = True
+		    Catch Err As RuntimeException
+		    End Try
 		  #endif
 		End Sub
 	#tag EndEvent
