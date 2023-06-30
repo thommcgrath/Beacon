@@ -69,7 +69,7 @@ Protected Class Socket
 		      Return
 		    End If
 		    
-		    Preferences.OnlineToken = SessionToken
+		    //Preferences.OnlineToken = SessionToken
 		    
 		    For Idx As Integer = 0 To Self.Queue.LastIndex
 		      If Self.Queue(Idx).AuthType = BeaconAPI.Request.AuthTypes.Token Then

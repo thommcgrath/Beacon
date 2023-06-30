@@ -196,9 +196,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped)
 		  
-		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)
-		  Self.mIdentityManager = New IdentityManager(IdentityFile)
-		  AddHandler mIdentityManager.NeedsLogin, WeakAddressOf mIdentityManager_NeedsLogin
+		  Self.mIdentityManager = New IdentityManager()
 		  
 		  Try
 		    Self.TemporarilyInstallFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
@@ -711,7 +709,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "refreshengrams"
 		      Self.SyncGamedata(False, True)
 		    Case "refreshuser"
-		      Self.IdentityManager.RefreshUserDetails()
+		      BeaconAPI.UserController.RefreshUserDetails()
 		    Case "releasenotes"
 		      Self.ShowReleaseNotes()
 		    Case "enableonline"
@@ -735,7 +733,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      End If
 		      
 		      Preferences.OnlineEnabled = False
-		      Preferences.OnlineToken = ""
+		      Preferences.BeaconAuth = Nil
 		      Self.IdentityManager.CurrentIdentity = Nil
 		      
 		      UserWelcomeWindow.Present(False)
@@ -879,32 +877,24 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Sub ImportIdentityFile(File As FolderItem, ParentWindow As DesktopWindow = Nil)
-		  If ParentWindow = Nil Then
+		  If ParentWindow Is Nil Then
 		    ParentWindow = MainWindow
 		  End If
 		  
-		  Var Stream As TextInputStream = TextInputStream.Open(File)
-		  Var Contents As String = Stream.ReadAll(Encodings.UTF8)
-		  Stream.Close
-		  
-		  Var Dict As Dictionary
-		  Try
-		    Dict = Beacon.ParseJSON(Contents)
-		  Catch Err As RuntimeException
-		    ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
-		    Return
-		  End Try
-		  
-		  Var Identity As Beacon.Identity = Beacon.Identity.Import(Dict, "")
+		  Var Identity As Beacon.Identity = Self.mIdentityManager.Import(File)
 		  If Identity Is Nil Then
-		    // Password is needed to decrypt
-		    Identity = IdentityDecryptDialog.ShowDecryptIdentityDict(ParentWindow, Dict)
-		    If Identity Is Nil Then
+		    // Try with password
+		    Var Password As String = IdentityDecryptDialog.Present(ParentWindow)
+		    If Password.IsEmpty Then
 		      Return
 		    End If
+		    
+		    Identity = Self.mIdentityManager.Import(File, Password)
 		  End If
 		  
-		  Self.IdentityManager.CurrentIdentity = Identity
+		  If (Identity Is Nil) = False Then
+		    Self.mIdentityManager.CurrentIdentity = Identity
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -994,7 +984,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_RequestUser()
-		  Self.mIdentityManager.RefreshUserDetails()
+		  BeaconAPI.UserController.RefreshUserDetails()
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
@@ -1282,7 +1272,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Select Case Notification.Name
 		  Case BeaconAPI.Socket.Notification_Unauthorized
-		    Preferences.OnlineToken = ""
+		    Preferences.BeaconAuth = Nil
 		  Case Preferences.Notification_RecentsChanged
 		    Self.RebuildRecentMenu()
 		  Case UserCloud.Notification_SyncStarted

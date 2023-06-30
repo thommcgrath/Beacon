@@ -1059,7 +1059,7 @@ End
 		    If (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
 		      Identity = App.IdentityManager.CurrentIdentity
 		    Else
-		      Identity = New Beacon.Identity
+		      Identity = App.IdentityManager.Create
 		    End If
 		    Self.mProgress.Detail = "Attaching project…"
 		    Var FileName As String = Self.mTicketDocument.Title + ".beacon"

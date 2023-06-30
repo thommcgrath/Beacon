@@ -139,9 +139,8 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestEncryption()
-		  Var Identity As New Beacon.Identity
-		  Var PublicKey As String = Identity.PublicKey
-		  Var PrivateKey As String = Identity.PrivateKey
+		  Var PublicKey, PrivateKey As String 
+		  Call Crypto.RSAGenerateKeyPair(2048, PrivateKey, PublicKey)
 		  Call Assert(Crypto.RSAVerifyKey(PublicKey), "Unable to validate public key")
 		  Call Assert(Crypto.RSAVerifyKey(PrivateKey), "Unable to validate private key")
 		  
@@ -157,13 +156,13 @@ Protected Module Tests
 		  Var Encrypted, Decrypted As MemoryBlock
 		  
 		  Try
-		    Encrypted = Identity.Encrypt(TestValue)
+		    Encrypted = Crypto.RSAEncrypt(TestValue, PublicKey)
 		  Catch Err As RuntimeException
 		    System.DebugLog("Unable to encrypt test value")
 		  End Try
 		  
 		  Try
-		    Decrypted = Identity.Decrypt(Encrypted)
+		    Decrypted = Crypto.RSADecrypt(Encrypted, PrivateKey)
 		  Catch Err As RuntimeException
 		    System.DebugLog("Unable to decrypt encrypted test value")
 		  End Try

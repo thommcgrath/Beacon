@@ -86,6 +86,27 @@ Protected Module Preferences
 		    If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
 		      HardwareIdVersion = 4
 		    End If
+		    
+		    If mManager.StringValue("Device Private Key").IsEmpty = False Then
+		      Try
+		        Var PrivateKey As String = EncodeHex(BeaconEncryption.SlowDecrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, mManager.StringValue("Device Private Key")))
+		        Var PublicKey As String = EncodeHex(DecodeBase64(mManager.StringValue("Device Public Key", "")))
+		        If Crypto.RSAVerifyKey(PublicKey) And Crypto.RSAVerifyKey(PrivateKey) Then
+		          mDevicePublicKey = PublicKey
+		          mDevicePrivateKey = PrivateKey
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
+		    
+		    If mDevicePrivateKey.IsEmpty Then
+		      Var PublicKey, PrivateKey As String
+		      Call Crypto.RSAGenerateKeyPair(4096, PrivateKey, PublicKey)
+		      mDevicePublicKey = PublicKey
+		      mDevicePrivateKey = PrivateKey
+		      mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(PublicKey), 0)
+		      mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, DecodeHex(PrivateKey))
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -444,6 +465,37 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
+			  If mAuthToken Is Nil Then
+			    Init
+			    
+			    Try
+			      Var TokenSource As String = mManager.StringValue("Beacon Auth")
+			      TokenSource = BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, TokenSource)
+			      mAuthToken = BeaconAPI.OAuthToken.Load(TokenSource)
+			    Catch Err As RuntimeException
+			    End Try
+			  End If
+			  
+			  Return mAuthToken
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  If (Value Is Nil) = False Then
+			    Var TokenSource As String = Value.StringValue
+			    mManager.StringValue("Beacon Auth") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, TokenSource)
+			  Else
+			    mManager.StringValue("Beacon Auth") = ""
+			  End If
+			End Set
+		#tag EndSetter
+		Protected BeaconAuth As BeaconAPI.OAuthToken
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
 			  Init
 			  Return mManager.StringValue("Breeding Tuner Creatures", "*")
 			End Get
@@ -563,6 +615,24 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected DeployRunAdvisor As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Return mDevicePrivateKey
+			End Get
+		#tag EndGetter
+		Protected DevicePrivateKey As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Return mDevicePublicKey
+			End Get
+		#tag EndGetter
+		Protected DevicePublicKey As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
@@ -693,6 +763,10 @@ Protected Module Preferences
 		Protected MainWindowPosition As Rect
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h21
+		Private mAuthToken As BeaconAPI.OAuthToken
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
@@ -722,6 +796,14 @@ Protected Module Preferences
 
 	#tag Property, Flags = &h21
 		Private mConnectionLockCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDevicePrivateKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDevicePublicKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -776,40 +858,14 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Init
-			  
-			  If mOnlineToken.IsEmpty Then
-			    Var Token As String = mManager.StringValue("Online Token", "")
-			    If Token.IsEmpty Or v4UUID.IsValid(Token) Then
-			      mOnlineToken = Token
-			    Else
-			      Try
-			        mOnlineToken = DefineEncoding(BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Token), Encodings.UTF8)
-			      Catch Err As RuntimeException
-			        mOnlineToken = ""
-			      End Try
-			    End If
+			  Var Token As BeaconAPI.OAuthToken = BeaconAuth
+			  If Token Is Nil Then
+			    Return ""
 			  End If
-			  
-			  Return mOnlineToken
+			  Return Token.AccessToken
 			End Get
 		#tag EndGetter
-		#tag Setter
-			Set
-			  If OnlineToken = Value Then
-			    Return
-			  End If
-			  
-			  mOnlineToken = Value
-			  If Value.IsEmpty Then
-			    mManager.StringValue("Online Token") = ""
-			  Else
-			    mManager.StringValue("Online Token") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, Value)
-			  End If
-			  NotificationKit.Post(Notification_OnlineTokenChanged, Value)
-			End Set
-		#tag EndSetter
-		Protected OnlineToken As String
+		Attributes( Deprecated ) Protected OnlineToken As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

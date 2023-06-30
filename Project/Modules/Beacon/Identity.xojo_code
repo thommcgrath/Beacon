@@ -1,60 +1,14 @@
 #tag Class
 Protected Class Identity
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "New Beacon.Identity" )  Function Clone() As Beacon.Identity
-		  Return New Beacon.Identity(Self)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function Compare(Left As MemoryBlock, Right As MemoryBlock) As Integer
-		  // I guess if both are non-nil, we'll sort by hex?
-		  
-		  If Left <> Nil And Right = Nil Then
-		    Return 1
-		  ElseIf Left = Nil And Right <> Nil Then
-		    Return -1
-		  ElseIf Left = Nil And Right = Nil Then
-		    Return 0
-		  End If
-		  
-		  Var LeftString As String = EncodeHex(Left)
-		  Var RightString As String = EncodeHex(Right)
-		  Return LeftString.Compare(RightString, ComparisonOptions.CaseInsensitive)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Var PrivateKey, PublicKey As String
-		  If Crypto.RSAGenerateKeyPair(2048, PrivateKey, PublicKey) = False Or Crypto.RSAVerifyKey(PrivateKey) = False Or Crypto.RSAVerifyKey(PublicKey) = False Then
-		    Raise New CryptoException
-		  End If
-		  
-		  // Keys are already hex encoded, despite being MemoryBlock objects. Brilliant.
-		  
-		  Self.mIdentifier = New v4UUID
-		  Self.mPrivateKey = PrivateKey
-		  Self.mPublicKey = PublicKey
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.Identity)
+		Attributes( Deprecated )  Sub Constructor(Source As Beacon.Identity)
 		  Self.mBanned = Source.mBanned
 		  Self.mCloudKey = Source.mCloudKey
-		  Self.mCloudKeyEncrypted = Source.mCloudKeyEncrypted
-		  Self.mExpirationString = Source.mExpirationString
-		  Self.mIdentifier = Source.mIdentifier
+		  Self.mExpiration = Source.mExpiration
+		  Self.mUserId = Source.mUserId
 		  Self.mIsValid = Source.mIsValid
-		  Self.mPassword = Source.mPassword
 		  Self.mPrivateKey = Source.mPrivateKey
-		  Self.mPrivateKeyEncrypted = Source.mPrivateKeyEncrypted
-		  Self.mPrivateKeyIterations = Source.mPrivateKeyIterations
-		  Self.mPrivateKeySalt = Source.mPrivateKeySalt
 		  Self.mPublicKey = Source.mPublicKey
-		  Self.mSignature = Source.mSignature
-		  Self.mSignatureVersion = Source.mSignatureVersion
 		  Self.mUsername = Source.mUserName
 		  
 		  For Each License As Beacon.OmniLicense In Source.mLicenses
@@ -64,101 +18,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Identifier As String, PublicKey As String, PrivateKey As String)
-		  Self.mIdentifier = Identifier.Lowercase
+		Private Sub Constructor(UserId As String, PublicKey As String, PrivateKey As String)
+		  Self.mUserId = UserId.Lowercase
 		  Self.mPublicKey = PublicKey
 		  Self.mPrivateKey = PrivateKey
+		  Self.mIsValid = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function ConvertUserDictionaryWithKey(Dict As Dictionary, PrivateKey As String) As Dictionary
-		  Var Converted As New Dictionary
-		  Try
-		    Converted.Value("Identifier") = Dict.Value("user_id")
-		    Converted.Value("Username") = Dict.Lookup("username", "")
-		    Converted.Value("Expiration") = Dict.Lookup("expiration", "")
-		    Converted.Value("Banned") = Dict.Lookup("banned", false)
-		    Converted.Value("Public") = BeaconEncryption.PEMDecodePublicKey(Dict.Value("public_key"))
-		    Converted.Value("Private") = PrivateKey
-		    Converted.Value("Version") = Beacon.Identity.SignatureVersion
-		    
-		    Var Licenses() As Variant
-		    If Dict.HasKey("licenses") Then
-		      Var LicenseDicts() As Variant = Dict.Value("licenses")
-		      For Each LicenseDictMember As Variant In LicenseDicts
-		        Var ToDict As New Dictionary
-		        Var FromDict As Dictionary = LicenseDictMember
-		        ToDict.Value("Flags") = FromDict.Value("flags").IntegerValue
-		        ToDict.Value("Product Id") = FromDict.Value("product_id").StringValue
-		        ToDict.Value("Expiration") = FromDict.Lookup("expires", "").StringValue
-		        Licenses.Add(ToDict)
-		      Next
-		    End If
-		    Converted.Value("Licenses") = Licenses
-		    
-		    If Dict.HasKey("signatures") Then
-		      Var SignaturesDict As Dictionary = Dict.Value("signatures")
-		      Var SignatureKeys(1) As Variant
-		      SignatureKeys(0) = Beacon.Identity.SignatureVersion
-		      SignatureKeys(1) = Beacon.Identity.SignatureVersion.ToString(Locale.Raw, "0")
-		      For Each SignatureKey As Variant In SignatureKeys
-		        If SignaturesDict.HasKey(SignatureKey) Then
-		          Converted.Value("Signature") = SignaturesDict.Value(SignatureKey)
-		          Converted.Value("Signature Version") = Beacon.Identity.SignatureVersion
-		          Exit
-		        End If
-		      Next
-		    End If
-		    
-		    If Dict.HasKey("usercloud_key") And Dict.Value("usercloud_key").IsNull = False Then
-		      Var EncryptedCloudKey As String = DecodeHex(Dict.Value("usercloud_key"))
-		      Converted.Value("Cloud Key") = EncodeHex(Crypto.RSADecrypt(EncryptedCloudKey, PrivateKey))
-		    End If
-		    
-		    Return Converted
-		  Catch Err as RuntimeException
-		    App.Log(Err, CurrentMethodName, "Converting with known private key")
-		    Return Nil
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function ConvertUserDictionaryWithPassword(Dict As Dictionary, Password As String) As Dictionary
-		  Var PrivateKey, PrivateEncrypted, PrivateSalt As String
-		  Var PrivateIterations As Integer
-		  Try
-		    PrivateSalt = DecodeHex(Dict.Value("private_key_salt"))
-		    PrivateIterations = Dict.Value("private_key_iterations")
-		    Var Key As MemoryBlock = DeriveKey(Password, PrivateIterations, PrivateSalt)
-		    Var Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(Key, DecodeHex(Dict.Value("private_key")))
-		    PrivateKey = BeaconEncryption.PEMDecodePrivateKey(Decrypted)
-		    
-		    PrivateSalt = EncodeBase64(PrivateSalt, 0)
-		    PrivateEncrypted = EncodeBase64(BeaconEncryption.SymmetricEncrypt(Key, PrivateKey), 0)
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Decrypting private key")
-		    Return Nil
-		  End Try
-		  
-		  Var Converted As Dictionary = ConvertUserDictionaryWithKey(Dict, PrivateKey)
-		  If Converted Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Try
-		    Converted.Value("Private") = PrivateEncrypted
-		    Converted.Value("Private Salt") = PrivateSalt
-		    Converted.Value("Private Iterations") = PrivateIterations
-		    Converted.Value("Cloud Key") = EncodeBase64(Crypto.RSAEncrypt(DecodeHex(Converted.Value("Cloud Key")), Converted.Value("Public")), 0)
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Converting unencrypted to encrypted")
-		    Return Nil
-		  End Try
-		  
-		  Return Converted
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -172,179 +37,9 @@ Protected Class Identity
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function DeriveKey(Password As String, Iterations As Integer, Salt As MemoryBlock) As MemoryBlock
-		  Return Crypto.PBKDF2(Salt, Password, Iterations, 56, Crypto.HashAlgorithms.SHA512)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Encrypt(Data As MemoryBlock) As MemoryBlock
 		  Return Crypto.RSAEncrypt(Data, Self.mPublicKey)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Export() As Dictionary
-		  Return Self.Export(False)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function Export(ForceUnencrypted As Boolean) As Dictionary
-		  Var Licenses() As Dictionary
-		  For Idx As Integer = 0 To Self.mLicenses.LastIndex
-		    Var License As New Dictionary
-		    License.Value("Flags") = Self.mLicenses(Idx).Flags
-		    License.Value("Product ID") = Self.mLicenses(Idx).ProductID
-		    If Self.mLicenses(Idx).IsLifetime = False Then
-		      License.Value("Expiration") = Self.mLicenses(Idx).ExpirationString
-		    End If
-		    Licenses.Add(License)
-		  Next Idx
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("Identifier") = Self.mIdentifier
-		  Dict.Value("Public") = Self.mPublicKey
-		  If Self.IsEncrypted And ForceUnencrypted = False Then
-		    Dict.Value("Private") = Self.mPrivateKeyEncrypted
-		    Dict.Value("Private Salt") = Self.mPrivateKeySalt
-		    Dict.Value("Private Iterations") = Self.mPrivateKeyIterations
-		    Dict.Value("Cloud Key") = Self.mCloudKeyEncrypted
-		  Else
-		    Dict.Value("Private") = Self.mPrivateKey
-		    Dict.Value("Cloud Key") = EncodeHex(Self.mCloudKey)
-		  End If
-		  Dict.Value("Version") = Self.SignatureVersion
-		  Dict.Value("Licenses") = Licenses
-		  Dict.Value("Username") = Self.mUsername
-		  Dict.Value("Banned") = Self.mBanned
-		  If (Self.mSignature Is Nil) = False And Self.mSignature.Size > 0 Then
-		    Dict.Value("Signature") = EncodeHex(Self.mSignature)
-		    Dict.Value("Signature Version") = Self.mSignatureVersion
-		  End If
-		  If Self.mExpirationString <> "" Then
-		    Dict.Value("Expiration") = Self.mExpirationString
-		  End If
-		  Return Dict
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Import(Source As Dictionary, Password As String) As Beacon.Identity
-		  If IsUserDictionary(Source) Then
-		    Try
-		      Source = ConvertUserDictionaryWithPassword(Source, Password)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  End If
-		  
-		  If Source Is Nil Or Source.HasKey("Identifier") = False Or Source.HasKey("Public") = False Or Source.HasKey("Private") = False Then
-		    Return Nil
-		  End If
-		  
-		  Var UserId As String = Source.Value("Identifier")
-		  
-		  Var Encrypted As Boolean
-		  Var PublicKey, PrivateKey As String
-		  If Source.HasKey("Version") Then
-		    Select Case Source.Value("Version")
-		    Case 2, 3
-		      PublicKey = Source.Value("Public")
-		      PrivateKey = Source.Value("Private")
-		      Encrypted = Source.HasKey("Private Salt")
-		    Else
-		      Return Nil
-		    End Select
-		  Else
-		    PublicKey = DecodeHex(Source.Value("Public"))
-		    PrivateKey = DecodeHex(Source.Value("Private"))
-		  End If
-		  
-		  Var PrivateEncrypted, PrivateSalt, CloudKey, CloudKeyEncrypted As String
-		  Var PrivateIterations As Integer
-		  If Encrypted Then
-		    If Password.IsEmpty Then
-		      Password = PasswordStorage.RetrievePassword(UserId)
-		      If Password.IsEmpty Then
-		        Return Nil
-		      End If
-		    End If
-		    
-		    PrivateSalt = Source.Value("Private Salt")
-		    PrivateIterations = Source.Value("Private Iterations")
-		    PrivateEncrypted = PrivateKey
-		    
-		    Try
-		      Var Key As MemoryBlock = DeriveKey(Password, PrivateIterations, DecodeBase64(PrivateSalt))
-		      PrivateKey = DefineEncoding(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKey)), Encodings.UTF8)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		    
-		    If Source.HasKey("Cloud Key") Then
-		      CloudKeyEncrypted = Source.Value("Cloud Key").StringValue
-		      CloudKey = Crypto.RSADecrypt(DecodeBase64(CloudKeyEncrypted), PrivateKey)
-		    End If
-		  Else
-		    If Source.HasKey("Cloud Key") Then
-		      CloudKey = DecodeHex(Source.Value("Cloud Key").StringValue)
-		    End If
-		  End If
-		  
-		  If Not VerifyKeyPair(PublicKey, PrivateKey) Then
-		    Return Nil
-		  End If
-		  
-		  Var Identity As New Beacon.Identity(UserId, PublicKey, PrivateKey)
-		  Identity.mCloudKey = CloudKey
-		  Identity.mCloudKeyEncrypted = CloudKeyEncrypted
-		  Identity.mPassword = Password
-		  Identity.mPrivateKeyEncrypted = PrivateEncrypted
-		  Identity.mPrivateKeyIterations = PrivateIterations
-		  Identity.mPrivateKeySalt = PrivateSalt
-		  
-		  If Source.HasKey("Licenses") Then
-		    Var Licenses() As Variant = Source.Value("Licenses")
-		    For Each License As Dictionary In Licenses
-		      Var Flags As Integer = License.Value("Flags").IntegerValue
-		      Var ProductID As String = License.Value("Product ID").StringValue
-		      Var ExpirationString As String = License.Lookup("Expiration", "").StringValue
-		      
-		      Identity.mLicenses.Add(New Beacon.OmniLicense(ProductID, Flags, ExpirationString))
-		    Next License
-		  ElseIf Source.HasKey("Omni Version") Then
-		    Var Flags As Integer = Source.Value("Omni Version").IntegerValue
-		    Identity.mLicenses.Add(New Beacon.OmniLicense("972f9fc5-ad64-4f9c-940d-47062e705cc5", Flags, ""))
-		  End If
-		  
-		  If Source.HasKey("Signature") Then
-		    Identity.mSignature = DecodeHex(Source.Value("Signature"))
-		  End If
-		  If Source.HasKey("Signature Version") Then
-		    Identity.mSignatureVersion = Source.Value("Signature Version")
-		  Else
-		    Identity.mSignatureVersion = 2
-		  End If
-		  
-		  If Source.HasKey("Username") Then
-		    Identity.mUsername = Source.Value("Username")
-		  ElseIf Source.HasKey("LoginKey") Then
-		    Identity.mUsername = Source.Value("LoginKey")
-		  End If
-		  
-		  If Source.HasKey("Expiration") Then
-		    Identity.mExpirationString = Source.Value("Expiration")
-		  End If
-		  
-		  If Source.HasKey("Banned") Then
-		    Identity.mBanned = Source.Value("Banned")
-		  End If
-		  
-		  Call Identity.Validate()
-		  
-		  Return Identity
 		End Function
 	#tag EndMethod
 
@@ -361,8 +56,13 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsEncrypted() As Boolean
-		  Return Self.mPrivateKeyEncrypted.IsEmpty = False
+		Function IsExpired() As Boolean
+		  If Self.mExpiration Is Nil Then
+		    Return False
+		  End If
+		  
+		  Var Now As DateTime = DateTime.Now
+		  Return Now.SecondsFrom1970 < Self.mExpiration.SecondsFrom1970
 		End Function
 	#tag EndMethod
 
@@ -373,12 +73,72 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function IsUserDictionary(Dict As Dictionary) As Boolean
-		  If Dict Is Nil Then
-		    Return False
-		  End If
+		Function IsValid() As Boolean
+		  Return Self.mIsValid And Self.IsExpired = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Load(Row As RowSet) As Beacon.Identity
+		  Var Identity As New Beacon.Identity(Row.Column("user_id").StringValue, Row.Column("public_key").StringValue, Row.Column("private_key").StringValue)
 		  
-		  Return Dict.HasAllKeys("private_key_salt", "private_key_iterations", "private_key", "public_key", "user_id")
+		  Try
+		    Var CloudKey As String = DecodeBase64(Row.Column("cloud_key").StringValue)
+		    Var Banned As Boolean = Row.Column("banned").BooleanValue
+		    Var Signature As String = DecodeBase64(Row.Column("signature").StringValue)
+		    Var SignatureVersion As Integer = Row.Column("signature_version").IntegerValue
+		    Var Username As String = Row.Column("username").StringValue
+		    Var ExpirationString As String = Row.Column("expiration").StringValue
+		    Var Expiration As DateTime
+		    
+		    Var Licenses() As Beacon.OmniLicense
+		    Var Arr() As Variant
+		    If Row.Column("licenses").Value.IsNull = False Then
+		      Arr = Beacon.ParseJSON(Row.Column("licenses").StringValue)
+		    End If
+		    Var OmniFlags As Integer
+		    Var LicenseSigningData() As String
+		    For Each Member As Variant In Arr
+		      If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      
+		      Var License As New Beacon.OmniLicense(Dictionary(Member))
+		      OmniFlags = OmniFlags Or License.Flags
+		      LicenseSigningData.Add(License.ValidationString)
+		      Licenses.Add(License)
+		    Next
+		    
+		    Var SignatureParts(3) As String
+		    SignatureParts(0) = Beacon.HardwareID
+		    SignatureParts(1) = Identity.mUserId
+		    Select Case SignatureVersion
+		    Case 2
+		      SignatureParts(2) = OmniFlags.ToString(Locale.Raw, "0")
+		    Case 3
+		      SignatureParts(2) = String.FromArray(LicenseSigningData, ";")
+		    End Select
+		    SignatureParts(3) = If(Banned, "Banned", "Clean")
+		    
+		    If ExpirationString.IsEmpty = False Then
+		      Expiration = NewDateFromSQLDateTime(ExpirationString)
+		      SignatureParts.Add(ExpirationString)
+		    End If
+		    
+		    Var StringToSign As String = String.FromArray(SignatureParts, " ")
+		    Var SignatureValid As Boolean = Crypto.RSAVerifySignature(StringToSign, Signature, BeaconAPI.PublicKey)
+		    
+		    Identity.mBanned = Banned
+		    Identity.mCloudKey = CloudKey
+		    Identity.mExpiration = Expiration
+		    Identity.mIsValid = SignatureValid
+		    Identity.mUsername = Username
+		    Identity.mLicenses = Licenses
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		  
+		  Return Identity
 		End Function
 	#tag EndMethod
 
@@ -400,15 +160,7 @@ Protected Class Identity
 		    Return 1
 		  End If
 		  
-		  Var SelfHash As String = Beacon.Hash(Beacon.GenerateJSON(Self.Export(True), False))
-		  Var OtherHash As String = Beacon.Hash(Beacon.GenerateJSON(Other.Export(True), False))
-		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseInsensitive)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Password() As String
-		  Return Self.mPassword
+		  Return Self.mUserId.Compare(Other.mUserId, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -437,92 +189,18 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UserID() As String
-		  Return Self.mIdentifier
+		Function UserId() As String
+		  Return Self.mUserId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Username(WithSuffix As Boolean = False) As String
 		  If WithSuffix Then
-		    Return Self.mUsername + "#" + Self.mIdentifier.Left(8)
+		    Return Self.mUsername + "#" + Self.mUserId.Left(8)
 		  Else
 		    Return Self.mUsername
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Validate() As Boolean
-		  If (Self.mIsValid Is Nil) = False Then
-		    Return Self.mIsValid.BooleanValue
-		  End If
-		  
-		  If (Self.mSignature Is Nil) = False Then
-		    Var Fields(3) As String
-		    Fields(0) = Beacon.HardwareID
-		    Fields(1) = Self.mIdentifier.Lowercase
-		    Select Case Self.mSignatureVersion
-		    Case 2
-		      Fields(2) = Self.OmniFlags.ToString(Locale.Raw, "0")
-		    Case 3
-		      Var LicenseSigningData() As String
-		      For Each License As Beacon.OmniLicense In Self.mLicenses
-		        LicenseSigningData.Add(License.ValidationString)
-		      Next License
-		      
-		      Fields(2) = String.FromArray(LicenseSigningData, ";")
-		    End Select
-		    Fields(3) = If(Self.mBanned, "Banned", "Clean")
-		    
-		    If Self.mExpirationString.IsEmpty = False Then
-		      Var Expires As DateTime = NewDateFromSQLDateTime(Self.mExpirationString)
-		      Var Now As DateTime = DateTime.Now
-		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
-		        // Not Expired
-		        Fields.Add(Self.mExpirationString)
-		      End If
-		    End If
-		    
-		    Var PublicKey As String = BeaconAPI.PublicKey
-		    Var CheckData As String = Fields.Join(" ")
-		    If Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
-		      // It is valid, now return so the reset code below does not fire
-		      Self.mIsValid = True
-		      Return True
-		    End If
-		  End If
-		  
-		  #if DebugBuild
-		    System.DebugLog("Failed to validate identity file")
-		  #endif
-		  
-		  Self.mUsername = ""
-		  Self.mLicenses.ResizeTo(-1)
-		  Self.mIsValid = False
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function VerifyKeyPair(PublicKey As MemoryBlock, PrivateKey As MemoryBlock) As Boolean
-		  If Crypto.RSAVerifyKey(PublicKey) = False Or Crypto.RSAVerifyKey(PrivateKey) = False Then
-		    Return False
-		  End If
-		  
-		  Try
-		    Var Original As MemoryBlock = Crypto.GenerateRandomBytes(12)
-		    Var Encrypted As String = Crypto.RSAEncrypt(Original, PublicKey)
-		    Var Decrypted As String = Crypto.RSADecrypt(Encrypted, PrivateKey)
-		    If Decrypted <> Original Then
-		      Return False
-		    End If
-		    
-		    Var Signature As MemoryBlock = Crypto.RSASign(Original, PrivateKey)
-		    Return Crypto.RSAVerifySignature(Original, Signature, PublicKey)
-		  Catch Err As CryptoException
-		    Return False
-		  End Try
 		End Function
 	#tag EndMethod
 
@@ -536,19 +214,11 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCloudKeyEncrypted As String
+		Private mExpiration As DateTime
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExpirationString As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mIdentifier As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mIsValid As NullableBoolean
+		Private mIsValid As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -556,23 +226,7 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPassword As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mPrivateKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPrivateKeyEncrypted As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPrivateKeyIterations As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPrivateKeySalt As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -580,11 +234,7 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSignature As MemoryBlock
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSignatureVersion As Integer
+		Private mUserId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

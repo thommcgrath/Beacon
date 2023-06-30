@@ -1,7 +1,17 @@
 #tag Class
 Protected Class Request
 	#tag Method, Flags = &h0
-		Sub Authenticate(Token As String)
+		Sub Authenticate(Token As BeaconAPI.OAuthToken)
+		  If Token Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RequestHeader("Authorization") = Token.AuthHeaderValue
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated )  Sub Authenticate(Token As String)
 		  Self.RequestHeader("Authorization") = "Session " + Token
 		  Self.RequestHeader("X-Beacon-Token") = Token
 		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Token
@@ -9,7 +19,7 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Authenticate(Username As String, Password As String)
+		Attributes( Deprecated )  Sub Authenticate(Username As String, Password As String)
 		  Self.RequestHeader("Authorization") = "Basic " + EncodeBase64(Username + ":" + Password, 0)
 		  Self.RequestHeader("X-Beacon-Token") = ""
 		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Password

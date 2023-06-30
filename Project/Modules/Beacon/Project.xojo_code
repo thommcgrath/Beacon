@@ -355,7 +355,7 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      Var MergedIdentity As Beacon.Identity = IdentityManager.FindMergedIdentity(UserID)
+		      Var MergedIdentity As Beacon.Identity = App.IdentityManager.Fetch(UserID)
 		      If (MergedIdentity Is Nil) = False Then
 		        PossibleIdentities.Add(MergedIdentity)
 		      End If
@@ -1043,7 +1043,7 @@ Implements ObservationKit.Observable
 		  If Self.mUseCompression Then
 		    Var Archive As Beacon.Archive = Beacon.Archive.Create()
 		    Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, True))
-		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", Beacon.GenerateJSON(ProjectData, True))
+		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", Beacon.GenerateJSON(ProjectData, False))
 		    Var ArchiveData As MemoryBlock = Archive.Finalize
 		    Var BOM As New MemoryBlock(8)
 		    BOM.LittleEndian = ArchiveData.LittleEndian

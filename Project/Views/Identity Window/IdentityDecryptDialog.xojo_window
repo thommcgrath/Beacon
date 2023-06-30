@@ -210,34 +210,23 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub Constructor(InputDict As Dictionary)
-		  Self.mInputDictionary = InputDict
-		  Super.Constructor
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Shared Function ShowDecryptIdentityDict(Parent As DesktopWindow, Dict As Dictionary) As Beacon.Identity
-		  If Parent = Nil Then
-		    Return Nil
+		Shared Function Present(Parent As DesktopWindow) As String
+		  If Parent Is Nil Then
+		    Return ""
 		  End If
 		  
-		  Var Win As New IdentityDecryptDialog(Dict)
+		  Var Win As New IdentityDecryptDialog
 		  Win.ShowModal(Parent)
-		  Var Identity As Beacon.Identity = Win.mOutputIdentity
+		  Var Password As String = Win.mPassword
 		  Win.Close
-		  Return Identity
+		  Return Password
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mInputDictionary As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOutputIdentity As Beacon.Identity
+		Private mPassword As String
 	#tag EndProperty
 
 
@@ -247,22 +236,15 @@ End
 	#tag Event
 		Sub Pressed()
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
-		  Var Password As String = Self.PasswordField.Text
-		  
-		  Var Identity As Beacon.Identity = Beacon.Identity.Import(Self.mInputDictionary, Password)
-		  If Identity <> Nil Then
-		    Self.mOutputIdentity = Identity
-		    Self.Hide
-		    Return
-		  End If
-		  
-		  Self.ShowAlert("Unable to decrypt identity", "This usually means the password is wrong. Please try again.")
+		  Self.mPassword = Self.PasswordField.Text
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Pressed()
+		  Self.mPassword = ""
 		  Self.Hide
 		End Sub
 	#tag EndEvent

@@ -255,7 +255,6 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Width           =   80
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -472,23 +471,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowExportIdentity()
-		  Var Dialog As New SaveFileDialog
-		  Dialog.Filter = BeaconFileTypes.BeaconIdentity
-		  Dialog.SuggestedFileName = "Identity Backup" + Beacon.FileExtensionIdentity
-		  
-		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Var Dict As Dictionary = App.IdentityManager.CurrentIdentity.Export
-		  Var Writer As New Beacon.JSONWriter(Dict, File)
-		  Writer.Start
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ShowImportIdentity()
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconIdentity
@@ -525,8 +507,6 @@ End
 		  #Pragma Unused ItemRect
 		  
 		  Select Case Item.Name
-		  Case "ExportIdentity"
-		    Self.ShowExportIdentity()
 		  Case "ImportIdentity"
 		    Self.ShowImportIdentity()
 		  Case "DecryptFile"
@@ -536,7 +516,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("ExportIdentity", "Export", IconToolbarExport, "Create a backup of your identity file."))
 		  Me.Append(OmniBarItem.CreateButton("ImportIdentity", "Import", IconToolbarImport, "Restore an identity file backup."))
 		  Me.Append(OmniBarItem.CreateSpace)
 		  Me.Append(OmniBarItem.CreateButton("DecryptFile", "Decrypt File", IconToolbarUnlock, "Decrypt a file that was encrypted with your active identity."))
