@@ -318,7 +318,6 @@ Protected Module UserCloud
 		  
 		  Var Fresh As Boolean = PendingRequests.KeyCount = 0
 		  
-		  Request.Authenticate(Preferences.OnlineToken)
 		  PendingRequests.Value(Request.RequestID) = Request
 		  BeaconAPI.Send(Request)
 		  

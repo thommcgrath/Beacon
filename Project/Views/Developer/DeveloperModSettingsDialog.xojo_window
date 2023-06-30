@@ -307,7 +307,6 @@ End
 		  Var Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
 		  
 		  Var Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
-		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent

@@ -309,7 +309,7 @@ Begin DesktopWindow UserWelcomeWindow
       Begin DesktopHTMLViewer LoginView
          AutoDeactivate  =   True
          Enabled         =   True
-         Height          =   300
+         Height          =   360
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   216
@@ -324,74 +324,9 @@ Begin DesktopWindow UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   60
+         Top             =   0
          Visible         =   True
          Width           =   424
-      End
-      Begin DesktopButton LoginViewCancelButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   236
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   20
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel LoginViewTitle
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   328
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Login"
-         TextAlignment   =   2
-         TextColor       =   &c000000
-         Tooltip         =   ""
-         Top             =   20
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   200
       End
    End
    Begin DesktopCanvas SidebarCanvas
@@ -469,6 +404,45 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub Collapse()
+		  For Idx As Integer = Self.mAnimationTasks.LastIndex DownTo 0
+		    Self.mAnimationTasks(Idx).Cancel
+		    Self.mAnimationTasks.RemoveAt(Idx)
+		  Next
+		  
+		  Var Task As AnimationKit.MoveTask
+		  Var CollapsedWidth As Integer = 640
+		  Var CollapsedHeight As Integer = 360
+		  
+		  Task = New AnimationKit.MoveTask(Self)
+		  Task.Width = CollapsedWidth
+		  Task.Height = CollapsedHeight
+		  Task.Left = Self.Left + ((Self.Width - Task.Width) / 2)
+		  Task.DurationInSeconds = 0.15
+		  Task.Curve = AnimationKit.Curve.CreateEaseOut
+		  Task.Run
+		  Self.mAnimationTasks.Add(Task)
+		  
+		  Task = New AnimationKit.MoveTask(Self.SidebarCanvas)
+		  Task.Left = 0
+		  Task.Height = CollapsedHeight
+		  Task.DurationInSeconds = 0.15
+		  Task.Curve = AnimationKit.Curve.CreateEaseOut
+		  Task.Run
+		  Self.mAnimationTasks.Add(Task)
+		  
+		  Task = New AnimationKit.MoveTask(Self.PagePanel1)
+		  Task.Left = Self.SidebarCanvas.Width
+		  Task.Width = CollapsedWidth - Self.SidebarCanvas.Width
+		  Task.Height = CollapsedHeight
+		  Task.DurationInSeconds = 0.15
+		  Task.Curve = AnimationKit.Curve.CreateEaseOut
+		  Task.Run
+		  Self.mAnimationTasks.Add(Task)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor()
 		  // Just here to block calling with New
 		  
@@ -488,6 +462,45 @@ End
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ExecuteAfterPresentDelegate(WelcomeWindow As UserWelcomeWindow)
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h21
+		Private Sub Expand()
+		  For Idx As Integer = Self.mAnimationTasks.LastIndex DownTo 0
+		    Self.mAnimationTasks(Idx).Cancel
+		    Self.mAnimationTasks.RemoveAt(Idx)
+		  Next
+		  
+		  Var Task As AnimationKit.MoveTask
+		  Var ExpandedWidth As Integer = 800
+		  Var ExpandedHeight As Integer = (ExpandedWidth / 1.6) + Self.LoginView.Top
+		  
+		  Task = New AnimationKit.MoveTask(Self)
+		  Task.Width = ExpandedWidth
+		  Task.Height = ExpandedHeight
+		  Task.Left = Self.Left + ((Self.Width - Task.Width) / 2)
+		  Task.DurationInSeconds = 0.15
+		  Task.Curve = AnimationKit.Curve.CreateEaseOut
+		  Task.Run
+		  Self.mAnimationTasks.Add(Task)
+		  
+		  Task = New AnimationKit.MoveTask(Self.SidebarCanvas)
+		  Task.Left = Self.SidebarCanvas.Width * -1
+		  Task.Height = ExpandedHeight
+		  Task.DurationInSeconds = 0.15
+		  Task.Curve = AnimationKit.Curve.CreateEaseOut
+		  Task.Run
+		  Self.mAnimationTasks.Add(Task)
+		  
+		  Task = New AnimationKit.MoveTask(Self.PagePanel1)
+		  Task.Left = 0
+		  Task.Width = ExpandedWidth
+		  Task.Height = ExpandedHeight
+		  Task.DurationInSeconds = 0.15
+		  Task.Curve = AnimationKit.Curve.CreateEaseOut
+		  Task.Run
+		  Self.mAnimationTasks.Add(Task)
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Shared Function GenerateCodeVerifier() As String
@@ -527,6 +540,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub HandleAuthenticated()
+		  Self.ContinueAnonymousButton.Enabled = False
+		  Self.ContinueAuthenticatedButton.Enabled = False
+		  Self.DisableOnlineButton.Enabled = False
+		  Self.WelcomePageSpinner.Visible = True
+		  
+		  Preferences.OnlineEnabled = True
+		  Preferences.BeaconAuth = Nil
+		  
+		  Self.StartOAuth(Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub HandleDisableOnline()
 		  Preferences.OnlineEnabled = False
 		  Preferences.BeaconAuth = Nil
@@ -557,7 +584,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RedeemOAuth(Code As String)
 		  Var Params As New Dictionary
-		  Params.Value("client_id") = Self.ClientId
+		  Params.Value("client_id") = BeaconAPI.ClientId
 		  Params.Value("code") = Code
 		  Params.Value("grant_type") = "authorization_code"
 		  Params.Value("redirect_uri") = Self.RedirectUri
@@ -571,8 +598,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SaveOAuthResponse(Response As String)
 		  Var Token As BeaconAPI.OAuthToken = BeaconAPI.OAuthToken.Load(Response)
-		  Break
-		  Preferences.OnlineEnabled = True
+		  Preferences.OnlineEnabled = (Token Is Nil) = False
 		  Preferences.BeaconAuth = Token
 		End Sub
 	#tag EndMethod
@@ -619,7 +645,7 @@ End
 		  
 		  Var Params As New Dictionary
 		  Params.Value("state") = Self.mOAuthState
-		  Params.Value("client_id") = Self.ClientId
+		  Params.Value("client_id") = BeaconAPI.ClientId
 		  Params.Value("no_redirect") = "true"
 		  
 		  Var Scopes() As String = Array("common", "users:read")
@@ -682,9 +708,6 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ClientId, Type = String, Dynamic = False, Default = \"9f823fcf-eb7a-41c0-9e4b-db8ed4396f80", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = PageInitializing, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
@@ -725,7 +748,7 @@ End
 #tag Events ContinueAuthenticatedButton
 	#tag Event
 		Sub Pressed()
-		  Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
+		  Self.HandleAuthenticated()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -749,11 +772,6 @@ End
 		  If Self.PagePanel1.SelectedPanelIndex <> Self.PageLogin Then
 		    Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
 		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub TitleChanged(newTitle as String)
-		  Self.LoginViewTitle.Text = NewTitle
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -781,57 +799,21 @@ End
 		    
 		    Return True
 		  ElseIf Url = "beacon://dismiss" Then
-		    Self.Close
+		    If Self.mLoginOnly Then
+		      Self.Close
+		    Else
+		      Self.Collapse
+		      Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		    End If
 		    Return True
 		  End If
 		End Function
 	#tag EndEvent
-#tag EndEvents
-#tag Events LoginViewCancelButton
 	#tag Event
-		Sub Pressed()
-		  If Self.mLoginOnly Then
-		    Self.Close
-		    Return
-		  End If
-		  
-		  Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
-		  
-		  For Idx As Integer = Self.mAnimationTasks.LastIndex DownTo 0
-		    Self.mAnimationTasks(Idx).Cancel
-		    Self.mAnimationTasks.RemoveAt(Idx)
-		  Next
-		  
-		  Var Task As AnimationKit.MoveTask
-		  Var CollapsedWidth As Integer = 640
-		  Var CollapsedHeight As Integer = 360
-		  
-		  Task = New AnimationKit.MoveTask(Self)
-		  Task.Width = CollapsedWidth
-		  Task.Height = CollapsedHeight
-		  Task.Left = Self.Left + ((Self.Width - Task.Width) / 2)
-		  Task.DurationInSeconds = 0.15
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		  
-		  Task = New AnimationKit.MoveTask(Self.SidebarCanvas)
-		  Task.Left = 0
-		  Task.Height = CollapsedHeight
-		  Task.DurationInSeconds = 0.15
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		  
-		  Task = New AnimationKit.MoveTask(Self.PagePanel1)
-		  Task.Left = Self.SidebarCanvas.Width
-		  Task.Width = CollapsedWidth - Self.SidebarCanvas.Width
-		  Task.Height = CollapsedHeight
-		  Task.DurationInSeconds = 0.15
-		  Task.Curve = AnimationKit.Curve.CreateEaseOut
-		  Task.Run
-		  Self.mAnimationTasks.Add(Task)
-		End Sub
+		Function NewWindow(url as String) As DesktopHTMLViewer
+		  System.GotoURL(URL)
+		  Return Nil
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events SidebarCanvas
@@ -845,7 +827,7 @@ End
 		    Var Scale As Double = G.Height / LoginSidebarBackground.Height
 		    Var ScaledWidth As Integer = LoginSidebarBackground.Width * Scale
 		    Var ScaledHeight As Integer = LoginSidebarBackground.Height * Scale
-		    G.DrawPicture(LoginSidebarBackground, G.Width - ScaledWidth, (G.Height - ScaledHeight) / 2, ScaledWidth, ScaledHeight, 0, 0, LoginSidebarBackground.Width, LoginSidebarBackground.Height)
+		    G.DrawPicture(LoginSidebarBackground, G.Width - (ScaledWidth + 1), (G.Height - ScaledHeight) / 2, ScaledWidth, ScaledHeight, 0, 0, LoginSidebarBackground.Width, LoginSidebarBackground.Height)
 		  End If
 		  
 		  G.DrawPicture(LoginSidebarLogo, 0, (G.Height - LoginSidebarLogo.Height) / 2)
@@ -858,6 +840,11 @@ End
 #tag Events OAuthStartSocket
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  Self.ContinueAnonymousButton.Enabled = True
+		  Self.ContinueAuthenticatedButton.Enabled = True
+		  Self.DisableOnlineButton.Enabled = True
+		  Self.WelcomePageSpinner.Visible = False
+		  
 		  If HTTPStatus = 200 Or HTTPStatus = 302 Then
 		    // Show html viewer
 		    Var LoginUrl As String
@@ -873,41 +860,7 @@ End
 		    End If
 		    
 		    Self.LoginView.LoadURL(LoginURL)
-		    
-		    For Idx As Integer = Self.mAnimationTasks.LastIndex DownTo 0
-		      Self.mAnimationTasks(Idx).Cancel
-		      Self.mAnimationTasks.RemoveAt(Idx)
-		    Next
-		    
-		    Var Task As AnimationKit.MoveTask
-		    Var ExpandedWidth As Integer = 800
-		    Var ExpandedHeight As Integer = (ExpandedWidth / 1.6) + Self.LoginView.Top
-		    
-		    Task = New AnimationKit.MoveTask(Self)
-		    Task.Width = ExpandedWidth
-		    Task.Height = ExpandedHeight
-		    Task.Left = Self.Left + ((Self.Width - Task.Width) / 2)
-		    Task.DurationInSeconds = 0.15
-		    Task.Curve = AnimationKit.Curve.CreateEaseOut
-		    Task.Run
-		    Self.mAnimationTasks.Add(Task)
-		    
-		    Task = New AnimationKit.MoveTask(Self.SidebarCanvas)
-		    Task.Left = Self.SidebarCanvas.Width * -1
-		    Task.Height = ExpandedHeight
-		    Task.DurationInSeconds = 0.15
-		    Task.Curve = AnimationKit.Curve.CreateEaseOut
-		    Task.Run
-		    Self.mAnimationTasks.Add(Task)
-		    
-		    Task = New AnimationKit.MoveTask(Self.PagePanel1)
-		    Task.Left = 0
-		    Task.Width = ExpandedWidth
-		    Task.Height = ExpandedHeight
-		    Task.DurationInSeconds = 0.15
-		    Task.Curve = AnimationKit.Curve.CreateEaseOut
-		    Task.Run
-		    Self.mAnimationTasks.Add(Task)
+		    Self.Expand()
 		  ElseIf HTTPStatus = 201 Then
 		    // Session started
 		    Self.SaveOAuthResponse(Content)
@@ -928,6 +881,7 @@ End
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  If HTTPStatus = 201 Then
 		    Self.SaveOAuthResponse(Content)
+		    Self.Close
 		  Else
 		    Break
 		  End If

@@ -466,7 +466,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       End
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -646,11 +645,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Params As New Dictionary
-		  Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
-		  
-		  Var Request As New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocuments)
-		  Request.Authenticate(Preferences.OnlineToken)
+		  Var Request As New BeaconAPI.Request("/user/projects", "GET", AddressOf APICallback_ListDocuments)
 		  Self.APISocket.Start(Request)
 		  
 		  Self.Pages.SelectedPanelIndex = Self.PageLoading
@@ -728,10 +723,17 @@ End
 		    Return
 		  End If
 		  
-		  Var Dicts() As Variant = Response.JSON
+		  Var Dicts() As Variant
+		  Try
+		    Dicts = Response.JSON
+		  Catch Err As RuntimeException
+		  End Try
 		  For Each Dict As Dictionary In Dicts
-		    Var Document As New BeaconAPI.Document(Dict)
-		    Self.mDocuments.Add(Document)
+		    Try
+		      Var Document As New BeaconAPI.Document(Dict)
+		      Self.mDocuments.Add(Document)
+		    Catch Err As RuntimeException
+		    End Try
 		  Next
 		  
 		  Self.UpdateFilter()
@@ -940,7 +942,6 @@ End
 		    End If
 		    
 		    Var Request As New BeaconAPI.Request(URL.URL(Beacon.ProjectURL.URLTypes.Writing), "DELETE", AddressOf APICallback_DeleteDocument)
-		    Request.Authenticate(Token)
 		    Self.APISocket.Start(Request)
 		    ShouldRefresh = True
 		  Next
@@ -984,7 +985,6 @@ End
 		    If Me.SelectedRowCount = 1 Then
 		      Var Document As BeaconAPI.Document = Me.RowTagAt(Me.SelectedRowIndex)
 		      Var Request As New BeaconAPI.Request("project/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
-		      Request.Authenticate(Preferences.OnlineToken)
 		      BeaconAPI.Send(Request)
 		      
 		      Self.mVersionProgressKey = CallLater.Schedule(2000, WeakAddressOf ShowVersionProgress)

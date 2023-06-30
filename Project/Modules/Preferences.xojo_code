@@ -488,6 +488,7 @@ Protected Module Preferences
 			  Else
 			    mManager.StringValue("Beacon Auth") = ""
 			  End If
+			  mAuthToken = Value
 			End Set
 		#tag EndSetter
 		Protected BeaconAuth As BeaconAPI.OAuthToken

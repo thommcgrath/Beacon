@@ -613,8 +613,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Function BuildPHPCode(Request As BeaconAPI.Request) As String
+		  #Pragma Warning "Needs updating"
+		  
 		  Var EOL As String = EndOfLine
-		  Var Authenticated As Boolean = Request.Authenticated
+		  Var Authenticated As Boolean = Request.RequiresAuthentication
 		  
 		  Var Lines() As String
 		  
@@ -696,9 +698,7 @@ End
 		    Else
 		      Request = New BeaconAPI.Request(Path, Method, AddressOf APICallback_DoNothing)
 		    End If
-		    If AuthenticatedCheck.Value Then
-		      Request.Authenticate(Preferences.OnlineToken)
-		    End If
+		    Request.RequiresAuthentication = AuthenticatedCheck.Value
 		  Catch Err As RuntimeException
 		    Self.ShowAlert("Cannot build the request", Err.Message)
 		    Return

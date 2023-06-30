@@ -1238,7 +1238,6 @@ End
 		  Var Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
 		  Var Request As New BeaconAPI.Request("ark/mod", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
-		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.RegisterSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1261,7 +1260,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  Var Request As New BeaconAPI.Request(Self.mModInfo.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
-		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.ConfirmSocket.Start(Request)
 		End Sub
 	#tag EndEvent

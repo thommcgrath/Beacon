@@ -1,44 +1,6 @@
 #tag Class
 Protected Class Request
 	#tag Method, Flags = &h0
-		Sub Authenticate(Token As BeaconAPI.OAuthToken)
-		  If Token Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.RequestHeader("Authorization") = Token.AuthHeaderValue
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub Authenticate(Token As String)
-		  Self.RequestHeader("Authorization") = "Session " + Token
-		  Self.RequestHeader("X-Beacon-Token") = Token
-		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Token
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub Authenticate(Username As String, Password As String)
-		  Self.RequestHeader("Authorization") = "Basic " + EncodeBase64(Username + ":" + Password, 0)
-		  Self.RequestHeader("X-Beacon-Token") = ""
-		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Password
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Authenticated() As Boolean
-		  Return Self.mRequestHeaders <> Nil And Self.mRequestHeaders.HasKey("Authorization")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AuthType() As BeaconAPI.Request.AuthTypes
-		  Return Self.mAuthType
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Path As String, Method As String, Callback As BeaconAPI.Request.ReplyCallback)
 		  Self.Constructor(Path, Method, New Dictionary, Callback)
 		End Sub
@@ -172,18 +134,9 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RequestID() As String
+		Function RequestId() As String
 		  Return Self.mRequestID
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Sign(Identity As Beacon.Identity, Challenge As String)
-		  Var Signature As String = Identity.Sign(Challenge)
-		  Self.RequestHeader("Authorization") = "Challenge " + EncodeBase64(Identity.UserID + ":" + Signature, 0)
-		  Self.RequestHeader("X-Beacon-Token") = ""
-		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Signature
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -195,10 +148,6 @@ Protected Class Request
 
 	#tag Property, Flags = &h0
 		HasBeenRetried As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mAuthType As BeaconAPI.Request.AuthTypes
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -222,11 +171,15 @@ Protected Class Request
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mRequestID As String
+		Protected mRequestId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mURL As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		RequiresAuthentication As Boolean = True
 	#tag EndProperty
 
 
@@ -281,6 +234,14 @@ Protected Class Request
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBeenRetried"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RequiresAuthentication"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

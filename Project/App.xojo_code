@@ -728,7 +728,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Var Token As String = Preferences.OnlineToken
 		      If Token.IsEmpty = False Then
 		        Var Request As New BeaconAPI.Request("/session/" + EncodeURLComponent(Token), "DELETE", Nil)
-		        Request.Authenticate(Token)
 		        BeaconAPI.Send(Request)
 		      End If
 		      

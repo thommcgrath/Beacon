@@ -271,7 +271,6 @@ End
 		  Self.StartJob()
 		  
 		  Var Request As New BeaconAPI.Request("ark/mod", "GET", AddressOf APICallback_ListMods)
-		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
@@ -393,7 +392,6 @@ End
 		    
 		    Var Body As String = WorkshopIDs.Join(",")
 		    Var Request As New BeaconAPI.Request("ark/mod", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
-		    Request.Authenticate(Preferences.OnlineToken)
 		    BeaconAPI.Send(Request)
 		  End If
 		End Sub

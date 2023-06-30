@@ -10,7 +10,7 @@ Protected Class UserController
 		  End Try
 		  
 		  Var Identity As Beacon.Identity = App.IdentityManager.Import(Parsed)
-		  If Identity.IsValid Then
+		  If (Identity Is Nil) = False And Identity.IsValid Then
 		    App.IdentityManager.CurrentIdentity = Identity
 		  Else
 		    Break
@@ -26,7 +26,6 @@ Protected Class UserController
 		  End If
 		  
 		  Var Request As New BeaconAPI.Request("/user?deviceId=" + Beacon.HardwareID, "GET", AddressOf Callback_RefreshUserDetails)
-		  Request.Authenticate(Token)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod

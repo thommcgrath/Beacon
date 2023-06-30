@@ -772,7 +772,6 @@ End
 		  Payload.Value("status") = DesiredStatus
 		  
 		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("project/" + Self.mProject.UUID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
-		  Request.Authenticate(Preferences.OnlineToken)
 		  APISocket.Start(Request)
 		  
 		  Me.Enabled = False

@@ -23,7 +23,7 @@ Protected Class IdentityManager
 		  Var Database As New SQLiteDatabase
 		  #if Not DebugBuild
 		    Var Key As String = Crypto.SHA3_256("8df95865-3fac-4c79-8ee6-8ee98ca199df" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID)
-		    Database.EncryptionKey = "aes256:" + Key
+		    Database.EncryptionKey = "aes256:" + Key.ReplaceAll(Chr(0), Chr(1)) // https://forum.xojo.com/t/sqlitedatabase-encryptionkey-key-derivation/76366/9?u=thom_mcgrath
 		  #endif
 		  Database.DatabaseFile = DatabaseFile
 		  
@@ -43,11 +43,12 @@ Protected Class IdentityManager
 		  Self.mDatabase = Database
 		  
 		  Var MergedFolder As FolderItem = AppSupport.Child("Merged Identities")
-		  Var Children() As FolderItem
 		  For Each Child As FolderItem In MergedFolder.Children(False)
 		    Var Identity As Beacon.Identity = Self.Import(Child)
 		    If (Identity Is Nil) = False Then
-		      //Child.Remove
+		      #if Not DebugBuild
+		        Child.Remove
+		      #endif
 		    End If
 		  Next
 		  
@@ -60,7 +61,9 @@ Protected Class IdentityManager
 		    Var Default As Beacon.Identity = Self.Import(DefaultIdentity)
 		    If (Default Is Nil) = False Then
 		      Self.CurrentIdentity = Default
-		      //DefaultIdentity.Remove
+		      #if Not DebugBuild
+		        DefaultIdentity.Remove
+		      #endif
 		    End If
 		  End If
 		End Sub
@@ -108,7 +111,9 @@ Protected Class IdentityManager
 		Sub CurrentIdentity(Assigns Value As Beacon.Identity)
 		  Self.mDatabase.BeginTransaction
 		  Self.mDatabase.ExecuteSQL("UPDATE identities SET active = FALSE WHERE active = TRUE;")
-		  Self.mDatabase.ExecuteSQL("UPDATE identities SET active = TRUE WHERE user_id = ?1;", Value.UserId)
+		  If (Value Is Nil) = False Then
+		    Self.mDatabase.ExecuteSQL("UPDATE identities SET active = TRUE WHERE user_id = ?1;", Value.UserId)
+		  End If
 		  Self.mDatabase.CommitTransaction
 		  Self.mCurrentIdentity = Value
 		  
@@ -154,59 +159,60 @@ Protected Class IdentityManager
 
 	#tag Method, Flags = &h0
 		Function Import(Dict As Dictionary) As Beacon.Identity
-		  #Pragma Warning "Not implemented"
-		  
-		  Var UserId As String = Dict.Value("userId").StringValue
-		  Var Username As String = Dict.Value("username").StringValue
-		  Var PublicKey As String = BeaconEncryption.PEMDecodePublicKey(Dict.Value("publicKey").StringValue)
-		  Var Banned As Boolean = Dict.Value("banned").BooleanValue
-		  Var Expiration As String = Dict.Lookup("expiration", "").StringValue
-		  Var Signatures As Dictionary = Dict.Value("signatures")
-		  Var Signature As String = Signatures.Value("3").StringValue
-		  Var SignatureVersion As Integer = 3
-		  Var LicenseArray() As Variant = Dict.Value("licenses")
-		  Var LicenseSaveData() As Variant
-		  For Each Member As Variant In LicenseArray
-		    If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
-		      Continue
+		  Try
+		    Var UserId As String = Dict.Value("userId").StringValue
+		    Var Username As String = Dict.Value("username").StringValue
+		    Var PublicKey As String = BeaconEncryption.PEMDecodePublicKey(Dict.Value("publicKey").StringValue)
+		    Var Banned As Boolean = Dict.Value("banned").BooleanValue
+		    Var Expiration As String = Dict.Lookup("expiration", "").StringValue
+		    Var Signatures As Dictionary = Dict.Value("signatures")
+		    Var Signature As String = Signatures.Value("3").StringValue
+		    Var SignatureVersion As Integer = 3
+		    Var LicenseArray() As Variant = Dict.Value("licenses")
+		    Var LicenseSaveData() As Variant
+		    For Each Member As Variant In LicenseArray
+		      If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      
+		      Var LicenseData As Dictionary = Member
+		      Var License As New Beacon.OmniLicense(LicenseData.Value("productId").StringValue, LicenseData.Value("flags").IntegerValue, LicenseData.Lookup("expiration", "").StringValue)
+		      LicenseSaveData.Add(License.SaveData)
+		    Next
+		    Var Licenses As String = Beacon.GenerateJSON(LicenseSaveData, False)
+		    
+		    Var PrivateKeyDict As Dictionary = Dict.Value("privateKey")
+		    Var EncryptionVersion As Integer = PrivateKeyDict.Value("version")
+		    If EncryptionVersion > 1 Then
+		      App.Log("Unable to import identity because encryption version is too new.")
+		      Return Nil
 		    End If
 		    
-		    Var LicenseData As Dictionary = Member
-		    Var License As New Beacon.OmniLicense(LicenseData.Value("productId").StringValue, LicenseData.Value("flags").IntegerValue, LicenseData.Lookup("expiration", "").StringValue)
-		    LicenseSaveData.Add(License.SaveData)
-		  Next
-		  Var Licenses As String = Beacon.GenerateJSON(LicenseSaveData, False)
-		  
-		  Var PrivateKeyDict As Dictionary = Dict.Value("privateKey")
-		  Var EncryptionVersion As Integer = PrivateKeyDict.Value("version")
-		  If EncryptionVersion > 1 Then
-		    App.Log("Unable to import identity because encryption version is too new.")
-		    Return Nil
-		  End If
-		  
-		  Var KeyEncrypted As String = PrivateKeyDict.Value("key")
-		  Var PrivateKeyEncrypted As String = PrivateKeyDict.Value("message")
-		  
-		  Var PrivateKey, CloudKey As String
-		  Try
-		    Var Key As String = Crypto.RSADecrypt(DecodeBase64(KeyEncrypted), Preferences.DevicePrivateKey)
-		    PrivateKey = BeaconEncryption.PEMDecodePrivateKey(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKeyEncrypted)))
-		    CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
+		    Var KeyEncrypted As String = PrivateKeyDict.Value("key")
+		    Var PrivateKeyEncrypted As String = PrivateKeyDict.Value("message")
+		    
+		    Var PrivateKey, CloudKey As String
+		    Try
+		      Var Key As String = Crypto.RSADecrypt(DecodeBase64(KeyEncrypted), Preferences.DevicePrivateKey)
+		      PrivateKey = BeaconEncryption.PEMDecodePrivateKey(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKeyEncrypted)))
+		      CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
+		    Catch Err As RuntimeException
+		      App.Log("Unable to import identity because private key could not be decrypted.")
+		      Return Nil
+		    End Try
+		    
+		    Self.mDatabase.BeginTransaction
+		    Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT user_id FROM identities WHERE user_id = ?1;", UserId)
+		    If Rows.RowCount = 0 Then
+		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, banned, signature, signature_version, expiration) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, Banned, Signature, SignatureVersion, Expiration)
+		    Else
+		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, banned = ?7, signature = ?8, signature_version = ?9, expiration = ?10 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, Banned, Signature, SignatureVersion, Expiration)
+		    End If
+		    Self.mDatabase.CommitTransaction
+		    
+		    Return Self.Fetch(UserId)
 		  Catch Err As RuntimeException
-		    App.Log("Unable to import identity because private key could not be decrypted.")
-		    Return Nil
 		  End Try
-		  
-		  Self.mDatabase.BeginTransaction
-		  Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT user_id FROM identities WHERE user_id = ?1;", UserId)
-		  If Rows.RowCount = 0 Then
-		    Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, banned, signature, signature_version, expiration) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, Banned, Signature, SignatureVersion, Expiration)
-		  Else
-		    Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, banned = ?7, signature = ?8, signature_version = ?9, expiration = ?10 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, Banned, Signature, SignatureVersion, Expiration)
-		  End If
-		  Self.mDatabase.CommitTransaction
-		  
-		  Return Self.Fetch(UserId)
 		End Function
 	#tag EndMethod
 
