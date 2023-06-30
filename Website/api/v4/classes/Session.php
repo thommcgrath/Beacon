@@ -348,7 +348,7 @@ class Session extends DatabaseObject implements JsonSerializable {
 			'refresh_token' => $this->refreshToken,
 			'access_token_expiration' => $this->accessTokenExpiration,
 			'refresh_token_expiration' => $this->refreshTokenExpiration,
-			'expires_in' => $this->accessTokenExpiration - time(),
+			'access_token_expires_in' => $this->accessTokenExpiration - time(),
 			'refresh_token_expires_in' => $this->refreshTokenExpiration - time(),
 			'scope' => implode(' ', $this->scopes)
 		];

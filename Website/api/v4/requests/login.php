@@ -66,7 +66,13 @@ function handleRequest(array $context): Response {
 		}
 		
 		$loginUrl = BeaconCommon::AbsoluteUrl('/account/login?flow_id=' . urlencode($flow->FlowId()));
-		return Response::NewRedirect($loginUrl);
+		if (isset($_GET['no_redirect']) && filter_var($_GET['no_redirect'], FILTER_VALIDATE_BOOLEAN) === true) {
+			return Response::NewJson([
+				'login_url' => $loginUrl
+			], 200);
+		} else {
+			return Response::NewRedirect($loginUrl);
+		}
 	case 'POST /login':
 		if (Core::IsJsonContentType()) {
 			$obj = Core::BodyAsJson();
@@ -83,11 +89,11 @@ function handleRequest(array $context): Response {
 		
 		switch ($grantType) {
 		case 'authorization_code':
-			$code = $obj['code'] ?? null;
-			$redirectUri = $obj['redirect_uri'] ?? null;
-			$codeVerifier = $obj['code_verifier'] ?? null;
+			$code = $obj['code'] ?? '';
+			$redirectUri = $obj['redirect_uri'] ?? '';
+			$codeVerifier = $obj['code_verifier'] ?? '';
 			
-			if (is_null($grantType) || is_null($code) || is_null($clientId) || is_null($redirectUri)) {
+			if (empty($grantType) || empty($code) || empty($clientId) || empty($redirectUri)) {
 				return Response::NewJsonError('Missing parameters', ['code' => 'INVALID_GRANT'], 400);
 			}
 			

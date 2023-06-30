@@ -2755,6 +2755,17 @@ input.no-stepper {
 	color: rgba($foreground-color, 50%);
 }
 
+body.no-navigation {
+	#header_wrapper, #footer {
+		display: none;
+	}
+	
+	#content_wrapper {
+		margin-top: $page_margins;
+		margin-bottom: $page_margins;
+	}
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;

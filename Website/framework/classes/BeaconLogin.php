@@ -15,8 +15,10 @@ class BeaconLogin {
 		$session = BeaconCommon::GetSession();
 		$flowId = $params['flowId'] ?? null;
 		$params['challengeExpiration'] = time() + 300;
+		$params['useAppCancelBehavior'] = false;
 		
 		$flow = null;
+		$app = null;
 		if (is_null($flowId) === false) {
 			$flow = ApplicationAuthFlow::Fetch($flowId);
 			if (is_null($flow) || $flow->IsCompleted()) {
@@ -25,6 +27,13 @@ class BeaconLogin {
 				echo '<p>This login request has expired or has already been completed. Please request a new login from your app.</p>';
 				echo '<p class="text-center"><a class="button" href="/account/">Account Home</a></p>';
 				return;
+			}
+			$app = $flow->Application();
+			
+			if (($app->Experience() & Application::kExperienceAppWebView) === Application::kExperienceAppWebView) {
+				BeaconTemplate::SetVar('No Navigation', true);
+				$params['useAppCancelBehavior'] = true;
+				$params['withCancel'] = true;
 			}
 		}
 		
@@ -58,7 +67,6 @@ class BeaconLogin {
 		BeaconTemplate::FinishScript();
 			
 		if (is_null($session) === false && is_null($flow) === false) {
-			$app = $flow->Application();
 			?><div id="page_authorize">
 				<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services?</h3>
 				<div class="app_id">
@@ -163,16 +171,17 @@ class BeaconLogin {
 						'Summon a typhoon of staplers.',
 						'Make breakfast.',
 						'Play a fiddle on a roof.',
-						'Take the red pill.',
 						'Influence the passage of time.',
-						'Simply walk into Mordor.'
+						'Simply walk into Mordor.',
+						'Juggle buffalo.',
+						'Reach singularity.'
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);
 						
 					?></li>
 				</ul>
-				<ul class="buttons"><li><button class="default" id="authorize_action_button">Allow</button></li><li><button id="authorize_cancel_button">Cancel</button></li></ul>
+				<ul class="buttons"><li><button class="default" id="authorize_action_button">Allow</button></li><li><button id="authorize_cancel_button" class="red">Cancel</button></li><li><button id="authorize_switch_button">Switch User</button></li></ul>
 			</div><?php
 			
 			BeaconTemplate::StartModal('authorizePasswordDialog');
@@ -215,7 +224,7 @@ class BeaconLogin {
 		<p class="floating-label"><input class="text-field" type="email" name="email" placeholder="E-Mail Address" id="login_email_field" autocomplete="email" required><label for="login_email_field">E-Mail Address</label></p>
 		<p class="floating-label"><input class="text-field" type="password" name="password" placeholder="Password" id="login_password_field" autocomplete="current-password" minlength="8" title="Enter a password with at least 8 characters" required><label for="login_password_field">Password</label></p>
 		<?php if ($withRememberMe) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
-		<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button">Cancel</button></li><?php } ?></ul>
+		<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li><?php if ($withCancel) { ?><li><button id="login_cancel_button" class="red">Cancel</button></li><?php } ?></ul>
 	</form>
 </div>
 <div id="page_totp">

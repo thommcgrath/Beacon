@@ -21,7 +21,7 @@ function handleRequest(array $context): Response {
 		$privateKey = $session->PrivateKeyEncrypted();
 		if (is_null($privateKey) === false) {
 			$userInfo['privateKey'] = json_decode($privateKey, true);
-			$userInfo['cloudKey'] = $user->CloudKey();
+			$userInfo['cloudKey'] = base64_encode(hex2bin($user->CloudKey()));
 		}
 	} else {
 		// don't use the regular method that includes lots of values

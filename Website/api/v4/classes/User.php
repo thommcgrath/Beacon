@@ -357,7 +357,7 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 	}
 	
 	public static function GenerateCloudKey(): string {
-		return random_bytes(128);
+		return random_bytes(32);
 	}
 	
 	public function HasFiles(): bool {
@@ -626,7 +626,7 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 		}
 		$signature = '';
 		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
-			$this->signatures['3'] = bin2hex($signature);
+			$this->signatures['3'] = base64_encode($signature);
 		}
 	}
 	

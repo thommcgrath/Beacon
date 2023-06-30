@@ -14,6 +14,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 	protected array $callbacks = [];
 	protected int $rateLimit = 50;
 	protected bool $isOfficial = false;
+	protected int $experience = 0;
 	
 	const kScopeCommon = 'common';
 	const kScopeAppsCreate = 'apps:create';
@@ -34,6 +35,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 	const kScopeSentinelServicesRead = 'sentinel.services:read';
 	const kScopeSentinelServicesUpdate = 'sentinel.services:update';
 	const kScopeSentinelServicesDelete = 'sentinel.services:delete';
+	
+	const kExperienceAppWebView = 1;
 	
 	public static function ValidScopes(): array {
 		return [
@@ -89,6 +92,7 @@ class Application extends DatabaseObject implements JsonSerializable {
 		$this->callbacks = json_decode($row->Field('callbacks'), true);
 		$this->rateLimit = filter_var($row->Field('rate_limit'), FILTER_VALIDATE_INT);
 		$this->isOfficial = filter_var($row->Field('is_official'), FILTER_VALIDATE_BOOL);
+		$this->experience = filter_var($row->Field('experience'), FILTER_VALIDATE_INT);
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -102,7 +106,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('scopes'),
 			new DatabaseObjectProperty('callbacks', ['columnName' => 'callbacks', 'accessor' => "(SELECT COALESCE(array_to_json(array_agg(callbacks_template.url)), '[]') FROM (SELECT url FROM application_callbacks WHERE application_id = applications.application_id ORDER BY url) AS callbacks_template)"]),
 			new DatabaseObjectProperty('rateLimit', ['columnName' => 'rate_limit']),
-			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official'])
+			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official']),
+			new DatabaseObjectProperty('experience')
 		]);
 	}
 	
@@ -402,6 +407,10 @@ class Application extends DatabaseObject implements JsonSerializable {
 		return $this->isOfficial;
 	}
 	
+	public function Experience(): int {
+		return $this->experience;
+	}
+	
 	public function jsonSerialize(): mixed {
 		return [
 			'applicationId' => $this->applicationId,
@@ -412,7 +421,8 @@ class Application extends DatabaseObject implements JsonSerializable {
 			'scopes' => $this->scopes,
 			'callbacks' => $this->callbacks,
 			'rateLimit' => $this->rateLimit,
-			'isOfficial' => $this->isOfficial
+			'isOfficial' => $this->isOfficial,
+			'experience' => $this->experience
 		];
 	}
 }

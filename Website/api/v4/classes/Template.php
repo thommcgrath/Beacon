@@ -63,7 +63,7 @@ class Template extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public function MinVersion(): int {
-		return $this->minVersio ;
+		return $this->minVersion;
 	}
 	
 	public function Contents(): string {

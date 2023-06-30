@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const authorizePage = document.getElementById('page_authorize');
 	const authorizeActionButton = document.getElementById('authorize_action_button');
 	const authorizeCancelButton = document.getElementById('authorize_cancel_button');
+	const authorizeSwitchButton = document.getElementById('authorize_switch_button');
 	
 	const loginReturnURI = loginParams.return;
 	let loginRemember = false;
@@ -279,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (loginCancelButton) {
 		loginCancelButton.addEventListener('click', (ev) => {
 			ev.preventDefault();
-			window.location = 'beacon://dismiss_me';
+			window.location = 'beacon://dismiss';
 			return false;
 		});
 	}
@@ -593,7 +594,20 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (loginPasswordField) {
 				loginPasswordField.value = '';
 			}
-			window.location = '/account/';
+			if (loginParams.useAppCancelBehavior) {
+				window.location = 'beacon://dismiss';
+			} else {
+				window.location = '/account/';
+			}
+		});
+	}
+	
+	if (authorizeSwitchButton) {
+		authorizeSwitchButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			const currentLocation = window.location;
+			window.location = '/account/auth/redeem?return=' + encodeURIComponent(currentLocation);
 		});
 	}
 	
