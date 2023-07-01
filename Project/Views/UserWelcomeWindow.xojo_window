@@ -769,6 +769,8 @@ End
 #tag Events LoginView
 	#tag Event
 		Sub DocumentComplete(url as String)
+		  #Pragma Unused url
+		  
 		  If Self.PagePanel1.SelectedPanelIndex <> Self.PageLogin Then
 		    Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
 		  End If

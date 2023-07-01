@@ -148,7 +148,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -171,7 +170,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListDocuments(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Private Sub APICallback_ListProjects(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
 		  If Not Response.Success Then
@@ -179,31 +178,45 @@ End
 		    Return
 		  End If
 		  
-		  Var Dicts() As Variant = Response.JSON
-		  If Dicts.Count = 0 Then
+		  Var TotalResults As Integer
+		  Var Results() As Variant
+		  Try
+		    Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
+		    TotalResults = Parsed.Value("totalResults")
+		    Results = Parsed.Value("results")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing page of results.")
 		    Return
-		  End If
+		  End Try
 		  
-		  Var SelectedDocuments() As String
-		  For I As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.RowSelectedAt(I) Then
-		      Var Document As BeaconAPI.Document = Self.List.RowTagAt(I)
-		      SelectedDocuments.Add(Document.ResourceURL)
+		  Var SelectedProjects() As String
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    If Self.List.RowSelectedAt(Idx) Then
+		      Var Project As BeaconAPI.Project = Self.List.RowTagAt(Idx)
+		      SelectedProjects.Add(Project.ProjectId)
 		    End If
 		  Next
 		  
-		  For Each Dict As Dictionary In Dicts
-		    Var Document As New BeaconAPI.Document(Dict)
+		  For Each Member As Variant In Results
+		    If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
 		    
-		    Self.List.AddRow("")
-		    Var Idx As Integer = Self.List.LastAddedRowIndex
-		    Self.List.CellTextAt(Idx, Self.ColumnName) = Document.Name
-		    Self.List.CellTextAt(Idx, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
-		    Self.List.CellTextAt(Idx, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
-		    Self.List.CellTextAt(Idx, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		    Self.List.CellTextAt(Idx, Self.ColumnDownloads) = Document.DownloadCount.ToString(Locale.Raw, "#,##0")
-		    Self.List.RowTagAt(Idx) = Document
-		    Self.List.RowSelectedAt(Idx) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
+		    Try
+		      Var Project As New BeaconAPI.Project(Dictionary(Member.ObjectValue))
+		      Self.List.AddRow("")
+		      Var RowIdx As Integer = Self.List.LastAddedRowIndex
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
+		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
+		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnDownloads) = Project.DownloadCount.ToString(Locale.Current, "#,##0")
+		      Self.List.RowTagAt(RowIdx) = Project
+		      Self.List.RowSelectedAt(RowIdx) = SelectedProjects.IndexOf(Project.ProjectId) > -1
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Adding result to list.")
+		      Continue
+		    End Try
 		  Next
 		  
 		  Self.List.InvalidateScrollPosition
@@ -225,10 +238,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mHasBeenShown As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLoadedBound As Integer
 	#tag EndProperty
 
 
@@ -257,8 +266,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -275,18 +284,15 @@ End
 		  End If
 		  
 		  Var Bound As Integer = Offset + RowCount
-		  If Bound > Self.mLoadedBound Then
-		    
-		  End If
-		  Self.mLoadedBound = Bound
 		  
 		  #if DebugBuild
 		    System.DebugLog("Looking for projects " + Offset.ToString + "-" + Bound.ToString + "…")
 		  #endif
 		  
 		  Var Params As New Dictionary
-		  Params.Value("offset") = Offset
-		  Params.Value("count") = RowCount
+		  Params.Value("page") = CType(Floor(Offset / RowCount), Integer) + 1
+		  Params.Value("pageSize") = RowCount
+		  Params.Value("gameId") = Self.FilterBar.GameId
 		  If Self.FilterBar.Mask > CType(0, UInt64) Then
 		    Params.Value("mask") = Self.FilterBar.Mask
 		  End If
@@ -297,11 +303,11 @@ End
 		  End If
 		  
 		  If Self.FilterBar.ConsoleSafe Then
-		    Params.Value("console_only") = True
+		    Params.Value("consoleSafe") = True
 		  End If
 		  
 		  If Self.FilterBar.RequireAllMaps Then
-		    Params.Value("mask_require_all") = True
+		    Params.Value("maskRequireAll") = True
 		  End If
 		  
 		  Select Case Me.SortingColumn
@@ -310,11 +316,11 @@ End
 		  Case Self.ColumnMaps
 		    Params.Value("sort") = "map"
 		  Case Self.ColumnConsole
-		    Params.Value("sort") = "console_safe"
+		    Params.Value("sort") = "consoleSafe"
 		  Case Self.ColumnUpdated
-		    Params.Value("sort") = "last_update"
+		    Params.Value("sort") = "lastUpdate"
 		  Case Self.ColumnDownloads
-		    Params.Value("sort") = "download_count"
+		    Params.Value("sort") = "downloadCount"
 		  End Select
 		  
 		  If Me.ColumnSortDirectionAt(Me.SortingColumn) = DesktopListbox.SortDirections.Descending Then
@@ -323,7 +329,7 @@ End
 		    Params.Value("direction") = "asc"
 		  End If
 		  
-		  Var Request As New BeaconAPI.Request("project", "GET", Params, AddressOf APICallback_ListDocuments)
+		  Var Request As New BeaconAPI.Request("/projects", "GET", Params, AddressOf APICallback_ListProjects)
 		  Self.APISocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -348,8 +354,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
-		    Self.OpenDocument(Document.ResourceURL)
+		    Var Project As BeaconAPI.Project = Me.RowTagAt(Row)
+		    Self.OpenProject(Project.URL)
 		  Next
 		End Sub
 	#tag EndEvent

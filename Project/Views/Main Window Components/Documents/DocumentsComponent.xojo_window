@@ -467,7 +467,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub LoadImportedDocuments(Projects() As Beacon.Project)
 		  For Each Project As Beacon.Project In Projects
-		    Self.NewDocument(Project)
+		    Self.NewProject(Project)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -496,16 +496,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewDocument()
+		Sub NewProject()
 		  // This version prompts the user to select a game
 		  
 		  // At the moment, since Ark is the only supported game, we'll just forward this to the game-specific version
-		  Self.NewDocument(Ark.Identifier)
+		  Self.NewProject(Ark.Identifier)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewDocument(Project As Beacon.Project)
+		Sub NewProject(Project As Beacon.Project)
 		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity)
 		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
 		  NavItem.IsFlexible = True
@@ -518,7 +518,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewDocument(GameID As String)
+		Sub NewProject(GameId As String)
 		  If Self.CheckGameDatabase(GameID) = False Then
 		    Return
 		  End If
@@ -530,7 +530,7 @@ End
 		  Project.Modified = False
 		  NewDocumentNumber = NewDocumentNumber + 1
 		  
-		  Self.NewDocument(Project)
+		  Self.NewProject(Project)
 		End Sub
 	#tag EndMethod
 
@@ -557,27 +557,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL)
+		Sub OpenProject(URL As Beacon.ProjectURL)
 		  Var Actions() As Beacon.ScriptAction
-		  Self.OpenDocument(URL, True, Actions)
+		  Self.OpenProject(URL, True, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL, Actions() As Beacon.ScriptAction)
-		  Self.OpenDocument(URL, True, Actions)
+		Sub OpenProject(URL As Beacon.ProjectURL, Actions() As Beacon.ScriptAction)
+		  Self.OpenProject(URL, True, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean)
+		Sub OpenProject(URL As Beacon.ProjectURL, AddToRecents As Boolean)
 		  Var Actions() As Beacon.ScriptAction
-		  Self.OpenDocument(URL, AddToRecents, Actions)
+		  Self.OpenProject(URL, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(URL As Beacon.ProjectURL, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
+		Sub OpenProject(URL As Beacon.ProjectURL, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
 		  Var Hash As String = URL.Hash
 		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
 		  If (NavItem Is Nil) = False Then
@@ -607,29 +607,29 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem)
+		Sub OpenProject(File As FolderItem)
 		  Var Actions() As Beacon.ScriptAction
-		  Self.OpenDocument(File, True, Actions)
+		  Self.OpenProject(File, True, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem, Actions() As Beacon.ScriptAction)
-		  Self.OpenDocument(File, True, Actions)
+		Sub OpenProject(File As FolderItem, Actions() As Beacon.ScriptAction)
+		  Self.OpenProject(File, True, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean)
+		Sub OpenProject(File As FolderItem, AddToRecents As Boolean)
 		  Var Actions() As Beacon.ScriptAction
-		  Self.OpenDocument(File, AddToRecents, Actions)
+		  Self.OpenProject(File, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
+		Sub OpenProject(File As FolderItem, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
 		  Var URL As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(File))
-		  Self.OpenDocument(URL, AddToRecents, Actions)
+		  Self.OpenProject(URL, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
 
@@ -750,29 +750,29 @@ End
 #tag EndEvents
 #tag Events RecentDocumentsComponent1
 	#tag Event
-		Sub OpenDocument(URL As Beacon.ProjectURL)
-		  Self.OpenDocument(URL)
+		Sub OpenProject(URL As Beacon.ProjectURL)
+		  Self.OpenProject(URL)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CloudDocumentsComponent1
 	#tag Event
-		Sub OpenDocument(URL As Beacon.ProjectURL)
-		  Self.OpenDocument(URL)
+		Sub OpenProject(URL As Beacon.ProjectURL)
+		  Self.OpenProject(URL)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CloseDocument(URL As Beacon.ProjectURL) As Boolean
+		Function CloseProject(URL As Beacon.ProjectURL) As Boolean
 		  Var Hash As String = URL.Hash
 		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
 		  If NavItem Is Nil Then
@@ -793,13 +793,13 @@ End
 #tag EndEvents
 #tag Events CommunityDocumentsComponent1
 	#tag Event
-		Sub OpenDocument(URL As Beacon.ProjectURL)
-		  Self.OpenDocument(URL)
+		Sub OpenProject(URL As Beacon.ProjectURL)
+		  Self.OpenProject(URL)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

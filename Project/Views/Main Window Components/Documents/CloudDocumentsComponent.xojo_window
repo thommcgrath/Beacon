@@ -27,449 +27,131 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    Transparent     =   True
    Visible         =   True
    Width           =   804
-   Begin DesktopPagePanel Pages
+   Begin BeaconAPI.Socket APISocket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin DocumentFilterControl FilterBar
       AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      Composited      =   False
+      ConsoleSafe     =   False
       Enabled         =   True
-      Height          =   508
+      HasBackgroundColor=   False
+      Height          =   62
       Index           =   -2147483648
       InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      RequireAllMaps  =   False
+      Scope           =   2
+      SearchDelayPeriod=   250
+      ShowFullControls=   True
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   804
+   End
+   Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowInfiniteScroll=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
+      Bold            =   False
+      ColumnCount     =   6
+      ColumnWidths    =   "46,2*,*,100,70,220"
+      DefaultRowHeight=   26
+      DefaultSortColumn=   "#ColumnUpdated"
+      DefaultSortDirection=   -1
+      DropIndicatorVisible=   False
+      EditCaption     =   "Open"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   445
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   " 	Name	Map	Console Safe	Revision	Last Updated"
+      Italic          =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   5
-      Panels          =   ""
+      PreferencesKey  =   "Cloud Documents"
+      RequiresSelection=   False
+      RowSelectionType=   1
       Scope           =   2
-      SelectedPanelIndex=   0
-      TabIndex        =   0
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   63
       Transparent     =   False
-      Value           =   3
+      TypeaheadColumn =   "#ColumnName"
+      Underline       =   False
+      Visible         =   True
+      VisibleRowCount =   0
+      Width           =   804
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
+   Begin FadedSeparator FadedSeparator1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   62
+      Transparent     =   True
       Visible         =   True
       Width           =   804
-      Begin DesktopProgressBar LoadingProgressBar
-         Active          =   False
-         AllowAutoDeactivate=   True
-         AllowTabStop    =   True
-         Enabled         =   True
-         Height          =   20
-         Indeterminate   =   True
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   277
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumValue    =   0
-         PanelIndex      =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         Tooltip         =   ""
-         Top             =   256
-         Transparent     =   False
-         Value           =   0.0
-         Visible         =   True
-         Width           =   250
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
-      End
-      Begin DesktopLabel LoadingLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   277
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Loading projects…"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   232
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   250
-      End
-      Begin DocumentFilterControl FilterBar
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         Composited      =   False
-         ConsoleSafe     =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   62
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         RequireAllMaps  =   False
-         Scope           =   2
-         SearchDelayPeriod=   250
-         ShowFullControls=   True
-         TabIndex        =   0
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   804
-      End
-      Begin BeaconListbox List
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   False
-         AllowInfiniteScroll=   False
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
-         Bold            =   False
-         ColumnCount     =   6
-         ColumnWidths    =   "46,2*,*,100,70,220"
-         DefaultRowHeight=   26
-         DefaultSortColumn=   "#ColumnUpdated"
-         DefaultSortDirection=   -1
-         DropIndicatorVisible=   False
-         EditCaption     =   "Open"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         GridLineStyle   =   0
-         HasBorder       =   False
-         HasHeader       =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         HeadingIndex    =   -1
-         Height          =   445
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   " 	Name	Map	Console Safe	Revision	Last Updated"
-         Italic          =   False
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         PreferencesKey  =   "Cloud Documents"
-         RequiresSelection=   False
-         RowSelectionType=   1
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   63
-         Transparent     =   False
-         TypeaheadColumn =   "#ColumnName"
-         Underline       =   False
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   804
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
-      Begin DesktopLabel LoginMessageLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   213
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Looks like there was a problem signing you in."
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   228
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   379
-      End
-      Begin UITweaks.ResizedPushButton LoginActionButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Log In"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   362
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   260
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel PermissionMessageLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   75
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Your cloud features are disabled. Turn them on to access projects stored in the cloud."
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   228
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   655
-      End
-      Begin UITweaks.ResizedPushButton PermissionActionButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Turn On"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   362
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   260
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin DesktopLabel ErrorMessageLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   74
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   5
-         TabStop         =   True
-         Text            =   "There was an error loading your cloud projects."
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   212
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   655
-      End
-      Begin UITweaks.ResizedPushButton ErrorActionButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Try Again"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   357
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   5
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   276
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   90
-      End
-      Begin DesktopLabel ErrorExplanationLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   74
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   5
-         TabStop         =   True
-         Text            =   "This is a placeholder"
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   244
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   655
-      End
-      Begin FadedSeparator FadedSeparator1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         ContentHeight   =   0
-         Enabled         =   True
-         Height          =   1
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollActive    =   False
-         ScrollingEnabled=   False
-         ScrollSpeed     =   20
-         TabIndex        =   1
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   62
-         Transparent     =   True
-         Visible         =   True
-         Width           =   804
-      End
-   End
-   Begin BeaconAPI.Socket APISocket
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
    End
 End
 #tag EndDesktopWindow
@@ -500,38 +182,19 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Resize(Initial As Boolean)
-		  #Pragma Unused Initial
-		  
-		  Var LoadingGroup As New ControlGroup(Self.LoadingLabel, Self.LoadingProgressBar)
-		  LoadingGroup.Left = (Self.Width - LoadingGroup.Width) / 2
-		  LoadingGroup.Top = (Self.Height - LoadingGroup.Height) / 2
-		  
-		  Var LoginGroup As New ControlGroup(Self.LoginMessageLabel, Self.LoginActionButton)
-		  LoginGroup.Left = (Self.Width - LoginGroup.Width) / 2
-		  LoginGroup.Top = (Self.Height - LoginGroup.Height) / 2
-		  
-		  Var PermissionGroup As New ControlGroup(Self.PermissionMessageLabel, Self.PermissionActionButton)
-		  PermissionGroup.Left = (Self.Width - PermissionGroup.Width) / 2
-		  PermissionGroup.Top = (Self.Height - PermissionGroup.Height) / 2
-		  
-		  Var ErrorGroup As New ControlGroup(Self.ErrorMessageLabel, Self.ErrorExplanationLabel, Self.ErrorActionButton)
-		  ErrorGroup.Left = (Self.Width - ErrorGroup.Width) / 2
-		  ErrorGroup.Top = (Self.Height - ErrorGroup.Height) / 2
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  Self.RefreshList()
+		  If Self.mHasBeenShown = False Then
+		    Self.mHasBeenShown = True
+		    Self.Load
+		  End If
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DeleteDocument(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Private Sub APICallback_DeleteProject(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Response.Success Then
 		    // Remove from recents
 		    Var Recents() As Beacon.ProjectURL = Preferences.RecentDocuments
@@ -559,17 +222,58 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListDocuments(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Private Sub APICallback_ListProjects(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
 		  Self.mRefreshing = False
 		  
-		  If Response.HTTPStatus = 401 Then
-		    Self.Pages.SelectedPanelIndex = Self.PageLogin
+		  If Not Response.Success Then
+		    Break
 		    Return
 		  End If
 		  
-		  Self.UpdateList(Response)
+		  Var TotalResults As Integer
+		  Var Results() As Variant
+		  Try
+		    Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
+		    TotalResults = Parsed.Value("totalResults")
+		    Results = Parsed.Value("results")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing page of results.")
+		    Return
+		  End Try
+		  
+		  Var SelectedProjects() As String
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    If Self.List.RowSelectedAt(Idx) Then
+		      Var Project As BeaconAPI.Project = Self.List.RowTagAt(Idx)
+		      SelectedProjects.Add(Project.ProjectId)
+		    End If
+		  Next
+		  
+		  For Each Member As Variant In Results
+		    If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
+		    Try
+		      Var Project As New BeaconAPI.Project(Dictionary(Member.ObjectValue))
+		      Self.List.AddRow("")
+		      Var RowIdx As Integer = Self.List.LastAddedRowIndex
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
+		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
+		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnRevision) = Project.Revision.ToString(Locale.Current, "#,##0")
+		      Self.List.RowTagAt(RowIdx) = Project
+		      Self.List.RowSelectedAt(RowIdx) = SelectedProjects.IndexOf(Project.ProjectId) > -1
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Adding result to list.")
+		      Continue
+		    End Try
+		  Next
+		  
+		  Self.List.InvalidateScrollPosition
 		End Sub
 	#tag EndMethod
 
@@ -624,32 +328,25 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Load()
+		  If Not Self.mHasBeenShown Then
+		    Return
+		  End If
+		  
+		  // This should trigger List.LoadMoreRows which will do the actual work.
+		  Self.List.ScrollPosition = 0
+		  Self.List.RemoveAllRows()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged, Preferences.Notification_OnlineStateChanged, Preferences.Notification_OnlineTokenChanged
-		    Self.RefreshList()
+		    Self.Load()
 		  End Select
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub RefreshList()
-		  If Self.mRefreshing Then
-		    Return
-		  End If
-		  
-		  If Preferences.OnlineEnabled = False Or App.IdentityManager.CurrentIdentity Is Nil Then
-		    Self.Pages.SelectedPanelIndex = Self.PagePermission
-		    Return
-		  End If
-		  
-		  Var Request As New BeaconAPI.Request("/user/projects", "GET", AddressOf APICallback_ListDocuments)
-		  Self.APISocket.Start(Request)
-		  
-		  Self.Pages.SelectedPanelIndex = Self.PageLoading
-		  Self.mRefreshing = True
 		End Sub
 	#tag EndMethod
 
@@ -664,86 +361,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateFilter()
-		  Var SelectedDocuments() As String
-		  For I As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.RowSelectedAt(I) Then
-		      Var Document As BeaconAPI.Document = Self.List.RowTagAt(I)
-		      SelectedDocuments.Add(Document.ResourceURL)
-		    End If
-		  Next
-		  
-		  Var SearchText As String = Self.FilterBar.SearchText
-		  Var Mask As UInt64 = Self.FilterBar.Mask
-		  Var ConsoleSafe As Boolean = Self.FilterBar.ConsoleSafe
-		  Var RequireAllMaps As Boolean = Self.FilterBar.RequireAllMaps
-		  Var FilteredDocuments() As BeaconAPI.Document
-		  
-		  For Each Document As BeaconAPI.Document In Self.mDocuments
-		    If ConsoleSafe = True And Document.ConsoleSafe = False Then
-		      Continue
-		    End If
-		    
-		    If Mask > CType(0, UInt64) And ((RequireAllMaps And (Document.MapMask And Mask) <> Mask) Or (RequireAllMaps = False And (Document.MapMask And Mask) = CType(0, UInt64))) Then
-		      Continue
-		    End If
-		    
-		    If Document.Name.IndexOf(SearchText) = -1 Then
-		      Continue
-		    End If
-		    
-		    FilteredDocuments.Add(Document)
-		  Next
-		  
-		  Self.List.RowCount = FilteredDocuments.Count
-		  
-		  For I As Integer = 0 To FilteredDocuments.LastIndex
-		    Var Document As BeaconAPI.Document = FilteredDocuments(I)
-		    
-		    Self.List.CellTextAt(I, Self.ColumnName) = Document.Name
-		    Self.List.CellTextAt(I, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
-		    Self.List.CellTextAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
-		    Self.List.CellTextAt(I, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		    Self.List.CellTextAt(I, Self.ColumnRevision) = Document.Revision.ToString(Locale.Current, "#,##0")
-		    Self.List.RowTagAt(I) = Document
-		    Self.List.RowSelectedAt(I) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
-		  Next
-		  
-		  Self.List.Sort
-		End Sub
+		Attributes( Deprecated = "URLForProject" ) Private Shared Function URLForDocument(Document As BeaconAPI.Project) As Beacon.ProjectURL
+		  Return URLForProject(Document)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(Response As BeaconAPI.Response)
-		  Self.mDocuments.ResizeTo(-1)
-		  
-		  If Response.Success = False Then
-		    Self.Pages.SelectedPanelIndex = Self.PageError
-		    Self.ErrorExplanationLabel.Text = Response.Message
-		    Return
-		  End If
-		  
-		  Var Dicts() As Variant
-		  Try
-		    Dicts = Response.JSON
-		  Catch Err As RuntimeException
-		  End Try
-		  For Each Dict As Dictionary In Dicts
-		    Try
-		      Var Document As New BeaconAPI.Document(Dict)
-		      Self.mDocuments.Add(Document)
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
-		  
-		  Self.UpdateFilter()
-		  Self.Pages.SelectedPanelIndex = Self.PageList
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function URLForDocument(Document As BeaconAPI.Document) As Beacon.ProjectURL
-		  Return Beacon.ProjectURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
+		Private Shared Function URLForProject(Project As BeaconAPI.Project) As Beacon.ProjectURL
+		  Return Project.URL(Beacon.ProjectURL.TypeCloud)
 		End Function
 	#tag EndMethod
 
@@ -754,7 +379,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mDocuments() As BeaconAPI.Document
+		Private mHasBeenShown As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProjects() As BeaconAPI.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -806,10 +435,29 @@ End
 
 #tag EndWindowCode
 
+#tag Events APISocket
+	#tag Event
+		Sub WorkCompleted()
+		  Self.Progress = BeaconSubview.ProgressNone
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WorkProgress(Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
+		  #Pragma Unused Request
+		  
+		  Self.Progress = BytesReceived / BytesTotal
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WorkStarted()
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events FilterBar
 	#tag Event
 		Sub Changed()
-		  Self.UpdateFilter
+		  Self.Load
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -818,8 +466,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -833,14 +481,14 @@ End
 		    Return
 		  End If
 		  
-		  Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
-		  If Document Is Nil Then
+		  Var Project As BeaconAPI.Project = Me.RowTagAt(Row)
+		  If Project Is Nil Then
 		    Return
 		  End If
 		  
 		  Var IconColor As Color = TextColor.AtOpacity(0.5)
 		  Var Icon As Picture
-		  If Document.IsGuest Then
+		  If Project.IsGuest Then
 		  Else
 		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
 		  End If
@@ -874,12 +522,12 @@ End
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnUpdated
-		    Var Row1Document As BeaconAPI.Document = Me.RowTagAt(Row1)
-		    Var Row2Document As BeaconAPI.Document = Me.RowTagAt(Row2)
+		    Var Row1Project As BeaconAPI.Project = Me.RowTagAt(Row1)
+		    Var Row2Project As BeaconAPI.Project = Me.RowTagAt(Row2)
 		    
-		    If Row1Document.LastUpdated.SecondsFrom1970 > Row2Document.LastUpdated.SecondsFrom1970 Then
+		    If Row1Project.LastUpdated.SecondsFrom1970 > Row2Project.LastUpdated.SecondsFrom1970 Then
 		      Result = 1
-		    ElseIf Row1Document.LastUpdated.SecondsFrom1970 < Row2Document.LastUpdated.SecondsFrom1970 Then
+		    ElseIf Row1Project.LastUpdated.SecondsFrom1970 < Row2Project.LastUpdated.SecondsFrom1970 Then
 		      Result = -1
 		    Else
 		      Result = 0
@@ -887,12 +535,12 @@ End
 		    
 		    Return True
 		  Case Self.ColumnRevision
-		    Var Row1Document As BeaconAPI.Document = Me.RowTagAt(Row1)
-		    Var Row2Document As BeaconAPI.Document = Me.RowTagAt(Row2)
+		    Var Row1Project As BeaconAPI.Project = Me.RowTagAt(Row1)
+		    Var Row2Project As BeaconAPI.Project = Me.RowTagAt(Row2)
 		    
-		    If Row1Document.Revision > Row2Document.Revision Then
+		    If Row1Project.Revision > Row2Project.Revision Then
 		      Result = 1
-		    ElseIf Row1Document.Revision < Row2Document.Revision Then
+		    ElseIf Row1Project.Revision < Row2Project.Revision Then
 		      Result = -1
 		    Else
 		      Result = 0
@@ -915,8 +563,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
-		    URLs.Add(Self.URLForDocument(Document))
+		    Var Project As BeaconAPI.Project = Me.RowTagAt(Row)
+		    URLs.Add(Self.URLForProject(Project))
 		  Next
 		  
 		  If URLs.Count = 0 Then
@@ -936,17 +584,17 @@ End
 		  
 		  Var ShouldRefresh As Boolean
 		  For Each URL As Beacon.ProjectURL In URLs
-		    If Self.CloseDocument(URL) = False Then
+		    If Self.CloseProject(URL) = False Then
 		      Continue
 		    End If
 		    
-		    Var Request As New BeaconAPI.Request(URL.URL(Beacon.ProjectURL.URLTypes.Writing), "DELETE", AddressOf APICallback_DeleteDocument)
+		    Var Request As New BeaconAPI.Request(URL.URL(Beacon.ProjectURL.URLTypes.Writing), "DELETE", AddressOf APICallback_DeleteProject)
 		    Self.APISocket.Start(Request)
 		    ShouldRefresh = True
 		  Next
 		  
 		  If ShouldRefresh Then
-		    Self.RefreshList()
+		    Self.Load()
 		  End If
 		End Sub
 	#tag EndEvent
@@ -957,8 +605,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
-		    Self.OpenDocument(Self.URLForDocument(Document))
+		    Var Project As BeaconAPI.Project = Me.RowTagAt(Row)
+		    Self.OpenProject(Self.URLForProject(Project))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -982,8 +630,8 @@ End
 		  
 		  If HitItem.Tag.IsNull = False And HitItem.Tag.Type = Variant.TypeString And HitItem.Tag.StringValue = "versions" Then
 		    If Me.SelectedRowCount = 1 Then
-		      Var Document As BeaconAPI.Document = Me.RowTagAt(Me.SelectedRowIndex)
-		      Var Request As New BeaconAPI.Request("projects/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
+		      Var Project As BeaconAPI.Project = Me.RowTagAt(Me.SelectedRowIndex)
+		      Var Request As New BeaconAPI.Request("projects/" + Project.ProjectId + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
 		      BeaconAPI.Send(Request)
 		      
 		      Self.mVersionProgressKey = CallLater.Schedule(2000, WeakAddressOf ShowVersionProgress)
@@ -992,44 +640,60 @@ End
 		  End If
 		End Function
 	#tag EndEvent
-#tag EndEvents
-#tag Events LoginActionButton
 	#tag Event
-		Sub Pressed()
-		  UserWelcomeWindow.Present(True)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PermissionActionButton
-	#tag Event
-		Sub Pressed()
-		  UserWelcomeWindow.Present(False)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ErrorActionButton
-	#tag Event
-		Sub Pressed()
-		  Self.RefreshList()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events APISocket
-	#tag Event
-		Sub WorkCompleted()
-		  Self.Progress = BeaconSubview.ProgressNone
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub WorkProgress(Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
-		  #Pragma Unused Request
+		Sub LoadMoreRows(Offset As Integer, RowCount As Integer)
+		  If Not Self.mHasBeenShown Then
+		    Return
+		  End If
 		  
-		  Self.Progress = BytesReceived / BytesTotal
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub WorkStarted()
-		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		  Var Bound As Integer = Offset + RowCount
+		  
+		  #if DebugBuild
+		    System.DebugLog("Looking for user projects " + Offset.ToString + "-" + Bound.ToString + "…")
+		  #endif
+		  
+		  Var Params As New Dictionary
+		  Params.Value("page") = Floor(Offset / RowCount) + 1
+		  Params.Value("pageSize") = RowCount
+		  Params.Value("gameId") = Self.FilterBar.GameId
+		  If Self.FilterBar.Mask > CType(0, UInt64) Then
+		    Params.Value("mask") = Self.FilterBar.Mask
+		  End If
+		  
+		  Var Filter As String = Self.FilterBar.SearchText
+		  If Filter.IsEmpty = False Then
+		    Params.Value("search") = Filter
+		  End If
+		  
+		  If Self.FilterBar.ConsoleSafe Then
+		    Params.Value("consoleSafe") = True
+		  End If
+		  
+		  If Self.FilterBar.RequireAllMaps Then
+		    Params.Value("maskRequireAll") = True
+		  End If
+		  
+		  Select Case Me.SortingColumn
+		  Case Self.ColumnName
+		    Params.Value("sort") = "name"
+		  Case Self.ColumnMaps
+		    Params.Value("sort") = "map"
+		  Case Self.ColumnConsole
+		    Params.Value("sort") = "consoleSafe"
+		  Case Self.ColumnUpdated
+		    Params.Value("sort") = "lastUpdate"
+		  Case Self.ColumnRevision
+		    Params.Value("sort") = "revision"
+		  End Select
+		  
+		  If Me.ColumnSortDirectionAt(Me.SortingColumn) = DesktopListbox.SortDirections.Descending Then
+		    Params.Value("direction") = "desc"
+		  Else
+		    Params.Value("direction") = "asc"
+		  End If
+		  
+		  Var Request As New BeaconAPI.Request("/user/projects", "GET", Params, AddressOf APICallback_ListProjects)
+		  Self.APISocket.Start(Request)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

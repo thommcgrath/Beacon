@@ -1020,7 +1020,7 @@ End
 	#tag Event
 		Sub NewDocument()
 		  Self.SwitchView(Self.PageDocuments)
-		  Self.DocumentsComponent1.NewDocument()
+		  Self.DocumentsComponent1.NewProject()
 		End Sub
 	#tag EndEvent
 	#tag Event

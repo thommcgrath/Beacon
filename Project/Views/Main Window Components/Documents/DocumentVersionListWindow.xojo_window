@@ -289,7 +289,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  Var DocumentURL As String = Me.RowTagAt(Me.SelectedRowIndex)
-		  App.MainWindow.Documents.OpenDocument(DocumentURL.Replace("https://", Beacon.ProjectURL.TypeCloud + "://"), False)
+		  App.MainWindow.Documents.OpenProject(DocumentURL.Replace("https://", Beacon.ProjectURL.TypeCloud + "://"), False)
 		  Self.Close
 		End Sub
 	#tag EndEvent

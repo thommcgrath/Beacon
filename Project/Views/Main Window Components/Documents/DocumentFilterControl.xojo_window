@@ -242,7 +242,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event NewDocument()
+		Event NewProject()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -272,6 +272,20 @@ End
 			End Set
 		#tag EndSetter
 		ConsoleSafe As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Ark.Identifier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  // Ignore 
+			End Set
+		#tag EndSetter
+		GameId As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -402,7 +416,7 @@ End
 #tag Events NewDocumentButton
 	#tag Event
 		Sub Pressed()
-		  RaiseEvent NewDocument()
+		  RaiseEvent NewProject()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -696,5 +710,13 @@ End
 		InitialValue="0"
 		Type="Integer"
 		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="GameId"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

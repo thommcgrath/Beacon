@@ -337,7 +337,7 @@ End
 		    End If
 		    
 		    Var URL As Beacon.ProjectURL = Me.RowTagAt(Row)
-		    Self.OpenDocument(URL)
+		    Self.OpenProject(URL)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -357,8 +357,8 @@ End
 #tag EndEvents
 #tag Events FilterBar
 	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
+		Sub NewProject()
+		  Self.NewProject()
 		End Sub
 	#tag EndEvent
 	#tag Event

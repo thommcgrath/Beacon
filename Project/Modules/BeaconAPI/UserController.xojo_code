@@ -2,6 +2,8 @@
 Protected Class UserController
 	#tag Method, Flags = &h21
 		Private Sub Callback_RefreshUserDetails(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  Var Parsed As Dictionary
 		  Try
 		    Parsed = Beacon.ParseJSON(Response.Content)

@@ -2,34 +2,34 @@
 Protected Class DocumentsComponentView
 Inherits BeaconSubview
 	#tag Method, Flags = &h1
-		Protected Function CloseDocument(URL As Beacon.ProjectURL) As Boolean
-		  Return RaiseEvent CloseDocument(URL)
+		Protected Function CloseProject(URL As Beacon.ProjectURL) As Boolean
+		  Return RaiseEvent CloseProject(URL)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub NewDocument()
-		  RaiseEvent NewDocument()
+		Protected Sub NewProject()
+		  RaiseEvent NewProject()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub OpenDocument(URL As Beacon.ProjectURL)
-		  RaiseEvent OpenDocument(URL)
+		Protected Sub OpenProject(URL As Beacon.ProjectURL)
+		  RaiseEvent OpenProject(URL)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event CloseDocument(URL As Beacon.ProjectURL) As Boolean
+		Event CloseProject(URL As Beacon.ProjectURL) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event NewDocument()
+		Event NewProject()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event OpenDocument(URL As Beacon.ProjectURL)
+		Event OpenProject(URL As Beacon.ProjectURL)
 	#tag EndHook
 
 

@@ -92,11 +92,11 @@ Protected Module BeaconAPI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function URL(Path As String = "/", Versioned As Boolean = True) As String
+		Protected Function URL(Path As String = "/", Versioned As Boolean = True, Scheme As String = "https") As String
 		  #if DebugBuild And App.ForceLiveData = False
-		    Var Domain As String = "https://local-api.usebeacon.app"
+		    Var Domain As String = Scheme + "://local-api.usebeacon.app"
 		  #else
-		    Var Domain As String = "https://api.usebeacon.app"
+		    Var Domain As String = Scheme + "://api.usebeacon.app"
 		  #endif
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path

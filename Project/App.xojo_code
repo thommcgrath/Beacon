@@ -280,7 +280,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
 		  If (Self.mMainWindow Is Nil) = False Then
-		    Self.mMainWindow.Documents.NewDocument
+		    Self.mMainWindow.Documents.NewProject
 		  End If
 		  Return True
 		End Function
@@ -780,7 +780,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    
 		    Var FrontmostView As DocumentEditorView = Self.mMainWindow.FrontmostDocumentView(GameID)
 		    If FrontmostView Is Nil Then
-		      Self.mMainWindow.Documents.NewDocument(GameID)
+		      Self.mMainWindow.Documents.NewProject(GameID)
 		      FrontmostView = Self.mMainWindow.FrontmostDocumentView(GameID)
 		    End If
 		    If (FrontmostView Is Nil) = False Then
@@ -807,7 +807,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Actions(0) = Action
 		      
 		      If SaveInfo.BeginsWith(Beacon.ProjectURL.TypeCloud + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeLocal + "://") Or SaveInfo.BeginsWith(Beacon.ProjectURL.TypeWeb + "://") Then
-		        Self.mMainWindow.Documents.OpenDocument(SaveInfo, Actions)
+		        Self.mMainWindow.Documents.OpenProject(SaveInfo, Actions)
 		      Else
 		        Var File As BookmarkedFolderItem
 		        Try
@@ -816,7 +816,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		          Self.Log(Err, CurrentMethodName, "Decoding save info")
 		        End Try
 		        If (File Is Nil) = False And File.Exists Then
-		          Self.mMainWindow.Documents.OpenDocument(File, Actions)
+		          Self.mMainWindow.Documents.OpenProject(File, Actions)
 		        End If
 		      End If
 		    End If
@@ -829,7 +829,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		    
 		    Var FileURL As String = "https://" + URL
-		    Self.mMainWindow.Documents.OpenDocument(FileURL)
+		    Self.mMainWindow.Documents.OpenProject(FileURL)
 		  End If
 		  
 		  Try
@@ -1247,7 +1247,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Function mOpenRecent_OpenFile(Sender As DesktopMenuItem) As Boolean
 		  If (Self.mMainWindow Is Nil) = False Then
 		    Var Project As Beacon.ProjectURL = Sender.Tag
-		    Self.mMainWindow.Documents.OpenDocument(Project)
+		    Self.mMainWindow.Documents.OpenProject(Project)
 		    Return True
 		  End If
 		End Function
@@ -1359,7 +1359,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  If File.ExtensionMatches(Beacon.FileExtensionProject) Then
 		    Self.mMainWindow.BringToFront()
-		    Self.mMainWindow.Documents.OpenDocument(File)
+		    Self.mMainWindow.Documents.OpenProject(File)
 		    Return
 		  End If
 		  

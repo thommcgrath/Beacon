@@ -673,6 +673,8 @@ Inherits DesktopListBox
 		Private Sub mScrollWatchTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
+		  #Pragma Warning "This doesn't work using page counts."
+		  
 		  Var RangeLength As Integer = Self.VisibleRowCount
 		  
 		  If Self.ScrollPosition = Self.mLastScrollPosition And RangeLength = Self.mLastViewportHeight Then
