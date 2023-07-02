@@ -43,6 +43,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       Composited      =   False
       ConsoleSafe     =   False
       Enabled         =   True
+      GameId          =   ""
       HasBackgroundColor=   False
       Height          =   62
       Index           =   -2147483648
@@ -94,7 +95,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   445
+      Height          =   414
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   " 	Name	Map	Console Safe	Revision	Last Updated"
@@ -105,6 +106,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   "Cloud Documents"
       RequiresSelection=   False
       RowSelectionType=   1
@@ -153,6 +155,65 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       Visible         =   True
       Width           =   804
    End
+   Begin DesktopLabel StatusbarLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   483
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   764
+   End
+   Begin FadedSeparator StatusbarSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   477
+      Transparent     =   True
+      Visible         =   True
+      Width           =   804
+   End
 End
 #tag EndDesktopWindow
 
@@ -171,13 +232,15 @@ End
 		  
 		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged, Preferences.Notification_OnlineStateChanged, Preferences.Notification_OnlineTokenChanged)
 		  
-		  RaiseEvent Close
+		  RaiseEvent Closing
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Opening()
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged, Preferences.Notification_OnlineStateChanged, Preferences.Notification_OnlineTokenChanged)
+		  RaiseEvent Opening
+		  Self.UpdateStatusbar()
 		End Sub
 	#tag EndEvent
 
@@ -232,16 +295,20 @@ End
 		    Return
 		  End If
 		  
-		  Var TotalResults As Integer
+		  Var TotalResults, TotalPages As Integer
 		  Var Results() As Variant
 		  Try
 		    Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
 		    TotalResults = Parsed.Value("totalResults")
+		    TotalPages = Parsed.Value("pages")
 		    Results = Parsed.Value("results")
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Parsing page of results.")
 		    Return
 		  End Try
+		  
+		  Self.mTotalPages = TotalPages
+		  Self.mTotalResults = TotalResults
 		  
 		  Var SelectedProjects() As String
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
@@ -274,6 +341,7 @@ End
 		  Next
 		  
 		  Self.List.InvalidateScrollPosition
+		  Self.UpdateStatusbar()
 		End Sub
 	#tag EndMethod
 
@@ -361,6 +429,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateStatusbar()
+		  Var Status As String
+		  If Self.List.SelectedRowCount > 0 Then
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "0,##") + " of " + Language.NounWithQuantity(Self.mTotalResults, "project", "projects") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.mTotalResults, "project", "projects")
+		  End If
+		  If Self.StatusbarLabel.Text <> Status Then
+		    Self.StatusbarLabel.Text = Status
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Attributes( Deprecated = "URLForProject" ) Private Shared Function URLForDocument(Document As BeaconAPI.Project) As Beacon.ProjectURL
 		  Return URLForProject(Document)
 		End Function
@@ -374,7 +456,11 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Close()
+		Event Closing()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Opening()
 	#tag EndHook
 
 
@@ -388,6 +474,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mRefreshing As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTotalPages As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTotalResults As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -641,20 +735,20 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub LoadMoreRows(Offset As Integer, RowCount As Integer)
-		  If Not Self.mHasBeenShown Then
+		Sub LoadMoreRows(Page As Integer)
+		  If Self.mHasBeenShown = False Or (Page > 1 And Page > Self.mTotalPages) Then
 		    Return
 		  End If
 		  
-		  Var Bound As Integer = Offset + RowCount
-		  
 		  #if DebugBuild
-		    System.DebugLog("Looking for user projects " + Offset.ToString + "-" + Bound.ToString + "…")
+		    Var LowerBound As Integer = ((Page - 1) * Me.PageSize) + 1
+		    Var UpperBound As Integer = Page * Me.PageSize
+		    System.DebugLog("Looking for user projects " + LowerBound.ToString + "-" + UpperBound.ToString + "…")
 		  #endif
 		  
 		  Var Params As New Dictionary
-		  Params.Value("page") = Floor(Offset / RowCount) + 1
-		  Params.Value("pageSize") = RowCount
+		  Params.Value("page") = Page
+		  Params.Value("pageSize") = Me.PageSize
 		  Params.Value("gameId") = Self.FilterBar.GameId
 		  If Self.FilterBar.Mask > CType(0, UInt64) Then
 		    Params.Value("mask") = Self.FilterBar.Mask
@@ -694,6 +788,11 @@ End
 		  
 		  Var Request As New BeaconAPI.Request("/user/projects", "GET", Params, AddressOf APICallback_ListProjects)
 		  Self.APISocket.Start(Request)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Self.UpdateStatusbar()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

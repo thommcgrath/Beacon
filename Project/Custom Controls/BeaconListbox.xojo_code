@@ -673,33 +673,21 @@ Inherits DesktopListBox
 		Private Sub mScrollWatchTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  #Pragma Warning "This doesn't work using page counts."
+		  Var ViewportHeight As Integer = Self.VisibleRowCount
 		  
-		  Var RangeLength As Integer = Self.VisibleRowCount
-		  
-		  If Self.ScrollPosition = Self.mLastScrollPosition And RangeLength = Self.mLastViewportHeight Then
+		  If Self.ScrollPosition = Self.mLastScrollPosition And ViewportHeight = Self.mLastViewportHeight Then
 		    Return
 		  End If
 		  
-		  Const LoadAheadFactor = 2 // Number of pages ahead of the viewport to load
-		  Const MinPreloadFactor = 1 // Minimum number of pages ahead of the viewport that should be loaded
+		  Const LoadAheadFactor = 0.25 // Number of pages below the viewport ahead to load
 		  
-		  // Once there is less than a full page of results below the scroll position, request more
-		  Var RangeStart As Integer = Self.ScrollPosition
-		  Var RangeEnd As Integer = RangeStart + RangeLength
+		  Self.mLastScrollPosition = Self.ScrollPosition
+		  Self.mLastViewportHeight = ViewportHeight
 		  
-		  Self.mLastScrollPosition = RangeStart
-		  Self.mLastViewportHeight = RangeLength
-		  
-		  Var MinLoadedRows As Integer = RangeEnd + (RangeLength * MinPreloadFactor)
-		  
-		  If Self.mUpperRequestedBound < MinLoadedRows Then
-		    Var NewUpperBound As Integer = RangeEnd + (RangeLength * LoadAheadFactor)
-		    If NewUpperBound > Self.mUpperRequestedBound Then
-		      Var LoadRowCount As Integer = NewUpperBound - Self.mUpperRequestedBound
-		      RaiseEvent LoadMoreRows(Self.mUpperRequestedBound, LoadRowCount)
-		      Self.mUpperRequestedBound = NewUpperBound
-		    End If
+		  If Self.ScrollPosition + ViewportHeight + (LoadAheadFactor * Self.PageSize) > Self.mUpperRequestedBound Then
+		    Var NextPage As Integer = Ceiling(Self.mUpperRequestedBound / Self.PageSize) + 1
+		    RaiseEvent LoadMoreRows(NextPage)
+		    Self.mUpperRequestedBound = Self.mUpperRequestedBound + Self.PageSize
 		  End If
 		End Sub
 	#tag EndMethod
@@ -857,7 +845,7 @@ Inherits DesktopListBox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event LoadMoreRows(Offset As Integer, RowCount As Integer)
+		Event LoadMoreRows(Page As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -989,6 +977,10 @@ Inherits DesktopListBox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPageSize As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPostOpenInvalidateCallbackKey As String
 	#tag EndProperty
 
@@ -1011,6 +1003,27 @@ Inherits DesktopListBox
 	#tag Property, Flags = &h21
 		Private mUpperRequestedBound As Integer
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPageSize
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Value = Max(Value, 1)
+			  If Self.mPageSize <> Value Then
+			    Self.mPageSize = Value
+			    If Self.AllowInfiniteScroll Then
+			      Self.ScrollPosition = 0
+			      Self.RemoveAllRows()
+			    End If
+			  End If
+			End Set
+		#tag EndSetter
+		PageSize As Integer
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		PreferencesKey As String
@@ -1092,20 +1105,6 @@ Inherits DesktopListBox
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="GridLineStyle"
-			Visible=true
-			Group="Appearance"
-			InitialValue="0"
-			Type="GridLineStyles"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Horizontal"
-				"2 - Vertical"
-				"3 - Both"
-			#tag EndEnumValues
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -1209,6 +1208,20 @@ Inherits DesktopListBox
 			InitialValue="100"
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GridLineStyle"
+			Visible=true
+			Group="Appearance"
+			InitialValue="0"
+			Type="GridLineStyles"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Horizontal"
+				"2 - Vertical"
+				"3 - Both"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Tooltip"
@@ -1449,6 +1462,14 @@ Inherits DesktopListBox
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PageSize"
+			Visible=true
+			Group="Behavior"
+			InitialValue="100"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

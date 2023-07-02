@@ -37,6 +37,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       Composited      =   False
       ConsoleSafe     =   False
       Enabled         =   True
+      GameId          =   ""
       HasBackgroundColor=   False
       Height          =   62
       Index           =   -2147483648
@@ -118,7 +119,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   457
+      Height          =   426
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Name	Map	Console Safe	Last Updated	Downloads"
@@ -129,6 +130,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   "Community Documents"
       RequiresSelection=   False
       RowSelectionType=   1
@@ -153,10 +155,76 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin DesktopLabel StatusbarLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   495
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   736
+   End
+   Begin FadedSeparator StatusbarSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   489
+      Transparent     =   True
+      Visible         =   True
+      Width           =   776
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  RaiseEvent Opening
+		  Self.UpdateStatusbar()
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
@@ -178,16 +246,20 @@ End
 		    Return
 		  End If
 		  
-		  Var TotalResults As Integer
+		  Var TotalResults, TotalPages As Integer
 		  Var Results() As Variant
 		  Try
 		    Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
 		    TotalResults = Parsed.Value("totalResults")
+		    TotalPages = Parsed.Value("pages")
 		    Results = Parsed.Value("results")
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Parsing page of results.")
 		    Return
 		  End Try
+		  
+		  Self.mTotalPages = TotalPages
+		  Self.mTotalResults = TotalResults
 		  
 		  Var SelectedProjects() As String
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
@@ -220,6 +292,7 @@ End
 		  Next
 		  
 		  Self.List.InvalidateScrollPosition
+		  Self.UpdateStatusbar()
 		End Sub
 	#tag EndMethod
 
@@ -235,9 +308,36 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatusbar()
+		  Var Status As String
+		  If Self.List.SelectedRowCount > 0 Then
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "0,##") + " of " + Language.NounWithQuantity(Self.mTotalResults, "project", "projects") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.mTotalResults, "project", "projects")
+		  End If
+		  If Self.StatusbarLabel.Text <> Status Then
+		    Self.StatusbarLabel.Text = Status
+		  End If
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Opening()
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
 		Private mHasBeenShown As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTotalPages As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTotalResults As Integer
 	#tag EndProperty
 
 
@@ -278,20 +378,20 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub LoadMoreRows(Offset As Integer, RowCount As Integer)
-		  If Not Self.mHasBeenShown Then
+		Sub LoadMoreRows(Page As Integer)
+		  If Self.mHasBeenShown = False Or (Page > 1 And Page > Self.mTotalPages) Then
 		    Return
 		  End If
 		  
-		  Var Bound As Integer = Offset + RowCount
-		  
 		  #if DebugBuild
-		    System.DebugLog("Looking for projects " + Offset.ToString + "-" + Bound.ToString + "…")
+		    Var LowerBound As Integer = ((Page - 1) * Me.PageSize) + 1
+		    Var UpperBound As Integer = Page * Me.PageSize
+		    System.DebugLog("Looking for community projects " + LowerBound.ToString + "-" + UpperBound.ToString + "…")
 		  #endif
 		  
 		  Var Params As New Dictionary
-		  Params.Value("page") = CType(Floor(Offset / RowCount), Integer) + 1
-		  Params.Value("pageSize") = RowCount
+		  Params.Value("page") = Page
+		  Params.Value("pageSize") = Me.PageSize
 		  Params.Value("gameId") = Self.FilterBar.GameId
 		  If Self.FilterBar.Mask > CType(0, UInt64) Then
 		    Params.Value("mask") = Self.FilterBar.Mask
@@ -364,6 +464,11 @@ End
 		  #Pragma Unused Column
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Self.UpdateStatusbar()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events APISocket
