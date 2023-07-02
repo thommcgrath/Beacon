@@ -418,6 +418,18 @@ Protected Class ProjectController
 		      Saved = Response.HTTPStatus = 200 Or Response.HTTPStatus = 201
 		      Message = Self.ErrorMessageFromResponse(Response)
 		    End If
+		    
+		    If Self.mProject.KeepLocalBackup Then
+		      Var BackupFolder As FolderItem = App.BackupsFolder.Child("Projects")
+		      If BackupFolder.CheckIsFolder Then
+		        Var BackupFile As FolderItem = BackupFolder.Child(Self.mProject.UUID + ".beacon")
+		        Try
+		          Saved = BackupFile.Write(SaveData)
+		        Catch LocalErr As RuntimeException
+		          App.Log(LocalErr, CurrentMethodName, "Writing local backup")
+		        End Try
+		      End If
+		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Uploading cloud project")
 		    Message = Err.Message

@@ -8,16 +8,16 @@ Begin BeaconDialog DocumentSaveToCloudWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   142
+   Height          =   174
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   142
+   MaxHeight       =   174
    MaximizeButton  =   False
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   142
+   MinHeight       =   174
    MinimizeButton  =   False
    MinWidth        =   600
    Placement       =   1
@@ -160,7 +160,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   102
+      Top             =   134
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -192,7 +192,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   102
+      Top             =   134
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -224,11 +224,40 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   102
+      Top             =   134
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   140
+   End
+   Begin DesktopCheckBox KeepLocalCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Keep Backup on Computer"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   147
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   94
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      VisualState     =   0
+      Width           =   433
    End
 End
 #tag EndDesktopWindow
@@ -287,6 +316,7 @@ End
 		  Self.mController.Project.NewIdentifier
 		  Var NewURL As String = Beacon.ProjectURL.TypeCloud + "://" + BeaconAPI.URL("projects/" + Self.mController.Project.UUID).Middle(8)
 		  Self.mController.Project.Title = Self.TitleField.Text
+		  Self.mController.Project.KeepLocalBackup = Self.KeepLocalCheck.Value
 		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved
 		  Self.Hide

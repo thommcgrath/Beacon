@@ -343,6 +343,9 @@ Implements ObservationKit.Observable
 		  ElseIf SaveData.HasKey("Trust") Then
 		    Project.mLegacyTrustKey = SaveData.Value("Trust")
 		  End If
+		  If SaveData.HasKey("Keep Local Backup") Then
+		    Project.mKeepLocalBackup = SaveData.Value("Keep Local Backup")
+		  End If
 		  
 		  If Version >= 4 And SaveData.HasKey("EncryptionKeys") And SaveData.Value("EncryptionKeys") IsA Dictionary Then
 		    Var PossibleIdentities(0) As Beacon.Identity
@@ -669,6 +672,21 @@ Implements ObservationKit.Observable
 		  Next
 		  Return -1
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function KeepLocalBackup() As Boolean
+		  Return Self.mKeepLocalBackup
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub KeepLocalBackup(Assigns Value As Boolean)
+		  If Self.mKeepLocalBackup <> Value Then
+		    Self.mKeepLocalBackup = Value
+		    Self.Modified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1040,6 +1058,8 @@ Implements ObservationKit.Observable
 		    ProjectData.Value("Other Properties") = AdditionalProperties
 		  End If
 		  
+		  ProjectData.Value("Keep Local Backup") = Self.mKeepLocalBackup
+		  
 		  If Self.mUseCompression Then
 		    Var Archive As Beacon.Archive = Beacon.Archive.Create()
 		    Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, True))
@@ -1206,6 +1226,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mEncryptedPasswords As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mKeepLocalBackup As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
