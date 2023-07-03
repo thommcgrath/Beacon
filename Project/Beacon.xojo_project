@@ -598,6 +598,7 @@ Class=ProjectLoadException;Modules/Beacon/ProjectLoadException.xojo_code;&h00000
 Class=ConfigSet;Modules/Beacon/ConfigSet.xojo_code;&h000000002E478FFF;&h0000000055ADDFFF;false
 Class=UserController;Modules/BeaconAPI/UserController.xojo_code;&h000000003917CFFF;&h00000000783217FF;false
 Class=OAuthToken;Modules/BeaconAPI/OAuthToken.xojo_code;&h000000005AE11FFF;&h00000000783217FF;false
+Class=ProviderToken;Modules/BeaconAPI/ProviderToken.xojo_code;&h000000006C1BB7FF;&h00000000783217FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=6

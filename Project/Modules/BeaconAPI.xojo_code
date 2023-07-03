@@ -1,6 +1,63 @@
 #tag Module
 Protected Module BeaconAPI
 	#tag Method, Flags = &h1
+		Protected Function GetProviderToken(TokenId As String) As BeaconAPI.ProviderToken
+		  Var Request As New BeaconAPI.Request("/tokens/" + EncodeURLComponent(TokenId))
+		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
+		  If Response.HTTPStatus <> 200 Then
+		    Return Nil
+		  End If
+		  
+		  Var Parsed As Dictionary
+		  Try
+		    Parsed = Beacon.ParseJSON(Response.Content)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing JSON")
+		    Return Nil
+		  End Try
+		  
+		  Try
+		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.ProviderToken.Load(Parsed)
+		    Return Token
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Building ProviderToken from response")
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GetProviderTokens(UserId As String) As BeaconAPI.ProviderToken()
+		  Var Request As New BeaconAPI.Request("/users/" + EncodeURLComponent(UserId) + "/tokens")
+		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
+		  Var Tokens() As BeaconAPI.ProviderToken
+		  If Response.HTTPStatus <> 200 Then
+		    Return Tokens
+		  End If
+		  
+		  Var Parsed() As Variant
+		  Try
+		    Parsed = Beacon.ParseJSON(Response.Content)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing JSON")
+		  End Try
+		  
+		  For Each Member As Variant In Parsed
+		    Try
+		      Var Token As BeaconAPI.ProviderToken = BeaconAPI.ProviderToken.Load(Dictionary(Member.ObjectValue))
+		      If (Token Is Nil) = False Then
+		        Tokens.Add(Token)
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Building ProviderToken from response")
+		    End Try
+		  Next
+		  
+		  Return Tokens
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub Send(Request As BeaconAPI.Request)
 		  // We really want only one socket here so that things queue and stay in order
 		  
