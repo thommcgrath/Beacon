@@ -2,7 +2,7 @@
 Protected Module BeaconAPI
 	#tag Method, Flags = &h1
 		Protected Function GetProviderToken(TokenId As String) As BeaconAPI.ProviderToken
-		  Var Request As New BeaconAPI.Request("/tokens/" + EncodeURLComponent(TokenId))
+		  Var Request As New BeaconAPI.Request("/tokens/" + EncodeURLComponent(TokenId), "GET")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  If Response.HTTPStatus <> 200 Then
 		    Return Nil
@@ -28,7 +28,7 @@ Protected Module BeaconAPI
 
 	#tag Method, Flags = &h1
 		Protected Function GetProviderTokens(UserId As String) As BeaconAPI.ProviderToken()
-		  Var Request As New BeaconAPI.Request("/users/" + EncodeURLComponent(UserId) + "/tokens")
+		  Var Request As New BeaconAPI.Request("/users/" + EncodeURLComponent(UserId) + "/tokens", "GET")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  Var Tokens() As BeaconAPI.ProviderToken
 		  If Response.HTTPStatus <> 200 Then
@@ -107,7 +107,11 @@ Protected Module BeaconAPI
 		  
 		  Var Socket As New URLConnection
 		  Var URL As String = SetupSocket(Socket, Request, AuthHeader)
-		  Var ResponseBody As String = Socket.SendSync(Request.Method, URL)
+		  Var ResponseBody As String
+		  Try
+		    ResponseBody = Socket.SendSync(Request.Method, URL)
+		  Catch Err As RuntimeException
+		  End Try
 		  Var ResponseHeaders As New Dictionary
 		  For Each Header As Pair In Socket.ResponseHeaders
 		    ResponseHeaders.Value(Header.Left) = Header.Right

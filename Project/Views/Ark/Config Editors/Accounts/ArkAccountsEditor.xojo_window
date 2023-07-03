@@ -57,7 +57,7 @@ Begin ArkConfigEditor ArkAccountsEditor
       Height          =   467
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Provider	Account Name	Used By"
+      InitialValue    =   "Name	Provider	Status"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -65,6 +65,7 @@ Begin ArkConfigEditor ArkAccountsEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -117,6 +118,15 @@ Begin ArkConfigEditor ArkAccountsEditor
       Visible         =   True
       Width           =   784
    End
+   Begin Timer RefreshWatchTimer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   100
+      RunMode         =   0
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -126,38 +136,90 @@ End
 		  Var Selected() As String
 		  For I As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.RowSelectedAt(I) Then
-		      Selected.Add(Beacon.ExternalAccount(Self.List.RowTagAt(I)).UUID)
+		      Selected.Add(Self.List.RowTagAt(I).StringValue)
 		    End If
 		  Next
 		  
-		  Var Accounts() As Beacon.ExternalAccount = Self.Project.Accounts.All
-		  Self.List.RowCount = Accounts.Count
+		  Var TokenIds() As String = Self.Project.ProviderTokenIds
+		  Var Profiles() As Beacon.ServerProfile = Self.Project.ServerProfiles
+		  Self.List.RowCount = TokenIds.Count
 		  
-		  Var ProfileCount As Integer = Self.Project.ServerProfileCount
-		  Var Profiles() As Beacon.ServerProfile
-		  For Idx As Integer = 0 To ProfileCount - 1
-		    Profiles.Add(Self.Project.ServerProfile(Idx))
+		  Var UsageCounts As New Dictionary
+		  For Each Profile As Beacon.ServerProfile In Profiles
+		    UsageCounts.Value(Profile.ProviderTokenId) = UsageCounts.Lookup(Profile.ProviderTokenId, 0) + 1
 		  Next
 		  
-		  For Idx As Integer = Accounts.FirstRowIndex To Accounts.LastIndex
-		    Var Account As Beacon.ExternalAccount = Accounts(Idx)
-		    Var ServerCount As Integer
-		    For Each Profile As Beacon.ServerProfile In Profiles
-		      If Profile.ExternalAccountUUID = Account.UUID Then
-		        ServerCount = ServerCount + 1
-		      End If
-		    Next
+		  Var IsRefreshing As Boolean = Self.IsRefreshing
+		  For RowIdx As Integer = 0 To TokenIds.LastIndex
+		    Var TokenId As String = TokenIds(RowIdx)
+		    Self.List.RowTagAt(RowIdx) = TokenId
 		    
-		    Self.List.RowTagAt(Idx) = Account
-		    Self.List.CellTextAt(Idx, Self.ColumnProvider) = Account.Provider
-		    Self.List.CellTextAt(Idx, Self.ColumnLabel) = Account.Label
-		    Self.List.CellTextAt(Idx, Self.ColumnServerCount) = Language.NounWithQuantity(ServerCount, "Server", "Servers")
+		    If Self.mTokens.HasKey(TokenId) Then
+		      Var Token As BeaconAPI.ProviderToken = Self.mTokens.Value(TokenId)
+		      Var UsedCount As Integer = UsageCounts.Lookup(Token.TokenId, 0)
+		      
+		      Self.List.CellTextAt(RowIdx, Self.ColumnLabel) = Token.Label(BeaconAPI.ProviderToken.DetailNormal)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnProvider) = Token.Provider
+		      If Token.IsEncrypted Then
+		        Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = "Error: Decryption key is incorrect"
+		      ElseIf UsedCount = 0 Then
+		        Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = "Unused"
+		      Else
+		        Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = "Used by " + Language.NounWithQuantity(UsedCount, "server", "servers")
+		      End If
+		    Else
+		      Self.List.CellTextAt(RowIdx, Self.ColumnLabel) = TokenId
+		      Self.List.CellTextAt(RowIdx, Self.ColumnProvider) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnStatus) = If(IsRefreshing, "Loading…", "Service not found")
+		    End If
 		  Next
 		  
 		  Self.List.Sort
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+		  #Pragma Unused UserData
+		  #Pragma Unused FireSetupUI
+		  
+		  If Self.mNextRefresh Is Nil Or Self.mNextRefresh < DateTime.Now Then
+		    Self.RefreshTokensList()
+		  End If
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Project As Ark.Project)
+		  Self.mTokens = New Dictionary
+		  Super.Constructor(Project)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub FetchToken(TokenId As String)
+		  Var FetchThread As New Beacon.Thread
+		  AddHandler FetchThread.Run, AddressOf Thread_FetchToken
+		  AddHandler FetchThread.UserInterfaceUpdate, AddressOf Thread_UserInterfaceUpdate
+		  FetchThread.UserData = TokenId
+		  FetchThread.Start
+		  Self.mThreads.Add(FetchThread)
+		  Self.RefreshWatchTimer.RunMode = Timer.RunModes.Multiple
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub FetchUserTokens(Silent As Boolean)
+		  Var FetchThread As New Beacon.Thread
+		  AddHandler FetchThread.Run, AddressOf Thread_FetchTokens
+		  AddHandler FetchThread.UserInterfaceUpdate, AddressOf Thread_UserInterfaceUpdate
+		  FetchThread.UserData = Silent
+		  FetchThread.Start
+		  Self.mThreads.Add(FetchThread)
+		  Self.RefreshWatchTimer.RunMode = Timer.RunModes.Multiple
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
@@ -165,17 +227,143 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function IsRefreshing() As Boolean
+		  For Idx As Integer = 0 To Self.mThreads.LastIndex
+		    If Self.mThreads(Idx).ThreadState = Thread.ThreadStates.Running Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
 
-	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Method, Flags = &h21
+		Private Sub RefreshTokensList()
+		  Var TokenIds() As String = Self.Project.ProviderTokenIds
+		  For Each TokenId As String In TokenIds
+		    Self.FetchToken(TokenId)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_FetchToken(Sender As Beacon.Thread)
+		  Var UpdateDict As New Dictionary("finished": true)
+		  
+		  Try
+		    Var TokenId As String = Sender.UserData
+		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId)
+		    If (Token Is Nil) = False Then
+		      UpdateDict.Value("token") = Token
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Fetching provider token.")
+		  End Try
+		  
+		  Sender.AddUserInterfaceUpdate(UpdateDict)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_FetchTokens(Sender As Beacon.Thread)
+		  Var UpdateDict As New Dictionary("finished": true)
+		  Try
+		    UpdateDict.Value("silent") = Sender.UserData
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Var User As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  If (User Is Nil) = False Then
+		    Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(User.UserId)
+		    UpdateDict.Value("tokens") = Tokens
+		  End If
+		  
+		  Sender.AddUserInterfaceUpdate(UpdateDict)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		  For Each Update As Dictionary In Updates
+		    Try
+		      If Update.HasKey("tokens") Then
+		        Var Tokens() As BeaconAPI.ProviderToken = Update.Value("tokens")
+		        Var HadTokens As Boolean = Tokens.Count > 0
+		        Var Silent As Boolean = Sender.UserData
+		        For Idx As Integer = Tokens.LastIndex DownTo 0
+		          If Self.Project.ProviderTokenKey(Tokens(Idx).TokenId).IsEmpty = False Then
+		            // This token is alread linked to the project
+		            Tokens.RemoveAt(Idx)
+		          End If
+		        Next
+		        
+		        If Tokens.Count = 0 Then
+		          // No existing tokens to link
+		          If Silent = False And HadTokens And Self.ShowConfirm("All your services are already added to this project.", "Would you link to connect a new service to your Beacon account?", "Connect", "Cancel") Then
+		            System.GotoURL(Beacon.WebURL("/account/#oauth"))
+		          End If
+		        Else
+		          // Present link ui
+		          Var NewLink As BeaconAPI.ProviderToken = ArkLinkAccountDialog.Present(Self, Tokens)
+		          If (NewLink Is Nil) = False Then
+		            If NewLink.IsEncrypted = False Then
+		              Self.Project.ProviderTokenKey(NewLink.TokenId) = DecodeBase64(NewLink.EncryptionKey)
+		              Self.mTokens.Value(NewLink.TokenId) = NewLink
+		              Self.Modified = True
+		              Self.SetupUI()
+		            Else
+		              Break
+		            End If
+		          End If
+		        End If
+		      End If
+		      
+		      If Update.HasKey("token") Then
+		        Var Token As BeaconAPI.ProviderToken = Update.Value("token")
+		        If Token.IsEncrypted Then
+		          Var Key As String = Self.Project.ProviderTokenKey(Token.TokenId)
+		          Call Token.Decrypt(Key)
+		        End If
+		        Self.mTokens.Value(Token.TokenId) = Token
+		        Self.SetupUI()
+		      End If
+		      
+		      If Update.Lookup("finished", False) = True Then
+		        For Idx As Integer = Self.mThreads.LastIndex DownTo 0
+		          If Self.mThreads(Idx) = Sender Then
+		            Self.mThreads.RemoveAt(Idx)
+		            Exit For Idx
+		          End If
+		        Next
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Handling token fetch response")
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mNextRefresh As DateTime
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThreads() As Beacon.Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTokens As Dictionary
+	#tag EndProperty
+
+
+	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnProvider, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag Constant, Name = ColumnProvider, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnServerCount, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.account", Scope = Private
+	#tag Constant, Name = ColumnStatus, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 
@@ -190,74 +378,34 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  Var Bound As Integer = Me.LastRowIndex
-		  Var Accounts() As Beacon.ExternalAccount
+		  Var TokenIds(), ServiceNames() As String
 		  For I As Integer = 0 To Bound
 		    If Me.RowSelectedAt(I) = False Then
 		      Continue
 		    End If
 		    
-		    Accounts.Add(Me.RowTagAt(I))
+		    Var TokenId As String = Me.RowTagAt(I)
+		    TokenIds.Add(TokenId)
+		    If Self.mTokens.HasKey(TokenId) Then
+		      ServiceNames.Add(BeaconAPI.ProviderToken(Self.mTokens.Value(TokenId)).Label(BeaconAPI.ProviderToken.DetailLow))
+		    Else
+		      ServiceNames.Add(Me.CellTextAt(I, Self.ColumnLabel))
+		    End If
 		  Next
 		  
-		  If Warn And Self.ShowDeleteConfirmation(Accounts, "account", "accounts") = False Then
+		  If Warn And Self.ShowDeleteConfirmation(ServiceNames, "service", "services") = False Then
 		    Return
 		  End If
 		  
-		  For Each Account As Beacon.ExternalAccount In Accounts
-		    Self.Project.Accounts.Remove(Account)
+		  For Each TokenId As String In TokenIds
+		    Self.Project.RemoveProviderTokenKey(TokenId)
+		    Self.Modified = True
+		    If Self.mTokens.HasKey(TokenId) THen
+		      Self.mTokens.Remove(TokenId)
+		    End If
 		  Next
 		  
 		  Self.SetupUI
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CanPaste(Board As Clipboard) As Boolean
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub PerformCopy(Board As Clipboard)
-		  Var Accounts() As Dictionary
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    Var Account As Beacon.ExternalAccount = Me.RowTagAt(Idx)
-		    Accounts.Add(Account.AsDictionary)
-		  Next
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Accounts, False)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return
-		  End If
-		  
-		  Var Accounts() As Variant
-		  Try
-		    Accounts = Beacon.ParseJSON(Board.RawData(Self.kClipboardType))
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Var Changed As Boolean
-		  For Each Dict As Dictionary In Accounts
-		    Var Account As Beacon.ExternalAccount = Beacon.ExternalAccount.FromDictionary(Dict)
-		    If Account Is Nil Then
-		      Continue
-		    End If
-		    
-		    Self.Project.Accounts.Add(Account)
-		    Changed = True
-		  Next
-		  
-		  If Changed Then
-		    Self.SetupUI
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -265,6 +413,67 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("NewAccount", "Add Service", IconToolbarAdd, "Add a service to this project.", True))
+		  Me.Append(OmniBarItem.CreateSpace)
+		  Me.Append(OmniBarItem.CreateButton("Refresh", "Refresh", IconToolbarRefresh, "Refresh the services list.", True))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  If Item Is Nil Then
+		    Return
+		  End If
+		  
+		  Select Case Item.Name
+		  Case "NewAccount"
+		    Self.FetchUserTokens(False)
+		  Case "Refresh"
+		    Self.RefreshTokensList()
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RefreshWatchTimer
+	#tag Event
+		Sub Action()
+		  If Self.IsRefreshing Then
+		    If (Self.LinkedOmniBarItem Is Nil) = False And Self.LinkedOmniBarItem.HasProgressIndicator = False Then
+		      Self.LinkedOmniBarItem.HasProgressIndicator = True
+		      Self.LinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
+		    End If
+		    
+		    Var LinkButton As OmniBarItem = Self.ConfigToolbar.Item("NewAccount")
+		    If (LinkButton Is Nil) = False And LinkButton.Enabled = True Then
+		      LinkButton.Enabled = False
+		    End If
+		    
+		    Var RefreshButton As OmniBarItem = Self.ConfigToolbar.Item("Refresh")
+		    If (RefreshButton Is Nil) = False And RefreshButton.Enabled = True Then
+		      RefreshButton.Enabled = False
+		    End If
+		    
+		    Return
+		  End If
+		  
+		  Me.RunMode = Timer.RunModes.Off
+		  Self.mNextRefresh = DateTime.Now + New DateInterval(0, 0, 0, 1, 0, 0, 0)
+		  
+		  If (Self.LinkedOmniBarItem Is Nil) = False And Self.LinkedOmniBarItem.HasProgressIndicator = True Then
+		    Self.LinkedOmniBarItem.HasProgressIndicator = False
+		  End If
+		  
+		  Var LinkButton As OmniBarItem = Self.ConfigToolbar.Item("NewAccount")
+		  If (LinkButton Is Nil) = False And LinkButton.Enabled = False Then
+		    LinkButton.Enabled = True
+		  End If
+		  
+		  Var RefreshButton As OmniBarItem = Self.ConfigToolbar.Item("Refresh")
+		  If (RefreshButton Is Nil) = False And RefreshButton.Enabled = False Then
+		    RefreshButton.Enabled = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -237,6 +237,8 @@ Implements ObservationKit.Observable
 		  Self.mConfigSetPriorities.ResizeTo(0)
 		  Self.mConfigSetPriorities(0) = New Beacon.ConfigSetState(BaseSet, True)
 		  
+		  Self.mProviderTokenKeys = New Dictionary
+		  
 		  Self.mUseCompression = True
 		End Sub
 	#tag EndMethod
@@ -551,6 +553,13 @@ Implements ObservationKit.Observable
 		    Next ServerDict
 		  End If
 		  
+		  If SecureDict.HasKey("Provider Token Keys") Then
+		    Var KeysDict As Dictionary = SecureDict.Value("Provider Token Keys")
+		    For Each Entry As DictionaryEntry In KeysDict
+		      Project.mProviderTokenKeys.Value(Entry.Key) = DecodeBase64(Entry.Value)
+		    Next
+		  End If
+		  
 		  Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion)
 		  
 		  If SaveData.HasKey("Other Properties") And (AdditionalProperties Is Nil) = False Then
@@ -799,6 +808,44 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ProviderTokenIds() As String()
+		  Var TokenIds() As String
+		  For Each Entry As DictionaryEntry In Self.mProviderTokenKeys
+		    TokenIds.Add(Entry.Key)
+		  Next
+		  Return TokenIds
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProviderTokenKey(TokenId As String) As String
+		  Return Self.mProviderTokenKeys.Lookup(TokenId, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ProviderTokenKey(TokenId As String, Assigns Key As String)
+		  If Key.IsEmpty Then
+		    Self.RemoveProviderTokenKey(TokenId)
+		    Return
+		  End If
+		  
+		  If Self.mProviderTokenKeys.HasKey(TokenId) And Self.mProviderTokenKeys.Value(TokenId).StringValue.Compare(Key, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mProviderTokenKeys.Value(TokenId) = Key
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProviderTokenKeyCount() As Integer
+		  Return Self.mProviderTokenKeys.KeyCount
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function ReadLegacySecureData(SecureDict As Dictionary, Identity As Beacon.Identity, SkipHashVerification As Boolean = False) As Dictionary
 		  If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
@@ -893,6 +940,15 @@ Implements ObservationKit.Observable
 		  
 		  Self.mObservers.Value(Key) = Refs
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveProviderTokenKey(TokenId As String)
+		  If Self.mProviderTokenKeys.HasKey(TokenId) Then
+		    Self.mProviderTokenKeys.Remove(TokenId)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1042,6 +1098,14 @@ Implements ObservationKit.Observable
 		  ProjectData.Value("Config Set Data") = Sets
 		  If EncryptedSets.KeyCount > 0 Then
 		    EncryptedData.Value("Config Sets Data") = EncryptedSets
+		  End If
+		  
+		  If Self.mProviderTokenKeys.KeyCount > 0 Then
+		    Var KeysDict As New Dictionary
+		    For Each Entry As DictionaryEntry In Self.mProviderTokenKeys
+		      KeysDict.Value(Entry.Key) = EncodeBase64(Entry.Value)
+		    Next
+		    EncryptedData.Value("Provider Token Keys") = KeysDict
 		  End If
 		  
 		  If EncryptedData.KeyCount > 0 Then
@@ -1254,6 +1318,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mProjectPassword As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProviderTokenKeys As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

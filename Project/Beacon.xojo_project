@@ -599,6 +599,7 @@ Class=ConfigSet;Modules/Beacon/ConfigSet.xojo_code;&h000000002E478FFF;&h00000000
 Class=UserController;Modules/BeaconAPI/UserController.xojo_code;&h000000003917CFFF;&h00000000783217FF;false
 Class=OAuthToken;Modules/BeaconAPI/OAuthToken.xojo_code;&h000000005AE11FFF;&h00000000783217FF;false
 Class=ProviderToken;Modules/BeaconAPI/ProviderToken.xojo_code;&h000000006C1BB7FF;&h00000000783217FF;false
+DesktopWindow=ArkLinkAccountDialog;Views/Ark/Config Editors/Accounts/ArkLinkAccountDialog.xojo_window;&h000000005F7BBFFF;&h000000003AD327FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=6

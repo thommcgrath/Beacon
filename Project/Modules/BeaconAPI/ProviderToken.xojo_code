@@ -76,6 +76,39 @@ Protected Class ProviderToken
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Label(Detail As Integer) As String
+		  Var Label As String
+		  
+		  Select Case Self.Provider
+		  Case "Nitrado"
+		    Try
+		      Var UserDict As Dictionary = Self.ProviderSpecific("user", Nil)
+		      Var Username As String = UserDict.Value("username")
+		      Var Id As Integer = UserDict.Value("id")
+		      
+		      If Detail >= Self.DetailLow Then
+		        Label = Username
+		      End If
+		      If Detail >= Self.DetailNormal Then
+		        Label = Label + " (" + Id.ToString(Locale.Current, "0") + ")"
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Building Nitrado service name")
+		    End Try
+		  End Select
+		  
+		  If Label.IsEmpty Then
+		    Label = Self.mTokenId
+		  End If
+		  If Detail >= Self.DetailHigh Then
+		    Label = Self.Provider + ": " + Label
+		  End If
+		  
+		  Return Label
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Load(Dict As Dictionary) As BeaconAPI.ProviderToken
 		  If Dict.HasAllKeys("tokenId", "userId", "provider", "accessToken", "accessTokenExpiration", "providerSpecific") = False Then
 		    Return Nil
@@ -158,6 +191,16 @@ Protected Class ProviderToken
 	#tag Property, Flags = &h21
 		Private mUserId As String
 	#tag EndProperty
+
+
+	#tag Constant, Name = DetailHigh, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = DetailLow, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = DetailNormal, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

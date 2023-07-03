@@ -63,6 +63,7 @@ Protected Class ServerProfile
 		  Self.mAdminNotes = Dict.Lookup("Admin Notes", "")
 		  Self.mProfileColor = CType(Dict.Lookup("Color", 0).IntegerValue, Beacon.ServerProfile.Colors)
 		  Self.mProviderServiceID = Dict.Lookup("Provider Service ID", Nil)
+		  Self.mProviderTokenId = Dict.Lookup("Provider Token Id", "")
 		  
 		  If Dict.HasKey("External Account") Then
 		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
@@ -235,6 +236,7 @@ Protected Class ServerProfile
 		  Dict.Value("Platform") = Self.mPlatform
 		  Dict.Value("Admin Notes") = Self.mAdminNotes
 		  Dict.Value("Color") = CType(Self.mProfileColor, Integer)
+		  Dict.Value("Provider Token Id") = Self.mProviderTokenId
 		  If Self.mExternalAccountUUID <> Nil Then
 		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
 		  End If
@@ -405,6 +407,10 @@ Protected Class ServerProfile
 		Private mProviderServiceID As Variant
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mProviderTokenId As String
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -481,6 +487,23 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		ProviderServiceID As Variant
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mProviderTokenId
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mProviderTokenId <> Value Then
+			    Self.mProviderTokenId = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ProviderTokenId As String
 	#tag EndComputedProperty
 
 
