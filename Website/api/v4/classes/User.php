@@ -43,7 +43,7 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 		$this->requirePasswordChange = filter_var($row->Field('require_password_change'), FILTER_VALIDATE_BOOL);
 		$this->signatures = [];
 		$this->userId = $row->Field('user_id');
-		$this->username = $row->Field('username');
+		$this->username = $row->Field('username') ?? 'Anonymous';
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {

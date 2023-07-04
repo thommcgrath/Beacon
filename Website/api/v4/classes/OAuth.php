@@ -233,9 +233,7 @@ class OAuth implements JsonSerializable {
 			'userId' => $this->userId,
 			'provider' => $this->provider,
 			'accessToken' => $this->AccessToken($decrypted),
-			'refreshToken' => $this->RefreshToken($decrypted),
 			'accessTokenExpiration' => $this->accessTokenExpiration,
-			'refreshTokenExpiration' => $this->refreshTokenExpiration,
 			'providerSpecific' => $this->providerSpecific
 		];
 		if ($decrypted) {

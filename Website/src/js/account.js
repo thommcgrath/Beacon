@@ -196,155 +196,178 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	
 	/* ! Profile */
 	
-	document.getElementById('username_action_button').addEventListener('click', (ev) => {
-		ev.preventDefault();
-		
-		const username = document.getElementById('username_field').value.trim();
-		if (username === '') {
-			BeaconDialog.show('Username can not be empty', 'How did you press the button anyway?');
-			return false;
-		}
-		
-		const params = new URLSearchParams();
-		params.append('username', username);
-		
-		BeaconWebRequest.post('/account/actions/username', params).then((response) => {
-			const message = {
-				message: 'Username changed',
-				explanation: 'Your username has been changed.'
-			};
-			
-			try {
-				const obj = JSON.parse(response.body);
-				message.explanation = `Your username has been changed to "${obj.username}."`;
-			} catch (e) {
-			}
-			BeaconDialog.show(message.message, message.explanation).then(() => {
-				window.location.reload(true);
-			});
-		}).catch((error) => {
-			switch (error.status) {
-			case 401:
-				BeaconDialog.show('Username not changed', 'There was an authentication error.');
-				break;
-			default:
-				BeaconDialog.show('Username not changed', `Sorry, there was a ${error.status} error.`);
-				break;
-			}
+	const usernameActionButton = document.getElementById('username_action_button');
+	const usernameField = document.getElementById('username_field');
+	const suggestedUsernameLink = document.getElementById('suggested-username-link');
+	const newSuggestionLink = document.getElementById('new-suggestion-link');
+	
+	if (usernameActionButton && usernameField) {
+		usernameField.addEventListener('input', (ev) => {
+			usernameActionButton.disabled = ev.target.value.trim() == '';
 		});
-	});
-	
-	document.getElementById('suggested-username-link').addEventListener('click', (ev) => {
-		ev.preventDefault();
 		
-		const field = document.getElementById('username_field');
-		field.value = ev.target.getAttribute('beacon-username');
-		document.getElementById('username_action_button').disabled = field.value.trim() == '';
-		
-		return false;
-	});
-	
-	document.getElementById('new-suggestion-link').addEventListener('click', (ev) => {
-		BeaconWebRequest.get('/account/login/suggest').then((response) => {
-			try {
-				const obj = JSON.parse(response.body);
-				const usernameLink = document.getElementById('suggested-username-link');
-				usernameLink.innerText = obj.username;
-				usernameLink.setAttribute('beacon-username', obj.username);
-			} catch (e) {
+		usernameActionButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			const username = usernameField.value.trim();
+			if (username === '') {
+				BeaconDialog.show('Username can not be empty', 'How did you press the button anyway?');
+				return false;
 			}
-		}).catch(() => {});
+			
+			const params = new URLSearchParams();
+			params.append('username', username);
+			
+			BeaconWebRequest.post('/account/actions/username', params).then((response) => {
+				const message = {
+					message: 'Username changed',
+					explanation: 'Your username has been changed.'
+				};
+				
+				try {
+					const obj = JSON.parse(response.body);
+					message.explanation = `Your username has been changed to "${obj.username}."`;
+				} catch (e) {
+				}
+				BeaconDialog.show(message.message, message.explanation).then(() => {
+					window.location.reload(true);
+				});
+			}).catch((error) => {
+				switch (error.status) {
+				case 401:
+					BeaconDialog.show('Username not changed', 'There was an authentication error.');
+					break;
+				default:
+					BeaconDialog.show('Username not changed', `Sorry, there was a ${error.status} error.`);
+					break;
+				}
+			});
+		});
 		
-		ev.preventDefault();
-		return false;
-	});
-	
-	document.getElementById('username_field').addEventListener('input', (ev) => {
-		document.getElementById('username_action_button').disabled = ev.target.value.trim() == '';
-	});
+		if (suggestedUsernameLink) {
+			suggestedUsernameLink.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				
+				usernameField.value = ev.target.getAttribute('beacon-username');
+				usernameActionButton.disabled = field.value.trim() == '';
+				
+				return false;
+			});
+			
+			if (newSuggestionLink) {
+				newSuggestionLink.addEventListener('click', (ev) => {
+					BeaconWebRequest.get('/account/login/suggest').then((response) => {
+						try {
+							const obj = JSON.parse(response.body);
+							if (suggestedUsernameLink) {
+								suggestedUsernameLink.innerText = obj.username;
+								suggestedUsernameLink.setAttribute('beacon-username', obj.username);
+							}
+						} catch (e) {
+						}
+					}).catch(() => {});
+					
+					ev.preventDefault();
+					return false;
+				});
+			}
+		}
+	}
 	
 	/* ! Security */
 	
-	document.getElementById('password_action_button').addEventListener('click', (event) => {
-		event.preventDefault();
-		
-		const currentPassword = (currentPasswordField) ? currentPasswordField.value : '';
-		const password = (newPasswordField) ? newPasswordField.value : '';
-		const passwordConfirm = (confirmPasswordField) ? confirmPasswordField.value : '';
-		const allowVulnerable = password === known_vulnerable_password;
-		const regenerateKey = document.getElementById('password_regenerate_check').checked;
-		const terminateSessions = regenerateKey;
-		
-		if (password.length < 8) {
-			BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.');
-			return false;
-		}
-		if (password !== passwordConfirm) {
-			BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.');
-			return false;
-		}
-		
-		const body = new URLSearchParams();
-		body.append('current_password', currentPassword);
-		body.append('password', password);
-		body.append('allow_vulnerable', allowVulnerable);
-		if (terminateSessions) {
-			body.append('terminate_sessions', true);
-		}
-		if (regenerateKey) {
-			body.append('regenerate_key', true);
-		}
-		
-		BeaconWebRequest.post('/account/actions/password', body).then((response) => {
-			document.getElementById('change_password_form').reset();
-			
-			try {
-				const obj = JSON.parse(response.body);
-				const msg = {};
-				if (regenerateKey) {
-					msg.message = 'Your password and private key have been changed.';
-				} else {
-					msg.message = 'Your password has been changed.';
-				}
-				msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
-				BeaconDialog.show(msg.message, msg.explanation);
-			} catch (e) {
-				console.log(e)
-				BeaconDialog.show('There was an error. Your password may or may not have been changed.');
-			}
-		}).catch((error) => {
-			let errorMessage = 'Unable to change password';
-			let errorExplanation = `There was a ${error.status} error while trying to change your password.`;
-			try {
-				const obj = JSON.parse(error.body);
-				if (obj.message) {
-					errorExplanation = obj.message;
-				}
-			} catch (e) {
-			}
-			
-			switch (error.status) {
-			case 403:
-				errorMessage = 'Incorrect Two Step Verification Code';
-				errorExplanation = 'Please get a new code from your authenticator app.';
-				break;
-			case 438:
-				known_vulnerable_password = password;
-				errorMessage = 'Your password is vulnerable.';
-				errorExplanation = 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.';
-				break;
-			}
-			
-			BeaconDialog.show(errorMessage, errorExplanation);
-		});
-		
-		return false;
-	});
-	
+	const passwordActionButton = document.getElementById('password_action_button');
+	const passwordRegenerateCheck = document.getElementById('password_regenerate_check');
+	const changePasswordForm = document.getElementById('change_password_form');
 	const currentPasswordField = document.getElementById('password_current_field');
 	const newPasswordField = document.getElementById('password_initial_field');
 	const confirmPasswordField = document.getElementById('password_confirm_field');
-	const passwordActionButton = document.getElementById('password_action_button');
+	const addAuthenticatorButton = document.getElementById('add-authenticator-button');
+	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
+	const addAuthenticatorNicknameField = document.getElementById('add-authenticator-nickname-field');
+	const addAuthenticatorActionButton = document.getElementById('add-authenticator-action-button');
+	const addAuthenticatorCancelButton = document.getElementById('add-authenticator-cancel-button');
+	const addAuthenticatorQRCode = document.getElementById('add-authenticator-qrcode');
+	const timeZoneName = document.getElementById('authenticators_time_zone_name');
+	const replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
+	
+	if (passwordActionButton && passwordRegenerateCheck && changePasswordForm) {
+		passwordActionButton.addEventListener('click', (event) => {
+			event.preventDefault();
+			
+			const currentPassword = (currentPasswordField) ? currentPasswordField.value : '';
+			const password = (newPasswordField) ? newPasswordField.value : '';
+			const passwordConfirm = (confirmPasswordField) ? confirmPasswordField.value : '';
+			const allowVulnerable = password === known_vulnerable_password;
+			const regenerateKey = passwordRegenerateCheck.checked;
+			const terminateSessions = regenerateKey;
+			
+			if (password.length < 8) {
+				BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.');
+				return false;
+			}
+			if (password !== passwordConfirm) {
+				BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.');
+				return false;
+			}
+			
+			const body = new URLSearchParams();
+			body.append('current_password', currentPassword);
+			body.append('password', password);
+			body.append('allow_vulnerable', allowVulnerable);
+			if (terminateSessions) {
+				body.append('terminate_sessions', true);
+			}
+			if (regenerateKey) {
+				body.append('regenerate_key', true);
+			}
+			
+			BeaconWebRequest.post('/account/actions/password', body).then((response) => {
+				changePasswordForm.reset();
+				
+				try {
+					const obj = JSON.parse(response.body);
+					const msg = {};
+					if (regenerateKey) {
+						msg.message = 'Your password and private key have been changed.';
+					} else {
+						msg.message = 'Your password has been changed.';
+					}
+					msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
+					BeaconDialog.show(msg.message, msg.explanation);
+				} catch (e) {
+					console.log(e)
+					BeaconDialog.show('There was an error. Your password may or may not have been changed.');
+				}
+			}).catch((error) => {
+				let errorMessage = 'Unable to change password';
+				let errorExplanation = `There was a ${error.status} error while trying to change your password.`;
+				try {
+					const obj = JSON.parse(error.body);
+					if (obj.message) {
+						errorExplanation = obj.message;
+					}
+				} catch (e) {
+				}
+				
+				switch (error.status) {
+				case 403:
+					errorMessage = 'Incorrect Two Step Verification Code';
+					errorExplanation = 'Please get a new code from your authenticator app.';
+					break;
+				case 438:
+					known_vulnerable_password = password;
+					errorMessage = 'Your password is vulnerable.';
+					errorExplanation = 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.';
+					break;
+				}
+				
+				BeaconDialog.show(errorMessage, errorExplanation);
+			});
+			
+			return false;
+		});
+	}
 	
 	const passwordConfirmCheck = (ev) => {
 		if (!passwordActionButton) {
@@ -370,11 +393,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		confirmPasswordField.addEventListener('input', passwordConfirmCheck);
 	}
 	
-	const addAuthenticatorButton = document.getElementById('add-authenticator-button');
-	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
-	const addAuthenticatorNicknameField = document.getElementById('add-authenticator-nickname-field');
-	const addAuthenticatorActionButton = document.getElementById('add-authenticator-action-button');
-	const addAuthenticatorCancelButton = document.getElementById('add-authenticator-cancel-button');
 	if (addAuthenticatorButton && addAuthenticatorCodeField && addAuthenticatorNicknameField && addAuthenticatorActionButton && addAuthenticatorCancelButton) {
 		try {
 			const generateSecret = () => {
@@ -407,7 +425,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				authenticator.metadata.secret = generateSecret();
 				authenticator.metadata.setup = `otpauth://totp/${encodeURIComponent('Beacon:' + userFullName + ' (' + authenticator.authenticator_id + ')')}?secret=${authenticator.metadata.secret}&issuer=Beacon`;
 				
-				const addAuthenticatorQRCode = document.getElementById('add-authenticator-qrcode');
 				if (addAuthenticatorQRCode) {
 					addAuthenticatorQRCode.src = `/account/assets/qr.php?content=${btoa(authenticator.metadata.setup)}`;
 					addAuthenticatorQRCode.setAttribute('alt', authenticator.metadata.setup);
@@ -480,7 +497,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			}
 		}
 		
-		const timeZoneName = document.getElementById('authenticators_time_zone_name');
 		if (timeZoneName) {
 			timeZoneName.innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		}
@@ -532,7 +548,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		}
 	}
 	
-	const replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
 	if (replaceBackupCodesButton) {
 		replaceBackupCodesButton.addEventListener('click', (ev) => {
 			BeaconDialog.confirm('Replace backup codes?', 'This will replace all of your backup codes with new ones.').then(() => {

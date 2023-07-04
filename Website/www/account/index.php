@@ -40,10 +40,12 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 	<div class="page-panel-nav">
 		<ul>
 			<li class="page-panel-active"><a href="#projects" page="projects">Projects</a></li>
+			<?php if ($user->IsAnonymous() === false) { ?>
 			<li><a href="#omni" page="omni">Omni</a></li>
 			<li><a href="#profile" page="profile">Profile</a></li>
 			<li><a href="#security" page="security">Security</a></li>
 			<li><a href="#sessions" page="sessions">Sessions</a></li>
+			<?php } ?>
 			<li><a href="#oauth" page="oauth">Connections</a></li>
 		</ul>
 	</div>
@@ -52,6 +54,7 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<h1>Projects</h1>
 			<?php include('includes/projects.php'); ?>
 		</div>
+		<?php if ($user->IsAnonymous() === false) { ?>
 		<div class="page-panel-page" page="omni">
 			<h1>Beacon Omni</h1>
 			<?php include('includes/omni.php'); ?>
@@ -68,6 +71,7 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<h1>Sessions</h1>
 			<?php include('includes/sessions.php'); ?>
 		</div>
+		<?php } ?>
 		<div class="page-panel-page" page="oauth">
 			<h1>Connected Services</h1>
 			<?php include('includes/oauth.php'); ?>

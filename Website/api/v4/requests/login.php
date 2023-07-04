@@ -156,8 +156,8 @@ function HandlePublicKeyAuth(string $clientId, &$application, &$publicKey, array
 		$publicKey = $user->PublicKey();
 	}
 	$stringToSign = $userId . ';' . $expiration;
-	$expiration = intval($expiration);
-	if ($expiration < time() || $expiration > time() + 90) {
+	$expiration = filter_var($expiration, FILTER_VALIDATE_INT);
+	if ($expiration < time() || $expiration > time() + 120) {
 		return Response::NewJsonError('Signature has expired or is too far in the future.', null, 400);
 	}
 	$verified = BeaconEncryption::RSAVerify($publicKey, $stringToSign, BeaconCommon::Base64UrlDecode($signature));
@@ -177,6 +177,7 @@ function HandlePublicKeyAuth(string $clientId, &$application, &$publicKey, array
 		}
 		
 		$session = Session::Create($user, $application, $scopes);
+		$database->Commit();
 		Core::SetSession($session);
 		return Response::NewJson($session->OAuthResponse(), 201);
 	} catch (Exception $err) {
