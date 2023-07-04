@@ -144,7 +144,7 @@ Protected Class IdentityManager
 
 	#tag Method, Flags = &h0
 		Function FetchAnonymous(Create As Boolean) As Beacon.Identity
-		  Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT * FROM identities WHERE username IS NULL;")
+		  Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT * FROM identities WHERE username = '' AND merged = FALSE AND banned = FALSE ORDER BY LENGTH(public_key) DESC, signature_version DESC, LENGTH(signature) DESC;")
 		  If Rows.RowCount = 0 Then
 		    If Create Then
 		      Return Self.Create()
@@ -181,25 +181,36 @@ Protected Class IdentityManager
 		    Next
 		    Var Licenses As String = Beacon.GenerateJSON(LicenseSaveData, False)
 		    
-		    Var PrivateKeyDict As Dictionary = Dict.Value("privateKey")
-		    Var EncryptionVersion As Integer = PrivateKeyDict.Value("version")
-		    If EncryptionVersion > 1 Then
-		      App.Log("Unable to import identity because encryption version is too new.")
-		      Return Nil
-		    End If
-		    
-		    Var KeyEncrypted As String = PrivateKeyDict.Value("key")
-		    Var PrivateKeyEncrypted As String = PrivateKeyDict.Value("message")
-		    
 		    Var PrivateKey, CloudKey As String
-		    Try
-		      Var Key As String = Crypto.RSADecrypt(DecodeBase64(KeyEncrypted), Preferences.DevicePrivateKey)
-		      PrivateKey = BeaconEncryption.PEMDecodePrivateKey(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKeyEncrypted)))
-		      CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
-		    Catch Err As RuntimeException
-		      App.Log("Unable to import identity because private key could not be decrypted.")
-		      Return Nil
-		    End Try
+		    If Dict.HasKey("privateKey") Then
+		      Var PrivateKeyDict As Dictionary = Dict.Value("privateKey")
+		      Var EncryptionVersion As Integer = PrivateKeyDict.Value("version")
+		      If EncryptionVersion > 1 Then
+		        App.Log("Unable to import identity because encryption version is too new.")
+		        Return Nil
+		      End If
+		      
+		      Var KeyEncrypted As String = PrivateKeyDict.Value("key")
+		      Var PrivateKeyEncrypted As String = PrivateKeyDict.Value("message")
+		      
+		      Try
+		        Var Key As String = Crypto.RSADecrypt(DecodeBase64(KeyEncrypted), Preferences.DevicePrivateKey)
+		        PrivateKey = BeaconEncryption.PEMDecodePrivateKey(BeaconEncryption.SymmetricDecrypt(Key, DecodeBase64(PrivateKeyEncrypted)))
+		        CloudKey = EncodeBase64(Crypto.RSADecrypt(DecodeBase64(Dict.Value("cloudKey").StringValue), PrivateKey), 0)
+		      Catch Err As RuntimeException
+		        App.Log("Unable to import identity because private key could not be decrypted.")
+		        Return Nil
+		      End Try
+		    Else
+		      Var ExistingIdentity As Beacon.Identity = Self.Fetch(UserId)
+		      If ExistingIdentity Is Nil Then
+		        App.Log("Unable to import identity because the profile is anonymous and the private key is not known.")
+		        Return Nil
+		      End
+		      
+		      PrivateKey = ExistingIdentity.PrivateKey
+		      CloudKey = EncodeBase64(ExistingIdentity.UserCloudKey)
+		    End If
 		    
 		    Self.mDatabase.BeginTransaction
 		    Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT user_id FROM identities WHERE user_id = ?1;", UserId)

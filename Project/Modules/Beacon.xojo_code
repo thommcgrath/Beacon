@@ -1409,15 +1409,28 @@ Protected Module Beacon
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
-		Protected Function WebURL(Path As String = "/") As String
+		Protected Function WebURL(Path As String = "/", Authenticate As Boolean = False) As String
 		  #if DebugBuild And App.ForceLiveData = False
 		    Var Domain As String = "https://local.usebeacon.app"
 		  #else
 		    Var Domain As String = "https://usebeacon.app"
 		  #endif
+		  
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path
 		  End If
+		  
+		  If Authenticate Then
+		    Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		    If (Identity Is Nil) = False And Identity.IsAnonymous Then
+		      Var Expiration As String = Ceiling(DateTime.Now.SecondsFrom1970 + 90).ToString(Locale.Raw, "0")
+		      Var StringToSign As String = Identity.UserId + ";" + Expiration
+		      Var Signature As String = Identity.Sign(StringToSign)
+		      
+		      Path = "/account/auth/app?path=" + EncodeURLComponent(Path) + "&userId=" + EncodeURLComponent(Identity.UserId) + "&expiration=" + EncodeURLComponent(Expiration) + "&signature=" + EncodeBase64URLMBS(Signature)
+		    End If
+		  End If
+		  
 		  Return Domain + Path
 		End Function
 	#tag EndMethod

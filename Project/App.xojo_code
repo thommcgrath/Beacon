@@ -717,7 +717,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "signin"
 		      UserWelcomeWindow.Present(True)
 		    Case "showaccount"
-		      System.GotoURL(Beacon.WebURL("/account/"))
+		      System.GotoURL(Beacon.WebURL("/account/", True))
 		    Case "spawncodes"
 		      Self.ShowSpawnCodes()
 		    Case "reportproblem", "newhelpticket"

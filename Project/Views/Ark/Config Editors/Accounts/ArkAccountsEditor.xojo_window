@@ -300,7 +300,7 @@ End
 		        If Tokens.Count = 0 Then
 		          // No existing tokens to link
 		          If Silent = False And HadTokens And Self.ShowConfirm("All your services are already added to this project.", "Would you link to connect a new service to your Beacon account?", "Connect", "Cancel") Then
-		            System.GotoURL(Beacon.WebURL("/account/#oauth"))
+		            System.GotoURL(Beacon.WebURL("/account/#oauth", True))
 		          End If
 		        Else
 		          // Present link ui

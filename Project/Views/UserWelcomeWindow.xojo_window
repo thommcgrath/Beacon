@@ -356,12 +356,16 @@ Begin DesktopWindow UserWelcomeWindow
       Width           =   216
    End
    Begin URLConnection OAuthStartSocket
+      AllowCertificateValidation=   False
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin URLConnection OAuthRedeemSocket
+      AllowCertificateValidation=   False
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -373,11 +377,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Closing()
-		  If App.IdentityManager.CurrentIdentity Is Nil Then
-		    Quit
-		  Else
-		    App.NextLaunchQueueTask()
-		  End If
+		  App.NextLaunchQueueTask()
 		End Sub
 	#tag EndEvent
 
@@ -723,8 +723,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events PagePanel1
-#tag EndEvents
 #tag Events PrivacyPolicyLabel
 	#tag Event
 		Sub Pressed()
@@ -866,6 +864,7 @@ End
 		  ElseIf HTTPStatus = 201 Then
 		    // Session started
 		    Self.SaveOAuthResponse(Content)
+		    Self.Close
 		  Else
 		    // Something else
 		    Break

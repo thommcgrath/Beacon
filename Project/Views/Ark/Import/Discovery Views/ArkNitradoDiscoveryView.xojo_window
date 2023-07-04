@@ -560,7 +560,7 @@ End
 		    End If
 		    If Update.Lookup("finished", false).BooleanValue = True And Self.mTokens.Count = 0 Then
 		      If Self.ShowConfirm("No Nitrado services are available. Would you like to connect a Nitrado account to your Beacon account?", "Your web browser will be opened so you can connect your accounts.", "Connect", "Cancel") Then
-		        System.GotoURL(Beacon.WebURL("/account/#oauth"))
+		        System.GotoURL(Beacon.WebURL("/account/#oauth", True))
 		      End If
 		      Self.ShouldCancel()
 		    End If
