@@ -194,7 +194,7 @@ Inherits Ark.IntegrationEngine
 		    Self.Log("Updating " + Key + "…")
 		    
 		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		    Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		    Sock.SetFormData(FormData)
 		    Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
 		    If Self.Finished Or Self.CheckError(Sock) Then
@@ -225,41 +225,10 @@ Inherits Ark.IntegrationEngine
 
 	#tag Event
 		Sub Begin()
-		  // To make sure we don't spam the user with more authentication requests than necessary, 
-		  // we obtain a lock here. This event is threaded, so it is safe
-		  
-		  Self.Log("Waiting for another authorization…")
-		  Beacon.OAuth2Client.Lock
-		  Self.Log("Authorizing…", True)
-		  If Self.Finished Then
-		    Beacon.OAuth2Client.Unlock
-		    Return
+		  Var Token As Variant = Beacon.Cache.Fetch(Profile.ProviderTokenId)
+		  If Token.IsNull = False And Token.Type = Variant.TypeObject And Token.ObjectValue IsA BeaconAPI.ProviderToken Then
+		    Self.mProviderToken = Token
 		  End If
-		  
-		  Self.mAccount = Self.Project.Accounts.GetByUUID(Self.Profile.ExternalAccountUUID)
-		  If Self.mAccount Is Nil Or Self.mAccount.IsExpired Then
-		    Self.Authenticate()
-		  End If
-		  
-		  If (Self.mAccount Is Nil) = False Then
-		    // Test that authentication works
-		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		    
-		    // Odd request, but we're just trying to test validity
-		    Self.Log("Testing authentication…")
-		    Self.SendRequest(Sock, "GET", "https://api.nitrado.net/countries/states")
-		    Var Status As Integer = Sock.LastHTTPStatus
-		    If Status = 401 Then
-		      // A new account is needed
-		      Self.Project.Accounts.Remove(Self.mAccount)
-		      Self.mAccount = Nil
-		      
-		      Self.Authenticate()
-		    End If
-		  End If
-		  
-		  Beacon.OAuth2Client.Unlock
 		End Sub
 	#tag EndEvent
 
@@ -275,7 +244,7 @@ Inherits Ark.IntegrationEngine
 		  
 		  // Get a list of all servers
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Socket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  
 		  Self.Log("Finding servers…")
 		  Self.SendRequest(Socket, "GET", "https://api.nitrado.net/services")
@@ -332,7 +301,7 @@ Inherits Ark.IntegrationEngine
 		        End If
 		        
 		        Profile = New Ark.NitradoServerProfile
-		        Profile.ExternalAccountUUID = Self.mAccount.UUID
+		        Profile.ProviderTokenId = Self.mProviderToken.TokenId
 		        Profile.Name = Details.Value("name")
 		        Profile.ServiceID = Dict.Value("id")
 		        Profile.Address = Details.Value("address")
@@ -347,7 +316,7 @@ Inherits Ark.IntegrationEngine
 		      Self.Log("Retrieving " + Profile.Name + "…")
 		      // Lookup server information
 		      Var DetailsSocket As New SimpleHTTP.SynchronousHTTPSocket
-		      DetailsSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		      DetailsSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		      Self.SendRequest(DetailsSocket, "GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw, "#") + "/gameservers")
 		      If Self.Finished Or Self.CheckError(DetailsSocket) Then
 		        Continue
@@ -380,7 +349,7 @@ Inherits Ark.IntegrationEngine
 		        Profile.Platform = Beacon.ServerProfile.PlatformUnknown
 		      End Select
 		      
-		      Var Server As New Ark.NitradoDiscoveredData(Profile.ServiceID, Self.mAccount.AccessToken, Profile.ConfigPath, General.Lookup("PrimitivePlus", False).BooleanValue)
+		      Var Server As New Ark.NitradoDiscoveredData(Profile.ServiceID, Self.mProviderToken.AccessToken, Profile.ConfigPath, General.Lookup("PrimitivePlus", False).BooleanValue)
 		      Server.Profile = Profile
 		      Server.CommandLineOptions = Settings.Value("start-param")
 		      
@@ -461,7 +430,7 @@ Inherits Ark.IntegrationEngine
 		  Var ServiceID As Integer = Ark.NitradoServerProfile(Profile).ServiceID
 		  
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath))
 		  Var Content As MemoryBlock = Sock.LastContent
@@ -494,7 +463,7 @@ Inherits Ark.IntegrationEngine
 		  
 		  Var SizeSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  SizeSocket.RequestHeader("Cache-Control") = "no-cache"
-		  SizeSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  SizeSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Self.SendRequest(SizeSocket, "GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath))
 		  If SizeSocket.LastHTTPStatus <> 200 Then
 		    Call Self.CheckSocketForError(Sock, Transfer)
@@ -538,7 +507,7 @@ Inherits Ark.IntegrationEngine
 		  
 		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  FetchSocket.RequestHeader("Cache-Control") = "no-cache"
-		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  FetchSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Self.SendRequest(FetchSocket, "GET", FetchURL)
 		  
 		  If Self.CheckSocketForError(FetchSocket, Transfer) Then
@@ -632,16 +601,13 @@ Inherits Ark.IntegrationEngine
 
 	#tag Event
 		Sub RefreshServerStatus()
-		  If Self.mAccount Is Nil Then
-		    Self.Authenticate()
-		    If Self.mAccount Is Nil Then
-		      Self.SetError("Cannot check server status because there is no Nitrado account assigned to this process. Start the deploy again to authenticate again.")
-		      Return
-		    End If
+		  If Self.mProviderToken Is Nil Then
+		    Self.SetError("Cannot check server status because there is no Nitrado account assigned to this process. Start the deploy again to authenticate again.")
+		    Return
 		  End If
 		  
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers")
 		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
@@ -727,7 +693,7 @@ Inherits Ark.IntegrationEngine
 	#tag Event
 		Sub StartServer()
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
@@ -758,7 +724,7 @@ Inherits Ark.IntegrationEngine
 	#tag Event
 		Sub StopServer()
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  
 		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server is being stopped by Beacon (https://usebeacon.app)"
@@ -800,7 +766,7 @@ Inherits Ark.IntegrationEngine
 		  End If
 		  
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  
 		  Var FormData As New Dictionary
@@ -840,7 +806,7 @@ Inherits Ark.IntegrationEngine
 		  Self.Wait(1000)
 		  
 		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  PutSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  PutSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  PutSocket.RequestHeader("token") = PutToken
 		  PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(Transfer.Content))
 		  PutSocket.SetRequestContent(Transfer.Content, "application/octet-stream")
@@ -859,32 +825,6 @@ Inherits Ark.IntegrationEngine
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Sub Authenticate()
-		  Var Dict As New Dictionary
-		  Dict.Value("Provider") = Beacon.ExternalAccount.ProviderNitrado
-		  If (Self.mAccount Is Nil) = False Then
-		    Dict.Value("Account") = Self.mAccount
-		  End If
-		  If (Self.Profile.ExternalAccountUUID Is Nil) = False Then
-		    Dict.Value("Account UUID") = Self.Profile.ExternalAccountUUID.StringValue
-		  End If
-		  
-		  Var Controller As New Beacon.TaskWaitController("Auth External", Dict)
-		  
-		  Self.Log("Waiting for authentication…")
-		  Self.Wait(Controller)
-		  If Controller.Cancelled Or Dict.HasKey("Account") = False Or IsNull(Dict.Value("Account")) Then
-		    Self.Cancel
-		    Return
-		  End If
-		  
-		  Self.mAccount = Dict.Value("Account")
-		  Self.Profile.ExternalAccountUUID = Self.mAccount.UUID
-		  Self.Project.Accounts.Add(Self.mAccount)
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function CheckError(Socket As SimpleHTTP.SynchronousHTTPSocket) As Boolean
@@ -1000,7 +940,7 @@ Inherits Ark.IntegrationEngine
 		  FormData.Value("name") = "Beacon " + Self.Label
 		  
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Sock.SetFormData(FormData)
 		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings/sets")
 		  If Self.Finished Or Self.CheckError(Sock) Then
@@ -1142,7 +1082,7 @@ Inherits Ark.IntegrationEngine
 		  FormData.Value("value") = "true"
 		  
 		  Var ExpertToggleSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  ExpertToggleSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  ExpertToggleSocket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  ExpertToggleSocket.SetFormData(FormData)
 		  
 		  Self.Log("Enabling expert mode…", True)
@@ -1164,10 +1104,6 @@ Inherits Ark.IntegrationEngine
 
 
 	#tag Property, Flags = &h21
-		Private mAccount As Beacon.ExternalAccount
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mCurrentSettings As Dictionary
 	#tag EndProperty
 
@@ -1181,6 +1117,10 @@ Inherits Ark.IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mLogFilePath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProviderToken As BeaconAPI.ProviderToken
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
