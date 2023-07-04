@@ -803,18 +803,20 @@ End
 		  If Not Preferences.OnlineEnabled Then
 		    Base.AddMenu(New DesktopMenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
 		  Else
-		    If App.IdentityManager.CurrentIdentity Is Nil Or App.IdentityManager.CurrentIdentity.Username.IsEmpty Then
+		    If App.IdentityManager.CurrentIdentity Is Nil Then
 		      Base.AddMenu(New DesktopMenuItem("Log In", "beacon://action/signin"))
 		    Else
 		      Var IdentityItem As New DesktopMenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
 		      IdentityItem.Enabled = False
 		      Base.AddMenu(IdentityItem)
-		      Base.AddMenu(New DesktopMenuItem("Manage Account", "beacon://action/showaccount"))
-		      Base.AddMenu(New DesktopMenuItem("Log Out", "beacon://action/signout"))
+		      Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		      Base.AddMenu(New DesktopMenuItem("Refresh Purchases", "beacon://action/refreshuser"))
+		      Base.AddMenu(New DesktopMenuItem("Account Control Panel", "beacon://action/showaccount"))
+		      Base.AddMenu(New DesktopMenuItem("Show Account Info…", "beacon://action/showidentity"))
+		      Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		      Base.AddMenu(New DesktopMenuItem("Change Account…", "beacon://action/signout"))
 		    End If
 		  End If
-		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
-		  Base.AddMenu(New DesktopMenuItem("User Info…", "beacon://action/showidentity"))
 		  
 		  Var Choice As DesktopMenuItem = Base.PopUp(X, Y)
 		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Then

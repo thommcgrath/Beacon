@@ -2,7 +2,7 @@
 Protected Class Identity
 	#tag Method, Flags = &h0
 		Attributes( Deprecated )  Sub Constructor(Source As Beacon.Identity)
-		  Self.mBanned = Source.mBanned
+		  Self.mIsBanned = Source.mIsBanned
 		  Self.mCloudKey = Source.mCloudKey
 		  Self.mExpiration = Source.mExpiration
 		  Self.mUserId = Source.mUserId
@@ -45,13 +45,13 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function IsAnonymous() As Boolean
-		  Return Self.mUsername.Length = 0
+		  Return Self.mIsAnonymous
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsBanned() As Boolean
-		  Return Self.mBanned
+		  Return Self.mIsBanned
 		End Function
 	#tag EndMethod
 
@@ -88,6 +88,7 @@ Protected Class Identity
 		    Var Signature As String = DecodeBase64(Row.Column("signature").StringValue)
 		    Var SignatureVersion As Integer = Row.Column("signature_version").IntegerValue
 		    Var Username As String = Row.Column("username").StringValue
+		    Var IsAnonymous As Boolean = Row.Column("anonymous").BooleanValue
 		    Var ExpirationString As String = Row.Column("expiration").StringValue
 		    Var Expiration As DateTime
 		    
@@ -128,11 +129,12 @@ Protected Class Identity
 		    Var StringToSign As String = String.FromArray(SignatureParts, " ")
 		    Var SignatureValid As Boolean = Crypto.RSAVerifySignature(StringToSign, Signature, BeaconAPI.PublicKey)
 		    
-		    Identity.mBanned = Banned
+		    Identity.mIsBanned = Banned
 		    Identity.mCloudKey = CloudKey
 		    Identity.mExpiration = Expiration
 		    Identity.mIsValid = SignatureValid
 		    Identity.mUsername = Username
+		    Identity.mIsAnonymous = IsAnonymous
 		    Identity.mLicenses = Licenses
 		  Catch Err As RuntimeException
 		    Return Nil
@@ -206,15 +208,19 @@ Protected Class Identity
 
 
 	#tag Property, Flags = &h21
-		Private mBanned As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mCloudKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mExpiration As DateTime
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsAnonymous As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsBanned As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

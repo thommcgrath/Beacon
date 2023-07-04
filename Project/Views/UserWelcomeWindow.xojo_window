@@ -46,7 +46,7 @@ Begin DesktopWindow UserWelcomeWindow
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   424
       Begin DesktopLabel PrivacyMessageLabel
@@ -154,39 +154,7 @@ Begin DesktopWindow UserWelcomeWindow
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
-         Caption         =   "Continue"
-         Default         =   True
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   298
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   160
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   261
-      End
-      Begin UITweaks.ResizedPushButton ContinueAuthenticatedButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Login With Email"
+         Caption         =   "Use Anonymously"
          Default         =   False
          Enabled         =   True
          FontName        =   "System"
@@ -214,11 +182,43 @@ Begin DesktopWindow UserWelcomeWindow
          Visible         =   True
          Width           =   261
       End
+      Begin UITweaks.ResizedPushButton ContinueAuthenticatedButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Use a Beacon Account"
+         Default         =   True
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   298
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   160
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   261
+      End
       Begin UITweaks.ResizedPushButton DisableOnlineButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
-         Caption         =   "Disable Cloud && Community Features"
+         Caption         =   "Use Offline"
          Default         =   False
          Enabled         =   True
          FontName        =   "System"
