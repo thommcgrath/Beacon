@@ -22,13 +22,13 @@ Protected Class UserController
 
 	#tag Method, Flags = &h0
 		Sub RefreshUserDetails()
-		  Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
-		  If Token Is Nil Then
-		    Return
-		  End If
-		  
 		  Var Request As New BeaconAPI.Request("/user?deviceId=" + Beacon.HardwareID, "GET", AddressOf Callback_RefreshUserDetails)
-		  BeaconAPI.Send(Request)
+		  If Thread.Current Is Nil Then
+		    BeaconAPI.Send(Request)
+		  Else
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
+		    Self.Callback_RefreshUserDetails(Request, Response)
+		  End If
 		End Sub
 	#tag EndMethod
 

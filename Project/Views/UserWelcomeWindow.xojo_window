@@ -46,7 +46,7 @@ Begin DesktopWindow UserWelcomeWindow
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   424
       Begin DesktopLabel PrivacyMessageLabel
@@ -328,6 +328,39 @@ Begin DesktopWindow UserWelcomeWindow
          Visible         =   True
          Width           =   424
       End
+      Begin DesktopLabel InitializingMessage
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   320
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   236
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Connecting…"
+         TextAlignment   =   2
+         TextColor       =   &c000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   384
+      End
    End
    Begin DesktopCanvas SidebarCanvas
       AllowAutoDeactivate=   True
@@ -371,6 +404,14 @@ Begin DesktopWindow UserWelcomeWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin Thread RefreshAndCloseThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -410,15 +451,19 @@ End
 		    Self.mAnimationTasks.RemoveAt(Idx)
 		  Next
 		  
-		  Var Task As AnimationKit.MoveTask
 		  Var CollapsedWidth As Integer = 640
 		  Var CollapsedHeight As Integer = 360
+		  If Self.Width = CollapsedWidth And Self.Height = CollapsedHeight Then
+		    Return
+		  End If
+		  
+		  Var Task As AnimationKit.MoveTask
 		  
 		  Task = New AnimationKit.MoveTask(Self)
 		  Task.Width = CollapsedWidth
 		  Task.Height = CollapsedHeight
 		  Task.Left = Self.Left + ((Self.Width - Task.Width) / 2)
-		  Task.DurationInSeconds = 0.15
+		  Task.DurationInSeconds = Self.AnimationTime
 		  Task.Curve = AnimationKit.Curve.CreateEaseOut
 		  Task.Run
 		  Self.mAnimationTasks.Add(Task)
@@ -426,7 +471,7 @@ End
 		  Task = New AnimationKit.MoveTask(Self.SidebarCanvas)
 		  Task.Left = 0
 		  Task.Height = CollapsedHeight
-		  Task.DurationInSeconds = 0.15
+		  Task.DurationInSeconds = Self.AnimationTime
 		  Task.Curve = AnimationKit.Curve.CreateEaseOut
 		  Task.Run
 		  Self.mAnimationTasks.Add(Task)
@@ -435,7 +480,7 @@ End
 		  Task.Left = Self.SidebarCanvas.Width
 		  Task.Width = CollapsedWidth - Self.SidebarCanvas.Width
 		  Task.Height = CollapsedHeight
-		  Task.DurationInSeconds = 0.15
+		  Task.DurationInSeconds = Self.AnimationTime
 		  Task.Curve = AnimationKit.Curve.CreateEaseOut
 		  Task.Run
 		  Self.mAnimationTasks.Add(Task)
@@ -470,15 +515,19 @@ End
 		    Self.mAnimationTasks.RemoveAt(Idx)
 		  Next
 		  
-		  Var Task As AnimationKit.MoveTask
 		  Var ExpandedWidth As Integer = 800
 		  Var ExpandedHeight As Integer = (ExpandedWidth / 1.6) + Self.LoginView.Top
+		  If Self.Width = ExpandedWidth And Self.Height = ExpandedHeight Then
+		    Return
+		  End If
+		  
+		  Var Task As AnimationKit.MoveTask
 		  
 		  Task = New AnimationKit.MoveTask(Self)
 		  Task.Width = ExpandedWidth
 		  Task.Height = ExpandedHeight
 		  Task.Left = Self.Left + ((Self.Width - Task.Width) / 2)
-		  Task.DurationInSeconds = 0.15
+		  Task.DurationInSeconds = Self.AnimationTime
 		  Task.Curve = AnimationKit.Curve.CreateEaseOut
 		  Task.Run
 		  Self.mAnimationTasks.Add(Task)
@@ -486,7 +535,7 @@ End
 		  Task = New AnimationKit.MoveTask(Self.SidebarCanvas)
 		  Task.Left = Self.SidebarCanvas.Width * -1
 		  Task.Height = ExpandedHeight
-		  Task.DurationInSeconds = 0.15
+		  Task.DurationInSeconds = Self.AnimationTime
 		  Task.Curve = AnimationKit.Curve.CreateEaseOut
 		  Task.Run
 		  Self.mAnimationTasks.Add(Task)
@@ -495,7 +544,7 @@ End
 		  Task.Left = 0
 		  Task.Width = ExpandedWidth
 		  Task.Height = ExpandedHeight
-		  Task.DurationInSeconds = 0.15
+		  Task.DurationInSeconds = Self.AnimationTime
 		  Task.Curve = AnimationKit.Curve.CreateEaseOut
 		  Task.Run
 		  Self.mAnimationTasks.Add(Task)
@@ -600,6 +649,12 @@ End
 		  Var Token As BeaconAPI.OAuthToken = BeaconAPI.OAuthToken.Load(Response)
 		  Preferences.OnlineEnabled = (Token Is Nil) = False
 		  Preferences.BeaconAuth = Token
+		  
+		  Self.InitializingMessage.Text = "Downloading user details…"
+		  Self.PagePanel1.SelectedPanelIndex = Self.PageInitializing
+		  Self.Collapse()
+		  
+		  Self.RefreshAndCloseThread.Start
 		End Sub
 	#tag EndMethod
 
@@ -641,6 +696,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub StartOAuth(WithIdentity As Beacon.Identity = Nil)
 		  Self.mOAuthState = Beacon.UUID.v4
+		  Self.InitializingMessage.Text = "Starting authentication…"
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageInitializing
 		  
 		  Var Params As New Dictionary
@@ -707,6 +763,9 @@ End
 		Private mUseRecoverLanguage As Boolean
 	#tag EndProperty
 
+
+	#tag Constant, Name = AnimationTime, Type = Double, Dynamic = False, Default = \"0.15", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = PageInitializing, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
@@ -825,8 +884,8 @@ End
 		  
 		  If Not SystemColors.IsDarkMode Then
 		    Var Scale As Double = G.Height / LoginSidebarBackground.Height
-		    Var ScaledWidth As Integer = LoginSidebarBackground.Width * Scale
-		    Var ScaledHeight As Integer = LoginSidebarBackground.Height * Scale
+		    Var ScaledWidth As Integer = Ceiling(LoginSidebarBackground.Width * Scale)
+		    Var ScaledHeight As Integer = Ceiling(LoginSidebarBackground.Height * Scale)
 		    G.DrawPicture(LoginSidebarBackground, G.Width - (ScaledWidth + 1), (G.Height - ScaledHeight) / 2, ScaledWidth, ScaledHeight, 0, 0, LoginSidebarBackground.Width, LoginSidebarBackground.Height)
 		  End If
 		  
@@ -864,7 +923,6 @@ End
 		  ElseIf HTTPStatus = 201 Then
 		    // Session started
 		    Self.SaveOAuthResponse(Content)
-		    Self.Close
 		  Else
 		    // Something else
 		    Break
@@ -882,7 +940,6 @@ End
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  If HTTPStatus = 201 Then
 		    Self.SaveOAuthResponse(Content)
-		    Self.Close
 		  Else
 		    Break
 		  End If
@@ -891,6 +948,23 @@ End
 	#tag Event
 		Sub Error(e As RuntimeException)
 		  Break
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RefreshAndCloseThread
+	#tag Event
+		Sub Run()
+		  BeaconAPI.UserController.RefreshUserDetails()
+		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    If Update.Lookup("Finished", False).BooleanValue = True Then
+		      Self.Close
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
