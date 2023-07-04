@@ -18,6 +18,7 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('Only static tokens can be saved at this endpoint.', 400);
 	}
 	
+	$provider = ServiceToken::CleanupProvider($provider);
 	$token = ServiceToken::StoreStatic($userId, $provider, $accessToken, $providerSpecific);
 	if (is_null($token)) {
 		return Response::NewJsonError('Static token was not saved.', 500);

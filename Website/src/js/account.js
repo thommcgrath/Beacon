@@ -640,6 +640,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const staticTokenTokenField = document.getElementById('static-token-token-field');
 	const staticTokenCancelButton = document.getElementById('static-token-cancel-button');
 	const staticTokenActionButton = document.getElementById('static-token-action-button');
+	const staticTokenProviderField = document.getElementById('static-token-provider-field');
+	const staticTokenGenerateLink = document.getElementById('static-token-generate-link');
 	
 	const connectedServiceButtonAction = (event) => {
 		event.preventDefault();
@@ -655,9 +657,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				window.location = `/account/oauth/v4/begin/${provider}`;
 				break;
 			case 'static':
-				if (staticTokenModal && staticTokenNameField && staticTokenTokenField) {
+				if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenProviderField && staticTokenGenerateLink) {
 					staticTokenNameField.value = '';
 					staticTokenTokenField.value = '';
+					staticTokenProviderField.value = provider;
+					switch (provider) {
+					case 'nitrado':
+						staticTokenGenerateLink.href = 'https://server.nitrado.net/usa/developer/tokens';
+						break;
+					case 'gameserverapp':
+						staticTokenGenerateLink.href = 'https://dash.gameserverapp.com/configure/api';
+						break;
+					}
 					BeaconDialog.showModal('static-token-modal');
 				}
 				break;
@@ -678,7 +689,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		button.addEventListener('click', connectedServiceButtonAction);
 	}
 	
-	if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenCancelButton && staticTokenActionButton) {
+	if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenCancelButton && staticTokenActionButton && staticTokenProviderField) {
 		const checkStaticTokenActionButton = () => {
 			staticTokenActionButton.disabled = staticTokenNameField.value.trim() === '' || staticTokenTokenField.value.trim() === '';
 		};
@@ -700,7 +711,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			ev.preventDefault();
 			
 			const tokenInfo = {
-				provider: 'GameServerApp',
+				provider: staticTokenProviderField.value,
 				type: 'Static',
 				accessToken: staticTokenTokenField.value.trim(),
 				providerSpecific: {
