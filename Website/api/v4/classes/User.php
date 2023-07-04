@@ -586,6 +586,7 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 			'userId' => $this->userId,
 			'username' => $this->Username(false),
 			'usernameFull' => $this->Username(true),
+			'isAnonymous' => $this->IsAnonymous(),
 			'publicKey' => $this->publicKey,
 			'banned' => $this->banned,
 			'signatures' => $this->signatures,

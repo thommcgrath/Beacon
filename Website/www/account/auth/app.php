@@ -18,10 +18,6 @@ if (empty($userId) || empty($expiration) || empty($signature)) {
 	BeaconCommon::Redirect($path);
 }
 
-if (filter_var($expiration, FILTER_VALIDATE_INT) < time()) {
-	BeaconCommon::Redirect($path);
-}
-
 $user = BeaconAPI\v4\User::Fetch($userId);
 if (is_null($user) || $user->IsAnonymous() === false) {
 	BeaconCommon::Redirect($path);
