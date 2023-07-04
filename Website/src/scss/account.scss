@@ -118,7 +118,7 @@ h1 span.tag {
 	gap: 1rem;
 	
 	.service {
-		width: 175px;
+		width: 200px;
 		border-radius: 0.5rem;
 		display: flex;
 		flex-direction: column;
@@ -133,6 +133,7 @@ h1 span.tag {
 				width: 100%;
 				height: auto;
 				display: block;
+				max-height: 75px;
 			}
 			
 			flex: 1 1 auto;
@@ -153,7 +154,7 @@ h1 span.tag {
 		}
 	}
 	
-	.service-nitrado {
+	.service-nitrado, .service-gameserverapp {
 		background-color: black;
 		color: white;
 		
@@ -165,5 +166,10 @@ h1 span.tag {
 				filter: brightness(0%);
 			}
 		}
-	}
+	}		
+}
+
+#static-token-token-field {
+	height: 100px;
+	resize: none;
 }

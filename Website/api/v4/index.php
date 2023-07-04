@@ -106,10 +106,8 @@ Core::RegisterRoutes(
 			'GET' => 'templates/get'
 		],
 		'/tokens/{tokenId}' => [
-			'GET' => 'tokens/get'
-		],
-		'/users' => [
-			'POST' => 'users/create'
+			'GET' => 'tokens/get',
+			'DELETE' => 'tokens/delete'
 		],
 		'/users/{userId}' => [
 			'GET' => 'users/get',
@@ -122,7 +120,8 @@ Core::RegisterRoutes(
 			'GET' => 'projects/list'
 		],
 		'/users/{userId}/tokens' => [
-			'GET' => 'tokens/list'
+			'GET' => 'tokens/list',
+			'POST' => 'tokens/create'
 		]
 	]
 );

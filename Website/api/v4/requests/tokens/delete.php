@@ -9,11 +9,13 @@ function handleRequest(array $context): Response {
 	if (is_null($token)) {
 		return Response::NewJsonError('Token not found', $tokenId, 404);
 	}
-	$authenticatedAsUser = (Core::UserId() === $token->UserId());
+	if ($token->UserId() !== Core::UserId()) {
+		return Response::NewJsonError('Forbidden.', 403);
+	}
 	
-	$token->Refresh();
+	$token->Delete();
 	
-	return Response::NewJson($token->JSON($authenticatedAsUser), 200);
+	return Response::NewNoContent();
 }
 
 ?>

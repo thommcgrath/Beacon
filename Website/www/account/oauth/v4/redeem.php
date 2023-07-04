@@ -3,7 +3,7 @@
 require(dirname(__FILE__, 5) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
-use BeaconAPI\v4\OAuth;
+use BeaconAPI\v4\ServiceToken;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 	http_response_code(405);
@@ -24,7 +24,7 @@ if (is_null($session)) {
 	BeaconCommon::Redirect('/account/login/?return=' . urlencode($_SERVER['REQUEST_URI']));
 }
 
-$provider = OAuth::CleanupProvider($_GET['provider']);
+$provider = ServiceToken::CleanupProvider($_GET['provider']);
 $code = $_GET['code'];
 $state = $_GET['state'];
 $expectedState = $_COOKIE['beacon_oauth_state'] ?? '';
@@ -35,7 +35,7 @@ if ($state !== $expectedState) {
 	exit;
 }
 
-$token = OAuth::Complete($session->UserId(), $provider, $_GET['code']);
-BeaconCommon::Redirect('/account/#oauth');
+$token = ServiceToken::Complete($session->UserId(), $provider, $_GET['code']);
+BeaconCommon::Redirect('/account/#services');
 
 ?>

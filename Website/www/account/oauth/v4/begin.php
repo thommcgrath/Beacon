@@ -3,7 +3,7 @@
 require(dirname(__FILE__, 5) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
-use BeaconAPI\v4\OAuth;
+use BeaconAPI\v4\ServiceToken;
 
 if (isset($_GET['provider']) === false) {
 	http_response_code(400);
@@ -12,7 +12,7 @@ if (isset($_GET['provider']) === false) {
 	exit;
 }
 
-$provider = OAuth::CleanupProvider($_GET['provider']);
+$provider = ServiceToken::CleanupProvider($_GET['provider']);
 
 $session = BeaconCommon::GetSession();
 if (is_null($session)) {
@@ -20,7 +20,7 @@ if (is_null($session)) {
 }
 
 $state = BeaconCommon::GenerateUUID();
-$url = OAuth::Begin($provider, $state);
+$url = ServiceToken::Begin($provider, $state);
 setcookie('beacon_oauth_state', $state, [
 	'path' => '/account',
 	'domain' => BeaconCommon::Domain(),
@@ -29,7 +29,7 @@ setcookie('beacon_oauth_state', $state, [
 	'samesite' => 'Lax'
 ]);
 
-$url = OAuth::Begin($provider, $state);
+$url = ServiceToken::Begin($provider, $state);
 BeaconCommon::Redirect($url);
 
 ?>

@@ -46,7 +46,7 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<li><a href="#security" page="security">Security</a></li>
 			<li><a href="#sessions" page="sessions">Sessions</a></li>
 			<?php } ?>
-			<li><a href="#oauth" page="oauth">Connections</a></li>
+			<li><a href="#services" page="services">Connections</a></li>
 		</ul>
 	</div>
 	<div class="page-panel-pages">
@@ -72,9 +72,9 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<?php include('includes/sessions.php'); ?>
 		</div>
 		<?php } ?>
-		<div class="page-panel-page" page="oauth">
+		<div class="page-panel-page" page="services">
 			<h1>Connected Services</h1>
-			<?php include('includes/oauth.php'); ?>
+			<?php include('includes/services.php'); ?>
 		</div>
 	</div>
 	<div class="page-panel-footer">&nbsp;</div>

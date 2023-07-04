@@ -634,22 +634,87 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		button.addEventListener('click', editAppAction);	
 	}
 	
-	/* ! OAuth */
+	/* ! Services */
+	const staticTokenModal = document.getElementById('static-token-modal');
+	const staticTokenNameField = document.getElementById('static-token-name-field');
+	const staticTokenTokenField = document.getElementById('static-token-token-field');
+	const staticTokenCancelButton = document.getElementById('static-token-cancel-button');
+	const staticTokenActionButton = document.getElementById('static-token-action-button');
+	
 	const connectedServiceButtonAction = (event) => {
 		event.preventDefault();
 		
 		const provider = event.currentTarget.getAttribute('beacon-provider');
+		const type = event.currentTarget.getAttribute('beacon-provider-type');
 		const tokenId = event.currentTarget.getAttribute('beacon-token-id');
+		const tokenName = event.currentTarget.getAttribute('beacon-token-name');
 		
 		if (tokenId === '') {
-			window.location = `/account/oauth/v4/begin/${provider}`;
+			switch (type) {
+			case 'oauth':
+				window.location = `/account/oauth/v4/begin/${provider}`;
+				break;
+			case 'static':
+				if (staticTokenModal && staticTokenNameField && staticTokenTokenField) {
+					staticTokenNameField.value = '';
+					staticTokenTokenField.value = '';
+					BeaconDialog.showModal('static-token-modal');
+				}
+				break;
+			}
 		} else {
-			window.location = `/account/oauth/v4/revoke/${tokenId}`;
+			BeaconDialog.confirm(`Are you sure you want to remove the service ${tokenName}?`, 'You will be able to connect the service again if you choose to.', 'Delete', 'Cancel').then(() => {
+				BeaconWebRequest.delete(`https://${apiDomain}/v4/tokens/${tokenId}`, { Authorization: `Bearer ${sessionId}` }).then((response) => {
+					window.location.reload(true);
+				}).catch((error) => {
+					BeaconDialog.show('The service was not deleted.');
+				});
+			});
 		}
 	};
 	
-	const connectedServiceActionButtons = document.querySelectorAll('#panel-account div[page="oauth"] .service-action button');
+	const connectedServiceActionButtons = document.querySelectorAll('#panel-account div[page="services"] .service-action button');
 	for (const button of connectedServiceActionButtons) {
 		button.addEventListener('click', connectedServiceButtonAction);
+	}
+	
+	if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenCancelButton && staticTokenActionButton) {
+		const checkStaticTokenActionButton = () => {
+			staticTokenActionButton.disabled = staticTokenNameField.value.trim() === '' || staticTokenTokenField.value.trim() === '';
+		};
+		
+		staticTokenNameField.addEventListener('input', (ev) => {
+			checkStaticTokenActionButton();
+		});
+		
+		staticTokenTokenField.addEventListener('input', (ev) => {
+			checkStaticTokenActionButton();
+		});
+		
+		staticTokenCancelButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			BeaconDialog.hideModal();
+		});
+		
+		staticTokenActionButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			const tokenInfo = {
+				provider: 'GameServerApp',
+				type: 'Static',
+				accessToken: staticTokenTokenField.value.trim(),
+				providerSpecific: {
+					tokenName: staticTokenNameField.value.trim()
+				}
+			};
+			
+			BeaconDialog.hideModal().then(() => {
+				BeaconWebRequest.post(`https://${apiDomain}/v4/user/tokens`, tokenInfo, { Authorization: `Bearer ${sessionId}` }).then((response) => {
+					window.location.reload(true);
+				}).catch((error) => {
+					BeaconDialog.show('Could not save token.');
+				});
+			});
+		});
 	}
 });
