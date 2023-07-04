@@ -67,8 +67,9 @@ class BeaconLogin {
 		BeaconTemplate::FinishScript();
 			
 		if (is_null($session) === false && is_null($flow) === false) {
+			$user = $session->User();
 			?><div id="page_authorize">
-				<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services?</h3>
+				<h3>Allow <?php echo htmlentities($app->Name()); ?> to use Beacon services as <?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span>?</h3>
 				<div class="app_id">
 					<div class="app_id_avatar"><?php echo $app->IconHtml(64); ?></div>
 					<div class="api_id_namecard"><span class="bold larger"><?php echo htmlentities($app->Name()); ?></span><br>Website: <a href="<?php echo htmlentities($app->Website()); ?>" target="_blank"><?php echo htmlentities($app->Website()); ?></a></div>
