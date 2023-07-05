@@ -308,7 +308,7 @@ End
 		            Explanation = "Your browser will open Beacon's website where you can connect services to your account."
 		            
 		            If Self.ShowConfirm(Message, Explanation, "Connect", "Cancel") Then
-		              System.GotoURL(Beacon.WebURL("/account/#oauth", True))
+		              System.GotoURL(Beacon.WebURL("/account/#services", True))
 		            End If
 		          End If
 		        Else

@@ -1,7 +1,17 @@
 #tag Module
 Protected Module BeaconAPI
 	#tag Method, Flags = &h1
-		Protected Function GetProviderToken(TokenId As String) As BeaconAPI.ProviderToken
+		Protected Function GetProviderToken(TokenId As String, UseCache As Boolean = False) As BeaconAPI.ProviderToken
+		  If UseCache Then
+		    Try
+		      Var Cached As BeaconAPI.ProviderToken = Beacon.Cache.Fetch(TokenId)
+		      If (Cached Is Nil) = False Then
+		        Return Cached
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
 		  Var Request As New BeaconAPI.Request("/tokens/" + EncodeURLComponent(TokenId), "GET")
 		  Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		  If Response.HTTPStatus <> 200 Then

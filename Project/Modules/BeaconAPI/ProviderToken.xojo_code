@@ -7,13 +7,17 @@ Protected Class ProviderToken
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AccessTokenExpiration() As Double
+		Function AccessTokenExpiration() As NullableDouble
 		  Return Self.mAccessTokenExpiration
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function AccessTokenExpired() As Boolean
+		  If Self.mAccessTokenExpiration Is Nil Then
+		    Return False
+		  End If
+		  
 		  Var Now As DateTime = DateTime.Now
 		  Return Self.mAccessTokenExpiration < Now.SecondsFrom1970
 		End Function
@@ -30,8 +34,9 @@ Protected Class ProviderToken
 		  Self.mTokenId = Dict.Value("tokenId").StringValue
 		  Self.mUserId = Dict.Value("userId").StringValue
 		  Self.mProvider = Dict.Value("provider").StringValue
+		  Self.mType = Dict.Value("type").StringValue
 		  Self.mAccessToken = Dict.Value("accessToken").StringValue
-		  Self.mAccessTokenExpiration = Dict.Value("accessTokenExpiration").DoubleValue
+		  Self.mAccessTokenExpiration = NullableDouble.FromVariant(Dict.Value("accessTokenExpiration"))
 		  Try
 		    Self.mProviderSpecific = Dict.Value("providerSpecific")
 		  Catch Err As RuntimeException
@@ -80,20 +85,30 @@ Protected Class ProviderToken
 		  Var Label As String
 		  
 		  Select Case Self.Provider
-		  Case "Nitrado"
+		  Case Self.ProviderNitrado
 		    Try
+		      Var TokenName As String = Self.ProviderSpecific("tokenName", "")
 		      Var UserDict As Dictionary = Self.ProviderSpecific("user", Nil)
 		      Var Username As String = UserDict.Value("username")
 		      Var Id As Integer = UserDict.Value("id")
 		      
-		      If Detail >= Self.DetailLow Then
-		        Label = Username
-		      End If
+		      Label = Username
+		      
 		      If Detail >= Self.DetailNormal Then
 		        Label = Label + " (" + Id.ToString(Locale.Current, "0") + ")"
 		      End If
+		      
+		      If Detail >= Self.DetailHigh And TokenName.IsEmpty = False Then
+		        Label = TokenName + " - " + Label
+		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Building Nitrado service name")
+		    End Try
+		  Case Self.ProviderGameServerApp
+		    Try
+		      Label = Self.ProviderSpecific("tokenName", "")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Building GameServerApp service name")
 		    End Try
 		  End Select
 		  
@@ -110,7 +125,7 @@ Protected Class ProviderToken
 
 	#tag Method, Flags = &h0
 		Shared Function Load(Dict As Dictionary) As BeaconAPI.ProviderToken
-		  If Dict.HasAllKeys("tokenId", "userId", "provider", "accessToken", "accessTokenExpiration", "providerSpecific") = False Then
+		  If Dict.HasAllKeys("tokenId", "userId", "provider", "type", "accessToken", "accessTokenExpiration", "providerSpecific") = False Then
 		    Return Nil
 		  End If
 		  
@@ -158,6 +173,12 @@ Protected Class ProviderToken
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Type() As String
+		  Return Self.mType
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UserId() As String
 		  Return Self.mUserId
 		End Function
@@ -169,7 +190,7 @@ Protected Class ProviderToken
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAccessTokenExpiration As Double
+		Private mAccessTokenExpiration As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -189,6 +210,10 @@ Protected Class ProviderToken
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mType As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUserId As String
 	#tag EndProperty
 
@@ -200,6 +225,18 @@ Protected Class ProviderToken
 	#tag EndConstant
 
 	#tag Constant, Name = DetailNormal, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ProviderGameServerApp, Type = String, Dynamic = False, Default = \"GameServerApp", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ProviderNitrado, Type = String, Dynamic = False, Default = \"Nitrado", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeOAuth, Type = String, Dynamic = False, Default = \"OAuth", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeStatic, Type = String, Dynamic = False, Default = \"Static", Scope = Public
 	#tag EndConstant
 
 

@@ -252,7 +252,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.mSelectedToken = Nil
-		  System.GotoURL(Beacon.WebURL("/account/#oauth", True))
+		  System.GotoURL(Beacon.WebURL("/account/#services", True))
 		  Self.Hide
 		End Sub
 	#tag EndEvent

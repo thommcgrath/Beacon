@@ -270,6 +270,7 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  Self.ProviderTokenId = Profile.ProviderTokenId
 		  RaiseEvent UpdateDetailsFrom(Profile)
 		End Sub
 	#tag EndMethod

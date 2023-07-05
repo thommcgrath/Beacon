@@ -2,7 +2,7 @@
 Protected Class Project
 Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
-		Function Accounts() As Beacon.ExternalAccountManager
+		Attributes( Deprecated )  Function Accounts() As Beacon.ExternalAccountManager
 		  Return Self.mAccounts
 		End Function
 	#tag EndMethod
@@ -997,7 +997,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReplaceAccount(OldAccount As Beacon.ExternalAccount, NewAccount As Beacon.ExternalAccount)
+		Attributes( Deprecated )  Sub ReplaceAccount(OldAccount As Beacon.ExternalAccount, NewAccount As Beacon.ExternalAccount)
 		  If OldAccount Is Nil Or NewAccount Is Nil Then
 		    Return
 		  End If
@@ -1007,7 +1007,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReplaceAccount(OldUUID As String, Account As Beacon.ExternalAccount)
+		Attributes( Deprecated )  Sub ReplaceAccount(OldUUID As String, Account As Beacon.ExternalAccount)
 		  If Account Is Nil Then
 		    Return
 		  End If
@@ -1232,7 +1232,7 @@ Implements ObservationKit.Observable
 
 
 	#tag Hook, Flags = &h0
-		Event AccountReplaced(OldUUID As String, NewUUID As String)
+		Attributes( Deprecated ) Event AccountReplaced(OldUUID As String, NewUUID As String)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

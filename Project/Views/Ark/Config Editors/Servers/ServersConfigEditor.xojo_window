@@ -66,6 +66,7 @@ Begin ArkConfigEditor ServersConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -215,6 +216,14 @@ Begin ArkConfigEditor ServersConfigEditor
       Visible         =   True
       Width           =   299
    End
+   Begin Thread RefreshThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -348,18 +357,7 @@ End
 	#tag Method, Flags = &h1
 		Protected Function Engine_Wait(Sender As Ark.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
 		  #Pragma Unused Sender
-		  
-		  Select Case Controller.Action
-		  Case "Auth External"
-		    Var Profile As Ark.ServerProfile = Sender.Profile
-		    Var Account As Beacon.ExternalAccount = Self.Project.Accounts.GetByUUID(Profile.ExternalAccountUUID)
-		    If (Account Is Nil) = False Then
-		      Self.ShowAlert("Authorization Expired", "Authorization for " + Account.Provider + " account '" + Account.Label + "' has expired. Please select a server which belongs to the account to refresh authorization.")
-		    Else
-		      Call ShowAlert("Authorization Expired", "The authorization for an unknown account has expired. It may be necessary to import again.")
-		    End If
-		  End Select
-		  
+		  Controller.Cancelled = False
 		  Controller.ShouldResume = True
 		  Return True
 		End Function
@@ -436,37 +434,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Accounts() As Beacon.ExternalAccount = Self.Project.Accounts.All
-		  Var Engines As New Dictionary
-		  For Each Account As Beacon.ExternalAccount In Accounts
-		    Var Engine As Ark.IntegrationEngine
-		    
-		    Select Case Account.Provider
-		    Case Beacon.ExternalAccount.ProviderNitrado
-		      Var Profile As New Ark.NitradoServerProfile
-		      Profile.ExternalAccountUUID = Account.UUID
-		      
-		      Engine = New Ark.NitradoIntegrationEngine(Profile)
-		    Case Beacon.ExternalAccount.ProviderGameServerApp
-		      Engine = New Ark.GSAIntegrationEngine(Account)
-		    End Select
-		    
-		    If Engine Is Nil Then
-		      Continue
-		    End If
-		    
-		    Engines.Value(Account.UUID.StringValue) = Engine
-		    AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
-		    AddHandler Engine.Wait, WeakAddressOf Engine_Wait
-		    Engine.BeginDiscovery(Self.Project)
-		  Next
-		  Self.mEngines = Engines
-		  Self.mRefreshing = True
-		  Self.UpdateRefreshButton()
-		  
-		  If Self.mEngines.KeyCount = 0 Then
-		    Self.FinishRefreshingDetails()
-		  End If
+		  Self.RefreshThread.Start
 		End Sub
 	#tag EndMethod
 
@@ -822,6 +790,87 @@ End
 		  End If
 		  
 		  Self.ServerList.Filter = Me.Text.Trim
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RefreshThread
+	#tag Event
+		Sub Run()
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  If Identity Is Nil Then
+		    Self.mEngines = New Dictionary
+		    Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": True))
+		    Return
+		  End If
+		  
+		  Self.mRefreshing = True
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		  
+		  Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(Identity.UserId)
+		  Var Filter As New Dictionary
+		  For Each Token As BeaconAPI.ProviderToken In Tokens
+		    Filter.Value(Token.TokenId) = Token
+		  Next
+		  
+		  Var TokenIds() As String = Self.Project.ProviderTokenIds
+		  For Each TokenId As String In TokenIds
+		    If Filter.HasKey(TokenId) Then
+		      Continue
+		    End If
+		    
+		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId, True)
+		    If (Token Is Nil) = False Then
+		      Tokens.Add(Token)
+		      Filter.Value(Token.TokenId) = Token
+		    End If
+		  Next
+		  
+		  Var Engines As New Dictionary
+		  For Each Token As BeaconAPI.ProviderToken In Tokens
+		    Var Engine As Ark.IntegrationEngine
+		    
+		    Select Case Token.Provider
+		    Case "Nitrado"
+		      Var Profile As New Ark.NitradoServerProfile
+		      Profile.ProviderTokenId = Token.TokenId
+		      
+		      Engine = New Ark.NitradoIntegrationEngine(Profile)
+		    End Select
+		    
+		    #if DebugBuild
+		      #Pragma Warning "Add GSA Support"
+		    #else
+		      #Pragma Error "Add GSA Support"
+		    #endif
+		    
+		    If Engine Is Nil Then
+		      Continue
+		    End If
+		    
+		    Engines.Value(Token.TokenId) = Engine
+		    AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		    AddHandler Engine.Wait, WeakAddressOf Engine_Wait
+		    Engine.BeginDiscovery(Self.Project)
+		  Next
+		  
+		  Self.mEngines = Engines
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": True))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    Var UpdateUI As Boolean = Update.Lookup("UpdateUI", False).BooleanValue
+		    Var Finished As Boolean = Update.Lookup("Finished", False).BooleanValue
+		    
+		    If UpdateUI Then
+		      If Self.mEngines Is Nil Or Self.mEngines.KeyCount > 0 Or Finished = False Then
+		        Self.UpdateRefreshButton()
+		      Else
+		        Self.FinishRefreshingDetails()
+		      End If
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
