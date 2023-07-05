@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\Response;
+use BeaconAPI\v4\{Core, Response};
 
 $requiredScopes = [];
 $authScheme = Core::kAuthSchemeNone;
