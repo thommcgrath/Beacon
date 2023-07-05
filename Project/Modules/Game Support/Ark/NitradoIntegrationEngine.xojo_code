@@ -694,10 +694,13 @@ Inherits Ark.IntegrationEngine
 		Sub StartServer()
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		  Sock.RequestHeader("Connection") = "close"
 		  
 		  Var FormData As New Dictionary
-		  FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
-		  Sock.SetFormData(FormData)
+		  FormData.Value("message") = "Server started by Beacon"
+		  FormData.Value("restart_message") = Nil
+		  
+		  Sock.SetJSON(FormData)
 		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/restart")
 		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
@@ -725,11 +728,13 @@ Inherits Ark.IntegrationEngine
 		Sub StopServer()
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
+		  Sock.RequestHeader("Connection") = "close"
 		  
 		  Var FormData As New Dictionary
-		  FormData.Value("message") = "Server is being stopped by Beacon (https://usebeacon.app)"
+		  FormData.Value("message") = "Server is being stopped by Beacon"
 		  FormData.Value("stop_message") = Self.StopMessage
-		  Sock.SetFormData(FormData)
+		  
+		  Sock.SetJSON(FormData)
 		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/stop")
 		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return

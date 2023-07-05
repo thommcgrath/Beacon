@@ -322,6 +322,8 @@ End
 		Sub Constructor(Document As Ark.Project, Profile As Ark.NitradoServerProfile)
 		  Self.mProject = Document
 		  Self.mProfile = Profile
+		  Self.mLock = New CriticalSection
+		  Self.mServerState = Self.StatusChecking
 		End Sub
 	#tag EndMethod
 
@@ -359,6 +361,9 @@ End
 		  Case 503
 		    Self.mServerState = Self.StatusMaintenance
 		  Else
+		    #if DebugBuild
+		      System.DebugLog("Nitrado status " + HTTPStatus.ToString)
+		    #endif
 		    Self.mServerState = Self.StatusNitradoOther
 		  End Select
 		End Function
@@ -420,6 +425,10 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mLock As CriticalSection
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProfile As Ark.NitradoServerProfile
@@ -566,8 +575,7 @@ End
 #tag Events RefreshThread
 	#tag Event
 		Sub Run()
-		  Self.mServerState = Self.StatusChecking
-		  Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		  Self.mLock.Enter
 		  
 		  If Self.mProfile Is Nil Or Self.mProfile.ProviderTokenId.IsEmpty Then
 		    Self.mServerState = Self.StatusMissingProfile
@@ -581,6 +589,7 @@ End
 		    Self.mServerState = Self.StatusMissingToken
 		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		    Self.ScheduleRefresh()
+		    Self.mLock.Leave
 		    Return
 		  End If
 		  
@@ -588,6 +597,7 @@ End
 		    Self.mServerState = Self.StatusEncryptedToken
 		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		    Self.ScheduleRefresh()
+		    Self.mLock.Leave
 		    Return
 		  End If
 		  
@@ -622,6 +632,7 @@ End
 		  
 		  Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		  Self.ScheduleRefresh()
+		  Self.mLock.Leave
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -637,12 +648,14 @@ End
 #tag Events ToggleThread
 	#tag Event
 		Sub Run()
+		  Self.mLock.Enter
 		  Self.CancelRefresh()
 		  
 		  If Self.mProfile Is Nil Or Self.mProfile.ProviderTokenId.IsEmpty Then
 		    Self.mServerState = Self.StatusMissingProfile
 		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		    Self.ScheduleRefresh()
+		    Self.mLock.Leave
 		    Return
 		  End If
 		  
@@ -651,6 +664,7 @@ End
 		    Self.mServerState = Self.StatusMissingToken
 		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		    Self.ScheduleRefresh()
+		    Self.mLock.Leave
 		    Return
 		  End If
 		  
@@ -658,19 +672,21 @@ End
 		    Self.mServerState = Self.StatusEncryptedToken
 		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		    Self.ScheduleRefresh()
+		    Self.mLock.Leave
 		    Return
 		  End If
 		  
 		  Select Case Self.mServerState
 		  Case Self.StatusStarted
 		    Var FormData As New Dictionary
-		    FormData.Value("message") = "Server stopped by Beacon (https://usebeacon.app)"
+		    FormData.Value("message") = "Server stopped by Beacon"
 		    FormData.Value("stop_message") = Me.UserData
 		    
 		    Var Socket As New URLConnection
 		    Socket.RequestHeader("Authorization") = Token.AuthHeaderValue
+		    Socket.RequestHeader("Connection") = "close"
 		    Socket.RequestHeader("User-Agent") = App.UserAgent
-		    Socket.SetRequestContent("application/json", Beacon.GenerateJSON(FormData, False))
+		    Socket.SetRequestContent(Beacon.GenerateJSON(FormData, False), "application/json; chartset=utf-8")
 		    
 		    Try
 		      Call Socket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop")
@@ -685,12 +701,14 @@ End
 		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
 		  Case Self.StatusStopped
 		    Var FormData As New Dictionary
-		    FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
+		    FormData.Value("message") = "Server started by Beacon"
+		    FormData.Value("restart_message") = Nil
 		    
 		    Var Socket As New URLConnection
 		    Socket.RequestHeader("Authorization") = Token.AuthHeaderValue
+		    Socket.RequestHeader("Connection") = "close"
 		    Socket.RequestHeader("User-Agent") = App.UserAgent
-		    Socket.SetRequestContent("application/json", Beacon.GenerateJSON(FormData, False))
+		    Socket.SetRequestContent(Beacon.GenerateJSON(FormData, False), "application/json; chartset=utf-8")
 		    
 		    Try
 		      Call Socket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart")
@@ -708,6 +726,7 @@ End
 		  End Select
 		  
 		  Self.ScheduleRefresh()
+		  Self.mLock.Leave
 		End Sub
 	#tag EndEvent
 	#tag Event
