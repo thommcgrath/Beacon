@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 #session_table {
 	max-width: 100%;
 	
@@ -128,6 +130,13 @@ h1 span.tag {
 		box-sizing: border-box;
 		background-color: white;
 		position: relative;
+		margin-left: auto;
+		margin-right: auto;
+		
+		@media (min-width: calc(500px + 1rem + 80px)) {
+			margin-left: 0;
+			margin-right: 0;
+		}
 		
 		.service-logo {
 			img {
