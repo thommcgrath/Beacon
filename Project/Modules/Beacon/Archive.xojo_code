@@ -218,8 +218,15 @@ Protected Class Archive
 		      If Entry Is Nil Then
 		        Exit
 		      End If
+		      
+		      Var TargetSize As UInt64 = Entry.Size
 		      Var Offset As Int64
-		      Self.mFileContents.Value(Entry.PathName) = Self.mReader.ReadDataBlockMemory(Offset)
+		      Var FileContents As New MemoryBlock(0)
+		      While FileContents.Size <> TargetSize
+		        FileContents = FileContents +  Self.mReader.ReadDataBlockMemory(Offset)
+		      Wend
+		      
+		      Self.mFileContents.Value(Entry.PathName) = FileContents
 		    Loop
 		  End If
 		  
