@@ -9,24 +9,23 @@ if (count($connectedServices) > 0) {
 	foreach ($connectedServices as $service) {
 		$provider = $service->Provider();
 		$providerLower = strtolower($provider);
+		$type = $service->Type();
 		$username = $provider;
 		$buttonClass = 'red';
-		$buttonCaption = 'Disconnect';
+		$buttonCaption = $type === ServiceToken::TypeOAuth ? 'Disconnect' : 'Discard';
 		$serviceName = '';
 		switch ($provider) {
 		case ServiceToken::ProviderNitrado:
 			$details = $service->ProviderSpecific();
-			if ($service->Type() === 'OAuth') {
-				$username = htmlentities($details['user']['username']) . ' <span class="service-uid">(' . htmlentities($details['user']['id']) . ')</span>';
-				$serviceName = $details['user']['username'];
-			} else {
-				$username = htmlentities($details['tokenName']);
+			$username = htmlentities($details['user']['username']) . ' <span class="service-uid">(' . htmlentities($details['user']['id']) . ')</span>';
+			$serviceName = $details['user']['username'];
+			
+			if (array_key_exists('tokenName', $details)) {
 				$serviceName = $details['tokenName'];
-				$buttonCaption = 'Discard';
+				$username = htmlentities($serviceName) . '<br>' . $username;
 			}
 			break;
 		case ServiceToken::ProviderGameServerApp:
-			$buttonCaption = 'Discard';
 			$details = $service->ProviderSpecific();
 			$username = htmlentities($details['tokenName']);
 			$serviceName = $details['tokenName'];
@@ -66,6 +65,8 @@ BeaconTemplate::StartModal('static-token-modal');
 	<div class="content">
 		<div class="hidden"><input type="hidden" id="static-token-provider-field" value=""></div>
 		<p class="text-center"><a class="button blue" href="" id="static-token-generate-link" target="_blank">Generate A Token</a></p>
+		<p class="text-center hidden" id="static-token-help-field"></p>
+		<p class="text-center hidden notice-block notice-warning" id="static-token-error-field"></p>
 		<div class="floating-label"><input type="text" id="static-token-name-field" class="text-field" placeholder="Token Name"><label for="static-token-name-field">Token Name</label></div>
 		<div class="floating-label"><textarea id="static-token-token-field" class="text-field" placeholder="Token" rows="4"></textarea><label for="static-token-token-field">Token</label></div>
 	</div>

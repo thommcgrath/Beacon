@@ -642,6 +642,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const staticTokenActionButton = document.getElementById('static-token-action-button');
 	const staticTokenProviderField = document.getElementById('static-token-provider-field');
 	const staticTokenGenerateLink = document.getElementById('static-token-generate-link');
+	const staticTokenHelpField = document.getElementById('static-token-help-field');
+	const staticTokenErrorField = document.getElementById('static-token-error-field');
 	
 	const connectedServiceButtonAction = (event) => {
 		event.preventDefault();
@@ -657,16 +659,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				window.location = `/account/oauth/v4/begin/${provider}`;
 				break;
 			case 'static':
-				if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenProviderField && staticTokenGenerateLink) {
+				if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenProviderField && staticTokenGenerateLink && staticTokenHelpField) {
 					staticTokenNameField.value = '';
 					staticTokenTokenField.value = '';
 					staticTokenProviderField.value = provider;
 					switch (provider) {
 					case 'nitrado':
 						staticTokenGenerateLink.href = 'https://server.nitrado.net/usa/developer/tokens';
+						staticTokenHelpField.innerText = 'Beacon requires long life tokens from Nitrado to have the "service" scope enabled.';
+						staticTokenHelpField.classList.remove('hidden');
 						break;
 					case 'gameserverapp':
 						staticTokenGenerateLink.href = 'https://dash.gameserverapp.com/configure/api';
+						staticTokenHelpField.classList.add('hidden');
 						break;
 					}
 					BeaconDialog.showModal('static-token-modal');
@@ -689,7 +694,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		button.addEventListener('click', connectedServiceButtonAction);
 	}
 	
-	if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenCancelButton && staticTokenActionButton && staticTokenProviderField) {
+	if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenCancelButton && staticTokenActionButton && staticTokenProviderField && staticTokenErrorField) {
 		const checkStaticTokenActionButton = () => {
 			staticTokenActionButton.disabled = staticTokenNameField.value.trim() === '' || staticTokenTokenField.value.trim() === '';
 		};
@@ -709,6 +714,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		
 		staticTokenActionButton.addEventListener('click', (ev) => {
 			ev.preventDefault();
+			staticTokenActionButton.disabled = true;
+			staticTokenErrorField.classList.add('hidden');
 			
 			const tokenInfo = {
 				provider: staticTokenProviderField.value,
@@ -719,13 +726,35 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				}
 			};
 			
-			BeaconDialog.hideModal().then(() => {
+			const submitFunction = () => {
 				BeaconWebRequest.post(`https://${apiDomain}/v4/user/tokens`, tokenInfo, { Authorization: `Bearer ${sessionId}` }).then((response) => {
 					window.location.reload(true);
 				}).catch((error) => {
-					BeaconDialog.show('Could not save token.');
+					staticTokenErrorField.innerText = 'Could not save token.';
+					staticTokenErrorField.classList.remove('hidden');
+					staticTokenActionButton.disabled = false;
 				});
-			});
+			};
+			
+			if (tokenInfo.provider === 'nitrado') {
+				const response = BeaconWebRequest.get('https://api.nitrado.net/token', { Authorization: `Bearer ${tokenInfo.accessToken}` }).then((response) => {
+					const parsed = JSON.parse(response.body);
+					if (parsed.data.token.scopes.includes('service') === false) {
+						staticTokenErrorField.innerText = 'The long life token is valid, but is missing the "service" scope that Beacon requires.';
+						staticTokenErrorField.classList.remove('hidden');
+						staticTokenActionButton.disabled = false;
+						return;
+					}
+					tokenInfo.providerSpecific.user = parsed.data.token.user;
+					submitFunction();
+				}).catch((error) => {
+					staticTokenErrorField.innerText = 'The long life token is not valid. Double check the Nitrado website, as the beginning of the token can wrap to another line.';
+					staticTokenErrorField.classList.remove('hidden');
+					staticTokenActionButton.disabled = false;
+				});
+			} else {
+				submitFunction();
+			}
 		});
 	}
 });

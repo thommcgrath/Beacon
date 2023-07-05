@@ -13,9 +13,11 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('Forbidden.', 403);
 	}
 	
-	$token->Delete();
-	
-	return Response::NewNoContent();
+	if ($token->Delete()) {
+		return Response::NewNoContent();
+	} else {
+		return Response::NewJsonError('Token was not deleted.', 500);
+	}
 }
 
 ?>

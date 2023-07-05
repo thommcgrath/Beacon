@@ -43,7 +43,7 @@ class ServiceToken implements JsonSerializable {
 		case self::ProviderNitrado:
 			return 'https://oauth.nitrado.net/oauth/v2/token';
 		default:
-			throw new Exception("Unknown provider {$provider}.");
+			throw new Exception("Unknown endpoint for provider {$provider}.");
 		}
 	}
 	
@@ -52,7 +52,7 @@ class ServiceToken implements JsonSerializable {
 		case self::ProviderNitrado:
 			return BeaconCommon::GetGlobal('Nitrado_Client_ID');
 		default:
-			throw new Exception("Unknown provider {$provider}.");
+			throw new Exception("Unknown client id for provider {$provider}.");
 		}
 	}
 	
@@ -61,7 +61,7 @@ class ServiceToken implements JsonSerializable {
 		case self::ProviderNitrado:
 			return BeaconCommon::GetGlobal('Nitrado_Client_Secret');
 		default:
-			throw new Exception("Unknown provider {$provider}.");
+			throw new Exception("Unknown client secret for provider {$provider}.");
 		}
 	}
 	
@@ -133,11 +133,9 @@ class ServiceToken implements JsonSerializable {
 		
 		$uuidParts = [
 			$user->UserId(),
-			$provider
+			$provider,
+			$accessToken
 		];
-		if ($provider === self::ProviderGameServerApp) {
-			$uuidParts[] = $accessToken;
-		}
 		$accessTokenId = BeaconUUID::v5(implode('|', $uuidParts));
 		
 		$database = BeaconCommon::Database();
@@ -223,7 +221,7 @@ class ServiceToken implements JsonSerializable {
 	
 	public static function RefreshExpiring(): void {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE access_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
+		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE access_token_expiration IS NOT NULL AND access_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
 		
 		while (!$results->EOF()) {
 			try {
@@ -255,23 +253,31 @@ class ServiceToken implements JsonSerializable {
 		return $decrypted ? $this->accessToken : $this->accessTokenEncrypted;
 	}
 	
-	public function RefreshToken(bool $decrypted = false): string {
+	public function RefreshToken(bool $decrypted = false): ?string {
 		return $decrypted ? $this->refreshToken : $this->refreshTokenEncrypted;
 	}
 	
-	public function AccessTokenExpiration(): int {
+	public function AccessTokenExpiration(): ?int {
 		return $this->accessTokenExpiration;
 	}
 	
-	public function RefreshTokenExpiration(): int {
+	public function RefreshTokenExpiration(): ?int {
 		return $this->refreshTokenExpiration;
 	}
 	
 	public function IsExpiring(): bool {
+		if (is_null($this->accessTokenExpiration)) {
+			return false;
+		}
+		
 		return $this->accessTokenExpiration < time() + self::ExpirationBuffer;
 	}
 	
 	public function IsExpired(): bool {
+		if (is_null($this->accessTokenExpiration)) {
+			return false;
+		}
+		
 		return $this->accessTokenExpiration < time();
 	}
 	
@@ -284,6 +290,7 @@ class ServiceToken implements JsonSerializable {
 			'tokenId' => $this->tokenId,
 			'userId' => $this->userId,
 			'provider' => $this->provider,
+			'type' => $this->type,
 			'accessToken' => $this->AccessToken($decrypted),
 			'accessTokenExpiration' => $this->accessTokenExpiration,
 			'providerSpecific' => $this->providerSpecific
@@ -316,7 +323,7 @@ class ServiceToken implements JsonSerializable {
 			$endpoint = 'https://oauth.nitrado.net/token';
 			break;
 		default:
-			throw new Exception("Unknown provider {$this->provider}");
+			return true;
 		}
 		
 		$curl = curl_init($endpoint);
@@ -347,16 +354,9 @@ class ServiceToken implements JsonSerializable {
 	}
 	
 	public function Delete(): bool {
-		$url = null;
 		$status = 0;
-		try {
-			$url = static::ProviderEndpoint($this->provider);
-		} catch (Exception $err) {
-			$status = 200;
-		}
-		
-		if (is_null($url) === false) {
-			$curl = curl_init($url);
+		if ($this->type === static::TypeOAuth) {
+			$curl = curl_init(static::ProviderEndpoint($this->provider));
 			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
 			curl_setopt($curl, CURLOPT_HTTPHEADER, [
 				'Authorization: Bearer ' . $this->accessToken
@@ -365,6 +365,8 @@ class ServiceToken implements JsonSerializable {
 			$response = curl_exec($curl);
 			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 			curl_close($curl);
+		} else {
+			$status = 200;
 		}
 		
 		if ($status === 200 || $status === 204) {

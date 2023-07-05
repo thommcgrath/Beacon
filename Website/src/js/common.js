@@ -24,7 +24,7 @@ class BeaconWebRequest {
 			status: xhr.status,
 			statusText: xhr.statusText,
 			body: xhr.responseText,
-			success: (xhr.status >= 200 && xhr.status < 300)
+			success: (xhr.status >= 200 && xhr.status < 300) || xhr.status === 304
 		};
 	}
 	
