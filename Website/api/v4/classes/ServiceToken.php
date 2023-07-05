@@ -34,6 +34,8 @@ class ServiceToken implements JsonSerializable {
 		switch (strtolower($provider)) {
 		case strtolower(self::ProviderNitrado):
 			return self::ProviderNitrado;
+		case strtolower(self::ProviderGameServerApp):
+			return self::ProviderGameServerApp;
 		}
 		return $provider;	
 	}
