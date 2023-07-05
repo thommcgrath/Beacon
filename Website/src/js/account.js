@@ -663,6 +663,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 					staticTokenNameField.value = '';
 					staticTokenTokenField.value = '';
 					staticTokenProviderField.value = provider;
+					staticTokenErrorField.classList.add('hidden');
 					switch (provider) {
 					case 'nitrado':
 						staticTokenGenerateLink.href = 'https://server.nitrado.net/usa/developer/tokens';
