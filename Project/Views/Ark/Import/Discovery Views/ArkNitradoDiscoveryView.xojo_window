@@ -211,7 +211,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
       Visible         =   False
       Width           =   468
    End
-   Begin UITweaks.ResizedPushButton ListCancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   True
@@ -243,7 +243,7 @@ Begin ArkDiscoveryView ArkNitradoDiscoveryView
       Visible         =   True
       Width           =   80
    End
-   Begin UITweaks.ResizedPushButton ListActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -428,7 +428,7 @@ End
 		    Self.TokensRefreshButton.Visible = Not Refreshing
 		  End If
 		  
-		  Var ListActionEnabled As Boolean
+		  Var ActionEnabled As Boolean
 		  If Refreshing Then
 		    Var RefreshLabel As String
 		    If Self.mFetchingTokens Then
@@ -443,14 +443,14 @@ End
 		  Else
 		    For I As Integer = 0 To Self.List.RowCount - 1
 		      If Self.List.CellCheckBoxValueAt(I, 0) Then
-		        ListActionEnabled = True
+		        ActionEnabled = True
 		        Exit For I
 		      End If
 		    Next
 		  End If
 		  
-		  If Self.ListActionButton.Enabled <> ListActionEnabled Then
-		    Self.ListActionButton.Enabled = ListActionEnabled
+		  If Self.ActionButton.Enabled <> ActionEnabled Then
+		    Self.ActionButton.Enabled = ActionEnabled
 		  End If
 		End Sub
 	#tag EndMethod
@@ -463,10 +463,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mAddressColumnWidth As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mAuthController As Beacon.TaskWaitController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -507,7 +503,7 @@ End
 		    Return
 		  End If
 		  Self.mFetchingTokens = True
-		  Me.AddUserInterfaceUpdate(New Dictionary("updateui": true))
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
 		  
 		  Var UserId As String = App.IdentityManager.CurrentUserId
 		  Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(UserId)
@@ -518,9 +514,9 @@ End
 		    End If
 		    Cache.Value(Tokens(Idx).TokenId) = Tokens(Idx)
 		    
-		    If Tokens(Idx).Provider = "Nitrado" Then
+		    If Tokens(Idx).Provider = BeaconAPI.ProviderToken.ProviderNitrado Then
 		      Self.ListServers(Tokens(Idx))
-		      Me.AddUserInterfaceUpdate(New Dictionary("updateui": true))
+		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
 		    Else
 		      Tokens.RemoveAt(Idx)
 		    End If
@@ -536,11 +532,11 @@ End
 		    End If
 		    
 		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId)
-		    If Token.Provider = "Nitrado" And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
+		    If Token.Provider = BeaconAPI.ProviderToken.ProviderNitrado And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
 		      Tokens.Add(Token)
 		      Cache.Value(Token.TokenId) = Token
 		      Self.ListServers(Token)
-		      Me.AddUserInterfaceUpdate(New Dictionary("updateui": true))
+		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
 		    End If
 		  Next
 		  If Self.mCancelled Then
@@ -549,16 +545,16 @@ End
 		  
 		  Self.mTokens = Tokens
 		  Self.mFetchingTokens = False
-		  Me.AddUserInterfaceUpdate(New Dictionary("updateui": true, "finished": true))
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": true))
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub UserInterfaceUpdate(data() as Dictionary)
 		  For Each Update As Dictionary In Data
-		    If Update.Lookup("updateui", False).BooleanValue = True Then
+		    If Update.Lookup("UpdateUI", False).BooleanValue = True Then
 		      Self.UpdateUI()
 		    End If
-		    If Update.Lookup("finished", false).BooleanValue = True And Self.mTokens.Count = 0 Then
+		    If Update.Lookup("Finished", false).BooleanValue = True And Self.mTokens.Count = 0 Then
 		      If Self.ShowConfirm("No Nitrado services are available. Would you like to connect a Nitrado account to your Beacon account?", "Your web browser will be opened so you can connect your accounts.", "Connect", "Cancel") Then
 		        System.GotoURL(Beacon.WebURL("/account/#services", True))
 		      End If
@@ -597,14 +593,14 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ListCancelButton
+#tag Events CancelButton
 	#tag Event
 		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ListActionButton
+#tag Events ActionButton
 	#tag Event
 		Sub Pressed()
 		  Var Data() As Beacon.DiscoveredData

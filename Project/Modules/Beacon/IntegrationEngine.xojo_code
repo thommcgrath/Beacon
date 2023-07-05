@@ -465,10 +465,6 @@ Protected Class IntegrationEngine
 		    Return
 		  End If
 		  
-		  If Self.Finished Then
-		    Return
-		  End If
-		  
 		  // And done
 		  Self.Log("Finished")
 		  Self.Finished = True

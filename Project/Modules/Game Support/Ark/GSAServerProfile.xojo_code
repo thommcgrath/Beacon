@@ -17,10 +17,8 @@ Inherits Ark.ServerProfile
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(TemplateID As Integer, TemplateName As String)
+		Sub Constructor()
 		  // Do not call the parent constructor
-		  Self.Name = TemplateName
-		  Self.ProviderServiceID = TemplateID
 		  Self.Platform = Ark.ServerProfile.PlatformPC
 		End Sub
 	#tag EndMethod

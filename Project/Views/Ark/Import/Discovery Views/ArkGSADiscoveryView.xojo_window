@@ -27,597 +27,252 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
    Transparent     =   True
    Visible         =   True
    Width           =   576
-   Begin DesktopPagePanel Views
+   Begin DesktopLabel TemplatesMessage
       AllowAutoDeactivate=   True
+      Bold            =   True
       Enabled         =   True
-      Height          =   402
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Select Config Templates"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   536
+   End
+   Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowInfiniteScroll=   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
+      Bold            =   False
+      ColumnCount     =   2
+      ColumnWidths    =   "26,*"
+      DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   282
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   " 	Name"
+      Italic          =   False
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   3
-      Panels          =   ""
+      PageSize        =   100
+      PreferencesKey  =   ""
+      RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      SelectedPanelIndex=   0
-      TabIndex        =   0
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   60
       Transparent     =   False
-      Value           =   2
+      TypeaheadColumn =   0
+      Underline       =   False
       Visible         =   True
-      Width           =   576
-      Begin DesktopLabel UserTokenMessage
-         AllowAutoDeactivate=   True
-         Bold            =   True
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "GameServerApp.com API Token"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   20
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   536
-      End
-      Begin DesktopLabel UserTokenExplanation
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   54
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "On your GameServerApp.com dashboard you will find an ""API / Integrate"" option where you can issue a token for Beacon. Copy the token into the field below to continue. Remember to keep your token in a safe place in case you need it again."
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   52
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   536
-      End
-      Begin UITweaks.ResizedPushButton UserTokenDashboardButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Take Me There"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   229
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   118
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   118
-      End
-      Begin CodeArea UserTokenArea
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   True
-         AllowStyledText =   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         Height          =   166
-         HideSelection   =   True
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LineHeight      =   0.0
-         LineSpacing     =   1.0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Multiline       =   True
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   184
-         Transparent     =   False
-         Underline       =   False
-         UnicodeMode     =   1
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   536
-      End
-      Begin UITweaks.ResizedPushButton UserTokenActionButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Next"
-         Default         =   True
-         Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   476
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   362
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPushButton UserTokenCancelButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   384
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   362
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField UserTokenNameField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   149
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   150
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   407
-      End
-      Begin UITweaks.ResizedLabel UserTokenNameLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Name Your Token:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   150
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   117
-      End
-      Begin DesktopProgressBar ListingIndicator
-         Active          =   False
-         AllowAutoDeactivate=   True
-         AllowTabStop    =   True
-         Enabled         =   True
-         Height          =   20
-         Indeterminate   =   True
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumValue    =   100
-         PanelIndex      =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         Tooltip         =   ""
-         Top             =   207
-         Transparent     =   False
-         Value           =   0.0
-         Visible         =   True
-         Width           =   536
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
-      End
-      Begin DesktopLabel ListingMessage
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Finding config templates…"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   175
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   536
-      End
-      Begin DesktopLabel TemplatesMessage
-         AllowAutoDeactivate=   True
-         Bold            =   True
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Your config templates"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   20
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   536
-      End
-      Begin UITweaks.ResizedPushButton TemplatesLinkAdditionalButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Link Another Account"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   False
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   362
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   160
-      End
-      Begin UITweaks.ResizedPushButton TemplatesCancelButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   384
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   362
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPushButton TemplatesActionButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Next"
-         Default         =   True
-         Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   476
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   362
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin BeaconListbox TemplatesList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowInfiniteScroll=   False
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
-         Bold            =   False
-         ColumnCount     =   2
-         ColumnWidths    =   "26,*"
-         DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
-         DefaultSortColumn=   0
-         DefaultSortDirection=   0
-         DropIndicatorVisible=   False
-         EditCaption     =   "Edit"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         GridLineStyle   =   0
-         HasBorder       =   True
-         HasHeader       =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         HeadingIndex    =   -1
-         Height          =   298
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         InitialValue    =   " 	Name"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         PreferencesKey  =   ""
-         RequiresSelection=   False
-         RowSelectionType=   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   52
-         Transparent     =   False
-         TypeaheadColumn =   0
-         Underline       =   False
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   536
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
-      Begin UITweaks.ResizedPushButton ListingCancelButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   476
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   362
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
+      VisibleRowCount =   0
+      Width           =   536
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
+   Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Next"
+      Default         =   True
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   476
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   362
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   384
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   362
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin DesktopButton TokensRefreshButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Refresh"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   9
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -49
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin DesktopProgressWheel TokensRefreshSpinner
+      AllowAutoDeactivate=   True
+      AllowTabStop    =   True
+      Enabled         =   True
+      Height          =   16
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   364
+      Transparent     =   False
+      Visible         =   False
+      Width           =   16
+   End
+   Begin DesktopLabel TokensRefreshLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   48
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Authorizing…"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   362
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      Width           =   324
+   End
+   Begin Thread TokenLookupThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
    End
 End
 #tag EndDesktopWindow
@@ -625,265 +280,176 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.TemplatesList.RemoveAllRows()
-		  Self.CheckTemplatesActionEnabled()
-		  Self.mPendingEngines.ResizeTo(-1)
-		  Self.mActiveEngine = Nil
-		  Self.mSuccess = False
-		  
-		  If Self.mAccounts.Count = 0 Then
-		    Self.StartNewAccount()
-		    Return
-		  End If
-		  
-		  Var Accounts() As Beacon.ExternalAccount = Self.mAccounts.ForProvider(Beacon.ExternalAccount.ProviderGameServerApp)
-		  For Each Account As Beacon.ExternalAccount In Accounts
-		    Self.ListTemplatesForAccount(Account)
-		  Next
-		  
-		  Self.Views.SelectedPanelIndex = Self.PageListingTemplates
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GetValuesFromProject(Project As Beacon.Project)
-		  Self.mAccounts.Import(Project.Accounts)
+		  Self.DesiredHeight = 480
+		  Self.RefreshTokens()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Opening()
 		  Self.SwapButtons()
-		  RaiseEvent Open
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resize()
-		  Var TopMargin As Integer = 20
-		  Var BottomMargin As Integer = 40 + Self.ListingCancelButton.Height
-		  Var IndicatorGroup As New ControlGroup(Self.ListingIndicator, Self.ListingMessage)
-		  IndicatorGroup.Top = TopMargin + (((Self.Height - (TopMargin + BottomMargin)) - IndicatorGroup.Height) / 2)
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Sub AdvanceListQueue()
-		  If Self.mPendingEngines.Count = 0 Then
-		    // Finished
-		    If Self.mSuccess Then
-		      If Self.TemplatesList.RowCount > 0 Then
-		        Self.Views.SelectedPanelIndex = Self.PageTemplateList
-		      Else
-		        Self.ShowAlert("No editable config templates found", "Beacon was unable to find any editable config templates in your account. Use the ""Config templates"" section of your GameServerApp.com dashboard to create a new editable config template.")
-		        Self.ShouldCancel
-		      End If
-		    Else
-		      Self.ShouldCancel
-		    End If
-		    Return
-		  End If
-		  
-		  Var Engine As Ark.GSAIntegrationEngine = Self.mPendingEngines(0)
-		  Self.mActiveEngine = Engine
-		  Self.mPendingEngines.RemoveAt(0)
-		  
-		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
-		  Engine.BeginDiscovery(Self.Project)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CheckTemplatesActionEnabled()
-		  For Idx As Integer = 0 To Self.TemplatesList.LastRowIndex
-		    If Self.TemplatesList.CellCheckBoxValueAt(Idx, 0) Then
-		      Self.TemplatesActionButton.Enabled = True
-		      Return
-		    End If
-		  Next
-		  
-		  Self.TemplatesActionButton.Enabled = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CheckUserTokenActionButton()
-		  Self.UserTokenActionButton.Enabled = Self.UserTokenNameField.Text.Trim.IsEmpty = False And Self.UserTokenArea.Text.Trim.IsEmpty = False
-		End Sub
+		Private Function Busy() As Boolean
+		  Return Self.mPendingListActions > 0 Or Self.mFetchingTokens = True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mAccounts = New Beacon.ExternalAccountManager
+		  Self.mEngines = New Dictionary
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Engine_Discovered(Sender As Ark.GSAIntegrationEngine, Data() As Beacon.DiscoveredData)
-		  Self.mActiveEngine = Nil
+		  Self.mPendingListActions = Self.mPendingListActions - 1
 		  
 		  If Sender.Errored Then
 		    Self.ShowAlert("Unable to retrieve server list from GameServerApp.com", "The error message provided was:" + EndOfLine + EndOfLine + Sender.ErrorMessage + EndOfLine + EndOfLine + "This error may be temporary, so try again in a few minutes. If the problem persists, make sure your antivirus or malware protection is not blocking Beacon from contacting GameServerApp.com's servers.")
-		    Self.AdvanceListQueue()
+		    Self.ShouldCancel()
 		    Return
 		  End If
 		  
 		  For Each Server As Beacon.DiscoveredData In Data
-		    Self.TemplatesList.AddRow("", Server.Profile.Name)
-		    Self.TemplatesList.RowTagAt(Self.TemplatesList.LastAddedRowIndex) = Server
+		    Self.List.AddRow("", Server.Profile.Name)
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Server
 		  Next
 		  
-		  Self.mSuccess = True
-		  Self.AdvanceListQueue()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ListTemplatesForAccount(Account As Beacon.ExternalAccount)
-		  Self.mPendingEngines.Add(New Ark.GSAIntegrationEngine(Account))
-		  
-		  If (Self.mActiveEngine Is Nil) = False Then
+		  If Self.Busy = False And Self.List.RowCount = 0 Then
+		    Self.ShowAlert("No eligible templates were found", "Beacon could not find any templates on any of the connected GameServerApp.com accounts.")
+		    Self.ShouldCancel()
 		    Return
 		  End If
 		  
-		  Self.AdvanceListQueue()
+		  Self.List.SortingColumn = 1
+		  Self.List.Sort
+		  Self.UpdateUI()
+		  
+		  If Self.Busy = False Then
+		    App.FrontmostMBS = True
+		    Self.TrueWindow.ActivateWindowMBS
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub StartNewAccount()
-		  Self.UserTokenNameField.Text = ""
-		  Self.UserTokenArea.Text = ""
-		  Self.Views.SelectedPanelIndex = Self.PageUserToken
+		Private Function Engine_Wait(Sender As Ark.GSAIntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
+		  #Pragma Unused Sender
+		  
+		  Controller.Cancelled = True
+		  Controller.ShouldResume = True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ListTemplatesForAccount(Token As BeaconAPI.ProviderToken)
+		  Var Profile As New Ark.GSAServerProfile
+		  Profile.ProviderTokenId = Token.TokenId
+		  
+		  Var Engine As New Ark.GSAIntegrationEngine(Profile)
+		  Self.mEngines.Value(Token.TokenId) = Engine
+		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		  AddHandler Engine.Wait, WeakAddressOf Engine_Wait
+		  Engine.BeginDiscovery(Self.Project)
+		  
+		  Self.mPendingListActions = Self.mPendingListActions + 1
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RefreshTokens()
+		  Self.List.RemoveAllRows()
+		  Self.mFetchingTokens = False
+		  Self.mPendingListActions = 0
+		  Self.mCancelled = False
+		  
+		  Self.TokenLookupThread.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ShouldCancel()
+		  Self.mCancelled = True
+		  Super.ShouldCancel()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  Var Refreshing As Boolean = Self.Busy
+		  If Self.TokensRefreshLabel.Visible <> Refreshing Then
+		    Self.TokensRefreshLabel.Visible = Refreshing
+		  End If
+		  If Self.TokensRefreshSpinner.Visible <> Refreshing Then
+		    Self.TokensRefreshSpinner.Visible = Refreshing
+		  End If
+		  If Self.TokensRefreshButton.Visible = Refreshing Then
+		    Self.TokensRefreshButton.Visible = Not Refreshing
+		  End If
+		  
+		  Var ActionEnabled As Boolean
+		  If Refreshing Then
+		    Var RefreshLabel As String
+		    If Self.mFetchingTokens Then
+		      RefreshLabel = "Retrieving GameServerApp.com tokens…"
+		    Else
+		      RefreshLabel = "Listing templates on " + Language.NounWithQuantity(Self.mPendingListActions, "GameServerApp.com account", "GameServerApp.com accounts") + "…"
+		    End If
+		    
+		    If Self.TokensRefreshLabel.Text <> RefreshLabel Then
+		      Self.TokensRefreshLabel.Text = RefreshLabel
+		    End If
+		  Else
+		    For I As Integer = 0 To Self.List.RowCount - 1
+		      If Self.List.CellCheckBoxValueAt(I, 0) Then
+		        ActionEnabled = True
+		        Exit For I
+		      End If
+		    Next
+		  End If
+		  
+		  If Self.ActionButton.Enabled <> ActionEnabled Then
+		    Self.ActionButton.Enabled = ActionEnabled
+		  End If
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
-		Private mAccounts As Beacon.ExternalAccountManager
+		Private mCancelled As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mActiveEngine As Ark.GSAIntegrationEngine
+		Private mEngines As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPendingEngines() As Ark.GSAIntegrationEngine
+		Private mFetchingTokens As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSuccess As Boolean
+		Private mPendingListActions As Integer
 	#tag EndProperty
 
-
-	#tag Constant, Name = PageListingTemplates, Type = Double, Dynamic = False, Default = \"1", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageTemplateList, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageUserToken, Type = Double, Dynamic = False, Default = \"0", Scope = Private
-	#tag EndConstant
+	#tag Property, Flags = &h21
+		Private mTokens() As BeaconAPI.ProviderToken
+	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events Views
-	#tag Event
-		Sub PanelChanged()
-		  Select Case Me.SelectedPanelIndex
-		  Case Self.PageUserToken
-		    Self.DesiredHeight = 400
-		  Case Self.PageListingTemplates
-		    Self.DesiredHeight = 200
-		  Case Self.PageTemplateList
-		    Self.DesiredHeight = 400
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UserTokenDashboardButton
-	#tag Event
-		Sub Pressed()
-		  System.GotoURL(Beacon.WebURL("/gsatoken"))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UserTokenArea
-	#tag Event
-		Sub TextChanged()
-		  Self.CheckUserTokenActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UserTokenActionButton
-	#tag Event
-		Sub Pressed()
-		  Var Account As New Beacon.ExternalAccount(v4UUID.Create, Self.UserTokenNameField.Text.Trim, Beacon.ExternalAccount.ProviderGameServerApp, Self.UserTokenArea.Text.Trim, "", New DateTime(2999, 12, 31, 0, 0, 0, 0, New TimeZone(0)))
-		  Self.mAccounts.Add(Account)
-		  Self.ListTemplatesForAccount(Account)
-		  
-		  Self.Views.SelectedPanelIndex = Self.PageListingTemplates
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UserTokenCancelButton
-	#tag Event
-		Sub Pressed()
-		  If Self.TemplatesList.RowCount = 0 Then
-		    Self.ShouldCancel()
-		  ElseIf Self.mPendingEngines.Count > 0 Then
-		    Self.Views.SelectedPanelIndex = Self.PageListingTemplates
-		  Else
-		    Self.Views.SelectedPanelIndex = Self.PageTemplateList
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UserTokenNameField
-	#tag Event
-		Sub TextChanged()
-		  Self.CheckUserTokenActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TemplatesLinkAdditionalButton
-	#tag Event
-		Sub Pressed()
-		  Self.StartNewAccount()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TemplatesCancelButton
-	#tag Event
-		Sub Pressed()
-		  Self.ShouldCancel()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TemplatesActionButton
-	#tag Event
-		Sub Pressed()
-		  Var Data() As Beacon.DiscoveredData
-		  For Idx As Integer = 0 To Self.TemplatesList.LastRowIndex
-		    If Not Self.TemplatesList.CellCheckBoxValueAt(Idx, 0) Then
-		      Continue
-		    End If
-		    
-		    Var Template As Ark.GSADiscoveredData = Self.TemplatesList.RowTagAt(Idx)
-		    Data.Add(Template)
-		  Next
-		  Self.ShouldFinish(Data, Self.mAccounts)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TemplatesList
+#tag Events List
 	#tag Event
 		Sub Opening()
 		  Me.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
@@ -895,20 +461,110 @@ End
 		  #Pragma Unused Row
 		  #Pragma Unused Column
 		  
-		  Self.CheckTemplatesActionEnabled()
+		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ListingCancelButton
+#tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  If (Self.mActiveEngine Is Nil) = False Then
-		    RemoveHandler Self.mActiveEngine.Discovered, WeakAddressOf Engine_Discovered
-		    Self.mActiveEngine.Cancel
-		    Self.mActiveEngine = Nil
-		  End If
-		  Self.mPendingEngines.ResizeTo(-1)
+		  Var Data() As Beacon.DiscoveredData
+		  For I As Integer = 0 To Self.List.RowCount - 1
+		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Data.Add(Self.List.RowTagAt(I))
+		  Next
+		  Self.ShouldFinish(Data, Nil)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CancelButton
+	#tag Event
+		Sub Pressed()
 		  Self.ShouldCancel()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TokensRefreshButton
+	#tag Event
+		Sub Pressed()
+		  Self.RefreshTokens()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Top = Self.TokensRefreshLabel.Top
+		  Me.Left = Self.TokensRefreshSpinner.Left
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TokenLookupThread
+	#tag Event
+		Sub Run()
+		  If Self.Busy Then
+		    Return
+		  End If
+		  Self.mFetchingTokens = True
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		  
+		  Var UserId As String = App.IdentityManager.CurrentUserId
+		  Var Tokens() As BeaconAPI.ProviderToken = BeaconAPI.GetProviderTokens(UserId)
+		  Var Cache As New Dictionary
+		  For Idx As Integer = Tokens.LastIndex DownTo 0
+		    If Self.mCancelled Then
+		      Return
+		    End If
+		    Cache.Value(Tokens(Idx).TokenId) = Tokens(Idx)
+		    
+		    If Tokens(Idx).Provider = BeaconAPI.ProviderToken.ProviderGameServerApp Then
+		      Self.ListTemplatesForAccount(Tokens(Idx))
+		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		    Else
+		      Tokens.RemoveAt(Idx)
+		    End If
+		  Next
+		  
+		  Var TokenIds() As String = Self.Project.ProviderTokenIds
+		  For Each TokenId As String In TokenIds
+		    If Self.mCancelled Then
+		      Return
+		    End If
+		    If Cache.HasKey(TokenId) Then
+		      Continue
+		    End If
+		    
+		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId)
+		    If Token.Provider = BeaconAPI.ProviderToken.ProviderGameServerApp And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
+		      Tokens.Add(Token)
+		      Cache.Value(Token.TokenId) = Token
+		      Self.ListTemplatesForAccount(Token)
+		      Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true))
+		    End If
+		  Next
+		  If Self.mCancelled Then
+		    Return
+		  End If
+		  
+		  Self.mTokens = Tokens
+		  Self.mFetchingTokens = False
+		  Me.AddUserInterfaceUpdate(New Dictionary("UpdateUI": true, "Finished": true))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    If Update.Lookup("UpdateUI", False).BooleanValue = True Then
+		      Self.UpdateUI()
+		    End If
+		    If Update.Lookup("Finished", false).BooleanValue = True And Self.mTokens.Count = 0 Then
+		      If Self.ShowConfirm("No GameServerApp.com services are available. Would you like to a GameServerApp.com token to your Beacon account?", "Your web browser will be opened so you can add a token.", "Connect", "Cancel") Then
+		        System.GotoURL(Beacon.WebURL("/account/#services", True))
+		      End If
+		      Self.ShouldCancel()
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

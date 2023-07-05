@@ -830,18 +830,17 @@ End
 		    Var Engine As Ark.IntegrationEngine
 		    
 		    Select Case Token.Provider
-		    Case "Nitrado"
+		    Case BeaconAPI.ProviderToken.ProviderNitrado
 		      Var Profile As New Ark.NitradoServerProfile
 		      Profile.ProviderTokenId = Token.TokenId
 		      
 		      Engine = New Ark.NitradoIntegrationEngine(Profile)
+		    Case BeaconAPI.ProviderToken.ProviderGameServerApp
+		      Var Profile As New Ark.GSAServerProfile
+		      Profile.ProviderTokenId = Token.TokenId
+		      
+		      Engine = New Ark.GSAIntegrationEngine(Profile)
 		    End Select
-		    
-		    #if DebugBuild
-		      #Pragma Warning "Add GSA Support"
-		    #else
-		      #Pragma Error "Add GSA Support"
-		    #endif
 		    
 		    If Engine Is Nil Then
 		      Continue

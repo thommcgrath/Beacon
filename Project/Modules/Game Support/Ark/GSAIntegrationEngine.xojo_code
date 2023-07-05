@@ -9,7 +9,7 @@ Inherits Ark.IntegrationEngine
 		  End If
 		  
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Socket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Socket.RequestHeader("GSA-ID") = Ark.GSAIntegrationEngine.GSAID
 		  Self.SendRequest(Socket, "GET", "https://api.gameserverapp.com/system-api/v1/config-template/" + Self.Profile.TemplateID.ToString(Locale.Raw, "0") + "/config/chain")
 		  If Self.CheckSocketForError(Socket) Then
@@ -26,7 +26,7 @@ Inherits Ark.IntegrationEngine
 		  End Try
 		  
 		  Socket = New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Socket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Socket.RequestHeader("GSA-ID") = Ark.GSAIntegrationEngine.GSAID
 		  Self.SendRequest(Socket, "GET", "https://api.gameserverapp.com/system-api/v1/config-template/" + Self.Profile.TemplateID.ToString(Locale.Raw, "0") + "/config/end")
 		  If Self.CheckSocketForError(Socket) Then
@@ -103,12 +103,9 @@ Inherits Ark.IntegrationEngine
 
 	#tag Event
 		Sub Begin()
-		  If Self.mAccount Is Nil Then
-		    Self.mAccount = Self.Project.Accounts.GetByUUID(Self.Profile.ExternalAccountUUID)
-		    If Self.mAccount Is Nil Then
-		      Self.SetError("No account is available for this server. Check Beacon's Accounts editor.")
-		      Return
-		    End If
+		  Var Token As Variant = Beacon.Cache.Fetch(Profile.ProviderTokenId)
+		  If Token.IsNull = False And Token.Type = Variant.TypeObject And Token.ObjectValue IsA BeaconAPI.ProviderToken Then
+		    Self.mProviderToken = Token
 		  End If
 		End Sub
 	#tag EndEvent
@@ -116,16 +113,9 @@ Inherits Ark.IntegrationEngine
 	#tag Event
 		Function Discover() As Beacon.DiscoveredData()
 		  Var Servers() As Beacon.DiscoveredData
-		  If Self.mAccount Is Nil Then
-		    Self.mAccount = Self.Project.Accounts.GetByUUID(Self.Profile.ExternalAccountUUID)
-		    If Self.mAccount Is Nil Then
-		      Self.SetError("Cannot list templates because the required account is no longer available. Check the Accounts editor in your Beacon project.")
-		      Return Servers
-		    End If
-		  End If
 		  
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Socket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Socket.RequestHeader("GSA-ID") = Ark.GSAIntegrationEngine.GSAID
 		  Self.SendRequest(Socket, "GET", "https://api.gameserverapp.com/system-api/v1/config-template")
 		  If Self.CheckSocketForError(Socket) Then
@@ -145,14 +135,16 @@ Inherits Ark.IntegrationEngine
 		      If Dict.Value("can_edit").BooleanValue = False Then
 		        Continue
 		      End If
-		      Var TemplateID As Integer = Dict.Value("id").IntegerValue
+		      Var TemplateId As Integer = Dict.Value("id").IntegerValue
 		      Var TemplateName As String = Dict.Value("name").StringValue
 		      
-		      Var Profile As New Ark.GSAServerProfile(TemplateID, TemplateName)
-		      Profile.ExternalAccountUUID = Self.mAccount.UUID
+		      Var Profile As New Ark.GSAServerProfile()
+		      Profile.Name = TemplateName
+		      Profile.ProviderServiceId = TemplateId
+		      Profile.ProviderTokenId = Self.mProviderToken.TokenId
 		      Profile.Mask = Ark.Maps.All.Mask
 		      
-		      Var Server As New Ark.GSADiscoveredData(TemplateID, Self.mAccount.AccessToken)
+		      Var Server As New Ark.GSADiscoveredData(TemplateId, Self.mProviderToken.AccessToken)
 		      Server.Profile = Profile
 		      
 		      Servers.Add(Server)
@@ -176,7 +168,7 @@ Inherits Ark.IntegrationEngine
 		  End If
 		  
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Socket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Socket.RequestHeader("GSA-ID") = Ark.GSAIntegrationEngine.GSAID
 		  Self.SendRequest(Socket, "GET", "https://api.gameserverapp.com/system-api/v1/config-template/" + Ark.GSAServerProfile(Profile).TemplateID.ToString(Locale.Raw, "0") + "/config/" + Transfer.Filename)
 		  If Self.CheckSocketForError(Socket) Then
@@ -217,7 +209,7 @@ Inherits Ark.IntegrationEngine
 		  
 		  Var TemplateID As Integer = Self.Profile.TemplateID
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Socket.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Socket.RequestHeader("GSA-ID") = Ark.GSAIntegrationEngine.GSAID
 		  Socket.SetRequestContent(PostBody, ContentType)
 		  Self.SendRequest(Socket, "POST", "https://api.gameserverapp.com/system-api/v1/config-template/" + TemplateID.ToString(Locale.Raw, "0") + "/config/" + Transfer.Filename)
@@ -264,14 +256,6 @@ Inherits Ark.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Account As Beacon.ExternalAccount)
-		  // Simply changing the scope of the constructor
-		  Self.mAccount = Account
-		  Super.Constructor(Nil)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Profile As Beacon.ServerProfile)
 		  // Simply changing the scope of the constructor
 		  Super.Constructor(Profile)
@@ -307,7 +291,7 @@ Inherits Ark.IntegrationEngine
 
 
 	#tag Property, Flags = &h21
-		Private mAccount As Beacon.ExternalAccount
+		Private mProviderToken As BeaconAPI.ProviderToken
 	#tag EndProperty
 
 
