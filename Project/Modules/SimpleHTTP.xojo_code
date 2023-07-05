@@ -91,6 +91,12 @@ Protected Module SimpleHTTP
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub SetJSON(Extends Socket As URLConnection, Obj As Variant)
+		  Socket.SetRequestContent(Beacon.GenerateJSON(Obj, False), "application/json; charset=utf-8")
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private Sockets() As SimpleHTTP.SimpleHTTPSocket
