@@ -51,7 +51,7 @@ if (count($connectedServices) > 0) {
 			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="nitrado" beacon-provider-type="oauth" beacon-token-id="">Connect</button><button beacon-provider="nitrado" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
 		</div>
 		<div class="service service-gameserverapp inactive">
-			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('gameserverapp-color.svg'); ?>" alt="GameServerApp"></div>
+			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('gameserverapp-black.svg'); ?>" alt="GameServerApp"></div>
 			<div class="service-name">GameServerApp.com</div>
 			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="gameserverapp" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
 		</div>

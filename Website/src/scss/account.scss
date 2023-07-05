@@ -155,7 +155,7 @@ h1 span.tag {
 		}
 	}
 	
-	.service-nitrado, .service-gameserverapp {
+	.service-nitrado {
 		background-color: black;
 		color: white;
 		
@@ -167,7 +167,19 @@ h1 span.tag {
 				filter: brightness(0%);
 			}
 		}
-	}		
+	}
+	
+	.service-gameserverapp {
+		background: rgb(12,38,76);
+		background: linear-gradient(0deg, rgba(3,3,4,1) 0%, rgba(12,38,76,1) 100%);
+		color: white;
+		
+		&.inactive {
+			background: none;
+			background-color: white;
+			color: black;
+		}
+	}	
 }
 
 #static-token-token-field {
