@@ -98,7 +98,7 @@ Begin ServerViewContainer NitradoServerView
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   142
+         Left            =   168
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -118,7 +118,7 @@ Begin ServerViewContainer NitradoServerView
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   438
+         Width           =   412
       End
       Begin UITweaks.ResizedLabel ServerStatusLabel
          AllowAutoDeactivate=   True
@@ -144,14 +144,14 @@ Begin ServerViewContainer NitradoServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Server Status:"
-         TextAlignment   =   0
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   110
+         Width           =   136
       End
       Begin BeaconTextArea AdminNotesField
          AllowAutoDeactivate=   True
@@ -234,13 +234,6 @@ Begin ServerViewContainer NitradoServerView
          Width           =   600
       End
    End
-   Begin Beacon.OAuth2Client Auth
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
    Begin OmniBar ControlToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -275,37 +268,29 @@ Begin ServerViewContainer NitradoServerView
       Visible         =   True
       Width           =   600
    End
+   Begin Thread RefreshThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
+   Begin Beacon.Thread ToggleThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
-		  Self.Auth.Cancel
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Hidden()
-		  If Self.mRefreshKey.IsEmpty = False Then
-		    CallLater.Cancel(Self.mRefreshKey)
-		    Self.mRefreshKey = ""
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Opening()
-		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
-		  If Account Is Nil Then
-		    Account = New Beacon.ExternalAccount(Self.mProfile.ExternalAccountUUID, Beacon.ExternalAccount.ProviderNitrado)
-		  End If
-		  
-		  If Self.Auth.SetAccount(Account) Then
-		    Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
-		  Else
-		    Self.ShowAlert("Unsupported external account", "This version of Beacon does not support accounts from " + Beacon.ExternalAccount.ProviderNitrado + ". This means there is probably an update available.")
-		  End If
+		  Self.CancelRefresh()
 		End Sub
 	#tag EndEvent
 
@@ -313,7 +298,7 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  If Self.mRefreshKey.IsEmpty And Self.Auth.IsAuthenticated Then
+		  If Self.mRefreshKey.IsEmpty Then
 		    Self.RefreshServerStatus()
 		  End If
 		  
@@ -325,30 +310,34 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ServerStatus(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
-		  #Pragma Unused URL
-		  #Pragma Unused Tag
-		  
-		  If Self.Closed Then
-		    Return
+		Private Sub CancelRefresh()
+		  If Self.mRefreshKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mRefreshKey)
+		    Self.mRefreshKey = ""
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Document As Ark.Project, Profile As Ark.NitradoServerProfile)
+		  Self.mProject = Document
+		  Self.mProfile = Profile
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RefreshServerStatus()
+		  Self.CancelRefresh()
 		  
-		  If Self.CheckError(Status) Then
-		    Return
+		  If Self.RefreshThread.ThreadState = Thread.ThreadStates.NotRunning Then
+		    Self.RefreshThread.Start
 		  End If
-		  
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    Var Data As Dictionary = Response.Value("data")
-		    Var GameServer As Dictionary = Data.Value("gameserver")
-		    
-		    Self.mServerState = GameServer.Value("status")
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Trying to refresh server status")
-		    Self.mServerState = "beacon_exception"
-		  End Try
-		  
-		  Self.UpdateStatusDisplay()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ScheduleRefresh()
+		  Self.CancelRefresh()
 		  
 		  If Self.IsFrontmost Then
 		    Self.mRefreshKey = CallLater.Schedule(5000, WeakAddressOf RefreshServerStatus)
@@ -359,102 +348,67 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ServerToggle(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
-		  #Pragma Unused URL
-		  #Pragma Unused Content
-		  #Pragma Unused Tag
-		  
-		  If Self.Closed Then
-		    Return
-		  End If
-		  
-		  Self.mRefreshKey = CallLater.Schedule(5000, WeakAddressOf RefreshServerStatus)
-		  
-		  If Self.CheckError(Status) Then
-		    Return
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function CheckError(Status As Integer) As Boolean
-		  Select Case Status
-		  Case 401
-		    Self.ShowAlert("Nitrado API Error", "You are not authorized to query this server.")
-		    Return True
+		Private Function StatusFromHTTPCode(HTTPStatus As Integer) As String
+		  Select Case HTTPStatus
+		  Case 401, 403
+		    Self.mServerState = Self.StatusUnauthorized
 		  Case 429
-		    Self.ShowAlert("Nitrado API Error", "Rate limit has been exceeded.")
-		    Return True
+		    Self.mServerState = Self.StatusRateLimited
+		  Case 502
+		    Self.mServerState = Self.StatusBadGateway
 		  Case 503
-		    Self.ShowAlert("Nitrado API Error", "Nitrado is currently offline for maintenace.")
-		    Return True
+		    Self.mServerState = Self.StatusMaintenance
+		  Else
+		    Self.mServerState = Self.StatusNitradoOther
 		  End Select
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(Document As Ark.Project, Profile As Ark.NitradoServerProfile)
-		  Self.mDocument = Document
-		  Self.mProfile = Profile
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Destructor()
-		  If Self.mOAuthWindow <> Nil Then
-		    Self.mOAuthWindow.Close
-		    Self.mOAuthWindow = Nil
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub RefreshServerStatus()
-		  If Self.mRefreshKey.IsEmpty = False Then
-		    CallLater.Cancel(Self.mRefreshKey)
-		  End If
-		  
-		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
-		  If Account Is Nil Then
-		    Return
-		  End If
-		  
-		  Var Headers As New Dictionary
-		  Headers.Value("Authorization") = "Bearer " + Account.AccessToken
-		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatusDisplay()
-		  Var Started As Boolean = Self.mServerState = "started"
+		  Var Started As Boolean = Self.mServerState = Self.StatusStarted
 		  Var ButtonEnabled As Boolean
 		  Select Case Self.mServerState
-		  Case "started"
+		  Case Self.StatusStarted
 		    Self.ServerStatusField.Text = "Running"
 		    ButtonEnabled = True
-		  Case "stopped"
+		  Case Self.StatusStopped
 		    Self.ServerStatusField.Text = "Stopped"
 		    ButtonEnabled = True
-		  Case "stopping"
+		  Case Self.StatusStopping
 		    Self.ServerStatusField.Text = "Stopping"
-		  Case "restarting"
-		    Self.ServerStatusField.Text = "Restarting"
-		  Case "suspended"
+		  Case Self.StatusRestarting
+		    Self.ServerStatusField.Text = "Starting"
+		  Case Self.StatusSuspended
 		    Self.ServerStatusField.Text = "Suspended"
-		  Case "guardian_locked"
-		    Self.ServerStatusField.Text = "Locked by Guardian"
-		  Case "gs_installation"
+		  Case Self.StatusGuardianLocked
+		    Self.ServerStatusField.Text = "Locked by guardian"
+		  Case Self.StatusGameserverInstallation
 		    Self.ServerStatusField.Text = "Switching games"
-		  Case "backup_restore"
+		  Case Self.StatusBackupRestore
 		    Self.ServerStatusField.Text = "Restoring from backup"
-		  Case "backup_creation"
+		  Case Self.StatusBackupCreation
 		    Self.ServerStatusField.Text = "Creating backup"
-		  Case "beacon_checking"
+		  Case Self.StatusChecking
 		    Self.ServerStatusField.Text = "Checking…"
-		  Case "beacon_exception"
-		    Self.ServerStatusField.Text = "Beacon Error"
+		  Case Self.StatusException
+		    Self.ServerStatusField.Text = "Beacon error"
+		  Case Self.StatusBadGateway
+		    Self.ServerStatusField.Text = "Unexpected Nitrado outage"
+		  Case Self.StatusEncryptedToken
+		    Self.ServerStatusField.Text = "Token is encrypted. Ask the project owner to resave."
+		  Case Self.StatusMaintenance
+		    Self.ServerStatusField.Text = "Nitrado is down for maintenance"
+		  Case Self.StatusMissingProfile
+		    Self.ServerStatusField.Text = "Missing profile. Try a server list refresh."
+		  Case Self.StatusMissingToken
+		    Self.ServerStatusField.Text = "Missing token. Try a server list refresh."
+		  Case Self.StatusNitradoOther
+		    Self.ServerStatusField.Text = "Unknown Nitrado error"
+		  Case Self.StatusUnauthorized
+		    Self.ServerStatusField.Text = "Unauthorized. The token may have been revoked."
+		  Case Self.StatusNetworkError
+		    Self.ServerStatusField.Text = "Network error. This is likely an outage between you and Nitrado."
 		  Else
 		    Self.ServerStatusField.Text = "Unknown state: " + Self.mServerState
 		  End Select
@@ -468,15 +422,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mDocument As Ark.Project
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOAuthWindow As OAuthAuthorizationWindow
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mProfile As Ark.NitradoServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProject As Ark.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -486,6 +436,67 @@ End
 	#tag Property, Flags = &h21
 		Private mServerState As String = "beacon_checking"
 	#tag EndProperty
+
+
+	#tag Constant, Name = StatusBackupCreation, Type = String, Dynamic = False, Default = \"backup_creation", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusBackupRestore, Type = String, Dynamic = False, Default = \"backup_restore", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusBadGateway, Type = String, Dynamic = False, Default = \"nitrado_bad_gateway", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusChecking, Type = String, Dynamic = False, Default = \"beacon_checking", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusEncryptedToken, Type = String, Dynamic = False, Default = \"beacon_encrypted_token", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusException, Type = String, Dynamic = False, Default = \"beacon_exception", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusGameserverInstallation, Type = String, Dynamic = False, Default = \"gs_installation", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusGuardianLocked, Type = String, Dynamic = False, Default = \"guardian_locked", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusMaintenance, Type = String, Dynamic = False, Default = \"nitrado_maintenance", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusMissingProfile, Type = String, Dynamic = False, Default = \"beacon_missing_profile", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusMissingToken, Type = String, Dynamic = False, Default = \"beacon_missing_token", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusNetworkError, Type = String, Dynamic = False, Default = \"network_error", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusNitradoOther, Type = String, Dynamic = False, Default = \"nitrado_other", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusRateLimited, Type = String, Dynamic = False, Default = \"nitrado_rate_limited", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusRestarting, Type = String, Dynamic = False, Default = \"restarting", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusStarted, Type = String, Dynamic = False, Default = \"started", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusStopped, Type = String, Dynamic = False, Default = \"stopped", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusStopping, Type = String, Dynamic = False, Default = \"stopping", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusSuspended, Type = String, Dynamic = False, Default = \"suspended", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusUnauthorized, Type = String, Dynamic = False, Default = \"nitrado_unauthorized", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -506,49 +517,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GetProject() As Ark.Project
-		  Return Self.mDocument
+		  Return Self.mProject
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
 		  Me.Profile = Self.mProfile
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Auth
-	#tag Event
-		Sub Authenticated()
-		  Self.mDocument.Accounts.Add(Me.Account)
-		  Self.RefreshServerStatus()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
-		  If Not Self.ShowConfirm(Account) Then
-		    Return False
-		  End If
-		  
-		  System.GotoURL(URL)
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub DismissWaitingWindow()
-		  If Self.mOAuthWindow <> Nil Then
-		    Self.mOAuthWindow.Close
-		    Self.mOAuthWindow = Nil
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShowWaitingWindow()
-		  Self.mOAuthWindow = New OAuthAuthorizationWindow(Me)
-		  Self.mOAuthWindow.Show()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub AccountUUIDChanged(OldUUID As v4UUID)
-		  Self.mDocument.ReplaceAccount(OldUUID, Me.Account)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -576,44 +550,178 @@ End
 		    Item.Toggled = True
 		    Me.Item("PageGeneral").Toggled = False
 		  Case "PowerButton"
-		    Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
-		    If Account Is Nil Then
-		      Return
-		    End If
-		    
-		    Var Headers As New Dictionary
-		    Headers.Value("Authorization") = "Bearer " + Account.AccessToken
-		    
-		    If Self.mServerState = "started" Then
+		    If Self.mServerState = Self.StatusStarted Then
 		      Var StopMessage As String = StopMessageDialog.Present(Self)
-		      If StopMessage = "" Then
+		      If StopMessage.IsEmpty Then
 		        Return
 		      End If
-		      
-		      Var FormData As New Dictionary
-		      FormData.Value("message") = "Server stopped by Beacon (https://usebeacon.app)"
-		      FormData.Value("stop_message") = StopMessage
-		      
-		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
-		      
-		      Self.mServerState = "stopping"
-		    ElseIf Self.mServerState = "stopped" Then
-		      Var FormData As New Dictionary
-		      FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
-		      
-		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
-		      
-		      Self.mServerState = "restarting"
-		    Else
-		      Self.ShowAlert("Cannot do that right now.", "The server is neither started nor stopped. Please wait for the current process to finish.")
-		      Return
+		      ToggleThread.UserData = StopMessage
 		    End If
 		    
-		    CallLater.Cancel(Self.mRefreshKey)
-		    Self.mRefreshKey = ""
-		    
-		    Self.UpdateStatusDisplay()
+		    ToggleThread.Start
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RefreshThread
+	#tag Event
+		Sub Run()
+		  Self.mServerState = Self.StatusChecking
+		  Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		  
+		  If Self.mProfile Is Nil Or Self.mProfile.ProviderTokenId.IsEmpty Then
+		    Self.mServerState = Self.StatusMissingProfile
+		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		    Self.ScheduleRefresh()
+		    Return
+		  End If
+		  
+		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Self.mProfile.ProviderTokenId, True)
+		  If Token Is Nil Then
+		    Self.mServerState = Self.StatusMissingToken
+		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		    Self.ScheduleRefresh()
+		    Return
+		  End If
+		  
+		  If Token.IsEncrypted And Token.Decrypt(Self.mProject.ProviderTokenKey(Token.TokenId)) = False Then
+		    Self.mServerState = Self.StatusEncryptedToken
+		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		    Self.ScheduleRefresh()
+		    Return
+		  End If
+		  
+		  Var Socket As New URLConnection
+		  Socket.RequestHeader("Authorization") = Token.AuthHeaderValue
+		  Socket.RequestHeader("User-Agent") = App.UserAgent
+		  
+		  Var Response As String
+		  Try
+		    Response = Socket.SendSync("GET", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers")
+		  Catch Err As NetworkException
+		    Self.mServerState = Self.StatusNetworkError
+		  End Try
+		  
+		  If Response.IsEmpty = False Then
+		    Select Case Socket.HTTPStatusCode
+		    Case 200, 304
+		      Try
+		        Var Parsed As Dictionary = Beacon.ParseJSON(Response)
+		        Var Data As Dictionary = Parsed.Value("data")
+		        Var GameServer As Dictionary = Data.Value("gameserver")
+		        
+		        Self.mServerState = GameServer.Value("status")
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Trying to refresh server status")
+		        Self.mServerState = Self.StatusException
+		      End Try
+		    Else
+		      Self.mServerState = Self.StatusFromHTTPCode(Socket.HTTPStatusCode)
+		    End Select
+		  End If
+		  
+		  Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		  Self.ScheduleRefresh()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    If Update.Lookup("RefreshStatus", False).BooleanValue = True Then
+		      Self.UpdateStatusDisplay()
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ToggleThread
+	#tag Event
+		Sub Run()
+		  Self.CancelRefresh()
+		  
+		  If Self.mProfile Is Nil Or Self.mProfile.ProviderTokenId.IsEmpty Then
+		    Self.mServerState = Self.StatusMissingProfile
+		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		    Self.ScheduleRefresh()
+		    Return
+		  End If
+		  
+		  Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(Self.mProfile.ProviderTokenId, True)
+		  If Token Is Nil Then
+		    Self.mServerState = Self.StatusMissingToken
+		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		    Self.ScheduleRefresh()
+		    Return
+		  End If
+		  
+		  If Token.IsEncrypted And Token.Decrypt(Self.mProject.ProviderTokenKey(Token.TokenId)) = False Then
+		    Self.mServerState = Self.StatusEncryptedToken
+		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		    Self.ScheduleRefresh()
+		    Return
+		  End If
+		  
+		  Select Case Self.mServerState
+		  Case Self.StatusStarted
+		    Var FormData As New Dictionary
+		    FormData.Value("message") = "Server stopped by Beacon (https://usebeacon.app)"
+		    FormData.Value("stop_message") = Me.UserData
+		    
+		    Var Socket As New URLConnection
+		    Socket.RequestHeader("Authorization") = Token.AuthHeaderValue
+		    Socket.RequestHeader("User-Agent") = App.UserAgent
+		    Socket.SetRequestContent("application/json", Beacon.GenerateJSON(FormData, False))
+		    
+		    Try
+		      Call Socket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop")
+		      If Socket.HTTPStatusCode = 200 Then
+		        Self.mServerState = Self.StatusStopping
+		      Else
+		        Self.mServerState = Self.StatusFromHTTPCode(Socket.HTTPStatusCode)
+		      End If
+		    Catch Err As NetworkException
+		      Self.mServerState = Self.StatusNetworkError
+		    End Try
+		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		  Case Self.StatusStopped
+		    Var FormData As New Dictionary
+		    FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
+		    
+		    Var Socket As New URLConnection
+		    Socket.RequestHeader("Authorization") = Token.AuthHeaderValue
+		    Socket.RequestHeader("User-Agent") = App.UserAgent
+		    Socket.SetRequestContent("application/json", Beacon.GenerateJSON(FormData, False))
+		    
+		    Try
+		      Call Socket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart")
+		      If Socket.HTTPStatusCode = 200 Then
+		        Self.mServerState = Self.StatusRestarting
+		      Else
+		        Self.mServerState = Self.StatusFromHTTPCode(Socket.HTTPStatusCode)
+		      End If
+		    Catch Err As NetworkException
+		      Self.mServerState = Self.StatusNetworkError
+		    End Try
+		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
+		  Else
+		    Me.AddUserInterfaceUpdate(New Dictionary("ShowAlert": True, "AlertMessage": "Cannot do that right now.", "AlertExplanation": "The server is neither started nor stopped. Please wait for the current process to finish."))
+		  End Select
+		  
+		  Self.ScheduleRefresh()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Update As Dictionary In Data
+		    If Update.Lookup("RefreshStatus", False).BooleanValue = True Then
+		      Self.UpdateStatusDisplay()
+		    End If
+		    If Update.Lookup("ShowAlert", False).BooleanValue = True Then
+		      Var AlertMessage As String = Update.Lookup("AlertMessage", "")
+		      Var AlertExplanation As String = Update.Lookup("AlertExplanation", "")
+		      Self.ShowAlert(AlertMessage, AlertExplanation)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
