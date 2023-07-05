@@ -57,16 +57,16 @@ if (count($connectedServices) > 0) {
 		</div>
 	</div>
 </div>
+<div class="hidden"><input type="hidden" id="static-token-provider-field" value=""></div>
 <?php
 
 BeaconTemplate::StartModal('static-token-modal');
 ?><div class="modal-content">
 	<div class="title-bar">Add Token</div>
 	<div class="content">
-		<div class="hidden"><input type="hidden" id="static-token-provider-field" value=""></div>
-		<p class="text-center"><a class="button blue" href="" id="static-token-generate-link" target="_blank">Generate A Token</a></p>
 		<p class="text-center hidden" id="static-token-help-field"></p>
 		<p class="text-center hidden notice-block notice-warning" id="static-token-error-field"></p>
+		<p class="text-center"><a class="button blue" href="" id="static-token-generate-link" target="_blank">Generate A Token</a></p>
 		<div class="floating-label"><input type="text" id="static-token-name-field" class="text-field" placeholder="Token Name"><label for="static-token-name-field">Token Name</label></div>
 		<div class="floating-label"><textarea id="static-token-token-field" class="text-field" placeholder="Token" rows="4"></textarea><label for="static-token-token-field">Token</label></div>
 	</div>

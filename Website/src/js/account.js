@@ -248,8 +248,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			suggestedUsernameLink.addEventListener('click', (ev) => {
 				ev.preventDefault();
 				
-				usernameField.value = ev.target.getAttribute('beacon-username');
-				usernameActionButton.disabled = field.value.trim() == '';
+				usernameField.value = ev.currentTarget.getAttribute('beacon-username');
+				usernameActionButton.disabled = usernameField.value.trim() == '';
 				
 				return false;
 			});
@@ -671,7 +671,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 						break;
 					case 'gameserverapp':
 						staticTokenGenerateLink.href = 'https://dash.gameserverapp.com/configure/api';
-						staticTokenHelpField.classList.add('hidden');
+						staticTokenHelpField.innerText = 'On your GameServerApp.com dashboard, you will find an "API / Integrate" option where you can issue a token for Beacon. Copy the token into the field below to continue. Remember to keep your token in a safe place in case you need it again.';
+						staticTokenHelpField.classList.remove('hidden');
 						break;
 					}
 					BeaconDialog.showModal('static-token-modal');
