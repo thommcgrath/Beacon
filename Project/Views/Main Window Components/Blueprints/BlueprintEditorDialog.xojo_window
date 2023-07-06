@@ -1265,6 +1265,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -1321,6 +1322,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -2165,18 +2167,18 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Blueprint As Ark.Blueprint)
 		  Self.mOriginalBlueprint = Blueprint.ImmutableVersion
-		  Self.mModUUID = Blueprint.ContentPackUUID
-		  Self.mModName = Blueprint.ContentPackName
+		  Self.mContentPackId = Blueprint.ContentPackId
+		  Self.mContentPackName = Blueprint.ContentPackName
 		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ModUUID As String, ModName As String)
+		Private Sub Constructor(ContentPackId As String, ContentPackName As String)
 		  Self.mOriginalBlueprint = Nil
-		  Self.mModUUID = ModUUID
-		  Self.mModName = ModName
+		  Self.mContentPackId = ContentPackId
+		  Self.mContentPackName = ContentPackName
 		  
 		  Super.Constructor
 		End Sub
@@ -2343,12 +2345,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ModUUID As String, ModName As String) As Ark.Blueprint
+		Shared Function Present(Parent As DesktopWindow, ContentPackId As String, ContentPackName As String) As Ark.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Var Win As New BlueprintEditorDialog(ModUUID, ModName)
+		  Var Win As New BlueprintEditorDialog(ContentPackId, ContentPackName)
 		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As Ark.Blueprint
@@ -2426,17 +2428,19 @@ End
 		    Return False
 		  End If
 		  
+		  Var BlueprintId As String = Beacon.UUID.v5(Self.mContentPackId.Lowercase + ":" + Path.Lowercase)
+		  
 		  Var Blueprint As Ark.MutableBlueprint
 		  If Self.mOriginalBlueprint Is Nil Then
 		    Select Case Self.TypeMenu.SelectedRowIndex
 		    Case Self.IndexEngram
-		      Blueprint = New Ark.MutableEngram(Path, New v4UUID)
+		      Blueprint = New Ark.MutableEngram(Path, BlueprintId)
 		    Case Self.IndexCreature
-		      Blueprint = New Ark.MutableCreature(Path, New v4UUID)
+		      Blueprint = New Ark.MutableCreature(Path, BlueprintId)
 		    Case Self.IndexSpawnPoint
-		      Blueprint = New Ark.MutableSpawnPoint(Path, New v4UUID)
+		      Blueprint = New Ark.MutableSpawnPoint(Path, BlueprintId)
 		    Case Self.IndexLootContainer
-		      Blueprint = New Ark.MutableLootContainer(Path, New v4UUID)
+		      Blueprint = New Ark.MutableLootContainer(Path, BlueprintId)
 		    End Select
 		  Else
 		    Blueprint = Self.mOriginalBlueprint.MutableVersion
@@ -2449,8 +2453,8 @@ End
 		  Blueprint.Label = Label
 		  Blueprint.Tags = Tags
 		  Blueprint.Availability = Availability
-		  Blueprint.ContentPackUUID = Self.mModUUID
-		  Blueprint.ContentPackName = Self.mModName
+		  Blueprint.ContentPackId = Self.mContentPackId
+		  Blueprint.ContentPackName = Self.mContentPackName
 		  
 		  Select Case Blueprint
 		  Case IsA Ark.MutableEngram
@@ -2727,19 +2731,19 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mContentPackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPackName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mModifiedBlueprint As Ark.Blueprint
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mModName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mModUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

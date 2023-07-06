@@ -355,30 +355,15 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Import(Data As Dictionary, ShouldTruncate As Boolean, Deletions() As Dictionary) As Boolean
+		Function Import(ShouldTruncate As Boolean, Payloads() As Dictionary, Timestamp As Double) As Boolean
 		  // The DataUpdater module will call this method inside a thread with its own database connection
-		  
-		  If Data.HasKey(Self.Identifier.Lowercase) = False Then
-		    Return True
-		  End If
-		  
-		  Var Timestamp As Double
-		  Try
-		    Timestamp = Data.Value("timestamp").DoubleValue
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Invalid timestamp value")
-		    Return False
-		  End Try
-		  
-		  If Timestamp <= Self.LastSyncTimestamp And ShouldTruncate = False Then
-		    // Already imported
-		    Return True
-		  End If
 		  
 		  Var StatusData As New Dictionary
 		  Var OriginalDepth As Integer = Self.TransactionDepth
-		  Self.BeginTransaction()
 		  Self.mImporting = True
+		  Self.BeginTransaction()
+		  Self.SQLExecute("PRAGMA defer_foreign_keys = TRUE;")
+		  Self.DropIndexes()
 		  
 		  If ShouldTruncate Then
 		    Try
@@ -393,27 +378,46 @@ Implements NotificationKit.Receiver
 		    End Try
 		  End If
 		  
-		  Try
-		    Var ChangeDict As Dictionary = Data.Value(Self.Identifier.Lowercase)
-		    If Import(ChangeDict, StatusData, Deletions) Then
-		      Self.LastSyncTimestamp = Timestamp
-		      Self.CommitTransaction
-		    Else
-		      Self.RollbackTransaction
+		  For Each Parsed As Dictionary In Payloads
+		    Var Deletions() As Dictionary
+		    If Parsed.HasKey("deletions") Then
+		      Var Temp() As Variant = Parsed.Value("deletions")
+		      For Each Member As Variant In Temp
+		        Try
+		          Deletions.Add(Member)
+		        Catch MemberErr As RuntimeException
+		        End Try
+		      Next
+		    End If
+		    
+		    If Parsed.HasKey(Self.Identifier.Lowercase) = False Then
+		      Continue
+		    End If
+		    
+		    Try
+		      Var ChangeDict As Dictionary = Parsed.Value(Self.Identifier.Lowercase)
+		      If Import(ChangeDict, StatusData, Deletions) = False Then
+		        Self.RollbackTransaction
+		        Self.mImporting = False
+		        Return False
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Importing")
+		      While Self.TransactionDepth > OriginalDepth
+		        Self.RollbackTransaction
+		      Wend
 		      Self.mImporting = False
 		      Return False
-		    End If
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Importing")
-		    While Self.TransactionDepth > OriginalDepth
-		      Self.RollbackTransaction
-		    Wend
-		    Self.mImporting = False
-		    Return False
-		  End Try
+		    End Try
+		  Next
+		  
+		  Self.LastSyncTimestamp = Timestamp
+		  Self.BuildIndexes()
+		  Self.CommitTransaction()
 		  
 		  Try
 		    RaiseEvent ImportCleanup(StatusData)
+		    
 		    If ShouldTruncate Then
 		      RaiseEvent ImportCloudFiles()
 		    End If

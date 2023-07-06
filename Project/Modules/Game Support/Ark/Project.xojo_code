@@ -394,8 +394,8 @@ Inherits Beacon.Project
 		      Self.mContentPacks.Value(Packs(Idx).UUID) = Packs(Idx).DefaultEnabled
 		    Next Idx
 		  End If
-		  If Self.mContentPacks.HasKey(Ark.UserContentPackUUID) Then
-		    Self.mContentPacks.Value(Ark.UserContentPackUUID) = True // Force this, if it exists
+		  If Self.mContentPacks.HasKey(Ark.UserContentPackId) Then
+		    Self.mContentPacks.Value(Ark.UserContentPackId) = True // Force this, if it exists
 		  End If
 		  
 		  Super.Constructor
@@ -490,12 +490,12 @@ Inherits Beacon.Project
 		            NewSet = New Ark.MutableSpawnPointSet(Set)
 		            NewSet.Label = ReplacementCreature.Label + " (Converted)"
 		            NewSet.RemoveAll()
-		            NewSet.ID = New v4UUID
+		            NewSet.SetId = Beacon.UUID.v4
 		          End If
 		          
 		          Var NewEntry As New Ark.MutableSpawnPointSetEntry(Entry)
 		          NewEntry.Creature = ReplacementCreature
-		          NewEntry.ID = New v4UUID
+		          NewEntry.EntryId = Beacon.UUID.v4
 		          NewSet.Append(NewEntry)
 		        Next
 		        If (NewSet Is Nil) = False And NewSet.Count > 0 Then

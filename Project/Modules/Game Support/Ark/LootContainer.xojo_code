@@ -24,6 +24,12 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintId() As String
+		  Return Self.mLootDropId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Category() As String
 		  // Part of the Ark.Blueprint interface.
 		  
@@ -65,12 +71,12 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Self.mLabel = Source.mLabel
 		  Self.mMaxItemSets = Source.MaxItemSets
 		  Self.mMinItemSets = Source.mMinItemSets
-		  Self.mContentPackUUID = Source.mContentPackUUID
+		  Self.mContentPackId = Source.mContentPackId
 		  Self.mModified = Source.mModified
 		  Self.mContentPackName = Source.mContentPackName
 		  Self.mMultipliers = Source.mMultipliers
 		  Self.mNotes = Source.mNotes
-		  Self.mObjectID = Source.mObjectID
+		  Self.mLootDropId = Source.mLootDropId
 		  Self.mPath = Source.mPath
 		  Self.mPreventDuplicates = Source.mPreventDuplicates
 		  Self.mRequirements = If(Source.mRequirements Is Nil, Nil, Source.mRequirements.Clone)
@@ -91,18 +97,18 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackName() As String
+		Function ContentPackId() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  Return Self.mContentPackName
+		  Return Self.mContentPackId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackUUID() As String
+		Function ContentPackName() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  Return Self.mContentPackUUID
+		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
 
@@ -131,30 +137,30 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.LootContainer
+		Shared Function CreateCustom(BlueprintId As String, Path As String, ClassString As String) As Ark.LootContainer
 		  Var LootContainer As New Ark.LootContainer
-		  LootContainer.mContentPackUUID = Ark.UserContentPackUUID
+		  LootContainer.mContentPackId = Ark.UserContentPackId
 		  LootContainer.mContentPackName = Ark.UserContentPackName
 		  
-		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		  If BlueprintId.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
 		    // Seriously?
 		    ClassString = "BeaconLoot_NoData_C"
 		  End If
 		  If Path.IsEmpty Then
 		    If ClassString.IsEmpty Then
-		      ClassString = "BeaconLoot_" + ObjectID + "_C"
+		      ClassString = "BeaconLoot_" + BlueprintId + "_C"
 		    End If
 		    Path = Ark.UnknownBlueprintPath("LootContainers", ClassString)
 		  ElseIf ClassString.IsEmpty Then
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If
-		  If ObjectID.IsEmpty Then
-		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LootContainer.mContentPackUUID + ":" + Path.Lowercase)
+		  If BlueprintId.IsEmpty Then
+		    BlueprintId = Beacon.UUID.v5(LootContainer.mContentPackId.Lowercase + ":" + Path.Lowercase)
 		  End If
 		  
 		  LootContainer.mClassString = ClassString
 		  LootContainer.mPath = Path
-		  LootContainer.mObjectID = ObjectID
+		  LootContainer.mLootDropId = BlueprintId
 		  LootContainer.mLabel = Beacon.LabelFromClassString(ClassString)
 		  Return LootContainer
 		End Function
@@ -190,11 +196,18 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    Return Nil
 		  End If
 		  
-		  Var LegacyMode As Boolean
 		  Var PreventDuplicatesKey As String = "PreventDuplicates"
 		  Var AppendModeKey As String = "AppendMode"
+		  Var MinItemSetsKey As String = "MinItemSets"
+		  Var MaxItemSetsKey As String = "MaxItemSets"
 		  Var SourceContainer As Ark.LootContainer
-		  If SaveData.HasKey("Reference") Then
+		  If SaveData.HasKey("lootDropId") Then
+		    PreventDuplicatesKey = "preventDuplicates"
+		    AppendModeKey = "appendMode"
+		    MinItemSetsKey = "minItemSets"
+		    MaxItemSetsKey = "maxItemSets"
+		    SourceContainer = Ark.ResolveLootContainer(SaveData.Value("lootDropId").StringValue, "", "", Nil)
+		  ElseIf SaveData.HasKey("Reference") Then
 		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
 		    If Reference Is Nil Then
 		      Return Nil
@@ -202,7 +215,6 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    SourceContainer = Ark.LootContainer(Reference.Resolve)
 		  Else
 		    SourceContainer = Ark.ResolveLootContainer(SaveData, "", "", "SupplyCrateClassString", Nil)
-		    LegacyMode = True
 		    PreventDuplicatesKey = "bSetsRandomWithoutReplacement"
 		    AppendModeKey = "bAppendMode"
 		  End If
@@ -214,13 +226,13 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Var Container As New Ark.MutableLootContainer(SourceContainer)
 		  
 		  Try
-		    Container.MinItemSets = SaveData.Lookup("MinItemSets", 1).IntegerValue
+		    Container.MinItemSets = SaveData.Lookup(MinItemSetsKey, 1).IntegerValue
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading MinItemSets value")
 		  End Try
 		  
 		  Try
-		    Container.MaxItemSets = SaveData.Lookup("MaxItemSets", 1).IntegerValue
+		    Container.MaxItemSets = SaveData.Lookup(MaxItemSetsKey, 1).IntegerValue
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading MaxItemSets value")
 		  End Try
@@ -237,74 +249,36 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    App.Log(Err, CurrentMethodName, "Reading " + AppendModeKey + " value")
 		  End Try
 		  
-		  If SaveData.HasKey("ItemSets") Then
+		  Var SetDicts() As Variant
+		  If SaveData.HasKey("itemSets") Then
 		    Try
-		      Var SetDicts() As Variant = SaveData.Value("ItemSets")
-		      For Idx As Integer = 0 To SetDicts.LastIndex
-		        Try
-		          Var SetDict As Variant = SetDicts(Idx)
-		          If IsNull(SetDict) Or SetDict.IsArray = True Or SetDict.Type <> Variant.TypeObject Or (SetDict.ObjectValue IsA Dictionary) = False Then
-		            Continue
-		          End If
-		          
-		          Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dictionary(SetDict))
-		          If (Set Is Nil) = False Then
-		            Container.Add(Set)
-		          End If
-		        Catch IdxErr As RuntimeException
-		          App.Log(IdxErr, CurrentMethodName, "Reading item set member")
-		        End Try
-		      Next Idx
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reading ItemSets value")
-		    End Try
-		  End If
-		  
-		  If LegacyMode And Container.ContentPackUUID = Ark.UserContentPackUUID Then
-		    // Load the extra data
-		    Try
-		      Container.Availability = SaveData.Lookup("Availability", Ark.Maps.UniversalMask).UInt64Value
+		      SetDicts = SaveData.Value("itemSets")
 		    Catch Err As RuntimeException
 		    End Try
-		    
+		  ElseIf SaveData.HasKey("ItemSets") Then
 		    Try
-		      Container.Multipliers = New Beacon.Range(SaveData.Lookup("Multiplier_Min", 1.0).DoubleValue, SaveData.Lookup("Multiplier_Max", 1.0).DoubleValue)
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    Try
-		      Container.SortValue = SaveData.Lookup("SortValue", 999).IntegerValue
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    Try
-		      Container.Label = SaveData.Lookup("Label", Container.ClassString).StringValue
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    Try
-		      Container.RequiredItemSetCount = SaveData.Lookup("RequiredItemSets", 1).IntegerValue
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    Try
-		      Container.Experimental = SaveData.Lookup("Experimental", False).BooleanValue
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    Try
-		      Container.Notes = SaveData.Lookup("Notes", "").StringValue
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    Try
-		      Var UIColor As String = SaveData.Lookup("UIColor", "FFFFFF00")
-		      Container.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
+		      SetDicts = SaveData.Value("ItemSets")
 		    Catch Err As RuntimeException
 		    End Try
 		  End If
 		  
-		  Container.Modified = True
+		  For Idx As Integer = 0 To SetDicts.LastIndex
+		    Try
+		      Var SetDict As Variant = SetDicts(Idx)
+		      If IsNull(SetDict) Or SetDict.IsArray = True Or SetDict.Type <> Variant.TypeObject Or (SetDict.ObjectValue IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      
+		      Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dictionary(SetDict))
+		      If (Set Is Nil) = False Then
+		        Container.Add(Set)
+		      End If
+		    Catch IdxErr As RuntimeException
+		      App.Log(IdxErr, CurrentMethodName, "Reading item set member")
+		    End Try
+		  Next
+		  
+		  Container.Modified = False
 		  Return Container
 		End Function
 	#tag EndMethod
@@ -336,7 +310,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    Container = New Ark.MutableLootContainer(Containers(0))
 		  Else
 		    Var Path As String = Ark.UnknownBlueprintPath("LootContainers", ClassString)
-		    Var UUID As String = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Path)
+		    Var UUID As String = Beacon.UUID.v5(Ark.UserContentPackId.Lowercase + ":" + Path.Lowercase)
 		    Var UIColor As String = Dict.Lookup("UIColor", "FFFFFF00")
 		    
 		    Container = New Ark.MutableLootContainer(Path, UUID)
@@ -348,7 +322,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    Container.RequiredItemSetCount = Dict.Lookup("RequiredItemSets", 1).IntegerValue
 		    Container.Experimental = Dict.Lookup("Experimental", False).BooleanValue
 		    Container.Notes = Dict.Lookup("Notes", "").StringValue
-		    Container.ContentPackUUID = Ark.UserContentPackUUID
+		    Container.ContentPackId = Ark.UserContentPackId
 		  End If
 		  
 		  Var Children() As Dictionary
@@ -426,6 +400,12 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LootDropId() As String
+		  Return Self.mLootDropId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MaxItemSets() As Integer
 		  Return Self.mMaxItemSets
 		End Function
@@ -481,7 +461,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Function ObjectID() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  Return Self.mObjectID
+		  Return Self.mLootDropId
 		End Function
 	#tag EndMethod
 
@@ -502,16 +482,16 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Next Idx
 		  
 		  Dict.Value("multipliers") = New Dictionary("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)
-		  Dict.Value("ui_color") = Self.mUIColor.ToHex
+		  Dict.Value("uiColor") = Self.mUIColor.ToHex
 		  Dict.Value("icon") = Self.mIconID
 		  Dict.Value("sort") = Self.mSortValue
 		  Dict.Value("experimental") = Self.mExperimental
 		  Dict.Value("notes") = Self.mNotes
 		  Dict.Value("requirements") = Beacon.GenerateJSON(Self.mRequirements, False)
-		  Dict.Value("min_item_sets") = Self.mMinItemSets
-		  Dict.Value("max_item_sets") = Self.mMaxItemSets
-		  Dict.Value("prevent_duplicates") = Self.mPreventDuplicates
-		  Dict.Value("contents") = Sets
+		  Dict.Value("minItemSets") = Self.mMinItemSets
+		  Dict.Value("maxItemSets") = Self.mMaxItemSets
+		  Dict.Value("preventDuplicates") = Self.mPreventDuplicates
+		  Dict.Value("itemSets") = Sets
 		End Sub
 	#tag EndMethod
 
@@ -531,7 +511,9 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function RequiredItemSetCount() As Integer
-		  If Self.mRequirements.HasKey("min_item_sets") Then
+		  If Self.mRequirements.HasKey("minItemSets") Then
+		    Return Max(Self.mRequirements.Value("minItemSets").IntegerValue, 1)
+		  ElseIf Self.mRequirements.HasKey("min_item_sets") Then
 		    Return Max(Self.mRequirements.Value("min_item_sets").IntegerValue, 1)
 		  Else
 		    Return 1
@@ -553,13 +535,13 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Next
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("Reference") = Ark.BlueprintReference.CreateSaveData(Self)
-		  Keys.Value("MinItemSets") = Self.mMinItemSets
-		  Keys.Value("MaxItemSets") = Self.mMaxItemSets
-		  Keys.Value("PreventDuplicates") = Self.mPreventDuplicates
-		  Keys.Value("AppendMode") = Self.mAppendMode
+		  Keys.Value("lootDropId") = Self.mLootDropId
+		  Keys.Value("minItemSets") = Self.mMinItemSets
+		  Keys.Value("maxItemSets") = Self.mMaxItemSets
+		  Keys.Value("preventDuplicates") = Self.mPreventDuplicates
+		  Keys.Value("appendMode") = Self.mAppendMode
 		  If Children.LastIndex > -1 Then
-		    Keys.Value("ItemSets") = Children
+		    Keys.Value("itemSets") = Children
 		  End If
 		  Return Keys
 		End Function
@@ -702,11 +684,11 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mContentPackName As String
+		Protected mContentPackId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mContentPackUUID As String
+		Protected mContentPackName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -723,6 +705,10 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Property, Flags = &h1
 		Protected mLabel As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mLootDropId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -743,10 +729,6 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Property, Flags = &h1
 		Protected mNotes As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mObjectID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

@@ -108,7 +108,7 @@ Protected Class WorkshopMod
 		Shared Function UserBlueprintsMod() As BeaconAPI.WorkshopMod
 		  Var ModInfo As New BeaconAPI.WorkshopMod
 		  ModInfo.mConfirmed = True
-		  ModInfo.mModID = Ark.UserContentPackUUID
+		  ModInfo.mModID = Ark.UserContentPackId
 		  ModInfo.mName = Ark.UserContentPackName
 		  ModInfo.mWorkshopID = Nil
 		  Return ModInfo

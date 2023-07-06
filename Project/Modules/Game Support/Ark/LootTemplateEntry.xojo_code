@@ -438,7 +438,7 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
-		    If ContentPacks.IndexOf(Option.Engram.ContentPackUUID) = -1 Then
+		    If ContentPacks.IndexOf(Option.Engram.ContentPackId) = -1 Then
 		      Return False
 		    End If
 		  Next

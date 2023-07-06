@@ -167,6 +167,13 @@ Protected Class UUID
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function Validate(Input As String) As Boolean
+		  Var Version As Integer
+		  Return Validate(Input, Version)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Validate(Input As String, ByRef Version As Integer) As Boolean
 		  If Input = "00000000-0000-0000-0000-000000000000" Then
 		    Version = 0

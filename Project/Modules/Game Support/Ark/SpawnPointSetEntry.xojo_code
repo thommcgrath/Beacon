@@ -4,27 +4,21 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Clone() As Ark.SpawnPointSetEntry
 		  Var Clone As New Ark.SpawnPointSetEntry(Self)
-		  Clone.mID = New v4UUID
+		  Clone.mEntryId = Beacon.UUID.v4
 		  Return Clone
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mID = New v4UUID
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Reference As Ark.BlueprintReference)
-		  Self.Constructor()
-		  Self.mCreatureRef = Reference
+		  Self.mEntryId = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Creature As Ark.Creature)
-		  Self.Constructor(New Ark.BlueprintReference(Creature.ImmutableVersion))
+		  Self.Constructor()
+		  Self.mCreature = Creature
 		End Sub
 	#tag EndMethod
 
@@ -32,8 +26,8 @@ Implements Beacon.NamedItem
 		Sub Constructor(Source As Ark.SpawnPointSetEntry)
 		  Self.Constructor()
 		  
-		  Self.mID = Source.mID
-		  Self.mCreatureRef = Source.mCreatureRef
+		  Self.mEntryId = Source.mEntryId
+		  Self.mCreature = Source.mCreature
 		  Self.mChance = Source.mChance
 		  Self.mModified = Source.mModified
 		  Self.mLevelOverride = Source.mLevelOverride
@@ -54,13 +48,19 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Creature() As Ark.Creature
-		  Return Ark.Creature(Self.mCreatureRef.Resolve)
+		  Return Self.mCreature
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EntryId() As String
+		  Return Self.mEntryId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Ark.SpawnPointSetEntry
-		  If Dict Is Nil Or Dict.HasAnyKey("creature", "Blueprint", "creature_id", "Creature") = False Then
+		  If Dict Is Nil Or Dict.HasAnyKey("creature", "Blueprint", "creature_id", "Creature", "creatureId") = False Then
 		    Return Nil
 		  End If
 		  
@@ -68,18 +68,34 @@ Implements Beacon.NamedItem
 		  // delta versions, v4, and v5 versions of the structure.
 		  
 		  Var Entry As Ark.SpawnPointSetEntry
-		  If Dict.HasKey("creature") Then
-		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("creature"))
-		    If Reference Is Nil Then
+		  If Dict.HasKey("creatureId") Then
+		    Var Creature As Ark.Creature = Ark.ResolveCreature(Dict.Value("creatureId").StringValue, "", "", Nil)
+		    If Creature Is Nil Then
 		      Return Nil
 		    End If
-		    Entry = New Ark.SpawnPointSetEntry(Reference)
+		    Entry = New Ark.SpawnPointSetEntry(Creature)
+		  ElseIf Dict.HasKey("creature") Then
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("creature"))
+		    If Reference Is Nil Or Reference.IsCreature = False Then
+		      Return Nil
+		    End If
+		    
+		    Var Blueprint As Ark.Blueprint = Reference.Resolve
+		    If Blueprint Is Nil Or (Blueprint IsA Ark.Creature) = False Then
+		      Return Nil
+		    End If
+		    Entry = New Ark.SpawnPointSetEntry(Ark.Creature(Blueprint))
 		  ElseIf Dict.HasKey("Blueprint") Then
 		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
-		    If Reference Is Nil Then
+		    If Reference Is Nil Or Reference.IsCreature = False Then
 		      Return Nil
 		    End If
-		    Entry = New Ark.SpawnPointSetEntry(Reference)
+		    
+		    Var Blueprint As Ark.Blueprint = Reference.Resolve
+		    If Blueprint Is Nil Or (Blueprint IsA Ark.Creature) = False Then
+		      Return Nil
+		    End If
+		    Entry = New Ark.SpawnPointSetEntry(Ark.Creature(Blueprint))
 		  Else
 		    Var Creature As Ark.Creature = Ark.ResolveCreature(Dict, "creature_id", "Creature", "", Nil)
 		    If Creature Is Nil Then
@@ -88,23 +104,27 @@ Implements Beacon.NamedItem
 		    Entry = New Ark.SpawnPointSetEntry(Creature)
 		  End If
 		  
-		  If Dict.HasKey("UUID") Then
-		    Entry.mID = Dict.Value("UUID").StringValue
+		  If Dict.HasKey("spawnPointSetEntryId") Then
+		    Entry.mEntryId = Dict.Value("spawnPointSetEntryId")
+		  ElseIf Dict.HasKey("UUID") Then
+		    Entry.mEntryId = Dict.Value("UUID").StringValue
 		  ElseIf Dict.HasKey("spawn_point_set_entry_id") Then
-		    Entry.mID = Dict.Value("spawn_point_set_entry_id").StringValue
+		    Entry.mEntryId = Dict.Value("spawn_point_set_entry_id").StringValue
 		  End If
 		  
-		  If Dict.HasKey("Weight") Then
-		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("Weight"))
-		  ElseIf Dict.HasKey("weight") Then
+		  If Dict.HasKey("weight") Then
 		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("weight"))
+		  ElseIf Dict.HasKey("Weight") Then
+		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("Weight"))
 		  ElseIf Dict.HasKey("SpawnChance") Then
 		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("SpawnChance"))
 		  ElseIf Dict.HasKey("Chance") Then
 		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("Chance"))
 		  End If
 		  
-		  If Dict.HasKey("Spawn Offset") Then
+		  If Dict.HasKey("spawnOffset") Then
+		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("spawnOffset"))
+		  ElseIf Dict.HasKey("Spawn Offset") Then
 		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("Spawn Offset"))
 		  ElseIf Dict.HasKey("spawn_offset") Then
 		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("spawn_offset"))
@@ -113,7 +133,9 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  Var Levels() As Dictionary
-		  If Dict.HasKey("Level Overrides") And Dict.Value("Level Overrides").IsNull = False Then
+		  If Dict.HasKey("levelOverrides") And Dict.Value("levelOverrides").IsNull = False Then
+		    Levels = Dict.Value("levelOverrides").DictionaryArrayValue
+		  ElseIf Dict.HasKey("Level Overrides") And Dict.Value("Level Overrides").IsNull = False Then
 		    Levels = Dict.Value("Level Overrides").DictionaryArrayValue
 		  ElseIf Dict.HasKey("level_overrides") And Dict.Value("level_overrides").IsNull = False Then
 		    Levels = Dict.Value("level_overrides").DictionaryArrayValue
@@ -127,7 +149,9 @@ Implements Beacon.NamedItem
 		    End If
 		  Next
 		  
-		  If Dict.HasKey("Max Level Multiplier") Then
+		  If Dict.HasKey("maxLevelMultiplier") Then
+		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("maxLevelMultiplier"))
+		  ElseIf Dict.HasKey("Max Level Multiplier") Then
 		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("Max Level Multiplier"))
 		  ElseIf Dict.HasKey("max_level_multiplier") Then
 		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("max_level_multiplier"))
@@ -135,7 +159,9 @@ Implements Beacon.NamedItem
 		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("MaxLevelMultiplier"))
 		  End If
 		  
-		  If Dict.HasKey("Max Level Offset") Then
+		  If Dict.HasKey("maxLevelOffset") Then
+		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("maxLevelOffset"))
+		  ElseIf Dict.HasKey("Max Level Offset") Then
 		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("Max Level Offset"))
 		  ElseIf Dict.HasKey("max_level_offset") Then
 		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("max_level_offset"))
@@ -143,7 +169,9 @@ Implements Beacon.NamedItem
 		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("MaxLevelOffset"))
 		  End If
 		  
-		  If Dict.HasKey("Min Level Multiplier") Then
+		  If Dict.HasKey("minLevelMultiplier") Then
+		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("minLevelMultiplier"))
+		  ElseIf Dict.HasKey("Min Level Multiplier") Then
 		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("Min Level Multiplier"))
 		  ElseIf Dict.HasKey("min_level_multiplier") Then
 		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("min_level_multiplier"))
@@ -151,7 +179,9 @@ Implements Beacon.NamedItem
 		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("MinLevelMultiplier"))
 		  End If
 		  
-		  If Dict.HasKey("Min Level Offset") Then
+		  If Dict.HasKey("minLevelOffset") Then
+		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("minLevelOffset"))
+		  ElseIf Dict.HasKey("Min Level Offset") Then
 		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("Min Level Offset"))
 		  ElseIf Dict.HasKey("min_level_offset") Then
 		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("min_level_offset"))
@@ -159,10 +189,10 @@ Implements Beacon.NamedItem
 		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("MinLevelOffset"))
 		  End If
 		  
-		  If Dict.HasKey("Level Override") Then
-		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("Level Override"))
-		  ElseIf Dict.HasKey("override") Then
+		  If Dict.HasKey("override") Then
 		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("override"))
+		  ElseIf Dict.HasKey("Level Override") Then
+		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("Level Override"))
 		  ElseIf Dict.HasKey("LevelOverride") Then
 		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("LevelOverride"))
 		  End If
@@ -174,12 +204,6 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function HasCustomLevelRange() As Boolean
 		  Return Self.mLevels.Count > 0
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ID() As v4UUID
-		  Return Self.mID
 		End Function
 	#tag EndMethod
 
@@ -389,7 +413,7 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function MutableClone() As Ark.MutableSpawnPointSetEntry
 		  Var Clone As New Ark.MutableSpawnPointSetEntry(Self)
-		  Clone.ID = New v4UUID
+		  Clone.EntryId = Beacon.UUID.v4
 		  Return Clone
 		End Function
 	#tag EndMethod
@@ -410,88 +434,25 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Ark.SpawnPointSetEntry) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  Return Self.mID.Operator_Compare(Other.mID)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Pack() As Dictionary
-		  Var Dict As New Dictionary
-		  Dict.Value("spawn_point_set_entry_id") = Self.mID.StringValue
-		  Dict.Value("creature") = Self.mCreatureRef.SaveData
-		  If (Self.mChance Is Nil) = False Then
-		    Dict.Value("weight") = Self.mChance.DoubleValue
-		  Else
-		    Dict.Value("weight") = Nil
-		  End If
-		  If (Self.mLevelOverride Is Nil) = False Then
-		    Dict.Value("override") = Self.mLevelOverride.DoubleValue
-		  Else
-		    Dict.Value("override") = Nil
-		  End If
-		  If (Self.mMinLevelMultiplier Is Nil) = False Then
-		    Dict.Value("min_level_multiplier") = Self.mMinLevelMultiplier.DoubleValue
-		  Else
-		    Dict.Value("min_level_multiplier") = Nil
-		  End If
-		  If (Self.mMaxLevelMultiplier Is Nil) = False Then
-		    Dict.Value("max_level_multiplier") = Self.mMaxLevelMultiplier.DoubleValue
-		  Else
-		    Dict.Value("max_level_multiplier") = Nil
-		  End If
-		  If (Self.mMinLevelOffset Is Nil) = False Then
-		    Dict.Value("min_level_offset") = Self.mMinLevelOffset.DoubleValue
-		  Else
-		    Dict.Value("min_level_offset") = Nil
-		  End If
-		  If (Self.mMaxLevelOffset Is Nil) = False Then
-		    Dict.Value("max_level_offset") = Self.mMaxLevelOffset.DoubleValue
-		  Else
-		    Dict.Value("max_level_offset") = Nil
-		  End If
-		  If (Self.mOffset Is Nil) = False Then
-		    Var Offset As New Dictionary
-		    Offset.Value("x") = Self.mOffset.X
-		    Offset.Value("y") = Self.mOffset.Y
-		    Offset.Value("z") = Self.mOffset.Z
-		    Dict.Value("spawn_offset") = Offset
-		  Else
-		    Dict.Value("spawn_offset") = Nil
-		  End If
-		  
-		  If Self.mLevels.Count > 0 Then
-		    Var Overrides() As Dictionary
-		    For Each Level As Ark.SpawnPointLevel In Self.mLevels
-		      Var Override As New Dictionary
-		      Override.Value("difficulty") = Level.Difficulty
-		      Override.Value("min_level") = Level.MinLevel
-		      Override.Value("max_level") = Level.MaxLevel
-		      Overrides.Add(Override)
-		    Next
-		    Dict.Value("level_overrides") = Overrides
-		  Else
-		    Dict.Value("level_overrides") = Nil
-		  End If
-		  
-		  Return Dict
+		  Return Self.mEntryId.Compare(Other.mEntryId, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("UUID") = Self.mID.StringValue
-		  Dict.Value("Blueprint") = Self.mCreatureRef.SaveData
-		  Dict.Value("Type") = "SpawnPointSetEntry"
+		  Dict.Value("spawnPointSetEntryId") = Self.mEntryId
+		  Dict.Value("creatureId") = Self.mCreature.CreatureId
+		  Dict.Value("type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then
-		    Dict.Value("Weight") = Self.mChance.DoubleValue
+		    Dict.Value("weight") = Self.mChance.DoubleValue
 		  End If
 		  If Self.mOffset <> Nil Then
-		    Dict.Value("Spawn Offset") = Self.mOffset.SaveData
+		    Dict.Value("spawnOffset") = Self.mOffset.SaveData
 		  End If
 		  If Self.mLevels.LastIndex > -1 Then
 		    Var Levels() As Dictionary
@@ -499,22 +460,22 @@ Implements Beacon.NamedItem
 		    For I As Integer = 0 To Self.mLevels.LastIndex
 		      Levels(I) = Self.mLevels(I).SaveData
 		    Next
-		    Dict.Value("Level Overrides") = Levels
-		  End If
-		  If Self.mMaxLevelMultiplier <> Nil Then
-		    Dict.Value("Max Level Multiplier") = Self.mMaxLevelMultiplier.DoubleValue
-		  End If
-		  If Self.mMaxLevelOffset <> Nil Then
-		    Dict.Value("Max Level Offset") = Self.mMaxLevelOffset.DoubleValue
+		    Dict.Value("levelOverrides") = Levels
 		  End If
 		  If Self.mMinLevelMultiplier <> Nil Then
-		    Dict.Value("Min Level Multiplier") = Self.mMinLevelMultiplier.DoubleValue
+		    Dict.Value("minLevelMultiplier") = Self.mMinLevelMultiplier.DoubleValue
+		  End If
+		  If Self.mMaxLevelMultiplier <> Nil Then
+		    Dict.Value("maxLevelMultiplier") = Self.mMaxLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMinLevelOffset <> Nil Then
-		    Dict.Value("Min Level Offset") = Self.mMinLevelOffset.DoubleValue
+		    Dict.Value("minLevelOffset") = Self.mMinLevelOffset.DoubleValue
+		  End If
+		  If Self.mMaxLevelOffset <> Nil Then
+		    Dict.Value("maxLevelOffset") = Self.mMaxLevelOffset.DoubleValue
 		  End If
 		  If Self.mLevelOverride <> Nil Then
-		    Dict.Value("Level Override") = Self.mLevelOverride.DoubleValue
+		    Dict.Value("override") = Self.mLevelOverride.DoubleValue
 		  End If
 		  Return Dict
 		End Function
@@ -569,11 +530,11 @@ Implements Beacon.NamedItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mCreatureRef As Ark.BlueprintReference
+		Protected mCreature As Ark.Creature
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mID As v4UUID
+		Protected mEntryId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

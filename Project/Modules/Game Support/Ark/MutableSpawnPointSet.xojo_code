@@ -35,84 +35,36 @@ Inherits Ark.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreatureReplacementWeight(FromCreatureRef As Ark.BlueprintReference, ToCreatureRef As Ark.BlueprintReference, Assigns Weight As NullableDouble)
-		  If FromCreatureRef Is Nil Or ToCreatureRef Is Nil Then
-		    Return
-		  End If
-		  
-		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreatureRef, ToCreatureRef)
-		  If CurrentWeight = Weight Then
-		    Return
-		  End If
-		  
-		  Var Options As Ark.BlueprintAttributeManager
-		  If Self.mReplacements.HasBlueprint(FromCreatureRef) Then
-		    Options = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
-		  Else
-		    If Weight = Nil Then
-		      Return
-		    End If
-		    Options = New Ark.BlueprintAttributeManager
-		  End If
-		  
-		  If Weight = Nil Then
-		    Options.Remove(ToCreatureRef)
-		  Else
-		    Options.Value(ToCreatureRef, "Weight") = Weight.DoubleValue
-		  End If
-		  
-		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreatureRef) Then
-		    Self.mReplacements.Remove(FromCreatureRef)
-		  Else
-		    Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute) = Options
-		  End If
-		  
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub CreatureReplacementWeight(FromCreature As Ark.Creature, ToCreature As Ark.Creature, Assigns Weight As NullableDouble)
 		  If FromCreature Is Nil Or ToCreature Is Nil Then
 		    Return
 		  End If
 		  
-		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreature, ToCreature)
-		  If CurrentWeight = Weight Then
-		    Return
-		  End If
-		  
-		  Var Options As Ark.BlueprintAttributeManager
-		  If Self.mReplacements.HasBlueprint(FromCreature) Then
-		    Options = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
-		  Else
-		    If Weight = Nil Then
-		      Return
-		    End If
-		    Options = New Ark.BlueprintAttributeManager
-		  End If
-		  
-		  If Weight = Nil Then
-		    Options.Remove(ToCreature)
-		  Else
-		    Options.Value(ToCreature, "Weight") = Weight.DoubleValue
-		  End If
-		  
-		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreature) Then
-		    Self.mReplacements.Remove(FromCreature)
-		  Else
-		    Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute) = Options
-		  End If
-		  
-		  Self.Modified = True
+		  Self.CreatureReplacementWeight(FromCreature.CreatureId, ToCreature.CreatureId) = Weight
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String, Assigns Weight As NullableDouble)
-		  Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromCreatureID)
-		  Var ToCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ToCreatureID)
-		  Self.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		Sub CreatureReplacementWeight(FromCreatureId As String, ToCreatureId As String, Assigns Weight As NullableDouble)
+		  If Self.mReplacements.HasKey(FromCreatureId) = False Then
+		    Self.mReplacements.Value(FromCreatureId) = New Dictionary
+		  End If
+		  
+		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
+		  If Choices.HasKey(ToCreatureId) Then
+		    If Weight Is Nil Then
+		      Choices.Remove(ToCreatureId)
+		      Self.Modified = True
+		    ElseIf Choices.Value(ToCreatureId).DoubleValue.Equals(Weight.DoubleValue, 1) = False Then
+		      Choices.Value(ToCreatureId) = Weight.DoubleValue
+		      Self.Modified = True
+		    End If
+		  End If
+		  
+		  If Choices.KeyCount = 0 Then
+		    Self.mReplacements.Remove(FromCreatureId)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -142,14 +94,6 @@ Inherits Ark.SpawnPointSet
 		      Self.mGroupOffset = New Beacon.Point3D(Offset)
 		    End If
 		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ID(Assigns Value As v4UUID)
-		  If Not IsNull(Value) Then
-		    Self.mID = Value
 		  End If
 		End Sub
 	#tag EndMethod
@@ -247,6 +191,16 @@ Inherits Ark.SpawnPointSet
 		  
 		  Self.mEntries.RemoveAll
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetId(Assigns Value As String)
+		  // Calling the overridden superclass method.
+		  If Self.mSetId <> Value Then
+		    Self.mSetId = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 

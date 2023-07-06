@@ -50,10 +50,10 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As String)
+		Sub Constructor(Path As String, CreatureId As String)
 		  Super.Constructor()
 		  
-		  Self.mObjectID = ObjectID
+		  Self.mCreatureId = CreatureId
 		  Self.mPath = Path
 		  Self.mClassString = Beacon.ClassStringFromPath(Path)
 		  Self.mAvailability = Ark.Maps.UniversalMask
@@ -98,15 +98,15 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackName(Assigns Value As String)
-		  Self.mContentPackName = Value
+		Sub ContentPackId(Assigns Value As String)
+		  Self.mContentPackId = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackUUID(Assigns Value As String)
-		  Self.mContentPackUUID = Value
+		Sub ContentPackName(Assigns Value As String)
+		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

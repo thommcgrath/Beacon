@@ -33,6 +33,12 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintId() As String
+		  Return Self.mCreatureId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Category() As String
 		  Return Ark.CategoryCreatures
 		End Function
@@ -70,10 +76,10 @@ Implements Ark.Blueprint
 		  Self.mMatureTime = Source.mMatureTime
 		  Self.mMaxMatingInterval = Source.mMaxMatingInterval
 		  Self.mMinMatingInterval = Source.mMinMatingInterval
-		  Self.mContentPackUUID = Source.mContentPackUUID
+		  Self.mContentPackId = Source.mContentPackId
 		  Self.mModified = Source.mModified
 		  Self.mContentPackName = Source.mContentPackName
-		  Self.mObjectID = Source.mObjectID
+		  Self.mCreatureId = Source.mCreatureId
 		  Self.mPath = Source.mPath
 		  Self.mStats = Source.mStats.Clone
 		  Self.mStatsMask = Source.mStatsMask
@@ -86,44 +92,50 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContentPackId() As String
+		  Return Self.mContentPackId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ContentPackName() As String
 		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackUUID() As String
-		  Return Self.mContentPackUUID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.Creature
+		Shared Function CreateCustom(BlueprintId As String, Path As String, ClassString As String) As Ark.Creature
 		  Var Creature As New Ark.Creature
-		  Creature.mContentPackUUID = Ark.UserContentPackUUID
+		  Creature.mContentPackId = Ark.UserContentPackId
 		  Creature.mContentPackName = Ark.UserContentPackName
 		  
-		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		  If BlueprintId.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
 		    // Seriously?
 		    ClassString = "BeaconNoData_Character_BP_C"
 		  End If
 		  If Path.IsEmpty Then
 		    If ClassString.IsEmpty Then
-		      ClassString = ObjectID + "_Character_BP_C"
+		      ClassString = BlueprintId + "_Character_BP_C"
 		    End If
 		    Path = Ark.UnknownBlueprintPath("Creatures", ClassString)
 		  ElseIf ClassString.IsEmpty Then
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If
-		  If ObjectID.IsEmpty Then
-		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Creature.mContentPackUUID + ":" + Path.Lowercase)
+		  If BlueprintId.IsEmpty Then
+		    BlueprintId = Beacon.UUID.v5(Creature.mContentPackId.Lowercase + ":" + Path.Lowercase)
 		  End If
 		  
 		  Creature.mClassString = ClassString
 		  Creature.mPath = Path
-		  Creature.mObjectID = ObjectID
+		  Creature.mCreatureId = BlueprintId
 		  Creature.mLabel = Beacon.LabelFromClassString(ClassString)
 		  Return Creature
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreatureId() As String
+		  Return Self.mCreatureId
 		End Function
 	#tag EndMethod
 
@@ -205,7 +217,7 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ObjectID() As String
-		  Return Self.mObjectID
+		  Return Self.mCreatureId
 		End Function
 	#tag EndMethod
 
@@ -215,7 +227,7 @@ Implements Ark.Blueprint
 		    Return 1
 		  End If
 		  
-		  If Self.ObjectID = Other.ObjectID Then
+		  If Self.mCreatureId = Other.mCreatureId Then
 		    Return 0
 		  End If
 		  
@@ -383,11 +395,15 @@ Implements Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mContentPackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mContentPackName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mContentPackUUID As String
+		Protected mCreatureId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -412,10 +428,6 @@ Implements Ark.Blueprint
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mObjectID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

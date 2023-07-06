@@ -222,7 +222,7 @@ Protected Class Archive
 		      Var TargetSize As UInt64 = Entry.Size
 		      Var Offset As Int64
 		      Var FileContents As New MemoryBlock(0)
-		      While FileContents.Size <> TargetSize
+		      While FileContents.Size <> CType(TargetSize, Integer)
 		        FileContents = FileContents +  Self.mReader.ReadDataBlockMemory(Offset)
 		      Wend
 		      

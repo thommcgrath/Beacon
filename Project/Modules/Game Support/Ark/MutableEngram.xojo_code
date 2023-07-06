@@ -27,13 +27,22 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As String)
+		Sub Constructor(Path As String, EngramId As String)
 		  Super.Constructor()
 		  
-		  Self.mObjectID = ObjectID
+		  Self.mEngramId = EngramId
 		  Self.mPath = Path
 		  Self.mClassString = Beacon.ClassStringFromPath(Path)
 		  Self.mAvailability = Ark.Maps.UniversalMask
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackId(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  Self.mContentPackId = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -42,15 +51,6 @@ Implements Ark.MutableBlueprint
 		  // Part of the Ark.MutableBlueprint interface.
 		  
 		  Self.mContentPackName = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ContentPackUUID(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
-		  
-		  Self.mContentPackUUID = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -171,34 +171,43 @@ Implements Ark.MutableBlueprint
 		Sub Unpack(Dict As Dictionary)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  If Dict.HasAllKeys("entry_string", "required_points", "required_level") Then
-		    If IsNull(Dict.Value("entry_string")) Or Dict.Value("entry_string").StringValue.IsEmpty Then
-		      Self.mEngramEntryString = ""
-		      Self.mRequiredUnlockPoints = Nil
-		      Self.mRequiredPlayerLevel = Nil
-		      Self.mItemID = Nil
-		    Else
-		      Self.mEngramEntryString = Dict.Value("entry_string").StringValue
-		      
-		      If IsNull(Dict.Value("required_level")) = False Then
-		        Self.mRequiredPlayerLevel = Dict.Value("required_level").IntegerValue
-		      Else
-		        Self.mRequiredPlayerLevel = Nil
-		      End If
-		      
-		      If IsNull(Dict.Value("required_points")) = False Then
-		        Self.mRequiredUnlockPoints = Dict.Value("required_points").IntegerValue
-		      Else
-		        Self.mRequiredUnlockPoints = Nil
-		      End If
-		    End If
+		  Var EntryString As NullableString
+		  Var RequiredPoints, RequiredLevel, ItemId As NullableDouble
+		  If Dict.HasAllKeys("entryString", "requiredPoints", "requiredLevel") Then
+		    EntryString = NullableString.FromVariant(Dict.Value("entryString"))
+		    RequiredPoints = NullableDouble.FromVariant(Dict.Value("requiredPoints"))
+		    RequiredLevel = NullableDouble.FromVariant(Dict.Value("requiredLevel"))
+		  ElseIf Dict.HasAllKeys("entry_string", "required_points", "required_level") Then
+		    EntryString = NullableString.FromVariant(Dict.Value("entry_string"))
+		    RequiredPoints = NullableDouble.FromVariant(Dict.Value("required_points"))
+		    RequiredLevel = NullableDouble.FromVariant(Dict.Value("required_level"))
 		  End If
 		  
-		  If Dict.HasKey("stack_size") And IsNull(Dict.Value("stack_size")) = False Then
-		    Self.mStackSize = Dict.Value("stack_size").IntegerValue
-		  Else
-		    Self.mStackSize = Nil
+		  If Dict.HasKey("itemId") Then
+		    ItemId = NullableDouble.FromVariant(Dict.Value("itemId"))
+		  ElseIf Dict.HasKey("item_id") Then
+		    ItemId = NullableDouble.FromVariant(Dict.Value("item_id"))
 		  End If
+		  
+		  If EntryString Is Nil Or EntryString.IsEmpty Then
+		    Self.mEngramEntryString = ""
+		    Self.mRequiredUnlockPoints = Nil
+		    Self.mRequiredPlayerLevel = Nil
+		    Self.mItemID = Nil
+		  Else
+		    Self.mEngramEntryString = EntryString.StringValue
+		    Self.mRequiredUnlockPoints = RequiredPoints
+		    Self.mRequiredPlayerLevel = RequiredLevel
+		    Self.mItemID = ItemId
+		  End If
+		  
+		  Var StackSize As NullableDouble
+		  If Dict.HasKey("stackSize") Then
+		    StackSize = NullableDouble.FromVariant(Dict.Value("stackSize"))
+		  ElseIf Dict.HasKey("stack_size") Then
+		    StackSize = NullableDouble.FromVariant(Dict.Value("stack_size"))
+		  End If
+		  Self.mStackSize = StackSize
 		  
 		  If Dict.HasKey("recipe") And IsNull(Dict.Value("recipe")) = False Then
 		    Self.mIngredients = Ark.CraftingCostIngredient.FromVariant(Dict.Value("recipe"), Nil)

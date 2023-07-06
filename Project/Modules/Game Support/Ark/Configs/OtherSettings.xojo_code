@@ -22,7 +22,7 @@ Inherits Ark.ConfigGroup
 		      Var Value As Variant = Entry.Value
 		      Var StringValue As String
 		      
-		      If Key Is Nil Or Project.ContentPackEnabled(Key.ContentPackUUID) = False Then
+		      If Key Is Nil Or Project.ContentPackEnabled(Key.ContentPackId) = False Then
 		        Continue
 		      End If
 		      
@@ -198,7 +198,7 @@ Inherits Ark.ConfigGroup
 		    End If
 		    
 		    Var LookupKey As String = Key.Key
-		    Var Pack As Ark.ContentPack = ContentPackLookup.Lookup(Key.ContentPackUUID, Nil)
+		    Var Pack As Ark.ContentPack = ContentPackLookup.Lookup(Key.ContentPackId, Nil)
 		    If (Pack Is Nil) = False And Pack.ConsoleSafe = False Then
 		      LookupKey = Key.Header + "." + Key.Key
 		    End If
@@ -254,7 +254,7 @@ Inherits Ark.ConfigGroup
 		    // Only support single value keys
 		    Return False
 		  End If
-		  If ContentPacks.IndexOf(Key.ContentPackUUID) = -1 Then
+		  If ContentPacks.IndexOf(Key.ContentPackId) = -1 Then
 		    // Is this not obvious?
 		    Return False
 		  End If

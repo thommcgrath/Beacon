@@ -23,9 +23,9 @@ Protected Class BlueprintReference
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackUUID() As String
+		Function ContentPackId() As String
 		  If (Self.mBlueprint Is Nil) = False Then
-		    Return Self.mBlueprint.ContentPackUUID
+		    Return Self.mBlueprint.ContentPackId
 		  Else
 		    Return Self.mSaveData.Value("ModUUID")
 		  End If
@@ -33,8 +33,8 @@ Protected Class BlueprintReference
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromDict(Kind As String, Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassStringKey As String, ContentPackUUIDKey As String) As Ark.BlueprintReference
-		  Var ObjectID, Path, ClassString, ContentPackUUID As String
+		Shared Function CreateFromDict(Kind As String, Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassStringKey As String, ContentPackIdKey As String) As Ark.BlueprintReference
+		  Var ObjectID, Path, ClassString, ContentPackId As String
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
 		    ObjectID = Dict.Value(ObjectIDKey)
 		  End If
@@ -44,15 +44,15 @@ Protected Class BlueprintReference
 		  If ClassStringKey.IsEmpty = False And Dict.HasKey(ClassStringKey) Then
 		    ClassString = Dict.Value(ClassStringKey)
 		  End If
-		  If ContentPackUUIDKey.IsEmpty = False And Dict.HasKey(ContentPackUUIDKey) Then
-		    ContentPackUUID = Dict.Value(ContentPackUUIDKey)
+		  If ContentPackIdKey.IsEmpty = False And Dict.HasKey(ContentPackIdKey) Then
+		    ContentPackId = Dict.Value(ContentPackIdKey)
 		  End If
-		  Return CreateFromDict(Kind, ObjectID, Path, ClassString, ContentPackUUID)
+		  Return CreateFromDict(Kind, ObjectID, Path, ClassString, ContentPackId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromDict(Kind As String, ObjectID As String, Path As String, ClassString As String, ContentPackUUID As String) As Ark.BlueprintReference
+		Shared Function CreateFromDict(Kind As String, ObjectID As String, Path As String, ClassString As String, ContentPackId As String) As Ark.BlueprintReference
 		  Var Dict As New Dictionary
 		  Dict.Value("Schema") = "Beacon.BlueprintReference"
 		  Dict.Value("Version") = Version
@@ -60,7 +60,7 @@ Protected Class BlueprintReference
 		  Dict.Value("UUID") = ObjectID
 		  Dict.Value("Path") = Path
 		  Dict.Value("Class") = ClassString
-		  Dict.Value("ModUUID") = ContentPackUUID
+		  Dict.Value("ModUUID") = ContentPackId
 		  Return New Ark.BlueprintReference(Dict)
 		End Function
 	#tag EndMethod
@@ -249,7 +249,7 @@ Protected Class BlueprintReference
 		    Dict.Value("UUID") = Self.mBlueprint.ObjectID
 		    Dict.Value("Path") = Self.mBlueprint.Path
 		    Dict.Value("Class") = Self.mBlueprint.ClassString
-		    Dict.Value("ModUUID") = Self.mBlueprint.ContentPackUUID
+		    Dict.Value("ModUUID") = Self.mBlueprint.ContentPackId
 		    Self.mSaveData = Dict
 		  End If
 		  Return Self.mSaveData

@@ -25,7 +25,7 @@ Protected Class ConfigKey
 		  Self.mNitradoFormat = Source.mNitradoFormat
 		  Self.mNitradoDeployStyle = Source.mNitradoDeployStyle
 		  Self.mUIGroup = Source.mUIGroup
-		  Self.mContentPackUUID = Source.mContentPackUUID
+		  Self.mContentPackId = Source.mContentPackId
 		  Self.mGSAPlaceholder = Source.mGSAPlaceholder
 		  Self.mUWPChanges = Source.mUWPChanges
 		End Sub
@@ -40,7 +40,7 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackUUID As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
+		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mUUID = ObjectID
@@ -51,7 +51,7 @@ Protected Class ConfigKey
 		  Self.mDefaultValue = DefaultValue
 		  Self.mNativeEditorVersion = NativeEditorVersion
 		  Self.mUIGroup = UIGroup
-		  Self.mContentPackUUID = ContentPackUUID
+		  Self.mContentPackId = ContentPackId
 		  Self.mCustomSort = CustomSort
 		  Self.mConstraints = Constraints
 		  Self.mGSAPlaceholder = GSAPlaceholder
@@ -66,8 +66,8 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackUUID() As String
-		  Return Self.mContentPackUUID
+		Function ContentPackId() As String
+		  Return Self.mContentPackId
 		End Function
 	#tag EndMethod
 
@@ -278,7 +278,7 @@ Protected Class ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContentPackUUID As String
+		Private mContentPackId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

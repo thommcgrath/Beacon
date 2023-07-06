@@ -65,6 +65,7 @@ Begin BeaconSubview ModsListView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -339,7 +340,7 @@ End
 #tag Events ModsList
 	#tag Event
 		Function CanDelete() As Boolean
-		  If Me.SelectedRowCount = 1 And BeaconAPI.WorkshopMod(Me.RowTagAt(Me.SelectedRowIndex)).ModID = Ark.UserContentPackUUID Then
+		  If Me.SelectedRowCount = 1 And BeaconAPI.WorkshopMod(Me.RowTagAt(Me.SelectedRowIndex)).ModID = Ark.UserContentPackId Then
 		    Return False
 		  Else
 		    Return Me.SelectedRowCount > 0
@@ -358,7 +359,7 @@ End
 		    Var Names() As String
 		    For Row As Integer = 0 To Me.LastRowIndex
 		      Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Row)
-		      If Me.RowSelectedAt(Row) And ModInfo.ModID <> Ark.UserContentPackUUID Then
+		      If Me.RowSelectedAt(Row) And ModInfo.ModID <> Ark.UserContentPackId Then
 		        Names.Add(ModInfo.Name)
 		        Mods.Add(ModInfo)
 		      End If

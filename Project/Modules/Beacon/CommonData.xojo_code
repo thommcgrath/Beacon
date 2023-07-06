@@ -95,12 +95,11 @@ Inherits Beacon.DataSource
 	#tag Event
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
-		  Self.DropIndexes()
 		  
 		  For Each Dict As Dictionary In Deletions
 		    Try
-		      If Dict.HasKey("min_version") Then
-		        Var MinVersion As Integer = Dict.Value("min_version").IntegerValue
+		      If Dict.HasKey("minVersion") Then
+		        Var MinVersion As Integer = Dict.Value("minVersion").IntegerValue
 		        If MinVersion > BuildNumber Then
 		          Continue
 		        End If
@@ -127,12 +126,12 @@ Inherits Beacon.DataSource
 		    For Each Value As Variant In Templates
 		      Try
 		        Var Dict As Dictionary = Value
-		        Var MinVersion As Integer = Dict.Value("min_version").IntegerValue
+		        Var MinVersion As Integer = Dict.Value("minVersion").IntegerValue
 		        If MinVersion > BuildNumber Then
 		          Continue
 		        End If
 		        
-		        Var Contents As String = Dict.Value("contents")
+		        Var Contents As String = Beacon.Decompress(DecodeBase64(Dict.Value("contents")))
 		        Var Raw As Dictionary = Beacon.ParseJSON(Contents)
 		        
 		        Var Template As Beacon.Template = Beacon.Template.FromSaveData(Raw)
@@ -153,7 +152,7 @@ Inherits Beacon.DataSource
 		    For Each Value As Variant In TemplateSelectors
 		      Try
 		        Var Dict As Dictionary = Value
-		        Var MinVersion As Integer = Dict.Value("min_version").IntegerValue
+		        Var MinVersion As Integer = Dict.Value("minVersion").IntegerValue
 		        If MinVersion > BuildNumber Then
 		          Continue
 		        End If
@@ -173,7 +172,6 @@ Inherits Beacon.DataSource
 		    Next Value
 		  End If
 		  
-		  Self.BuildIndexes()
 		  Return True
 		End Function
 	#tag EndEvent

@@ -69,13 +69,13 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Matches(Set As Ark.SpawnPointSet) As Boolean
-		  If Self.mTemplate.ID = Set.ID Or Self.mTemplate.Hash = Set.Hash Then
+		  If Self.mTemplate.SetId = Set.SetId Or Self.mTemplate.Hash = Set.Hash Then
 		    Return True
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Var OtherSet As Ark.SpawnPointSet = Entry.Value
-		    If OtherSet.ID = Set.ID or OtherSet.Hash = Set.Hash Then
+		    If OtherSet.SetId = Set.SetId or OtherSet.Hash = Set.Hash Then
 		      Return True
 		    End If
 		  Next
@@ -85,11 +85,11 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Matches(Values() As String) As Boolean
 		  Var PossibleValues() As String
-		  PossibleValues.Add(Self.mTemplate.ID)
+		  PossibleValues.Add(Self.mTemplate.SetId)
 		  PossibleValues.Add(Self.mTemplate.Hash)
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Var Set As Ark.SpawnPointSet = Entry.Value
-		    PossibleValues.Add(Set.ID)
+		    PossibleValues.Add(Set.SetId)
 		    PossibleValues.Add(Set.Hash)
 		  Next
 		  

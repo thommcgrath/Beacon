@@ -54,10 +54,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
 		  If NewUUID Then
-		    Set.UUID = v4UUID.Create.StringValue
+		    Set.UUID = Beacon.UUID.v4
 		  Else
 		    Try
-		      If Dict.HasKey("loot_item_set_id") Then
+		      If Dict.HasKey("lootItemSetId") Then
+		        Set.UUID = Dict.Value("lootItemSetId")
+		      ElseIf Dict.HasKey("loot_item_set_id") Then
 		        Set.UUID = Dict.Value("loot_item_set_id")
 		      ElseIf Dict.HasKey("UUID") Then
 		        Set.UUID = Dict.Value("UUID")
@@ -68,7 +70,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End If
 		  
 		  Try
-		    If Dict.HasKey("NumItemsPower") Then
+		    If Dict.HasKey("numItemsPower") Then
+		      Set.NumItemsPower = Dict.Value("numItemsPower")
+		    ElseIf Dict.HasKey("NumItemsPower") Then
 		      Set.NumItemsPower = Dict.Value("NumItemsPower")
 		    End If
 		  Catch Err As RuntimeException
@@ -88,7 +92,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("prevent_duplicates") Then
+		    If Dict.HasKey("preventDuplicates") Then
+		      Set.ItemsRandomWithoutReplacement = Dict.Value("preventDuplicates")
+		    ElseIf Dict.HasKey("prevent_duplicates") Then
 		      Set.ItemsRandomWithoutReplacement = Dict.Value("prevent_duplicates")
 		    ElseIf Dict.HasKey("bItemsRandomWithoutReplacement") Then
 		      Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
@@ -136,7 +142,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next
 		  
 		  Try
-		    If Dict.HasKey("min_entries") Then
+		    If Dict.HasKey("minEntries") Then
+		      Set.MinNumItems = Dict.Value("minEntries")
+		    ElseIf Dict.HasKey("min_entries") Then
 		      Set.MinNumItems = Dict.Value("min_entries")
 		    ElseIf Dict.HasKey("MinNumItems") Then
 		      Set.MinNumItems = Dict.Value("MinNumItems")
@@ -146,7 +154,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("max_entries") Then
+		    If Dict.HasKey("maxEntries") Then
+		      Set.MaxNumItems = Dict.Value("maxEntries")
+		    ElseIf Dict.HasKey("max_entries") Then
 		      Set.MaxNumItems = Dict.Value("max_entries")
 		    ElseIf Dict.HasKey("MaxNumItems") Then
 		      Set.MaxNumItems = Dict.Value("MaxNumItems")
@@ -156,7 +166,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("SourcePresetID") Then
+		    If Dict.HasKey("sourceTemplateId") Then
+		      Set.TemplateUUID = Dict.Value("sourceTemplateId")
+		    ElseIf Dict.HasKey("SourcePresetID") Then
 		      Set.TemplateUUID = Dict.Value("SourcePresetID")
 		    End If
 		  Catch Err As RuntimeException
@@ -535,12 +547,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next Idx
 		  
 		  Var Dict As New Dictionary
-		  Dict.Value("loot_item_set_id") = Self.mUUID
+		  Dict.Value("lootItemSetId") = Self.mUUID
 		  Dict.Value("label") = Self.mLabel
-		  Dict.Value("min_entries") = Self.mMinNumItems
-		  Dict.Value("max_entries") = Self.mMaxNumItems
+		  Dict.Value("minEntries") = Self.mMinNumItems
+		  Dict.Value("maxEntries") = Self.mMaxNumItems
 		  Dict.Value("weight") = Self.mSetWeight
-		  Dict.Value("prevent_duplicates") = Self.mItemsRandomWithoutReplacement
+		  Dict.Value("preventDuplicates") = Self.mItemsRandomWithoutReplacement
 		  Dict.Value("entries") = Entries
 		  Return Dict
 		End Function
@@ -591,17 +603,16 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("UUID") = Self.mUUID
-		  Keys.Value("ItemEntries") = Children
-		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
-		  Keys.Value("Label") = Self.Label // Write "Label" so older versions of Beacon can read it
-		  Keys.Value("MaxNumItems") = Self.MaxNumItems
-		  Keys.Value("MinNumItems") = Self.MinNumItems
-		  Keys.Value("NumItemsPower") = Self.NumItemsPower
-		  Keys.Value("Weight") = Self.RawWeight
-		  Keys.Value("SetWeight") = Self.RawWeight / 1000
+		  Keys.Value("lootItemSetId") = Self.mUUID
+		  Keys.Value("entries") = Children
+		  Keys.Value("preventDuplicates") = Self.ItemsRandomWithoutReplacement
+		  Keys.Value("label") = Self.Label
+		  Keys.Value("minEntries") = Self.MinNumItems
+		  Keys.Value("maxEntries") = Self.MaxNumItems
+		  Keys.Value("numItemsPower") = Self.NumItemsPower
+		  Keys.Value("weight") = Self.RawWeight
 		  If Self.TemplateUUID.IsEmpty = False Then
-		    Keys.Value("SourcePresetID") = Self.TemplateUUID
+		    Keys.Value("sourceTemplateId") = Self.TemplateUUID
 		  End If
 		  Return Keys
 		End Function

@@ -4,7 +4,7 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Function Clone() As Ark.SpawnPointSet
 		  Var Clone As New Ark.SpawnPointSet(Self)
-		  Clone.mID = New v4UUID
+		  Clone.mSetId = Beacon.UUID.v4
 		  Return Clone
 		End Function
 	#tag EndMethod
@@ -20,15 +20,15 @@ Implements Beacon.Countable,Ark.Weighted
 		  Self.mWeight = 0.5
 		  Self.mModified = False
 		  Self.mGroupOffset = Nil
-		  Self.mID = New v4UUID
-		  Self.mReplacements = New Ark.BlueprintAttributeManager
+		  Self.mSetId = Beacon.UUID.v4
+		  Self.mReplacements = New Dictionary
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.SpawnPointSet)
 		  Self.Constructor()
-		  Self.mID = Source.mID
+		  Self.mSetId = Source.mSetId
 		  Self.CopyFrom(Source)
 		  Self.mModified = Source.mModified
 		End Sub
@@ -68,48 +68,27 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreatureReplacementWeight(FromCreatureRef As Ark.BlueprintReference, ToCreatureRef As Ark.BlueprintReference) As NullableDouble
-		  If FromCreatureRef Is Nil Or ToCreatureRef Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  If Not Self.mReplacements.HasBlueprint(FromCreatureRef) Then
-		    Return Nil
-		  End If
-		  
-		  Var Options As Ark.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
-		  If Options.HasAttribute(ToCreatureRef, "Weight") Then
-		    Return Options.Value(ToCreatureRef, "Weight").DoubleValue
-		  End If
-		  
-		  Return Nil
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreature As Ark.Creature, ToCreature As Ark.Creature) As NullableDouble
 		  If FromCreature Is Nil Or ToCreature Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  If Not Self.mReplacements.HasBlueprint(FromCreature) Then
-		    Return Nil
-		  End If
-		  
-		  Var Options As Ark.BlueprintAttributeManager = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
-		  If Options.HasAttribute(ToCreature, "Weight") Then
-		    Return Options.Value(ToCreature, "Weight").DoubleValue
-		  End If
-		  
-		  Return Nil
+		  Return Self.CreatureReplacementWeight(FromCreature.CreatureId, ToCreature.CreatureId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String) As NullableDouble
-		  Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromCreatureID)
-		  Var ToCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ToCreatureID)
-		  Return Self.CreatureReplacementWeight(FromCreature, ToCreature)
+		Function CreatureReplacementWeight(FromCreatureId As String, ToCreatureId As String) As NullableDouble
+		  If Self.mReplacements.HasKey(FromCreatureId) = False Then
+		    Return Nil
+		  End If
+		  
+		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
+		  If Choices.HasKey(ToCreatureId) = False Then
+		    Return Nil
+		  End If
+		  
+		  Return Choices.Value(ToCreatureId)
 		End Function
 	#tag EndMethod
 
@@ -132,175 +111,172 @@ Implements Beacon.Countable,Ark.Weighted
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary) As Ark.SpawnPointSet
-		  If SaveData = Nil Then
+		  If SaveData Is Nil Then
 		    Return Nil
 		  End If
 		  
 		  Var Set As New Ark.MutableSpawnPointSet
-		  If SaveData.HasKey("spawn_point_set_id") Then
-		    Set.ID = SaveData.Value("spawn_point_set_id").StringValue
-		  ElseIf SaveData.HasKey("ID") Then
-		    Set.ID = SaveData.Value("ID").StringValue
+		  
+		  Var SetIdKey As Variant = SaveData.FirstKey("spawnPointSetId", "spawn_point_set_id", "ID")
+		  If SetIdKey.IsNull = False Then
+		    Set.SetId = SaveData.Value(SetIdKey)
 		  End If
-		  If SaveData.HasKey("label") Then
-		    Set.Label = SaveData.Value("label")
-		  ElseIf SaveData.HasKey("Label") Then
-		    Set.Label = SaveData.Value("Label")
-		  Else
-		    Return Nil
-		  End If
-		  If SaveData.HasKey("weight") Then
-		    Set.Weight = SaveData.Value("weight").DoubleValue
-		  ElseIf SaveData.HasKey("Weight") Then
-		    Set.Weight = SaveData.Value("Weight").DoubleValue
+		  
+		  Var LabelKey As Variant = SaveData.FirstKey("label", "Label")
+		  If LabelKey.IsNull = False Then
+		    Set.Label = SaveData.Value(LabelKey)
 		  Else
 		    Return Nil
 		  End If
 		  
-		  If (SaveData.HasKey("entries") And SaveData.Value("entries").IsNull = False) Or (SaveData.HasKey("Entries") And SaveData.Value("Entries").IsNull = False) Then
-		    Var Entries() As Variant
-		    If SaveData.HasKey("entries") Then
-		      Entries = SaveData.Value("entries")
-		    Else
-		      Entries = SaveData.Value("Entries")
-		    End If
-		    For Each EntrySaveData As Dictionary In Entries
-		      Var Entry As Ark.SpawnPointSetEntry = Ark.SpawnPointSetEntry.FromSaveData(EntrySaveData)
-		      If Entry = Nil Then
-		        Continue
+		  Var WeightKey As Variant = SaveData.FirstKey("weight", "Weight")
+		  If WeightKey.IsNull = False Then
+		    Set.Weight = SaveData.Value(WeightKey)
+		  Else
+		    Return Nil
+		  End If
+		  
+		  Var EntriesKey As Variant = SaveData.FirstKey("entries", "Entries", "creatures")
+		  If EntriesKey.IsNull Or SaveData.Value(EntriesKey).IsNull Then
+		    Return Nil
+		  End If
+		  Var Entries() As Variant = SaveData.Value(EntriesKey)
+		  For Each EntrySaveData As Variant In Entries
+		    If EntrySaveData.Type = Variant.TypeObject And EntrySaveData.ObjectValue IsA Dictionary Then
+		      Var Entry As Ark.SpawnPointSetEntry = Ark.SpawnPointSetEntry.FromSaveData(Dictionary(EntrySaveData.ObjectValue))
+		      If (Entry Is Nil) = False Then
+		        Set.Append(Entry)
 		      End If
-		      
-		      Set.Append(Entry)
-		    Next
-		  ElseIf SaveData.HasKey("creatures") And SaveData.Value("creatures").IsNull = False Then
-		    Var Paths() As Variant = SaveData.Value("creatures")
-		    For Each Path As String In Paths
-		      Var Creature As Ark.Creature = Ark.ResolveCreature("", Path, "", Nil)
-		      If Creature = Nil Then
-		        Continue
+		    ElseIf EntrySaveData.Type = Variant.TypeString Then
+		      Var CreaturePath As String = EntrySaveData.StringValue
+		      Var Creature As Ark.Creature = Ark.ResolveCreature("", CreaturePath, "", Nil)
+		      If (Creature Is Nil) = False Then
+		        Set.Append(New Ark.SpawnPointSetEntry(Creature))
 		      End If
-		      
-		      Set.Append(New Ark.SpawnPointSetEntry(Creature))
-		    Next
-		  Else
-		    Return Nil
-		  End If
-		  
-		  If SaveData.HasKey("Spread Radius") Then
-		    Set.SpreadRadius = NullableDouble.FromVariant(SaveData.Value("Spread Radius"))
-		  ElseIf SaveData.HasKey("spread_radius") Then
-		    Set.SpreadRadius = NullableDouble.FromVariant(SaveData.Value("spread_radius"))
-		  ElseIf SaveData.HasKey("SpreadRadius") Then
-		    Set.SpreadRadius = NullableDouble.FromVariant(SaveData.Value("SpreadRadius"))
-		  End If
-		  
-		  Var SpawnOffset As Beacon.Point3D
-		  If SaveData.HasKey("Spawn Offset") And SaveData.Value("Spawn Offset") <> Nil Then
-		    SpawnOffset = Beacon.Point3D.FromSaveData(SaveData.Value("Spawn Offset"))
-		  ElseIf SaveData.HasKey("spawn_offset") And SaveData.Value("spawn_offset") <> Nil Then
-		    SpawnOffset = Beacon.Point3D.FromSaveData(SaveData.Value("spawn_offset"))
-		  ElseIf SaveData.HasKey("GroupOffset") And SaveData.Value("GroupOffset") <> Nil Then
-		    SpawnOffset = Beacon.Point3D.FromSaveData(SaveData.Value("GroupOffset"))
-		  End If
-		  If (SpawnOffset Is Nil) = False Then
-		    Set.GroupOffset = SpawnOffset
-		  End If
-		  
-		  If SaveData.HasKey("Water Only Minimum Height") Then
-		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value("Water Only Minimum Height"))
-		  ElseIf SaveData.HasKey("water_only_minimum_height") Then
-		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value("water_only_minimum_height"))
-		  ElseIf SaveData.HasKey("WaterOnlyMinimumHeight") Then
-		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value("WaterOnlyMinimumHeight"))
-		  End If
-		  
-		  If SaveData.HasKey("Min Distance From Players Multiplier") Then
-		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value("Min Distance From Players Multiplier"))
-		  ElseIf SaveData.HasKey("min_distance_from_players_multiplier") Then
-		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value("min_distance_from_players_multiplier"))
-		  ElseIf SaveData.HasKey("MinDistanceFromPlayersMultiplier") Then
-		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value("MinDistanceFromPlayersMultiplier"))
-		  End If
-		  
-		  If SaveData.HasKey("Min Distance From Structures Multiplier") Then
-		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value("Min Distance From Structures Multiplier"))
-		  ElseIf SaveData.HasKey("min_distance_from_structures_multiplier") Then
-		    Set.MinDistanceFromStructuresMultiplier = NullableDouble.FromVariant(SaveData.Value("min_distance_from_structures_multiplier"))
-		  ElseIf SaveData.HasKey("MinDistanceFromStructuresMultiplier") Then
-		    Set.MinDistanceFromStructuresMultiplier = NullableDouble.FromVariant(SaveData.Value("MinDistanceFromStructuresMultiplier"))
-		  End If
-		  
-		  If SaveData.HasKey("Min Distance From Tamed Dinos Multiplier") Then
-		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value("Min Distance From Tamed Dinos Multiplier"))
-		  ElseIf SaveData.HasKey("min_distance_from_tamed_dinos_multiplier") Then
-		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value("min_distance_from_tamed_dinos_multiplier"))
-		  ElseIf SaveData.HasKey("MinDistanceFromTamedDinosMultiplier") Then
-		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value("MinDistanceFromTamedDinosMultiplier"))
-		  End If
-		  
-		  If SaveData.HasKey("Offset Before Multiplier") Then
-		    Set.LevelOffsetBeforeMultiplier = SaveData.Value("Offset Before Multiplier").BooleanValue
-		  ElseIf SaveData.HasKey("offset_before_multiplier") Then
-		    Set.LevelOffsetBeforeMultiplier = SaveData.Value("offset_before_multiplier").BooleanValue
-		  ElseIf SaveData.HasKey("OffsetBeforeMultiplier") Then
-		    Set.LevelOffsetBeforeMultiplier = SaveData.Value("OffsetBeforeMultiplier").BooleanValue
-		  End If
-		  
-		  If SaveData.HasKey("Creature Replacements") And SaveData.Value("Creature Replacements").IsNull = False Then
-		    Var Replacements As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(SaveData.Value("Creature Replacements"))
-		    If (Replacements Is Nil) = False Then
-		      Ark.SpawnPointSet(Set).mReplacements = Replacements
 		    End If
-		  ElseIf SaveData.HasKey("replacements") And SaveData.Value("replacements").IsNull = False Then
-		    Var Replacements() As Dictionary
-		    Try
-		      Replacements = SaveData.Value("replacements").DictionaryArrayValue
-		    Catch Err As RuntimeException
-		    End Try
+		  Next
+		  
+		  Var SpreadKey As Variant = SaveData.FirstKey("spreadRadius", "Spread Radius", "spread_radius", "SpreadRadius")
+		  If SpreadKey.IsNull = False Then
+		    Set.SpreadRadius = NullableDouble.FromVariant(SpreadKey)
+		  End If
+		  
+		  Var SpawnOffsetKey As Variant = SaveData.FirstKey("spawnOffset", "Spawn Offset", "spawn_offset", "GroupOffset")
+		  If SpawnOffsetKey.IsNull = False Then
+		    Var SpawnOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(SaveData.Value(SpawnOffsetKey))
+		    If (SpawnOffset Is Nil) = False Then
+		      Set.GroupOffset = SpawnOffset
+		    End If
+		  End If
+		  
+		  Var WaterOnlyMinimumHeightKey As Variant = SaveData.FirstKey("waterOnlyMinimumHeight", "Water Only Minimum Height", "water_only_minimum_height", "WaterOnlyMinimumHeight")
+		  If WaterOnlyMinimumHeightKey.IsNull = False Then
+		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value(WaterOnlyMinimumHeightKey))
+		  End If
+		  
+		  Var MinDistanceFromPlayersMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromPlayersMultiplier", "Min Distance From Players Multiplier", "min_distance_from_players_multiplier", "MinDistanceFromPlayersMultiplier")
+		  If MinDistanceFromPlayersMultiplierKey.IsNull = False Then
+		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromPlayersMultiplierKey))
+		  End If
+		  
+		  Var MinDistanceFromStructuresMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromStructuresMultiplier", "Min Distance From Structures Multiplier", "min_distance_from_structures_multiplier", "MinDistanceFromStructuresMultiplier")
+		  If MinDistanceFromStructuresMultiplierKey.IsNull = False Then
+		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromStructuresMultiplierKey))
+		  End If
+		  
+		  Var MinDistanceFromTamedDinosMultiplierKey As Variant = SaveData.FirstKey("minDistanceFromTamedDinosMultiplier", "Min Distance From Tamed Dinos Multiplier", "min_distance_from_tamed_dinos_multiplier", "MinDistanceFromTamedDinosMultiplier")
+		  If MinDistanceFromTamedDinosMultiplierKey.IsNull = False Then
+		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value(MinDistanceFromTamedDinosMultiplierKey))
+		  End If
+		  
+		  Var OffsetBeforeMultiplierKey As Variant = SaveData.FirstKey("offsetBeforeMultiplier", "Offset Before Multiplier", "offset_before_multiplier", "OffsetBeforeMultiplier")
+		  If OffsetBeforeMultiplierKey.IsNull = False Then
+		    Set.LevelOffsetBeforeMultiplier = SaveData.Value(OffsetBeforeMultiplierKey)
+		  End If
+		  
+		  Var ColorSetKey As Variant = SaveData.FirstKey("colorSet", "color_set", "Color Set Class")
+		  If ColorSetKey.IsNull = False Then
+		    Set.ColorSetClass = SaveData.Value(ColorSetKey)
+		  End If
+		  
+		  Var ReplacementsKey As Variant = SaveData.FirstKey("replacements", "Creature Replacements", "Replacements")
+		  Var ReplacementsData As Variant = SaveData.Value(ReplacementsKey)
+		  If ReplacementsData.IsNull = False Then
+		    // This could be a bunch of things
 		    
-		    For Each Replacement As Dictionary In Replacements
-		      Try
-		        If Replacement.HasKey("creature") Then
-		          Var TargetCreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Replacement.Value("creature"))
-		          Var Choices() As Variant = Replacement.Value("choices")
-		          For Each Choice As Dictionary In Choices
-		            Var ReplacementCreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Choice.Value("creature"))
-		            Var Weight As Double = Choice.Value("weight")
-		            Set.CreatureReplacementWeight(TargetCreatureRef, ReplacementCreatureRef) = Weight
-		          Next Choice
-		        ElseIf Replacement.HasKey("creature_id") Then
-		          Var TargetCreatureUUID As String = Replacement.Value("creature_id")
-		          Var Choices As Dictionary = Replacement.Value("choices")
-		          For Each Entry As DictionaryEntry In Choices
-		            Var ReplacementCreatureUUID As String = Entry.Key
-		            Var Weight As Double = Entry.Value
-		            Set.CreatureReplacementWeight(TargetCreatureUUID, ReplacementCreatureUUID) = Weight
+		    If ReplacementsData.IsArray Then
+		      // It was an array of dictionarys
+		      Var Replacements() As Variant = ReplacementsData
+		      For Each Replacement As Dictionary In Replacements
+		        Var FromCreatureId As String
+		        Var CreatureIdKey As Variant = Replacement.FirstKey("creatureId", "creature", "creature_id")
+		        Var CreatureData As Variant = Replacement.Value(CreatureIdKey)
+		        If CreatureData.Type = Variant.TypeString Then
+		          FromCreatureId = CreatureData.StringValue
+		        ElseIf CreatureData.Type = Variant.TypeObject Then
+		          Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dictionary(CreatureData))
+		          If (CreatureRef Is Nil) = False Then
+		            FromCreatureId = CreatureRef.ObjectID
+		          End If
+		        End If
+		        
+		        Var Choices As Variant = Replacement.Value("choices")
+		        If Choices.IsArray Then
+		          Var ChoiceDicts() As Variant = Choices
+		          For Each ChoiceDict As Dictionary In ChoiceDicts
+		            Var ReplacementWeight As Double = ChoiceDict.Value("weight")
+		            If ChoiceDict.HasKey("creatureId") Then
+		              Var ReplacementCreatureId As String = ChoiceDict.Value("creatureId")
+		              Set.CreatureReplacementWeight(FromCreatureId, ReplacementCreatureId) = ReplacementWeight
+		            Else
+		              Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dictionary(CreatureData))
+		              If (CreatureRef Is Nil) = False Then
+		                Set.CreatureReplacementWeight(FromCreatureId, CreatureRef.ObjectID) = ReplacementWeight
+		              End If
+		            End If
+		          Next
+		        Else
+		          Var ChoicesDict As Dictionary = Choices
+		          For Each ChoiceEntry As DictionaryEntry In ChoicesDict
+		            Var ReplacementCreatureId As String = ChoiceEntry.Key
+		            Var ReplacementWeight As Double = ChoiceEntry.Value
+		            Set.CreatureReplacementWeight(FromCreatureId, ReplacementCreatureId) = ReplacementWeight
 		          Next
 		        End If
-		      Catch Err As RuntimeException
-		      End Try
-		    Next
-		  ElseIf SaveData.HasKey("Replacements") And SaveData.Value("Replacements").IsNull = False Then
-		    Var Replacements As Dictionary = SaveData.Value("Replacements")
-		    If (Replacements Is Nil) = False Then
-		      For Each Entry As DictionaryEntry In Replacements
-		        Var FromPath As String = Entry.Key
-		        Var FromCreature As Ark.Creature = Ark.ResolveCreature("", FromPath, "", Nil)
-		        Var ToDict As Dictionary = Entry.Value
-		        For Each SubEntry As DictionaryEntry In ToDict
-		          Var ToPath As String = SubEntry.Key
-		          Var Weight As Double = SubEntry.Value
-		          Var ToCreature As Ark.Creature = Ark.ResolveCreature("", ToPath, "", Nil)
-		          Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
-		        Next
 		      Next
+		    Else
+		      Var Manager As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(ReplacementsData)
+		      If (Manager Is Nil) = False Then
+		        // It was a reference manager
+		        Var Blueprints() As Ark.BlueprintReference = Manager.References
+		        For Each Blueprint As Ark.BlueprintReference In Blueprints
+		          If Blueprint.IsCreature = False Then
+		            Continue
+		          End If
+		          
+		          Var Options As Ark.BlueprintAttributeManager = Manager.Value(Blueprint, ReplacementsAttribute)
+		          Var ReplacementBlueprints() As Ark.BlueprintReference = Options.References
+		          For Each ReplacementBlueprint As Ark.BlueprintReference In ReplacementBlueprints
+		            Var ReplacementWeight As Double = Options.Value(ReplacementBlueprint, "Weight")
+		            Set.CreatureReplacementWeight(Blueprint.ObjectID, ReplacementBlueprint.ObjectID) = ReplacementWeight
+		          Next
+		        Next
+		      Else
+		        // It was a dictionary
+		        Var Replacements As Dictionary = ReplacementsData
+		        For Each Entry As DictionaryEntry In Replacements
+		          Var FromPath As String = Entry.Key
+		          Var FromCreature As Ark.Creature = Ark.ResolveCreature("", FromPath, "", Nil)
+		          Var ToDict As Dictionary = Entry.Value
+		          For Each SubEntry As DictionaryEntry In ToDict
+		            Var ToPath As String = SubEntry.Key
+		            Var Weight As Double = SubEntry.Value
+		            Var ToCreature As Ark.Creature = Ark.ResolveCreature("", ToPath, "", Nil)
+		            Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		          Next
+		        Next
+		      End If
 		    End If
-		  End If
-		  
-		  If SaveData.HasKey("color_set") Then
-		    Set.ColorSetClass = SaveData.Value("color_set")
-		  ElseIf SaveData.HasKey("Color Set Class") Then
-		    Set.ColorSetClass = SaveData.Value("Color Set Class")
 		  End If
 		  
 		  Set.Modified = False
@@ -323,12 +299,6 @@ Implements Beacon.Countable,Ark.Weighted
 		    Self.mCachedHash = EncodeHex(Crypto.MD5(Raw))
 		  End If
 		  Return Self.mCachedHash
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ID() As v4UUID
-		  Return Self.mID
 		End Function
 	#tag EndMethod
 
@@ -421,7 +391,7 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Function MutableClone() As Ark.MutableSpawnPointSet
 		  Var Clone As New Ark.MutableSpawnPointSet(Self)
-		  Clone.ID = New v4UUID
+		  Clone.SetId = Beacon.UUID.v4
 		  Return Clone
 		End Function
 	#tag EndMethod
@@ -438,88 +408,13 @@ Implements Beacon.Countable,Ark.Weighted
 		    Return 1
 		  End If
 		  
-		  If Self.mID = Other.mID And Self.Hash = Other.Hash Then
+		  If Self.mSetId = Other.mSetId And Self.Hash = Other.Hash Then
 		    Return 0
 		  End If
 		  
 		  Var CompareLeft As String = Self.mLabel + Self.Hash
 		  Var CompareRight As String = Other.mLabel + Other.Hash
 		  Return CompareLeft.Compare(CompareRight, ComparisonOptions.CaseInsensitive, Locale.Current)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Pack() As Dictionary
-		  Var Dict As New Dictionary
-		  Dict.Value("spawn_point_set_id") = Self.mID.StringValue
-		  Dict.Value("label") = Self.mLabel
-		  Dict.Value("weight") = Self.mWeight
-		  If Self.mGroupOffset Is Nil Then
-		    Dict.Value("spawn_offset") = Nil
-		  Else
-		    Var Offset As New Dictionary
-		    Offset.Value("x") = Self.mGroupOffset.X
-		    Offset.Value("y") = Self.mGroupOffset.Y
-		    Offset.Value("z") = Self.mGroupOffset.Z
-		    Dict.Value("spawn_offset") = Offset
-		  End If
-		  If Self.mMinDistanceFromPlayersMultiplier Is Nil Then
-		    Dict.Value("min_distance_from_players_multiplier") = Nil
-		  Else
-		    Dict.Value("min_distance_from_players_multiplier") = Self.mMinDistanceFromPlayersMultiplier.DoubleValue
-		  End If
-		  If Self.mMinDistanceFromStructuresMultiplier Is Nil Then
-		    Dict.Value("min_distance_from_structures_multiplier") = Nil
-		  Else
-		    Dict.Value("min_distance_from_structures_multiplier") = Self.mMinDistanceFromStructuresMultiplier.DoubleValue
-		  End If
-		  If Self.mMinDistanceFromTamedDinosMultiplier Is Nil Then
-		    Dict.Value("min_distance_from_tamed_dinos_multiplier") = Nil
-		  Else
-		    Dict.Value("min_distance_from_tamed_dinos_multiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
-		  End If
-		  If Self.mSpreadRadius Is Nil Then
-		    Dict.Value("spread_radius") = Nil
-		  Else
-		    Dict.Value("spread_radius") = Self.mSpreadRadius.DoubleValue
-		  End If
-		  If Self.mWaterOnlyMinimumHeight Is Nil Then
-		    Dict.Value("water_only_minimum_height") = Nil
-		  Else
-		    Dict.Value("water_only_minimum_height") = Self.mWaterOnlyMinimumHeight.DoubleValue
-		  End If
-		  Dict.Value("offset_before_multiplier") = Self.mOffsetBeforeMultiplier
-		  
-		  Var Entries() As Dictionary
-		  For Each Entry As Ark.SpawnPointSetEntry In Self.mEntries
-		    Var Packed As Dictionary = Entry.Pack
-		    If (Packed Is Nil) = False Then
-		      Entries.Add(Packed)
-		    End If
-		  Next
-		  Dict.Value("entries") = Entries
-		  
-		  If Self.mReplacements.Count > 0 Then
-		    Var Replacements() As Dictionary
-		    Var TargetCreatureRefs() As Ark.BlueprintReference = Self.ReplacedCreatureRefs
-		    For Each TargetCreatureRef As Ark.BlueprintReference In TargetCreatureRefs
-		      Var ReplacementCreatureRefs() As Ark.BlueprintReference = Self.ReplacementCreatures(TargetCreatureRef)
-		      Var Choices() As Dictionary
-		      For Each ReplacementCreatureRef As Ark.BlueprintReference In ReplacementCreatureRefs
-		        Var Weight As Double = Self.CreatureReplacementWeight(TargetCreatureRef, ReplacementCreatureRef)
-		        Choices.Add(New Dictionary("creature": ReplacementCreatureRef.SaveData, "weight": weight))
-		      Next
-		      Var ReplacementDict As New Dictionary
-		      ReplacementDict.Value("creature") = TargetCreatureRef.SaveData
-		      ReplacementDict.Value("choices") = Choices
-		      Replacements.Add(ReplacementDict)
-		    Next
-		    Dict.Value("replacements") = Replacements
-		  Else
-		    Dict.Value("replacements") = Nil
-		  End If
-		  Return Dict
-		  
 		End Function
 	#tag EndMethod
 
@@ -532,49 +427,15 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReplacedCreatureRefs() As Ark.BlueprintReference()
-		  Var Arr() As Ark.BlueprintReference
-		  Var Blueprints() As Ark.BlueprintReference = Self.mReplacements.References
-		  For Each Blueprint As Ark.BlueprintReference In Blueprints
-		    If Blueprint.IsCreature Then
-		      Arr.Add(Blueprint)
-		    End If
-		  Next
-		  Return Arr
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ReplacedCreatures() As Ark.Creature()
 		  Var Arr() As Ark.Creature
-		  Var Blueprints() As Ark.BlueprintReference = Self.mReplacements.References
-		  For Each Blueprint As Ark.BlueprintReference In Blueprints
-		    If Blueprint.IsCreature Then
-		      Arr.Add(Ark.Creature(Blueprint.Resolve))
+		  For Each Entry As DictionaryEntry In Self.mReplacements
+		    Var FromCreatureId As String = Entry.Key
+		    Var Creature As Ark.Creature = Ark.ResolveCreature(FromCreatureId, "", "", Nil)
+		    If (Creature Is Nil) = False Then
+		      Arr.Add(Creature)
 		    End If
 		  Next
-		  Return Arr
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ReplacementCreatures(FromCreatureRef As Ark.BlueprintReference) As Ark.BlueprintReference()
-		  Var Arr() As Ark.BlueprintReference
-		  If FromCreatureRef Is Nil Then
-		    Return Arr
-		  End If
-		  
-		  Var Options As Ark.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureRef, Self.ReplacementsAttribute)
-		  If (Options Is Nil) = False Then
-		    Var References() As Ark.BlueprintReference = Options.References
-		    For Each Reference As Ark.BlueprintReference In References
-		      If Reference.IsCreature = False Then
-		        Continue
-		      End If
-		      Arr.Add(Reference)
-		    Next
-		  End If
-		  
 		  Return Arr
 		End Function
 	#tag EndMethod
@@ -586,16 +447,25 @@ Implements Beacon.Countable,Ark.Weighted
 		    Return Arr
 		  End If
 		  
-		  Var Options As Ark.BlueprintAttributeManager = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
-		  If (Options Is Nil) = False Then
-		    Var References() As Ark.BlueprintReference = Options.References
-		    For Each Reference As Ark.BlueprintReference In References
-		      If Reference.IsCreature = False Then
-		        Continue
-		      End If
-		      Arr.Add(Ark.Creature(Reference.Resolve))
-		    Next
+		  Return Self.ReplacementCreatures(FromCreature.CreatureId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReplacementCreatures(FromCreatureId As String) As Ark.Creature()
+		  Var Arr() As Ark.Creature
+		  If Self.mReplacements.HasKey(FromCreatureId) = False Then
+		    Return Arr
 		  End If
+		  
+		  Var Choices As Dictionary = Self.mReplacements.Value(FromCreatureId)
+		  For Each Entry As DictionaryEntry In Choices
+		    Var ToCreatureId As String = Entry.Key
+		    Var Creature As Ark.Creature = Ark.ResolveCreature(ToCreatureId, "", "", Nil)
+		    If (Creature Is Nil) = False Then
+		      Arr.Add(Creature)
+		    End If
+		  Next
 		  
 		  Return Arr
 		End Function
@@ -603,7 +473,7 @@ Implements Beacon.Countable,Ark.Weighted
 
 	#tag Method, Flags = &h0
 		Function ReplacesCreatures() As Boolean
-		  Return Self.mReplacements.Count > 0
+		  Return Self.mReplacements.KeyCount > 0
 		End Function
 	#tag EndMethod
 
@@ -615,35 +485,65 @@ Implements Beacon.Countable,Ark.Weighted
 		  Next
 		  
 		  Var SaveData As New Dictionary
-		  SaveData.Value("ID") = Self.mID.StringValue
-		  SaveData.Value("Type") = "SpawnPointSet"
-		  SaveData.Value("Label") = Self.Label
-		  SaveData.Value("Weight") = Self.RawWeight
-		  SaveData.Value("Entries") = Entries
-		  SaveData.Value("Offset Before Multiplier") = Self.mOffsetBeforeMultiplier
-		  SaveData.Value("Color Set Class") = Self.mColorSetClass
-		  If Self.mGroupOffset <> Nil Then
-		    SaveData.Value("Spawn Offset") = Self.mGroupOffset.SaveData
+		  SaveData.Value("spawnPointSetId") = Self.mSetId
+		  SaveData.Value("type") = "SpawnPointSet"
+		  SaveData.Value("label") = Self.Label
+		  SaveData.Value("weight") = Self.RawWeight
+		  SaveData.Value("entries") = Entries
+		  SaveData.Value("offsetBeforeMultiplier") = Self.mOffsetBeforeMultiplier
+		  SaveData.Value("colorSetClass") = Self.mColorSetClass
+		  If (Self.mGroupOffset Is Nil) = False Then
+		    SaveData.Value("spawnOffset") = Self.mGroupOffset.SaveData
 		  End If
-		  If Self.mSpreadRadius <> Nil Then
-		    SaveData.Value("Spread Radius") = Self.mSpreadRadius.DoubleValue
+		  If (Self.mSpreadRadius Is Nil) = False Then
+		    SaveData.Value("spreadRadius") = Self.mSpreadRadius.DoubleValue
 		  End If
-		  If Self.mWaterOnlyMinimumHeight <> Nil Then
-		    SaveData.Value("Water Only Minimum Height") = Self.mWaterOnlyMinimumHeight.DoubleValue
+		  If (Self.mWaterOnlyMinimumHeight Is Nil) = False Then
+		    SaveData.Value("waterOnlyMinimumHeight") = Self.mWaterOnlyMinimumHeight.DoubleValue
 		  End If
-		  If Self.mMinDistanceFromPlayersMultiplier <> Nil Then
-		    SaveData.Value("Min Distance From Players Multiplier") = Self.mMinDistanceFromPlayersMultiplier.DoubleValue
+		  If (Self.mMinDistanceFromPlayersMultiplier Is Nil) = False Then
+		    SaveData.Value("minDistanceFromPlayersMultiplier") = Self.mMinDistanceFromPlayersMultiplier.DoubleValue
 		  End If
-		  If Self.mMinDistanceFromStructuresMultiplier <> Nil Then
-		    SaveData.Value("Min Distance From Structures Multiplier") = Self.mMinDistanceFromStructuresMultiplier.DoubleValue
+		  If (Self.mMinDistanceFromStructuresMultiplier Is Nil) = False Then
+		    SaveData.Value("minDistanceFromStructuresMultiplier") = Self.mMinDistanceFromStructuresMultiplier.DoubleValue
 		  End If
-		  If Self.mMinDistanceFromTamedDinosMultiplier <> Nil Then
-		    SaveData.Value("Min Distance From Tamed Dinos Multiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
+		  If (Self.mMinDistanceFromTamedDinosMultiplier Is Nil) = False Then
+		    SaveData.Value("minDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
 		  End If
-		  If Self.mReplacements.Count > 0 Then
-		    SaveData.Value("Creature Replacements") = Self.mReplacements.SaveData
+		  If Self.mReplacements.KeyCount > 0 Then
+		    // We *could* just store the dictionary, but in the database replacements are objects so
+		    // for consistency we're going to replicate that structure
+		    
+		    Var Replacements() As Dictionary
+		    For Each FromEntry As DictionaryEntry In Self.mReplacements
+		      Var FromCreatureId As String = FromEntry.Key
+		      Var Choices As Dictionary = FromEntry.Value
+		      If Choices.KeyCount = 0 Then
+		        Continue
+		      End If
+		      
+		      Var ChoicesArray() As Dictionary
+		      For Each ToEntry As DictionaryEntry In Choices
+		        Var ToCreatureId As String = ToEntry.Key
+		        Var Weight As Double = ToEntry.Value
+		        ChoicesArray.Add(New Dictionary("creatureId": ToCreatureId, "weight": Weight))
+		      Next
+		      
+		      Var Dict As New Dictionary
+		      Dict.Value("creatureId") = FromCreatureId
+		      Dict.Value("choices") = ChoicesArray
+		      Replacements.Add(Dict)
+		    Next
+		    
+		    SaveData.Value("replacements") = Replacements
 		  End If
 		  Return SaveData
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SetId() As String
+		  Return Self.mSetId
 		End Function
 	#tag EndMethod
 
@@ -677,10 +577,6 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mID As v4UUID
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
 		Protected mLabel As String = "New Spawn Set"
 	#tag EndProperty
 
@@ -705,7 +601,11 @@ Implements Beacon.Countable,Ark.Weighted
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mReplacements As Ark.BlueprintAttributeManager
+		Protected mReplacements As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mSetId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

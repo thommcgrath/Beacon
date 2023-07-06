@@ -274,10 +274,10 @@ Protected Class BlueprintController
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Var ObjectID As String = Blueprint.ObjectID
 		    
-		    If Blueprint.ContentPackUUID <> Self.ModID Then
+		    If Blueprint.ContentPackId <> Self.ModID Then
 		      // Need to adjust the mod info to match
 		      Var MutableVersion As Ark.MutableBlueprint = Blueprint.MutableVersion
-		      MutableVersion.ContentPackUUID = Self.ModID
+		      MutableVersion.ContentPackId = Self.ModID
 		      MutableVersion.ContentPackName = Self.ModName
 		      Blueprint = MutableVersion.ImmutableVersion
 		    End If

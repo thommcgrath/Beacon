@@ -63,8 +63,8 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As String)
-		  Self.mObjectID = ObjectID
+		Sub Constructor(Path As String, LootDropId As String)
+		  Self.mLootDropId = LootDropId
 		  Self.mPath = Path
 		  Self.mClassString = Beacon.ClassStringFromPath(Path)
 		  Self.mAvailability = Ark.Maps.UniversalMask
@@ -74,19 +74,19 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackName(Assigns Value As String)
+		Sub ContentPackId(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  Self.mContentPackName = Value
+		  Self.mContentPackId = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackUUID(Assigns Value As String)
+		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  Self.mContentPackUUID = Value
+		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -341,16 +341,19 @@ Implements Ark.MutableBlueprint
 		    Self.mMultipliers = New Beacon.Range(MultiplierMin, MultiplierMax)
 		  End If
 		  
-		  If Dict.HasKey("ui_color") Then
-		    Self.mUIColor = Dict.Value("ui_color").StringValue.ToColor
+		  Var UIColorKey As Variant = Dict.FirstKey("uiColor", "ui_color")
+		  If UIColorKey.IsNull = False Then
+		    Self.mUIColor = Dict.Value(UIColorKey).StringValue.ToColor
 		  End If
 		  
-		  If Dict.HasKey("icon") Then
-		    Self.mIconID = Dict.Value("icon").StringValue
+		  Var IconIdKey As Variant = Dict.FirstKey("iconId", "icon")
+		  If IconIdKey.IsNull = False Then
+		    Self.mIconID = Dict.Value(IconIdKey).StringValue
 		  End If
 		  
-		  If Dict.HasKey("sort") Then
-		    Self.mSortValue = If(Dict.Value("sort").IsNull, 9999, Dict.Value("sort").IntegerValue)
+		  Var SortKey As Variant = Dict.FirstKey("sortOrder", "sort")
+		  If SortKey.IsNull = False Then
+		    Self.mSortValue = If(Dict.Value(SortKey).IsNull, 9999, Dict.Value(SortKey).IntegerValue)
 		  End If
 		  
 		  If Dict.HasKey("experimental") Then
@@ -369,32 +372,42 @@ Implements Ark.MutableBlueprint
 		    End Try
 		  End If
 		  
-		  If Dict.HasKey("min_item_sets") Then
-		    Self.mMinItemSets = Dict.Value("min_item_sets").IntegerValue
+		  Var MinItemSetsKey As Variant = Dict.FirstKey("minItemSets", "min_item_sets")
+		  If MinItemSetsKey.IsNull = False Then
+		    Self.mMinItemSets = Dict.Value(MinItemSetsKey).IntegerValue
 		  End If
 		  
-		  If Dict.HasKey("max_item_sets") Then
-		    Self.mMaxItemSets = Dict.Value("max_item_sets").IntegerValue
+		  Var MaxItemSetsKey As Variant = Dict.FirstKey("maxItemSets", "max_item_sets")
+		  If MaxItemSetsKey.IsNull = False Then
+		    Self.mMaxItemSets = Dict.Value(MaxItemSetsKey).IntegerValue
 		  End If
 		  
-		  If Dict.HasKey("prevent_duplicates") Then
-		    Self.mPreventDuplicates = Dict.Value("prevent_duplicates").BooleanValue
+		  Var PreventDuplicatesKey As Variant = Dict.FirstKey("preventDuplicates", "prevent_duplicates")
+		  If PreventDuplicatesKey.IsNull = False Then
+		    Self.mPreventDuplicates = Dict.Value(PreventDuplicatesKey)
 		  End If
 		  
-		  If Dict.HasKey("contents") And Dict.Value("contents").IsNull = False Then
-		    Var Sets() As Dictionary
+		  Var Sets() As Dictionary
+		  If Dict.HasKey("itemSets") And Dict.Value("itemSets").IsNull = False Then
+		    Try
+		      Sets = Dict.Value("itemSets").DictionaryArrayValue
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Unpacking item sets")
+		    End Try
+		  ElseIf Dict.HasKey("contents") And Dict.Value("contents").IsNull = False Then
 		    Try
 		      Sets = Dict.Value("contents").DictionaryArrayValue
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Unpacking item sets")
 		    End Try
-		    For Each PackedSet As Dictionary In Sets
-		      Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(PackedSet)
-		      If (Set Is Nil) = False Then
-		        Self.mItemSets.Add(Set)
-		      End If
-		    Next
 		  End If
+		  
+		  For Each PackedSet As Dictionary In Sets
+		    Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(PackedSet)
+		    If (Set Is Nil) = False Then
+		      Self.mItemSets.Add(Set)
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 

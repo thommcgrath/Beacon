@@ -800,7 +800,7 @@ End
 		      
 		      Var Mutable As Ark.MutableBlueprint = Blueprint.MutableVersion
 		      Mutable.ContentPackName = Pack.Name
-		      Mutable.ContentPackUUID = Pack.UUID
+		      Mutable.ContentPackId = Pack.UUID
 		      BlueprintsToSave.Add(Mutable)
 		      NewBlueprintIDs.Value(Blueprint.ObjectID) = True
 		    Catch Err As RuntimeException

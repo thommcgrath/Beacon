@@ -259,28 +259,33 @@ Protected Module Ark
 	#tag Method, Flags = &h1
 		Protected Function PackBlueprint(Blueprint As Ark.Blueprint) As Dictionary
 		  Var Dict As New Dictionary
+		  Var IdProperty As String
 		  
 		  Select Case Blueprint
 		  Case IsA Ark.Engram
 		    Dict.Value("group") = "engrams"
+		    IdProperty = "engramId"
 		  Case IsA Ark.Creature
 		    Dict.Value("group") = "creatures"
+		    IdProperty = "creatureId"
 		  Case IsA Ark.SpawnPoint
-		    Dict.Value("group") = "spawn_points"
+		    Dict.Value("group") = "spawnPoints"
+		    IdProperty = "spawnPointId"
 		  Case IsA Ark.LootContainer
-		    Dict.Value("group") = "loot_containers"
+		    Dict.Value("group") = "lootDrops"
+		    IdProperty = "lootDropId"
 		  Else
 		    Return Nil
 		  End Select
 		  
-		  Var ModInfo As New Dictionary
-		  ModInfo.Value("id") = Blueprint.ContentPackUUID
-		  ModInfo.Value("name") = Blueprint.ContentPackName
+		  Var ContentPackInfo As New Dictionary
+		  ContentPackInfo.Value("id") = Blueprint.ContentPackId
+		  ContentPackInfo.Value("name") = Blueprint.ContentPackName
 		  
-		  Dict.Value("id") = Blueprint.ObjectID
+		  Dict.Value(IdProperty) = Blueprint.ObjectID
 		  Dict.Value("label") = Blueprint.Label
-		  Dict.Value("alternate_label") = Blueprint.AlternateLabel
-		  Dict.Value("mod") = ModInfo
+		  Dict.Value("alternateLabel") = Blueprint.AlternateLabel
+		  Dict.Value("contentPack") = ContentPackInfo
 		  Dict.Value("tags") = Blueprint.Tags
 		  Dict.Value("availability") = Blueprint.Availability
 		  Dict.Value("path") = Blueprint.Path
@@ -795,33 +800,65 @@ Protected Module Ark
 
 	#tag Method, Flags = &h1
 		Protected Function UnpackBlueprint(Dict As Dictionary) As Ark.MutableBlueprint
-		  If Not Dict.HasAllKeys("id", "label", "alternate_label", "path", "group", "tags", "availability", "mod") Then
+		  Var IdProperty, Group As String
+		  Var LegacyMode As Boolean
+		  If Dict.HasKey("engramId") Then
+		    Group = "engrams"
+		    IdProperty = "engramId"
+		  ElseIf Dict.HasKey("creatureId") Then
+		    Group = "creatures"
+		    IdProperty = "creatureId"
+		  ElseIf Dict.HasKey("spawnPointId") Then
+		    Group = "spawnPoints"
+		    IdProperty = "spawnPointId"
+		  ElseIf Dict.HasKey("lootDropId") Then
+		    Group = "lootDrops"
+		    IdProperty = "lootDropId"
+		  ElseIf Dict.HasKey("group") Then
+		    Group = Dict.Value("group")
+		    IdProperty = "id"
+		    LegacyMode = True
+		  End If
+		  
+		  If Group.IsEmpty Then
 		    Return Nil
 		  End If
 		  
-		  Var Group As String = Dict.Value("group")
-		  Var Path As String = Dict.Value("path")
-		  Var ObjectID As String = Dict.Value("id")
+		  Var BlueprintId As String
+		  Var AlternateLabel As NullableString
+		  Var ContentPackInfo As Dictionary
+		  If LegacyMode Then
+		    BlueprintId = Dict.Value("id")
+		    AlternateLabel = NullableString.FromVariant(Dict.Value("alternate_label"))
+		    ContentPackInfo = Dict.Value("mod")
+		  ElseIf Dict.HasAllKeys(IdProperty, "label", "alternateLabel", "path", "tags", "availability", "contentPack") Then
+		    BlueprintId = Dict.Value(IdProperty)
+		    AlternateLabel = NullableString.FromVariant(Dict.Value("alternateLabel"))
+		    ContentPackInfo = Dict.Value("contentPack")
+		  Else
+		    Return Nil
+		  End If
 		  
-		  If Path.IsEmpty Or ObjectID.IsEmpty Or Group.IsEmpty Then
+		  Var Label As String = Dict.Value("label")
+		  Var Path As String = Dict.Value("path")
+		  
+		  If Path.IsEmpty Or BlueprintId.IsEmpty Or Label.IsEmpty Then
 		    Return Nil
 		  End If
 		  
 		  Var Blueprint As Ark.MutableBlueprint
 		  Select Case Group
-		  Case Ark.CategoryEngrams
-		    Blueprint = New Ark.MutableEngram(Path, ObjectID)
-		  Case Ark.CategoryCreatures
-		    Blueprint = New Ark.MutableCreature(Path, ObjectID)
-		  Case Ark.CategorySpawnPoints
-		    Blueprint = New Ark.MutableSpawnPoint(Path, ObjectID)
-		  Case Ark.CategoryLootContainers, "loot_sources"
-		    Blueprint = New Ark.MutableLootContainer(Path, ObjectID)
+		  Case "engrams"
+		    Blueprint = New Ark.MutableEngram(Path, BlueprintId)
+		  Case "creatures"
+		    Blueprint = New Ark.MutableCreature(Path, BlueprintId)
+		  Case "spawn_points", "spawnPoints"
+		    Blueprint = New Ark.MutableSpawnPoint(Path, BlueprintId)
+		  Case "loot_containers", "loot_sources", "lootDrops"
+		    Blueprint = New Ark.MutableLootContainer(Path, BlueprintId)
 		  Else
 		    Return Nil
 		  End Select
-		  
-		  Var ModInfo As Dictionary = Dict.Value("mod")
 		  
 		  Var Tags() As String
 		  If Dict.Value("tags").IsArray Then
@@ -837,15 +874,11 @@ Protected Module Ark
 		    End If
 		  End If
 		  
-		  If IsNull(Dict.Value("alternate_label")) = False And Dict.Value("alternate_label").StringValue.IsEmpty = False Then
-		    Blueprint.AlternateLabel = Dict.Value("alternate_label").StringValue
-		  Else
-		    Blueprint.AlternateLabel = Nil
-		  End If
+		  Blueprint.AlternateLabel = AlternateLabel
 		  Blueprint.Availability = Dict.Value("availability").UInt64Value
 		  Blueprint.Label = Dict.Value("label").StringValue
-		  Blueprint.ContentPackUUID = ModInfo.Value("id").StringValue
-		  Blueprint.ContentPackName = ModInfo.Value("name").StringValue
+		  Blueprint.ContentPackId = ContentPackInfo.Value("id").StringValue
+		  Blueprint.ContentPackName = ContentPackInfo.Value("name").StringValue
 		  Blueprint.Tags = Tags
 		  
 		  // Let the blueprint grab whatever additional data it needs
@@ -927,7 +960,7 @@ Protected Module Ark
 
 	#tag Method, Flags = &h0
 		Function ValidForProject(Extends Blueprint As Ark.Blueprint, Project As Ark.Project) As Boolean
-		  Return (Project Is Nil) = False And Project.ContentPackEnabled(Blueprint.ContentPackUUID)
+		  Return (Project Is Nil) = False And Project.ContentPackEnabled(Blueprint.ContentPackId)
 		End Function
 	#tag EndMethod
 
@@ -977,10 +1010,10 @@ Protected Module Ark
 	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
+	#tag Constant, Name = UserContentPackId, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UserContentPackUUID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Protected
+	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
 	#tag EndConstant
 
 

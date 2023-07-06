@@ -189,6 +189,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -370,6 +371,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -1483,12 +1485,12 @@ End
 		    For I As Integer = 0 To List.RowCount - 1
 		      If List.RowSelectedAt(I) Then
 		        Var Entry As Ark.SpawnPointSetEntry = List.RowTagAt(I)
-		        SelectedEntries.Add(Entry.ID)
+		        SelectedEntries.Add(Entry.EntryId)
 		      End If
 		    Next
 		  Else
 		    For Each Entry As Ark.SpawnPointSetEntry In SelectEntries
-		      SelectedEntries.Add(Entry.ID)
+		      SelectedEntries.Add(Entry.EntryId)
 		    Next
 		  End If
 		  
@@ -1522,7 +1524,7 @@ End
 		    
 		    List.RowTagAt(RowIndex) = Entry.MutableVersion
 		    List.CellTextAt(RowIndex, 0) = Label
-		    List.RowSelectedAt(RowIndex) = SelectedEntries.IndexOf(Entry.ID) > -1
+		    List.RowSelectedAt(RowIndex) = SelectedEntries.IndexOf(Entry.EntryId) > -1
 		  Next
 		  If List.DefaultRowHeight <> RowHeight Then
 		    List.DefaultRowHeight = RowHeight

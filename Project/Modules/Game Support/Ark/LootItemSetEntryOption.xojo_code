@@ -38,10 +38,12 @@ Implements Beacon.Validateable,Ark.Weighted
 		Shared Function FromSaveData(Dict As Dictionary, NewUUID As Boolean = False) As Ark.LootItemSetEntryOption
 		  Var UUID As String
 		  If NewUUID Then
-		    UUID = v4UUID.Create.StringValue
+		    UUID = Beacon.UUID.v4
 		  Else
 		    Try
-		      If Dict.HasKey("loot_item_set_entry_option_id") Then
+		      If Dict.HasKey("lootItemSetEntryOptionId") Then
+		        UUID = Dict.Value("lootItemSetEntryOptionId")
+		      ElseIf Dict.HasKey("loot_item_set_entry_option_id") Then
 		        UUID = Dict.Value("loot_item_set_entry_option_id")
 		      ElseIf Dict.HasKey("UUID") Then
 		        UUID = Dict.Value("UUID")
@@ -63,7 +65,13 @@ Implements Beacon.Validateable,Ark.Weighted
 		  End Try
 		  
 		  Var Option As Ark.LootItemSetEntryOption
-		  If Dict.HasKey("engram") Then
+		  If Dict.HasKey("engramId") Then
+		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict.Value("engramId").StringValue, "", "", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New Ark.LootItemSetEntryOption(Engram, Weight, UUID)
+		  ElseIf Dict.HasKey("engram") Then
 		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("engram"))
 		    If Reference Is Nil Then
 		      Return Nil
@@ -119,7 +127,7 @@ Implements Beacon.Validateable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Function Pack() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("loot_item_set_entry_option_id") = Self.mUUID
+		  Dict.Value("lootItemSetEntryOptionId") = Self.mUUID
 		  Dict.Value("engram") = Self.mEngramRef.SaveData
 		  Dict.Value("weight") = Self.mWeight
 		  Return Dict
@@ -143,9 +151,9 @@ Implements Beacon.Validateable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Keys As New Dictionary
-		  Keys.Value("UUID") = Self.mUUID
-		  Keys.Value("Blueprint") = Self.mEngramRef.SaveData
-		  Keys.Value("Weight") = Self.mWeight
+		  Keys.Value("lootItemSetEntryOptionId") = Self.mUUID
+		  Keys.Value("engramId") = Self.mEngramRef.ObjectID
+		  Keys.Value("weight") = Self.mWeight
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -167,7 +175,7 @@ Implements Beacon.Validateable,Ark.Weighted
 		    End If
 		    
 		    Var Engram As Ark.Engram = Self.Engram
-		    If Project IsA Ark.Project And Ark.Project(Project).ContentPackEnabled(Engram.ContentPackUUID) = False Then
+		    If Project IsA Ark.Project And Ark.Project(Project).ContentPackEnabled(Engram.ContentPackId) = False Then
 		      Issues.Add(New Beacon.Issue(Location, "'" + Engram.Label + "' is provided by the '" + Engram.ContentPackName + "' mod, which is turned off for this project."))
 		    ElseIf Engram.IsTagged("Generic") Or Engram.IsTagged("Blueprint") Then
 		      Issues.Add(New Beacon.Issue(Location, "'" + Engram.Label + "' is a generic item intended for crafting recipies and cannot spawn in a drop."))

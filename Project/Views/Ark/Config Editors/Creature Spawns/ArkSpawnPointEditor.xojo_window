@@ -278,6 +278,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -334,6 +335,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -717,7 +719,7 @@ End
 		    If SelectSets = Nil Then
 		      For I As Integer = 0 To Self.SetsList.RowCount - 1
 		        If Self.SetsList.RowSelectedAt(I) Then
-		          SelectedSets.Add(Ark.SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).Template.ID)
+		          SelectedSets.Add(Ark.SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).Template.SetId)
 		        End If
 		      Next
 		    Else
