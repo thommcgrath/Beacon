@@ -88,7 +88,7 @@ Implements Beacon.Countable,Ark.Weighted
 		    Return Nil
 		  End If
 		  
-		  Return Choices.Value(ToCreatureId)
+		  Return NullableDouble.FromVariant(Choices.Value(ToCreatureId))
 		End Function
 	#tag EndMethod
 

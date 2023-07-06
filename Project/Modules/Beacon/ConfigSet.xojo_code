@@ -38,15 +38,15 @@ Protected Class ConfigSet
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary) As Beacon.ConfigSet
-		  If SaveData.HasAllKeys("Name", "ConfigSetId") = False Then
+		  If SaveData.HasAllKeys("name", "configSetId") = False Then
 		    Var Err As New Beacon.ProjectLoadException
 		    Err.Message = "Stored config set metadata is incomplete."
 		    Raise Err
 		  End If
 		  
 		  Var Set As New Beacon.ConfigSet
-		  Set.mName = SaveData.Value("Name")
-		  set.mConfigSetId = SaveData.Value("ConfigSetId")
+		  Set.mName = SaveData.Value("name")
+		  set.mConfigSetId = SaveData.Value("configSetId")
 		  Return Set
 		End Function
 	#tag EndMethod
@@ -105,8 +105,8 @@ Protected Class ConfigSet
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("Name") = Self.mName
-		  Dict.Value("ConfigSetId") = Self.mConfigSetId
+		  Dict.Value("name") = Self.mName
+		  Dict.Value("configSetId") = Self.mConfigSetId
 		  Return Dict
 		End Function
 	#tag EndMethod

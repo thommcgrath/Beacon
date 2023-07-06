@@ -319,6 +319,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FirstValue(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Variant
+		  // Last element if Keys is the default
+		  For Idx As Integer = 0 To Keys.LastIndex - 1
+		    If Dict.HasKey(Keys(Idx)) Then
+		      Return Dict.Value(Keys(Idx))
+		    End If
+		  Next
+		  Return Keys(Keys.LastIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasAllKeys(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Boolean
 		  For Each Key As Variant In Keys
 		    If Dict.HasKey(Key) = False Then

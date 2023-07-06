@@ -228,7 +228,7 @@ Implements ObservationKit.Observable
 		  Self.mAccounts = New Beacon.ExternalAccountManager
 		  Self.mEncryptedPasswords = New Dictionary
 		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
-		  Self.mUUID = New v4UUID
+		  Self.mProjectId = Beacon.UUID.v4
 		  
 		  Self.mConfigSetData = New Dictionary
 		  Var BaseSet As Beacon.ConfigSet = Beacon.ConfigSet.BaseConfigSet
@@ -244,10 +244,10 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateForGameID(GameID As String) As Beacon.Project
+		Shared Function CreateForGameId(GameId As String) As Beacon.Project
 		  // At the moment, only Ark is supported.
 		  
-		  #Pragma Unused GameID 
+		  #Pragma Unused GameId
 		  Return New Ark.Project
 		End Function
 	#tag EndMethod
@@ -301,18 +301,14 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity, AdditionalProperties As Dictionary) As Beacon.Project
-		  Var Version As Integer = SaveData.Lookup("Version", 0).IntegerValue
-		  Var MinVersion As Integer = SaveData.Lookup("MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
-		  Var SavedWithVersion As Integer = SaveData.Lookup("SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
-		  Var GameID As String = SaveData.Lookup("Game", Ark.Identifier).StringValue
-		  Var UUID As String
-		  If SaveData.HasKey("ProjectId") Then
-		    UUID = SaveData.Value("ProjectId").StringValue
-		  ElseIf SaveData.HasKey("Identifier") Then
-		    UUID = SaveData.Value("Identifier").StringValue
-		  End If
-		  If v4UUID.IsValid(UUID) = False Then
-		    UUID = Beacon.UUID.v4
+		  Var Version As Integer = SaveData.FirstValue("version", "Version", 0).IntegerValue
+		  Var MinVersion As Integer = SaveData.FirstValue("minVersion", "MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
+		  Var SavedWithVersion As Integer = SaveData.FirstValue("savedWith", "SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
+		  Var GameId As String = SaveData.FirstValue("gameId", "Game", Ark.Identifier).StringValue
+		  
+		  Var ProjectId As String = SaveData.FirstValue("projectId", "Identifier", "").StringValue
+		  If Beacon.UUID.Validate(ProjectId) = False Then
+		    ProjectId = Beacon.UUID.v4
 		  End If
 		  
 		  If MinVersion > Beacon.Project.SaveDataVersion Then
@@ -322,7 +318,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var Project As Beacon.Project
-		  Select Case GameID
+		  Select Case GameId
 		  Case Ark.Identifier
 		    Project = New Ark.Project
 		  Else
@@ -331,55 +327,63 @@ Implements ObservationKit.Observable
 		    Raise Err
 		  End Select
 		  
-		  Project.mUUID = UUID
-		  If SaveData.HasKey("Description") Then
-		    Project.mDescription = SaveData.Value("Description")
-		  End If
-		  If SaveData.HasKey("Name") THen
-		    Project.mTitle = SaveData.Value("Name")
-		  ElseIf SaveData.HasKey("Title") Then
-		    Project.mTitle = SaveData.Value("Title")
-		  End If
-		  If SaveData.HasKey("LegacyTrustKey") Then
-		    Project.mLegacyTrustKey = SaveData.Value("LegacyTrustKey")
-		  ElseIf SaveData.HasKey("Trust") Then
-		    Project.mLegacyTrustKey = SaveData.Value("Trust")
-		  End If
-		  If SaveData.HasKey("Keep Local Backup") Then
-		    Project.mKeepLocalBackup = SaveData.Value("Keep Local Backup")
+		  Project.mProjectId = ProjectId
+		  
+		  Var DescriptionKey As Variant = SaveData.FirstKey("description", "Description")
+		  If DescriptionKey.IsNull = False Then
+		    Project.mDescription = SaveData.Value(DescriptionKey)
 		  End If
 		  
-		  If Version >= 4 And SaveData.HasKey("EncryptionKeys") And SaveData.Value("EncryptionKeys") IsA Dictionary Then
+		  Var TitleKey As Variant = SaveData.FirstKey("name", "Title")
+		  If TitleKey.IsNull = False Then
+		    Project.mTitle = SaveData.Value(TitleKey)
+		  End If
+		  
+		  Var LegacyTrustKey As Variant = SaveData.FirstKey("legacyTrustKey", "LegacyTrustKey", "Trust")
+		  If LegacyTrustKey.IsNull = False Then
+		    Project.mLegacyTrustKey = SaveData.Value(LegacyTrustKey)
+		  End If
+		  
+		  If SaveData.HasKey("keepLocalBackup") Then
+		    Project.mKeepLocalBackup = SaveData.Value("keepLocalBackup")
+		  End If
+		  
+		  Var UseCompressionKey As Variant = SaveData.FirstKey("useCompression", "UseCompression")
+		  If UseCompressionKey.IsNull = False Then
+		    Project.mUseCompression = SaveData.Value(UseCompressionKey)
+		  End If
+		  
+		  Var Passwords As Dictionary = SaveData.FirstValue("encryptionKeys", "EncryptionKeys", Nil)
+		  If Version >= 4 And (Passwords Is Nil) = False Then
 		    Var PossibleIdentities(0) As Beacon.Identity
 		    PossibleIdentities(0) = Identity
 		    
-		    Var Passwords As Dictionary = SaveData.Value("EncryptionKeys")
 		    For Each Entry As DictionaryEntry In Passwords
-		      Var UserID As String = Entry.Key
-		      If UserID = Identity.UserID Then
+		      Var UserId As String = Entry.Key
+		      If UserId = Identity.UserId Then
 		        Continue
 		      End If
 		      
-		      Var MergedIdentity As Beacon.Identity = App.IdentityManager.Fetch(UserID)
+		      Var MergedIdentity As Beacon.Identity = App.IdentityManager.Fetch(UserId)
 		      If (MergedIdentity Is Nil) = False Then
 		        PossibleIdentities.Add(MergedIdentity)
 		      End If
 		    Next
 		    
 		    For Each PossibleIdentity As Beacon.Identity In PossibleIdentities
-		      Var UserID As String = PossibleIdentity.UserID
-		      If Passwords.HasKey(UserID) = False Then
+		      Var UserId As String = PossibleIdentity.UserId
+		      If Passwords.HasKey(UserId) = False Then
 		        Continue
 		      End If
 		      
 		      Try
-		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(UserID)), PossibleIdentity.PrivateKey)
+		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(UserId)), PossibleIdentity.PrivateKey)
 		        Project.mProjectPassword = DocumentPassword
 		        Project.mEncryptedPasswords = Passwords
 		        
-		        If Passwords.HasKey(UserID) = False Then
+		        If Passwords.HasKey(UserId) = False Then
 		          // Add a password for the current user
-		          Project.AddUser(UserID, Identity.PublicKey)
+		          Project.AddUser(UserId, Identity.PublicKey)
 		        End If
 		        
 		        Exit
@@ -392,9 +396,9 @@ Implements ObservationKit.Observable
 		  
 		  Var SecureDict As Dictionary
 		  #Pragma BreakOnExceptions False
-		  If SaveData.HasKey("EncryptedData") Then
+		  If SaveData.HasAnyKey("encryptedData", "EncryptedData") Then
 		    Try
-		      Project.mLastSecureData = SaveData.Value("EncryptedData")
+		      Project.mLastSecureData = SaveData.FirstValue("encryptedData", "EncryptedData", "")
 		      Var Decrypted As String = Project.Decrypt(Project.mLastSecureData)
 		      Project.mLastSecureHash = Beacon.Hash(Decrypted)
 		      SecureDict = Beacon.ParseJSON(Decrypted)
@@ -405,26 +409,13 @@ Implements ObservationKit.Observable
 		    SecureDict = ReadLegacySecureData(SaveData.Value("Secure"), Identity)
 		  End If
 		  #Pragma BreakOnExceptions Default
-		  If (SecureDict Is Nil) = False Then
-		    Var AccountManager As Beacon.ExternalAccountManager
-		    Try
-		      If SecureDict.HasKey("ExternalAccounts") Then
-		        AccountManager = Beacon.ExternalAccountManager.FromDict(SecureDict.Value("ExternalAccounts"))
-		      ElseIf SecureDict.HasKey("OAuth") Then
-		        AccountManager = Beacon.ExternalAccountManager.FromLegacyDict(SecureDict.Value("OAuth"))
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		    If IsNull(AccountManager) = False Then
-		      Project.mAccounts = AccountManager
-		    End If
-		  Else
+		  If SecureDict Is Nil Then
 		    SecureDict = New Dictionary
 		  End If
 		  
-		  If SaveData.HasKey("Config Set Data") Then
+		  If SaveData.HasKey("configSetData") Then
 		    Project.mConfigSets.ResizeTo(-1)
-		    Var Definitions() As Variant = SaveData.Value("Config Sets")
+		    Var Definitions() As Variant = SaveData.Value("configSets")
 		    For Each Definition As Variant In Definitions
 		      If Definition.Type = Variant.TypeObject And Definition.ObjectValue IsA Dictionary Then
 		        Var ConfigSet As Beacon.ConfigSet = Beacon.ConfigSet.FromSaveData(Dictionary(Definition.ObjectValue))
@@ -432,13 +423,13 @@ Implements ObservationKit.Observable
 		      End If
 		    Next
 		    
-		    Project.mConfigSetPriorities = Beacon.ConfigSetState.DecodeArray(SaveData.Value("Config Set Priorities"))
+		    Project.mConfigSetPriorities = Beacon.ConfigSetState.DecodeArray(SaveData.Value("configSetPriorities"))
 		    
-		    Var SetDicts As Dictionary = SaveData.Value("Config Set Data")
+		    Var SetDicts As Dictionary = SaveData.Value("configSetData")
 		    Var EncryptedDicts As Dictionary
-		    If SecureDict.HasKey("Config Set Data") Then
+		    If SecureDict.HasKey("configSetData") Then
 		      Try
-		        EncryptedDicts = SecureDict.Value("Config Set Data")
+		        EncryptedDicts = SecureDict.Value("configSetData")
 		      Catch Err As RuntimeException
 		      End Try
 		    End If
@@ -535,26 +526,29 @@ Implements ObservationKit.Observable
 		    Project.mConfigSetData.Value(Beacon.ConfigSet.BaseConfigSetId) = Project.LoadConfigSet(SaveData.Value("Configs"), Nil)
 		  End If
 		  
-		  If SecureDict.HasKey("Servers") And SecureDict.Value("Servers").IsArray Then
-		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
-		    For Each ServerDict As Variant In ServerDicts
-		      Try
-		        Var Dict As Dictionary = ServerDict
-		        Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromSaveData(Dict, Project)
-		        If Profile Is Nil Then
-		          Continue
-		        End If
-		        
-		        // Something about migrating the nitrado account?
-		        
-		        Project.mServerProfiles.Add(Profile)
-		      Catch Err As RuntimeException
-		      End Try
-		    Next ServerDict
+		  Var ServerDicts() As Variant
+		  If SecureDict.HasKey("servers") And SecureDict.Value("servers").IsArray Then
+		    ServerDicts = SecureDict.Value("servers")
+		  ElseIf SecureDict.HasKey("Servers") And SecureDict.Value("Servers").IsArray Then
+		    ServerDicts = SecureDict.Value("Servers")
 		  End If
+		  For Each ServerDict As Variant In ServerDicts
+		    Try
+		      Var Dict As Dictionary = ServerDict
+		      Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromSaveData(Dict, Project)
+		      If Profile Is Nil Then
+		        Continue
+		      End If
+		      
+		      // Something about migrating the nitrado account?
+		      
+		      Project.mServerProfiles.Add(Profile)
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
 		  
-		  If SecureDict.HasKey("Provider Token Keys") Then
-		    Var KeysDict As Dictionary = SecureDict.Value("Provider Token Keys")
+		  If SecureDict.HasKey("providerTokenKeys") Then
+		    Var KeysDict As Dictionary = SecureDict.Value("providerTokenKeys")
 		    For Each Entry As DictionaryEntry In KeysDict
 		      Project.mProviderTokenKeys.Value(Entry.Key) = DecodeBase64(Entry.Value)
 		    Next
@@ -562,8 +556,8 @@ Implements ObservationKit.Observable
 		  
 		  Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion)
 		  
-		  If SaveData.HasKey("Other Properties") And (AdditionalProperties Is Nil) = False Then
-		    Var Dict As Dictionary = SaveData.Value("Other Properties")
+		  If SaveData.HasKey("otherProperties") And (AdditionalProperties Is Nil) = False Then
+		    Var Dict As Dictionary = SaveData.Value("otherProperties")
 		    For Each Entry As DictionaryEntry In Dict
 		      AdditionalProperties.Value(Entry.Key) = Entry.Value
 		    Next
@@ -622,7 +616,7 @@ Implements ObservationKit.Observable
 		    ProjectDict = Beacon.ParseJSON(SaveData)
 		  End If
 		  
-		  ProjectDict.Value("UseCompression") = UseCompression
+		  ProjectDict.Value("useCompression") = UseCompression
 		  
 		  Return FromSaveData(ProjectDict, Identity, AdditionalProperties)
 		End Function
@@ -762,7 +756,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub NewIdentifier()
-		  Self.mUUID = Beacon.UUID.v4
+		  Self.mProjectId = Beacon.UUID.v4
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -798,13 +792,19 @@ Implements ObservationKit.Observable
 		    Return 1
 		  End If
 		  
-		  If Self.mUUID = Other.mUUID Then
+		  If Self.mProjectId = Other.mProjectId Then
 		    Return 0
 		  End If
 		  
-		  Var MySort As String = Self.mTitle + ":" + Self.mDescription + ":" + Self.mUUID
-		  Var OtherSort As String = Other.mTitle + ":" + Other.mDescription + ":" + Other.mUUID
+		  Var MySort As String = Self.mTitle + ":" + Self.mDescription + ":" + Self.mProjectId
+		  Var OtherSort As String = Other.mTitle + ":" + Other.mDescription + ":" + Other.mProjectId
 		  Return MySort.Compare(OtherSort, ComparisonOptions.CaseInsensitive)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProjectId() As String
+		  Return Self.mProjectId
 		End Function
 	#tag EndMethod
 
@@ -1045,25 +1045,25 @@ Implements ObservationKit.Observable
 		    ProjectData = New Dictionary
 		  End If
 		  
-		  Manifest.Value("Version") = Self.SaveDataVersion
-		  Manifest.Value("MinVersion") = 7
-		  Manifest.Value("ProjectId") = Self.mUUID
-		  Manifest.Value("UserId") = Identity.UserId
-		  Manifest.Value("Name") = Self.mTitle
-		  Manifest.Value("Description") = Self.mDescription
-		  Manifest.Value("GameId") = Self.GameID()
-		  Manifest.Value("EncryptionKeys") = Self.mEncryptedPasswords
-		  Manifest.Value("SavedWidth") = App.BuildNumber
-		  Manifest.Value("Timestamp") = DateTime.Now.SecondsFrom1970
+		  Manifest.Value("version") = Self.SaveDataVersion
+		  Manifest.Value("minVersion") = 7
+		  Manifest.Value("projectId") = Self.mProjectId
+		  Manifest.Value("userId") = Identity.UserId
+		  Manifest.Value("name") = Self.mTitle
+		  Manifest.Value("description") = Self.mDescription
+		  Manifest.Value("gameId") = Self.GameID()
+		  Manifest.Value("encryptionKeys") = Self.mEncryptedPasswords
+		  Manifest.Value("savedWidth") = App.BuildNumber
+		  Manifest.Value("timestamp") = DateTime.Now.SecondsFrom1970
 		  If Self.mLegacyTrustKey.IsEmpty = False Then
-		    Manifest.Value("LegacyTrustKey") = Self.mLegacyTrustKey
+		    Manifest.Value("legacyTrustKey") = Self.mLegacyTrustKey
 		  End If
 		  
 		  Var EncryptedData As New Dictionary
 		  RaiseEvent AddSaveData(Manifest, ProjectData, EncryptedData)
 		  
 		  If Self.mAccounts.Count > 0 Then
-		    EncryptedData.Value("ExternalAccounts") = Self.mAccounts.AsDictionary
+		    EncryptedData.Value("externalAccounts") = Self.mAccounts.AsDictionary
 		  End If
 		  
 		  If Self.mServerProfiles.Count > 0 Then
@@ -1071,7 +1071,7 @@ Implements ObservationKit.Observable
 		    For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
 		      Profiles.Add(Profile.SaveData)
 		    Next
-		    EncryptedData.Value("Servers") = Profiles
+		    EncryptedData.Value("servers") = Profiles
 		  End If
 		  
 		  Var Sets As New Dictionary
@@ -1092,12 +1092,12 @@ Implements ObservationKit.Observable
 		      End If
 		    End If
 		  Next
-		  ProjectData.Value("Config Sets") = Definitions
-		  ProjectData.Value("Config Set Priorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetPriorities)
+		  ProjectData.Value("configSets") = Definitions
+		  ProjectData.Value("configSetPriorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetPriorities)
 		  
-		  ProjectData.Value("Config Set Data") = Sets
+		  ProjectData.Value("configSetData") = Sets
 		  If EncryptedSets.KeyCount > 0 Then
-		    EncryptedData.Value("Config Sets Data") = EncryptedSets
+		    EncryptedData.Value("configSetData") = EncryptedSets
 		  End If
 		  
 		  If Self.mProviderTokenKeys.KeyCount > 0 Then
@@ -1105,7 +1105,7 @@ Implements ObservationKit.Observable
 		    For Each Entry As DictionaryEntry In Self.mProviderTokenKeys
 		      KeysDict.Value(Entry.Key) = EncodeBase64(Entry.Value)
 		    Next
-		    EncryptedData.Value("Provider Token Keys") = KeysDict
+		    EncryptedData.Value("providerTokenKeys") = KeysDict
 		  End If
 		  
 		  If EncryptedData.KeyCount > 0 Then
@@ -1115,14 +1115,14 @@ Implements ObservationKit.Observable
 		      Self.mLastSecureData = Self.Encrypt(Content)
 		      Self.mLastSecureHash = Hash
 		    End If
-		    ProjectData.Value("EncryptedData") = Self.mLastSecureData
+		    ProjectData.Value("encryptedData") = Self.mLastSecureData
 		  End If
 		  
 		  If (AdditionalProperties Is Nil) = False And AdditionalProperties.KeyCount > 0 Then
-		    ProjectData.Value("Other Properties") = AdditionalProperties
+		    ProjectData.Value("otherProperties") = AdditionalProperties
 		  End If
 		  
-		  ProjectData.Value("Keep Local Backup") = Self.mKeepLocalBackup
+		  ProjectData.Value("keepLocalBackup") = Self.mKeepLocalBackup
 		  
 		  If Self.mUseCompression Then
 		    Var Archive As Beacon.Archive = Beacon.Archive.Create()
@@ -1217,8 +1217,8 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UUID() As String
-		  Return Self.mUUID
+		Attributes( Deprecated = "ProjectId" )  Function UUID() As String
+		  Return Self.mProjectId
 		End Function
 	#tag EndMethod
 
@@ -1317,6 +1317,10 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProjectId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProjectPassword As String
 	#tag EndProperty
 
@@ -1334,10 +1338,6 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mUseCompression As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUUID As String
 	#tag EndProperty
 
 

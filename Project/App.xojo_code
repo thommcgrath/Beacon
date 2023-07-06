@@ -468,11 +468,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return Self.mDataFolder
 		  End If
 		  
+		  Var FolderName As String = "Beacon"
+		  #if DebugBuild
+		    FolderName = "Beacon Dev"
+		  #endif
+		  
 		  Var AppSupport As FolderItem = SpecialFolder.ApplicationData
 		  Call AppSupport.CheckIsFolder
 		  Var CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
 		  Call CompanyFolder.CheckIsFolder
-		  Var AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
+		  Var AppFolder As FolderItem = CompanyFolder.Child(FolderName)
 		  Call AppFolder.CheckIsFolder
 		  Self.mDataFolder = AppFolder
 		  Return Self.mDataFolder

@@ -59,11 +59,14 @@ Inherits Ark.SpawnPointSet
 		      Choices.Value(ToCreatureId) = Weight.DoubleValue
 		      Self.Modified = True
 		    End If
+		  ElseIf (Weight Is Nil) = False Then
+		    Choices.Value(ToCreatureId) = Weight.DoubleValue
+		    Self.Modified = True
 		  End If
 		  
+		  // No modify here, the previous block will have done that
 		  If Choices.KeyCount = 0 Then
 		    Self.mReplacements.Remove(FromCreatureId)
-		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod

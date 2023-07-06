@@ -43,14 +43,16 @@ Protected Class IdentityManager
 		  Self.mDatabase = Database
 		  
 		  Var MergedFolder As FolderItem = AppSupport.Child("Merged Identities")
-		  For Each Child As FolderItem In MergedFolder.Children(False)
-		    Var Identity As Beacon.Identity = Self.Import(Child)
-		    If (Identity Is Nil) = False Then
-		      #if Not DebugBuild
-		        Child.Remove
-		      #endif
-		    End If
-		  Next
+		  If MergedFolder.Exists Then
+		    For Each Child As FolderItem In MergedFolder.Children(False)
+		      Var Identity As Beacon.Identity = Self.Import(Child)
+		      If (Identity Is Nil) = False Then
+		        #if Not DebugBuild
+		          Child.Remove
+		        #endif
+		      End If
+		    Next
+		  End If
 		  
 		  Database.BeginTransaction
 		  Database.ExecuteSQL("UPDATE identities SET merged = TRUE;")

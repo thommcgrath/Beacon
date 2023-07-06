@@ -21,11 +21,11 @@ Inherits Beacon.Project
 		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
 		  
-		  ManifestData.Value("AllowUCS") = Self.AllowUCS2
-		  ManifestData.Value("IsConsole") = Self.ConsoleSafe
-		  ManifestData.Value("Map") = Self.MapMask
-		  ManifestData.Value("ModSelections") = Self.mContentPacks
-		  ManifestData.Value("UWPCompatibilityMode") = CType(Self.UWPMode, Integer)
+		  ManifestData.Value("allowUcs") = Self.AllowUCS2
+		  ManifestData.Value("isConsole") = Self.ConsoleSafe
+		  ManifestData.Value("map") = Self.MapMask
+		  ManifestData.Value("modSelections") = Self.mContentPacks
+		  ManifestData.Value("uwpCompatibilityMode") = CType(Self.UWPMode, Integer)
 		  
 		  Var ConfigSets() As Beacon.ConfigSet = Self.ConfigSets
 		  Var Editors() As String
@@ -39,10 +39,10 @@ Inherits Beacon.Project
 		    Next Entry
 		  Next ConfigSet
 		  Editors.Sort
-		  ManifestData.Value("Editors") = Editors
+		  ManifestData.Value("editors") = Editors
 		  
 		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Beacon.ConfigSet.BaseConfigSet, True))
-		  ManifestData.Value("Difficulty") = Difficulty.DifficultyValue
+		  ManifestData.Value("difficulty") = Difficulty.DifficultyValue
 		End Sub
 	#tag EndEvent
 
@@ -131,20 +131,16 @@ Inherits Beacon.Project
 		    Self.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
 		  End If
 		  
-		  Self.AllowUCS2 = PlainData.Lookup("AllowUCS", Self.AllowUCS2).BooleanValue
-		  Self.ConsoleSafe = PlainData.Lookup("IsConsole", Self.ConsoleSafe).BooleanValue
-		  Self.UWPMode = CType(PlainData.Lookup("UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
+		  Self.AllowUCS2 = PlainData.FirstValue("allowUcs", "AllowUCS", Self.AllowUCS2).BooleanValue
+		  Self.ConsoleSafe = PlainData.FirstValue("isConsole", "IsConsole", Self.ConsoleSafe).BooleanValue
+		  Self.UWPMode = CType(PlainData.FirstValue("uwpCompatibilityMode", "UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
 		  
-		  If PlainData.HasKey("Map") Then
-		    Self.MapMask = PlainData.Value("Map")
-		  ElseIf PlainData.HasKey("MapPreference") Then
-		    Self.MapMask = PlainData.Value("MapPreference")
-		  End If
+		  Self.MapMask = PlainData.FirstValue("map", "Map", "MapPreference", 1)
 		  
-		  If PlainData.HasKey("ModSelections") Then
+		  If PlainData.HasKey("modSelections") Or PlainData.HasKey("ModSelections") Then
 		    // Newest mod, keys are uuids and values are boolean
 		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
-		    Var Selections As Dictionary = PlainData.Value("ModSelections")
+		    Var Selections As Dictionary = PlainData.FirstValue("modSelections", "ModSelections", Nil)
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
 		    For Each Pack As Ark.ContentPack In AllPacks
 		      If Selections.HasKey(Pack.UUID) = False Then
@@ -415,19 +411,19 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackEnabled(UUID As String) As Boolean
-		  Return Self.mContentPacks.Lookup(UUID, False)
+		Function ContentPackEnabled(ContentPackId As String) As Boolean
+		  Return Self.mContentPacks.Lookup(ContentPackId, False)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackEnabled(UUID As String, Assigns Value As Boolean)
-		  If v4UUID.IsValid(UUID) = False Then
+		Sub ContentPackEnabled(ContentPackId As String, Assigns Value As Boolean)
+		  If Beacon.UUID.Validate(ContentPackId) = False Then
 		    Return
 		  End If
 		  
-		  If Self.mContentPacks.HasKey(UUID) = False Or Self.mContentPacks.Value(UUID).BooleanValue <> Value Then
-		    Self.mContentPacks.Value(UUID) = Value
+		  If Self.mContentPacks.HasKey(ContentPackId) = False Or Self.mContentPacks.Value(ContentPackId).BooleanValue <> Value Then
+		    Self.mContentPacks.Value(ContentPackId) = Value
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -731,7 +727,7 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Function GameId() As String
 		  Return Ark.Identifier
 		End Function
 	#tag EndMethod
