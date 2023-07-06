@@ -23,6 +23,15 @@ Inherits Ark.LootItemSetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub EntryId(Assigns Value As String)
+		  If Self.mEntryId <> Value Then
+		    Self.mEntryId = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Ark.LootItemSetEntry
 		  Return New Ark.LootItemSetEntry(Self)
 		End Function
@@ -112,8 +121,11 @@ Inherits Ark.LootItemSetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UUID(Assigns Value As String)
-		  Self.mUUID = Value
+		Attributes( Deprecated = "EntryId" )  Sub UUID(Assigns Value As String)
+		  If Self.mEntryId <> Value Then
+		    Self.mEntryId = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 

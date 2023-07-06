@@ -14,16 +14,16 @@ Inherits Ark.LootItemSet
 		    Return Nil
 		  End If
 		  
-		  Var UUIDs() As String
+		  Var EntryIds() As String
 		  For Idx As Integer = Sources.FirstIndex To Sources.LastIndex
-		    UUIDs.Add(Sources(Idx).UUID)
-		  Next Idx
+		    EntryIds.Add(Sources(Idx).EntryId)
+		  Next
 		  
 		  Var MissingWeight, MinQualitySum, MaxQualitySum As Double
 		  Var EntryCount As Double
 		  Var References As New Dictionary
 		  For Idx As Integer = Self.mEntries.LastIndex DownTo Self.mEntries.FirstIndex
-		    If UUIDs.IndexOf(Self.mEntries(Idx).UUID) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
+		    If EntryIds.IndexOf(Self.mEntries(Idx).EntryId) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
 		      Continue
 		    End If
 		    

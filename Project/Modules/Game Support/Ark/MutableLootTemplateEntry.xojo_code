@@ -31,9 +31,18 @@ Inherits Ark.LootTemplateEntry
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mUUID = New v4UUID
+		  Self.mEntryId = Beacon.UUID.v4
 		  Super.Constructor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EntryId(Assigns Value As String)
+		  If Self.mEntryId <> Value Then
+		    Self.mEntryId = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -178,8 +187,11 @@ Inherits Ark.LootTemplateEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UUID(Assigns Value As String)
-		  Self.mUUID = Value
+		Attributes( Deprecated = "EntryId" )  Sub UUID(Assigns Value As String)
+		  If Self.mEntryId <> Value Then
+		    Self.mEntryId = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 

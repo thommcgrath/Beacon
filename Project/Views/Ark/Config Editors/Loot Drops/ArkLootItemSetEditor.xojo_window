@@ -70,6 +70,7 @@ Begin BeaconContainer ArkLootItemSetEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -263,10 +264,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GoToChild(EntryUUID As String, EngramClass As String = "") As Boolean
+		Function GoToChild(EntryId As String, EngramClass As String = "") As Boolean
 		  For Idx As Integer = 0 To Self.EntryList.LastRowIndex
 		    Var Entry As Ark.LootItemSetEntry = Self.EntryList.RowTagAt(Idx)
-		    If Entry Is Nil Or Entry.UUID <> EntryUUID Then
+		    If Entry Is Nil Or Entry.EntryId <> EntryId Then
 		      Continue
 		    End If
 		    

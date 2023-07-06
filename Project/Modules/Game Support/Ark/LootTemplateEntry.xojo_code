@@ -30,7 +30,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mRespectQuantityMultipliers = True
 		  Self.mRespectBlueprintChanceMultipliers = True
 		  Self.mRespectWeightMultipliers = True
-		  Self.mUUID = New v4UUID
+		  Self.mEntryId = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 
@@ -50,7 +50,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mRespectQualityOffsets = Source.mRespectQualityOffsets
 		  Self.mRespectQuantityMultipliers = Source.mRespectQuantityMultipliers
 		  Self.mWeight = Source.mWeight
-		  Self.mUUID = Source.mUUID
+		  Self.mEntryId = Source.mEntryId
 		  Self.mPreventGrinding = Source.mPreventGrinding
 		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
 		  Self.mStatClampMultiplier = Source.mStatClampMultiplier
@@ -67,6 +67,12 @@ Implements Beacon.Countable,Iterable
 		  // Part of the Beacon.Countable interface.
 		  
 		  Return Self.mOptions.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EntryId() As String
+		  Return Self.mEntryId
 		End Function
 	#tag EndMethod
 
@@ -328,12 +334,12 @@ Implements Beacon.Countable,Iterable
 		    Return 1
 		  End If
 		  
-		  If Self.mUUID = Other.mUUID Then
+		  If Self.mEntryId = Other.mEntryId Then
 		    Return 0
 		  End If
 		  
-		  Var MySort As String = Self.Label + ":" + Self.mUUID
-		  Var OtherSort As String = Other.Label + ":" + Other.mUUID
+		  Var MySort As String = Self.Label + ":" + Self.mEntryId
+		  Var OtherSort As String = Other.Label + ":" + Other.mEntryId
 		  Return MySort.Compare(OtherSort, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
@@ -350,7 +356,7 @@ Implements Beacon.Countable,Iterable
 		  Entry.SingleItemQuantity = Self.mSingleItemQuantity
 		  Entry.StatClampMultiplier = Self.mStatClampMultiplier
 		  Entry.RawWeight = Self.mWeight
-		  Entry.UUID = Self.mUUID
+		  Entry.EntryId = Self.mEntryId
 		  Entry.Modified = False
 		  
 		  // It's ok to reference the source objects here, they are not mutable
@@ -375,7 +381,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mSingleItemQuantity = Source.SingleItemQuantity
 		  Self.mStatClampMultiplier = Source.StatClampMultiplier
 		  Self.mWeight = Source.RawWeight
-		  Self.mUUID = Source.UUID
+		  Self.mEntryId = Source.EntryId
 		  
 		  // It's ok to reference the source objects here, they are not mutable
 		  For Each Option As Ark.LootItemSetEntryOption In Source
@@ -496,8 +502,8 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UUID() As String
-		  Return Self.mUUID
+		Attributes( Deprecated = "EntryId" )  Function UUID() As String
+		  Return Self.mEntryId
 		End Function
 	#tag EndMethod
 
@@ -520,6 +526,10 @@ Implements Beacon.Countable,Iterable
 
 	#tag Property, Flags = &h1
 		Protected mChanceToBeBlueprint As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mEntryId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -576,10 +586,6 @@ Implements Beacon.Countable,Iterable
 
 	#tag Property, Flags = &h1
 		Protected mStatClampMultiplier As Double = 1.0
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

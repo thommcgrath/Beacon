@@ -3,7 +3,7 @@ Protected Class Project
 Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Attributes( Deprecated )  Function Accounts() As Beacon.ExternalAccountManager
-		  Return Self.mAccounts
+		  Return New Beacon.ExternalAccountManager
 		End Function
 	#tag EndMethod
 
@@ -231,7 +231,6 @@ Implements ObservationKit.Observable
 		Protected Sub Constructor()
 		  // This class should only be created as a subclass
 		  
-		  Self.mAccounts = New Beacon.ExternalAccountManager
 		  Self.mEncryptedPasswords = New Dictionary
 		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
 		  Self.mProjectId = Beacon.UUID.v4
@@ -756,10 +755,6 @@ Implements ObservationKit.Observable
 		    Return True
 		  End If
 		  
-		  If Self.mAccounts.Modified Then
-		    Return True
-		  End If
-		  
 		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
 		    If Profile.Modified Then
 		      Return True
@@ -788,10 +783,6 @@ Implements ObservationKit.Observable
 		    For Each Set As Beacon.ConfigSet In Self.mConfigSets
 		      Set.Modified = False
 		    Next
-		    
-		    If (Self.mAccounts Is Nil) = False Then
-		      Self.mAccounts.Modified = False
-		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1048,39 +1039,15 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Attributes( Deprecated )  Sub ReplaceAccount(OldAccount As Beacon.ExternalAccount, NewAccount As Beacon.ExternalAccount)
-		  If OldAccount Is Nil Or NewAccount Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.ReplaceAccount(OldAccount.UUID, NewAccount)
+		  #Pragma Unused OldAccount
+		  #Pragma Unused NewAccount
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Attributes( Deprecated )  Sub ReplaceAccount(OldUUID As String, Account As Beacon.ExternalAccount)
-		  If Account Is Nil Then
-		    Return
-		  End If
-		  
-		  // These will all handle their own modification states
-		  
-		  If (Self.mAccounts.GetByUUID(OldUUID) Is Nil) = False Then
-		    Self.mAccounts.Remove(OldUUID)
-		    Self.Modified = True
-		  End If
-		  If Self.mAccounts.GetByUUID(Account.UUID) Is Nil Then
-		    Self.mAccounts.Add(Account)
-		    Self.Modified = True
-		  End If
-		  
-		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
-		    If Profile.ExternalAccountUUID = OldUUID Then
-		      Profile.ExternalAccountUUID = Account.UUID
-		      Self.Modified = True
-		    End If
-		  Next
-		  
-		  RaiseEvent AccountReplaced(OldUUID, Account.UUID)
+		  #Pragma Unused OldUUID
+		  #Pragma Unused Account
 		End Sub
 	#tag EndMethod
 
@@ -1111,10 +1078,6 @@ Implements ObservationKit.Observable
 		  
 		  Var EncryptedData As New Dictionary
 		  RaiseEvent AddSaveData(Manifest, ProjectData, EncryptedData)
-		  
-		  If Self.mAccounts.Count > 0 Then
-		    EncryptedData.Value("externalAccounts") = Self.mAccounts.AsDictionary
-		  End If
 		  
 		  If Self.mServerProfiles.Count > 0 Then
 		    Var Profiles() As Dictionary
@@ -1321,10 +1284,6 @@ Implements ObservationKit.Observable
 		Event Validate(Issues As Beacon.ProjectValidationResults)
 	#tag EndHook
 
-
-	#tag Property, Flags = &h21
-		Private mAccounts As Beacon.ExternalAccountManager
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mActiveConfigSet As Beacon.ConfigSet

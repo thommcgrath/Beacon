@@ -98,6 +98,7 @@ Begin BeaconDialog DocumentMergerWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
@@ -369,11 +370,6 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As DesktopWindow, SourceProjects() As Beacon.Project, DestinationProject As Beacon.Project, Callback As MergeFinishedCallback = Nil)
-		  Var Accounts As New Beacon.ExternalAccountManager
-		  For Each Project As Beacon.Project In SourceProjects
-		    Accounts.Import(Project.Accounts)
-		  Next
-		  
 		  Var UseServerNames As Boolean = SourceProjects.Count > 1
 		  If UseServerNames Then
 		    Var ServerNames() As String
@@ -495,7 +491,6 @@ End
 		  // Setup the window
 		  Var Win As New DocumentMergerWindow
 		  Win.mDestination = DestinationProject
-		  Win.mExternalAccounts = Accounts
 		  Win.mCallback = Callback
 		  Win.mConfigMap = New Dictionary
 		  If UseServerNames Then
@@ -667,10 +662,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDestination As Beacon.Project
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mExternalAccounts As Beacon.ExternalAccountManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -914,13 +905,6 @@ End
 		      Case IsA Beacon.DocumentMergeProfileItem
 		        Var ProfileItem As Beacon.DocumentMergeProfileItem = Beacon.DocumentMergeProfileItem(MergeItem)
 		        Self.mDestination.AddServerProfile(ProfileItem.Profile)
-		        
-		        If ProfileItem.Profile.ExternalAccountUUID <> Nil Then
-		          Var Account As Beacon.ExternalAccount = Self.mExternalAccounts.GetByUUID(ProfileItem.Profile.ExternalAccountUUID)
-		          If (Account Is Nil) = False Then
-		            Self.mDestination.Accounts.Add(Account)
-		          End If
-		        End If
 		      End Select
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName)
