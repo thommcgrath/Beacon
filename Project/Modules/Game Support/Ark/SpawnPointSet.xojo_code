@@ -200,81 +200,83 @@ Implements Beacon.Countable,Ark.Weighted
 		  End If
 		  
 		  Var ReplacementsKey As Variant = SaveData.FirstKey("replacements", "Creature Replacements", "Replacements")
-		  Var ReplacementsData As Variant = SaveData.Value(ReplacementsKey)
-		  If ReplacementsData.IsNull = False Then
-		    // This could be a bunch of things
-		    
-		    If ReplacementsData.IsArray Then
-		      // It was an array of dictionarys
-		      Var Replacements() As Variant = ReplacementsData
-		      For Each Replacement As Dictionary In Replacements
-		        Var FromCreatureId As String
-		        Var CreatureIdKey As Variant = Replacement.FirstKey("creatureId", "creature", "creature_id")
-		        Var CreatureData As Variant = Replacement.Value(CreatureIdKey)
-		        If CreatureData.Type = Variant.TypeString Then
-		          FromCreatureId = CreatureData.StringValue
-		        ElseIf CreatureData.Type = Variant.TypeObject Then
-		          Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dictionary(CreatureData))
-		          If (CreatureRef Is Nil) = False Then
-		            FromCreatureId = CreatureRef.ObjectID
-		          End If
-		        End If
-		        
-		        Var Choices As Variant = Replacement.Value("choices")
-		        If Choices.IsArray Then
-		          Var ChoiceDicts() As Variant = Choices
-		          For Each ChoiceDict As Dictionary In ChoiceDicts
-		            Var ReplacementWeight As Double = ChoiceDict.Value("weight")
-		            If ChoiceDict.HasKey("creatureId") Then
-		              Var ReplacementCreatureId As String = ChoiceDict.Value("creatureId")
-		              Set.CreatureReplacementWeight(FromCreatureId, ReplacementCreatureId) = ReplacementWeight
-		            Else
-		              Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dictionary(CreatureData))
-		              If (CreatureRef Is Nil) = False Then
-		                Set.CreatureReplacementWeight(FromCreatureId, CreatureRef.ObjectID) = ReplacementWeight
-		              End If
+		  If ReplacementsKey.IsNull = False Then
+		    Var ReplacementsData As Variant = SaveData.Value(ReplacementsKey)
+		    If ReplacementsData.IsNull = False Then
+		      // This could be a bunch of things
+		      
+		      If ReplacementsData.IsArray Then
+		        // It was an array of dictionarys
+		        Var Replacements() As Variant = ReplacementsData
+		        For Each Replacement As Dictionary In Replacements
+		          Var FromCreatureId As String
+		          Var CreatureIdKey As Variant = Replacement.FirstKey("creatureId", "creature", "creature_id")
+		          Var CreatureData As Variant = Replacement.Value(CreatureIdKey)
+		          If CreatureData.Type = Variant.TypeString Then
+		            FromCreatureId = CreatureData.StringValue
+		          ElseIf CreatureData.Type = Variant.TypeObject Then
+		            Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dictionary(CreatureData))
+		            If (CreatureRef Is Nil) = False Then
+		              FromCreatureId = CreatureRef.ObjectID
 		            End If
-		          Next
-		        Else
-		          Var ChoicesDict As Dictionary = Choices
-		          For Each ChoiceEntry As DictionaryEntry In ChoicesDict
-		            Var ReplacementCreatureId As String = ChoiceEntry.Key
-		            Var ReplacementWeight As Double = ChoiceEntry.Value
-		            Set.CreatureReplacementWeight(FromCreatureId, ReplacementCreatureId) = ReplacementWeight
-		          Next
-		        End If
-		      Next
-		    Else
-		      Var Manager As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(ReplacementsData)
-		      If (Manager Is Nil) = False Then
-		        // It was a reference manager
-		        Var Blueprints() As Ark.BlueprintReference = Manager.References
-		        For Each Blueprint As Ark.BlueprintReference In Blueprints
-		          If Blueprint.IsCreature = False Then
-		            Continue
 		          End If
 		          
-		          Var Options As Ark.BlueprintAttributeManager = Manager.Value(Blueprint, ReplacementsAttribute)
-		          Var ReplacementBlueprints() As Ark.BlueprintReference = Options.References
-		          For Each ReplacementBlueprint As Ark.BlueprintReference In ReplacementBlueprints
-		            Var ReplacementWeight As Double = Options.Value(ReplacementBlueprint, "Weight")
-		            Set.CreatureReplacementWeight(Blueprint.ObjectID, ReplacementBlueprint.ObjectID) = ReplacementWeight
-		          Next
+		          Var Choices As Variant = Replacement.Value("choices")
+		          If Choices.IsArray Then
+		            Var ChoiceDicts() As Variant = Choices
+		            For Each ChoiceDict As Dictionary In ChoiceDicts
+		              Var ReplacementWeight As Double = ChoiceDict.Value("weight")
+		              If ChoiceDict.HasKey("creatureId") Then
+		                Var ReplacementCreatureId As String = ChoiceDict.Value("creatureId")
+		                Set.CreatureReplacementWeight(FromCreatureId, ReplacementCreatureId) = ReplacementWeight
+		              Else
+		                Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dictionary(CreatureData))
+		                If (CreatureRef Is Nil) = False Then
+		                  Set.CreatureReplacementWeight(FromCreatureId, CreatureRef.ObjectID) = ReplacementWeight
+		                End If
+		              End If
+		            Next
+		          Else
+		            Var ChoicesDict As Dictionary = Choices
+		            For Each ChoiceEntry As DictionaryEntry In ChoicesDict
+		              Var ReplacementCreatureId As String = ChoiceEntry.Key
+		              Var ReplacementWeight As Double = ChoiceEntry.Value
+		              Set.CreatureReplacementWeight(FromCreatureId, ReplacementCreatureId) = ReplacementWeight
+		            Next
+		          End If
 		        Next
 		      Else
-		        // It was a dictionary
-		        Var Replacements As Dictionary = ReplacementsData
-		        For Each Entry As DictionaryEntry In Replacements
-		          Var FromPath As String = Entry.Key
-		          Var FromCreature As Ark.Creature = Ark.ResolveCreature("", FromPath, "", Nil)
-		          Var ToDict As Dictionary = Entry.Value
-		          For Each SubEntry As DictionaryEntry In ToDict
-		            Var ToPath As String = SubEntry.Key
-		            Var Weight As Double = SubEntry.Value
-		            Var ToCreature As Ark.Creature = Ark.ResolveCreature("", ToPath, "", Nil)
-		            Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		        Var Manager As Ark.BlueprintAttributeManager = Ark.BlueprintAttributeManager.FromSaveData(ReplacementsData)
+		        If (Manager Is Nil) = False Then
+		          // It was a reference manager
+		          Var Blueprints() As Ark.BlueprintReference = Manager.References
+		          For Each Blueprint As Ark.BlueprintReference In Blueprints
+		            If Blueprint.IsCreature = False Then
+		              Continue
+		            End If
+		            
+		            Var Options As Ark.BlueprintAttributeManager = Manager.Value(Blueprint, ReplacementsAttribute)
+		            Var ReplacementBlueprints() As Ark.BlueprintReference = Options.References
+		            For Each ReplacementBlueprint As Ark.BlueprintReference In ReplacementBlueprints
+		              Var ReplacementWeight As Double = Options.Value(ReplacementBlueprint, "Weight")
+		              Set.CreatureReplacementWeight(Blueprint.ObjectID, ReplacementBlueprint.ObjectID) = ReplacementWeight
+		            Next
 		          Next
-		        Next
+		        Else
+		          // It was a dictionary
+		          Var Replacements As Dictionary = ReplacementsData
+		          For Each Entry As DictionaryEntry In Replacements
+		            Var FromPath As String = Entry.Key
+		            Var FromCreature As Ark.Creature = Ark.ResolveCreature("", FromPath, "", Nil)
+		            Var ToDict As Dictionary = Entry.Value
+		            For Each SubEntry As DictionaryEntry In ToDict
+		              Var ToPath As String = SubEntry.Key
+		              Var Weight As Double = SubEntry.Value
+		              Var ToCreature As Ark.Creature = Ark.ResolveCreature("", ToPath, "", Nil)
+		              Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		            Next
+		          Next
+		        End If
 		      End If
 		    End If
 		  End If
