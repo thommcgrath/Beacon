@@ -493,7 +493,9 @@ Implements Beacon.Countable,Ark.Weighted
 		  SaveData.Value("weight") = Self.RawWeight
 		  SaveData.Value("entries") = Entries
 		  SaveData.Value("offsetBeforeMultiplier") = Self.mOffsetBeforeMultiplier
-		  SaveData.Value("colorSetClass") = Self.mColorSetClass
+		  If Self.mColorSetClass.IsEmpty = False Then
+		    SaveData.Value("colorSetClass") = Self.mColorSetClass
+		  End If
 		  If (Self.mGroupOffset Is Nil) = False Then
 		    SaveData.Value("spawnOffset") = Self.mGroupOffset.SaveData
 		  End If

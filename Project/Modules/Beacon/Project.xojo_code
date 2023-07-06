@@ -52,6 +52,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddFile(Filename As String, Contents As String)
+		  Self.mAdditionalFiles.Value(Filename) = Contents
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
 		  // Part of the ObservationKit.Observable interface.
 		  
@@ -238,6 +244,7 @@ Implements ObservationKit.Observable
 		  Self.mConfigSetPriorities(0) = New Beacon.ConfigSetState(BaseSet, True)
 		  
 		  Self.mProviderTokenKeys = New Dictionary
+		  Self.mAdditionalFiles = New Dictionary
 		  
 		  Self.mUseCompression = True
 		End Sub
@@ -278,6 +285,16 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function Encrypt(Data As String) As String
 		  Return EncodeBase64(BeaconEncryption.SymmetricEncrypt(Self.mProjectPassword, Data), 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Files() As String()
+		  Var Filenames() As String
+		  For Each Entry As DictionaryEntry In Self.mAdditionalFiles
+		    Filenames.Add(Entry.Key)
+		  Next
+		  Return Filenames
 		End Function
 	#tag EndMethod
 
@@ -594,6 +611,23 @@ Implements ObservationKit.Observable
 		    Var Version As Integer = ManifestData.Value("Version")
 		    Var ProjectData As Dictionary = Beacon.ParseJSON(Archive.GetFile("v" + Version.ToString(Locale.Raw, "0") + ".json"))
 		    
+		    If ManifestData.HasKey("additionalFiles") Then
+		      Var AdditionalFiles As New Dictionary
+		      Var Filenames() As Variant = ManifestData.Value("additionalFiles")
+		      For Each Filename As Variant In Filenames
+		        If Filename.Type <> Variant.TypeString Then
+		          Continue
+		        End If
+		        
+		        Var Contents As String = Archive.GetFile(Filename)
+		        If Contents.IsEmpty = False Then
+		          AdditionalFiles.Value(Filename) = Contents
+		        End If
+		      Next
+		      ProjectData.Value("additionalFiles") = AdditionalFiles
+		      ManifestData.Remove("additionalFiles") // Don't want to replace the loaded files with the list from the manifest
+		    End If
+		    
 		    For Each Entry As DictionaryEntry In ManifestData
 		      ProjectData.Value(Entry.Key) = Entry.Value
 		    Next
@@ -627,6 +661,14 @@ Implements ObservationKit.Observable
 		  Var Err As New UnsupportedOperationException
 		  Err.Message = "Project.GameID not overridden"
 		  Raise Err
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetFile(Filename As String) As String
+		  If Self.mAdditionalFiles.HasKey(Filename) Then
+		    Return Self.mAdditionalFiles.Value(Filename)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -919,6 +961,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RemoveFile(Filename As String)
+		  If Self.mAdditionalFiles.HasKey(Filename) Then
+		    Self.mAdditionalFiles.Remove(Filename)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
 		  // Part of the ObservationKit.Observable interface.
 		  
@@ -1126,6 +1176,14 @@ Implements ObservationKit.Observable
 		  
 		  If Self.mUseCompression Then
 		    Var Archive As Beacon.Archive = Beacon.Archive.Create()
+		    Var AdditionalFiles() As String
+		    For Each Entry As DictionaryEntry In Self.mAdditionalFiles
+		      Var Filename As String = Entry.Key
+		      Var Contents As String = Entry.Value
+		      AdditionalFiles.Add(Filename)
+		      Archive.AddFile(Filename, Contents)
+		    Next
+		    Manifest.Value("additionalFiles") = AdditionalFiles
 		    Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, True))
 		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", Beacon.GenerateJSON(ProjectData, False))
 		    Var ArchiveData As MemoryBlock = Archive.Finalize
@@ -1270,6 +1328,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mActiveConfigSet As Beacon.ConfigSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAdditionalFiles As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
