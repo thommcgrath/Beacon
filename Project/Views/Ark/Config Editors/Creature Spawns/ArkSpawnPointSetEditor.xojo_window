@@ -1305,15 +1305,17 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.NameLabel.SizeToFit
-		  Self.WeightLabel.SizeToFit
-		  BeaconUI.SizeToFit(Self.OffsetLabel, Self.SpreadRadiusLabel, Self.WaterMinHeightLabel, Self.DistanceMultipliersLabel, Self.ColorSetsLabel)
+		  Self.SizeLabels()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
+		  
+		  If Self.mHasSizedLabels = False Then
+		    Self.SizeLabels()
+		  End If
 		  
 		  Const ReplaceMinWidth = 304
 		  Const DesiredButtonsWidth = 80
@@ -1446,6 +1448,19 @@ End
 		  AddButton.Left = List.Left
 		  EditButton.Left = AddButton.Right + MinorMargin
 		  DeleteButton.Left = EditButton.Right + MinorMargin
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SizeLabels()
+		  If Self.NameLabel.Visible = False Then
+		    Return
+		  End If
+		  
+		  Self.NameLabel.SizeToFit
+		  Self.WeightLabel.SizeToFit
+		  BeaconUI.SizeToFit(Self.OffsetLabel, Self.SpreadRadiusLabel, Self.WaterMinHeightLabel, Self.DistanceMultipliersLabel, Self.ColorSetsLabel)
+		  Self.mHasSizedLabels = True
 		End Sub
 	#tag EndMethod
 
@@ -1671,6 +1686,10 @@ End
 		Event GetProject() As Ark.Project
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mHasSizedLabels As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mRef As WeakRef
