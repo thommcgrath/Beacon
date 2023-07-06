@@ -111,8 +111,8 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddUser(UserID As String, PublicKey As String)
-		  Self.mEncryptedPasswords.Value(UserID.Lowercase) = EncodeBase64(Crypto.RSAEncrypt(Self.mProjectPassword, PublicKey), 0)
+		Sub AddUser(UserId As String, PublicKey As String)
+		  Self.mEncryptedPasswords.Value(UserId.Lowercase) = EncodeBase64(Crypto.RSAEncrypt(Self.mProjectPassword, PublicKey), 0)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -699,8 +699,8 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasUser(UserID As String) As Boolean
-		  Return Self.mEncryptedPasswords.HasKey(UserID.Lowercase)
+		Function HasUser(UserId As String) As Boolean
+		  Return Self.mEncryptedPasswords.HasKey(UserId.Lowercase)
 		End Function
 	#tag EndMethod
 
@@ -1015,10 +1015,10 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveUser(UserID As String)
-		  UserID = UserID.Lowercase
-		  If Self.mEncryptedPasswords.HasKey(UserID) Then
-		    Self.mEncryptedPasswords.Remove(UserID)
+		Sub RemoveUser(UserId As String)
+		  UserId = UserId.Lowercase
+		  If Self.mEncryptedPasswords.HasKey(UserId) Then
+		    Self.mEncryptedPasswords.Remove(UserId)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -1086,8 +1086,8 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function SaveData(Identity As Beacon.Identity, AdditionalProperties As Dictionary = Nil) As MemoryBlock
-		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserID) Then
-		    Self.AddUser(Identity.UserID, Identity.PublicKey)
+		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserId) Then
+		    Self.AddUser(Identity.UserId, Identity.PublicKey)
 		  End If
 		  
 		  Var Manifest, ProjectData As Dictionary = New Dictionary // Intentionally assigning both to the same dictionary
