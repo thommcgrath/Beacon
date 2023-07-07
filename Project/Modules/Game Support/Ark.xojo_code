@@ -289,6 +289,7 @@ Protected Module Ark
 		  Dict.Value("tags") = Blueprint.Tags
 		  Dict.Value("availability") = Blueprint.Availability
 		  Dict.Value("path") = Blueprint.Path
+		  Dict.Value("minVersion") = 10700000
 		  
 		  // Let the blueprint add whatever additional data it needs
 		  Blueprint.Pack(Dict)

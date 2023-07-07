@@ -224,12 +224,12 @@ Protected Module DataUpdater
 		    Var FileList() As Variant
 		    Var IsFull As Boolean
 		    Var Version As Integer
-		    Var Timestamp As Double
+		    Var Timestamp As NullableDouble
 		    Try
 		      FileList = Manifest.Value("files")
 		      IsFull = Manifest.Value("isFull")
 		      Version = Manifest.Value("version")
-		      Timestamp = Manifest.Value("timestamp")
+		      Timestamp = NullableDouble.FromVariant(Manifest.Lookup("timestamp", Nil))
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Loading values from manifest")
 		      Continue
@@ -254,7 +254,7 @@ Protected Module DataUpdater
 		    Next
 		    
 		    For Each Source As Beacon.DataSource In Sources
-		      If mForceImport = False And Source.LastSyncTimestamp >= Timestamp Then
+		      If mForceImport = False And (Timestamp Is Nil) = False And Source.LastSyncTimestamp >= Timestamp Then
 		        // No need to import this one
 		        Continue
 		      End If

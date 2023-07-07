@@ -762,7 +762,7 @@ End
 		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
 		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		    For Each Pack As Ark.ContentPack In ContentPacks
-		      Self.Project.ContentPackEnabled(Pack.UUID) = Editor.ModEnabled(Pack.UUID)
+		      Self.Project.ContentPackEnabled(Pack.ContentPackId) = Editor.ModEnabled(Pack.ContentPackId)
 		    Next
 		    
 		    Self.Modified = Self.Project.Modified

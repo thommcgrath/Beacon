@@ -187,7 +187,7 @@ Inherits Ark.ConfigGroup
 		  Var AllContentPacks() As Ark.ContentPack = DataSource.GetContentPacks
 		  Var ContentPackLookup As New Dictionary
 		  For Each Pack As Ark.ContentPack In AllContentPacks
-		    ContentPackLookup.Value(Pack.UUID) = Pack
+		    ContentPackLookup.Value(Pack.ContentPackId) = Pack
 		  Next Pack
 		  
 		  Var Config As New Ark.Configs.OtherSettings

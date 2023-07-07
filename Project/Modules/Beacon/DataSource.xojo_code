@@ -355,7 +355,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Import(ShouldTruncate As Boolean, Payloads() As Dictionary, Timestamp As Double) As Boolean
+		Function Import(ShouldTruncate As Boolean, Payloads() As Dictionary, Timestamp As NullableDouble) As Boolean
 		  // The DataUpdater module will call this method inside a thread with its own database connection
 		  
 		  Var StatusData As New Dictionary
@@ -411,7 +411,9 @@ Implements NotificationKit.Receiver
 		    End Try
 		  Next
 		  
-		  Self.LastSyncTimestamp = Timestamp
+		  If (Timestamp Is Nil) = False Then
+		    Self.LastSyncTimestamp = Timestamp
+		  End If
 		  Self.BuildIndexes()
 		  Self.CommitTransaction()
 		  

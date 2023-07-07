@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconSubview ModsListView
+Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -120,7 +120,6 @@ Begin BeaconSubview ModsListView
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -135,10 +134,17 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Hidden()
+		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportStopped)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
 		  Self.RefreshMods()
+		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportStopped)
 		End Sub
 	#tag EndEvent
 
@@ -195,7 +201,7 @@ End
 		    Self.ModsList.AddRow(Pack.Name, "Custom")
 		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
 		    Self.ModsList.RowTagAt(Idx) = New BeaconAPI.WorkshopMod(Pack)
-		    If SelectedModID = Pack.UUID Then
+		    If SelectedModID = Pack.ContentPackId Then
 		      Self.ModsList.SelectedRowIndex = Idx
 		    End If
 		  Next
@@ -247,6 +253,108 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ExportSelectedMods()
+		  Var Packs() As Dictionary
+		  Var Filter As New Beacon.StringList
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  
+		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
+		    If Self.ModsList.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Var WorkshopMod As BeaconAPI.WorkshopMod = Self.ModsList.RowTagAt(Idx)
+		    If WorkshopMod Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithUUID(WorkshopMod.ModID)
+		    If Pack Is Nil Then
+		      Continue
+		    End If
+		    
+		    Packs.Add(Pack.SaveData)
+		    Filter.Append(Pack.ContentPackId)
+		  Next
+		  
+		  If Packs.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Var Blueprints() As Ark.Blueprint = DataSource.GetBlueprints("", Filter, "")
+		  If Blueprints.Count = 0 Then
+		    Self.ShowAlert("There are no blueprints to export", "The selected " + If(Blueprints.Count = 1, "mod has", "mods have") + " no blueprints, so there is nothing to export.")
+		    Return
+		  End If
+		  
+		  Var Dialog As New SaveFileDialog
+		  Dialog.SuggestedFileName = "Export.beacondata"
+		  
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+		  If File Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Filenames(1) As String
+		  Filenames(0) = "Main.beacondata"
+		  Filenames(1) = "Blueprints.beacondata"
+		  
+		  Var Manifest As New Dictionary
+		  Manifest.Value("version") = 7
+		  Manifest.Value("isFull") = False
+		  Manifest.Value("files") = Filenames
+		  
+		  Var MainArkData As New Dictionary
+		  MainArkData.Value("contentPacks") = Packs
+		  
+		  Var MainData As New Dictionary
+		  MainData.Value("ark") = MainArkData
+		  
+		  Var Engrams(), Creatures(), SpawnPoints(), LootDrops() As Dictionary
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var Packed As Dictionary = Blueprint.Pack
+		    If Packed Is Nil Then
+		      Continue
+		    End If
+		    
+		    Select Case Blueprint
+		    Case IsA Ark.Engram
+		      Engrams.Add(Packed)
+		    Case IsA Ark.Creature
+		      Creatures.Add(Packed)
+		    Case IsA Ark.SpawnPoint
+		      SpawnPoints.Add(Packed)
+		    Case IsA Ark.LootContainer
+		      LootDrops.Add(Packed)
+		    End Select
+		  Next
+		  
+		  Var BlueprintArkData As New Dictionary
+		  If Creatures.Count > 0 Then
+		    BlueprintArkData.Value("creatures") = Creatures
+		  End If
+		  If Engrams.Count > 0 Then
+		    BlueprintArkData.Value("engrams") = Engrams
+		  End If
+		  If LootDrops.Count > 0 Then
+		    BlueprintArkData.Value("lootDrops") = LootDrops
+		  End If
+		  If SpawnPoints.Count > 0 Then
+		    BlueprintArkData.Value("spawnPoints") = SpawnPoints
+		  End If
+		  
+		  Var BlueprintData As New Dictionary
+		  BlueprintData.Value("ark") = BlueprintArkData
+		  
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create(File)
+		  Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, False))
+		  Archive.AddFile("Main.beacondata", Beacon.GenerateJSON(MainData, False))
+		  Archive.AddFile("Blueprints.beacondata", Beacon.GenerateJSON(BlueprintData, False))
+		  Call Archive.Finalize
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub FinishJob()
 		  Self.mJobCount = Self.mJobCount - 1
 		  If Self.mJobCount > 0 Then
@@ -254,6 +362,17 @@ End
 		  Else
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case DataUpdater.Notification_ImportStopped
+		    Self.RefreshMods()
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -284,6 +403,20 @@ End
 		  End If
 		  
 		  ModDiscoveryDialog(Self.mDiscoveryDialog.Value).Show()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowImportDialog()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.BeaconData
+		  
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+		  If File Is Nil Then
+		    Return
+		  End If
+		  
+		  DataUpdater.ImportFile(File)
 		End Sub
 	#tag EndMethod
 
@@ -408,6 +541,10 @@ End
 		  If (Self.ModsToolbar.Item("EditModBlueprints") Is Nil) = False Then
 		    Self.ModsToolbar.Item("EditModBlueprints").Enabled = Me.SelectedRowCount = 1
 		  End If
+		  
+		  If (Self.ModsToolbar.Item("ExportButton") Is Nil) = False Then
+		    Self.ModsToolbar.Item("ExportButton").Enabled = Me.SelectedRowCount > 0
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -415,6 +552,9 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Register Mod", IconToolbarAdd, "Register your mod with Beacon."))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import mod info that was exported from Beacon."))
+		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Export the selected mod or mods to be shared with other Beacon users.", False))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EditModBlueprints", "Edit Blueprints", IconToolbarEdit, "Edit the blueprints provided by the selected mod.", Self.ModsList.SelectedRowCount = 1))
 		  #if TargetWindows
@@ -440,6 +580,10 @@ End
 		    Self.ModsList.DoEdit()
 		  Case "DiscoverMods"
 		    Self.RunModDiscovery()
+		  Case "ImportButton"
+		    Self.ShowImportDialog()
+		  Case "ExportButton"
+		    Self.ExportSelectedMods()
 		  End Select
 		End Sub
 	#tag EndEvent

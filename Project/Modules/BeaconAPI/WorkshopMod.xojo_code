@@ -37,7 +37,7 @@ Protected Class WorkshopMod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Details As Ark.ContentPack)
-		  Self.mModID = Details.UUID
+		  Self.mModID = Details.ContentPackId
 		  Self.mName = Details.Name
 		  Self.mWorkshopID = Details.WorkshopID
 		  Self.mIsLocalMod = Details.IsLocal

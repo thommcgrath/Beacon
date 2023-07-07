@@ -900,7 +900,7 @@ End
 		        If Self.mDestination IsA Ark.Project Then
 		          Var ArkDestination As Ark.Project = Ark.Project(Self.mDestination)
 		          Var PackItem As Ark.DocumentMergeContentPackItem = Ark.DocumentMergeContentPackItem(MergeItem)
-		          ArkDestination.ContentPackEnabled(PackItem.Pack.UUID) = True
+		          ArkDestination.ContentPackEnabled(PackItem.Pack.ContentPackId) = True
 		        End If
 		      Case IsA Beacon.DocumentMergeProfileItem
 		        Var ProfileItem As Beacon.DocumentMergeProfileItem = Beacon.DocumentMergeProfileItem(MergeItem)

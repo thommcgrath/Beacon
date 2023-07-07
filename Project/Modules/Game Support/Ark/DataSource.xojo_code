@@ -82,21 +82,13 @@ Inherits Beacon.DataSource
 		  If UserPacks.Count > 0 Then
 		    Var Packs As New Beacon.StringList()
 		    For Each Pack As Ark.ContentPack In UserPacks
-		      Packs.Append(Pack.UUID)
+		      Packs.Append(Pack.ContentPackId)
 		      
-		      If Pack.IsLocal = False Or Pack.UUID = Ark.UserContentPackId Then
+		      If Pack.IsLocal = False Or Pack.ContentPackId = Ark.UserContentPackId Then
 		        Continue
 		      End If
 		      
-		      Var Dict As New Dictionary
-		      Dict.Value("mod_id") = Pack.UUID
-		      Dict.Value("name") = Pack.Name
-		      If Pack.WorkshopID Is Nil Then
-		        Dict.Value("workshop_id") = Nil
-		      Else
-		        Dict.Value("workshop_id") = Pack.WorkshopID.StringValue
-		      End If
-		      Packed.Add(Dict)
+		      Packed.Add(Pack.SaveData)
 		    Next
 		    
 		    // Check this, because an empty array will select *everything*
@@ -182,13 +174,22 @@ Inherits Beacon.DataSource
 		      Var Name As String = Dict.Value("name")
 		      Var ConsoleSafe As Boolean = Dict.Value("isConsoleSafe")
 		      Var DefaultEnabled As Boolean = Dict.Value("isDefaultEnabled")
-		      Var SteamId As Double = Dict.Value("steamId")
+		      Var SteamId As Variant = Dict.Lookup("steamId", Nil)
+		      Var IsLocal As Boolean = SteamId.IsNull Or Dict.Lookup("isConfirmed", False).BooleanValue = False
 		      
-		      Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
-		      If Rows.RowCount = 1 Then
-		        Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, workshop_id = ?5 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, SteamId, False)
+		      Var Rows As RowSet
+		      If SteamId.IsNull Then
+		        Rows = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
 		      Else
-		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, workshop_id, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, SteamId, False)
+		        Rows = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 OR workshop_id = ?2;", ContentPackId, SteamId)
+		      End If
+		      If Rows.RowCount > 1 Then
+		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id IS DISTINCT FROM ?1 AND workshop_id = ?2;", ContentPackId, SteamId)
+		      End If
+		      If Rows.RowCount > 0 Then
+		        Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, workshop_id = ?5, is_local = ?6 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, SteamId, IsLocal)
+		      Else
+		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, workshop_id, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, SteamId, IsLocal)
 		      End If
 		    Next
 		  End If
@@ -584,10 +585,10 @@ Inherits Beacon.DataSource
 		    Var KeepPacks As New Beacon.StringList
 		    Var RemovePacks As New Beacon.StringList
 		    For Idx As Integer = Packs.FirstIndex To Packs.LastIndex
-		      If Packs(Idx).UUID = Ark.UserContentPackId Then
-		        KeepPacks.Append(Packs(Idx).UUID)
+		      If Packs(Idx).ContentPackId = Ark.UserContentPackId Then
+		        KeepPacks.Append(Packs(Idx).ContentPackId)
 		      Else
-		        RemovePacks.Append(Packs(Idx).UUID)
+		        RemovePacks.Append(Packs(Idx).ContentPackId)
 		      End If
 		    Next Idx
 		    
@@ -972,28 +973,31 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateLocalContentPack(PackName As String, WorkshopId As NullableString) As Ark.ContentPack
+		Function CreateLocalContentPack(PackName As String, SteamId As NullableDouble = Nil) As Ark.ContentPack
 		  Var ContentPackId As String
-		  Var WorkshopIdVar As Variant
-		  If (WorkshopId Is Nil) = False Then
-		    WorkshopIdVar = WorkshopId.StringValue
-		    ContentPackId = Beacon.UUID.v5(WorkshopIdVar)
-		  Else
+		  Var SteamIdVariant As Variant
+		  If SteamId Is Nil Then
 		    ContentPackId = Beacon.UUID.v4
+		  Else
+		    SteamIdVariant = SteamId.DoubleValue
+		    ContentPackId = Beacon.UUID.v5(SteamId.DoubleValue.ToString(Locale.Raw, "0"))
 		  End If
-		  
-		  Var ContentPack As New Ark.ContentPack(ContentPackId, PackName, True, False, True, WorkshopId)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, workshop_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", ContentPackId, WorkshopIdVar, PackName, ContentPack.ConsoleSafe, ContentPack.DefaultEnabled, ContentPack.IsLocal)
+		  Var Rows As RowSet = Self.SQLSelect("INSERT OR IGNORE INTO content_packs (content_pack_id, workshop_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6) RETURNING *;", ContentPackId, SteamIdVariant, PackName, False, False, True)
+		  If Rows.RowCount <> 1 Then
+		    Self.RollbackTransaction()
+		    Return Nil
+		  End If
 		  Self.CommitTransaction()
 		  Self.ExportCloudFiles()
-		  Return ContentPack
+		  Var Packs() As Ark.ContentPack = Ark.ContentPack.FromDatabase(Rows)
+		  Return Packs(0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DeleteContentPack(Pack As Ark.ContentPack) As Boolean
-		  Return Self.DeleteContentPack(Pack.UUID)
+		  Return Self.DeleteContentPack(Pack.ContentPackId)
 		End Function
 	#tag EndMethod
 
@@ -1363,13 +1367,8 @@ Inherits Beacon.DataSource
 		  End If
 		  SQL = SQL + ";"
 		  
-		  Var Packs() As Ark.ContentPack
 		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
-		  While Not Results.AfterLastRow
-		    Packs.Add(New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableString.FromVariant(Results.Column("workshop_id").Value)))
-		    Results.MoveToNextRow
-		  Wend
-		  Return Packs
+		  Return Ark.ContentPack.FromDatabase(Results)
 		End Function
 	#tag EndMethod
 
@@ -1380,24 +1379,35 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPackWithUUID(ContentPackId As String) As Ark.ContentPack
-		  If v4UUID.IsValid(ContentPackId) = False Then
-		    Return Nil
-		  End If
-		  
+		Function GetContentPackWithId(ContentPackId As String) As Ark.ContentPack
 		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
-		  If Results.RowCount = 1 Then
-		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableString.FromVariant(Results.Column("workshop_id").Value))
+		  Var Packs() As Ark.ContentPack = Ark.ContentPack.FromDatabase(Results)
+		  If Packs.Count = 1 Then
+		    Return Packs(0)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPackWithWorkshopID(WorkshopID As String) As Ark.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs WHERE workshop_id IS NOT NULL AND workshop_id = ?1;", WorkshopID)
-		  If Results.RowCount = 1 Then
-		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableString.FromVariant(Results.Column("workshop_id").Value))
+		Function GetContentPackWithSteamId(SteamId As Double) As Ark.ContentPack
+		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs WHERE workshop_id = ?1;", SteamId)
+		  Var Packs() As Ark.ContentPack = Ark.ContentPack.FromDatabase(Results)
+		  If Packs.Count = 1 Then
+		    Return Packs(0)
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "GetContentPackWithId" )  Function GetContentPackWithUUID(ContentPackId As String) As Ark.ContentPack
+		  Return Self.GetContentPackWithId(ContentPackId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "GetContentPackWithSteamId" )  Function GetContentPackWithWorkshopID(WorkshopID As String) As Ark.ContentPack
+		  Var SteamId As Double = Double.FromString(WorkshopID, Locale.Raw)
+		  Return Self.GetContentPackWithSteamId(SteamId)
 		End Function
 	#tag EndMethod
 
@@ -2312,6 +2322,10 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Sub ReplaceUserBlueprints()
+		  If Self.Writeable = False Then
+		    Return
+		  End If
+		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5);", Ark.UserContentPackId, Ark.UserContentPackName, True, True, True)
 		  Self.CommitTransaction()

@@ -293,8 +293,8 @@ End
 		    Check.Width = CheckboxWidth
 		    Check.Left = NextLeft
 		    Check.Top = NextTop
-		    Check.Value = Self.ModEnabled(Packs(Idx).UUID)
-		    Self.mMap(Idx) = Packs(Idx).UUID
+		    Check.Value = Self.ModEnabled(Packs(Idx).ContentPackId)
+		    Self.mMap(Idx) = Packs(Idx).ContentPackId
 		    
 		    If (Idx + 1) Mod ColumnCount = 0 Then
 		      NextLeft = PaddingLeft

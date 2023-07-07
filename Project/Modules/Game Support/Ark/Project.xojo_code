@@ -143,8 +143,8 @@ Inherits Beacon.Project
 		    Var Selections As Dictionary = PlainData.FirstValue("modSelections", "ModSelections", Nil)
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
 		    For Each Pack As Ark.ContentPack In AllPacks
-		      If Selections.HasKey(Pack.UUID) = False Then
-		        Selections.Value(Pack.UUID) = Pack.DefaultEnabled And (Pack.ConsoleSafe Or ConsoleMode = False)
+		      If Selections.HasKey(Pack.ContentPackId) = False Then
+		        Selections.Value(Pack.ContentPackId) = Pack.DefaultEnabled And (Pack.ConsoleSafe Or ConsoleMode = False)
 		      End If
 		    Next
 		    
@@ -158,7 +158,7 @@ Inherits Beacon.Project
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
 		    Var Selections As New Dictionary
 		    For Each Pack As Ark.ContentPack In AllPacks
-		      Selections.Value(Pack.UUID) = (Pack.ConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.UUID) > -1)
+		      Selections.Value(Pack.ContentPackId) = (Pack.ConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
 		    Next
 		    
 		    Self.mContentPacks = Selections
@@ -168,7 +168,7 @@ Inherits Beacon.Project
 		      Var Selections As New Dictionary
 		      Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		      For Each Pack As Ark.ContentPack In AllPacks
-		        Selections.Value(Pack.UUID) = Pack.DefaultEnabled And Pack.ConsoleSafe
+		        Selections.Value(Pack.ContentPackId) = Pack.DefaultEnabled And Pack.ConsoleSafe
 		      Next
 		      
 		      Self.ConsoleSafe = True
@@ -387,7 +387,7 @@ Inherits Beacon.Project
 		  If (DataSource Is Nil) = False Then
 		    Var Packs() As Ark.ContentPack = DataSource.GetContentPacks
 		    For Idx As Integer = 0 To Packs.LastIndex
-		      Self.mContentPacks.Value(Packs(Idx).UUID) = Packs(Idx).DefaultEnabled
+		      Self.mContentPacks.Value(Packs(Idx).ContentPackId) = Packs(Idx).DefaultEnabled
 		    Next Idx
 		  End If
 		  If Self.mContentPacks.HasKey(Ark.UserContentPackId) Then
@@ -400,13 +400,13 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function ContentPackEnabled(Pack As Ark.ContentPack) As Boolean
-		  Return Self.ContentPackEnabled(Pack.UUID)
+		  Return Self.ContentPackEnabled(Pack.ContentPackId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ContentPackEnabled(Pack As Ark.ContentPack, Assigns Value As Boolean)
-		  Self.ContentPackEnabled(Pack.UUID) = Value
+		  Self.ContentPackEnabled(Pack.ContentPackId) = Value
 		End Sub
 	#tag EndMethod
 

@@ -625,7 +625,6 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin Thread RunThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -639,7 +638,6 @@ Begin BeaconDialog ModDiscoveryDialog
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
-      Enabled         =   True
       ExecuteMode     =   2
       ExitCode        =   0
       Index           =   -2147483648
@@ -662,7 +660,6 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin TCPSocket RunSocket
       Address         =   "127.0.0.1"
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -745,7 +742,14 @@ End
 		      Continue
 		    End If
 		    
-		    Var Pack As Ark.ContentPack = Database.GetContentPackWithWorkshopID(WorkshopID)
+		    Var SteamId As Double
+		    Try
+		      SteamId = Double.FromString(WorkshopID, Locale.Raw)
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		    
+		    Var Pack As Ark.ContentPack = Database.GetContentPackWithSteamId(SteamId)
 		    
 		    If Pack Is Nil Then
 		      Var PackName As String = Self.mTagsByMod.Lookup(WorkshopID, WorkshopID).StringValue
@@ -760,7 +764,7 @@ End
 		        End If
 		      End If
 		      
-		      Pack = Database.CreateLocalContentPack(PackName, WorkshopID)
+		      Pack = Database.CreateLocalContentPack(PackName, SteamId)
 		      Self.mNumAddedMods = Self.mNumAddedMods + 1
 		    ElseIf Pack.IsLocal = False Then
 		      ForbiddenWorkshopIDs.Value(WorkshopID) = True
@@ -793,14 +797,14 @@ End
 		      End If
 		      
 		      Var Pack As Ark.ContentPack = Packs.Value(WorkshopID)
-		      Var ExistingBlueprints() As Ark.Blueprint = Database.GetBlueprints(Path, New Beacon.StringList(Pack.UUID))
+		      Var ExistingBlueprints() As Ark.Blueprint = Database.GetBlueprints(Path, New Beacon.StringList(Pack.ContentPackId))
 		      If ExistingBlueprints.Count > 0 Then
 		        Continue
 		      End If
 		      
 		      Var Mutable As Ark.MutableBlueprint = Blueprint.MutableVersion
 		      Mutable.ContentPackName = Pack.Name
-		      Mutable.ContentPackId = Pack.UUID
+		      Mutable.ContentPackId = Pack.ContentPackId
 		      BlueprintsToSave.Add(Mutable)
 		      NewBlueprintIDs.Value(Blueprint.ObjectID) = True
 		    Catch Err As RuntimeException

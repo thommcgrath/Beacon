@@ -160,6 +160,7 @@ Begin BeaconDialog ArkLootEntryEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   0
@@ -434,6 +435,7 @@ Begin BeaconDialog ArkLootEntryEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   0
@@ -609,11 +611,11 @@ End
 		    Var ModList As New Beacon.StringList
 		    Var PrefsDict As New Dictionary
 		    For Each Pack As Ark.ContentPack In ContentPacks
-		      If Editor.ModEnabled(Pack.UUID) Then
-		        ModList.Append(Pack.UUID)
-		        PrefsDict.Value(Pack.UUID) = True
+		      If Editor.ModEnabled(Pack.ContentPackId) Then
+		        ModList.Append(Pack.ContentPackId)
+		        PrefsDict.Value(Pack.ContentPackId) = True
 		      Else
-		        PrefsDict.Value(Pack.UUID) = False
+		        PrefsDict.Value(Pack.ContentPackId) = False
 		      End If
 		    Next
 		    Self.mMods = ModList
@@ -637,8 +639,8 @@ End
 		  Var PackList As New Beacon.StringList
 		  Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		  For Each Pack As Ark.ContentPack In ContentPacks
-		    If TemplatePacksDict.Lookup(Pack.UUID, Pack.DefaultEnabled).BooleanValue = True Then
-		      PackList.Append(Pack.UUID)
+		    If TemplatePacksDict.Lookup(Pack.ContentPackId, Pack.DefaultEnabled).BooleanValue = True Then
+		      PackList.Append(Pack.ContentPackId)
 		    End If
 		  Next
 		  
