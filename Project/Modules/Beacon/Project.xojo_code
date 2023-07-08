@@ -57,6 +57,12 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub AdditionalFilesLoaded()
+		  RaiseEvent AdditionalFilesLoaded()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
 		  // Part of the ObservationKit.Observable interface.
@@ -428,6 +434,11 @@ Implements ObservationKit.Observable
 		  If SecureDict Is Nil Then
 		    SecureDict = New Dictionary
 		  End If
+		  
+		  If SaveData.HasKey("additionalFiles") Then
+		    Project.mAdditionalFiles = SaveData.Value("additionalFiles")
+		  End If
+		  Project.AdditionalFilesLoaded()
 		  
 		  If SaveData.HasKey("configSetData") Then
 		    Project.mConfigSets.ResizeTo(-1)
@@ -1258,6 +1269,10 @@ Implements ObservationKit.Observable
 
 	#tag Hook, Flags = &h0
 		Event AddingProfile(Profile As Beacon.ServerProfile)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event AdditionalFilesLoaded()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
