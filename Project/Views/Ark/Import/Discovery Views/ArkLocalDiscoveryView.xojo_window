@@ -587,7 +587,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DropObject(obj As DragItem, action As Integer)
+		Sub DropObject(obj As DragItem, action As DragItem.Types)
 		  Break
 		  
 		  #Pragma Unused Action
