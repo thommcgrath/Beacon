@@ -22,7 +22,7 @@ Inherits Ark.DiscoveredData
 
 	#tag Method, Flags = &h21
 		Private Function DownloadFile(Filename As String) As String
-		  Var Sock As New URLConnection
+		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
 		  Sock.RequestHeader("User-Agent") = App.UserAgent
 		  
@@ -30,14 +30,15 @@ Inherits Ark.DiscoveredData
 		  Var Locked As Boolean = Preferences.SignalConnection
 		  Var Content As String
 		  Try
-		    Content = Sock.SendSync("GET", GetURL, Ark.NitradoIntegrationEngine.ConnectionTimeout)
+		    Sock.Send("GET", GetURL, Ark.NitradoIntegrationEngine.ConnectionTimeout)
+		    Content = Sock.LastContent
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Requesting download from " + GetURL)
 		  End Try
 		  If Locked Then
 		    Preferences.ReleaseConnection
 		  End If
-		  Var Status As Integer = Sock.HTTPStatusCode
+		  Var Status As Integer = Sock.LastHTTPStatus
 		  
 		  If Status <> 200 Then
 		    Return ""
@@ -58,19 +59,20 @@ Inherits Ark.DiscoveredData
 		    Return ""
 		  End Try
 		  
-		  Var FetchSocket As New URLConnection
+		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
 		  FetchSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Locked = Preferences.SignalConnection
 		  Try
-		    Content = FetchSocket.SendSync("GET", FetchURL, Ark.NitradoIntegrationEngine.ConnectionTimeout)
+		    FetchSocket.Send("GET", FetchURL, Ark.NitradoIntegrationEngine.ConnectionTimeout)
+		    Content = FetchSocket.LastContent
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Downloading file from " + FetchURL)
 		  End Try
 		  If Locked Then
 		    Preferences.ReleaseConnection
 		  End If
-		  Status = FetchSocket.HTTPStatusCode
+		  Status = FetchSocket.LastHTTPStatus
 		  
 		  If Status <> 200 Then
 		    Return ""

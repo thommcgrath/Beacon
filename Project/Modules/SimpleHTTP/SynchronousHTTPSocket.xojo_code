@@ -133,7 +133,7 @@ Inherits URLConnection
 		    #else
 		      Super.Send(Method, URL)
 		    #endif
-		    If Self.mOriginThread <> Nil Then
+		    If (Self.mOriginThread Is Nil) = False Then
 		      Self.mOriginThread.Pause
 		    End If
 		  Catch Err As RuntimeException

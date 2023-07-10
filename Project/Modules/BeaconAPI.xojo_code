@@ -102,11 +102,12 @@ Protected Module BeaconAPI
 		          Params.Value("refresh_token") = Token.RefreshToken
 		          Params.Value("scope") = Token.Scope
 		          
-		          Var RefreshSocket As New URLConnection
+		          Var RefreshSocket As New SimpleHTTP.SynchronousHTTPSocket
 		          RefreshSocket.SetRequestContent(SimpleHTTP.BuildFormData(Params), "application/x-www-form-urlencoded")
 		          
-		          Var RefreshResponse As String = RefreshSocket.SendSync("POST", BeaconAPI.URL("/login"))
-		          If RefreshSocket.HTTPStatusCode = 201 Then
+		          RefreshSocket.Send("POST", BeaconAPI.URL("/login"))
+		          Var RefreshResponse As String = RefreshSocket.LastContent
+		          If RefreshSocket.LastHTTPStatus = 201 Then
 		            Token = BeaconAPI.OAuthToken.Load(RefreshResponse)
 		            Preferences.BeaconAuth = Token
 		          End If
@@ -117,18 +118,19 @@ Protected Module BeaconAPI
 		    End If
 		  End If
 		  
-		  Var Socket As New URLConnection
+		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  Var URL As String = SetupSocket(Socket, Request, AuthHeader)
 		  Var ResponseBody As String
 		  Try
-		    ResponseBody = Socket.SendSync(Request.Method, URL)
+		    Socket.Send(Request.Method, URL)
+		    ResponseBody = Socket.LastContent
 		  Catch Err As RuntimeException
 		  End Try
 		  Var ResponseHeaders As New Dictionary
 		  For Each Header As Pair In Socket.ResponseHeaders
 		    ResponseHeaders.Value(Header.Left) = Header.Right
 		  Next
-		  Return New BeaconAPI.Response(URL, Socket.HTTPStatusCode, ResponseBody, ResponseHeaders)
+		  Return New BeaconAPI.Response(URL, Socket.LastHTTPStatus, ResponseBody, ResponseHeaders)
 		End Function
 	#tag EndMethod
 

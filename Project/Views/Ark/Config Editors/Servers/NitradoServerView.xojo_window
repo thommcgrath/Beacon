@@ -269,20 +269,28 @@ Begin ServerViewContainer NitradoServerView
       Width           =   600
    End
    Begin Thread RefreshThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
    Begin Beacon.Thread ToggleThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndDesktopWindow
@@ -601,19 +609,20 @@ End
 		    Return
 		  End If
 		  
-		  Var Socket As New URLConnection
+		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  Socket.RequestHeader("Authorization") = Token.AuthHeaderValue
 		  Socket.RequestHeader("User-Agent") = App.UserAgent
 		  
 		  Var Response As String
 		  Try
-		    Response = Socket.SendSync("GET", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers")
+		    Socket.Send("GET", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers")
+		    Response = Socket.LastContent
 		  Catch Err As NetworkException
 		    Self.mServerState = Self.StatusNetworkError
 		  End Try
 		  
 		  If Response.IsEmpty = False Then
-		    Select Case Socket.HTTPStatusCode
+		    Select Case Socket.LastHTTPStatus
 		    Case 200, 304
 		      Try
 		        Var Parsed As Dictionary = Beacon.ParseJSON(Response)
@@ -626,7 +635,7 @@ End
 		        Self.mServerState = Self.StatusException
 		      End Try
 		    Else
-		      Self.mServerState = Self.StatusFromHTTPCode(Socket.HTTPStatusCode)
+		      Self.mServerState = Self.StatusFromHTTPCode(Socket.LastHTTPStatus)
 		    End Select
 		  End If
 		  
@@ -682,18 +691,18 @@ End
 		    FormData.Value("message") = "Server stopped by Beacon"
 		    FormData.Value("stop_message") = Me.UserData
 		    
-		    Var Socket As New URLConnection
+		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Authorization") = Token.AuthHeaderValue
 		    Socket.RequestHeader("Connection") = "close"
 		    Socket.RequestHeader("User-Agent") = App.UserAgent
 		    Socket.SetRequestContent(Beacon.GenerateJSON(FormData, False), "application/json; chartset=utf-8")
 		    
 		    Try
-		      Call Socket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop")
-		      If Socket.HTTPStatusCode = 200 Then
+		      Socket.Send("POST", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop")
+		      If Socket.LastHTTPStatus = 200 Then
 		        Self.mServerState = Self.StatusStopping
 		      Else
-		        Self.mServerState = Self.StatusFromHTTPCode(Socket.HTTPStatusCode)
+		        Self.mServerState = Self.StatusFromHTTPCode(Socket.LastHTTPStatus)
 		      End If
 		    Catch Err As NetworkException
 		      Self.mServerState = Self.StatusNetworkError
@@ -704,18 +713,18 @@ End
 		    FormData.Value("message") = "Server started by Beacon"
 		    FormData.Value("restart_message") = Nil
 		    
-		    Var Socket As New URLConnection
+		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Authorization") = Token.AuthHeaderValue
 		    Socket.RequestHeader("Connection") = "close"
 		    Socket.RequestHeader("User-Agent") = App.UserAgent
 		    Socket.SetRequestContent(Beacon.GenerateJSON(FormData, False), "application/json; chartset=utf-8")
 		    
 		    Try
-		      Call Socket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart")
-		      If Socket.HTTPStatusCode = 200 Then
+		      Socket.Send("POST", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart")
+		      If Socket.LastHTTPStatus = 200 Then
 		        Self.mServerState = Self.StatusRestarting
 		      Else
-		        Self.mServerState = Self.StatusFromHTTPCode(Socket.HTTPStatusCode)
+		        Self.mServerState = Self.StatusFromHTTPCode(Socket.LastHTTPStatus)
 		      End If
 		    Catch Err As NetworkException
 		      Self.mServerState = Self.StatusNetworkError
