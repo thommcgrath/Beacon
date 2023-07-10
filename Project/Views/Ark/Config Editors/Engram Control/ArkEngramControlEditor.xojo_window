@@ -493,7 +493,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetupEngramsList(SelectEngrams() As Ark.Engram = Nil)
 		  Var Config As Ark.Configs.EngramControl = Self.Config(False)
-		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.Pool.Get(False).GetEngramEntries("", Self.Project.ContentPacks, "", True))
+		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.Pool.Get(False).GetEngramEntries("", Self.Project.ContentPacks, ""))
 		  Var LabelCounts As New Dictionary
 		  For Each Engram As Ark.Engram In Engrams
 		    LabelCounts.Value(Engram.Label) = LabelCounts.Lookup(Engram.Label, 0) + 1

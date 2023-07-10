@@ -83,6 +83,7 @@ Implements Ark.Blueprint
 		  Self.mPath = Source.mPath
 		  Self.mStats = Source.mStats.Clone
 		  Self.mStatsMask = Source.mStatsMask
+		  Self.mLastUpdate = Source.mLastUpdate
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
@@ -166,6 +167,12 @@ Implements Ark.Blueprint
 		  End If
 		  
 		  Return Self.mLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastUpdate() As Double
+		  Return Self.mLastUpdate
 		End Function
 	#tag EndMethod
 
@@ -412,6 +419,10 @@ Implements Ark.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mLabel As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mLastUpdate As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

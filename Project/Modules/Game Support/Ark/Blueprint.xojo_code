@@ -62,6 +62,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastUpdate() As Double
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MutableClone() As Ark.MutableBlueprint
 		  
 		End Function

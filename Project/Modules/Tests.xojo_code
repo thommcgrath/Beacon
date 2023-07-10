@@ -44,6 +44,7 @@ Protected Module Tests
 		    TestIntervalParsing()
 		    TestIniValidation()
 		    TestArkClassStrings()
+		    TestCachingTimes()
 		    App.Log("Tests complete")
 		  #endif
 		End Sub
@@ -119,6 +120,22 @@ Protected Module Tests
 		  If Not Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.") Then
 		    Break
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestCachingTimes()
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var StartTime As Double = System.Microseconds
+		  Var Container As Ark.LootContainer = DataSource.GetLootContainerByUUID("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
+		  Var InitialDuration As Double = System.Microseconds - StartTime
+		  
+		  StartTime = System.Microseconds
+		  Container = DataSource.GetLootContainerByUUID("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
+		  Var CachedDuration As Double = System.Microseconds - StartTime
+		  
+		  System.DebugLog("Initial Duration: " + InitialDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		  System.DebugLog("Cached Duration: " + CachedDuration.ToString(Locale.Current, "#,##0") + " microseconds")
 		End Sub
 	#tag EndMethod
 

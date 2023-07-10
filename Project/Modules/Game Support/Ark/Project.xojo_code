@@ -54,14 +54,13 @@ Inherits Beacon.Project
 		      Continue
 		    End Try
 		    
-		    Var BlueprintsWereCached As Boolean
 		    For Each BlueprintDict As Variant In BlueprintDicts
 		      If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
 		        Continue
 		      End If
 		      
-		      Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dictionary(BlueprintDict.ObjectValue))
-		      If Blueprint Is Nil Then
+		      Var ProjectBlueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dictionary(BlueprintDict.ObjectValue))
+		      If ProjectBlueprint Is Nil Then
 		        Continue
 		      End If
 		      
@@ -69,14 +68,11 @@ Inherits Beacon.Project
 		        DataSource = Ark.DataSource.Pool.Get(False)
 		      End If
 		      
-		      DataSource.Cache(Blueprint)
-		      BlueprintsWereCached = True
+		      Var StoredBlueprint As Ark.Blueprint = DataSource.GetBlueprintById(ProjectBlueprint.BlueprintId)
+		      If StoredBlueprint Is Nil Or ProjectBlueprint.LastUpdate > StoredBlueprint.LastUpdate Then
+		        DataSource.Cache(ProjectBlueprint)
+		      End If
 		    Next
-		    
-		    // Pull all blueprints already in the database to override the cache. The user's data takes priority over project data.
-		    If BlueprintsWereCached Then
-		      Call DataSource.GetBlueprints("", New Beacon.StringList(Pack.ContentPackId), "", False)
-		    End If
 		  Next
 		End Sub
 	#tag EndEvent

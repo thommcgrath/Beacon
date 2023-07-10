@@ -629,7 +629,7 @@ End
 		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As String = Self.Picker.Spec
 		  
-		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags, True)
+		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.RemoveAllRows
 		  For Each Blueprint As Ark.Blueprint In Blueprints

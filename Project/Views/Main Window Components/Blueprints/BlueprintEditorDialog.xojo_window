@@ -2455,6 +2455,7 @@ End
 		  Blueprint.Availability = Availability
 		  Blueprint.ContentPackId = Self.mContentPackId
 		  Blueprint.ContentPackName = Self.mContentPackName
+		  Blueprint.LastUpdate = DateTime.Now.SecondsFrom1970
 		  
 		  Select Case Blueprint
 		  Case IsA Ark.MutableEngram

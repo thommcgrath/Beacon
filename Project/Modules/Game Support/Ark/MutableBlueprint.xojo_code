@@ -38,6 +38,12 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub LastUpdate(Assigns Value As Double)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
 		  
 		End Sub

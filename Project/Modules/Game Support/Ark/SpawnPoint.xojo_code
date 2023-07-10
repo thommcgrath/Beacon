@@ -66,6 +66,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		  Self.mModified = Source.mModified
 		  Self.mLimits = Source.mLimits.Clone
 		  Self.mMode = Source.mMode
+		  Self.mLastUpdate = Source.mLastUpdate
 		  
 		  Self.mSets.ResizeTo(Source.mSets.LastIndex)
 		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastIndex
@@ -260,6 +261,12 @@ Implements Ark.Blueprint,Beacon.Countable
 		  // Part of the Ark.Blueprint interface.
 		  
 		  Return Self.mLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastUpdate() As Double
+		  Return Self.mLastUpdate
 		End Function
 	#tag EndMethod
 
@@ -506,6 +513,10 @@ Implements Ark.Blueprint,Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mLabel As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mLastUpdate As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

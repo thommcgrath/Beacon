@@ -77,6 +77,7 @@ Protected Class BlueprintImporter
 		  Var Importer As New Ark.BlueprintImporter
 		  Var ItemDicts(), CreatureDicts(), SpawnDicts(), LootDicts(), DropDicts() As Dictionary
 		  Var EngramsByClass As New Dictionary
+		  Var Now As Double = DateTime.Now.SecondsFrom1970
 		  
 		  If (Progress Is Nil) = False Then
 		    Progress.Detail = "Parsing log output…"
@@ -152,6 +153,7 @@ Protected Class BlueprintImporter
 		      Var Engram As New Ark.MutableEngram(Path, New v4UUID)
 		      Engram.Label = ItemDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
 		      Engram.AddTag("blueprintable")
+		      Engram.LastUpdate = Now
 		      Select Case ItemDict.Value("ITEM_TYPE").StringValue
 		      Case "Resource"
 		        Engram.AddTag("resource")
@@ -191,6 +193,7 @@ Protected Class BlueprintImporter
 		      
 		      Var Creature As New Ark.MutableCreature(Path, New v4UUID)
 		      Creature.Label = CreatureDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
+		      Creature.LastUpdate = Now
 		      Importer.mBlueprints.Add(Creature.ImmutableVersion)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing creature data")
@@ -209,6 +212,7 @@ Protected Class BlueprintImporter
 		      
 		      Var Point As New Ark.MutableSpawnPoint(Path, New v4UUID)
 		      Point.Label = SpawnDict.Value("CLASS")
+		      Point.LastUpdate = Now
 		      Importer.mBlueprints.Add(Point.ImmutableVersion)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing spawn point data")
@@ -228,6 +232,7 @@ Protected Class BlueprintImporter
 		      Var Container As New Ark.MutableLootContainer(Path, New v4UUID)
 		      Container.Label = LootDict.Value("CLASS")
 		      Container.IconID = "84d76c41-4386-467d-83e7-841dcaa4007d"
+		      Container.LastUpdate = Now
 		      Importer.mBlueprints.Add(Container.ImmutableVersion)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing supply crate data")
@@ -250,6 +255,7 @@ Protected Class BlueprintImporter
 		      Container.Label = DropDict.Value("CLASS")
 		      Container.IconID = "41dde824-5675-4515-b222-e860a44619d9"
 		      Container.Experimental = True
+		      Container.LastUpdate = Now
 		      Importer.mBlueprints.Add(Container.ImmutableVersion)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing dino inventory data")

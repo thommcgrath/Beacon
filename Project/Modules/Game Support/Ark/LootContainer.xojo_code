@@ -83,6 +83,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Self.mSortValue = Source.mSortValue
 		  Self.mIconID = Source.mIconID
 		  Self.mUIColor = Source.mUIColor
+		  Self.mLastUpdate = Source.mLastUpdate
 		  
 		  Self.mItemSets.ResizeTo(Source.mItemSets.LastIndex)
 		  For I As Integer = Source.mItemSets.FirstRowIndex To Source.mItemSets.LastIndex
@@ -400,6 +401,12 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastUpdate() As Double
+		  Return Self.mLastUpdate
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LootDropId() As String
 		  Return Self.mLootDropId
 		End Function
@@ -705,6 +712,10 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Property, Flags = &h1
 		Protected mLabel As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mLastUpdate As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

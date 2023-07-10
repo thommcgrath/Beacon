@@ -99,6 +99,15 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub LastUpdate(Assigns Value As Double)
+		  If Self.mLastUpdate <> Value THen
+		    Self.mLastUpdate = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Limit(Creature As Ark.Creature, Assigns Value As Double)
 		  If Creature Is Nil Then
 		    Return

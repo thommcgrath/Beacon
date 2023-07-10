@@ -430,7 +430,7 @@ End
 		    AddWhenFinished = True
 		  End If
 		  
-		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, "", False))
+		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, ""))
 		  Self.mEngramCount = Engrams.Count
 		  
 		  // Do the work
