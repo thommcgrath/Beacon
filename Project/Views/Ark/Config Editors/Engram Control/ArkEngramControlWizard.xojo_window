@@ -228,7 +228,6 @@ Begin BeaconDialog ArkEngramControlWizard
    End
    Begin Thread WorkThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3
@@ -431,7 +430,7 @@ End
 		    AddWhenFinished = True
 		  End If
 		  
-		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, ""))
+		  Var Engrams() As Ark.Engram = Beacon.Merge(Config.Engrams, Ark.DataSource.Pool.Get(False).GetEngramEntries("", Self.mProject.ContentPacks, "", False))
 		  Self.mEngramCount = Engrams.Count
 		  
 		  // Do the work

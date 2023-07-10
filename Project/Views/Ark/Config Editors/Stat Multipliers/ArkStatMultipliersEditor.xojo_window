@@ -4255,7 +4255,7 @@ End
 		  Menu.RemoveAllRows
 		  
 		  Var Health As Ark.Stat = Ark.Stats.Health
-		  Var Creatures() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Ark.CategoryCreatures, "", Self.Project.ContentPacks, "")
+		  Var Creatures() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Ark.CategoryCreatures, "", Self.Project.ContentPacks, "", True)
 		  For Each Blueprint As Ark.Blueprint In Creatures
 		    If Not Blueprint IsA Ark.Creature Then
 		      Continue

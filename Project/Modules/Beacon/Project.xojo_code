@@ -618,7 +618,7 @@ Implements ObservationKit.Observable
 		    
 		    Var Archive As Beacon.Archive = Beacon.Archive.Open(SaveData)
 		    Var ManifestData As Dictionary = Beacon.ParseJSON(Archive.GetFile("Manifest.json"))
-		    Var Version As Integer = ManifestData.Value("Version")
+		    Var Version As Integer = ManifestData.Value("version")
 		    Var ProjectData As Dictionary = Beacon.ParseJSON(Archive.GetFile("v" + Version.ToString(Locale.Raw, "0") + ".json"))
 		    
 		    If ManifestData.HasKey("additionalFiles") Then

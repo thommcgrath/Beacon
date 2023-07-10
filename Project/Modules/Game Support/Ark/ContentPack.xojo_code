@@ -34,6 +34,7 @@ Protected Class ContentPack
 		    Pack.mIsLocal = Row.Column("is_local").BooleanValue
 		    Pack.mName = Row.Column("name").StringValue
 		    Pack.mSteamId = NullableDouble.FromVariant(Row.Column("workshop_id").Value)
+		    Pack.mLastUpdate = Row.Column("last_update").DoubleValue
 		    Return Pack
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Building Ark.ContentPack from DatabaseRow")
@@ -71,6 +72,7 @@ Protected Class ContentPack
 		    Pack.mIsDefaultEnabled = SaveData.Value("isDefaultEnabled")
 		    Pack.mIsLocal = True
 		    Pack.mName = SaveData.Value("name")
+		    Pack.mLastUpdate = SaveData.Value("lastUpdate")
 		    If SaveData.HasKey("steamId") Then
 		      Pack.mSteamId = NullableDouble.FromVariant(SaveData.Value("steamId"))
 		    End If
@@ -96,6 +98,12 @@ Protected Class ContentPack
 	#tag Method, Flags = &h0
 		Function IsLocal() As Boolean
 		  Return Self.mIsLocal
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastUpdate() As Double
+		  Return Self.mLastUpdate
 		End Function
 	#tag EndMethod
 
@@ -133,6 +141,7 @@ Protected Class ContentPack
 		  SaveData.Value("isConsoleSafe") = Self.mIsConsoleSafe
 		  SaveData.Value("isDefaultEnabled") = Self.mIsDefaultEnabled
 		  SaveData.Value("minVersion") = 10700000
+		  SaveData.Value("lastUpdate") = Self.mLastUpdate
 		  Return SaveData
 		End Function
 	#tag EndMethod
@@ -180,6 +189,10 @@ Protected Class ContentPack
 
 	#tag Property, Flags = &h21
 		Private mIsLocal As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastUpdate As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

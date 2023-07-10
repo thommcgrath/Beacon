@@ -104,7 +104,7 @@ Protected Module Ark
 		    Results.Value(Blueprints(Idx).ObjectID) = Blueprints(Idx).Label
 		  Next Idx
 		  
-		  Var All() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Category, "", New Beacon.StringList, "")
+		  Var All() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Category, "", New Beacon.StringList, "", True)
 		  Var Labels As New Dictionary
 		  For Idx As Integer = 0 To All.LastIndex
 		    If All(Idx).ValidForMask(EnabledMaps) = False And Results.HasKey(All(Idx).ObjectID) = False Then

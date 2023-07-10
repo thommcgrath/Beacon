@@ -17,6 +17,71 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
+		Sub AdditionalFilesLoaded()
+		  Var ContentPacksJson As String = Self.GetFile("Content Packs.json")
+		  If ContentPacksJson.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var PackSaveData() As Variant
+		  Try
+		    PackSaveData = Beacon.ParseJSON(ContentPacksJson)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var DataSource As Ark.DataSource
+		  For Each SaveData As Variant In PackSaveData
+		    If SaveData.Type <> Variant.TypeObject Or (SaveData.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
+		    Var Pack As Ark.ContentPack = Ark.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
+		    If Pack Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var BlueprintsFilename As String = Pack.ContentPackId + ".json"
+		    Var BlueprintsJson As String = Self.GetFile(BlueprintsFilename)
+		    If BlueprintsJson.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    Var BlueprintDicts() As Variant
+		    Try
+		      BlueprintDicts = Beacon.ParseJSON(BlueprintsJson)
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		    
+		    Var BlueprintsWereCached As Boolean
+		    For Each BlueprintDict As Variant In BlueprintDicts
+		      If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      
+		      Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dictionary(BlueprintDict.ObjectValue))
+		      If Blueprint Is Nil Then
+		        Continue
+		      End If
+		      
+		      If DataSource Is Nil Then
+		        DataSource = Ark.DataSource.Pool.Get(False)
+		      End If
+		      
+		      DataSource.Cache(Blueprint)
+		      BlueprintsWereCached = True
+		    Next
+		    
+		    // Pull all blueprints already in the database to override the cache. The user's data takes priority over project data.
+		    If BlueprintsWereCached Then
+		      Call DataSource.GetBlueprints("", New Beacon.StringList(Pack.ContentPackId), "", False)
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused PlainData
 		  #Pragma Unused EncryptedData
@@ -43,6 +108,86 @@ Inherits Beacon.Project
 		  
 		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Beacon.ConfigSet.BaseConfigSet, True))
 		  ManifestData.Value("difficulty") = Difficulty.DifficultyValue
+		  
+		  If Self.UseCompression = False Then
+		    Return
+		  End If
+		  
+		  Var PackSaveData() As Variant
+		  Var PackSaveJson As String = Self.GetFile("Content Packs.json")
+		  If PackSaveJson.IsEmpty = False Then
+		    Try
+		      PackSaveData = Beacon.ParseJSON(PackSaveJson)
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Var PacksCache As New Dictionary
+		  Var PackSaveDicts As New Dictionary
+		  For Idx As Integer = PackSaveData.LastIndex DownTo 0
+		    If PackSaveData(Idx).Type = Variant.TypeObject And PackSaveData(Idx).ObjectValue IsA Dictionary Then
+		      Var Pack As Ark.ContentPack = Ark.ContentPack.FromSaveData(PackSaveData(Idx))
+		      If Pack Is Nil Then
+		        PackSaveData.RemoveAt(Idx)
+		        Continue
+		      End If
+		      
+		      If Self.ContentPackEnabled(Pack) = False Then
+		        PackSaveData.RemoveAt(Idx)
+		        Self.RemoveFile(Pack.ContentPackId + ".json")
+		        Continue
+		      End If
+		      
+		      PacksCache.Value(Pack.ContentPackId) = Pack
+		      PackSaveDicts.Value(Pack.ContentPackId) = PackSaveData(Idx)
+		    Else
+		      PackSaveData.RemoveAt(Idx)
+		    End If
+		  Next
+		  
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var LocalPacks() As Ark.ContentPack = DataSource.GetContentPacks(Ark.ContentPack.Types.Custom)
+		  For Each LocalPack As Ark.ContentPack In LocalPacks
+		    If Self.ContentPackEnabled(LocalPack) = False Then
+		      Continue
+		    End If
+		    
+		    Var CachedPack As Ark.ContentPack
+		    If PacksCache.HasKey(LocalPack.ContentPackId) = True And Ark.ContentPack(PacksCache.Value(LocalPack.ContentPackId)).LastUpdate >= LocalPack.LastUpdate Then
+		      Continue
+		    End If
+		    
+		    Var Blueprints() As Ark.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(LocalPack.ContentPackId), "")
+		    If Blueprints.Count = 0 Then
+		      If PackSaveDicts.HasKey(LocalPack.ContentPackId) Then
+		        PackSaveDicts.Remove(LocalPack.ContentPackId)
+		      End If
+		      Self.RemoveFile(LocalPack.ContentPackId + ".json")
+		      Continue
+		    End If
+		    
+		    Var PackedBlueprints() As Dictionary
+		    For Each Blueprint As Ark.Blueprint In Blueprints
+		      Var Packed As Dictionary = Blueprint.Pack
+		      If (Packed Is Nil) = False Then
+		        PackedBlueprints.Add(Packed)
+		      End If
+		    Next
+		    
+		    PackSaveDicts.Value(LocalPack.ContentPackId) = LocalPack.SaveData
+		    Self.AddFile(LocalPack.ContentPackId + ".json", Beacon.GenerateJSON(PackedBlueprints, False))
+		  Next
+		  
+		  If PackSaveDicts.KeyCount = 0 Then
+		    Self.RemoveFile("Content Packs.json")
+		  Else
+		    PackSaveData.ResizeTo(-1)
+		    For Each Entry As DictionaryEntry In PackSaveDicts
+		      PackSaveData.Add(Entry.Value)
+		    Next
+		    Self.AddFile("Content Packs.json", Beacon.GenerateJSON(PackSaveData, False))
+		  End If
+		  
 		End Sub
 	#tag EndEvent
 
@@ -406,6 +551,10 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Sub ContentPackEnabled(Pack As Ark.ContentPack, Assigns Value As Boolean)
+		  If Pack Is Nil Then
+		    Return
+		  End If
+		  
 		  Self.ContentPackEnabled(Pack.ContentPackId) = Value
 		End Sub
 	#tag EndMethod
@@ -418,14 +567,13 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Sub ContentPackEnabled(ContentPackId As String, Assigns Value As Boolean)
-		  If Beacon.UUID.Validate(ContentPackId) = False Then
+		  Var WasEnabled As Boolean = Self.mContentPacks.Lookup(ContentPackId, False)
+		  If WasEnabled = Value Then
 		    Return
 		  End If
 		  
-		  If Self.mContentPacks.HasKey(ContentPackId) = False Or Self.mContentPacks.Value(ContentPackId).BooleanValue <> Value Then
-		    Self.mContentPacks.Value(ContentPackId) = Value
-		    Self.Modified = True
-		  End If
+		  Self.mContentPacks.Value(ContentPackId) = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
