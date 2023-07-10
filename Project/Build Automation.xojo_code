@@ -39,7 +39,6 @@
 				Begin IDEScriptBuildStep UpdateInfoPlist , AppliesTo = 0, Architecture = 0, Target = 0
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + "/Contents/Info"""
 					Call DoShellCommand("/usr/bin/defaults write " + App + " ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
-					Call DoShellCommand("/usr/bin/defaults write " + App + " ""LSMinimumSystemVersion"" ""10.12.0""")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.0.UTTypeIcons -json '{""UTTypeIconBackgroundName"":""ProjectBackgroundFill"",""UTTypeIconBadgeName"":""ProjectCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.1.UTTypeIcons -json '{""UTTypeIconText"":""Identity"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.2.UTTypeIcons -json '{""UTTypeIconText"":""Preset"",""UTTypeIconBadgeName"":""GenericCenterIcon""}' " + App + ".plist")
