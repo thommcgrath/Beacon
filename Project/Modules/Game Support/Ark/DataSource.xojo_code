@@ -533,21 +533,12 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ImportCleanup(StatusData As Dictionary)
-		  Self.ResetCaches()
-		  
-		  If (Self.mPool Is Nil) = False Then
-		    For Each Instance As Ark.DataSource In Self.mPool
-		      Try
-		        If Instance Is Nil Or Instance = Self Then
-		          Continue
-		        End If
-		        
-		        Instance.ResetCaches()
-		      Catch Err As RuntimeException
-		        App.Log(Err, CurrentMethodName, "Clearing sibling caches")
-		      End Try
-		    Next
-		  End If
+		  // Do not invalidate mBlueprints, it uses timestamps
+		  Self.mConfigKeyCache = New Dictionary
+		  Self.mSpawnLabelCacheDict = New Dictionary
+		  Self.mIconCache = New Dictionary
+		  Self.mContainerLabelCacheDict = New Dictionary
+		  Self.mContainerLabelCacheMask = 0
 		  
 		  If StatusData.Lookup("Engrams Changed", False).BooleanValue Then
 		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
@@ -772,7 +763,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(Creature As Ark.Creature)
-		  Self.mCreatureCache.Value(Creature.CreatureId) = Creature
+		  Self.mBlueprintCache.Value(Creature.CreatureId) = Creature
 		End Sub
 	#tag EndMethod
 
@@ -786,12 +777,13 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(Engram As Ark.Engram)
-		  Self.mEngramCache.Value(Engram.EngramId) = Engram
+		  Self.mBlueprintCache.Value(Engram.EngramId) = Engram
 		  
 		  If Engram.HasUnlockDetails Then
 		    Var SimilarEngrams() As Ark.Engram
-		    If Self.mEngramCache.HasKey(Engram.EntryString) Then
-		      SimilarEngrams = Self.mEngramCache.Value(Engram.EntryString)
+		    Var CacheKey As String = "EngramEntry:" + Engram.EntryString
+		    If Self.mBlueprintCache.HasKey(CacheKey) Then
+		      SimilarEngrams = Self.mBlueprintCache.Value(CacheKey)
 		    End If
 		    
 		    Var Found As Boolean
@@ -805,7 +797,7 @@ Inherits Beacon.DataSource
 		    If Not Found Then
 		      SimilarEngrams.Add(Engram)
 		    End If
-		    Self.mEngramCache.Value(Engram.EntryString) = SimilarEngrams
+		    Self.mBlueprintCache.Value(CacheKey) = SimilarEngrams
 		  End If
 		End Sub
 	#tag EndMethod
@@ -820,7 +812,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(LootDrop As Ark.LootContainer)
-		  Self.mLootContainerCache.Value(LootDrop.LootDropId) = LootDrop
+		  Self.mBlueprintCache.Value(LootDrop.LootDropId) = LootDrop
 		End Sub
 	#tag EndMethod
 
@@ -834,7 +826,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(SpawnPoint As Ark.SpawnPoint)
-		  Self.mSpawnPointCache.Value(SpawnPoint.SpawnPointId) = SpawnPoint
+		  Self.mBlueprintCache.Value(SpawnPoint.SpawnPointId) = SpawnPoint
 		End Sub
 	#tag EndMethod
 
@@ -947,7 +939,22 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub Constructor(AllowWriting As Boolean)
-		  Self.ResetCaches()
+		  If Self.mBlueprintCache Is Nil Then
+		    Self.mBlueprintCache = New Dictionary
+		  End If
+		  If Self.mConfigKeyCache Is Nil Then
+		    Self.mConfigKeyCache = New Dictionary
+		  End If
+		  If Self.mSpawnLabelCacheDict Is Nil Then
+		    Self.mSpawnLabelCacheDict = New Dictionary
+		  End If
+		  If Self.mIconCache Is Nil Then
+		    Self.mIconCache = New Dictionary
+		  End If
+		  If Self.mContainerLabelCacheDict Is Nil Then
+		    Self.mContainerLabelCacheDict = New Dictionary
+		    Self.mContainerLabelCacheMask = 0
+		  End If
 		  
 		  If mLock Is Nil Then
 		    mLock = New CriticalSection
@@ -1048,6 +1055,10 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetBlueprintById(BlueprintId As String) As Ark.Blueprint
+		  If Self.mBlueprintCache.HasKey(BlueprintId) Then
+		    Return Self.mBlueprintCache.Value(BlueprintId)
+		  End If
+		  
 		  Var Rows As RowSet = Self.SQLSelect("SELECT category FROM blueprints WHERE object_id = ?1;", BlueprintId)
 		  If Rows.RowCount = 0 Then
 		    Return Nil
@@ -1448,8 +1459,8 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetCreatureByUUID(CreatureID As String) As Ark.Creature
-		  If Self.mCreatureCache.HasKey(CreatureID) Then
-		    Return Self.mCreatureCache.Value(CreatureID)
+		  If Self.mBlueprintCache.HasKey(CreatureID) Then
+		    Return Self.mBlueprintCache.Value(CreatureID)
 		  End If
 		  
 		  Try
@@ -1584,7 +1595,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetEngramByUUID(EngramID As String) As Ark.Engram
-		  If Self.mEngramCache.HasKey(EngramID) = False Then
+		  If Self.mBlueprintCache.HasKey(EngramID) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID)
 		      If Results.RowCount <> 1 Then
@@ -1597,7 +1608,7 @@ Inherits Beacon.DataSource
 		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mEngramCache.Value(EngramID)
+		  Return Self.mBlueprintCache.Value(EngramID)
 		End Function
 	#tag EndMethod
 
@@ -1654,8 +1665,8 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Var Engrams() As Ark.Engram
-		  If Self.mEngramCache.HasKey(EntryString) Then
-		    Engrams = Self.mEngramCache.Value(EntryString)
+		  If Self.mBlueprintCache.HasKey("EngramEntry:" + EntryString) Then
+		    Engrams = Self.mBlueprintCache.Value("EngramEntry:" + EntryString)
 		  Else
 		    Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.entry_string = ?1;"
 		    If (ContentPacks Is Nil) = False Then
@@ -1756,7 +1767,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetLootContainerByUUID(LootDropId As String) As Ark.LootContainer
-		  If Self.mLootContainerCache.HasKey(LootDropId) = False Then
+		  If Self.mBlueprintCache.HasKey(LootDropId) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectSQL + " WHERE object_id = ?1;", LootDropId)
 		      If Results.RowCount <> 1 Then
@@ -1770,7 +1781,7 @@ Inherits Beacon.DataSource
 		    End Try
 		  End If
 		  
-		  Return Self.mLootContainerCache.Value(LootDropId)
+		  Return Self.mBlueprintCache.Value(LootDropId)
 		End Function
 	#tag EndMethod
 
@@ -2031,7 +2042,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPointByUUID(SpawnPointID As String) As Ark.SpawnPoint
-		  If Self.mSpawnPointCache.HasKey(SpawnPointID) = False Then
+		  If Self.mBlueprintCache.HasKey(SpawnPointID) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID)
 		      If Results.RowCount <> 1 Then
@@ -2044,7 +2055,7 @@ Inherits Beacon.DataSource
 		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mSpawnPointCache.Value(SpawnPointID)
+		  Return Self.mBlueprintCache.Value(SpawnPointID)
 		End Function
 	#tag EndMethod
 
@@ -2368,20 +2379,6 @@ Inherits Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub ResetCaches()
-		  Self.mEngramCache = New Dictionary
-		  Self.mCreatureCache = New Dictionary
-		  Self.mSpawnPointCache = New Dictionary
-		  Self.mLootContainerCache = New Dictionary
-		  Self.mConfigKeyCache = New Dictionary
-		  Self.mSpawnLabelCacheDict = New Dictionary
-		  Self.mIconCache = New Dictionary
-		  Self.mContainerLabelCacheDict = New Dictionary
-		  Self.mContainerLabelCacheMask = 0
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function ResolvePathFromClassString(ClassString As String) As String
 		  Var Results As RowSet = Self.SQLSelect("SELECT path FROM blueprints WHERE class_string = ?1;", ClassString)
@@ -2495,7 +2492,7 @@ Inherits Beacon.DataSource
 		  While Not Results.AfterLastRow
 		    Var CreatureId As String = Results.Column("object_id").StringValue
 		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If Self.mCreatureCache.HasKey(CreatureId) = False Or Ark.Creature(Self.mCreatureCache.Value(CreatureId)).LastUpdate < LastUpdate Then
+		    If Self.mBlueprintCache.HasKey(CreatureId) = False Or Ark.Creature(Self.mBlueprintCache.Value(CreatureId)).LastUpdate < LastUpdate Then
 		      Var Creature As New Ark.MutableCreature(Results.Column("path").StringValue, CreatureId)
 		      Creature.Label = Results.Column("label").StringValue
 		      If IsNull(Results.Column("alternate_label").Value) = False Then
@@ -2522,10 +2519,10 @@ Inherits Beacon.DataSource
 		        Creature.MaxMatingInterval = Results.Column("mating_interval_max").DoubleValue
 		      End If
 		      
-		      Self.mCreatureCache.Value(CreatureId) = Creature.ImmutableVersion
+		      Self.mBlueprintCache.Value(CreatureId) = Creature.ImmutableVersion
 		    End If
 		    
-		    Creatures.Add(Self.mCreatureCache.Value(CreatureId))
+		    Creatures.Add(Self.mBlueprintCache.Value(CreatureId))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Creatures
@@ -2566,7 +2563,7 @@ Inherits Beacon.DataSource
 		  While Not Results.AfterLastRow
 		    Var EngramId As String = Results.Column("object_id").StringValue
 		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If Self.mEngramCache.HasKey(EngramId) = False Or Ark.Engram(Self.mEngramCache.Value(EngramId)).LastUpdate < LastUpdate Then
+		    If Self.mBlueprintCache.HasKey(EngramId) = False Or Ark.Engram(Self.mBlueprintCache.Value(EngramId)).LastUpdate < LastUpdate Then
 		      Var Engram As New Ark.MutableEngram(Results.Column("path").StringValue, EngramId)
 		      Engram.Label = Results.Column("label").StringValue
 		      If IsNull(Results.Column("alternate_label").Value) = False Then
@@ -2591,10 +2588,10 @@ Inherits Beacon.DataSource
 		      If IsNull(Results.Column("item_id").Value) = False Then
 		        Engram.ItemID = Results.Column("item_id").IntegerValue
 		      End If
-		      Self.mEngramCache.Value(EngramId) = Engram.ImmutableVersion
+		      Self.mBlueprintCache.Value(EngramId) = Engram.ImmutableVersion
 		    End If
 		    
-		    Engrams.Add(Self.mEngramCache.Value(EngramId))
+		    Engrams.Add(Self.mBlueprintCache.Value(EngramId))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Engrams
@@ -2624,7 +2621,7 @@ Inherits Beacon.DataSource
 		  While Not Results.AfterLastRow
 		    Var LootDropId As String = Results.Column("object_id").StringValue
 		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If Self.mLootContainerCache.HasKey(LootDropId) = False Or Ark.LootContainer(Self.mLootContainerCache.Value(LootDropId)).LastUpdate < LastUpdate Then
+		    If Self.mBlueprintCache.HasKey(LootDropId) = False Or Ark.LootContainer(Self.mBlueprintCache.Value(LootDropId)).LastUpdate < LastUpdate Then
 		      Var Requirements As Dictionary
 		      #Pragma BreakOnExceptions Off
 		      Try
@@ -2656,10 +2653,10 @@ Inherits Beacon.DataSource
 		      End If
 		      
 		      Source.Modified = False
-		      Self.mLootContainerCache.Value(Source.LootDropId) = Source.ImmutableVersion
+		      Self.mBlueprintCache.Value(Source.LootDropId) = Source.ImmutableVersion
 		    End If
 		    
-		    Sources.Add(Self.mLootContainerCache.Value(LootDropId))
+		    Sources.Add(Self.mBlueprintCache.Value(LootDropId))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Sources
@@ -2672,7 +2669,7 @@ Inherits Beacon.DataSource
 		  While Not Results.AfterLastRow
 		    Var SpawnPointId As String = Results.Column("object_id").StringValue
 		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If Self.mSpawnPointCache.HasKey(SpawnPointId) = False Or Ark.SpawnPoint(Self.mSpawnPointCache.Value(SpawnPointId)).LastUpdate < LastUpdate Then
+		    If Self.mBlueprintCache.HasKey(SpawnPointId) = False Or Ark.SpawnPoint(Self.mBlueprintCache.Value(SpawnPointId)).LastUpdate < LastUpdate Then
 		      Var Point As New Ark.MutableSpawnPoint(Results.Column("path").StringValue, SpawnPointId)
 		      Point.Label = Results.Column("label").StringValue
 		      If IsNull(Results.Column("alternate_label").Value) = False Then
@@ -2684,10 +2681,10 @@ Inherits Beacon.DataSource
 		      Point.ContentPackId = Results.Column("content_pack_id").StringValue
 		      Point.ContentPackName = Results.Column("content_pack_name").StringValue
 		      Point.Modified = False
-		      Self.mSpawnPointCache.Value(SpawnPointId) = Point.ImmutableVersion
+		      Self.mBlueprintCache.Value(SpawnPointId) = Point.ImmutableVersion
 		    End If
 		    
-		    SpawnPoints.Add(Self.mSpawnPointCache.Value(SpawnPointId))
+		    SpawnPoints.Add(Self.mBlueprintCache.Value(SpawnPointId))
 		    Results.MoveToNextRow
 		  Wend
 		  Return SpawnPoints
@@ -2779,7 +2776,6 @@ Inherits Beacon.DataSource
 		        Else
 		          Results = Self.SQLSelect("SELECT object_id, tags FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
 		        End If
-		        Var CacheDict As Dictionary
 		        If Results.RowCount = 1 Then
 		          If LocalModsOnly And Results.Column("is_user_blueprint").BooleanValue = False Then
 		            If (ErrorDict Is Nil) = False Then
@@ -2841,12 +2837,9 @@ Inherits Beacon.DataSource
 		            StatDicts.Add(StatValue.SaveData)
 		          Next
 		          Columns.Value("stats") = Beacon.GenerateJSON(StatDicts, False)
-		          
-		          CacheDict = Self.mCreatureCache
 		        Case IsA Ark.SpawnPoint
 		          Columns.Value("sets") = Ark.SpawnPoint(Blueprint).SetsString(False)
 		          Columns.Value("limits") = Ark.SpawnPoint(Blueprint).LimitsString(False)
-		          CacheDict = Self.mSpawnPointCache
 		        Case IsA Ark.Engram
 		          Var Engram As Ark.Engram = Ark.Engram(Blueprint)
 		          Columns.Value("recipe") = Ark.CraftingCostIngredient.ToJSON(Engram.Recipe, False)
@@ -2870,7 +2863,6 @@ Inherits Beacon.DataSource
 		          Else
 		            Columns.Value("stack_size") = Engram.StackSize.IntegerValue
 		          End If
-		          CacheDict = Self.mEngramCache
 		        Case IsA Ark.LootContainer
 		          Var Container As Ark.LootContainer = Ark.LootContainer(Blueprint)
 		          Var Requirements As New Dictionary
@@ -2954,19 +2946,11 @@ Inherits Beacon.DataSource
 		        Self.CommitTransaction()
 		        TransactionStarted = False
 		        
-		        If (CacheDict Is Nil) = False Then
-		          If CacheDict.HasKey(Blueprint.BlueprintId) Then
-		            CacheDict.Remove(Blueprint.BlueprintId)
-		          End If
-		          If CacheDict.HasKey(Blueprint.Path) Then
-		            CacheDict.Remove(Blueprint.Path)
-		          End If
-		          If CacheDict.HasKey(Blueprint.ClassString) Then
-		            CacheDict.Remove(Blueprint.ClassString)
-		          End If
-		          If Blueprint IsA Ark.Engram And Ark.Engram(Blueprint).HasUnlockDetails And CacheDict.HasKey(Ark.Engram(Blueprint).EntryString) Then
-		            CacheDict.Remove(Ark.Engram(Blueprint).EntryString)
-		          End If
+		        If Self.mBlueprintCache.HasKey(Blueprint.BlueprintId) Then
+		          Self.mBlueprintCache.Remove(Blueprint.BlueprintId)
+		        End If
+		        If Blueprint IsA Ark.Engram And Ark.Engram(Blueprint).HasUnlockDetails And Self.mBlueprintCache.HasKey("EngramEntry:" + Ark.Engram(Blueprint).EntryString) Then
+		          Self.mBlueprintCache.Remove("EngramEntry:" + Ark.Engram(Blueprint).EntryString)
 		        End If
 		        
 		        CountSuccess = CountSuccess + 1
@@ -3011,6 +2995,10 @@ Inherits Beacon.DataSource
 
 
 	#tag Property, Flags = &h21
+		Private Shared mBlueprintCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private Shared mConfigKeyCache As Dictionary
 	#tag EndProperty
 
@@ -3023,23 +3011,11 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared mCreatureCache As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared mEngramCache As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private Shared mIconCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Shared mLock As CriticalSection
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared mLootContainerCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -3056,10 +3032,6 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private Shared mSpawnLabelCacheMask As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared mSpawnPointCache As Dictionary
 	#tag EndProperty
 
 
