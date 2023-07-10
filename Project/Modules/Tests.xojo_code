@@ -134,8 +134,19 @@ Protected Module Tests
 		  Container = DataSource.GetLootContainerByUUID("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
 		  Var CachedDuration As Double = System.Microseconds - StartTime
 		  
-		  System.DebugLog("Initial Duration: " + InitialDuration.ToString(Locale.Current, "#,##0") + " microseconds")
-		  System.DebugLog("Cached Duration: " + CachedDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		  System.DebugLog("Single initial duration: " + InitialDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		  System.DebugLog("Single cached duration: " + CachedDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		  
+		  StartTime = System.Microseconds
+		  Call DataSource.GetBlueprints("", New Beacon.StringList("38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"), "")
+		  InitialDuration = System.Microseconds - StartTime
+		  
+		  StartTime = System.Microseconds
+		  Call DataSource.GetBlueprints("", New Beacon.StringList("38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"), "")
+		  CachedDuration = System.Microseconds - StartTime
+		  
+		  System.DebugLog("Search initial duration: " + InitialDuration.ToString(Locale.Current, "#,##0") + " microseconds")
+		  System.DebugLog("Search cached duration: " + CachedDuration.ToString(Locale.Current, "#,##0") + " microseconds")
 		End Sub
 	#tag EndMethod
 
