@@ -1047,6 +1047,23 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h21
 		Private Sub DeleteDataForContentPack(ContentPackId As String)
 		  Self.BeginTransaction()
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM blueprints WHERE content_pack_id = ?1;", ContentPackId)
+		  For Each Row As DatabaseRow In Rows
+		    Var BlueprintId As String = Row.Column("object_id").StringValue
+		    If Self.mBlueprintCache.HasKey(BlueprintId) Then
+		      Self.mBlueprintCache.Remove(BlueprintId)
+		    End If
+		  Next
+		  
+		  Rows = Self.SQLSelect("SELECT DISTINCT entry_string FROM engrams WHERE content_pack_id = ?1 AND entry_string IS NOT NULL;", ContentPackId)
+		  For Each Row As DatabaseRow In Rows
+		    Var EntryString As String = Row.Column("entry_string").StringValue
+		    If Self.mBlueprintCache.HasKey("EngramEntry:" + EntryString) Then
+		      Self.mBlueprintCache.Remove("EngramEntry:" + EntryString)
+		    End If
+		  Next
+		  
 		  Self.SQLExecute("DELETE FROM blueprints WHERE content_pack_id = ?1;", ContentPackId)
 		  Self.SQLExecute("DELETE FROM loot_container_selectors WHERE content_pack_id = ?1;", ContentPackId)
 		  Self.CommitTransaction()
@@ -1054,8 +1071,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintById(BlueprintId As String) As Ark.Blueprint
-		  If Self.mBlueprintCache.HasKey(BlueprintId) Then
+		Function GetBlueprintById(BlueprintId As String, UseCache As Boolean = True) As Ark.Blueprint
+		  If UseCache And Self.mBlueprintCache.HasKey(BlueprintId) Then
 		    Return Self.mBlueprintCache.Value(BlueprintId)
 		  End If
 		  
@@ -1066,13 +1083,13 @@ Inherits Beacon.DataSource
 		  
 		  Select Case Rows.Column("category").StringValue
 		  Case Ark.CategoryCreatures
-		    Return Self.GetCreatureByUUID(BlueprintId)
+		    Return Self.GetCreatureByUUID(BlueprintId, UseCache)
 		  Case Ark.CategoryEngrams
-		    Return Self.GetEngramByUUID(BlueprintId)
+		    Return Self.GetEngramByUUID(BlueprintId, UseCache)
 		  Case Ark.CategoryLootContainers
-		    Return Self.GetLootContainerByUUID(BlueprintId)
+		    Return Self.GetLootContainerByUUID(BlueprintId, UseCache)
 		  Case Ark.CategorySpawnPoints
-		    Return Self.GetSpawnPointByUUID(BlueprintId)
+		    Return Self.GetSpawnPointByUUID(BlueprintId, UseCache)
 		  End Select
 		End Function
 	#tag EndMethod
@@ -1458,8 +1475,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByUUID(CreatureID As String) As Ark.Creature
-		  If Self.mBlueprintCache.HasKey(CreatureID) Then
+		Function GetCreatureByUUID(CreatureID As String, UseCache As Boolean = True) As Ark.Creature
+		  If UseCache And Self.mBlueprintCache.HasKey(CreatureID) Then
 		    Return Self.mBlueprintCache.Value(CreatureID)
 		  End If
 		  
@@ -1469,7 +1486,7 @@ Inherits Beacon.DataSource
 		      Return Nil
 		    End If
 		    
-		    Var Creatures() As Ark.Creature = Self.RowSetToCreature(Results)
+		    Var Creatures() As Ark.Creature = Self.RowSetToCreature(Results, UseCache)
 		    Self.Cache(Creatures)
 		    Return Creatures(0)
 		  Catch Err As RuntimeException
@@ -1594,21 +1611,23 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByUUID(EngramID As String) As Ark.Engram
-		  If Self.mBlueprintCache.HasKey(EngramID) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID)
-		      If Results.RowCount <> 1 Then
-		        Return Nil
-		      End If
-		      
-		      Var Engrams() As Ark.Engram = Self.RowSetToEngram(Results)
-		      Self.Cache(Engrams)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
+		Function GetEngramByUUID(EngramId As String, UseCache As Boolean = True) As Ark.Engram
+		  If UseCache And Self.mBlueprintCache.HasKey(EngramId) Then
+		    Return Self.mBlueprintCache.Value(EngramId)
 		  End If
-		  Return Self.mBlueprintCache.Value(EngramID)
+		  
+		  Try
+		    Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID)
+		    If Results.RowCount <> 1 Then
+		      Return Nil
+		    End If
+		    
+		    Var Engrams() As Ark.Engram = Self.RowSetToEngram(Results, UseCache)
+		    Self.Cache(Engrams)
+		    Return Engrams(0)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -1766,22 +1785,23 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainerByUUID(LootDropId As String) As Ark.LootContainer
-		  If Self.mBlueprintCache.HasKey(LootDropId) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectSQL + " WHERE object_id = ?1;", LootDropId)
-		      If Results.RowCount <> 1 Then
-		        Return Nil
-		      End If
-		      
-		      Var LootDrops() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
-		      Self.Cache(LootDrops)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
+		Function GetLootContainerByUUID(LootDropId As String, UseCache As Boolean = True) As Ark.LootContainer
+		  If UseCache And Self.mBlueprintCache.HasKey(LootDropId) Then
+		    Return Self.mBlueprintCache.Value(LootDropId)
 		  End If
 		  
-		  Return Self.mBlueprintCache.Value(LootDropId)
+		  Try
+		    Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectSQL + " WHERE object_id = ?1;", LootDropId)
+		    If Results.RowCount <> 1 Then
+		      Return Nil
+		    End If
+		    
+		    Var LootDrops() As Ark.LootContainer = Self.RowSetToLootContainer(Results, UseCache)
+		    Self.Cache(LootDrops)
+		    Return LootDrops(0)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -2041,21 +2061,23 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByUUID(SpawnPointID As String) As Ark.SpawnPoint
-		  If Self.mBlueprintCache.HasKey(SpawnPointID) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID)
-		      If Results.RowCount <> 1 Then
-		        Return Nil
-		      End If
-		      
-		      Var SpawnPoints() As Ark.SpawnPoint = Self.RowSetToSpawnPoint(Results)
-		      Self.Cache(SpawnPoints)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
+		Function GetSpawnPointByUUID(SpawnPointId As String, UseCache As Boolean = True) As Ark.SpawnPoint
+		  If UseCache And Self.mBlueprintCache.HasKey(SpawnPointId) Then
+		    Return Self.mBlueprintCache.Value(SpawnPointId)
 		  End If
-		  Return Self.mBlueprintCache.Value(SpawnPointID)
+		  
+		  Try
+		    Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID)
+		    If Results.RowCount <> 1 Then
+		      Return Nil
+		    End If
+		    
+		    Var SpawnPoints() As Ark.SpawnPoint = Self.RowSetToSpawnPoint(Results, UseCache)
+		    Self.Cache(SpawnPoints)
+		    Return SpawnPoints(0)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -2297,6 +2319,37 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Invalidate(Blueprint As Ark.Blueprint)
+		  If Blueprint Is Nil Then
+		    Return
+		  End If
+		  
+		  If Self.mBlueprintCache.HasKey(Blueprint.BlueprintId) Then
+		    Self.mBlueprintCache.Remove(Blueprint.BlueprintId)
+		  End If
+		  
+		  If Blueprint IsA Ark.Engram And Self.mBlueprintCache.HasKey("EngramEntry:" + Ark.Engram(Blueprint).EntryString) Then
+		    Self.mBlueprintCache.Remove("EngramEntry:" + Ark.Engram(Blueprint).EntryString)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Invalidate(BlueprintId As String)
+		  If Self.mBlueprintCache.HasKey(BlueprintId) Then
+		    Self.mBlueprintCache.Remove(BlueprintId)
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT entry_string FROM engrams WHERE object_id = ?1 AND entry_string IS NOT NULL;")
+		  For Each Row As DatabaseRow In Rows
+		    If Self.mBlueprintCache.HasKey("EngramEntry:" + Row.Column("entry_string").StringValue) Then
+		      Self.mBlueprintCache.Remove("EngramEntry:" + Row.Column("entry_string").StringValue)
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub LoadDefaults(Container As Ark.MutableLootContainer)
 		  If Container Is Nil Then
 		    Return
@@ -2487,12 +2540,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RowSetToCreature(Results As RowSet) As Ark.Creature()
+		Private Function RowSetToCreature(Results As RowSet, UseCache As Boolean = True) As Ark.Creature()
 		  Var Creatures() As Ark.Creature
 		  While Not Results.AfterLastRow
 		    Var CreatureId As String = Results.Column("object_id").StringValue
 		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If Self.mBlueprintCache.HasKey(CreatureId) = False Or Ark.Creature(Self.mBlueprintCache.Value(CreatureId)).LastUpdate < LastUpdate Then
+		    If UseCache = False Or Self.mBlueprintCache.HasKey(CreatureId) = False Or Ark.Creature(Self.mBlueprintCache.Value(CreatureId)).LastUpdate < LastUpdate Then
 		      Var Creature As New Ark.MutableCreature(Results.Column("path").StringValue, CreatureId)
 		      Creature.Label = Results.Column("label").StringValue
 		      If IsNull(Results.Column("alternate_label").Value) = False Then
@@ -2558,12 +2611,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RowSetToEngram(Results As RowSet) As Ark.Engram()
+		Private Function RowSetToEngram(Results As RowSet, UseCache As Boolean = True) As Ark.Engram()
 		  Var Engrams() As Ark.Engram
 		  While Not Results.AfterLastRow
 		    Var EngramId As String = Results.Column("object_id").StringValue
 		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If Self.mBlueprintCache.HasKey(EngramId) = False Or Ark.Engram(Self.mBlueprintCache.Value(EngramId)).LastUpdate < LastUpdate Then
+		    If UseCache = False Or Self.mBlueprintCache.HasKey(EngramId) = False Or Ark.Engram(Self.mBlueprintCache.Value(EngramId)).LastUpdate < LastUpdate Then
 		      Var Engram As New Ark.MutableEngram(Results.Column("path").StringValue, EngramId)
 		      Engram.Label = Results.Column("label").StringValue
 		      If IsNull(Results.Column("alternate_label").Value) = False Then
@@ -2616,12 +2669,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RowSetToLootContainer(Results As RowSet) As Ark.LootContainer()
+		Private Function RowSetToLootContainer(Results As RowSet, UseCache As Boolean = True) As Ark.LootContainer()
 		  Var Sources() As Ark.LootContainer
 		  While Not Results.AfterLastRow
 		    Var LootDropId As String = Results.Column("object_id").StringValue
 		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If Self.mBlueprintCache.HasKey(LootDropId) = False Or Ark.LootContainer(Self.mBlueprintCache.Value(LootDropId)).LastUpdate < LastUpdate Then
+		    If UseCache = False Or Self.mBlueprintCache.HasKey(LootDropId) = False Or Ark.LootContainer(Self.mBlueprintCache.Value(LootDropId)).LastUpdate < LastUpdate Then
 		      Var Requirements As Dictionary
 		      #Pragma BreakOnExceptions Off
 		      Try
@@ -2664,12 +2717,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RowSetToSpawnPoint(Results As RowSet) As Ark.SpawnPoint()
+		Private Function RowSetToSpawnPoint(Results As RowSet, UseCache As Boolean = True) As Ark.SpawnPoint()
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  While Not Results.AfterLastRow
 		    Var SpawnPointId As String = Results.Column("object_id").StringValue
 		    Var LastUpdate As Double = Results.Column("last_update").DoubleValue
-		    If Self.mBlueprintCache.HasKey(SpawnPointId) = False Or Ark.SpawnPoint(Self.mBlueprintCache.Value(SpawnPointId)).LastUpdate < LastUpdate Then
+		    If UseCache = False Or Self.mBlueprintCache.HasKey(SpawnPointId) = False Or Ark.SpawnPoint(Self.mBlueprintCache.Value(SpawnPointId)).LastUpdate < LastUpdate Then
 		      Var Point As New Ark.MutableSpawnPoint(Results.Column("path").StringValue, SpawnPointId)
 		      Point.Label = Results.Column("label").StringValue
 		      If IsNull(Results.Column("alternate_label").Value) = False Then
@@ -2749,6 +2802,7 @@ Inherits Beacon.DataSource
 		        TransactionStarted = True
 		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", BlueprintId)
 		        Self.CommitTransaction()
+		        Self.Invalidate(BlueprintId)
 		        TransactionStarted = False
 		        CountSuccess = CountSuccess + 1
 		      Catch Err As RuntimeException
@@ -2985,6 +3039,36 @@ Inherits Beacon.DataSource
 		    Return False
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SaveContentPack(Pack As Ark.ContentPack)
+		  If Pack Is Nil Then
+		    Return
+		  End If
+		  
+		  Var SteamId As Variant
+		  If (Pack.SteamId Is Nil) = False Then
+		    SteamId = Pack.SteamId.DoubleValue
+		  End If
+		  
+		  Var Rows As RowSet
+		  If SteamId.IsNull Then
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1;", Pack.ContentPackId)
+		  Else
+		    Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1 OR workshop_id = ?2;", Pack.ContentPackId, SteamId)
+		  End If
+		  If Rows.RowCount > 1 Then
+		    Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id IS DISTINCT FROM ?1 AND workshop_id = ?2;", Pack.ContentPackId, SteamId)
+		  End If
+		  If Rows.RowCount > 0 Then
+		    If Rows.Column("last_update").DoubleValue < Pack.LastUpdate Then
+		      Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, workshop_id = ?5, is_local = ?6, last_update = ?7 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.ConsoleSafe, Pack.DefaultEnabled, SteamId, Pack.IsLocal, Pack.LastUpdate)
+		    End If
+		  Else
+		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, workshop_id, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Pack.ContentPackId, Pack.Name, Pack.ConsoleSafe, Pack.DefaultEnabled, SteamId, Pack.IsLocal, Pack.LastUpdate)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

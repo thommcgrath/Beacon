@@ -18,60 +18,14 @@ Inherits Beacon.Project
 
 	#tag Event
 		Sub AdditionalFilesLoaded()
-		  Var ContentPacksJson As String = Self.GetFile("Content Packs.json")
-		  If ContentPacksJson.IsEmpty Then
-		    Return
-		  End If
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
-		  Var PackSaveData() As Variant
-		  Try
-		    PackSaveData = Beacon.ParseJSON(ContentPacksJson)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
+		  Self.ProcessEmbeddedBlueprints()
 		  
-		  Var DataSource As Ark.DataSource
-		  For Each SaveData As Variant In PackSaveData
-		    If SaveData.Type <> Variant.TypeObject Or (SaveData.ObjectValue IsA Dictionary) = False Then
-		      Continue
-		    End If
-		    
-		    Var Pack As Ark.ContentPack = Ark.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
-		    If Pack Is Nil Then
-		      Continue
-		    End If
-		    
-		    Var BlueprintsFilename As String = Pack.ContentPackId + ".json"
-		    Var BlueprintsJson As String = Self.GetFile(BlueprintsFilename)
-		    If BlueprintsJson.IsEmpty Then
-		      Continue
-		    End If
-		    
-		    Var BlueprintDicts() As Variant
-		    Try
-		      BlueprintDicts = Beacon.ParseJSON(BlueprintsJson)
-		    Catch Err As RuntimeException
-		      Continue
-		    End Try
-		    
-		    For Each BlueprintDict As Variant In BlueprintDicts
-		      If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
-		        Continue
-		      End If
-		      
-		      Var ProjectBlueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dictionary(BlueprintDict.ObjectValue))
-		      If ProjectBlueprint Is Nil Then
-		        Continue
-		      End If
-		      
-		      If DataSource Is Nil Then
-		        DataSource = Ark.DataSource.Pool.Get(False)
-		      End If
-		      
-		      Var StoredBlueprint As Ark.Blueprint = DataSource.GetBlueprintById(ProjectBlueprint.BlueprintId)
-		      If StoredBlueprint Is Nil Or ProjectBlueprint.LastUpdate > StoredBlueprint.LastUpdate Then
-		        DataSource.Cache(ProjectBlueprint)
-		      End If
+		  For Each Entry As DictionaryEntry In Self.mEmbeddedBlueprints
+		    Var FreshBlueprints() As Ark.Blueprint = Entry.Value
+		    For Each Blueprint As Ark.Blueprint In FreshBlueprints
+		      DataSource.Cache(Blueprint)
 		    Next
 		  Next
 		End Sub
@@ -534,6 +488,8 @@ Inherits Beacon.Project
 		  If Self.mContentPacks.HasKey(Ark.UserContentPackId) Then
 		    Self.mContentPacks.Value(Ark.UserContentPackId) = True // Force this, if it exists
 		  End If
+		  Self.mEmbeddedBlueprints = New Dictionary
+		  Self.mEmbeddedContentPacks = New Dictionary
 		  
 		  Super.Constructor
 		End Sub
@@ -871,8 +827,34 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EmbeddedBlueprints(Pack As Ark.ContentPack) As Ark.Blueprint()
+		  Var Blueprints() As Ark.Blueprint
+		  If Pack Is Nil Or Self.mEmbeddedBlueprints.HasKey(Pack.ContentPackId) = False Then
+		    Return Blueprints
+		  End If
+		  Return Self.mEmbeddedBlueprints.Value(Pack.ContentPackId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EmbeddedContentPacks() As Ark.ContentPack()
+		  Var Packs() As Ark.ContentPack
+		  For Each Entry As DictionaryEntry In Self.mEmbeddedContentPacks
+		    Packs.Add(Entry.Value)
+		  Next
+		  Return Packs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameId() As String
 		  Return Ark.Identifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasAvailableBlueprints() As Boolean
+		  Return Self.mEmbeddedContentPacks.KeyCount > 0
 		End Function
 	#tag EndMethod
 
@@ -995,6 +977,72 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ProcessEmbeddedBlueprints()
+		  Var ContentPacksJson As String = Self.GetFile("Content Packs.json")
+		  If ContentPacksJson.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var PackSaveData() As Variant
+		  Try
+		    PackSaveData = Beacon.ParseJSON(ContentPacksJson)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Self.mEmbeddedBlueprints = New Dictionary
+		  Self.mEmbeddedContentPacks = New Dictionary
+		  
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  For Each SaveData As Variant In PackSaveData
+		    If SaveData.Type <> Variant.TypeObject Or (SaveData.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
+		    Var Pack As Ark.ContentPack = Ark.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
+		    If Pack Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var BlueprintsFilename As String = Pack.ContentPackId + ".json"
+		    Var BlueprintsJson As String = Self.GetFile(BlueprintsFilename)
+		    If BlueprintsJson.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    Var BlueprintDicts() As Variant
+		    Try
+		      BlueprintDicts = Beacon.ParseJSON(BlueprintsJson)
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		    
+		    Var FreshBlueprints() As Ark.Blueprint
+		    For Each BlueprintDict As Variant In BlueprintDicts
+		      If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      
+		      Var ProjectBlueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dictionary(BlueprintDict.ObjectValue))
+		      If ProjectBlueprint Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var StoredBlueprint As Ark.Blueprint = DataSource.GetBlueprintById(ProjectBlueprint.BlueprintId, False)
+		      If StoredBlueprint Is Nil Or ProjectBlueprint.LastUpdate > StoredBlueprint.LastUpdate Then
+		        FreshBlueprints.Add(ProjectBlueprint)
+		      End If
+		    Next
+		    
+		    If FreshBlueprints.Count > 0 Then
+		      Self.mEmbeddedBlueprints.Value(Pack.ContentPackId) = FreshBlueprints
+		      Self.mEmbeddedContentPacks.Value(Pack.ContentPackId) = Pack
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveConfigGroup(Group As Ark.ConfigGroup)
 		  If Group Is Nil Then
 		    Return
@@ -1085,6 +1133,14 @@ Inherits Beacon.Project
 
 	#tag Property, Flags = &h1
 		Protected mContentPacks As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEmbeddedBlueprints As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEmbeddedContentPacks As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

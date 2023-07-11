@@ -519,7 +519,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.ProjectController)
-		  If Self.mEditorRefs = Nil Then
+		  If Self.mEditorRefs Is Nil Then
 		    Self.mEditorRefs = New Dictionary
 		  End If
 		  Self.mEditorRefs.Value(Controller.Project.UUID) = New WeakRef(Self)
@@ -1282,6 +1282,38 @@ End
 		Private Panels As Dictionary
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return (Self.OmniBar1.Item("BlueprintsButton") Is Nil) = False
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = Self.ShowBlueprintsButton Then
+			    Return
+			  End If
+			  
+			  If Value Then
+			    Self.OmniBar1.Append(OmniBarItem.CreateSpace("BlueprintsSpaceA"))
+			    Self.OmniBar1.Append(OmniBarItem.CreateSeparator("BlueprintsSeparator"))
+			    Self.OmniBar1.Append(OmniBarItem.CreateSpace("BlueprintsSpaceB"))
+			    
+			    Var BlueprintsButton As OmniBarItem = OmniBarItem.CreateButton("BlueprintsButton", "Save Blueprints", IconToolbarGift, "This project has embedded blueprints that you can save.")
+			    BlueprintsButton.AlwaysUseActiveColor = True
+			    BlueprintsButton.ActiveColor = OmniBarItem.ActiveColors.Green
+			    Self.OmniBar1.Append(BlueprintsButton)
+			  Else
+			    Self.OmniBar1.Remove("BlueprintsButton")
+			    Self.OmniBar1.Remove("BlueprintsSpaceA")
+			    Self.OmniBar1.Remove("BlueprintsSeparator")
+			    Self.OmniBar1.Remove("BlueprintsSpaceB")
+			  End If
+			End Set
+		#tag EndSetter
+		Private ShowBlueprintsButton As Boolean
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = DeployEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
@@ -1360,21 +1392,25 @@ End
 #tag Events OmniBar1
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import config files"))
+		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import config files."))
 		  Me.Append(OmniBarItem.CreateSpace())
-		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Save new config file"))
+		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Save new config file."))
 		  
 		  #if DeployEnabled
-		    Me.Append(OmniBarItem.CreateButton("DeployButton", "Deploy", IconToolbarDeploy, "Make config changes live"))
+		    Me.Append(OmniBarItem.CreateButton("DeployButton", "Deploy", IconToolbarDeploy, "Make config changes live."))
 		  #endif
 		  
 		  Me.Append(OmniBarItem.CreateSpace())
-		  Me.Append(OmniBarItem.CreateButton("ShareButton", "Share", IconToolbarShare, "Share this project with other users"))
+		  Me.Append(OmniBarItem.CreateButton("ShareButton", "Share", IconToolbarShare, "Share this project with other users."))
+		  Me.Append(OmniBarItem.CreateSpace())
 		  
 		  Me.Append(OmniBarItem.CreateSeparator())
-		  Me.Append(OmniBarItem.CreateButton("MapsButton", "Maps", IconToolbarMaps, "Change the maps for this project"))
-		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods"))
-		  Me.Append(OmniBarItem.CreateButton("ToolsButton", "Tools", IconToolbarTools, "Use convenience tools for this project"))
+		  Me.Append(OmniBarItem.CreateSpace())
+		  Me.Append(OmniBarItem.CreateButton("MapsButton", "Maps", IconToolbarMaps, "Change the maps for this project."))
+		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods."))
+		  Me.Append(OmniBarItem.CreateButton("ToolsButton", "Tools", IconToolbarTools, "Use convenience tools for this project."))
+		  
+		  Self.ShowBlueprintsButton = Self.Project.HasAvailableBlueprints
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1451,6 +1487,9 @@ End
 		    End If
 		    Call Self.CurrentPanel.RunTool(Tool.UUID)
 		    Self.UpdateConfigList()
+		  Case "BlueprintsButton"
+		    ArkSaveBlueprintsDialog.Present(Self, Self.Project)
+		    Self.ShowBlueprintsButton = Self.Project.HasAvailableBlueprints
 		  End Select
 		End Sub
 	#tag EndEvent

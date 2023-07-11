@@ -282,7 +282,7 @@ Inherits DesktopListBox
 		    End If
 		  #endif
 		  
-		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
+		  // To ensure a consistent drawing experience. Partially obscured rows traditionally have a truncated g.height value.
 		  Var Clip As Graphics = G.Clip(InsetLeft, 0, ColumnWidth - (InsetLeft + InsetRight), RowHeight)
 		  
 		  Var BackgroundColor, TextColor, SecondaryTextColor As Color
@@ -347,6 +347,11 @@ Inherits DesktopListBox
 		  If IsChecked Then
 		    MaxDrawWidth = MaxDrawWidth - 20
 		  End If
+		  Var RowDepth As Integer
+		  If Column = 0 And Self.AllowExpandableRows Then
+		    RowDepth = (12 * (Self.RowDepthAt(Row) + 1)) + 4
+		    MaxDrawWidth = MaxDrawWidth - RowDepth
+		  End If
 		  
 		  Clip.FontSize = 0
 		  Clip.FontName = "System"
@@ -377,6 +382,7 @@ Inherits DesktopListBox
 		    Case DesktopListbox.Alignments.Right, DesktopListbox.Alignments.Decimal
 		      DrawLeft = Clip.Width - (LineWidth + CellPadding)
 		    End Select
+		    DrawLeft = DrawLeft + RowDepth
 		    
 		    Var LineHeight As Double = Clip.CapHeight
 		    Var LinePosition As Integer = Round(DrawTop + LineHeight)
