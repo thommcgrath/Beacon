@@ -32,6 +32,15 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub BlueprintId(Assigns Value As String)
+		  If Self.mSpawnPointId <> Value Then
+		    Self.mSpawnPointId = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone() As Ark.MutableSpawnPoint
 		  Return New Ark.MutableSpawnPoint(Self)
 		End Function
@@ -232,6 +241,15 @@ Implements Ark.MutableBlueprint
 		  Next
 		  
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SpawnPointId(Assigns Value As String)
+		  If Self.mSpawnPointId <> Value Then
+		    Self.mSpawnPointId = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 

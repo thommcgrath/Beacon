@@ -21,6 +21,15 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub BlueprintId(Assigns Value As String)
+		  If Self.mEngramId <> Value Then
+		    Self.mEngramId = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone() As Ark.MutableEngram
 		  Return New Ark.MutableEngram(Self)
 		End Function
@@ -52,6 +61,15 @@ Implements Ark.MutableBlueprint
 		  
 		  Self.mContentPackName = Value
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EngramId(Assigns Value As String)
+		  If Self.mEngramId <> Value Then
+		    Self.mEngramId = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 

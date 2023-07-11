@@ -272,21 +272,28 @@ Protected Class BlueprintController
 		  End If
 		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var ObjectID As String = Blueprint.ObjectID
+		    Var OriginalBlueprintId As String = Blueprint.BlueprintId
+		    Var BlueprintId As String = Blueprint.BlueprintId
 		    
 		    If Blueprint.ContentPackId <> Self.ModID Then
 		      // Need to adjust the mod info to match
 		      Var MutableVersion As Ark.MutableBlueprint = Blueprint.MutableVersion
 		      MutableVersion.ContentPackId = Self.ModID
 		      MutableVersion.ContentPackName = Self.ModName
+		      MutableVersion.RegenerateBlueprintId()
+		      BlueprintId = MutableVersion.BlueprintId
 		      Blueprint = MutableVersion.ImmutableVersion
 		    End If
 		    
-		    Self.mBlueprints.Value(ObjectID) = Blueprint
-		    Self.mBlueprintsToSave.Value(ObjectID) = Blueprint
+		    Self.mBlueprints.Value(BlueprintId) = Blueprint
+		    Self.mBlueprintsToSave.Value(BlueprintId) = Blueprint
 		    
-		    If Self.mBlueprintsToDelete.HasKey(ObjectID) Then
-		      Self.mBlueprintsToDelete.Remove(ObjectID)
+		    If Self.mBlueprintsToDelete.HasKey(BlueprintId) Then
+		      Self.mBlueprintsToDelete.Remove(BlueprintId)
+		    End If
+		    
+		    If BlueprintId <> OriginalBlueprintId And Self.mBlueprintsToDelete.HasKey(OriginalBlueprintId) Then
+		      Self.mBlueprintsToDelete.Remove(OriginalBlueprintId)
 		    End If
 		  Next
 		End Sub

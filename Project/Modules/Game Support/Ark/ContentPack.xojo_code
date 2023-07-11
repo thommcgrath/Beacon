@@ -13,6 +13,21 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Name As String, ContentPackId As String = "")
+		  If ContentPackId.IsEmpty Then
+		    ContentPackId = Beacon.UUID.v4
+		  End If
+		  
+		  Self.mContentPackId = ContentPackId
+		  Self.mIsConsoleSafe = False
+		  Self.mIsDefaultEnabled = False
+		  Self.mIsLocal = True
+		  Self.mLastUpdate = DateTime.Now.SecondsFrom1970
+		  Self.mName = Name
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ContentPackId() As String
 		  Return Self.mContentPackId
 		End Function

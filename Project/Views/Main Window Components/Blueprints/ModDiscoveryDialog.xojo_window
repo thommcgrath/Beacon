@@ -625,6 +625,7 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin Thread RunThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -638,6 +639,7 @@ Begin BeaconDialog ModDiscoveryDialog
       Arguments       =   ""
       Backend         =   ""
       Canonical       =   False
+      Enabled         =   True
       ExecuteMode     =   2
       ExitCode        =   0
       Index           =   -2147483648
@@ -660,6 +662,7 @@ Begin BeaconDialog ModDiscoveryDialog
    End
    Begin TCPSocket RunSocket
       Address         =   "127.0.0.1"
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -723,7 +726,7 @@ End
 		Private Sub Import(Contents As String)
 		  Self.RunThread.AddUserInterfaceUpdate(New Dictionary("message" : "Discovering blueprints…"))
 		  
-		  Var Importer As Ark.BlueprintImporter = Ark.BlueprintImporter.ImportAsDataDumper(Contents)
+		  Var Importer As Ark.BlueprintImporter = Ark.BlueprintImporter.ImportAsDataDumper(Contents, Beacon.UUID.v4)
 		  If Importer Is Nil Or Importer.BlueprintCount = 0 Then
 		    Return
 		  End If
@@ -805,8 +808,9 @@ End
 		      Var Mutable As Ark.MutableBlueprint = Blueprint.MutableVersion
 		      Mutable.ContentPackName = Pack.Name
 		      Mutable.ContentPackId = Pack.ContentPackId
+		      Mutable.RegenerateBlueprintId()
 		      BlueprintsToSave.Add(Mutable)
-		      NewBlueprintIDs.Value(Blueprint.ObjectID) = True
+		      NewBlueprintIDs.Value(Blueprint.BlueprintId) = True
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Pairing blueprint to mod")
 		    End Try

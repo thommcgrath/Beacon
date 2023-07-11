@@ -153,6 +153,12 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function GenerateBlueprintId(ContentPackId As String, Path As String) As String
+		  Return Beacon.UUID.v5(ContentPackId.Lowercase + ":" + Path.Lowercase)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Hash(Extends Blueprint As Ark.Blueprint) As String
 		  #if DebugBuild
@@ -403,6 +409,12 @@ Protected Module Ark
 		Function PickWeightedMember(Extends Members() As Ark.Weighted) As Ark.Weighted
 		  Return PickWeightedMember(Members)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RegenerateBlueprintId(Extends Blueprint As Ark.MutableBlueprint)
+		  Blueprint.BlueprintId = Ark.GenerateBlueprintId(Blueprint.ContentPackId, Blueprint.Path)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

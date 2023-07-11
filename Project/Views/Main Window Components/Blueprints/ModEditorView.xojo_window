@@ -65,6 +65,7 @@ Begin BeaconSubview ModEditorView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -128,7 +129,6 @@ Begin BeaconSubview ModEditorView
    End
    Begin Thread ImporterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -200,7 +200,14 @@ End
 		    Return
 		  End If
 		  
-		  Var Packed() As Dictionary
+		  Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Self.mController.ModID)
+		  If Pack Is Nil Then
+		    // What?
+		    Self.ShowAlert("Could not find mod info", "This error doesn't make sense. Beacon could not find the mod you're editing in its database.")
+		    Return
+		  End If
+		  
+		  Var Blueprints() As Dictionary
 		  Var SelectAll As Boolean = Self.BlueprintList.SelectedRowCount = 0
 		  For Idx As Integer = 0 To Self.BlueprintList.LastRowIndex
 		    If SelectAll Or Self.BlueprintList.RowSelectedAt(Idx) Then
@@ -210,13 +217,20 @@ End
 		        Continue
 		      End If
 		      
-		      Packed.Add(Blueprint.Pack)
+		      Blueprints.Add(Blueprint.Pack)
 		    End If
 		  Next
 		  
+		  Var ExportContents As New Dictionary
+		  ExportContents.Value("version") = 1
+		  ExportContents.Value("minVersion") = 1
+		  ExportContents.Value("generatedWith") = App.BuildNumber
+		  ExportContents.Value("contentPack") = Pack.SaveData
+		  ExportContents.Value("blueprints") = Blueprints
+		  
 		  Var JSON As String
 		  Try
-		    JSON = Beacon.GenerateJSON(Packed, True)
+		    JSON = Beacon.GenerateJSON(ExportContents, True)
 		  Catch Err As RuntimeException
 		    Self.ShowAlert("Could not export blueprints", "There was an error while generating the JSON content: " + Err.Message)
 		    Return
@@ -244,7 +258,7 @@ End
 		  Self.mProgress = New ProgressWindow("Importing blueprints…", "Getting started…")
 		  Self.mProgress.ShowDelayed(Self.TrueWindow)
 		  
-		  Self.mImported = Nil
+		  Self.mImporter = Nil
 		  Self.mContentToImport = Contents.GuessEncoding
 		  Self.ImporterThread.Start
 		  
@@ -499,7 +513,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mImported As Ark.BlueprintImporter
+		Private mImporter As Ark.BlueprintImporter
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -653,7 +667,7 @@ End
 #tag Events ImporterThread
 	#tag Event
 		Sub Run()
-		  Self.mImported = Ark.BlueprintImporter.Import(Self.mContentToImport, Self.mProgress)
+		  Self.mImporter = Ark.BlueprintImporter.Import(Self.mContentToImport, Self.mController.ModID, Self.mProgress)
 		  
 		  Var Dict As New Dictionary
 		  Dict.Value("Action") = "Finished"
@@ -673,26 +687,28 @@ End
 		      Self.Progress = BeaconSubview.ProgressNone
 		      
 		      If Cancelled = False Then
-		        If Self.mImported Is Nil Or Self.mImported.BlueprintCount = 0 Then
+		        If Self.mImporter Is Nil Or Self.mImporter.BlueprintCount = 0 Then
 		          Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
-		        ElseIf Self.mImported.ModCount = 1 Then
+		        ElseIf Self.mImporter.ModCount = 1 Then
 		          // Just import what was found
-		          Var FoundBlueprints() As Ark.Blueprint = Self.mImported.Blueprints
+		          Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
 		          Self.mController.SaveBlueprints(FoundBlueprints)
 		          Self.UpdateList(FoundBlueprints)
 		          Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(FoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
 		        Else
 		          // Show a prompt
-		          Var ChosenTags() As String = SelectModPrefixDialog.Present(Self, Self.mImported)
+		          Var ChosenTags() As String = SelectModPrefixDialog.Present(Self, Self.mImporter)
 		          If ChosenTags.Count > 0 Then
 		            Var ChosenBlueprints() As Ark.Blueprint
-		            Var FoundBlueprints() As Ark.Blueprint = Self.mImported.Blueprints
+		            Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
 		            For Each Tag As String In ChosenTags
 		              Var Prefix As String = "/Game/Mods/" + Tag + "/"
 		              For Each Blueprint As Ark.Blueprint In FoundBlueprints
-		                If Blueprint.Path.BeginsWith(Prefix) Then
-		                  ChosenBlueprints.Add(Blueprint)
+		                If Blueprint.Path.BeginsWith(Prefix) = False Then
+		                  Continue
 		                End If
+		                
+		                ChosenBlueprints.Add(Blueprint)
 		              Next Blueprint
 		            Next Tag
 		            
@@ -703,7 +719,7 @@ End
 		        End If
 		      End If
 		      
-		      Self.mImported = Nil
+		      Self.mImporter = Nil
 		    End Select
 		  Next Dict
 		End Sub

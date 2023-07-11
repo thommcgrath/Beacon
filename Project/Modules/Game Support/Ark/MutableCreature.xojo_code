@@ -37,6 +37,15 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub BlueprintId(Assigns Value As String)
+		  If Self.mCreatureId <> Value Then
+		    Self.mCreatureId = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ClearStats()
 		  Self.mStats = New Dictionary
 		  Self.Modified = True
@@ -108,6 +117,15 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackName(Assigns Value As String)
 		  Self.mContentPackName = Value
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CreatureId(Assigns Value As String)
+		  If Self.mCreatureId <> Value Then
+		    Self.mCreatureId = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 

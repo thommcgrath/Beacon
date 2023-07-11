@@ -50,6 +50,15 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub BlueprintId(Assigns Value As String)
+		  If Self.mLootDropId <> Value Then
+		    Self.mLootDropId = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone() As Ark.MutableLootContainer
 		  Return New Ark.MutableLootContainer(Self)
 		End Function
@@ -174,6 +183,15 @@ Implements Ark.MutableBlueprint
 		Sub LastUpdate(Assigns Value As Double)
 		  If Self.mLastUpdate <> Value THen
 		    Self.mLastUpdate = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LootDropId(Assigns Value As String)
+		  If Self.mLootDropId <> Value Then
+		    Self.mLootDropId = Value
 		    Self.Modified = True
 		  End If
 		End Sub

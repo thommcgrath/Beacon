@@ -14,6 +14,12 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub BlueprintId(Assigns Value As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ContentPackId(Assigns Value As String)
 		  
 		End Sub
