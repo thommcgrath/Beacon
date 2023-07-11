@@ -17,8 +17,8 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
+   MinimumHeight   =   400
+   MinimumWidth    =   500
    Resizeable      =   True
    Title           =   "Save Embedded Blueprints"
    Type            =   8
