@@ -940,7 +940,11 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Integer.FromString(Self.PortField.Text.Trim, Locale.Current)
+			  Try
+			    Return Integer.FromString(Self.PortField.Text.Trim, Locale.Current)
+			  Catch Err As RuntimeException
+			    Return 0
+			  End Try
 			End Get
 		#tag EndGetter
 		#tag Setter
