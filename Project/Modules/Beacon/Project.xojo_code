@@ -436,7 +436,14 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  If SaveData.HasKey("additionalFiles") Then
-		    Project.mAdditionalFiles = SaveData.Value("additionalFiles")
+		    If Project.mUseCompression Then
+		      Project.mAdditionalFiles = SaveData.Value("additionalFiles")
+		    Else
+		      Var AdditionalFiles As Dictionary = SaveData.Value("additionalFiles")
+		      For Each Entry As DictionaryEntry In AdditionalFiles
+		        Project.mAdditionalFiles.Value(Entry.Key) = Beacon.Decompress(DecodeBase64(Entry.Value.StringValue))
+		      Next
+		    End If
 		  End If
 		  Project.AdditionalFilesLoaded()
 		  
@@ -1166,6 +1173,12 @@ Implements ObservationKit.Observable
 		    BOM.UInt64Value(0) = If(ArchiveData.LittleEndian, CType(Beacon.Project.BinaryFormatLEBOM, UInt64), CType(Beacon.Project.BinaryFormatBEBOM, UInt64))
 		    Return BOM + ArchiveData
 		  Else
+		    Var AdditionalFiles As New Dictionary
+		    For Each Entry As DictionaryEntry In Self.mAdditionalFiles
+		      AdditionalFiles.Value(Entry.Key) = EncodeBase64(Beacon.Compress(Entry.Value.StringValue), 0)
+		    Next
+		    ProjectData.Value("additionalFiles") = AdditionalFiles
+		    
 		    Return Beacon.GenerateJSON(ProjectData, True)
 		  End If
 		End Function

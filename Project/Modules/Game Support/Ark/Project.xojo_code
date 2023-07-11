@@ -59,10 +59,6 @@ Inherits Beacon.Project
 		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Beacon.ConfigSet.BaseConfigSet, True))
 		  ManifestData.Value("difficulty") = Difficulty.DifficultyValue
 		  
-		  If Self.UseCompression = False Then
-		    Return
-		  End If
-		  
 		  Var PackSaveData() As Variant
 		  Var PackSaveJson As String = Self.GetFile("Content Packs.json")
 		  If PackSaveJson.IsEmpty = False Then
