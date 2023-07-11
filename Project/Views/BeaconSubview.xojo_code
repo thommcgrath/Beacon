@@ -34,8 +34,9 @@ Implements ObservationKit.Observable
 		    Return False
 		  End If
 		  
-		  If Self.Modified Then
+		  If Self.Modified And IsEventImplemented("ShouldSave") Then
 		    RaiseEvent ShouldSave(False)
+		    Return True
 		  End If
 		End Function
 	#tag EndMenuHandler

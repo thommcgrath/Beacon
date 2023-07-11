@@ -1326,7 +1326,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ReadOnly = True
 		End Sub
 	#tag EndEvent

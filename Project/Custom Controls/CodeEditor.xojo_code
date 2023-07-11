@@ -1,17 +1,17 @@
 #tag Class
 Protected Class CodeEditor
-Inherits ScintillaControlMBS
+Inherits DesktopScintillaControlMBS
 Implements NotificationKit.Receiver
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, App.Notification_AppearanceChanged)
 		  
-		  RaiseEvent Close
+		  RaiseEvent Closing
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  For Idx As Integer = 1 To 4
 		    Self.Margin(Idx).Width = 0
 		  Next Idx
@@ -19,7 +19,7 @@ Implements NotificationKit.Receiver
 		  Self.ScrollWidthTracking = True
 		  Self.RunSetup()
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  
 		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
 		End Sub
@@ -128,8 +128,8 @@ Implements NotificationKit.Receiver
 		  
 		  Var GutterWidth As Integer = Ceiling(Measure.Graphics.TextWidth(LineCount)) + 10
 		  #if TargetWindows
-		    If (Self.TrueWindow Is Nil) = False Then
-		      GutterWidth = GutterWidth * Self.TrueWindow.ScaleFactor
+		    If (Self.Window Is Nil) = False Then
+		      GutterWidth = GutterWidth * Self.Window.ScaleFactor
 		    End If
 		  #endif
 		  Var Margin As ScintillaMarginMBS = Self.Margin(0)
@@ -139,11 +139,11 @@ Implements NotificationKit.Receiver
 
 
 	#tag Hook, Flags = &h0
-		Event Close()
+		Event Closing()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
