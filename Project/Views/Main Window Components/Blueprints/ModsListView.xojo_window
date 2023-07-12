@@ -120,6 +120,7 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -254,8 +255,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ExportSelectedMods()
-		  Var Packs() As Dictionary
-		  Var Filter As New Beacon.StringList
+		  Var Packs() As Ark.ContentPack
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
@@ -268,89 +268,30 @@ End
 		      Continue
 		    End If
 		    
-		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithUUID(WorkshopMod.ModID)
+		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithId(WorkshopMod.ModID)
 		    If Pack Is Nil Then
 		      Continue
 		    End If
 		    
-		    Packs.Add(Pack.SaveData)
-		    Filter.Append(Pack.ContentPackId)
+		    Packs.Add(Pack)
 		  Next
 		  
 		  If Packs.Count = 0 Then
 		    Return
 		  End If
 		  
-		  Var Blueprints() As Ark.Blueprint = DataSource.GetBlueprints("", Filter, "")
-		  If Blueprints.Count = 0 Then
-		    Self.ShowAlert("There are no blueprints to export", "The selected " + If(Blueprints.Count = 1, "mod has", "mods have") + " no blueprints, so there is nothing to export.")
-		    Return
-		  End If
-		  
 		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = "Export.beacondata"
+		  Dialog.SuggestedFileName = "Exported Mods.beacondata"
+		  Dialog.Filter = BeaconFileTypes.BeaconData
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Filenames(1) As String
-		  Filenames(0) = "Main.beacondata"
-		  Filenames(1) = "Blueprints.beacondata"
-		  
-		  Var Manifest As New Dictionary
-		  Manifest.Value("version") = 7
-		  Manifest.Value("isFull") = False
-		  Manifest.Value("files") = Filenames
-		  
-		  Var MainArkData As New Dictionary
-		  MainArkData.Value("contentPacks") = Packs
-		  
-		  Var MainData As New Dictionary
-		  MainData.Value("ark") = MainArkData
-		  
-		  Var Engrams(), Creatures(), SpawnPoints(), LootDrops() As Dictionary
-		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var Packed As Dictionary = Blueprint.Pack
-		    If Packed Is Nil Then
-		      Continue
-		    End If
-		    
-		    Select Case Blueprint
-		    Case IsA Ark.Engram
-		      Engrams.Add(Packed)
-		    Case IsA Ark.Creature
-		      Creatures.Add(Packed)
-		    Case IsA Ark.SpawnPoint
-		      SpawnPoints.Add(Packed)
-		    Case IsA Ark.LootContainer
-		      LootDrops.Add(Packed)
-		    End Select
-		  Next
-		  
-		  Var BlueprintArkData As New Dictionary
-		  If Creatures.Count > 0 Then
-		    BlueprintArkData.Value("creatures") = Creatures
+		  If Ark.BuildExport(Packs, File) = False Then
+		    Self.ShowAlert("Export failed", "The selected " + If(Self.ModsList.SelectedRowCount = 1, "mod was", "mods were") + " not exported. Beacon's log files may have more information.")
 		  End If
-		  If Engrams.Count > 0 Then
-		    BlueprintArkData.Value("engrams") = Engrams
-		  End If
-		  If LootDrops.Count > 0 Then
-		    BlueprintArkData.Value("lootDrops") = LootDrops
-		  End If
-		  If SpawnPoints.Count > 0 Then
-		    BlueprintArkData.Value("spawnPoints") = SpawnPoints
-		  End If
-		  
-		  Var BlueprintData As New Dictionary
-		  BlueprintData.Value("ark") = BlueprintArkData
-		  
-		  Var Archive As Beacon.Archive = Beacon.Archive.Create(File)
-		  Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, False))
-		  Archive.AddFile("Main.beacondata", Beacon.GenerateJSON(MainData, False))
-		  Archive.AddFile("Blueprints.beacondata", Beacon.GenerateJSON(BlueprintData, False))
-		  Call Archive.Finalize
 		End Sub
 	#tag EndMethod
 

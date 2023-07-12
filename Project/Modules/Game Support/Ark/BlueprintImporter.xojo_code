@@ -68,6 +68,13 @@ Protected Class BlueprintImporter
 		Shared Function Import(Contents As String, ContentPackId As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
 		  Var Importer As Ark.BlueprintImporter
 		  
+		  Importer = ImportAsBinary(Contents, Progress)
+		  If (Progress Is Nil) = False ANd Progress.CancelPressed Then
+		    Return Nil
+		  ElseIf (Importer Is Nil) = False Then
+		    Return Importer
+		  End If
+		  
 		  Importer = ImportAsDataDumper(Contents, ContentPackId, Progress)
 		  If (Progress Is Nil) = False And Progress.CancelPressed Then
 		    Return Nil
@@ -88,6 +95,147 @@ Protected Class BlueprintImporter
 		  Else
 		    Return Importer
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ImportAsBinary(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
+		  Var Archive As Beacon.Archive = Beacon.Archive.Open(Contents)
+		  If Archive Is Nil Then
+		    // Not a .beacondata file
+		    Return Nil
+		  End If
+		  
+		  // Return the importer no matter what, because this is an archive file
+		  Var Importer As New Ark.BlueprintImporter
+		  
+		  Var ManifestString As String = Archive.GetFile("Manifest.json")
+		  If ManifestString.IsEmpty Then
+		    Return Importer
+		  End If
+		  
+		  Var Manifest As Dictionary
+		  Var Filenames() As Variant
+		  Try
+		    Manifest = Beacon.ParseJSON(ManifestString)
+		    Filenames = Manifest.Value("files")
+		    If Manifest.Lookup("minVersion", 7).IntegerValue > 7 Then
+		      Return Importer
+		    End If
+		  Catch Err As RuntimeException
+		    Return Importer
+		  End Try
+		  
+		  If (Progress Is Nil) = False Then
+		    Progress.ShowSubProgress = True
+		  End If
+		  
+		  Var NumFiles As Integer = Filenames.Count
+		  Var FilesProcessed As Integer = 0
+		  For Each Filename As Variant In Filenames
+		    If (Progress Is Nil) = False Then
+		      If Progress.CancelPressed Then
+		        Return Nil
+		      End If
+		      
+		      Progress.Detail = "Processing " + Filename + "..."
+		      Progress.Progress = FilesProcessed / NumFiles
+		    End If
+		    
+		    Try
+		      Var FileContents As String = Archive.GetFile(Filename.StringValue)
+		      Var Parsed As Dictionary = Beacon.ParseJSON(FileContents)
+		      Var ArkData As Dictionary = Parsed.Value("ark")
+		      
+		      Var TotalObjects As Integer
+		      Var ObjectsProcessed As Integer
+		      Var ContentPackDicts() As Variant
+		      
+		      If ArkData.HasKey("contentPacks") Then
+		        ContentPackDicts = ArkData.Value("contentPacks")
+		        TotalObjects = TotalObjects + ContentPackDicts.Count
+		      End If
+		      
+		      Var BlueprintArrays() As Variant
+		      Var Keys() As String = Array("engrams", "creatures", "lootDrops", "spawnPoints")
+		      For Each Key As String In Keys
+		        If ArkData.HasKey(Key) Then
+		          Var BlueprintDicts() As Variant = ArkData.Value(Key)
+		          TotalObjects = TotalObjects + BlueprintDicts.Count
+		          BlueprintArrays.Add(BlueprintDicts)
+		        End If
+		      Next
+		      
+		      If (Progress Is Nil) = False Then
+		        Progress.SubProgress = ObjectsProcessed / TotalObjects
+		      End If
+		      
+		      For Each ContentPackDict As Dictionary In ContentPackDicts
+		        If (Progress Is Nil) = False And Progress.CancelPressed Then
+		          Return Nil
+		        End If
+		        
+		        Var ContentPack As Ark.ContentPack = Ark.ContentPack.FromSaveData(ContentPackDict)
+		        If (ContentPack Is Nil) = False Then
+		          Importer.mContentPacks.Add(ContentPack)
+		          If (Progress Is Nil) = False Then
+		            Progress.SubDetail = "Found mod " + ContentPack.Name + "…"
+		          End If
+		        End If
+		        
+		        ObjectsProcessed = ObjectsProcessed + 1
+		        
+		        If (Progress Is Nil) = False Then
+		          Progress.SubProgress = ObjectsProcessed / TotalObjects
+		        End If
+		      Next
+		      
+		      For Each BlueprintArray As Variant In BlueprintArrays
+		        If (Progress Is Nil) = False And Progress.CancelPressed Then
+		          Return Nil
+		        End If
+		        
+		        Var BlueprintDicts() As Variant = BlueprintArray
+		        For Each BlueprintDict As Dictionary In BlueprintDicts
+		          If (Progress Is Nil) = False And Progress.CancelPressed Then
+		            Return Nil
+		          End If
+		          
+		          Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(BlueprintDict)
+		          If (Blueprint Is Nil) = False Then
+		            Importer.mBlueprints.Add(Blueprint)
+		            If (Progress Is Nil) = False Then
+		              Progress.SubDetail = "Found blueprint " + Blueprint.Label + "…"
+		            End If
+		            
+		            If Blueprint.Path.BeginsWith("/Game/Mods/") Then
+		              Var Tag As String = Blueprint.Path.NthField("/", 4)
+		              If Importer.mMods.HasKey(Tag) = False Then
+		                Var ContentPackName As String = Tag
+		                If Blueprint.ContentPackName.IsEmpty = False Then
+		                  ContentPackName = Blueprint.ContentPackName + " (" + Tag + ")"
+		                End If
+		                Importer.mMods.Value(Tag) = ContentPackName
+		              End If
+		            End If
+		          End If
+		          
+		          ObjectsProcessed = ObjectsProcessed + 1
+		          If (Progress Is Nil) = False Then
+		            Progress.SubProgress = ObjectsProcessed / TotalObjects
+		          End If
+		        Next
+		      Next
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    FilesProcessed = FilesProcessed + 1
+		    If (Progress Is Nil) = False Then
+		      Progress.Progress = FilesProcessed / NumFiles
+		    End If
+		  Next
+		  
+		  Return Importer
 		End Function
 	#tag EndMethod
 

@@ -192,53 +192,27 @@ End
 	#tag Method, Flags = &h0
 		Sub Export()
 		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = "Exported Blueprints.json"
-		  Dialog.Filter = BeaconFileTypes.JsonFile
+		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ModName) + Beacon.FileExtensionDelta
+		  Dialog.Filter = BeaconFileTypes.BeaconData
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Self.mController.ModID)
-		  If Pack Is Nil Then
-		    // What?
-		    Self.ShowAlert("Could not find mod info", "This error doesn't make sense. Beacon could not find the mod you're editing in its database.")
-		    Return
-		  End If
-		  
-		  Var Blueprints() As Dictionary
+		  Var Blueprints() As Ark.Blueprint
 		  Var SelectAll As Boolean = Self.BlueprintList.SelectedRowCount = 0
 		  For Idx As Integer = 0 To Self.BlueprintList.LastRowIndex
-		    If SelectAll Or Self.BlueprintList.RowSelectedAt(Idx) Then
-		      Var ObjectID As String = Self.BlueprintList.RowTagAt(Idx)
-		      Var Blueprint As Ark.Blueprint = Self.mController.Blueprint(ObjectID)
-		      If Blueprint Is Nil Then
-		        Continue
-		      End If
-		      
-		      Blueprints.Add(Blueprint.Pack)
+		    If SelectAll = False And Self.BlueprintList.RowSelectedAt(Idx) = False Then
+		      Continue
 		    End If
+		    
+		    Var BlueprintId As String = Self.BlueprintList.RowTagAt(Idx)
+		    Blueprints.Add(Self.mController.Blueprint(BlueprintId))
 		  Next
 		  
-		  Var ExportContents As New Dictionary
-		  ExportContents.Value("version") = 1
-		  ExportContents.Value("minVersion") = 1
-		  ExportContents.Value("generatedWith") = App.BuildNumber
-		  ExportContents.Value("contentPack") = Pack.SaveData
-		  ExportContents.Value("blueprints") = Blueprints
-		  
-		  Var JSON As String
-		  Try
-		    JSON = Beacon.GenerateJSON(ExportContents, True)
-		  Catch Err As RuntimeException
-		    Self.ShowAlert("Could not export blueprints", "There was an error while generating the JSON content: " + Err.Message)
-		    Return
-		  End Try
-		  
-		  If Not File.Write(JSON) Then
-		    Self.ShowAlert("Could not export blueprints", "Beacon was unable to save the JSON file to disk.")
-		    Return
+		  If Ark.BuildExport(Blueprints, File) = False Then
+		    Self.ShowAlert("Export failed", "The selected " + If(SelectAll = False And Self.BlueprintList.SelectedRowCount = 1, "blueprint was", "blueprints were") + " not exported. Beacon's log files may have more information.")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -281,7 +255,7 @@ End
 	#tag Method, Flags = &h0
 		Sub ImportFromFile()
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile + BeaconFileTypes.JsonFile
+		  Dialog.Filter = BeaconFileTypes.BeaconData + BeaconFileTypes.JsonFile + BeaconFileTypes.Text + BeaconFileTypes.CSVFile
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File Is Nil Then

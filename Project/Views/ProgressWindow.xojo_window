@@ -162,6 +162,63 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin DesktopProgressBar SubIndicator
+      AllowAutoDeactivate=   True
+      AllowTabStop    =   True
+      Enabled         =   True
+      Height          =   20
+      Indeterminate   =   False
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumValue    =   100
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   193
+      Transparent     =   False
+      Value           =   50.0
+      Visible         =   False
+      Width           =   460
+   End
+   Begin DesktopLabel SubDetailLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Detail"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   225
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      Width           =   460
+   End
 End
 #tag EndDesktopWindow
 
@@ -320,6 +377,66 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ShowSubProgress() As Boolean
+		  Return Self.mShowSubProgress
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowSubProgress(Assigns Value As Boolean)
+		  If Self.mShowSubProgress = Value Then
+		    Return
+		  End If
+		  
+		  Self.mShowSubProgress = Value
+		  
+		  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
+		    Self.UpdateTimer.RunMode = Timer.RunModes.Single
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SubDetail() As String
+		  Return Self.mSubDetail
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SubDetail(Assigns Value As String)
+		  If Self.mSubDetail = Value Then
+		    Return
+		  End If
+		  
+		  Self.mSubDetail = Value
+		  
+		  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
+		    Self.UpdateTimer.RunMode = Timer.RunModes.Single
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SubProgress() As NullableDouble
+		  Return Self.mSubProgress
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SubProgress(Assigns Value As NullableDouble)
+		  If Self.mSubProgress = Value Then
+		    Return
+		  End If
+		  
+		  Self.mSubProgress = Value
+		  
+		  If Self.UpdateTimer.RunMode = Timer.RunModes.Off Then
+		    Self.UpdateTimer.RunMode = Timer.RunModes.Single
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  If Self.MessageLabel.Text.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
@@ -335,12 +452,15 @@ End
 		  End If
 		  
 		  Var ProgressValue, ProgressMaximum As Integer
+		  Var ProgressIndeterminate As Boolean
 		  If IsNull(Self.mProgress) Then
 		    ProgressMaximum = 0
 		    ProgressValue = 0
+		    ProgressIndeterminate = True
 		  Else
 		    ProgressMaximum = Self.Indicator.Width
 		    ProgressValue = ProgressMaximum * Self.mProgress.DoubleValue
+		    ProgressIndeterminate = False
 		  End If
 		  
 		  If Self.Indicator.MaximumValue <> ProgressMaximum Then
@@ -348,6 +468,59 @@ End
 		  End If
 		  If Self.Indicator.Value <> ProgressValue Then
 		    Self.Indicator.Value = ProgressValue
+		  End If
+		  If Self.Indicator.Indeterminate <> ProgressIndeterminate Then
+		    Self.Indicator.Indeterminate = ProgressIndeterminate
+		  End If
+		  
+		  Var ShowingSubProgress As Boolean = Self.SubIndicator.Visible
+		  
+		  If Self.mShowSubProgress Then
+		    If ShowingSubProgress = False Then
+		      // Change layout
+		      Self.SubIndicator.Visible = True
+		      Self.SubIndicator.Top = Self.DetailLabel.Bottom + 12
+		      Self.SubDetailLabel.Visible = True
+		      Self.SubDetailLabel.Top = Self.SubIndicator.Bottom + 12
+		      Self.CancelButton.Top = Self.SubDetailLabel.Bottom + 12
+		      Self.MaximumHeight = 220
+		      Self.Height = 220
+		      Self.MinimumHeight = 220
+		    End If
+		    
+		    If Self.SubDetailLabel.Text.Compare(Self.mSubDetail, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		      Self.SubDetailLabel.Text = Self.SubDetail
+		    End If
+		    
+		    Var SubProgressValue, SubProgressMaximum As Integer
+		    Var SubProgressIndeterminate As Boolean
+		    If IsNull(Self.mSubProgress) Then
+		      SubProgressMaximum = 0
+		      SubProgressValue = 0
+		      SubProgressIndeterminate = True
+		    Else
+		      SubProgressMaximum = Self.SubIndicator.Width
+		      SubProgressValue = SubProgressMaximum * Self.mSubProgress.DoubleValue
+		      SubProgressIndeterminate = False
+		    End If
+		    
+		    If Self.SubIndicator.MaximumValue <> SubProgressMaximum Then
+		      Self.SubIndicator.MaximumValue = ProgressMaximum
+		    End If
+		    If Self.SubIndicator.Value <> SubProgressValue Then
+		      Self.SubIndicator.Value = SubProgressValue
+		    End If
+		    If Self.SubIndicator.Indeterminate <> SubProgressIndeterminate Then
+		      Self.SubIndicator.Indeterminate = SubProgressIndeterminate
+		    End If
+		  ElseIf ShowingSubProgress = True Then
+		    // Change layout
+		    Self.SubIndicator.Visible = False
+		    Self.SubDetailLabel.Visible = False
+		    Self.CancelButton.Top = Self.DetailLabel.Bottom + 12
+		    Self.MinimumHeight = 156
+		    Self.Height = 156
+		    Self.MaximumHeight = 156
 		  End If
 		End Sub
 	#tag EndMethod
@@ -378,7 +551,19 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mShowSubProgress As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mStartTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSubDetail As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSubProgress As NullableDouble
 	#tag EndProperty
 
 
