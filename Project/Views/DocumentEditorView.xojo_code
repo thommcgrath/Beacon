@@ -78,7 +78,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  
 		  If Self.mAutosaveURL Is Nil Then
 		    Var AutosaveFolder As FolderItem = App.AutosaveFolder(True)
-		    Var AutosaveFile As New BookmarkedFolderItem(AutosaveFolder.Child(Self.Project.UUID + Beacon.FileExtensionProject))
+		    Var AutosaveFile As New BookmarkedFolderItem(AutosaveFolder.Child(Self.Project.ProjectId + Beacon.FileExtensionProject))
 		    If AutosaveFile.Exists = False Then
 		      Call AutosaveFile.Write("")
 		    End If

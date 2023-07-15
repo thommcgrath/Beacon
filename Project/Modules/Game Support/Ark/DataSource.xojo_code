@@ -3073,10 +3073,10 @@ Inherits Beacon.DataSource
 		  End If
 		  If Rows.RowCount > 0 Then
 		    If Rows.Column("last_update").DoubleValue < Pack.LastUpdate Then
-		      Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, workshop_id = ?5, is_local = ?6, last_update = ?7 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.ConsoleSafe, Pack.DefaultEnabled, SteamId, Pack.IsLocal, Pack.LastUpdate)
+		      Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, workshop_id = ?5, is_local = ?6, last_update = ?7 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, SteamId, Pack.IsLocal, Pack.LastUpdate)
 		    End If
 		  Else
-		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, workshop_id, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Pack.ContentPackId, Pack.Name, Pack.ConsoleSafe, Pack.DefaultEnabled, SteamId, Pack.IsLocal, Pack.LastUpdate)
+		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, workshop_id, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, SteamId, Pack.IsLocal, Pack.LastUpdate)
 		  End If
 		End Sub
 	#tag EndMethod

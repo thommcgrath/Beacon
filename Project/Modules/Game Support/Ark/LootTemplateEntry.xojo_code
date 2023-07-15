@@ -156,13 +156,13 @@ Implements Beacon.Countable,Iterable
 		  
 		  Try
 		    If Dict.HasKey("UUID") Then
-		      Entry.UUID = Dict.Value("UUID")
+		      Entry.EntryId = Dict.Value("UUID")
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading UUID value")
 		  End Try
-		  If Entry.UUID.IsEmpty Or v4UUID.IsValid(Entry.UUID) = False Then
-		    Entry.UUID = New v4UUID
+		  If Entry.EntryId.IsEmpty Or Beacon.UUID.Validate(Entry.EntryId) = False Then
+		    Entry.EntryId = Beacon.UUID.v4
 		  End If
 		  
 		  If Dict.HasKey("Items") Then
@@ -475,7 +475,7 @@ Implements Beacon.Countable,Iterable
 		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultipliers
 		  Dict.Value("RespectWeightMultiplier") = Self.mRespectWeightMultipliers
 		  Dict.Value("Weight") = Self.RawWeight
-		  Dict.Value("UUID") = Self.UUID
+		  Dict.Value("UUID") = Self.EntryId
 		  Dict.Value("PreventGrinding") = Self.PreventGrinding
 		  Dict.Value("StatClampMultiplier") = Self.StatClampMultiplier
 		  Dict.Value("SingleItemQuantity") = Self.SingleItemQuantity

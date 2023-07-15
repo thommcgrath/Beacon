@@ -217,7 +217,14 @@ Inherits Beacon.Thread
 		    Var ActiveMods As String = ParsedData.StringValue("ActiveMods", "")
 		    Var ModIDs() As String = ActiveMods.Split(",")
 		    For Each ModID As String In ModIDs
-		      Var ContentPack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithWorkshopID(ModID)
+		      Var SteamId As Double
+		      Try
+		        SteamId = Double.FromString(ModID, Locale.Raw)
+		      Catch Err As RuntimeException
+		        Continue
+		      End Try
+		      
+		      Var ContentPack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithSteamId(SteamId)
 		      If (ContentPack Is Nil) = False Then
 		        Project.ContentPackEnabled(ContentPack) = True
 		      End If

@@ -39,7 +39,9 @@ Protected Class WorkshopMod
 		Sub Constructor(Details As Ark.ContentPack)
 		  Self.mModID = Details.ContentPackId
 		  Self.mName = Details.Name
-		  Self.mWorkshopID = Details.WorkshopID
+		  If (Details.SteamId Is Nil) = False Then
+		    Self.mWorkshopID = Details.SteamId.StringValue(Locale.Raw, "0")
+		  End If
 		  Self.mIsLocalMod = Details.IsLocal
 		  Self.mConfirmed = True
 		End Sub

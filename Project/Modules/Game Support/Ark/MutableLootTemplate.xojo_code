@@ -16,13 +16,13 @@ Inherits Ark.LootTemplate
 		Function AddBlueprintEntries(Sources() As Ark.LootTemplateEntry) As Ark.LootTemplateEntry()
 		  Var MatchingUUIDs() As String
 		  For Idx As Integer = 0 To Sources.LastIndex
-		    MatchingUUIDs.Add(Sources(Idx).UUID)
+		    MatchingUUIDs.Add(Sources(Idx).EntryId)
 		  Next Idx
 		  
 		  Var TotalWeight, MinQualitySum, MaxQualitySum, EntryCount As Double
 		  Var References As New Dictionary
 		  For Idx As Integer = Self.mEntries.FirstIndex To Self.mEntries.LastIndex
-		    If MatchingUUIDs.IndexOf(Self.mEntries(Idx).UUID) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
+		    If MatchingUUIDs.IndexOf(Self.mEntries(Idx).EntryId) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
 		      Continue
 		    End If
 		    

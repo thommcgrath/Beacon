@@ -364,7 +364,7 @@ End
 		  If (SelectEntries Is Nil) = False Then
 		    For Each Entry As Ark.LootItemSetEntry In SelectEntries
 		      If (Entry Is Nil) = False Then
-		        Selected.Add(Entry.UUID)
+		        Selected.Add(Entry.EntryId)
 		      End If
 		    Next
 		    ScrollToSelection = True
@@ -372,7 +372,7 @@ End
 		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.RowSelectedAt(I) Then
 		        Var Entry As Ark.LootItemSetEntry = EntryList.RowTagAt(I)
-		        Selected.Add(Entry.UUID)
+		        Selected.Add(Entry.EntryId)
 		      End If
 		    Next
 		  End If
@@ -466,7 +466,7 @@ End
 		    
 		    EntryList.CellTagAt(Idx, Self.ColumnLabel) = MainColumnTag
 		    EntryList.RowTagAt(Idx) = Entry
-		    EntryList.RowSelectedAt(Idx) = Selected.IndexOf(Entry.UUID) > -1
+		    EntryList.RowSelectedAt(Idx) = Selected.IndexOf(Entry.EntryId) > -1
 		  Next
 		  
 		  Self.EntryList.Sort

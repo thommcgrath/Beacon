@@ -130,6 +130,18 @@ Class NullableDouble
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function StringValue(Locale As Locale = Nil) As String
+		  Return Self.mValue.ToString(Locale)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StringValue(Locale As Locale = Nil, Format As String) As String
+		  Return Self.mValue.ToString(Locale, Format)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function ToVariant(Value As NullableDouble) As Variant
 		  If Value Is Nil Then
 		    Return Nil

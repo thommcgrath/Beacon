@@ -74,13 +74,13 @@ Protected Module DedicatedServer
 		  
 		  Var RewriteError As RuntimeException
 		  
-		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameIniOriginal, Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Ark.Project.UWPCompatibilityModes.Never, False, RewriteError)
+		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameIniOriginal, Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, Ark.Project.UWPCompatibilityModes.Never, False, RewriteError)
 		  If (RewriteError Is Nil) = False Then
 		    App.Log(RewriteError, CurrentMethodName, "Building Game.ini")
 		    Return False
 		  End If
 		  
-		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Ark.Project.UWPCompatibilityModes.Never, False, RewriteError)
+		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, Ark.Project.UWPCompatibilityModes.Never, False, RewriteError)
 		  If (RewriteError Is Nil) = False Then
 		    App.Log(RewriteError, CurrentMethodName, "Building GameUserSettings.ini")
 		    Return False

@@ -87,7 +87,7 @@ Protected Class ProjectController
 		  If (CustomProjectUrl Is Nil) = False Then
 		    Self.mProjectURL = CustomProjectUrl
 		  Else
-		    Self.mProjectURL = Beacon.ProjectURL.TypeTransient + "://" + Project.UUID + "?name=" + EncodeURLComponent(Project.Title) + "&game=" + EncodeURLComponent(Project.GameID.Lowercase)
+		    Self.mProjectURL = Beacon.ProjectURL.TypeTransient + "://" + Project.ProjectId + "?name=" + EncodeURLComponent(Project.Title) + "&game=" + EncodeURLComponent(Project.GameId.Lowercase)
 		  End If
 		  Self.mLoaded = True
 		  Self.mProject = Project
@@ -422,7 +422,7 @@ Protected Class ProjectController
 		    If Self.mProject.KeepLocalBackup Then
 		      Var BackupFolder As FolderItem = App.BackupsFolder.Child("Projects")
 		      If BackupFolder.CheckIsFolder Then
-		        Var BackupFile As FolderItem = BackupFolder.Child(Self.mProject.UUID + ".beacon")
+		        Var BackupFile As FolderItem = BackupFolder.Child(Self.mProject.ProjectId + ".beacon")
 		        Try
 		          Saved = BackupFile.Write(SaveData)
 		        Catch LocalErr As RuntimeException

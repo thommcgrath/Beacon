@@ -36,7 +36,7 @@ Inherits Global.Thread
 		  Var Error As RuntimeException
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameIni) = Self.FlagCreateGameIni Then
-		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Project.UWPMode, False, Error)
+		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Ark.HeaderShooterGame, Ark.ConfigFileGame, Self.mOrganizer, Project.ProjectId, LegacyTrustKey, Format, Project.UWPMode, False, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -47,7 +47,7 @@ Inherits Global.Thread
 		  End If
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameUserSettingsIni) = Self.FlagCreateGameUserSettingsIni Then
-		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Self.mOrganizer, Project.UUID, LegacyTrustKey, Format, Project.UWPMode, False, Error)
+		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Self.mOrganizer, Project.ProjectId, LegacyTrustKey, Format, Project.UWPMode, False, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -553,7 +553,7 @@ Inherits Global.Thread
 		Shared Function Rewrite(Source As Ark.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Project As Ark.Project, Identity As Beacon.Identity, Profile As Ark.ServerProfile, Format As Ark.Rewriter.EncodingFormat, Nuke As Boolean, ByRef Error As RuntimeException) As String
 		  Try
 		    Var Organizer As Ark.ConfigOrganizer = Project.CreateConfigOrganizer(Identity, Profile)
-		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Project.UUID, Project.LegacyTrustKey, Format, Project.UWPMode, Nuke, Error)
+		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, Project.UWPMode, Nuke, Error)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try

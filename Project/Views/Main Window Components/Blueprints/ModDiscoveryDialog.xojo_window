@@ -981,7 +981,14 @@ End
 		  
 		  Var ModIDs() As String = ModsString.Split(",")
 		  For Each ModID As String In ModIDs
-		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithWorkshopID(ModID)
+		    Var SteamId As Double
+		    Try
+		      SteamId = Double.FromString(ModID, Locale.Raw)
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		    
+		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithSteamId(SteamId)
 		    If (Pack Is Nil) = False And Pack.IsLocal = False Then
 		      Self.ShowAlert("Mod already supported", Pack.Name + " (" + ModID + ") is already built into Beacon, there is no need to run discovery on it.")
 		      Return

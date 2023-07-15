@@ -268,6 +268,7 @@ Begin BeaconWindow SupportTicketWindow
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -842,7 +843,7 @@ End
 		Private Sub RefreshDocumentMenu()
 		  Var SelectedDocumentID As String
 		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
-		    SelectedDocumentID = Beacon.Project(Self.DocumentMenu.SelectedRowTag).UUID
+		    SelectedDocumentID = Beacon.Project(Self.DocumentMenu.SelectedRowTag).ProjectId
 		  End If
 		  
 		  Self.DocumentMenu.RemoveAllRows
@@ -863,7 +864,7 @@ End
 		    End If
 		    
 		    Self.DocumentMenu.AddRow(Project.Title, Project)
-		    If Project.UUID = SelectedDocumentID Then
+		    If Project.ProjectId = SelectedDocumentID Then
 		      Self.DocumentMenu.SelectedRowIndex = Self.DocumentMenu.LastAddedRowIndex
 		    End If
 		  Next

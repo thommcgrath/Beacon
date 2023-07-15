@@ -255,6 +255,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       Top             =   94
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   0
       Width           =   433
@@ -314,7 +315,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.mController.Project.NewIdentifier
-		  Var NewURL As String = Beacon.ProjectURL.TypeCloud + "://" + BeaconAPI.URL("projects/" + Self.mController.Project.UUID).Middle(8)
+		  Var NewURL As String = Beacon.ProjectURL.TypeCloud + "://" + BeaconAPI.URL("projects/" + Self.mController.Project.ProjectId).Middle(8)
 		  Self.mController.Project.Title = Self.TitleField.Text
 		  Self.mController.Project.KeepLocalBackup = Self.KeepLocalCheck.Value
 		  Self.mController.SaveAs(NewURL)

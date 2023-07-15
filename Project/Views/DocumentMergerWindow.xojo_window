@@ -255,7 +255,7 @@ End
 		  End If
 		  Var Count As Integer = FoundInDocuments.Count
 		  Var AlreadyInDestination As Boolean
-		  If FoundInDocuments.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1 Then
+		  If FoundInDocuments.IndexOf(Self.mDestination.ProjectId + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1 Then
 		    AlreadyInDestination = True
 		  End If
 		  If FoundInDocuments.IndexOf(ConfigItem.SourceKey) > -1 Then
@@ -325,7 +325,7 @@ End
 		  End If
 		  
 		  Var Count As Integer = FoundInDocuments.Count
-		  Var AlreadyInDestination As Boolean = FoundInDocuments.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1
+		  Var AlreadyInDestination As Boolean = FoundInDocuments.IndexOf(Self.mDestination.ProjectId + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1
 		  
 		  If FoundInDocuments.IndexOf(ConfigItem.SourceKey) > -1 Then
 		    Count = Count - 1
@@ -480,9 +480,9 @@ End
 		    
 		    // Process mod additions
 		    For Each Entry As DictionaryEntry In UniqueContentPacks
-		      Var PackUUID As String = Entry.Key
-		      Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithUUID(PackUUID)
-		      If (Pack Is Nil) = False And ArkProject.ContentPackEnabled(PackUUID) = False Then
+		      Var PackId As String = Entry.Key
+		      Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(PackId)
+		      If (Pack Is Nil) = False And ArkProject.ContentPackEnabled(PackId) = False Then
 		        MergeItems.Add(New Ark.DocumentMergeContentPackItem(Pack))
 		      End If
 		    Next
@@ -551,7 +551,7 @@ End
 		    For Each ConfigSet As Beacon.ConfigSet In ConfigSets
 		      Var Groups() As Ark.ConfigGroup = Ark.Project(Self.mDestination).ImplementedConfigs(ConfigSet)
 		      For Each Group As Ark.ConfigGroup In Groups
-		        ConfigMap.Value(ConfigSet.ConfigSetId + ":" + Group.InternalName) = Array(Self.mDestination.UUID + ":" + ConfigSet.ConfigSetId)
+		        ConfigMap.Value(ConfigSet.ConfigSetId + ":" + Group.InternalName) = Array(Self.mDestination.ProjectId + ":" + ConfigSet.ConfigSetId)
 		      Next
 		    Next
 		    For RowIndex As Integer = 0 To Self.List.LastRowIndex
@@ -614,7 +614,7 @@ End
 		      If ConfigMap.HasKey(Key) Then
 		        Map = ConfigMap.Value(Key)
 		      End If
-		      ShowAsReplace = Map.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1
+		      ShowAsReplace = Map.IndexOf(Self.mDestination.ProjectId + ":" + ConfigItem.DestinationConfigSet.ConfigSetId) > -1
 		    Else
 		      Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ""
 		    End If

@@ -7,8 +7,8 @@ Inherits Beacon.Project
 		    Self.ConsoleSafe = True
 		    
 		    For Each Entry As DictionaryEntry In Self.mContentPacks
-		      Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithUUID(Entry.Key.StringValue)
-		      If (Pack Is Nil Or Pack.ConsoleSafe = False) And Self.mContentPacks.Value(Entry.Key).BooleanValue = True Then
+		      Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Entry.Key.StringValue)
+		      If (Pack Is Nil Or Pack.IsConsoleSafe = False) And Self.mContentPacks.Value(Entry.Key).BooleanValue = True Then
 		        Self.mContentPacks.Value(Entry.Key) = False
 		      End If
 		    Next
@@ -163,7 +163,7 @@ Inherits Beacon.Project
 		        End If
 		      End Select
 		    Catch Err As RuntimeException
-		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.UUID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
+		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.ProjectId + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
 		    End Try
 		  Next
 		  If (ConvertLootScale Is Nil) = False Then
@@ -234,7 +234,7 @@ Inherits Beacon.Project
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
 		    For Each Pack As Ark.ContentPack In AllPacks
 		      If Selections.HasKey(Pack.ContentPackId) = False Then
-		        Selections.Value(Pack.ContentPackId) = Pack.DefaultEnabled And (Pack.ConsoleSafe Or ConsoleMode = False)
+		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And (Pack.IsConsoleSafe Or ConsoleMode = False)
 		      End If
 		    Next
 		    
@@ -248,7 +248,7 @@ Inherits Beacon.Project
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
 		    Var Selections As New Dictionary
 		    For Each Pack As Ark.ContentPack In AllPacks
-		      Selections.Value(Pack.ContentPackId) = (Pack.ConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
+		      Selections.Value(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
 		    Next
 		    
 		    Self.mContentPacks = Selections
@@ -258,7 +258,7 @@ Inherits Beacon.Project
 		      Var Selections As New Dictionary
 		      Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		      For Each Pack As Ark.ContentPack In AllPacks
-		        Selections.Value(Pack.ContentPackId) = Pack.DefaultEnabled And Pack.ConsoleSafe
+		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
 		      Next
 		      
 		      Self.ConsoleSafe = True
@@ -477,7 +477,7 @@ Inherits Beacon.Project
 		  If (DataSource Is Nil) = False Then
 		    Var Packs() As Ark.ContentPack = DataSource.GetContentPacks
 		    For Idx As Integer = 0 To Packs.LastIndex
-		      Self.mContentPacks.Value(Packs(Idx).ContentPackId) = Packs(Idx).DefaultEnabled
+		      Self.mContentPacks.Value(Packs(Idx).ContentPackId) = Packs(Idx).IsDefaultEnabled
 		    Next Idx
 		  End If
 		  If Self.mContentPacks.HasKey(Ark.UserContentPackId) Then

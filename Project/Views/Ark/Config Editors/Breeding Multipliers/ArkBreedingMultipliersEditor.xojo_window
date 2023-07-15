@@ -657,6 +657,7 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
@@ -2208,9 +2209,9 @@ End
 		    Var ContentPackIds As Beacon.StringList = Self.Project.ContentPacks
 		    Var SteamIds As New Beacon.StringList
 		    For Each ContentPackId As String In ContentPackIds
-		      Var ContentPack As Ark.ContentPack = DataSource.GetContentPackWithUUID(ContentPackId)
-		      If ContentPack.IsLocal = False And ContentPack.Type = Ark.ContentPack.Types.Steam And (ContentPack.WorkshopID Is Nil) = False Then
-		        SteamIds.Append(ContentPack.WorkshopID)
+		      Var ContentPack As Ark.ContentPack = DataSource.GetContentPackWithID(ContentPackId)
+		      If ContentPack.IsLocal = False And ContentPack.Type = Ark.ContentPack.Types.Steam And (ContentPack.SteamId Is Nil) = False Then
+		        SteamIds.Append(ContentPack.SteamId.StringValue(Locale.Raw, "0"))
 		      End If
 		    Next
 		    If SteamIds.Count > 0 Then

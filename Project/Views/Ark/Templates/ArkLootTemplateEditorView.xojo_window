@@ -577,6 +577,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -633,6 +634,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PageSize        =   100
          PreferencesKey  =   ""
          RequiresSelection=   False
          RowSelectionType=   1
@@ -887,14 +889,14 @@ End
 		    Var OriginalEntry As Ark.LootTemplateEntry
 		    Var OriginalIndex As Integer = -1
 		    For Idx As Integer = 0 To Self.mTemplate.LastIndex
-		      If Self.mTemplate(Idx).UUID = NewEntry.UUID Then
+		      If Self.mTemplate(Idx).EntryId = NewEntry.EntryId Then
 		        OriginalEntry = Self.mTemplate(Idx)
 		        OriginalIndex = Idx
 		        Exit For Idx
 		      End If
 		    Next
 		    If OriginalIndex = -1 Then
-		      System.DebugLog("Unable to find original entry " + NewEntry.UUID)
+		      System.DebugLog("Unable to find original entry " + NewEntry.EntryId)
 		      Break
 		      Return
 		    End If
@@ -906,7 +908,7 @@ End
 		    Self.mTemplate(OriginalIndex) = Item
 		    
 		    For Idx As Integer = 0 To ContentsList.RowCount - 1
-		      If Ark.LootTemplateEntry(ContentsList.RowTagAt(Idx)).UUID = OriginalEntry.UUID Then
+		      If Ark.LootTemplateEntry(ContentsList.RowTagAt(Idx)).EntryId = OriginalEntry.EntryId Then
 		        Self.PutEntryInRow(Item, Idx, Maps)
 		        Exit For Idx
 		      End If
@@ -1089,7 +1091,7 @@ End
 		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
 		    If Self.ContentsList.RowSelectedAt(I) Then
 		      Var Entry As Ark.MutableLootTemplateEntry = Self.ContentsList.RowTagAt(I)
-		      SelectedEntryIds.Add(Entry.UUID)
+		      SelectedEntryIds.Add(Entry.EntryId)
 		    End If
 		  Next
 		  Self.UpdateUI(SelectedEntryIds)
@@ -1109,7 +1111,7 @@ End
 		      Continue
 		    End If
 		    
-		    SelectedEntryIds.Add(Entry.UUID)
+		    SelectedEntryIds.Add(Entry.EntryId)
 		  Next
 		  
 		  Self.UpdateUI(SelectedEntryIds)
@@ -1136,7 +1138,7 @@ End
 		  Var Maps() As Ark.Map = Self.FilteredMaps()
 		  Self.ContentsList.RemoveAllRows()
 		  For Each Entry As Ark.LootTemplateEntry In Self.mTemplate
-		    Self.PutEntryInRow(Entry, -1, Maps, SelectedEntryIds.IndexOf(Entry.UUID) > -1)
+		    Self.PutEntryInRow(Entry, -1, Maps, SelectedEntryIds.IndexOf(Entry.EntryId) > -1)
 		  Next
 		  Self.ContentsList.Sort
 		  

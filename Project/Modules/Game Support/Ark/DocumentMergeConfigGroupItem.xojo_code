@@ -24,7 +24,7 @@ Inherits Beacon.DocumentMergeItem
 
 	#tag Method, Flags = &h0
 		Function SourceKey() As String
-		  Return Self.SourceProject.UUID + ":" + If((Self.SourceConfigSet Is Nil) = False, Self.SourceConfigSet.ConfigSetId, "")
+		  Return Self.SourceProject.ProjectId + ":" + If((Self.SourceConfigSet Is Nil) = False, Self.SourceConfigSet.ConfigSetId, "")
 		End Function
 	#tag EndMethod
 

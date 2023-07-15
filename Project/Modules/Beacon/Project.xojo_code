@@ -1262,12 +1262,6 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "ProjectId" )  Function UUID() As String
-		  Return Self.mProjectId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Validate() As Beacon.ProjectValidationResults
 		  Var Issues As New Beacon.ProjectValidationResults
 		  RaiseEvent Validate(Issues)

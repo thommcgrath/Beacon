@@ -199,7 +199,7 @@ Inherits Ark.ConfigGroup
 		    
 		    Var LookupKey As String = Key.Key
 		    Var Pack As Ark.ContentPack = ContentPackLookup.Lookup(Key.ContentPackId, Nil)
-		    If (Pack Is Nil) = False And Pack.ConsoleSafe = False Then
+		    If (Pack Is Nil) = False And Pack.IsConsoleSafe = False Then
 		      LookupKey = Key.Header + "." + Key.Key
 		    End If
 		    

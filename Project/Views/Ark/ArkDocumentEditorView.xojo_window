@@ -318,9 +318,9 @@ End
 	#tag Event
 		Sub Opening()
 		  If (Self.Project Is Nil) = False Then
-		    Var UUID As String = Self.Project.UUID
-		    Var LastConfigName As String = Preferences.ProjectState(UUID, "Editor", "")
-		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(UUID, "Config Set", "").StringValue)
+		    Var ProjectId As String = Self.Project.ProjectId
+		    Var LastConfigName As String = Preferences.ProjectState(ProjectId, "Editor", "")
+		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(ProjectId, "Config Set", "").StringValue)
 		    If LastConfigName.IsEmpty Or LastConfigSet Is Nil Then
 		      If Self.URL.Scheme = Beacon.ProjectURL.TypeWeb Then
 		        LastConfigName = Ark.Configs.NameMetadataPsuedo
@@ -487,7 +487,7 @@ End
 		    For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
 		      Var Key As Variant = Self.mEditorRefs.Key(I)
 		      Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
-		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.UUID <> Self.Project.UUID Then
+		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.ProjectId <> Self.Project.ProjectId Then
 		        OtherProjects.Add(DocumentEditorView(Ref.Value).Project)
 		      End If
 		    Next
@@ -522,7 +522,7 @@ End
 		  If Self.mEditorRefs Is Nil Then
 		    Self.mEditorRefs = New Dictionary
 		  End If
-		  Self.mEditorRefs.Value(Controller.Project.UUID) = New WeakRef(Self)
+		  Self.mEditorRefs.Value(Controller.Project.ProjectId) = New WeakRef(Self)
 		  
 		  Self.Panels = New Dictionary
 		  
@@ -581,8 +581,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  If (Self.mEditorRefs Is Nil) = False And Self.mEditorRefs.HasKey(Self.Project.UUID) Then
-		    Self.mEditorRefs.Remove(Self.Project.UUID)
+		  If (Self.mEditorRefs Is Nil) = False And Self.mEditorRefs.HasKey(Self.Project.ProjectId) Then
+		    Self.mEditorRefs.Remove(Self.Project.ProjectId)
 		  End If
 		  
 		  If (Self.mMapsPopoverController Is Nil) = False Then
@@ -1063,7 +1063,7 @@ End
 			  Self.UpdateConfigList
 			  
 			  If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
-			    Preferences.ProjectState(Self.Project.UUID, "Config Set") = Value.Name
+			    Preferences.ProjectState(Self.Project.ProjectId, "Config Set") = Value.Name
 			  End If
 			  
 			  Self.CurrentConfigName = ConfigName
@@ -1096,7 +1096,7 @@ End
 			    Var CacheKey As String = Self.ActiveConfigSet.ConfigSetId + ":" + Value
 			    
 			    If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
-			      Preferences.ProjectState(Self.Project.UUID, "Editor") = Value
+			      Preferences.ProjectState(Self.Project.ProjectId, "Editor") = Value
 			    End If
 			    
 			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)

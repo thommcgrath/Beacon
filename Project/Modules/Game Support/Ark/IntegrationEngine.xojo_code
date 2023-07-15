@@ -61,7 +61,7 @@ Inherits Beacon.IntegrationEngine
 		  Var RewriteError As RuntimeException
 		  
 		  Self.EnterResourceIntenseMode()
-		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameIniOriginal, Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.UUID, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
+		  Var GameIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameIniOriginal, Ark.HeaderShooterGame, Ark.ConfigFileGame, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
 		  Self.ExitResourceIntenseMode()
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
@@ -69,7 +69,7 @@ Inherits Beacon.IntegrationEngine
 		  End If
 		  
 		  Self.EnterResourceIntenseMode()
-		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.UUID, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
+		  Var GameUserSettingsIniRewritten As String = Ark.Rewriter.Rewrite(Ark.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Ark.HeaderServerSettings, Ark.ConfigFileGameUserSettings, Organizer, Project.ProjectId, Project.LegacyTrustKey, Format, UWPMode, Self.NukeEnabled, RewriteError)
 		  Self.ExitResourceIntenseMode()
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)

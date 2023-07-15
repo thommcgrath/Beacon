@@ -419,7 +419,7 @@ End
 		  Var Bound As Integer = Self.PageCount - 1
 		  For Idx As Integer = 0 To Bound
 		    Var Page As BeaconSubview = Self.Page(Idx)
-		    If Page IsA DocumentEditorView And (DocumentEditorView(Page).Project Is Nil) = False And DocumentEditorView(Page).Project.UUID = Project.UUID Then
+		    If Page IsA DocumentEditorView And (DocumentEditorView(Page).Project Is Nil) = False And DocumentEditorView(Page).Project.ProjectId = Project.ProjectId Then
 		      Return DocumentEditorView(Page)
 		    End If
 		  Next

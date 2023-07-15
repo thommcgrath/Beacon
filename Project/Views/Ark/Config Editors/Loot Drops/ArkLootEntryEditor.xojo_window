@@ -639,7 +639,7 @@ End
 		  Var PackList As New Beacon.StringList
 		  Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		  For Each Pack As Ark.ContentPack In ContentPacks
-		    If TemplatePacksDict.Lookup(Pack.ContentPackId, Pack.DefaultEnabled).BooleanValue = True Then
+		    If TemplatePacksDict.Lookup(Pack.ContentPackId, Pack.IsDefaultEnabled).BooleanValue = True Then
 		      PackList.Append(Pack.ContentPackId)
 		    End If
 		  Next

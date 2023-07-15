@@ -629,7 +629,7 @@ End
 		  If Me.Value Then
 		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		    For Each Pack As Ark.ContentPack In ContentPacks
-		      If Pack.ConsoleSafe = False Then
+		      If Pack.IsConsoleSafe = False Then
 		        Self.Project.ContentPackEnabled(Pack.ContentPackId) = False
 		      End If
 		    Next
