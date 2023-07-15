@@ -168,11 +168,13 @@ Protected Module BeaconEncryption
 	#tag Method, Flags = &h1
 		Protected Function SlowDecrypt(Key As String, Source As String) As MemoryBlock
 		  Var Parts() As String = Source.Split(":")
+		  #Pragma BreakOnExceptions False
 		  If Parts.Count <> 4 Then
 		    Var Err As New CryptoException
 		    Err.Message = "Incorrect number of parts"
 		    Raise Err
 		  End If
+		  #Pragma BreakOnExceptions Default
 		  
 		  Var Encrypted As MemoryBlock = DecodeBase64(Parts(0))
 		  Var Salt As MemoryBlock = DecodeBase64(Parts(1))

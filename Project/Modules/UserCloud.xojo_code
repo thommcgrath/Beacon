@@ -133,6 +133,23 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function GetWriter(RemotePath As String) As UserCloud.FileWriter
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
+		  If LocalFile Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var OriginalHash As String
+		  If LocalFile.Exists Then
+		    Var ExistingContent As MemoryBlock = LocalFile.Read
+		    OriginalHash = EncodeHex(Crypto.SHA2_256(ExistingContent))
+		  End If
+		  
+		  Return New UserCloud.FileWriter(RemotePath, LocalFile, OriginalHash)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function HasPendingSync() As Boolean
 		  Return SyncKey.IsEmpty = False
 		End Function
@@ -583,6 +600,26 @@ Protected Module UserCloud
 		  End If
 		  
 		  SetActionForPath(RemotePath, "PUT")
+		  Sync()
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Write(Writer As UserCloud.FileWriter) As Boolean
+		  If Writer Is Nil Or Writer.LocalFile.Exists = False Then
+		    Return False
+		  End If
+		  
+		  Var NewContent As MemoryBlock = Writer.LocalFile.Read()
+		  Var NewHash As String = EncodeHex(Crypto.SHA2_256(NewContent))
+		  
+		  If NewHash = Writer.OriginalHash Then
+		    // No changes were made
+		    Return True
+		  End If
+		  
+		  SetActionForPath(Writer.RemotePath, "PUT")
 		  Sync()
 		  Return True
 		End Function

@@ -603,6 +603,7 @@ DesktopWindow=ArkLinkAccountDialog;Views/Ark/Config Editors/Accounts/ArkLinkAcco
 Module=Cache;Modules/Beacon/Cache.xojo_code;&h000000003EDE9FFF;&h0000000055ADDFFF;false
 MultiImage=IconToolbarGift;Icons/IconToolbarGift.xojo_image;&h000000003B445FFF;&h0000000007F977FF;false
 DesktopWindow=ArkSaveBlueprintsDialog;Views/Ark/General Dialogs/ArkSaveBlueprintsDialog.xojo_window;&h0000000028453FFF;&h00000000524BBFFF;false
+Class=FileWriter;Modules/UserCloud/FileWriter.xojo_code;&h000000005F4627FF;&h0000000015A337FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=7

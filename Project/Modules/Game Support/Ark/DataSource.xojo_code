@@ -1,6 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id TEXT UNIQUE, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
@@ -77,78 +78,27 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ExportCloudFiles()
-		  Var Packed() As Dictionary
-		  Var UserPacks() As Ark.ContentPack = Self.GetContentPacks(Ark.ContentPack.Types.Custom)
-		  If UserPacks.Count > 0 Then
-		    Var Packs As New Beacon.StringList()
-		    For Each Pack As Ark.ContentPack In UserPacks
-		      Packs.Append(Pack.ContentPackId)
-		      
-		      If Pack.IsLocal = False Or Pack.ContentPackId = Ark.UserContentPackId Then
-		        Continue
-		      End If
-		      
-		      Packed.Add(Pack.SaveData)
-		    Next
-		    
-		    // Check this, because an empty array will select *everything*
-		    If Packs.Count > 0 Then
-		      Var Engrams() As Ark.Engram = Self.GetEngrams("", Packs, "")
-		      For Each Engram As Ark.Engram In Engrams
-		        Var Dict As Dictionary = Engram.Pack
-		        If Dict Is Nil Then
-		          Continue
-		        End If
-		        
-		        Packed.Add(Dict)
-		      Next
-		      
-		      Var Creatures() As Ark.Creature = Self.GetCreatures("", Packs, "")
-		      For Each Creature As Ark.Creature In Creatures
-		        Var Dict As Dictionary = Creature.Pack
-		        If Dict Is Nil Then
-		          Continue
-		        End If
-		        
-		        Packed.Add(Dict)
-		      Next
-		      
-		      Var SpawnPoints() As Ark.SpawnPoint = Self.GetSpawnPoints("", Packs, "")
-		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
-		        Var Dict As Dictionary = SpawnPoint.Pack
-		        If Dict Is Nil Then
-		          Continue
-		        End If
-		        
-		        Packed.Add(Dict)
-		      Next
-		      
-		      Var Containers() As Ark.LootContainer = Self.GetLootContainers("", Packs, "")
-		      For Each Container As Ark.LootContainer In Containers
-		        Var Dict As Dictionary = Container.Pack
-		        If Dict Is Nil Then
-		          Continue
-		        End If
-		        
-		        Packed.Add(Dict)
-		      Next
-		    End If
-		  End If
-		  
-		  If Packed.Count > 0 Then
-		    Var Content As String
-		    Try
-		      Content = Beacon.GenerateJSON(Packed, True)
-		      Call UserCloud.Write("/Ark/Blueprints.json", Content)
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Trying to write packed blueprints to disk.")
-		    End Try
-		  Else
-		    Call UserCloud.Delete("/Ark/Blueprints.json")
-		  End If
-		  
 		  // Clean up legacy stuff
 		  Call UserCloud.Delete("/Blueprints.json")
+		  Call UserCloud.Delete("/Ark/Blueprints.json")
+		  
+		  Const Filename = "/Ark/Blueprints" + Beacon.FileExtensionDelta
+		  Var UserPacks() As Ark.ContentPack = Self.GetContentPacks(Ark.ContentPack.Types.Custom)
+		  If UserPacks.Count = 0 Then
+		    Call UserCloud.Delete(Filename)
+		    Return
+		  End If
+		  
+		  Var Writer As UserCloud.FileWriter = UserCloud.GetWriter(Filename)
+		  If Writer Is Nil Then
+		    Return
+		  End If
+		  
+		  If Ark.BuildExport(UserPacks, Writer.LocalFile) = False Then
+		    Return
+		  End If
+		  
+		  Call UserCloud.Write(Writer)
 		End Sub
 	#tag EndEvent
 
@@ -550,28 +500,79 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ImportCloudFiles()
-		  Var LegacyMode As Boolean
-		  Var PossibleFilenames() As String = Array("/Ark/Blueprints.json", "/Blueprints.json", "/Engrams.json")
+		  Const ModeBinary = 3
+		  Const ModeJson = 2
+		  Const ModeLegacy = 1
+		  Const ModeNone = 0
+		  
+		  Var Mode As Integer = ModeNone
+		  Var PossibleFilenames() As String = Array("/Ark/Blueprints" + Beacon.FileExtensionDelta, "/Ark/Blueprints.json", "/Blueprints.json", "/Engrams.json")
 		  Var EngramsContent As MemoryBlock
+		  Var MatchedFilename As String
 		  For Each Filename As String In PossibleFilenames
 		    EngramsContent = UserCloud.Read(Filename)
 		    If EngramsContent Is Nil Then
 		      Continue
 		    End If
-		    LegacyMode = (Filename = "/Engrams.json")
+		    
+		    Select Case Filename
+		    Case "/Ark/Blueprints" + Beacon.FileExtensionDelta
+		      Mode = ModeBinary
+		    Case "/Ark/Blueprints.json", "/Blueprints.json"
+		      Mode = ModeJson
+		    Case "/Engrams.json"
+		      Mode = ModeLegacy
+		    End Select
+		    
+		    MatchedFilename = Filename
 		    Exit For Filename
-		  Next Filename
+		  Next
 		  
-		  Var Blueprints() As Variant
-		  If (EngramsContent Is Nil) = False Then
+		  Select Case Mode
+		  Case ModeBinary
+		    Self.BeginTransaction()
+		    Var ContentPacks() As Ark.ContentPack = Self.GetContentPacks(Ark.ContentPack.Types.Custom)
+		    For Each ContentPack As Ark.ContentPack In ContentPacks
+		      Call Self.DeleteContentPack(ContentPack)
+		    Next
+		    
+		    Try
+		      Var Importer As Ark.BlueprintImporter = Ark.BlueprintImporter.ImportAsBinary(EngramsContent)
+		      If Importer Is Nil Then
+		        App.Log("Could not import Ark cloud files because data file is damaged.")
+		        Self.RollbackTransaction()
+		        Return
+		      End If
+		      
+		      ContentPacks = Importer.ContentPacks
+		      For Each ContentPack As Ark.ContentPack In ContentPacks
+		        Self.SaveContentPack(ContentPack)
+		      Next
+		      
+		      Var Blueprints() As Ark.Blueprint = Importer.Blueprints
+		      Var BlueprintsToDelete() As String
+		      Var Now As Double = DateTime.Now.SecondsFrom1970
+		      If Self.SaveBlueprints(Blueprints, BlueprintsToDelete, Nil, True, Now) = False Then
+		        App.Log("There was an error saving blueprints to database.")
+		        Self.RollbackTransaction()
+		        Return
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Importing Ark user blueprints")
+		      Self.RollbackTransaction()
+		      Return
+		    End Try
+		    
+		    Self.CommitTransaction()
+		  Case ModeJson
+		    Var Blueprints() As Variant
 		    Try
 		      Var StringContent As String = EngramsContent
 		      Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
 		    Catch Err As RuntimeException
 		      Return
 		    End Try
-		  End If
-		  If Not LegacyMode Then
+		    
 		    Self.BeginTransaction()
 		    Var Packs() As Ark.ContentPack = Self.GetContentPacks(Ark.ContentPack.Types.Custom)
 		    Var KeepPacks As New Beacon.StringList
@@ -582,7 +583,7 @@ Inherits Beacon.DataSource
 		      Else
 		        RemovePacks.Append(Packs(Idx).ContentPackId)
 		      End If
-		    Next Idx
+		    Next
 		    
 		    Var Unpacked() As Ark.Blueprint
 		    For Each Dict As Dictionary In Blueprints
@@ -611,7 +612,15 @@ Inherits Beacon.DataSource
 		      Call Self.DeleteContentPack(ContentPackId)
 		    Next ContentPackId
 		    Self.CommitTransaction()
-		  Else
+		  Case ModeLegacy
+		    Var Blueprints() As Variant
+		    Try
+		      Var StringContent As String = EngramsContent
+		      Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
+		    Catch Err As RuntimeException
+		      Return
+		    End Try
+		    
 		    Self.BeginTransaction()
 		    Self.DeleteDataForContentPack(Ark.UserContentPackId)
 		    
@@ -642,7 +651,7 @@ Inherits Beacon.DataSource
 		      End Try
 		    Next
 		    Self.CommitTransaction()
-		  End If
+		  End Select
 		End Sub
 	#tag EndEvent
 
@@ -739,7 +748,6 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Var CacheDict As Dictionary
 		  Select Case Blueprint
 		  Case IsA Ark.Creature
 		    Self.Cache(Ark.Creature(Blueprint))
@@ -1024,7 +1032,9 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function DeleteContentPack(ContentPackId As String) As Boolean
 		  If ContentPackId = Ark.UserContentPackId Then
-		    Return False
+		    Self.DeleteDataForContentPack(ContentPackId)
+		    Self.ExportCloudFiles()
+		    Return True
 		  End If
 		  
 		  Self.BeginTransaction()

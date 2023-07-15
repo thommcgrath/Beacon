@@ -98,7 +98,6 @@ Inherits Beacon.Project
 		      Continue
 		    End If
 		    
-		    Var CachedPack As Ark.ContentPack
 		    If PacksCache.HasKey(LocalPack.ContentPackId) = True And Ark.ContentPack(PacksCache.Value(LocalPack.ContentPackId)).LastUpdate >= LocalPack.LastUpdate Then
 		      Continue
 		    End If

@@ -65,8 +65,8 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function BuildExport(Blueprints() As Ark.Blueprint, Destination As FolderItem) As Boolean
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Blueprints() As Ark.Blueprint, Destination As FolderItem) As Boolean
 		  If Blueprints Is Nil Or Blueprints.Count = 0 Or Destination Is Nil Then
 		    App.Log("Could not export blueprints because the destination is invalid or there are no blueprints to export.")
 		    Return False
@@ -148,8 +148,8 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function BuildExport(ContentPacks() As Ark.ContentPack, Destination As FolderItem) As Boolean
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(ContentPacks() As Ark.ContentPack, Destination As FolderItem) As Boolean
 		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Or Destination Is Nil Then
 		    App.Log("Could not export blueprints because the destination is invalid or there are no mods to export.")
 		    Return False
