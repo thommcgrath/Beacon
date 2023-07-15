@@ -6,13 +6,13 @@ use BeaconCommon, BeaconRecordSet, DateTime, JsonSerializable;
 
 class Color extends DatabaseObject implements JsonSerializable {
 	protected int $colorId;
-	protected string $name;
+	protected string $label;
 	protected string $code;
 	protected int $lastUpdate;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		$this->colorId = intval($row->Field('color_id'));
-		$this->name = $row->Field('color_name');
+		$this->label = $row->Field('color_name');
 		$this->code = $row->Field('color_code');
 		$this->lastUpdate = round($row->Field('last_update'));
 	}
@@ -20,7 +20,7 @@ class Color extends DatabaseObject implements JsonSerializable {
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		return new DatabaseSchema('ark', 'colors', [
 			New DatabaseObjectProperty('colorId', ['primaryKey' => true, 'columnName' => 'color_id']),
-			New DatabaseObjectProperty('name', ['columnName' => 'color_name']),
+			New DatabaseObjectProperty('label', ['columnName' => 'color_name']),
 			New DatabaseObjectProperty('code', ['columnName' => 'color_code']),
 			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)'])
 		]);
@@ -74,7 +74,7 @@ class Color extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'colorId' => $this->colorId,
-			'name' => $this->name,
+			'label' => $this->label,
 			'code' => $this->code,
 			'lastUpdate' => $this->lastUpdate
 		];
@@ -85,7 +85,7 @@ class Color extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public function Label(): string {
-		return $this->name;
+		return $this->label;
 	}
 	
 	public function Hex(): string {

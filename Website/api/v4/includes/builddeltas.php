@@ -21,32 +21,34 @@ if (is_null($rows->Field('since')) == false) {
 }
 
 // Start getting the archive ready
-$completeArchive = new Archiver('Complete');
+$completeArchive = new Archiver('Complete', true, $lastDatabaseUpdate->getTimestamp());
 BuildMainFile($completeArchive, null);
+
+// Need to find the mods that have changes since the last run
+$packs = ContentPack::Search(['isIncludedInDeltas' => true], true);
+$packIds = [];
+foreach ($packs as $pack) {
+	$packIds[$pack->ContentPackId()] = $pack;
+	BuildArkContentPackFile($completeArchive, null, $pack);
+}
 
 // And delta archive
 $deltaArchive = null;
 if ($buildDeltas) {
-	$deltaArchive = new Archiver($deltaLabel);
+	$deltaArchive = new Archiver($deltaLabel, false, $lastDatabaseUpdate->getTimestamp());
 	BuildMainFile($deltaArchive, $since);
-}
-
-// Need to find the mods that have changes since the last run
-$rows = $database->Query("SELECT mod_id FROM ark.mod_update_times WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
-while (!$rows->EOF()) {
-	$pack = ContentPack::Fetch($rows->Field('mod_id'));
-	if ($pack->IsIncludedInDeltas() === false) {
-		$rows->MoveNext();
-		continue;
-	}
 	
-	BuildArkContentPackFile($completeArchive, null, $pack);
-	
-	if ($buildDeltas) {
+	$rows = $database->Query("SELECT mod_id FROM ark.mod_update_times WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
+	while (!$rows->EOF()) {
+		$pack = $packIds[$rows->Field('mod_id')];
+		if ($pack->IsIncludedInDeltas() === false) {
+			$rows->MoveNext();
+			continue;
+		}
+		
 		BuildArkContentPackFile($deltaArchive, $since, $pack);
+		$rows->MoveNext();
 	}
-	
-	$rows->MoveNext();
 }
 
 $completeUrl = $completeArchive->Upload($cdn, $root, 'Complete.beacondata');
@@ -103,18 +105,14 @@ function BuildFile(array $settings): void {
 	}
 	
 	$filters = [
-		'isIncludedInDeltas' => true
+		'isIncludedInDeltas' => true,
+		'isConfirmed' => true
 	];
 	if ($isComplete === false) {
-		$filters['lastUpdate'] = $since->format('Y-m-d H:i:s');
+		$filters['lastUpdate'] = $since->getTimestamp();
 	}
 	
-	$file = [
-		'timestamp' => $lastDatabaseUpdate->getTimestamp(),
-		'isFull' => true,
-		'version' => $version
-	];
-	
+	$file = [];
 	$ark = [];
 	$common = [];
 	
@@ -156,7 +154,7 @@ function BuildFile(array $settings): void {
 			'spawnPoints' => SpawnPoint::Search($filters, true)
 		];
 		
-		$packName = BeaconCommon::SanitizeFilename($pack->Name());
+		$packName = BeaconCommon::SanitizeFilename($pack->SteamId() . ' - ' . $pack->Name());
 		$localName = "$packName.beacondata";
 		break;
 	default:
@@ -198,13 +196,28 @@ class Archiver {
 	protected $path;
 	protected $manifest;
 	
-	public function __construct(string $label) {
+	public function __construct(string $label, bool $isFull, int $timestamp) {
 		$this->label = $label;
 		$this->path = tempnam(sys_get_temp_dir(), $label) . '.tar';
 		$this->archive = new PharData($this->path);
 		$this->manifest = [
+			'version' => 7,
+			'isFull' => $isFull,
+			'timestamp' => $timestamp,
 			'files' => []
 		];
+	}
+	
+	public function GetManifestValue(string $key): mixed {
+		if (array_key_exists($key, $this->manifest)) {
+			return $this->manifest[$key];
+		} else {
+			return null;
+		}	
+	}
+	
+	public function SetManifestValue(string $key, mixed $value): void {
+		$this->manifest[$key] = $value;
 	}
 	
 	public function AddFile(string $localPath, string $content, bool $first = false): void {

@@ -160,7 +160,7 @@ class ConfigOption extends GenericObject {
 			$json['nitradoEquivalent'] = [
 				'path' => $this->nitradoPath,
 				'format' => $this->nitradoFormat,
-				'deploy_style' => $this->nitradoDeployStyle
+				'deployStyle' => $this->nitradoDeployStyle
 			];
 		}
 		$json['uiGroup'] = $this->uiGroup;
