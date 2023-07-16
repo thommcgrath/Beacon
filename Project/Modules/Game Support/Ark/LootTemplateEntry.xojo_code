@@ -502,12 +502,6 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "EntryId" )  Function UUID() As String
-		  Return Self.mEntryId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Ark.Map) As Boolean
 		  Return Self.ValidForMask(Map.Mask)
 		End Function

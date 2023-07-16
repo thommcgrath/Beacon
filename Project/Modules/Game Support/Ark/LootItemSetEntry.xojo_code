@@ -878,13 +878,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "EntryId" )  Function UUID(Create As Boolean = True) As String
-		  #Pragma Unused Create
-		  Return Self.mEntryId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 		  // Part of the Beacon.Validateable interface.
 		  

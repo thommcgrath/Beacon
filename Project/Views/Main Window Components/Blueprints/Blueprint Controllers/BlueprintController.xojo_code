@@ -37,7 +37,7 @@ Protected Class BlueprintController
 		  Self.mBlueprints.RemoveAll
 		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Self.mBlueprints.Value(Blueprint.ObjectID) = Blueprint
+		    Self.mBlueprints.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
 		  Self.mOriginalBlueprints = Self.mBlueprints.Clone
@@ -118,7 +118,7 @@ Protected Class BlueprintController
 		  End If
 		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var ObjectID As String = Blueprint.ObjectID
+		    Var ObjectID As String = Blueprint.BlueprintId
 		    
 		    If Self.mBlueprints.HasKey(ObjectID) Then
 		      Self.mBlueprints.Remove(ObjectID)

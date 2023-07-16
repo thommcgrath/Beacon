@@ -80,12 +80,6 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function ObjectID() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary)
 		  
 		End Sub

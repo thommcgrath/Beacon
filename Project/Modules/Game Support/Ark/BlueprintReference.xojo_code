@@ -153,7 +153,7 @@ Protected Class BlueprintReference
 	#tag Method, Flags = &h0
 		Function ObjectID() As String
 		  If (Self.mBlueprint Is Nil) = False Then
-		    Return Self.mBlueprint.ObjectID
+		    Return Self.mBlueprint.BlueprintId
 		  Else
 		    Return Self.mSaveData.Value("UUID")
 		  End If
@@ -166,11 +166,11 @@ Protected Class BlueprintReference
 		    Return 1
 		  End If
 		  
-		  If Self.ObjectID = Other.ObjectID Then
+		  If Self.ObjectID = Other.BlueprintId Then
 		    Return 0
 		  End If
 		  
-		  Return Self.ObjectID.Compare(Other.ObjectID, ComparisonOptions.CaseInsensitive)
+		  Return Self.ObjectID.Compare(Other.BlueprintId, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -246,7 +246,7 @@ Protected Class BlueprintReference
 		    Case IsA Ark.LootContainer
 		      Dict.Value("Kind") = Self.KindLootContainer
 		    End Select
-		    Dict.Value("UUID") = Self.mBlueprint.ObjectID
+		    Dict.Value("UUID") = Self.mBlueprint.BlueprintId
 		    Dict.Value("Path") = Self.mBlueprint.Path
 		    Dict.Value("Class") = Self.mBlueprint.ClassString
 		    Dict.Value("ModUUID") = Self.mBlueprint.ContentPackId

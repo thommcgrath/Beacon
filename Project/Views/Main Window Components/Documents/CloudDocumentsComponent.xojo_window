@@ -28,6 +28,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    Visible         =   True
    Width           =   804
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -193,6 +194,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -203,6 +205,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
@@ -440,12 +443,6 @@ End
 		    Self.StatusbarLabel.Text = Status
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Attributes( Deprecated = "URLForProject" ) Private Shared Function URLForDocument(Document As BeaconAPI.Project) As Beacon.ProjectURL
-		  Return URLForProject(Document)
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

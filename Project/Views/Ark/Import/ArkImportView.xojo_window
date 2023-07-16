@@ -873,10 +873,12 @@ End
 		  
 		  Self.mImporters.ResizeTo(-1)
 		  
-		  If Self.Views.SelectedPanelIndex <> 0 Then
-		    Self.Views.SelectedPanelIndex = 0
-		  Else
-		    Self.SetPageHeight(Self.SourcesPageHeight)
+		  If (Self.Views Is Nil) = False Then
+		    If Self.Views.SelectedPanelIndex <> 0 Then
+		      Self.Views.SelectedPanelIndex = 0
+		    Else
+		      Self.SetPageHeight(Self.SourcesPageHeight)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
@@ -906,18 +908,6 @@ End
 		    End If
 		  Next
 		  Self.Finish(Projects)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Finish(Projects() As Beacon.Project)
-		  If Projects.Count > 0 Then
-		    For Idx As Integer = 0 To Projects.LastIndex
-		      Projects(Idx).Accounts.Import(Self.mAccounts)
-		    Next
-		    Super.Finish(Projects)
-		  End If
-		  Self.Dismiss
 		End Sub
 	#tag EndMethod
 

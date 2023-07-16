@@ -7,7 +7,7 @@ Inherits BlueprintController
 		  Var Deletions() As String
 		  
 		  For Each Blueprint As Ark.Blueprint In BlueprintsToDelete
-		    Deletions.Add(Blueprint.ObjectID)
+		    Deletions.Add(Blueprint.BlueprintId)
 		  Next
 		  
 		  For Each Blueprint As Ark.Blueprint In BlueprintsToSave

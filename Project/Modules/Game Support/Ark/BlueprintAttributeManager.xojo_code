@@ -2,7 +2,7 @@
 Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Function AttributesForBlueprint(Blueprint As Ark.Blueprint) As String()
-		  Return Self.AttributesForBlueprint(Blueprint.ObjectID)
+		  Return Self.AttributesForBlueprint(Blueprint.BlueprintId)
 		End Function
 	#tag EndMethod
 
@@ -158,7 +158,7 @@ Protected Class BlueprintAttributeManager
 		    Return False
 		  End If
 		  
-		  Return Self.HasAttribute(Blueprint.ObjectID, Key)
+		  Return Self.HasAttribute(Blueprint.BlueprintId, Key)
 		End Function
 	#tag EndMethod
 
@@ -184,7 +184,7 @@ Protected Class BlueprintAttributeManager
 		    Return False
 		  End If
 		  
-		  Return Self.HasBlueprint(Blueprint.ObjectID)
+		  Return Self.HasBlueprint(Blueprint.BlueprintId)
 		End Function
 	#tag EndMethod
 
@@ -260,7 +260,7 @@ Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Sub Remove(Blueprint As Ark.Blueprint)
 		  If (Blueprint Is Nil) = False Then
-		    Self.Remove(Blueprint.ObjectID)
+		    Self.Remove(Blueprint.BlueprintId)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -268,7 +268,7 @@ Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Sub Remove(Blueprint As Ark.Blueprint, Key As String)
 		  If (Blueprint Is Nil) = False Then
-		    Self.Remove(Blueprint.ObjectID, Key)
+		    Self.Remove(Blueprint.BlueprintId, Key)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -355,17 +355,17 @@ Protected Class BlueprintAttributeManager
 
 	#tag Method, Flags = &h0
 		Function Value(Blueprint As Ark.Blueprint, Key As String) As Variant
-		  Return Self.Value(Blueprint.ObjectID, Key)
+		  Return Self.Value(Blueprint.BlueprintId, Key)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Value(Blueprint As Ark.Blueprint, Key As String, Assigns NewValue As Variant)
-		  If Self.mReferences.HasKey(Blueprint.ObjectID) = False Then
-		    Self.mReferences.Value(Blueprint.ObjectID) = New Ark.BlueprintReference(Blueprint)
+		  If Self.mReferences.HasKey(Blueprint.BlueprintId) = False Then
+		    Self.mReferences.Value(Blueprint.BlueprintId) = New Ark.BlueprintReference(Blueprint)
 		  End If
 		  
-		  Self.Value(Blueprint.ObjectID, Key) = NewValue
+		  Self.Value(Blueprint.BlueprintId, Key) = NewValue
 		End Sub
 	#tag EndMethod
 

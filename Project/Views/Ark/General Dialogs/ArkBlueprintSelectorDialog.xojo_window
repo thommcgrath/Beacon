@@ -438,7 +438,7 @@ End
 		  Self.mSettingUp = True
 		  For Each Blueprint As Ark.Blueprint In Exclude
 		    If Blueprint <> Nil Then
-		      Self.mExcluded.Add(Blueprint.ObjectID)
+		      Self.mExcluded.Add(Blueprint.BlueprintId)
 		    End If
 		  Next
 		  Self.mMods = Mods
@@ -483,7 +483,7 @@ End
 		      Self.SelectedList.AddRow(Self.List.CellTextAt(I, 0))
 		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
 		      If Self.mSelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple Then
-		        Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(I)).ObjectID)
+		        Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(I)).BlueprintId)
 		        Self.List.RemoveRowAt(I)
 		      End If
 		    Next
@@ -491,7 +491,7 @@ End
 		    Self.SelectedList.AddRow(Self.List.CellTextAt(Self.List.SelectedRowIndex, 0))
 		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    If Self.mSelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple Then
-		      Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).ObjectID)
+		      Self.mExcluded.Add(Ark.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).BlueprintId)
 		      Self.List.RemoveRowAt(Self.List.SelectedRowIndex)
 		    End If
 		  End If
@@ -604,11 +604,11 @@ End
 		    End If
 		    
 		    Var Blueprint As Ark.Blueprint = Self.SelectedList.RowTagAt(I)
-		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.ObjectID)
+		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.BlueprintId)
 		    If Idx > -1 Then
 		      Self.mExcluded.RemoveAt(Idx)
 		    End If
-		    Selections.Add(Blueprint.ObjectID)
+		    Selections.Add(Blueprint.BlueprintId)
 		    Self.SelectedList.RemoveRowAt(I)
 		  Next
 		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0
@@ -617,7 +617,7 @@ End
 		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    Var Blueprint As Ark.Blueprint = Self.List.RowTagAt(I)
-		    Self.List.RowSelectedAt(I) = Selections.IndexOf(Blueprint.ObjectID) > -1
+		    Self.List.RowSelectedAt(I) = Selections.IndexOf(Blueprint.BlueprintId) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
 		  Self.List.SelectionChangeBlocked = False
@@ -633,7 +633,7 @@ End
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.RemoveAllRows
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    If Self.mExcluded.IndexOf(Blueprint.ObjectID) > -1 Then
+		    If Self.mExcluded.IndexOf(Blueprint.BlueprintId) > -1 Then
 		      Continue
 		    End If
 		    

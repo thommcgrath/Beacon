@@ -120,15 +120,6 @@ Inherits Ark.LootItemSetEntry
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "EntryId" )  Sub UUID(Assigns Value As String)
-		  If Self.mEntryId <> Value Then
-		    Self.mEntryId = Value
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
 
 	#tag ViewBehavior
 		#tag ViewProperty

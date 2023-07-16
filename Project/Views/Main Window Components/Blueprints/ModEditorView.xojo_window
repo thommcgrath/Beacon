@@ -393,7 +393,7 @@ End
 		Private Sub UpdateList(Selected() As Ark.Blueprint)
 		  Var SelectedBlueprints() As String
 		  For Each Blueprint As Ark.Blueprint In Selected
-		    SelectedBlueprints.Add(Blueprint.ObjectID)
+		    SelectedBlueprints.Add(Blueprint.BlueprintId)
 		  Next
 		  
 		  Self.UpdateList(SelectedBlueprints)
@@ -402,7 +402,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(Selected As Ark.Blueprint)
-		  Var SelectedBlueprints() As String = Array(Selected.ObjectID)
+		  Var SelectedBlueprints() As String = Array(Selected.BlueprintId)
 		  Self.UpdateList(SelectedBlueprints)
 		End Sub
 	#tag EndMethod
@@ -416,7 +416,7 @@ End
 		  
 		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
 		    Var Blueprint As Ark.Blueprint = Blueprints(Row)
-		    Var ObjectID As String = Blueprint.ObjectID
+		    Var ObjectID As String = Blueprint.BlueprintId
 		    
 		    Var Type As String = "Blueprint"
 		    Select Case Blueprint

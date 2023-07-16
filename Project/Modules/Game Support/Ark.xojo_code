@@ -263,13 +263,13 @@ Protected Module Ark
 		  
 		  Var Results As New Dictionary
 		  For Idx As Integer = 0 To Blueprints.LastIndex
-		    Results.Value(Blueprints(Idx).ObjectID) = Blueprints(Idx).Label
+		    Results.Value(Blueprints(Idx).BlueprintId) = Blueprints(Idx).Label
 		  Next Idx
 		  
 		  Var All() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints(Category, "", New Beacon.StringList, "")
 		  Var Labels As New Dictionary
 		  For Idx As Integer = 0 To All.LastIndex
-		    If All(Idx).ValidForMask(EnabledMaps) = False And Results.HasKey(All(Idx).ObjectID) = False Then
+		    If All(Idx).ValidForMask(EnabledMaps) = False And Results.HasKey(All(Idx).BlueprintId) = False Then
 		      Continue For Idx
 		    End If
 		    
@@ -300,7 +300,7 @@ Protected Module Ark
 		    Next Idx
 		    
 		    For Idx As Integer = 0 To Siblings.LastIndex
-		      Results.Value(Siblings(Idx).ObjectID) = Siblings(Idx).Label.Disambiguate(If(UseClassStrings, Siblings(Idx).ClassString, Siblings(Idx).ContentPackName))
+		      Results.Value(Siblings(Idx).BlueprintId) = Siblings(Idx).Label.Disambiguate(If(UseClassStrings, Siblings(Idx).ClassString, Siblings(Idx).ContentPackName))
 		    Next Idx
 		  Next Entry
 		  
@@ -450,7 +450,7 @@ Protected Module Ark
 		  ContentPackInfo.Value("id") = Blueprint.ContentPackId
 		  ContentPackInfo.Value("name") = Blueprint.ContentPackName
 		  
-		  Dict.Value(IdProperty) = Blueprint.ObjectID
+		  Dict.Value(IdProperty) = Blueprint.BlueprintId
 		  Dict.Value("label") = Blueprint.Label
 		  Dict.Value("alternateLabel") = Blueprint.AlternateLabel
 		  Dict.Value("contentPack") = ContentPackInfo

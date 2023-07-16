@@ -2,12 +2,6 @@
 Protected Class Project
 Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function Accounts() As Beacon.ExternalAccountManager
-		  Return New Beacon.ExternalAccountManager
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ActiveConfigSet() As Beacon.ConfigSet
 		  Return Self.mActiveConfigSet
 		End Function
@@ -1056,20 +1050,6 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub ReplaceAccount(OldAccount As Beacon.ExternalAccount, NewAccount As Beacon.ExternalAccount)
-		  #Pragma Unused OldAccount
-		  #Pragma Unused NewAccount
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub ReplaceAccount(OldUUID As String, Account As Beacon.ExternalAccount)
-		  #Pragma Unused OldUUID
-		  #Pragma Unused Account
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SaveData(Identity As Beacon.Identity, AdditionalProperties As Dictionary = Nil) As MemoryBlock
 		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserId) Then
 		    Self.AddUser(Identity.UserId, Identity.PublicKey)
@@ -1271,10 +1251,6 @@ Implements ObservationKit.Observable
 
 
 	#tag Hook, Flags = &h0
-		Attributes( Deprecated ) Event AccountReplaced(OldUUID As String, NewUUID As String)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event AddingProfile(Profile As Beacon.ServerProfile)
 	#tag EndHook
 
@@ -1383,9 +1359,6 @@ Implements ObservationKit.Observable
 		Private mUseCompression As Boolean
 	#tag EndProperty
 
-
-	#tag Constant, Name = BaseConfigSetName, Type = String, Dynamic = False, Default = \"Base", Scope = Public, Attributes = \"Deprecated"
-	#tag EndConstant
 
 	#tag Constant, Name = BinaryFormatBEBOM, Type = Double, Dynamic = False, Default = \"3470482855257601832", Scope = Public
 	#tag EndConstant

@@ -277,12 +277,12 @@ Inherits Beacon.DataSource
 		              Var Instances As Integer = Figures.Value("instances")
 		              Var TargetPopulation As Integer = Figures.Value("targetPopulation")
 		              
-		              Var Rows As RowSet = Self.SQLSelect("SELECT population_id FROM spawn_point_populations WHERE spawn_point_id = ?1 AND map_id = ?2;", Point.ObjectID, MapIdentifier)
+		              Var Rows As RowSet = Self.SQLSelect("SELECT population_id FROM spawn_point_populations WHERE spawn_point_id = ?1 AND map_id = ?2;", Point.BlueprintId, MapIdentifier)
 		              If Rows.RowCount = 1 Then
 		                Var PopulationID As String = Rows.Column("population_id").StringValue
 		                Self.SQLExecute("UPDATE spawn_point_populations SET instances = ?2, target_population = ?3 WHERE population_id = ?1 AND (instances != ?2 OR target_population != ?3);", PopulationID, Instances, TargetPopulation)
 		              Else
-		                Self.SQLExecute("INSERT INTO spawn_point_populations (population_id, spawn_point_id, map_id, instances, target_population) VALUES (?1, ?2, ?3, ?4, ?5);", v4UUID.Create.StringValue, Point.ObjectId, MapIdentifier, Instances, TargetPopulation)
+		                Self.SQLExecute("INSERT INTO spawn_point_populations (population_id, spawn_point_id, map_id, instances, target_population) VALUES (?1, ?2, ?3, ?4, ?5);", Beacon.UUID.v4.StringValue, Point.BlueprintId, MapIdentifier, Instances, TargetPopulation)
 		              End If
 		            Next Entry
 		          End If
@@ -1468,19 +1468,6 @@ Inherits Beacon.DataSource
 		  If Packs.Count = 1 Then
 		    Return Packs(0)
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "GetContentPackWithId" )  Function GetContentPackWithUUID(ContentPackId As String) As Ark.ContentPack
-		  Return Self.GetContentPackWithId(ContentPackId)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "GetContentPackWithSteamId" )  Function GetContentPackWithWorkshopID(WorkshopID As String) As Ark.ContentPack
-		  Var SteamId As Double = Double.FromString(WorkshopID, Locale.Raw)
-		  Return Self.GetContentPackWithSteamId(SteamId)
 		End Function
 	#tag EndMethod
 
@@ -2759,7 +2746,7 @@ Inherits Beacon.DataSource
 		  Var DeleteUUIDs() As String
 		  If (BlueprintsToDelete Is Nil) = False Then
 		    For Each Blueprint As Ark.Blueprint In BlueprintsToDelete
-		      DeleteUUIDs.Add(Blueprint.ObjectID)
+		      DeleteUUIDs.Add(Blueprint.BlueprintId)
 		    Next Blueprint
 		  End If
 		  
@@ -2783,7 +2770,7 @@ Inherits Beacon.DataSource
 		  If (BlueprintsToDelete Is Nil) = False Then
 		    If (BlueprintsToSave Is Nil) = False Then
 		      For Idx As Integer = BlueprintsToSave.FirstIndex To BlueprintsToSave.LastIndex
-		        Var DeleteIdx As Integer = BlueprintsToDelete.IndexOf(BlueprintsToSave(Idx).ObjectID)
+		        Var DeleteIdx As Integer = BlueprintsToDelete.IndexOf(BlueprintsToSave(Idx).BlueprintId)
 		        If DeleteIdx > -1 Then
 		          BlueprintsToDelete.RemoveAt(DeleteIdx)
 		        End If
@@ -2836,16 +2823,16 @@ Inherits Beacon.DataSource
 		        Var UpdateObjectID, CurrentTagString As String
 		        Var Results As RowSet
 		        If LocalModsOnly Then
-		          Results = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		          Results = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
 		        Else
-		          Results = Self.SQLSelect("SELECT object_id, tags FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		          Results = Self.SQLSelect("SELECT object_id, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
 		        End If
 		        If Results.RowCount = 1 Then
 		          If LocalModsOnly And Results.Column("is_user_blueprint").BooleanValue = False Then
 		            If (ErrorDict Is Nil) = False Then
 		              Var UnsupportedErr As New UnsupportedOperationException
 		              UnsupportedErr.Message = "Cannot update built-in blueprint."
-		              ErrorDict.Value(Blueprint.ObjectID) = UnsupportedErr
+		              ErrorDict.Value(Blueprint.BlueprintId) = UnsupportedErr
 		            End If
 		            Continue
 		          End If
@@ -2862,7 +2849,7 @@ Inherits Beacon.DataSource
 		        
 		        Var Category As String = Blueprint.Category
 		        Var Columns As New Dictionary
-		        Columns.Value("object_id") = Blueprint.ObjectID
+		        Columns.Value("object_id") = Blueprint.BlueprintId
 		        Columns.Value("path") = Blueprint.Path
 		        Columns.Value("class_string") = Blueprint.ClassString
 		        Columns.Value("label") = Blueprint.Label
@@ -2999,7 +2986,7 @@ Inherits Beacon.DataSource
 		          
 		          Var Tags() As String = Blueprint.Tags
 		          For Each Tag As String In Tags
-		            Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.ObjectID, Tag)
+		            Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.BlueprintId, Tag)
 		          Next Tag
 		        End If
 		        
@@ -3023,9 +3010,9 @@ Inherits Beacon.DataSource
 		          Self.RollbackTransaction()
 		        End If
 		        If (ErrorDict Is Nil) = False Then
-		          ErrorDict.Value(Blueprint.ObjectID) = Err
+		          ErrorDict.Value(Blueprint.BlueprintId) = Err
 		        Else
-		          App.Log("Unable to save blueprint " + Blueprint.ObjectID + ": Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + " " + Err.Message.NthField(EndOfLine, 1))
+		          App.Log("Unable to save blueprint " + Blueprint.BlueprintId + ": Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + " " + Err.Message.NthField(EndOfLine, 1))
 		        End If
 		        CountErrors = CountErrors + 1
 		      End Try

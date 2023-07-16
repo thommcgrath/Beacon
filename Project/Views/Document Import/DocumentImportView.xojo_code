@@ -10,6 +10,7 @@ Inherits DesktopContainer
 	#tag Method, Flags = &h1
 		Protected Sub Finish(Projects() As Beacon.Project)
 		  RaiseEvent ProjectsImported(Projects)
+		  Self.Dismiss()
 		End Sub
 	#tag EndMethod
 

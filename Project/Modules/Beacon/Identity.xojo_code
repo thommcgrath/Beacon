@@ -1,22 +1,5 @@
 #tag Class
 Protected Class Identity
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub Constructor(Source As Beacon.Identity)
-		  Self.mIsBanned = Source.mIsBanned
-		  Self.mCloudKey = Source.mCloudKey
-		  Self.mExpiration = Source.mExpiration
-		  Self.mUserId = Source.mUserId
-		  Self.mIsValid = Source.mIsValid
-		  Self.mPrivateKey = Source.mPrivateKey
-		  Self.mPublicKey = Source.mPublicKey
-		  Self.mUsername = Source.mUserName
-		  
-		  For Each License As Beacon.OmniLicense In Source.mLicenses
-		    Self.mLicenses.Add(New Beacon.OmniLicense(License))
-		  Next
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub Constructor(UserId As String, PublicKey As String, PrivateKey As String)
 		  Self.mUserId = UserId.Lowercase

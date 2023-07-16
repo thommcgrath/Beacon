@@ -859,19 +859,6 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Var Token As BeaconAPI.OAuthToken = BeaconAuth
-			  If Token Is Nil Then
-			    Return ""
-			  End If
-			  Return Token.AccessToken
-			End Get
-		#tag EndGetter
-		Attributes( Deprecated ) Protected OnlineToken As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
 			  Init
 			  Return mManager.BooleanValue("Play Sound After Deploy", True)
 			End Get

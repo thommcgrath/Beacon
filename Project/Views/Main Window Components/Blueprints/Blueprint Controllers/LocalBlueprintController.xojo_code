@@ -39,10 +39,10 @@ Inherits BlueprintController
 		  
 		  Var BlueprintMap As New Dictionary
 		  For Idx As Integer = 0 To Self.mSave.LastIndex
-		    BlueprintMap.Value(Self.mSave(Idx).ObjectID) = Self.mSave(Idx)
+		    BlueprintMap.Value(Self.mSave(Idx).BlueprintId) = Self.mSave(Idx)
 		  Next Idx
 		  For Idx As Integer = 0 To Self.mDelete.LastIndex
-		    BlueprintMap.Value(Self.mDelete(Idx).ObjectID) = Self.mDelete(Idx)
+		    BlueprintMap.Value(Self.mDelete(Idx).BlueprintId) = Self.mDelete(Idx)
 		  Next Idx
 		  
 		  Var Reasons() As String

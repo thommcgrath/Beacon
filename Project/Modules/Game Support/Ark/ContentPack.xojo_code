@@ -1,11 +1,5 @@
 #tag Class
 Protected Class ContentPack
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "IsConsoleSafe" )  Function ConsoleSafe() As Boolean
-		  Return Self.mIsConsoleSafe
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
 		  
@@ -30,12 +24,6 @@ Protected Class ContentPack
 	#tag Method, Flags = &h0
 		Function ContentPackId() As String
 		  Return Self.mContentPackId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "IsDefaultEnabled" )  Function DefaultEnabled() As Boolean
-		  Return Self.mIsDefaultEnabled
 		End Function
 	#tag EndMethod
 
@@ -176,16 +164,6 @@ Protected Class ContentPack
 		  Else
 		    Return Ark.ContentPack.Types.Steam
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "SteamId" )  Function WorkshopId() As NullableString
-		  If Self.mSteamId Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Return Self.mSteamId.DoubleValue.ToString(Locale.Raw, "0")
 		End Function
 	#tag EndMethod
 

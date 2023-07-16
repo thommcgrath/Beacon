@@ -817,7 +817,7 @@ End
 		  Var DeleteBlueprintIDs As New Dictionary
 		  For Each Entry As DictionaryEntry In CurrentBlueprintMap
 		    BlueprintsToDelete.Add(Ark.Blueprint(Entry.Value))
-		    DeleteBlueprintIDs.Value(Ark.Blueprint(Entry.Value).ObjectID) = True
+		    DeleteBlueprintIDs.Value(Ark.Blueprint(Entry.Value).BlueprintId) = True
 		  Next
 		  
 		  Var Errors As New Dictionary
