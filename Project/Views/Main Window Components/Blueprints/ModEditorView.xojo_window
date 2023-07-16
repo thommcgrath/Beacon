@@ -641,7 +641,7 @@ End
 #tag Events ImporterThread
 	#tag Event
 		Sub Run()
-		  Self.mImporter = Ark.BlueprintImporter.Import(Self.mContentToImport, Self.mController.ModID, Self.mProgress)
+		  Self.mImporter = Ark.BlueprintImporter.Import(Self.mContentToImport, Self.mProgress)
 		  
 		  Var Dict As New Dictionary
 		  Dict.Value("Action") = "Finished"

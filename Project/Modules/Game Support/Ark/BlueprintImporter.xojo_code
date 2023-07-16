@@ -65,7 +65,7 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Contents As String, ContentPackId As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
+		Shared Function Import(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
 		  Var Importer As Ark.BlueprintImporter
 		  
 		  Importer = ImportAsBinary(Contents, Progress)
@@ -75,21 +75,21 @@ Protected Class BlueprintImporter
 		    Return Importer
 		  End If
 		  
-		  Importer = ImportAsDataDumper(Contents, ContentPackId, Progress)
+		  Importer = ImportAsDataDumper(Contents, Progress)
 		  If (Progress Is Nil) = False And Progress.CancelPressed Then
 		    Return Nil
 		  ElseIf (Importer Is Nil) = False Then
 		    Return Importer
 		  End If
 		  
-		  Importer = ImportAsJson(Contents, ContentPackId, Progress)
+		  Importer = ImportAsJson(Contents, Progress)
 		  If (Progress Is Nil) = False And Progress.CancelPressed Then
 		    Return Nil
 		  ElseIf (Importer Is Nil) = False Then
 		    Return Importer
 		  End If
 		  
-		  Importer = ImportAsPlain(Contents, ContentPackId, Progress)
+		  Importer = ImportAsPlain(Contents, Progress)
 		  If (Progress Is Nil) = False And Progress.CancelPressed Then
 		    Return Nil
 		  Else
@@ -240,7 +240,7 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportAsDataDumper(Contents As String, ContentPackId As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
+		Shared Function ImportAsDataDumper(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
 		  If Contents.IndexOf("########## Start ") = -1 And Contents.IndexOf(" Data ##########") = -1 Then
 		    Return Nil
 		  End If
@@ -327,7 +327,7 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var BlueprintId As String = Ark.GenerateBlueprintId(ContentPackId, Path)
+		      Var BlueprintId As String = Beacon.UUID.v4
 		      Var Engram As New Ark.MutableEngram(Path, BlueprintId)
 		      Engram.Label = ItemDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
 		      Engram.AddTag("blueprintable")
@@ -369,7 +369,7 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var BlueprintId As String = Ark.GenerateBlueprintId(ContentPackId, Path)
+		      Var BlueprintId As String = Beacon.UUID.v4
 		      Var Creature As New Ark.MutableCreature(Path, BlueprintId)
 		      Creature.Label = CreatureDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
 		      Creature.LastUpdate = Now
@@ -389,7 +389,7 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var BlueprintId As String = Ark.GenerateBlueprintId(ContentPackId, Path)
+		      Var BlueprintId As String = Beacon.UUID.v4
 		      Var Point As New Ark.MutableSpawnPoint(Path, BlueprintId)
 		      Point.Label = SpawnDict.Value("CLASS")
 		      Point.LastUpdate = Now
@@ -409,7 +409,7 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var BlueprintId As String = Ark.GenerateBlueprintId(ContentPackId, Path)
+		      Var BlueprintId As String = Beacon.UUID.v4
 		      Var Container As New Ark.MutableLootContainer(Path, BlueprintId)
 		      Container.Label = LootDict.Value("CLASS")
 		      Container.IconID = "84d76c41-4386-467d-83e7-841dcaa4007d"
@@ -432,7 +432,7 @@ Protected Class BlueprintImporter
 		        Path = Path.Left(Path.Length - 2)
 		      End If
 		      
-		      Var BlueprintId As String = Ark.GenerateBlueprintId(ContentPackId, Path)
+		      Var BlueprintId As String = Beacon.UUID.v4
 		      Var Container As New Ark.MutableLootContainer(Path, BlueprintId)
 		      Container.Label = DropDict.Value("CLASS")
 		      Container.IconID = "41dde824-5675-4515-b222-e860a44619d9"
@@ -449,7 +449,7 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportAsJson(Contents As String, ContentPackId As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
+		Shared Function ImportAsJson(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
 		  Var Parsed As Variant
 		  Try
 		    #Pragma BreakOnExceptions False
@@ -549,7 +549,7 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportAsPlain(Contents As String, ContentPackId As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
+		Shared Function ImportAsPlain(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
 		  // First try to parse as a csv
 		  #Pragma BreakOnExceptions False
 		  Try
@@ -648,7 +648,7 @@ Protected Class BlueprintImporter
 		      End If
 		      
 		      Var Blueprint As Ark.MutableBlueprint
-		      Var BlueprintId As String = Ark.GenerateBlueprintId(ContentPackId, Path)
+		      Var BlueprintId As String = Beacon.UUID.v4
 		      Select Case Category
 		      Case Ark.CategoryEngrams
 		        Blueprint = New Ark.MutableEngram(Path, BlueprintId)
@@ -732,7 +732,7 @@ Protected Class BlueprintImporter
 		    Var Command As String = Paths.Value(Key)
 		    Var Path As String = Key
 		    Var Blueprint As Ark.Blueprint
-		    Var BlueprintId As String = Ark.GenerateBlueprintId(ContentPackId, Path)
+		    Var BlueprintId As String = Beacon.UUID.v4
 		    Select Case Command
 		    Case "giveitem"
 		      Blueprint = New Ark.MutableEngram(Path, BlueprintId)
