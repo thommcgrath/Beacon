@@ -689,24 +689,32 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(ForDefaults As Boolean = False) As Dictionary
+		Function SaveData(ForPreferences As Boolean = False) As Dictionary
 		  Var Options() As Dictionary
-		  For Each Item As Ark.LootItemSetEntryOption In Self.mOptions
-		    Options.Add(Item.SaveData)
-		  Next
+		  If ForPreferences = False Then
+		    For Each Item As Ark.LootItemSetEntryOption In Self.mOptions
+		      Options.Add(Item.SaveData)
+		    Next
+		  End If
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("lootItemSetEntryId") = Self.mEntryId
+		  If ForPreferences = False Then
+		    Keys.Value("lootItemSetEntryId") = Self.mEntryId
+		  End If
 		  Keys.Value("minQuantity") = Self.MinQuantity
 		  Keys.Value("maxQuantity") = Self.MaxQuantity
 		  Keys.Value("minQuality") = Self.MinQuality.Key
 		  Keys.Value("maxQuality") = Self.MaxQuality.Key
 		  Keys.Value("blueprintChance") = Self.ChanceToBeBlueprint
-		  Keys.Value("weight") = Self.RawWeight
+		  If ForPreferences = False Then
+		    Keys.Value("weight") = Self.RawWeight
+		  End If
 		  Keys.Value("singleItemQuantity") = Self.SingleItemQuantity
 		  Keys.Value("preventGrinding") = Self.PreventGrinding
 		  Keys.Value("statClampMultiplier") = Self.StatClampMultiplier
-		  Keys.Value("options") = Options
+		  If ForPreferences = False Then
+		    Keys.Value("options") = Options
+		  End If
 		  Return Keys
 		End Function
 	#tag EndMethod
