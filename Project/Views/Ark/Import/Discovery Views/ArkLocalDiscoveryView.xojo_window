@@ -48,6 +48,7 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   123
       VerticalScrollPosition=   0
       Visible         =   True

@@ -66,7 +66,7 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   1
       Visible         =   True
       Width           =   720
       Begin DesktopRadioButton SourceRadio
@@ -976,10 +976,6 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mAccounts As Beacon.ExternalAccountManager
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mDestinationProject As Ark.Project
 	#tag EndProperty
 
@@ -1124,11 +1120,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  If Self.mAccounts = Nil Then
-		    Self.mAccounts = New Beacon.ExternalAccountManager
-		  End If
-		  Self.mAccounts.Import(Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData)
 		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
@@ -1154,11 +1146,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  If Self.mAccounts = Nil Then
-		    Self.mAccounts = New Beacon.ExternalAccountManager
-		  End If
-		  Self.mAccounts.Import(Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData)
 		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
@@ -1184,11 +1172,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  If Self.mAccounts = Nil Then
-		    Self.mAccounts = New Beacon.ExternalAccountManager
-		  End If
-		  Self.mAccounts.Import(Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData)
 		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
@@ -1255,11 +1239,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  If Self.mAccounts = Nil Then
-		    Self.mAccounts = New Beacon.ExternalAccountManager
-		  End If
-		  Self.mAccounts.Import(Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData)
 		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
@@ -1292,11 +1272,7 @@ End
 #tag EndEvents
 #tag Events GSADiscoveryView1
 	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  If Self.mAccounts = Nil Then
-		    Self.mAccounts = New Beacon.ExternalAccountManager
-		  End If
-		  Self.mAccounts.Import(Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData)
 		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent

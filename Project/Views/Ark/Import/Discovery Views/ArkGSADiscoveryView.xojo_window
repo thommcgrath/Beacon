@@ -213,6 +213,7 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       Width           =   80
    End
    Begin DesktopProgressWheel TokensRefreshSpinner
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowTabStop    =   True
       Enabled         =   True
@@ -225,6 +226,7 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -233,6 +235,10 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       Transparent     =   False
       Visible         =   False
       Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopLabel TokensRefreshLabel
       AllowAutoDeactivate=   True
@@ -267,12 +273,15 @@ Begin ArkDiscoveryView ArkGSADiscoveryView
       Width           =   324
    End
    Begin Thread TokenLookupThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
 End
 #tag EndDesktopWindow
@@ -476,7 +485,7 @@ End
 		    
 		    Data.Add(Self.List.RowTagAt(I))
 		  Next
-		  Self.ShouldFinish(Data, Nil)
+		  Self.ShouldFinish(Data)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

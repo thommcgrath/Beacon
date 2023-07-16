@@ -1038,26 +1038,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function FindEnginesForAccount(Account As Beacon.ExternalAccount) As Beacon.IntegrationEngine()
-		  Var AccountUUID As String = Account.UUID
-		  Var Engines() As Beacon.IntegrationEngine
-		  For Each Entry As DictionaryEntry In Self.Engines
-		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
-		    If Controller = Nil Or Controller.Action <> "Auth External" Then
-		      Continue
-		    End If
-		    
-		    Var UserData As Dictionary = Controller.UserData
-		    If UserData.Lookup("Account UUID", "").StringValue = AccountUUID Then
-		      Engines.Add(Engine)
-		    End If
-		  Next
-		  Return Engines
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function SelectedEngine() As Beacon.IntegrationEngine
 		  If Self.ServerList.SelectedRowIndex = -1 Then
 		    Return Nil
@@ -1138,10 +1118,6 @@ End
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private AuthQueue() As Beacon.ExternalAccount
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Controller As Beacon.ProjectController

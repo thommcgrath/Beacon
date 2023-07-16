@@ -1,6 +1,7 @@
 #tag Class
 Protected Class ArkDiscoveryView
 Inherits DesktopContainer
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event
 		Sub Closing()
 		  RaiseEvent Close
@@ -78,31 +79,17 @@ Inherits DesktopContainer
 
 	#tag Method, Flags = &h1
 		Protected Sub ShouldFinish(Data() As Beacon.DiscoveredData)
-		  Self.ShouldFinish(Data, Nil)
+		  If Self.mClosed Then
+		    Return
+		  End If
+		  
+		  RaiseEvent Finished(Data)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub ShouldFinish(ParamArray Data() As Beacon.DiscoveredData)
-		  Self.ShouldFinish(Data, Nil)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  If Self.mClosed Then
-		    Return
-		  End If
-		  
-		  RaiseEvent Finished(Data, Accounts)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Data As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
-		  Var Arr(0) As Beacon.DiscoveredData
-		  Arr(0) = Data
-		  Self.ShouldFinish(Arr, Accounts)
+		  Self.ShouldFinish(Data)
 		End Sub
 	#tag EndMethod
 
@@ -116,7 +103,7 @@ Inherits DesktopContainer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		Event Finished(Data() As Beacon.DiscoveredData)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

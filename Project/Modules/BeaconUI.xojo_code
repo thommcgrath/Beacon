@@ -445,28 +445,6 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Account As Beacon.ExternalAccount) As Boolean
-		  If Account Is Nil Then
-		    Return False
-		  End If
-		  
-		  Var Provider As String = Account.Provider
-		  Var Message As String
-		  Var Explanation As String = "This can happen if unused for a while or permission was revoked."
-		  If Account.Label.IsEmpty Then
-		    // Unnamed account
-		    Message = "Beacon needs permission to access an account on " + Provider + ". Open your browser to authorize " + Provider + "?"
-		  Else
-		    // Named account
-		    Message = "Beacon needs permission to access the " + Provider + " account " + Account.Label + ". Open your browser to authorize " + Provider + "?"
-		    Explanation = " Make sure you authenticate with the account " + Account.Label + " to prevent errors."
-		  End If
-		  
-		  Return ShowConfirm(Win, Message, Explanation, "Continue", "Cancel")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
 		End Function
@@ -558,12 +536,6 @@ Protected Module BeaconUI
 		      Return ConfirmResponses.Alternate
 		    End Select
 		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ShowConfirm(Extends Win As DesktopWindow, Account As Beacon.ExternalAccount) As Boolean
-		  Return ShowConfirm(Win, Account)
 		End Function
 	#tag EndMethod
 
