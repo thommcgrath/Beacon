@@ -319,14 +319,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function HelpAPIBuilder() As Boolean Handles HelpAPIBuilder.Action
-		  Call Self.HandleURL("beacon://action/showapibuilder")
-		  Return True
-		  
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function HelpAPIGuide() As Boolean Handles HelpAPIGuide.Action
 		  Call Self.HandleURL("beacon://action/showguide")
 		  Return True
@@ -705,8 +697,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      IdentityWindow.Show()
 		    Case "showguide"
 		      System.GotoURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
-		    Case "showapibuilder"
-		      APIBuilderWindow.Show()
 		    Case "checkforupdate"
 		      Self.CheckForUpdates()
 		    Case "checkforengrams"
