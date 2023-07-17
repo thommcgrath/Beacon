@@ -1234,7 +1234,7 @@ End
 		  Dict.Value("mod_id") = ModID
 		  Var Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
-		  Var Request As New BeaconAPI.Request("ark/mod", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
+		  Var Request As New BeaconAPI.Request("ark/contentPacks", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
 		  Self.RegisterSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1256,7 +1256,7 @@ End
 #tag Events ConfirmActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Request As New BeaconAPI.Request(Self.mModInfo.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
+		  Var Request As New BeaconAPI.Request("/ark/contentPacks/" + Self.mModInfo.ModID + "/confirm", "GET", AddressOf APICallback_ConfirmMod)
 		  Self.ConfirmSocket.Start(Request)
 		End Sub
 	#tag EndEvent

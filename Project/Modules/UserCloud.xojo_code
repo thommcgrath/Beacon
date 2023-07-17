@@ -31,7 +31,7 @@ Protected Module UserCloud
 		    If Response.HTTPStatus = 446 Then
 		      // This response means the path is not allowed, so we're going to delete the local file
 		      Var URL As String = Response.URL
-		      Var BaseURL As String = BeaconAPI.URL("/file")
+		      Var BaseURL As String = BeaconAPI.URL("/files")
 		      Var RemotePath As String = URL.Middle(BaseURL.Length)
 		      Var LocalFile As FolderItem = LocalFile(RemotePath)
 		      Try
@@ -47,7 +47,7 @@ Protected Module UserCloud
 		  
 		  // So where do we put the file now?
 		  Var URL As String = Response.URL
-		  Var BaseURL As String = BeaconAPI.URL("/file")
+		  Var BaseURL As String = BeaconAPI.URL("/files")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
 		    CleanupRequest(Request)
@@ -129,6 +129,16 @@ Protected Module UserCloud
 		    Sync()
 		    Return True
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function FileExists(RemotePath As String) As Boolean
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
+		  If LocalFile Is Nil Then
+		    Return False
+		  End If
+		  Return LocalFile.Exists
 		End Function
 	#tag EndMethod
 
@@ -266,7 +276,7 @@ Protected Module UserCloud
 		    End Try
 		  End If
 		  
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
+		  SendRequest(New BeaconAPI.Request("files" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
 		  
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "DELETE"
@@ -290,7 +300,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub RequestFileFrom(LocalFile As FolderItem, RemotePath As String, ModificationDate As DateTime, ServerSizeBytes As Integer, ServerHash As String)
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "GET", AddressOf Callback_GetFile))
+		  SendRequest(New BeaconAPI.Request("files" + RemotePath, "GET", AddressOf Callback_GetFile))
 		  
 		  If Not LocalFile.Exists Then
 		    Var Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
@@ -521,7 +531,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  SyncActions.ResizeTo(-1)
-		  SendRequest(New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles))
+		  SendRequest(New BeaconAPI.Request("files", "GET", AddressOf Callback_ListFiles))
 		End Sub
 	#tag EndMethod
 
@@ -536,7 +546,7 @@ Protected Module UserCloud
 		  
 		  Var EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
 		  
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
+		  SendRequest(New BeaconAPI.Request("files" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
 		  
 		  If SetupIndexDatabase Then
 		    Var EncryptedContentsHash As String = EncodeHex(Crypto.SHA2_256(EncryptedContents)).Lowercase
@@ -570,11 +580,11 @@ Protected Module UserCloud
 		Private Function UserID() As String
 		  Try
 		    If (App.IdentityManager.CurrentIdentity Is Nil) = False Then
-		      Return App.IdentityManager.CurrentIdentity.UserID
+		      Return App.IdentityManager.CurrentIdentity.UserId
 		    End If
 		  Catch Err As RuntimeException
 		  End Try
-		  Return v4UUID.CreateNull
+		  Return Beacon.UUID.Null
 		End Function
 	#tag EndMethod
 

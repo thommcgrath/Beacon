@@ -24,7 +24,7 @@ Inherits Thread
 		  
 		  // So where do we put the file now?
 		  Var URL As String = Self.mResponse.URL
-		  Var BaseURL As String = BeaconAPI.URL("/file")
+		  Var BaseURL As String = BeaconAPI.URL("/files")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
 		    CleanupRequest(Self.mRequest)

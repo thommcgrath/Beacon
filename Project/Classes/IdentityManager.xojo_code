@@ -115,6 +115,7 @@ Protected Class IdentityManager
 		  Self.mDatabase.ExecuteSQL("UPDATE identities SET active = FALSE WHERE active = TRUE;")
 		  If (Value Is Nil) = False Then
 		    Self.mDatabase.ExecuteSQL("UPDATE identities SET active = TRUE WHERE user_id = ?1;", Value.UserId)
+		    UserCloud.Sync(False)
 		  End If
 		  Self.mDatabase.CommitTransaction
 		  Self.mCurrentIdentity = Value

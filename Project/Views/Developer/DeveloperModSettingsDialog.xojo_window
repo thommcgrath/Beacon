@@ -260,7 +260,6 @@ Begin BeaconDialog DeveloperModSettingsDialog
       _mPanelIndex    =   0
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -287,7 +286,7 @@ End
 		Shared Sub Present(Parent As DesktopWindow, WorkshopMod As BeaconAPI.WorkshopMod)
 		  Var Win As New DeveloperModSettingsDialog
 		  Win.WorkshopMod = WorkshopMod
-		  Win.PullURLField.Text = WorkshopMod.PullURL
+		  Win.PullURLField.Text = ""
 		  Win.ShowModal(Parent.TrueWindow)
 		End Sub
 	#tag EndMethod
@@ -303,10 +302,9 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Self.WorkshopMod.PullURL = Self.PullURLField.Text
 		  Var Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
 		  
-		  Var Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
+		  Var Request As New BeaconAPI.Request("ark/contentPack/" + Self.WorkshopMod.ModID, "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent

@@ -79,8 +79,12 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub ExportCloudFiles()
 		  // Clean up legacy stuff
-		  Call UserCloud.Delete("/Blueprints.json")
-		  Call UserCloud.Delete("/Ark/Blueprints.json")
+		  Var LegacyFiles() As String = Array("/Blueprints.json", "/Engrams.json", "/Ark/Blueprints.json")
+		  For Each LegacyFile As String In LegacyFiles
+		    If UserCloud.FileExists(LegacyFile) Then
+		      Call UserCloud.Delete(LegacyFile)
+		    End If
+		  Next
 		  
 		  Const Filename = "/Ark/Blueprints" + Beacon.FileExtensionDelta
 		  Var UserPacks() As Ark.ContentPack = Self.GetContentPacks(Ark.ContentPack.Types.Custom)

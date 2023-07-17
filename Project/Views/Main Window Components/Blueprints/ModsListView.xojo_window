@@ -32,7 +32,7 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   False
-      AllowInfiniteScroll=   False
+      AllowInfiniteScroll=   True
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
@@ -65,7 +65,7 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PageSize        =   100
+      PageSize        =   5
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -120,7 +120,6 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -143,6 +142,8 @@ End
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
+		  
+		  Self.mHasBeenShown = True
 		  
 		  Self.RefreshMods()
 		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportStopped)
@@ -183,11 +184,23 @@ End
 		    ScrollPosition = Self.ModsList.ScrollPosition
 		  End If
 		  
-		  Self.ModsList.RemoveAllRows
-		  
 		  If Response.Success Then
-		    Var Arr() As Variant = Response.JSON
-		    For Each Dict As Dictionary In Arr
+		    Var TotalResults, TotalPages As Integer
+		    Var Results() As Variant
+		    Try
+		      Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
+		      TotalResults = Parsed.Value("totalResults")
+		      TotalPages = Parsed.Value("pages")
+		      Results = Parsed.Value("results")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing page of results.")
+		      Return
+		    End Try
+		    
+		    Self.mTotalPages = TotalPages
+		    Self.mTotalResults = TotalResults
+		    
+		    For Each Dict As Dictionary In Results
 		      Var ModInfo As New BeaconAPI.WorkshopMod(Dict)
 		      Self.ModsList.AddRow(ModInfo.Name, If(ModInfo.Confirmed, "Confirmed", "Waiting Confirmation"))
 		      Self.ModsList.RowTagAt(Self.ModsList.LastAddedRowIndex) = ModInfo
@@ -222,15 +235,7 @@ End
 		      End If
 		    Next Idx
 		    Self.mOpenModWhenRefreshed = ""
-		  Else
-		    If Self.ModsList.RowCount = 1 And Self.mDidFirstRefresh = False Then
-		      Var Idx As Integer = Self.ModsList.SelectedRowIndex
-		      Self.ModsList.SelectedRowIndex = 0
-		      Self.ModsList.DoEdit
-		      Self.ModsList.SelectedRowIndex = Idx
-		    End If
 		  End If
-		  Self.mDidFirstRefresh = True
 		End Sub
 	#tag EndMethod
 
@@ -329,10 +334,10 @@ End
 		    Return
 		  End If
 		  
-		  Self.StartJob()
-		  
-		  Var Request As New BeaconAPI.Request("ark/mod", "GET", AddressOf APICallback_ListMods)
-		  BeaconAPI.Send(Request)
+		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
+		  Self.ModsList.ScrollPosition = 0
+		  Self.ModsList.RemoveAllRows()
+		  Self.ModsList.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
 
@@ -389,11 +394,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mDidFirstRefresh As Boolean
+		Private mDiscoveryDialog As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDiscoveryDialog As WeakRef
+		Private mHasBeenShown As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -406,6 +411,18 @@ End
 
 	#tag Property, Flags = &h21
 		Private mOpenModWhenRefreshed As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTotalPages As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTotalPages1 As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTotalResults As Integer
 	#tag EndProperty
 
 
@@ -466,7 +483,7 @@ End
 		    Self.StartJob()
 		    
 		    Var Body As String = WorkshopIDs.Join(",")
-		    Var Request As New BeaconAPI.Request("ark/mod", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
+		    Var Request As New BeaconAPI.Request("ark/contentPacks", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
 		    BeaconAPI.Send(Request)
 		  End If
 		End Sub
@@ -486,6 +503,17 @@ End
 		  If (Self.ModsToolbar.Item("ExportButton") Is Nil) = False Then
 		    Self.ModsToolbar.Item("ExportButton").Enabled = Me.SelectedRowCount > 0
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub LoadMoreRows(Page As Integer)
+		  If Self.mHasBeenShown = False Or (Page > 1 And Page > Self.mTotalPages) Then
+		    Return
+		  End If
+		  
+		  Self.StartJob()
+		  Var Request As New BeaconAPI.Request("ark/contentPacks?userId=" + App.IdentityManager.CurrentUserId + "&page=" + Page.ToString(Locale.Raw, "0") + "&pageSize=" + Me.PageSize.ToString(Locale.Raw, "0"), "GET", AddressOf APICallback_ListMods)
+		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
