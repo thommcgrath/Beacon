@@ -66,12 +66,26 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function BuildExport(Blueprints() As Ark.Blueprint, Destination As FolderItem) As Boolean
-		  If Blueprints Is Nil Or Blueprints.Count = 0 Or Destination Is Nil Then
-		    App.Log("Could not export blueprints because the destination is invalid or there are no blueprints to export.")
-		    Return False
+		Protected Function BuildExport(ParamArray Blueprints() As Ark.Blueprint) As MemoryBlock
+		  Return BuildExport(Blueprints)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Blueprints() As Ark.Blueprint) As MemoryBlock
+		  If Blueprints Is Nil Or Blueprints.Count = 0 Then
+		    App.Log("Could not export blueprints because there are no blueprints to export.")
+		    Return Nil
 		  End If
 		  
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create()
+		  BuildExport(Blueprints, Archive)
+		  Return Archive.Finalize
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BuildExport(Blueprints() As Ark.Blueprint, Archive As Beacon.Archive)
 		  Var DataSource As Ark.DataSource
 		  Var ContentPackMap As New Dictionary
 		  Var Engrams(), Creatures(), LootDrops(), SpawnPoints() As Dictionary
@@ -138,10 +152,21 @@ Protected Module Ark
 		  Var BlueprintData As New Dictionary
 		  BlueprintData.Value("ark") = BlueprintArkData
 		  
-		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Destination)
 		  Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, False))
 		  Archive.AddFile("Main.beacondata", Beacon.GenerateJSON(MainData, False))
 		  Archive.AddFile("Blueprints.beacondata", Beacon.GenerateJSON(BlueprintData, False))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Blueprints() As Ark.Blueprint, Destination As FolderItem) As Boolean
+		  If Blueprints Is Nil Or Blueprints.Count = 0 Or Destination Is Nil Then
+		    App.Log("Could not export blueprints because the destination is invalid or there are no blueprints to export.")
+		    Return False
+		  End If
+		  
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Destination)
+		  BuildExport(Blueprints, Archive)
 		  Call Archive.Finalize
 		  
 		  Return True
@@ -149,12 +174,26 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function BuildExport(ContentPacks() As Ark.ContentPack, Destination As FolderItem) As Boolean
-		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Or Destination Is Nil Then
-		    App.Log("Could not export blueprints because the destination is invalid or there are no mods to export.")
-		    Return False
+		Protected Function BuildExport(ParamArray ContentPacks() As Ark.ContentPack) As MemoryBlock
+		  Return BuildExport(ContentPacks)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(ContentPacks() As Ark.ContentPack) As MemoryBlock
+		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Then
+		    App.Log("Could not export blueprints because there are no mods to export.")
+		    Return Nil
 		  End If
 		  
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create()
+		  BuildExport(ContentPacks, Archive)
+		  Return Archive.Finalize
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BuildExport(ContentPacks() As Ark.ContentPack, Archive As Beacon.Archive)
 		  Var Packs() As Dictionary
 		  Var Filter As New Beacon.StringList(-1)
 		  For Each ContentPack As Ark.ContentPack In ContentPacks
@@ -217,13 +256,36 @@ Protected Module Ark
 		  Var BlueprintData As New Dictionary
 		  BlueprintData.Value("ark") = BlueprintArkData
 		  
-		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Destination)
 		  Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, False))
 		  Archive.AddFile("Main.beacondata", Beacon.GenerateJSON(MainData, False))
 		  Archive.AddFile("Blueprints.beacondata", Beacon.GenerateJSON(BlueprintData, False))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(ContentPacks() As Ark.ContentPack, Destination As FolderItem) As Boolean
+		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Or Destination Is Nil Then
+		    App.Log("Could not export blueprints because the destination is invalid or there are no mods to export.")
+		    Return False
+		  End If
+		  
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Destination)
+		  BuildExport(ContentPacks, Archive)
 		  Call Archive.Finalize
 		  
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Destination As FolderItem, ParamArray Blueprints() As Ark.Blueprint) As Boolean
+		  Return BuildExport(Blueprints, Destination)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(Destination As FolderItem, ParamArray ContentPacks() As Ark.ContentPack) As Boolean
+		  Return BuildExport(ContentPacks, Destination)
 		End Function
 	#tag EndMethod
 

@@ -847,6 +847,22 @@ End
 		    End If
 		    
 		    Self.mDiscoveredMods.Add(Pack)
+		    
+		    If Preferences.OnlineEnabled = False Then
+		      Continue
+		    End If
+		    
+		    Try
+		      Var Exported As MemoryBlock = Ark.BuildExport(Pack)
+		      If Exported Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var Request As New BeaconAPI.Request("discovery/" + Pack.ContentPackId, "PUT", Exported, "application/octet-stream")
+		      Call BeaconAPI.SendSync(Request) // Response doesn't actually matter
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Uploading discovery results")
+		    End Try
 		  Next
 		End Sub
 	#tag EndMethod
