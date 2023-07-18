@@ -35,6 +35,9 @@ Protected Class WorkshopMod
 		  End If
 		  Self.mIsLocalMod = Details.IsLocal
 		  Self.mConfirmed = True
+		  Self.mLastUpdate = Details.LastUpdate
+		  Self.mGameId = Ark.Identifier
+		  Self.mMinVersion = 0
 		End Sub
 	#tag EndMethod
 
@@ -42,19 +45,39 @@ Protected Class WorkshopMod
 		Sub Constructor(Source As Dictionary)
 		  // For mod info from the API
 		  
-		  Self.mConfirmationCode = Source.Value("confirmationCode")
-		  Self.mConfirmed = Source.Value("isConfirmed")
+		  Self.mConfirmationCode = Source.Lookup("confirmationCode", "")
+		  Self.mConfirmed = Source.Lookup("isConfirmed", "")
+		  Self.mGameId = Source.Lookup("gameId", Ark.Identifier)
+		  Self.mIsLocalMod = False
+		  Self.mLastUpdate = Source.Lookup("lastUpdate", 0)
+		  Self.mMinVersion = Source.Lookup("minVersion", 0)
 		  Self.mModID = Source.Value("contentPackId")
 		  Self.mName = Source.Value("name")
-		  Self.mWorkshopURL = Source.Value("steamUrl")
 		  Self.mWorkshopId = Source.Value("steamId").DoubleValue.ToString(Locale.Raw, "0")
-		  Self.mIsLocalMod = False
+		  
+		  If Source.HasKey("steamUrl") Then
+		    Self.mWorkshopURL = Source.Value("steamUrl")
+		  ElseIf (Self.mWorkshopId Is Nil) = False Then
+		    Self.mWorkshopURL = "https://steamcommunity.com/sharedfiles/filedetails/?id=" + Self.mWorkshopId.StringValue
+		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameId() As String
+		  Return Self.mGameId
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsLocalMod() As Boolean
 		  Return Self.mIsLocalMod
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastUpdate() As Double
+		  Return Self.mLastUpdate
 		End Function
 	#tag EndMethod
 
@@ -113,7 +136,19 @@ Protected Class WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGameId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mIsLocalMod As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastUpdate As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMinVersion As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

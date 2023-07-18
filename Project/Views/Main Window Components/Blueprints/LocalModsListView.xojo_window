@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
+Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -7,11 +7,9 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   400
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -26,19 +24,19 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   494
+   Width           =   600
    Begin BeaconListbox ModsList
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   False
-      AllowInfiniteScroll=   True
+      AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   "*,200"
+      ColumnCount     =   3
+      ColumnWidths    =   "*,200,200"
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   1
@@ -54,10 +52,10 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   259
+      Height          =   359
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Name	Status"
+      InitialValue    =   "Name	Game	Last Update"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -80,7 +78,7 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   494
+      Width           =   600
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -116,7 +114,7 @@ Begin BeaconSubview ModsListView Implements NotificationKit.Receiver
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   494
+      Width           =   600
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
@@ -140,10 +138,44 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub RefreshMods()
+		  Var SelectedModIds() As String
+		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
+		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
+		    If Self.ModsList.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    SelectedModIds.Add(BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Idx)).ModID)
+		  Next
+		  
+		  Self.ModsList.RemoveAllRows
+		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Ark.ContentPack.Types.Custom)
+		  For Each Pack As Ark.ContentPack In Packs
+		    Var GameName As String = Language.GameName("Ark")
+		    Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
+		    Var ModInfo As New BeaconAPI.WorkshopMod(Pack)
+		    
+		    Self.ModsList.AddRow(Pack.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Short, DateTime.FormatStyles.Medium))
+		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
+		    Self.ModsList.RowTagAt(Idx) = ModInfo
+		    Self.ModsList.RowSelectedAt(Idx) = SelectedModIds.IndexOf(Pack.ContentPackId) > -1
+		    
+		    If Self.mOpenModWhenRefreshed = Pack.ContentPackId Then
+		      Self.ShowMod(ModInfo)
+		      Self.mOpenModWhenRefreshed = ""
+		    End If
+		  Next
+		  
+		  Self.ModsList.Sort
+		  Self.ModsList.ScrollPosition = ScrollPosition
+		  Self.ModsList.EnsureSelectionIsVisible
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
-		  
-		  Self.mHasBeenShown = True
 		  
 		  Self.RefreshMods()
 		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportStopped)
@@ -166,88 +198,16 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  #Pragma Unused Request
-		  
-		  If Self.ModsList Is Nil Then
-		    // This view already closed
-		    Return
-		  End If
-		  
-		  Self.FinishJob()
-		  
-		  Var SelectedModID As String
-		  Var ScrollPosition As Integer = -1
-		  If Self.ModsList.SelectedRowIndex > -1 Then
-		    SelectedModID = BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Self.ModsList.SelectedRowIndex)).ModID
-		    ScrollPosition = Self.ModsList.ScrollPosition
-		  End If
-		  
-		  If Response.Success Then
-		    Var TotalResults, TotalPages As Integer
-		    Var Results() As Variant
-		    Try
-		      Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
-		      TotalResults = Parsed.Value("totalResults")
-		      TotalPages = Parsed.Value("pages")
-		      Results = Parsed.Value("results")
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Parsing page of results.")
-		      Return
-		    End Try
-		    
-		    Self.mTotalPages = TotalPages
-		    Self.mTotalResults = TotalResults
-		    
-		    For Each Dict As Dictionary In Results
-		      Var ModInfo As New BeaconAPI.WorkshopMod(Dict)
-		      Self.ModsList.AddRow(ModInfo.Name, If(ModInfo.Confirmed, "Confirmed", "Waiting Confirmation"))
-		      Self.ModsList.RowTagAt(Self.ModsList.LastAddedRowIndex) = ModInfo
-		      If SelectedModID = ModInfo.ModID Then
-		        Self.ModsList.SelectedRowIndex = Self.ModsList.LastAddedRowIndex
-		      End If
-		    Next
-		  End If
-		  
-		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Ark.ContentPack.Types.Custom)
-		  For Each Pack As Ark.ContentPack In Packs
-		    Self.ModsList.AddRow(Pack.Name, "Custom")
-		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
-		    Self.ModsList.RowTagAt(Idx) = New BeaconAPI.WorkshopMod(Pack)
-		    If SelectedModID = Pack.ContentPackId Then
-		      Self.ModsList.SelectedRowIndex = Idx
-		    End If
-		  Next
-		  Self.ModsList.Sort
-		  
-		  If ScrollPosition > -1 Then
-		    Self.ModsList.ScrollPosition = ScrollPosition
-		  End If
-		  Self.ModsList.EnsureSelectionIsVisible
-		  
-		  If Self.mOpenModWhenRefreshed.IsEmpty = False Then
-		    For Idx As Integer = 0 To Self.ModsList.LastRowIndex
-		      If BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Idx)).ModID = Self.mOpenModWhenRefreshed Then
-		        Self.ModsList.SelectedRowIndex = Idx
-		        Self.ModsList.DoEdit
-		        Exit For Idx
-		      End If
-		    Next Idx
-		    Self.mOpenModWhenRefreshed = ""
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.ViewID = "ModsListView"
+		  Self.ViewID = "LocalModsListView"
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function DiscoveryCheckMod(WorkshopID As String) As Boolean
-		  Return RaiseEvent CloseModView(WorkshopID)
+		  Return Self.CloseModView(WorkshopID)
 		End Function
 	#tag EndMethod
 
@@ -301,17 +261,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub FinishJob()
-		  Self.mJobCount = Self.mJobCount - 1
-		  If Self.mJobCount > 0 Then
-		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		  Else
-		    Self.Progress = BeaconSubview.ProgressNone
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
@@ -319,25 +268,6 @@ End
 		  Case DataUpdater.Notification_ImportStopped
 		    Self.RefreshMods()
 		  End Select
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RefreshMods()
-		  If Preferences.OnlineEnabled = False Then
-		    Var FakeResponse As New BeaconAPI.Response("", 0, New MemoryBlock(0), New Dictionary)
-		    Self.APICallback_ListMods(Nil, FakeResponse)
-		    Return
-		  End If
-		  
-		  If Self.Working Then
-		    Return
-		  End If
-		  
-		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
-		  Self.ModsList.ScrollPosition = 0
-		  Self.ModsList.RemoveAllRows()
-		  Self.ModsList.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
 
@@ -366,43 +296,9 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub StartJob()
-		  Self.mJobCount = Self.mJobCount + 1
-		  If Self.mJobCount > 0 Then
-		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		  Else
-		    Self.Progress = BeaconSubview.ProgressNone
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function Working() As Boolean
-		  Return Self.mJobCount > 0
-		End Function
-	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0
-		Event CloseModView(ModUUID As String) As Boolean
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ShowMod(ModInfo As BeaconAPI.WorkshopMod)
-	#tag EndHook
-
 
 	#tag Property, Flags = &h21
 		Private mDiscoveryDialog As WeakRef
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mHasBeenShown As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mJobCount As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -411,18 +307,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mOpenModWhenRefreshed As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTotalPages As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTotalPages1 As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTotalResults As Integer
 	#tag EndProperty
 
 
@@ -491,7 +375,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Me.SelectedRowIndex)
-		  RaiseEvent ShowMod(ModInfo)
+		  Self.ShowMod(ModInfo)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -505,22 +389,11 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
-	#tag Event
-		Sub LoadMoreRows(Page As Integer)
-		  If Self.mHasBeenShown = False Or (Page > 1 And Page > Self.mTotalPages) Then
-		    Return
-		  End If
-		  
-		  Self.StartJob()
-		  Var Request As New BeaconAPI.Request("ark/contentPacks?userId=" + App.IdentityManager.CurrentUserId + "&page=" + Page.ToString(Locale.Raw, "0") + "&pageSize=" + Me.PageSize.ToString(Locale.Raw, "0"), "GET", AddressOf APICallback_ListMods)
-		  BeaconAPI.Send(Request)
-		End Sub
-	#tag EndEvent
 #tag EndEvents
 #tag Events ModsToolbar
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Register Mod", IconToolbarAdd, "Register your mod with Beacon."))
+		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Add Mod", IconToolbarAdd, "Add a mod to Beacon."))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import mod info that was exported from Beacon."))
 		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Export the selected mod or mods to be shared with other Beacon users.", False))

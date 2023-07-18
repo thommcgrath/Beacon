@@ -193,6 +193,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -203,6 +204,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4

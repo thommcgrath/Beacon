@@ -68,8 +68,8 @@ Protected Module DataUpdater
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub ImportString(Content As String)
+	#tag Method, Flags = &h1
+		Protected Sub ImportString(Content As String)
 		  mPendingImports.Add(Content)
 		  
 		  If mPendingImports.Count > 0 Then
