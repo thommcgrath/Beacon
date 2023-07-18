@@ -40,12 +40,19 @@ Core::RegisterRoutes(
 		'/deltas/{version}' => [
 			'GET' => 'deltas'
 		],
+		'/discovery' => [
+			'GET' => 'discovery/list'
+		],
+		'/discovery/{contentPackId}' => [
+			'PUT' => 'discovery/edit',
+			'GET' => 'discovery/get'
+		],
 		'/files' => [
 			'GET' => 'file'
 		],
 		'/files/{...filePath}' => [
 			'GET' => 'file',
-			'POST' => 'file',
+			'PUT' => 'file',
 			'DELETE' => 'file'
 		],
 		'/login' => [

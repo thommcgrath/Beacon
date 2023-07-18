@@ -46,13 +46,17 @@ abstract class DatabaseObject {
 	}
 	
 	public static function Fetch(string $uuid): ?static {
-		$schema = static::DatabaseSchema();
-		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';', $uuid);
-		if (is_null($rows) || $rows->RecordCount() !== 1) {
+		try {
+			$schema = static::DatabaseSchema();
+			$database = BeaconCommon::Database();
+			$rows = $database->Query('SELECT ' . $schema->SelectColumns() . ' FROM ' . $schema->FromClause() . ' WHERE ' . $schema->PrimaryAccessor() . ' = ' . $schema->PrimarySetter('$1') . ';', $uuid);
+			if (is_null($rows) || $rows->RecordCount() !== 1) {
+				return null;
+			}
+			return static::NewInstance($rows);
+		} catch (Exception $err) {
 			return null;
 		}
-		return static::NewInstance($rows);
 	}
 	
 	// Need a way to check incoming array data for permission
@@ -201,7 +205,7 @@ abstract class DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->UUID());
+		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
 		$database->Commit();
 	}
 	

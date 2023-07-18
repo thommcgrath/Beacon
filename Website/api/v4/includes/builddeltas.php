@@ -25,7 +25,7 @@ $completeArchive = new Archiver('Complete', true, $lastDatabaseUpdate->getTimest
 BuildMainFile($completeArchive, null);
 
 // Need to find the mods that have changes since the last run
-$packs = ContentPack::Search(['isIncludedInDeltas' => true], true);
+$packs = ContentPack::Search(['isIncludedInDeltas' => true, 'isConfirmed' => true], true);
 $packIds = [];
 foreach ($packs as $pack) {
 	$packIds[$pack->ContentPackId()] = $pack;
@@ -40,8 +40,13 @@ if ($buildDeltas) {
 	
 	$rows = $database->Query("SELECT mod_id FROM ark.mod_update_times WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
 	while (!$rows->EOF()) {
+		if (array_key_exists($rows->Field('mod_id'), $packIds) === false) {
+			$rows->MoveNext();
+			continue;
+		}
+		
 		$pack = $packIds[$rows->Field('mod_id')];
-		if ($pack->IsIncludedInDeltas() === false) {
+		if ($pack->IsIncludedInDeltas() === false || $pack->IsConfirmed() === false) {
 			$rows->MoveNext();
 			continue;
 		}

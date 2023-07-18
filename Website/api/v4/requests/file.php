@@ -1,24 +1,24 @@
 <?php
 
-BeaconAPI::Authorize();
+use BeaconAPI\v4\{Response, Core};
 	
-function handleRequest(array $context): Response {
-	$user = BeaconAPI::User();
-	$prefix = '/' . $user->UserID();
+function handleRequest(array $context): ?Response {
+	$user = Core::User();
+	$prefix = '/' . $user->UserId();
 	$prefix_len = strlen($prefix);
 	$remote_path = $prefix . '/';
 	if (isset($context['pathParameters']['filePath'])) {
 		$remote_path .= $context['pathParameters']['filePath'];
 	}
 	
-	$prohibited_path = '/' . $user->UserID() . '/Documents/';
+	$prohibited_path = '/' . $user->UserId() . '/Documents/';
 	if (str_starts_with($remote_path, $prohibited_path)) {
-		BeaconAPI::ReplyError('Use the projects API for accessing projects', null, 446);
+		return Response::NewJsonError('Use the projects API for accessing projects', null, 446);
 	}
 	
 	switch ($context['routeKey']) {
-	case 'GET /file':
-	case 'GET /file/{...filePath}':
+	case 'GET /files':
+	case 'GET /files/{...filePath}':
 		$dir = str_ends_with($remote_path, '/');
 		if ($dir) {
 			$list = BeaconCloudStorage::ListFiles($remote_path);
@@ -31,25 +31,26 @@ function handleRequest(array $context): Response {
 				$file['path'] = substr($file['path'], $prefix_len);
 				$filtered[] = $file;
 			}
-			BeaconAPI::ReplySuccess($filtered);
+			return Response::NewJson($filtered, 200);
 		} else {
 			BeaconCloudStorage::StreamFile($remote_path);
+			return null;
 		}
-		break;
-	case 'POST /file/{...filePath}':
-	case 'PUT /file/{...filePath}':
-		if (BeaconCloudStorage::PutFile($remote_path, BeaconAPI::Body())) {
+	case 'POST /files/{...filePath}':
+	case 'PUT /files/{...filePath}':
+		if (BeaconCloudStorage::PutFile($remote_path, Core::Body())) {
 			$details = BeaconCloudStorage::DetailsForFile($remote_path);
 			$details['path'] = substr($details['path'], $prefix_len);
-			BeaconAPI::ReplySuccess($details);
+			return Response::NewJson($details, 200);
 		} else {
-			BeaconAPI::ReplyError('Something went wrong');
+			return Response::NewJsonError('Something went wrong', null, 500);
 		}
-		break;
-	case 'DELETE /file/{...filePath}':
+	case 'DELETE /files/{...filePath}':
 		BeaconCloudStorage::DeleteFile($remote_path);
-		break;
+		return Response::NewNoContent();
 	}
+	
+	return Response::NewJsonError('Route not found', null, 404);
 }
 
 ?>

@@ -3,7 +3,6 @@
 use BeaconAPI\v4\{Response, Core, Project, User};
 
 function handleRequest(array $context): Response {
-	$database = BeaconCommon::Database();
 	$public_only = true;
 	$filters = $_GET;
 	$filters['deleted'] = false;

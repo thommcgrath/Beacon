@@ -479,7 +479,9 @@ class Core {
 			try {
 				$response = $handler($context);
 				static::ManageRateLimit();
-				$response->Flush();
+				if (is_null($response) === false) {
+					$response->Flush();
+				}
 			} catch (Exception $err) {
 				static::ManageRateLimit();
 				Response::NewJsonError((BeaconCommon::InProduction() ? 'Internal server error' : $err->getMessage()), null, 500)->Flush();
