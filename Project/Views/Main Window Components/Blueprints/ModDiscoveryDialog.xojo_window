@@ -46,7 +46,7 @@ Begin BeaconDialog ModDiscoveryDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -976,8 +976,14 @@ End
 		  Matcher.Options.ReplaceAllMatches = True
 		  ModsString = Matcher.Replace(ModsString)
 		  
+		  Var OfficialModNames() As String
+		  Var OfficialModIds() As String
 		  Var ModIDs() As String = ModsString.Split(",")
 		  For Each ModID As String In ModIDs
+		    If ModID = "2171967557" Then
+		      Continue
+		    End If
+		    
 		    Var SteamId As Double
 		    Try
 		      SteamId = Double.FromString(ModID, Locale.Raw)
@@ -987,8 +993,8 @@ End
 		    
 		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithSteamId(SteamId)
 		    If (Pack Is Nil) = False And Pack.IsLocal = False Then
-		      Self.ShowAlert("Mod already supported", Pack.Name + " (" + ModID + ") is already built into Beacon, there is no need to run discovery on it.")
-		      Return
+		      OfficialModNames.Add(Pack.Name + " (" + ModID + ")")
+		      OfficialModIds.Add(ModID)
 		    End If
 		    
 		    If (Beacon.SafeToInvoke(Self.mCheckCallback) And Self.mCheckCallback.Invoke(ModID)) = False Then
@@ -996,6 +1002,43 @@ End
 		      Return
 		    End If
 		  Next
+		  
+		  If OfficialModNames.Count > 0 Then
+		    Var RemainingMods As Integer = ModIds.Count - OfficialModNames.Count
+		    Var SkipCaption As String = "Skip Them"
+		    
+		    Var Message As String = If(RemainingMods > 0, "Beacon already supports some of your mods", "Beacon already supports your mods")
+		    Var Explanation As String
+		    If OfficialModNames.Count > 8 Then
+		      Explanation = OfficialModNames.Count.ToString(Locale.Current, "#,##0") + " mods are already built into Beacon and do not need to be discovered."
+		    ElseIf OfficialModNames.Count > 1 Then
+		      Explanation = "The mods " + Language.EnglishOxfordList(OfficialModNames) + " are already built into Beacon and do not need to be discovered."
+		    Else
+		      Message = If(RemainingMods > 0, "Beacon already supports one of your mods", "Beacon already supports your mod")
+		      Explanation = "The mod " + OfficialModNames(0) + " is already built into Beacon and does not need to be discovered."
+		      SkipCaption = "Skip It"
+		    End If
+		    
+		    Var ShouldSkip As Boolean
+		    Var Choice As BeaconUI.ConfirmResponses
+		    If RemainingMods > 0 Then
+		      Choice = BeaconUI.ShowConfirm(Message, Explanation, SkipCaption, "Cancel Discovery", "Discover Anyway")
+		      ShouldSkip = (Choice = BeaconUI.ConfirmResponses.Action)
+		    Else
+		      Choice = BeaconUI.ShowConfirm(Message, Explanation, "Discover Anyway", "Cancel Discovery", "")
+		    End If
+		    If Choice = BeaconUI.ConfirmResponses.Cancel Then
+		      Return
+		    End If
+		    
+		    If ShouldSkip Then
+		      For Idx As Integer = ModIDs.LastIndex DownTo 0
+		        If OfficialModIds.IndexOf(ModIds(Idx)) > -1 Then
+		          ModIDs.RemoveAt(Idx)
+		        End If
+		      Next
+		    End If
+		  End If
 		  
 		  If ModIDs.IndexOf("2171967557") = -1 Then
 		    ModIDs.Add("2171967557")
