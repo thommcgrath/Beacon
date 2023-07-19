@@ -52,7 +52,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   359
+      Height          =   328
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Name	Game	Last Update"
@@ -114,7 +114,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   600
+      Width           =   330
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
@@ -126,6 +126,123 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
+   End
+   Begin DesktopLabel StatusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Loading Mods"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   375
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+   End
+   Begin FadedSeparator StatusSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   369
+      Transparent     =   True
+      Visible         =   True
+      Width           =   600
+   End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      AllowTabStop    =   True
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Mods"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   340
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   9
+      Transparent     =   False
+      Visible         =   True
+      Width           =   250
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   330
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   270
    End
 End
 #tag EndDesktopWindow
@@ -149,14 +266,16 @@ End
 		    SelectedModIds.Add(BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Idx)).ModID)
 		  Next
 		  
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  
 		  Self.ModsList.RemoveAllRows
-		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Ark.ContentPack.Types.Custom)
+		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Filter, Ark.ContentPack.Types.Custom)
 		  For Each Pack As Ark.ContentPack In Packs
 		    Var GameName As String = Language.GameName("Ark")
 		    Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
 		    Var ModInfo As New BeaconAPI.WorkshopMod(Pack)
 		    
-		    Self.ModsList.AddRow(Pack.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Short, DateTime.FormatStyles.Medium))
+		    Self.ModsList.AddRow(Pack.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium))
 		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
 		    Self.ModsList.RowTagAt(Idx) = ModInfo
 		    Self.ModsList.RowSelectedAt(Idx) = SelectedModIds.IndexOf(Pack.ContentPackId) > -1
@@ -166,6 +285,8 @@ End
 		      Self.mOpenModWhenRefreshed = ""
 		    End If
 		  Next
+		  Self.TotalPages = 1
+		  Self.TotalResults = Self.ModsList.RowCount
 		  
 		  Self.ModsList.Sort
 		  Self.ModsList.ScrollPosition = ScrollPosition
@@ -179,6 +300,20 @@ End
 		  
 		  Self.RefreshMods()
 		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportStopped)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub UpdateUI()
+		  Var Status As String
+		  If Self.ModsList.SelectedRowCount > 0 Then
+		    Status = Self.ModsList.SelectedRowCount.ToString(Locale.Current, "0,##") + " of " + Language.NounWithQuantity(Self.TotalResults, "mod", "mods") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.TotalResults, "mod", "mods")
+		  End If
+		  If Self.StatusLabel.Text <> Status Then
+		    Self.StatusLabel.Text = Status
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -346,29 +481,17 @@ End
 		  End If
 		  
 		  // Make sure they do not have unsaved changes
-		  Var WorkshopIDs() As String
 		  For Idx As Integer = Mods.LastIndex DownTo 0
-		    If Not CloseModView(Mods(Idx).ModID) Then
+		    If Self.CloseModView(Mods(Idx).ModID) = False Then
 		      Mods.RemoveAt(Idx)
-		    Else
-		      If Mods(Idx).IsLocalMod Then
-		        Self.mModUUIDsToDelete.Add(Mods(Idx).ModID)
-		      ElseIf (Mods(Idx).WorkshopID Is Nil) = False Then
-		        WorkshopIDs.Add(Mods(Idx).WorkshopID)
-		      End If
+		      Continue
 		    End If
-		  Next Idx
+		    
+		    Self.mModUUIDsToDelete.Add(Mods(Idx).ModID)
+		  Next
 		  
 		  If Self.mModUUIDsToDelete.Count > 0 And Self.ModDeleterThread.ThreadState = Thread.ThreadStates.NotRunning Then
 		    Self.ModDeleterThread.Start
-		  End If
-		  
-		  If WorkshopIDs.Count > 0 Then
-		    Self.StartJob()
-		    
-		    Var Body As String = WorkshopIDs.Join(",")
-		    Var Request As New BeaconAPI.Request("ark/contentPacks", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
-		    BeaconAPI.Send(Request)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -387,6 +510,8 @@ End
 		  If (Self.ModsToolbar.Item("ExportButton") Is Nil) = False Then
 		    Self.ModsToolbar.Item("ExportButton").Enabled = Me.SelectedRowCount > 0
 		  End If
+		  
+		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -455,8 +580,16 @@ End
 		          Exit For Row
 		        End If
 		      Next
+		      Self.TotalResults = Self.ModsList.RowCount
 		    End Select
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.RefreshMods()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

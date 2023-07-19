@@ -78,13 +78,19 @@ Implements NotificationKit.Receiver
 		  Var Savepoint As String = Self.mTransactions(0)
 		  Self.mTransactions.RemoveAt(0)
 		  
-		  If Savepoint = "" Then
-		    Self.mDatabase.ExecuteSQL("COMMIT TRANSACTION;")
-		  Else
-		    Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
-		  End If
-		  
-		  Self.ReleaseLock()
+		  Try
+		    If Savepoint.IsEmpty Then
+		      Self.mDatabase.ExecuteSQL("COMMIT TRANSACTION;")
+		    Else
+		      Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
+		    End If
+		    Self.ReleaseLock()
+		  Catch Err As RuntimeException
+		    // Put the transaction back into the stack
+		    Self.mTransactions.AddAt(0, Savepoint)
+		    Self.ReleaseLock()
+		    Raise Err
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -415,7 +421,17 @@ Implements NotificationKit.Receiver
 		    Self.LastSyncTimestamp = Timestamp
 		  End If
 		  Self.BuildIndexes()
-		  Self.CommitTransaction()
+		  
+		  Try
+		    Self.CommitTransaction()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Trying to commit import")
+		    While Self.TransactionDepth > OriginalDepth
+		      Self.RollbackTransaction
+		    Wend
+		    Self.mImporting = False
+		    Return False
+		  End Try
 		  
 		  Try
 		    RaiseEvent ImportCleanup(StatusData)
@@ -635,14 +651,20 @@ Implements NotificationKit.Receiver
 		  Var Savepoint As String = Self.mTransactions(0)
 		  Self.mTransactions.RemoveAt(0)
 		  
-		  If Savepoint = "" Then
-		    Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION;")
-		  Else
-		    Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION TO SAVEPOINT " + Savepoint + ";")
-		    Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
-		  End If
-		  
-		  Self.ReleaseLock()
+		  Try
+		    If Savepoint.IsEmpty Then
+		      Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION;")
+		    Else
+		      Self.mDatabase.ExecuteSQL("ROLLBACK TRANSACTION TO SAVEPOINT " + Savepoint + ";")
+		      Self.mDatabase.ExecuteSQL("RELEASE SAVEPOINT " + Savepoint + ";")
+		    End If
+		    Self.ReleaseLock()
+		  Catch Err As RuntimeException
+		    // Put the transaction back into the stack
+		    Self.mTransactions.AddAt(0, Savepoint)
+		    Self.ReleaseLock()
+		    Raise Err
+		  End Try
 		End Sub
 	#tag EndMethod
 

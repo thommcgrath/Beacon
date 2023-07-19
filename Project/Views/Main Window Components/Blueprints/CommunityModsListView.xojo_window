@@ -358,12 +358,16 @@ End
 		  
 		  Select Case Notification.Name
 		  Case DataUpdater.Notification_ImportStopped
+		    Var OpenEditors As Boolean = Self.mPendingDownloads.Count <= 4
+		    
 		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    For Idx As Integer = Self.mPendingDownloads.LastIndex DownTo 0
 		      Var Pack As Ark.ContentPack = DataSource.GetContentPackWithId(Self.mPendingDownloads(Idx))
 		      If (Pack Is Nil) = False Then
-		        Var ModInfo As New BeaconAPI.WorkshopMod(Pack)
-		        Self.ShowMod(ModInfo)
+		        If OpenEditors Then
+		          Var ModInfo As New BeaconAPI.WorkshopMod(Pack)
+		          Self.ShowMod(ModInfo)
+		        End If
 		        Self.mPendingDownloads.RemoveAt(Idx)
 		        Self.mDownloadCount = Self.mDownloadCount + 1
 		      End If
