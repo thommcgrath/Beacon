@@ -10,6 +10,10 @@ function handleRequest(array $context): ?Response {
 		return Response::NewJsonError('Result not found.', $contentPackId, 404);
 	}
 	
+	if ($context['routeKey'] === 'HEAD /discovery/{contentPackId}') {
+		return Response::NewJson('', 200);
+	}
+	
 	$storagePath = $result->StoragePath();
 	BeaconCloudStorage::StreamFile($storagePath);
 	return null;

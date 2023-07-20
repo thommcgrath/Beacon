@@ -69,7 +69,7 @@ class ModDiscoveryResult extends DatabaseObject implements JsonSerializable {
 		$database = BeaconCommon::Database();
 		$rows = $database->Query('SELECT game_id, workshop_id, EXTRACT(EPOCH FROM last_update) AS last_update FROM public.mod_discovery_results WHERE mod_id = $1;', $contentPackId);
 		if ($rows->RecordCount() === 0) {
-			$storagePath = '/discovery/' . $contentPackId . '.beacondata';
+			$storagePath = '/Discovery/' . $contentPackId . '.beacondata';
 			$database->BeginTransaction();
 			$database->Query('INSERT INTO public.mod_discovery_results (mod_id, game_id, workshop_id, name, last_update, min_version, storage_path) VALUES ($1, $2, $3, $4, TO_TIMESTAMP($5), $6, $7);', $contentPackId, $gameId, $steamId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion'], $storagePath);
 			$database->Commit();

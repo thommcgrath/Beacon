@@ -45,7 +45,8 @@ Core::RegisterRoutes(
 		],
 		'/discovery/{contentPackId}' => [
 			'PUT' => 'discovery/edit',
-			'GET' => 'discovery/get'
+			'GET' => 'discovery/get',
+			'HEAD' => 'discovery/get'
 		],
 		'/files' => [
 			'GET' => 'file'
