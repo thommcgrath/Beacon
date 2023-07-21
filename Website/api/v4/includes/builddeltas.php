@@ -25,7 +25,7 @@ $completeArchive = new Archiver('Complete', true, $lastDatabaseUpdate->getTimest
 BuildMainFile($completeArchive, null);
 
 // Need to find the mods that have changes since the last run
-$packs = ContentPack::Search(['isIncludedInDeltas' => true, 'isConfirmed' => true], true);
+$packs = ContentPack::Search(['isIncludedInDeltas' => true, 'isConfirmed' => true, 'gameId' => 'Ark'], true);
 $packIds = [];
 foreach ($packs as $pack) {
 	$packIds[$pack->ContentPackId()] = $pack;
@@ -38,14 +38,14 @@ if ($buildDeltas) {
 	$deltaArchive = new Archiver($deltaLabel, false, $lastDatabaseUpdate->getTimestamp());
 	BuildMainFile($deltaArchive, $since);
 	
-	$rows = $database->Query("SELECT mod_id FROM ark.mod_update_times WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
+	$rows = $database->Query("SELECT content_pack_id FROM public.content_pack_id WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
 	while (!$rows->EOF()) {
-		if (array_key_exists($rows->Field('mod_id'), $packIds) === false) {
+		if (array_key_exists($rows->Field('content_pack_id'), $packIds) === false) {
 			$rows->MoveNext();
 			continue;
 		}
 		
-		$pack = $packIds[$rows->Field('mod_id')];
+		$pack = $packIds[$rows->Field('content_pack_id')];
 		if ($pack->IsIncludedInDeltas() === false || $pack->IsConfirmed() === false) {
 			$rows->MoveNext();
 			continue;
@@ -143,7 +143,7 @@ function BuildFile(array $settings): void {
 			}
 		}
 		
-		$localName = 'Main.beacondata';
+		$localName = 'Main.json';
 		break;
 	case 'Ark/Mod':
 		$pack = $settings['ark']['contentPack'];
@@ -159,7 +159,7 @@ function BuildFile(array $settings): void {
 			'spawnPoints' => SpawnPoint::Search($filters, true)
 		];
 		
-		$localName = "{$pack->ContentPackId()}.beacondata";
+		$localName = "{$pack->ContentPackId()}.json";
 		break;
 	default:
 		throw new Exception("Unknown class {$class}");
