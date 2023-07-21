@@ -100,6 +100,12 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function GenerateLocalContentPackId(Marketplace As String, MarketplaceId As String) As String
+		  Return Beacon.UUID.v5("Local " + Marketplace + ": " + MarketplaceId).StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsConsoleSafe() As Boolean
 		  Return Self.mIsConsoleSafe
 		End Function

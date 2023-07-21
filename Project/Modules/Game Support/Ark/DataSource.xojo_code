@@ -4,7 +4,7 @@ Inherits Beacon.DataSource
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub BuildSchema()
-		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL, label TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, last_update INTEGER NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', min_item_sets INTEGER NOT NULL DEFAULT 1, max_item_sets INTEGER NOT NULL DEFAULT 1, prevent_duplicates BOOLEAN NOT NULL DEFAULT 1, contents TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
@@ -133,6 +133,7 @@ Inherits Beacon.DataSource
 		      Var Marketplace As String = Dict.Lookup("marketplace", "")
 		      Var MarketplaceId As String = Dict.Lookup("marketplaceId", "")
 		      Var IsLocal As Boolean = MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
+		      Var GameId As String = Dict.Value("gameId")
 		      
 		      Var Rows As RowSet
 		      If MarketplaceId.IsEmpty Then
@@ -144,9 +145,9 @@ Inherits Beacon.DataSource
 		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id IS DISTINCT FROM ?1 AND marketplace = ?2 AND marketplace_id = ?3;", ContentPackId, Marketplace, MarketplaceId)
 		      End If
 		      If Rows.RowCount > 0 Then
-		        Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, Now)
+		        Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, Now, GameId)
 		      Else
-		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, Now)
+		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, Now, GameId)
 		      End If
 		    Next
 		  End If
@@ -1013,7 +1014,7 @@ Inherits Beacon.DataSource
 		  If MarketplaceId.IsEmpty Then
 		    ContentPackId = Beacon.UUID.v4
 		  Else
-		    ContentPackId = Beacon.UUID.v5("Local " + Marketplace + ": " + MarketplaceId)
+		    ContentPackId = Beacon.ContentPack.GenerateLocalContentPackId(Marketplace, MarketplaceId)
 		  End If
 		  Self.BeginTransaction()
 		  Var Rows As RowSet = Self.SQLSelect("INSERT OR IGNORE INTO content_packs (content_pack_id, game_id, marketplace, marketplace_id, name, console_safe, default_enabled, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9) RETURNING *;", ContentPackId, Ark.Identifier, Marketplace, MarketplaceId, PackName, False, False, True, DateTime.Now.SecondsFrom1970)
@@ -2429,7 +2430,7 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Ark.UserContentPackId, Ark.UserContentPackName, True, True, True, DateTime.Now.SecondsFrom1970)
+		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local, last_update, marketplace, marketplace_id, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, '', '', ?7);", Ark.UserContentPackId, Ark.UserContentPackName, True, True, True, DateTime.Now.SecondsFrom1970, Ark.Identifier)
 		  Self.CommitTransaction()
 		End Sub
 	#tag EndMethod

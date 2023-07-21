@@ -49,7 +49,7 @@ Begin BeaconDialog RegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   520
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -1316,7 +1316,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  If Self.mMode = Self.ModeLocal Then
-		    Self.mModId = Beacon.UUID.v5("Local " + Beacon.ContentPack.MarketplaceSteamWorkshop + ": " + Self.mSteamId)
+		    Self.mModId = Beacon.ContentPack.GenerateLocalContentPackId(Beacon.ContentPack.MarketplaceSteamWorkshop, Self.mSteamId)
 		    Var ContentPack As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Self.mModId)
 		    If (ContentPack Is Nil) = False Then
 		      Self.ShowAlert("You have already added this mod.", "It is not possible to add the same mod more than once.")
