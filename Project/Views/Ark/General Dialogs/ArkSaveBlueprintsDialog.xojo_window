@@ -189,6 +189,7 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
       LockTop         =   True
       PageSize        =   100
       PreferencesKey  =   ""
+      RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
       TabIndex        =   2
@@ -200,10 +201,13 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   560
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin DesktopProgressWheel Spinner
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowTabStop    =   True
       Enabled         =   True
@@ -216,6 +220,7 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -224,14 +229,22 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
       Transparent     =   False
       Visible         =   False
       Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin Thread SaveThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndDesktopWindow
@@ -239,8 +252,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Var Packs() As Ark.ContentPack = Self.mProject.EmbeddedContentPacks
-		  For Each Pack As Ark.ContentPack In Packs
+		  Var Packs() As Beacon.ContentPack = Self.mProject.EmbeddedContentPacks
+		  For Each Pack As Beacon.ContentPack In Packs
 		    Self.List.AddExpandableRow(Pack.Name)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Pack
 		    Self.List.CellCheckBoxStateAt(Self.List.LastAddedRowIndex, 0) = DesktopCheckBox.VisualStates.Checked
@@ -278,7 +291,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContentPacks() As Ark.ContentPack
+		Private mContentPacks() As Beacon.ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -295,11 +308,11 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var ContentPacks() As Ark.ContentPack
+		  Var ContentPacks() As Beacon.ContentPack
 		  Var Blueprints() As Ark.Blueprint
 		  
-		  Var Packs() As Ark.ContentPack = Self.mProject.EmbeddedContentPacks
-		  For Each Pack As Ark.ContentPack In Packs
+		  Var Packs() As Beacon.ContentPack = Self.mProject.EmbeddedContentPacks
+		  For Each Pack As Beacon.ContentPack In Packs
 		    Var PackState As DesktopCheckBox.VisualStates = Self.mStates.Lookup(Pack.ContentPackId, DesktopCheckBox.VisualStates.Unchecked)
 		    Select Case PackState
 		    Case DesktopCheckBox.VisualStates.Unchecked
@@ -343,7 +356,7 @@ End
 #tag Events List
 	#tag Event
 		Sub RowExpanded(row As Integer)
-		  Var Pack As Ark.ContentPack = Me.RowTagAt(Row)
+		  Var Pack As Beacon.ContentPack = Me.RowTagAt(Row)
 		  Var Blueprints() As Ark.Blueprint = Self.mProject.EmbeddedBlueprints(Pack)
 		  Var PackState As DesktopCheckBox.VisualStates = Self.mStates.Lookup(Pack.ContentPackId, DesktopCheckBox.VisualStates.Checked)
 		  For Each Blueprint As Ark.Blueprint In Blueprints
@@ -365,9 +378,9 @@ End
 		  Var RowTag As Variant = Me.RowTagAt(Row)
 		  Var SomethingSelected As Boolean
 		  Select Case RowTag.ObjectValue
-		  Case IsA Ark.ContentPack
+		  Case IsA Beacon.ContentPack
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    Var Pack As Ark.ContentPack = RowTag
+		    Var Pack As Beacon.ContentPack = RowTag
 		    Self.mStates.Value(Pack.ContentPackId) = Checked
 		    
 		    Var Blueprints() As Ark.Blueprint = Self.mProject.EmbeddedBlueprints(Pack)
@@ -406,7 +419,7 @@ End
 		    Self.mStates.Value(Blueprint.BlueprintId) = Me.CellCheckBoxStateAt(Row, Column)
 		    
 		    For Idx As Integer = 0 To Me.LastRowIndex
-		      If Me.RowTagAt(Idx).ObjectValue IsA Ark.ContentPack And Ark.ContentPack(Me.RowTagAt(Idx)).ContentPackId = ContentPackId Then
+		      If Me.RowTagAt(Idx).ObjectValue IsA Beacon.ContentPack And Beacon.ContentPack(Me.RowTagAt(Idx)).ContentPackId = ContentPackId Then
 		        Me.CellCheckBoxStateAt(Idx, Column) = State
 		      End If
 		      SomethingSelected = SomethingSelected Or Me.CellCheckBoxValueAt(Idx, Column)
@@ -421,7 +434,7 @@ End
 	#tag Event
 		Sub Run()
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
-		  For Each Pack As Ark.ContentPack In Self.mContentPacks
+		  For Each Pack As Beacon.ContentPack In Self.mContentPacks
 		    DataSource.SaveContentPack(Pack)
 		  Next
 		  Var Delete() As Ark.Blueprint

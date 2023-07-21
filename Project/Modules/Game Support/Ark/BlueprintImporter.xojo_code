@@ -36,7 +36,7 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackAt(Idx As Integer) As Ark.ContentPack
+		Function ContentPackAt(Idx As Integer) As Beacon.ContentPack
 		  Return Self.mContentPacks(Idx)
 		End Function
 	#tag EndMethod
@@ -54,8 +54,8 @@ Protected Class BlueprintImporter
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPacks() As Ark.ContentPack()
-		  Var Arr() As Ark.ContentPack
+		Function ContentPacks() As Beacon.ContentPack()
+		  Var Arr() As Beacon.ContentPack
 		  Arr.ResizeTo(Self.mContentPacks.LastIndex)
 		  For Idx As Integer = Self.mContentPacks.FirstIndex To Self.mContentPacks.LastIndex
 		    Arr(Idx) = Self.mContentPacks(Idx)
@@ -175,7 +175,7 @@ Protected Class BlueprintImporter
 		          Return Nil
 		        End If
 		        
-		        Var ContentPack As Ark.ContentPack = Ark.ContentPack.FromSaveData(ContentPackDict)
+		        Var ContentPack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(ContentPackDict)
 		        If (ContentPack Is Nil) = False Then
 		          Importer.mContentPacks.Add(ContentPack)
 		          If (Progress Is Nil) = False Then
@@ -497,7 +497,7 @@ Protected Class BlueprintImporter
 		      Return Nil
 		    End If
 		    
-		    Var Pack As Ark.ContentPack = Ark.ContentPack.FromSaveData(ContentPacks(Idx))
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(ContentPacks(Idx))
 		    If (Pack Is Nil) = False Then
 		      Importer.mContentPacks.Add(Pack)
 		    End If
@@ -819,7 +819,7 @@ Protected Class BlueprintImporter
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContentPacks() As Ark.ContentPack
+		Private mContentPacks() As Beacon.ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

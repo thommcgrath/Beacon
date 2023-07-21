@@ -2209,9 +2209,9 @@ End
 		    Var ContentPackIds As Beacon.StringList = Self.Project.ContentPacks
 		    Var SteamIds As New Beacon.StringList
 		    For Each ContentPackId As String In ContentPackIds
-		      Var ContentPack As Ark.ContentPack = DataSource.GetContentPackWithID(ContentPackId)
-		      If ContentPack.IsLocal = False And ContentPack.Type = Ark.ContentPack.Types.Steam And (ContentPack.SteamId Is Nil) = False Then
-		        SteamIds.Append(ContentPack.SteamId.StringValue(Locale.Raw, "0"))
+		      Var ContentPack As Beacon.ContentPack = DataSource.GetContentPackWithId(ContentPackId)
+		      If ContentPack.IsLocal = False And ContentPack.Type = Beacon.ContentPack.Types.ThirdParty Then
+		        SteamIds.Append(ContentPack.ContentPackId)
 		      End If
 		    Next
 		    If SteamIds.Count > 0 Then
@@ -2233,7 +2233,7 @@ End
 		    SingleMenuItem.HasCheckMark = Self.mComputeSinglePlayer
 		    Base.AddMenu(NormalMenuItem)
 		    Base.AddMenu(SingleMenuItem)
-		    Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
 		    Var NoEventItem As New DesktopMenuItem("No Event", "")
 		    NoEventItem.HasCheckMark = Self.mActiveEvent.IsEmpty

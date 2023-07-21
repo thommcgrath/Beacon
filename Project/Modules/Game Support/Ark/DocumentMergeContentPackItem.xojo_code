@@ -2,7 +2,7 @@
 Protected Class DocumentMergeContentPackItem
 Inherits Beacon.DocumentMergeItem
 	#tag Method, Flags = &h0
-		Sub Constructor(Pack As Ark.ContentPack)
+		Sub Constructor(Pack As Beacon.ContentPack)
 		  Self.Pack = Pack
 		  Self.Label = "Enable Mod: " + Pack.Name
 		End Sub
@@ -10,7 +10,7 @@ Inherits Beacon.DocumentMergeItem
 
 
 	#tag Property, Flags = &h0
-		Pack As Ark.ContentPack
+		Pack As Beacon.ContentPack
 	#tag EndProperty
 
 

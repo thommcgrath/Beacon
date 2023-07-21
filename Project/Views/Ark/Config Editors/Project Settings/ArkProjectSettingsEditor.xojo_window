@@ -627,8 +627,8 @@ End
 		  Self.Project.ConsoleSafe = Me.Value
 		  
 		  If Me.Value Then
-		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
-		    For Each Pack As Ark.ContentPack In ContentPacks
+		    Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
+		    For Each Pack As Beacon.ContentPack In ContentPacks
 		      If Pack.IsConsoleSafe = False Then
 		        Self.Project.ContentPackEnabled(Pack.ContentPackId) = False
 		      End If

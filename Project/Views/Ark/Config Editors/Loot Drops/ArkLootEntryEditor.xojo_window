@@ -606,11 +606,11 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mModSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
-		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
+		    Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
 		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
 		    Var ModList As New Beacon.StringList
 		    Var PrefsDict As New Dictionary
-		    For Each Pack As Ark.ContentPack In ContentPacks
+		    For Each Pack As Beacon.ContentPack In ContentPacks
 		      If Editor.ModEnabled(Pack.ContentPackId) Then
 		        ModList.Append(Pack.ContentPackId)
 		        PrefsDict.Value(Pack.ContentPackId) = True
@@ -637,8 +637,8 @@ End
 		    TemplatePacksDict = New Dictionary
 		  End If
 		  Var PackList As New Beacon.StringList
-		  Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
-		  For Each Pack As Ark.ContentPack In ContentPacks
+		  Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
+		  For Each Pack As Beacon.ContentPack In ContentPacks
 		    If TemplatePacksDict.Lookup(Pack.ContentPackId, Pack.IsDefaultEnabled).BooleanValue = True Then
 		      PackList.Append(Pack.ContentPackId)
 		    End If

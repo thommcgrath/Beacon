@@ -184,9 +184,9 @@ Inherits Ark.ConfigGroup
 		  #Pragma Unused Difficulty
 		  
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  Var AllContentPacks() As Ark.ContentPack = DataSource.GetContentPacks
+		  Var AllContentPacks() As Beacon.ContentPack = DataSource.GetContentPacks
 		  Var ContentPackLookup As New Dictionary
-		  For Each Pack As Ark.ContentPack In AllContentPacks
+		  For Each Pack As Beacon.ContentPack In AllContentPacks
 		    ContentPackLookup.Value(Pack.ContentPackId) = Pack
 		  Next Pack
 		  
@@ -198,7 +198,7 @@ Inherits Ark.ConfigGroup
 		    End If
 		    
 		    Var LookupKey As String = Key.Key
-		    Var Pack As Ark.ContentPack = ContentPackLookup.Lookup(Key.ContentPackId, Nil)
+		    Var Pack As Beacon.ContentPack = ContentPackLookup.Lookup(Key.ContentPackId, Nil)
 		    If (Pack Is Nil) = False And Pack.IsConsoleSafe = False Then
 		      LookupKey = Key.Header + "." + Key.Key
 		    End If

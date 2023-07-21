@@ -706,7 +706,7 @@ End
 	#tag EndDelegateDeclaration
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Sub CompletedDelegate(DiscoveredMods() As Ark . ContentPack)
+		Private Delegate Sub CompletedDelegate(DiscoveredMods() As Beacon.ContentPack)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
@@ -737,22 +737,15 @@ End
 		  Var Packs As New Dictionary
 		  Var ForbiddenWorkshopIDs As New Dictionary
 		  ForbiddenWorkshopIDs.Value("2171967557") = True
-		  For Each WorkshopID As String In Self.mMods
+		  For Each WorkshopId As String In Self.mMods
 		    If WorkshopID = "2171967557" Then
 		      Continue
 		    End If
 		    
-		    Var SteamId As Double
-		    Try
-		      SteamId = Double.FromString(WorkshopID, Locale.Raw)
-		    Catch Err As RuntimeException
-		      Continue
-		    End Try
-		    
-		    Var Pack As Ark.ContentPack = Database.GetContentPackWithSteamId(SteamId)
+		    Var Pack As Beacon.ContentPack = Database.GetContentPackWithSteamId(WorkshopId)
 		    
 		    If Pack Is Nil Then
-		      Var PackName As String = Self.mTagsByMod.Lookup(WorkshopID, WorkshopID).StringValue
+		      Var PackName As String = Self.mTagsByMod.Lookup(WorkshopId, WorkshopId).StringValue
 		      
 		      Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		      Socket.RequestHeader("User-Agent") = App.UserAgent
@@ -764,7 +757,7 @@ End
 		        End If
 		      End If
 		      
-		      Pack = Database.CreateLocalContentPack(PackName, SteamId)
+		      Pack = Database.CreateLocalContentPack(PackName, WorkshopID)
 		      Self.mNumAddedMods = Self.mNumAddedMods + 1
 		    ElseIf Pack.IsLocal = False Then
 		      ForbiddenWorkshopIDs.Value(WorkshopID) = True
@@ -796,7 +789,7 @@ End
 		        Continue
 		      End If
 		      
-		      Var Pack As Ark.ContentPack = Packs.Value(WorkshopID)
+		      Var Pack As Beacon.ContentPack = Packs.Value(WorkshopID)
 		      Var ExistingBlueprints() As Ark.Blueprint = Database.GetBlueprints(Path, New Beacon.StringList(Pack.ContentPackId))
 		      If ExistingBlueprints.Count > 0 Then
 		        Continue
@@ -840,7 +833,7 @@ End
 		  
 		  For Each Entry As DictionaryEntry In Packs
 		    Var WorkshopID As String = Entry.Key
-		    Var Pack As Ark.ContentPack = Entry.Value
+		    Var Pack As Beacon.ContentPack = Entry.Value
 		    
 		    If ForbiddenWorkshopIDs.HasKey(WorkshopID) Then
 		      Continue
@@ -892,7 +885,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDiscoveredMods() As Ark.ContentPack
+		Private mDiscoveredMods() As Beacon.ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -994,22 +987,15 @@ End
 		  
 		  Var OfficialModNames() As String
 		  Var OfficialModIds() As String
-		  Var ModIDs() As String = ModsString.Split(",")
-		  For Each ModID As String In ModIDs
+		  Var ModIds() As String = ModsString.Split(",")
+		  For Each ModId As String In ModIds
 		    If ModID = "2171967557" Then
 		      Continue
 		    End If
 		    
-		    Var SteamId As Double
-		    Try
-		      SteamId = Double.FromString(ModID, Locale.Raw)
-		    Catch Err As RuntimeException
-		      Continue
-		    End Try
-		    
-		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithSteamId(SteamId)
+		    Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithSteamId(ModId)
 		    If (Pack Is Nil) = False And Pack.IsLocal = False Then
-		      OfficialModNames.Add(Pack.Name + " (" + ModID + ")")
+		      OfficialModNames.Add(Pack.Name + " (" + ModId + ")")
 		      OfficialModIds.Add(ModID)
 		    End If
 		    

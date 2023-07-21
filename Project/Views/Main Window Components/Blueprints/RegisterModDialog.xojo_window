@@ -43,7 +43,7 @@ Begin BeaconDialog RegisterModDialog
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
-      TabIndex        =   0
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -52,139 +52,13 @@ Begin BeaconDialog RegisterModDialog
       Value           =   1
       Visible         =   True
       Width           =   520
-      Begin DesktopLabel IntroMessageLabel
-         AllowAutoDeactivate=   True
-         Bold            =   True
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Register Mod"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   20
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   480
-      End
-      Begin DesktopLabel IntroExplanationLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "To get started, which best describes your situation?"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   52
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   480
-      End
-      Begin DesktopRadioButton IntroAuthorRadio
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "I am a mod author who wants to add my mod to Beacon."
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   84
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   480
-      End
-      Begin DesktopRadioButton IntroUserRadio
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "I am a server admin who wants to add mod items to Beacon."
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   116
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   480
-      End
       Begin UITweaks.ResizedPushButton IntroActionButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
-         Enabled         =   True
+         Enabled         =   False
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
@@ -204,7 +78,7 @@ Begin BeaconDialog RegisterModDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   156
+         Top             =   142
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -236,7 +110,7 @@ Begin BeaconDialog RegisterModDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   156
+         Top             =   142
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -697,7 +571,7 @@ Begin BeaconDialog RegisterModDialog
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
-         Text            =   "Name Your Mod"
+         Text            =   "Set Mod Name"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -714,7 +588,7 @@ Begin BeaconDialog RegisterModDialog
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         Height          =   20
+         Height          =   17
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -724,13 +598,13 @@ Begin BeaconDialog RegisterModDialog
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Multiline       =   False
+         Multiline       =   True
          Scope           =   2
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   4
          TabStop         =   True
-         Text            =   "This is for organization only and will stay synced with your Beacon account."
+         Text            =   "#NameExplanationRemote"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -804,7 +678,7 @@ Begin BeaconDialog RegisterModDialog
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   8
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
@@ -836,7 +710,7 @@ Begin BeaconDialog RegisterModDialog
          LockTop         =   True
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   7
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
@@ -865,7 +739,7 @@ Begin BeaconDialog RegisterModDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   6
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
@@ -877,56 +751,83 @@ Begin BeaconDialog RegisterModDialog
          VisualState     =   0
          Width           =   296
       End
-      Begin UITweaks.ResizedTextField NameWorkshopField
+      Begin DesktopLabel IntroMessageLabel
          AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
+         Bold            =   True
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   "123456789"
+         Height          =   20
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   132
+         Left            =   20
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
+         Multiline       =   False
          Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   4
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   ""
+         Text            =   "#IntroMessageLocal"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   126
-         Transparent     =   False
+         Top             =   20
+         Transparent     =   True
          Underline       =   False
-         ValidationMask  =   ""
          Visible         =   True
-         Width           =   184
+         Width           =   480
       End
-      Begin UITweaks.ResizedLabel NameWorkshopLabel
+      Begin DesktopLabel IntroExplanationLabel
          AllowAutoDeactivate=   True
          Bold            =   False
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         Height          =   22
+         Height          =   36
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "#IntroExplanationLocal"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   52
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   480
+      End
+      Begin DesktopButton IntroSkipButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Skip"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -936,54 +837,59 @@ Begin BeaconDialog RegisterModDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Multiline       =   False
+         MacButtonStyle  =   0
          Scope           =   2
-         Selectable      =   False
-         TabIndex        =   7
-         TabPanelIndex   =   4
+         TabIndex        =   3
+         TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Workshop ID:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   126
+         Top             =   142
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   100
+         Width           =   80
       End
-      Begin UITweaks.ResizedLabel NameWorkshopOptionalLabel
+      Begin UITweaks.ResizedTextField IntroIdField
          AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF
          Bold            =   False
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
          Height          =   22
+         Hint            =   "Mod Id Or Link"
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   328
+         Left            =   20
          LockBottom      =   False
          LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
+         LockLeft        =   True
+         LockRight       =   False
          LockTop         =   True
-         Multiline       =   False
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
          Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   4
+         TabIndex        =   2
+         TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "(Optional)"
+         Text            =   ""
          TextAlignment   =   0
-         TextColor       =   &c00000000
+         TextColor       =   &c000000
          Tooltip         =   ""
-         Top             =   126
+         Top             =   100
          Transparent     =   False
          Underline       =   False
+         ValidationMask  =   ""
          Visible         =   True
-         Width           =   172
+         Width           =   480
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
@@ -1009,12 +915,104 @@ Begin BeaconDialog RegisterModDialog
       ThreadID        =   0
       ThreadState     =   0
    End
+   Begin DesktopRadioButton IntroAuthorRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "I am a mod author who wants to add my mod to Beacon."
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -130
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   480
+   End
+   Begin DesktopRadioButton IntroUserRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "I am a server admin who wants to add mod items to Beacon."
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -98
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   480
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  Var Pic As New Picture(10, 10)
+		  Pic.Graphics.FontName = Self.IntroExplanationLabel.FontName
+		  Pic.Graphics.FontUnit = Self.IntroExplanationLabel.FontUnit
+		  Pic.Graphics.FontSize = Self.IntroExplanationLabel.FontSize
+		  
+		  Const LabelPadding = 4
+		  
+		  If Self.mMode = Self.ModeLocal Then
+		    Self.IntroMessageLabel.Text = Self.IntroMessageLocal
+		    Self.IntroExplanationLabel.Text = Self.IntroExplanationLocal
+		    Self.NameExplanationLabel.Text = Self.NameExplanationLocal
+		    Self.IntroSkipButton.Visible = True
+		  Else
+		    Self.IntroMessageLabel.Text = Self.IntroMessageRemote
+		    Self.IntroExplanationLabel.Text = Self.IntroExplanationRemote
+		    Self.NameExplanationLabel.Text = Self.NameExplanationRemote
+		    Self.IntroSkipButton.Visible = False
+		  End If
+		  Self.IntroExplanationLabel.Height = Ceiling(Pic.Graphics.TextHeight(Self.IntroExplanationLabel.Text, Self.IntroExplanationLabel.Width)) + LabelPadding
+		  Self.IntroIdField.Top = Self.IntroExplanationLabel.Bottom + 12
+		  Self.IntroSkipButton.Top = Self.IntroIdField.Bottom + 20
+		  Self.IntroCancelButton.Top = Self.IntroSkipButton.Top
+		  Self.IntroActionButton.Top = Self.IntroCancelButton.Top
+		  Self.HeightIntro = Self.IntroActionButton.Bottom + 20
+		  
+		  Self.NameExplanationLabel.Height = Ceiling(Pic.Graphics.TextHeight(Self.NameExplanationLabel.Text, Self.NameExplanationLabel.Width)) + LabelPadding
+		  Self.NameInputField.Top = Self.NameExplanationLabel.Bottom + 12
+		  Self.NameActionButton.Top = Self.NameInputField.Bottom + 20
+		  Self.NameCancelButton.Top = Self.NameActionButton.Top
+		  Self.NameShowInstructionsCheck.Top = Self.NameActionButton.Top
+		  Self.HeightName = Self.NameActionButton.Bottom + 20
+		  
 		  If (Self.mModInfo Is Nil) = False Then
 		    Self.ShowConfirmation()
 		  Else
@@ -1022,13 +1020,30 @@ End
 		    Self.Height = Self.HeightIntro
 		    Self.MaximumHeight = Self.HeightIntro
 		  End If
-		  
-		  Self.NameWorkshopLabel.SizeToFit
-		  Self.NameWorkshopField.Left = Self.NameWorkshopLabel.Right + 12
-		  Self.NameWorkshopField.Width = Self.NameWorkshopOptionalLabel.Left - (12 + Self.NameWorkshopField.Left)
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_CheckModDiscovered(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Response.Success Then
+		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Data for this mod is available online.", "Other Beacon users have already used the Mod Discovery feature on this mod. Would you like to downloda their results or continue adding the mod?", "Download", "Cancel", "Add Anway")
+		    Select Case Choice
+		    Case BeaconUI.ConfirmResponses.Action
+		      Var DownloadRequest As New BeaconAPI.Request(Request.URL, "GET", WeakAddressOf APICallback_DownloadDiscoveryResults)
+		      BeaconAPI.Send(DownloadRequest)
+		      Return
+		    Case BeaconUI.ConfirmResponses.Cancel
+		      Self.IntroActionButton.Enabled = Self.mSteamId.IsEmpty = False
+		      Self.IntroSkipButton.Enabled = True
+		      Self.IntroIdField.Enabled = True
+		      Return
+		    End Select
+		  End If
+		  
+		  Self.GetSteamPage()
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ConfirmMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
@@ -1039,7 +1054,7 @@ End
 		    Self.ShowConfirmation()
 		    If Self.mModInfo.Confirmed Then
 		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your Steam page.")
-		      Self.mModUUID = Self.mModInfo.ModID
+		      Self.mModId = Self.mModInfo.ModID
 		      Self.Hide
 		      Return
 		    Else
@@ -1048,6 +1063,20 @@ End
 		  Else
 		    Self.ShowAlert("Mod ownership has not been confirmed.", Response.Message)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_DownloadDiscoveryResults(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Not Response.Success Then
+		    Self.ShowAlert("Failed to download discovery results.", "The process will continue as if discovery results were not found.")
+		    Self.GetSteamPage()
+		    Return
+		  End If
+		  
+		  DataUpdater.ImportString(Response.Content)
+		  Self.mModId = ""
+		  Self.Hide
 		End Sub
 	#tag EndMethod
 
@@ -1076,24 +1105,77 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ModInfo As BeaconAPI.WorkshopMod)
+		Private Sub Constructor(ModInfo As BeaconAPI.WorkshopMod, Mode As Integer)
 		  Self.mModInfo = ModInfo
+		  Self.mMode = Mode
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ModInfo As BeaconAPI.WorkshopMod = Nil) As String
-		  If Parent Is Nil Then
-		    Return ""
+	#tag Method, Flags = &h21
+		Private Sub GetSteamPage()
+		  Var Socket As New URLConnection
+		  Socket.RequestHeader("User-Agent") = App.UserAgent
+		  AddHandler Socket.Error, WeakAddressOf mSteamLookupSocket_Error
+		  AddHandler Socket.ContentReceived, WeakAddressOf mSteamLookupSocket_ContentReceived
+		  Socket.Send("GET", "https://steamcommunity.com/sharedfiles/filedetails/?id=" + Self.mSteamId)
+		  Self.mSteamLookupSocket = Socket
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mSteamLookupSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		  Var Extractor As New RegEx
+		  Extractor.SearchPattern = "<div class=""workshopItemTitle"">(.+)</div>"
+		  Extractor.Options.Greedy = False
+		  
+		  Var Matches As RegExMatch = Extractor.Search(Content)
+		  Var ModName As String
+		  If (Matches Is Nil) = False Then
+		    ModName = DecodingFromHTMLMBS(Matches.SubExpressionString(1))
 		  End If
 		  
-		  Var Win As New RegisterModDialog(ModInfo)
+		  Self.ShowNamePage(ModName)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mSteamLookupSocket_Error(Sender As URLConnection, Err As RuntimeException)
+		  Self.IntroActionButton.Enabled = Self.mSteamId.IsEmpty = False
+		  Self.IntroSkipButton.Enabled = True
+		  Self.IntroIdField.Enabled = True
+		  Break
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, ModInfo As BeaconAPI.WorkshopMod) As Boolean
+		  If (Parent Is Nil) = False Then
+		    Parent = Parent.TrueWindow
+		  End If
+		  
+		  Var Mode As Integer = If(ModInfo.IsLocalMod, ModeLocal, ModeRemote)
+		  Var Win As New RegisterModDialog(ModInfo, Mode)
 		  Win.SwapButtons()
 		  Win.ShowModal(Parent)
-		  Var ModUUID As String = Win.mModUUID
+		  Var ModId As String = Win.mModId
 		  Win.Close
-		  Return ModUUID
+		  Return ModId.IsEmpty = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, Mode As Integer) As String
+		  If (Parent Is Nil) = False Then
+		    Parent = Parent.TrueWindow
+		  End If
+		  
+		  Var Win As New RegisterModDialog(Nil, Mode)
+		  Win.SwapButtons()
+		  Win.ShowModal(Parent)
+		  Var ModId As String = Win.mModId
+		  Win.Close
+		  Return ModId
 		End Function
 	#tag EndMethod
 
@@ -1110,6 +1192,29 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowNamePage(PrefilledName As String = "")
+		  Self.NameInputField.Text = PrefilledName
+		  Self.Pages.SelectedPanelIndex = Self.PageName
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private HeightIntro As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private HeightName As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMode As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModId As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mModInfo As BeaconAPI.WorkshopMod
@@ -1120,11 +1225,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModUUID As String
+		Private mSteamId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWorkshopID As NullableDouble
+		Private mSteamLookupSocket As URLConnection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Attributes( Deprecated = "mSteamId" ) Private mWorkshopID As NullableDouble
 	#tag EndProperty
 
 
@@ -1140,10 +1249,28 @@ End
 	#tag Constant, Name = HeightDetail, Type = Double, Dynamic = False, Default = \"252", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightIntro, Type = Double, Dynamic = False, Default = \"196", Scope = Private
+	#tag Constant, Name = IntroExplanationLocal, Type = String, Dynamic = False, Default = \"Start by entering the id or link to the mod. You may skip this step\x2C but Beacon can better support this mod if you don\'t.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightName, Type = Double, Dynamic = False, Default = \"208", Scope = Private
+	#tag Constant, Name = IntroExplanationRemote, Type = String, Dynamic = False, Default = \"Start by entering the id or link to your mod.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IntroMessageLocal, Type = String, Dynamic = False, Default = \"Add Mod", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IntroMessageRemote, Type = String, Dynamic = False, Default = \"Register Mod", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ModeLocal, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeRemote, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = NameExplanationLocal, Type = String, Dynamic = False, Default = \"This is for organization only and will stay synced with your Beacon account.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NameExplanationRemote, Type = String, Dynamic = False, Default = \"This is the name as it will appear to other users in Beacon and the Beacon website.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageConfirm, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -1188,20 +1315,43 @@ End
 #tag Events IntroActionButton
 	#tag Event
 		Sub Pressed()
-		  If Self.IntroAuthorRadio.Value Then
-		    Self.Pages.SelectedPanelIndex = Self.PageDetail
-		  ElseIf Self.IntroUserRadio.Value Then
-		    Self.Pages.SelectedPanelIndex = Self.PageName
+		  If Self.mMode = Self.ModeLocal Then
+		    Self.mModId = Beacon.UUID.v5("Local " + Beacon.ContentPack.MarketplaceSteamWorkshop + ": " + Self.mSteamId)
+		    Var ContentPack As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Self.mModId)
+		    If (ContentPack Is Nil) = False Then
+		      Self.ShowAlert("You have already added this mod.", "It is not possible to add the same mod more than once.")
+		      Return
+		    End If
+		    
+		    If Preferences.OnlineEnabled = False Then
+		      // Go to next step
+		      Self.ShowNamePage()
+		      Return
+		    End If
+		    
+		    // See if this mod has been discovered already
+		    Var Request As New BeaconAPI.Request("/discovery/" + Self.mModId, "HEAD", WeakAddressOf APICallback_CheckModDiscovered)
+		    BeaconAPI.Send(Request)
 		  Else
-		    Self.ShowAlert("Please choose an option", "Choosing one of the two options will get you the information you need.")
+		    If Preferences.OnlineEnabled = False Then
+		      // Go to next step
+		      Self.ShowNamePage()
+		      Return
+		    End If
+		    
+		    Self.GetSteamPage()
 		  End If
+		  
+		  Me.Enabled = False
+		  Self.IntroSkipButton.Enabled = False
+		  Self.IntroIdField.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IntroCancelButton
 	#tag Event
 		Sub Pressed()
-		  Self.mModUUID = ""
+		  Self.mModId = ""
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -1234,7 +1384,7 @@ End
 		  Dict.Value("mod_id") = ModID
 		  Var Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
-		  Var Request As New BeaconAPI.Request("ark/contentPacks", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
+		  Var Request As New BeaconAPI.Request("/contentPacks", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
 		  Self.RegisterSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1256,7 +1406,7 @@ End
 #tag Events ConfirmActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Request As New BeaconAPI.Request("/ark/contentPacks/" + Self.mModInfo.ModID + "/confirm", "GET", AddressOf APICallback_ConfirmMod)
+		  Var Request As New BeaconAPI.Request("/contentPacks/" + Self.mModInfo.ModID + "/confirm", "GET", AddressOf APICallback_ConfirmMod)
 		  Self.ConfirmSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1281,19 +1431,7 @@ End
 		    Return
 		  End If
 		  
-		  Var SteamId As NullableDouble
-		  Var SteamIdString As String = Self.NameWorkshopField.Text.Trim
-		  If SteamIdString.IsEmpty = False Then
-		    Try
-		      SteamId = Double.FromString(SteamIdString, Locale.Current)
-		    Catch Err As RuntimeException
-		      Self.ShowAlert("The workshop id should be a number.", "Look for mod id number on the mod's Steam Workshop page.")
-		      Return
-		    End Try
-		  End If
-		  
 		  Self.mModName = ModName
-		  Self.mWorkshopID = SteamId
 		  
 		  Self.RegisterModThread.Start
 		  
@@ -1306,6 +1444,30 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.Pages.SelectedPanelIndex = 0
+		  Self.IntroIdField.Enabled = True
+		  Self.IntroActionButton.Enabled = (Self.mSteamId.IsEmpty = False)
+		  Self.IntroSkipButton.Enabled = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IntroMessageLabel
+#tag EndEvents
+#tag Events IntroExplanationLabel
+#tag EndEvents
+#tag Events IntroIdField
+	#tag Event
+		Sub TextChanged()
+		  Var Validator As New RegEx
+		  Validator.SearchPattern = "^((https?://)?steamcommunity.com/sharedfiles/filedetails/\?id=)?(\d+)"
+		  
+		  Var Matches As RegExMatch = Validator.Search(Me.Text)
+		  If Matches Is Nil Then
+		    Self.IntroActionButton.Enabled = False
+		    Return
+		  End If
+		  
+		  Self.mSteamId = Matches.SubExpressionString(3)
+		  Self.IntroActionButton.Enabled = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1342,22 +1504,51 @@ End
 #tag Events RegisterModThread
 	#tag Event
 		Sub Run()
-		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
-		  Var ContentPack As Ark.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mWorkshopID)
-		  Self.mModUUID = ContentPack.ContentPackId
+		  If Self.mMode = Self.ModeLocal Then
+		    Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
+		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mSteamId)
+		    Self.mModId = ContentPack.ContentPackId
+		  Else
+		    Var PackData As New Dictionary
+		    PackData.Value("contentPackId") = Beacon.UUID.v4.StringValue
+		    PackData.Value("name") = Self.mModName
+		    PackData.Value("marketplace") = Beacon.ContentPack.MarketplaceSteamWorkshop
+		    PackData.Value("marketplaceId") = Self.mSteamId
+		    PackData.Value("gameId") = Ark.Identifier
+		    
+		    Var Request As New BeaconAPI.Request("contentPacks", "POST", PackData)
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
+		    If Not Response.Success Then
+		      Var Reason As String = Response.Message
+		      If Reason.IsEmpty Then
+		        Reason = "Unknown API error"
+		      End If
+		      Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Success": False, "Reason": Response.Message))
+		      Return
+		    End If
+		  End If
 		  
-		  Me.AddUserInterfaceUpdate(New Dictionary("finished": true))
+		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Success": True))
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub UserInterfaceUpdate(data() as Dictionary)
 		  For Each Dict As Dictionary In Data
-		    If Dict.Lookup("finished", False) Then
-		      If Self.NameShowInstructionsCheck.Value Then
-		        System.GotoURL(Beacon.WebURL("/help/adding_blueprints_to_beacon"))
+		    Var Finished As Boolean = Dict.Lookup("Finished", False)
+		    If Finished Then
+		      Var Success As Boolean = Dict.Lookup("Success", False)
+		      If Success Then
+		        If Self.NameShowInstructionsCheck.Value Then
+		          System.GotoURL(Beacon.WebURL("/help/adding_blueprints_to_beacon"))
+		        End If
+		        
+		        Self.Hide
+		      Else
+		        Var ErrorReason As String = Dict.Lookup("Reason", "Unknown error")
+		        Self.ShowAlert("There was an error adding the mod.", ErrorReason)
+		        Self.NameActionButton.Enabled = True
+		        Self.NameCancelButton.Enabled = True
 		      End If
-		      
-		      Self.Hide
 		      Return
 		    End If
 		  Next

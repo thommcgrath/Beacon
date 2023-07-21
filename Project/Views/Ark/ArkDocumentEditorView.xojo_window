@@ -760,8 +760,8 @@ End
 		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
 		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
-		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
-		    For Each Pack As Ark.ContentPack In ContentPacks
+		    Var ContentPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks
+		    For Each Pack As Beacon.ContentPack In ContentPacks
 		      Self.Project.ContentPackEnabled(Pack.ContentPackId) = Editor.ModEnabled(Pack.ContentPackId)
 		    Next
 		    

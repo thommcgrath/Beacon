@@ -83,7 +83,7 @@ Begin BeaconPagedSubview BlueprintsComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   800
       Begin LocalModsListView LocalModsView
@@ -277,8 +277,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowMod(Sender As ModsListView, ModInfo As BeaconAPI.WorkshopMod)
 		  If ModInfo.Confirmed = False Then
-		    Var ModUUID As String = RegisterModDialog.Present(Self, ModInfo)
-		    If ModUUID.IsEmpty = False Then
+		    If RegisterModDialog.Present(Self, ModInfo) Then
 		      Sender.RefreshMods()
 		    Else
 		      Return
@@ -396,6 +395,18 @@ End
 		Function CloseModView(ModId As String) As Boolean
 		  Return Self.CloseModView(ModId)
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events RemoteModsView
+	#tag Event
+		Function CloseModView(ModId As String) As Boolean
+		  Return Self.CloseModView(ModId)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShowMod(ModInfo As BeaconAPI.WorkshopMod)
+		  Self.ShowMod(Me, ModInfo)
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

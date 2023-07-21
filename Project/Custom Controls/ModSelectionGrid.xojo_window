@@ -248,16 +248,16 @@ End
 		  Self.GetPadding(PaddingLeft, PaddingTop, PaddingRight, PaddingBottom)
 		  Var HeaderHeight As Integer = PaddingTop + Max(Self.ViewSelector.Height, Self.FilterField.Height) + InnerSpacing
 		  
-		  Var RequiredType As Ark.ContentPack.Types
+		  Var RequiredType As Beacon.ContentPack.Types
 		  For Idx As Integer = 0 To Self.ViewSelector.LastIndex
 		    If Self.ViewSelector.Segment(Idx).Selected Then
 		      Select Case Idx
 		      Case PageUniversal
-		        RequiredType = Ark.ContentPack.Types.Universal
+		        RequiredType = Beacon.ContentPack.Types.Official
 		      Case PageSteam
-		        RequiredType = Ark.ContentPack.Types.Steam
+		        RequiredType = Beacon.ContentPack.Types.ThirdParty
 		      Case PageLocal
-		        RequiredType = Ark.ContentPack.Types.Custom
+		        RequiredType = Beacon.ContentPack.Types.Custom
 		      End Select
 		      Exit For Idx
 		    End If
@@ -271,7 +271,7 @@ End
 		    Self.mResultCount = Ark.DataSource.Pool.Get(False).CountContentPacks(Self.FilterField.Text.Trim, RequiredType)
 		  End If
 		  
-		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
+		  Var Packs() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
 		  Var Measure As New Picture(20, 20)
 		  Var MeasuredWidth As Double
 		  Self.CheckboxesBound = Packs.LastIndex

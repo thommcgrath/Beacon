@@ -269,8 +269,8 @@ End
 		  Var Filter As String = Self.FilterField.Text.Trim
 		  
 		  Self.ModsList.RemoveAllRows
-		  Var Packs() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Filter, Ark.ContentPack.Types.Custom)
-		  For Each Pack As Ark.ContentPack In Packs
+		  Var Packs() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Filter, Beacon.ContentPack.Types.Custom)
+		  For Each Pack As Beacon.ContentPack In Packs
 		    Var GameName As String = Language.GameName("Ark")
 		    Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
 		    Var ModInfo As New BeaconAPI.WorkshopMod(Pack)
@@ -296,9 +296,7 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.RefreshMods()
+		  RaiseEvent Shown(UserData)
 		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportStopped)
 		End Sub
 	#tag EndEvent
@@ -347,7 +345,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DiscoveryCompleted(DiscoveredMods() As Ark.ContentPack)
+		Private Sub DiscoveryCompleted(DiscoveredMods() As Beacon.ContentPack)
 		  #Pragma Unused DiscoveredMods
 		  Self.RefreshMods()
 		End Sub
@@ -355,7 +353,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ExportSelectedMods()
-		  Var Packs() As Ark.ContentPack
+		  Var Packs() As Beacon.ContentPack
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
@@ -368,7 +366,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Pack As Ark.ContentPack = DataSource.GetContentPackWithId(WorkshopMod.ModID)
+		    Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(WorkshopMod.ModID)
 		    If Pack Is Nil Then
 		      Continue
 		    End If
@@ -430,6 +428,11 @@ End
 		  DataUpdater.ImportFile(File)
 		End Sub
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
+	#tag EndHook
 
 
 	#tag Property, Flags = &h21
@@ -538,9 +541,9 @@ End
 		  
 		  Select Case Item.Name
 		  Case "RegisterMod"
-		    Var ModUUID As String =  RegisterModDialog.Present(Self)
-		    If ModUUID.IsEmpty = False Then
-		      Self.mOpenModWhenRefreshed = ModUUID
+		    Var ModId As String =  RegisterModDialog.Present(Self, RegisterModDialog.ModeLocal)
+		    If ModId.IsEmpty = False Then
+		      Self.mOpenModWhenRefreshed = ModId
 		      Self.RefreshMods()
 		    End If
 		  Case "EditModBlueprints"

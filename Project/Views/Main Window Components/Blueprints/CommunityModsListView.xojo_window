@@ -256,14 +256,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  RaiseEvent Shown(UserData)
-		  
-		  Self.RefreshMods()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub UpdateUI()
 		  Var Status As String
 		  If Self.List.SelectedRowCount > 0 Then
@@ -327,7 +319,7 @@ End
 		      Var LastUpdate As New DateTime(ModInfo.LastUpdate, TimeZone.Current)
 		      Var Status As String = ""
 		      
-		      Var Pack As Ark.ContentPack = DataSource.GetContentPackWithId(ModInfo.ModID)
+		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(ModInfo.ModID)
 		      If (Pack Is Nil) = False Then
 		        If Pack.LastUpdate < ModInfo.LastUpdate Then
 		          Status = "Update Available"
@@ -362,7 +354,7 @@ End
 		    
 		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    For Idx As Integer = Self.mPendingDownloads.LastIndex DownTo 0
-		      Var Pack As Ark.ContentPack = DataSource.GetContentPackWithId(Self.mPendingDownloads(Idx))
+		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(Self.mPendingDownloads(Idx))
 		      If (Pack Is Nil) = False Then
 		        If OpenEditors Then
 		          Var ModInfo As New BeaconAPI.WorkshopMod(Pack)
@@ -387,10 +379,6 @@ End
 
 	#tag Hook, Flags = &h0
 		Event Opening()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
 
 

@@ -25,10 +25,281 @@ Begin ModsListView RemoteModsListView
    Transparent     =   True
    Visible         =   True
    Width           =   600
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      AllowTabStop    =   True
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Mods"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   340
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   9
+      Transparent     =   False
+      Visible         =   True
+      Width           =   250
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   330
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   270
+   End
+   Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowInfiniteScroll=   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
+      Bold            =   False
+      ColumnCount     =   4
+      ColumnWidths    =   "*,200,200,125"
+      DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      DropIndicatorVisible=   False
+      EditCaption     =   "Edit Blueprints"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   False
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   328
+      Index           =   -2147483648
+      InitialValue    =   "Name	Game	Last Updated	Status"
+      Italic          =   False
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PageSize        =   100
+      PreferencesKey  =   ""
+      RowSelectionType=   1
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   False
+      TypeaheadColumn =   0
+      Underline       =   False
+      Visible         =   True
+      Width           =   600
+      _ScrollWidth    =   -1
+   End
+   Begin OmniBar ModsToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   330
+   End
+   Begin DesktopLabel StatusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Loading Mods"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   375
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+   End
+   Begin FadedSeparator StatusSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   369
+      Transparent     =   True
+      Visible         =   True
+      Width           =   600
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub RefreshMods()
+		  If Self.List Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.List.ScrollPosition = 0
+		  Self.List.RemoveAllRows()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub UpdateUI()
+		  Var Status As String
+		  If Self.List.SelectedRowCount > 0 Then
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "0,##") + " of " + Language.NounWithQuantity(Self.TotalResults, "mod", "mods") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.TotalResults, "mod", "mods")
+		  End If
+		  If Self.StatusLabel.Text <> Status Then
+		    Self.StatusLabel.Text = Status
+		  End If
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_DeleteMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  Self.FinishJob
+		  
+		  Break
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Self.List Is Nil Then
+		    // This view already closed
+		    Return
+		  End If
+		  
+		  Self.FinishJob()
+		  
+		  If Response.Success Then
+		    Var Results() As Variant
+		    Try
+		      Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
+		      Self.TotalResults = Parsed.Value("totalResults")
+		      Self.TotalPages = Parsed.Value("pages")
+		      Results = Parsed.Value("results")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Parsing page of results.")
+		      Return
+		    End Try
+		    
+		    For Each Dict As Dictionary In Results
+		      Var ModInfo As New BeaconAPI.WorkshopMod(Dict)
+		      Var GameName As String = Language.GameName(ModInfo.GameId)
+		      Var LastUpdate As New DateTime(ModInfo.LastUpdate, TimeZone.Current)
+		      Var Status As String = If(ModInfo.Confirmed, "Confirmed", "Waiting Confirmation")
+		      
+		      Self.List.AddRow(ModInfo.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium), Status)
+		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = ModInfo
+		    Next
+		  End If
+		  
+		  Self.List.InvalidateScrollPosition
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.ViewID = "RemoteModsListView"
@@ -39,6 +310,124 @@ End
 
 #tag EndWindowCode
 
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.List.ScrollPosition = 0
+		  Self.List.RemoveAllRows
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub LoadMoreRows(Page As Integer)
+		  If Self.HasBeenShown = False Or (Page > 1 And Page > Self.TotalPages) Then
+		    Return
+		  End If
+		  
+		  Self.StartJob()
+		  
+		  Var Params As New Dictionary
+		  Params.Value("page") = Page
+		  Params.Value("pageSize") = Me.PageSize
+		  Params.Value("userId") = App.IdentityManager.CurrentUserId
+		  
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  If Filter.IsEmpty = False Then
+		    Params.Value("search") = Filter
+		  End If
+		  
+		  Var Request As New BeaconAPI.Request("/ark/contentPacks", "GET", Params, AddressOf APICallback_ListMods)
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  For Idx As Integer = 0 To Me.LastRowIndex
+		    If Me.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Idx)
+		    Self.ShowMod(ModInfo)
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  If (Self.ModsToolbar.Item("EditModBlueprints") Is Nil) = False Then
+		    Self.ModsToolbar.Item("EditModBlueprints").Enabled = (Me.SelectedRowCount > 0)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  Var ModIds() As String
+		  If Warn Then
+		    Var Names() As String
+		    For Row As Integer = 0 To Me.LastRowIndex
+		      If Me.RowSelectedAt(Row) = False Then
+		        Continue
+		      End If
+		      
+		      Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Row)
+		      Names.Add(ModInfo.Name)
+		      ModIds.Add(ModInfo.ModID)
+		    Next
+		    
+		    If Not Self.ShowDeleteConfirmation(Names, "mod", "mods") Then
+		      Return
+		    End If
+		  End If
+		  
+		  // Make sure they do not have unsaved changes
+		  For Idx As Integer = ModIds.LastIndex DownTo 0
+		    If Self.CloseModView(ModIds(Idx)) = False Then
+		      Continue
+		    End If
+		    
+		    Self.StartJob
+		    Var Request As New BeaconAPI.Request("/ark/contentPacks/" + ModIds(Idx), "DELETE", WeakAddressOf APICallback_DeleteMod)
+		    BeaconAPI.Send(Request)
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ModsToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Register Mod", IconToolbarAdd, "Register your mod with Beacon."))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("EditModBlueprints", "Edit Blueprints", IconToolbarEdit, "Edit the blueprints provided by the selected mod.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "RegisterMod"
+		    Var ModId As String =  RegisterModDialog.Present(Self, RegisterModDialog.ModeRemote)
+		    If ModId.IsEmpty = False Then
+		      Self.RefreshMods()
+		    End If
+		  Case "EditModBlueprints"
+		    Self.List.DoEdit()
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Modified"

@@ -27,11 +27,11 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Details As Ark.ContentPack)
+		Sub Constructor(Details As Beacon.ContentPack)
 		  Self.mModID = Details.ContentPackId
 		  Self.mName = Details.Name
-		  If (Details.SteamId Is Nil) = False Then
-		    Self.mWorkshopID = Details.SteamId.StringValue(Locale.Raw, "0")
+		  If Details.MarketplaceId.IsEmpty = False Then
+		    Self.mWorkshopID = Details.MarketplaceId
 		  End If
 		  Self.mIsLocalMod = Details.IsLocal
 		  Self.mConfirmed = True

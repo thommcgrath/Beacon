@@ -7,11 +7,12 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String, ContentPackId As String = "")
+		Sub Constructor(GameId As String, Name As String, ContentPackId As String = "")
 		  If ContentPackId.IsEmpty Then
 		    ContentPackId = Beacon.UUID.v4
 		  End If
 		  
+		  Self.mGameId = GameId
 		  Self.mContentPackId = ContentPackId
 		  Self.mIsConsoleSafe = False
 		  Self.mIsDefaultEnabled = False
@@ -28,28 +29,32 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDatabase(Row As DatabaseRow) As Ark.ContentPack
+		Shared Function FromDatabase(Row As DatabaseRow) As Beacon.ContentPack
 		  Try
-		    Var Pack As New Ark.ContentPack
+		    Var Pack As New Beacon.ContentPack
 		    Pack.mContentPackId = Row.Column("content_pack_id").StringValue
+		    Pack.mGameId = Row.Column("game_id").StringValue
 		    Pack.mIsConsoleSafe = Row.Column("console_safe").BooleanValue
 		    Pack.mIsDefaultEnabled = Row.Column("default_enabled").BooleanValue
 		    Pack.mIsLocal = Row.Column("is_local").BooleanValue
 		    Pack.mName = Row.Column("name").StringValue
-		    Pack.mSteamId = NullableDouble.FromVariant(Row.Column("workshop_id").Value)
+		    If Row.Column("marketplace").Value.IsNull = False And Row.Column("marketplace_id").Value.IsNull = False Then
+		      Pack.mMarketplace = Row.Column("marketplace").StringValue
+		      Pack.mMarketplaceId = Row.Column("marketplace_id").StringValue
+		    End If
 		    Pack.mLastUpdate = Row.Column("last_update").DoubleValue
 		    Return Pack
 		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Building Ark.ContentPack from DatabaseRow")
+		    App.Log(Err, CurrentMethodName, "Building Beacon.ContentPack from DatabaseRow")
 		  End Try
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDatabase(Rows As RowSet) As Ark.ContentPack()
-		  Var Packs() As Ark.ContentPack
+		Shared Function FromDatabase(Rows As RowSet) As Beacon.ContentPack()
+		  Var Packs() As Beacon.ContentPack
 		  For Each Row As DatabaseRow In Rows
-		    Var Pack As Ark.ContentPack = Ark.ContentPack.FromDatabase(Row)
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Row)
 		    If (Pack Is Nil) = False Then
 		      Packs.Add(Pack)
 		    End If
@@ -59,8 +64,8 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Dictionary) As Ark.ContentPack
-		  If SaveData Is Nil Or SaveData.KeyCount = 0 Or SaveData.HasAllKeys("contentPackId", "name", "isConsoleSafe", "isDefaultEnabled", "minVersion") = False Then
+		Shared Function FromSaveData(SaveData As Dictionary) As Beacon.ContentPack
+		  If SaveData Is Nil Or SaveData.KeyCount = 0 Or SaveData.HasAllKeys("contentPackId", "gameId", "name", "isConsoleSafe", "isDefaultEnabled", "minVersion") = False Then
 		    Return Nil
 		  End If
 		  
@@ -69,20 +74,28 @@ Protected Class ContentPack
 		      Return Nil
 		    End If
 		    
-		    Var Pack As New Ark.ContentPack
+		    Var Pack As New Beacon.ContentPack
 		    Pack.mContentPackId = SaveData.Value("contentPackId")
+		    Pack.mGameId = SaveData.Value("gameId")
 		    Pack.mIsConsoleSafe = SaveData.Value("isConsoleSafe")
 		    Pack.mIsDefaultEnabled = SaveData.Value("isDefaultEnabled")
 		    Pack.mIsLocal = True
 		    Pack.mName = SaveData.Value("name")
 		    Pack.mLastUpdate = SaveData.Value("lastUpdate")
-		    If SaveData.HasKey("steamId") Then
-		      Pack.mSteamId = NullableDouble.FromVariant(SaveData.Value("steamId"))
+		    If SaveData.HasKey("marketplace") And SaveData.HasKey("marketplaceId") Then
+		      Pack.mMarketplace = SaveData.Value("marketplace")
+		      Pack.mMarketplaceId = SaveData.Value("marketplaceId")
 		    End If
 		    Return Pack
 		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Building Ark.ContentPack from Dictionary")
+		    App.Log(Err, CurrentMethodName, "Building Beacon.ContentPack from Dictionary")
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GameId() As String
+		  Return Self.mGameId
 		End Function
 	#tag EndMethod
 
@@ -111,13 +124,25 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Marketplace() As String
+		  Return Self.mMarketplace
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MarketplaceId() As String
+		  Return Self.mMarketplaceId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Name() As String
 		  Return Self.mName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Ark.ContentPack) As Integer
+		Function Operator_Compare(Other As Beacon.ContentPack) As Integer
 		  If Other Is Nil Then
 		    Return 1
 		  End If
@@ -136,9 +161,10 @@ Protected Class ContentPack
 		Function SaveData() As Dictionary
 		  Var SaveData As New Dictionary
 		  SaveData.Value("contentPackId") = Self.mContentPackId
-		  If (Self.mSteamId Is Nil) = False THen
-		    SaveData.Value("steamId") = Self.mSteamId.DoubleValue
-		    SaveData.Value("steamUrl") = "https://steamcommunity.com/sharedfiles/filedetails/?id=" + Self.mSteamId.DoubleValue.ToString(Locale.Raw, "0")
+		  SaveData.Value("gameId") = Self.mGameId
+		  If Self.mMarketplace.IsEmpty = False And Self.mMarketplaceId.IsEmpty = False Then
+		    SaveData.Value("marketplace") = Self.mMarketplace
+		    SaveData.Value("marketplaceId") = Self.mMarketplaceId
 		  End If
 		  SaveData.Value("name") = Self.mName
 		  SaveData.Value("isConsoleSafe") = Self.mIsConsoleSafe
@@ -150,19 +176,13 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SteamId() As NullableDouble
-		  Return Self.mSteamId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Type() As Ark.ContentPack.Types
+		Function Type() As Beacon.ContentPack.Types
 		  If Self.mIsLocal Then
-		    Return Ark.ContentPack.Types.Custom
+		    Return Beacon.ContentPack.Types.Custom
 		  ElseIf Self.mIsConsoleSafe Then
-		    Return Ark.ContentPack.Types.Universal
+		    Return Beacon.ContentPack.Types.Official
 		  Else
-		    Return Ark.ContentPack.Types.Steam
+		    Return Beacon.ContentPack.Types.ThirdParty
 		  End If
 		End Function
 	#tag EndMethod
@@ -170,6 +190,10 @@ Protected Class ContentPack
 
 	#tag Property, Flags = &h21
 		Private mContentPackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -189,17 +213,28 @@ Protected Class ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mName As String
+		Private mMarketplace As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSteamId As NullableDouble
+		Private mMarketplaceId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mName As String
 	#tag EndProperty
 
 
+	#tag Constant, Name = MarketplaceSteam, Type = String, Dynamic = False, Default = \"Steam", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = MarketplaceSteamWorkshop, Type = String, Dynamic = False, Default = \"Steam Workshop", Scope = Public
+	#tag EndConstant
+
+
 	#tag Enum, Name = Types, Type = Integer, Flags = &h0
-		Universal
-		  Steam
+		Official
+		  ThirdParty
 		Custom
 	#tag EndEnum
 

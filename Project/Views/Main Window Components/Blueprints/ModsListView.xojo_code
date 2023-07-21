@@ -5,6 +5,7 @@ Inherits BeaconSubview
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  Self.HasBeenShown = True
+		  Self.RefreshMods()
 		  RaiseEvent Shown(UserData)
 		End Sub
 	#tag EndEvent

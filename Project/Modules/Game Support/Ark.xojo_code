@@ -110,7 +110,7 @@ Protected Module Ark
 		        DataSource = Ark.DataSource.Pool.Get(False)
 		      End If
 		      
-		      Var ContentPack As Ark.ContentPack = DataSource.GetContentPackWithId(Blueprint.ContentPackId)
+		      Var ContentPack As Beacon.ContentPack = DataSource.GetContentPackWithId(Blueprint.ContentPackId)
 		      If (ContentPack Is Nil) = False Then
 		        PackedContentPacks.Add(ContentPack.SaveData)
 		        ContentPackMap.Value(ContentPack.ContentPackId) = True
@@ -119,8 +119,8 @@ Protected Module Ark
 		  Next
 		  
 		  Var Filenames(1) As String
-		  Filenames(0) = "Main.beacondata"
-		  Filenames(1) = "Blueprints.beacondata"
+		  Filenames(0) = "Main.json"
+		  Filenames(1) = "Blueprints.json"
 		  
 		  Var Manifest As New Dictionary
 		  Manifest.Value("version") = 7
@@ -153,8 +153,8 @@ Protected Module Ark
 		  BlueprintData.Value("ark") = BlueprintArkData
 		  
 		  Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, False))
-		  Archive.AddFile("Main.beacondata", Beacon.GenerateJSON(MainData, False))
-		  Archive.AddFile("Blueprints.beacondata", Beacon.GenerateJSON(BlueprintData, False))
+		  Archive.AddFile("Main.json", Beacon.GenerateJSON(MainData, False))
+		  Archive.AddFile("Blueprints.json", Beacon.GenerateJSON(BlueprintData, False))
 		End Sub
 	#tag EndMethod
 
@@ -174,13 +174,13 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function BuildExport(ParamArray ContentPacks() As Ark.ContentPack) As MemoryBlock
+		Protected Function BuildExport(ParamArray ContentPacks() As Beacon.ContentPack) As MemoryBlock
 		  Return BuildExport(ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function BuildExport(ContentPacks() As Ark.ContentPack) As MemoryBlock
+		Protected Function BuildExport(ContentPacks() As Beacon.ContentPack) As MemoryBlock
 		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Then
 		    App.Log("Could not export blueprints because there are no mods to export.")
 		    Return Nil
@@ -193,10 +193,10 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub BuildExport(ContentPacks() As Ark.ContentPack, Archive As Beacon.Archive)
+		Private Sub BuildExport(ContentPacks() As Beacon.ContentPack, Archive As Beacon.Archive)
 		  Var Packs() As Dictionary
 		  Var Filter As New Beacon.StringList(-1)
-		  For Each ContentPack As Ark.ContentPack In ContentPacks
+		  For Each ContentPack As Beacon.ContentPack In ContentPacks
 		    Filter.Append(ContentPack.ContentPackId)
 		    Packs.Add(ContentPack.SaveData)
 		  Next
@@ -204,8 +204,8 @@ Protected Module Ark
 		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints("", Filter, "")
 		  
 		  Var Filenames(1) As String
-		  Filenames(0) = "Main.beacondata"
-		  Filenames(1) = "Blueprints.beacondata"
+		  Filenames(0) = "Main.json"
+		  Filenames(1) = "Blueprints.json"
 		  
 		  Var Manifest As New Dictionary
 		  Manifest.Value("version") = 7
@@ -257,13 +257,13 @@ Protected Module Ark
 		  BlueprintData.Value("ark") = BlueprintArkData
 		  
 		  Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, False))
-		  Archive.AddFile("Main.beacondata", Beacon.GenerateJSON(MainData, False))
-		  Archive.AddFile("Blueprints.beacondata", Beacon.GenerateJSON(BlueprintData, False))
+		  Archive.AddFile("Main.json", Beacon.GenerateJSON(MainData, False))
+		  Archive.AddFile("Blueprints.json", Beacon.GenerateJSON(BlueprintData, False))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function BuildExport(ContentPacks() As Ark.ContentPack, Destination As FolderItem) As Boolean
+		Protected Function BuildExport(ContentPacks() As Beacon.ContentPack, Destination As FolderItem) As Boolean
 		  If ContentPacks Is Nil Or ContentPacks.Count = 0 Or Destination Is Nil Then
 		    App.Log("Could not export blueprints because the destination is invalid or there are no mods to export.")
 		    Return False
@@ -284,7 +284,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function BuildExport(Destination As FolderItem, ParamArray ContentPacks() As Ark.ContentPack) As Boolean
+		Protected Function BuildExport(Destination As FolderItem, ParamArray ContentPacks() As Beacon.ContentPack) As Boolean
 		  Return BuildExport(ContentPacks, Destination)
 		End Function
 	#tag EndMethod

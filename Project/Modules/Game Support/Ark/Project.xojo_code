@@ -7,7 +7,7 @@ Inherits Beacon.Project
 		    Self.ConsoleSafe = True
 		    
 		    For Each Entry As DictionaryEntry In Self.mContentPacks
-		      Var Pack As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Entry.Key.StringValue)
+		      Var Pack As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Entry.Key.StringValue)
 		      If (Pack Is Nil Or Pack.IsConsoleSafe = False) And Self.mContentPacks.Value(Entry.Key).BooleanValue = True Then
 		        Self.mContentPacks.Value(Entry.Key) = False
 		      End If
@@ -72,7 +72,7 @@ Inherits Beacon.Project
 		  Var PackSaveDicts As New Dictionary
 		  For Idx As Integer = PackSaveData.LastIndex DownTo 0
 		    If PackSaveData(Idx).Type = Variant.TypeObject And PackSaveData(Idx).ObjectValue IsA Dictionary Then
-		      Var Pack As Ark.ContentPack = Ark.ContentPack.FromSaveData(PackSaveData(Idx))
+		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(PackSaveData(Idx))
 		      If Pack Is Nil Then
 		        PackSaveData.RemoveAt(Idx)
 		        Continue
@@ -92,13 +92,13 @@ Inherits Beacon.Project
 		  Next
 		  
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  Var LocalPacks() As Ark.ContentPack = DataSource.GetContentPacks(Ark.ContentPack.Types.Custom)
-		  For Each LocalPack As Ark.ContentPack In LocalPacks
+		  Var LocalPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.Types.Custom)
+		  For Each LocalPack As Beacon.ContentPack In LocalPacks
 		    If Self.ContentPackEnabled(LocalPack) = False Then
 		      Continue
 		    End If
 		    
-		    If PacksCache.HasKey(LocalPack.ContentPackId) = True And Ark.ContentPack(PacksCache.Value(LocalPack.ContentPackId)).LastUpdate >= LocalPack.LastUpdate Then
+		    If PacksCache.HasKey(LocalPack.ContentPackId) = True And Beacon.ContentPack(PacksCache.Value(LocalPack.ContentPackId)).LastUpdate >= LocalPack.LastUpdate Then
 		      Continue
 		    End If
 		    
@@ -229,10 +229,10 @@ Inherits Beacon.Project
 		  
 		  If PlainData.HasKey("modSelections") Or PlainData.HasKey("ModSelections") Then
 		    // Newest mod, keys are uuids and values are boolean
-		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
+		    Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		    Var Selections As Dictionary = PlainData.FirstValue("modSelections", "ModSelections", Nil)
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
-		    For Each Pack As Ark.ContentPack In AllPacks
+		    For Each Pack As Beacon.ContentPack In AllPacks
 		      If Selections.HasKey(Pack.ContentPackId) = False Then
 		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And (Pack.IsConsoleSafe Or ConsoleMode = False)
 		      End If
@@ -242,12 +242,12 @@ Inherits Beacon.Project
 		  ElseIf PlainData.HasKey("Mods") Then
 		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
 		    
-		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
+		    Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
 		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
 		    Var Selections As New Dictionary
-		    For Each Pack As Ark.ContentPack In AllPacks
+		    For Each Pack As Beacon.ContentPack In AllPacks
 		      Selections.Value(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
 		    Next
 		    
@@ -256,8 +256,8 @@ Inherits Beacon.Project
 		    Var ConsolePacksOnly As Boolean = PlainData.Value("ConsoleModsOnly")
 		    If ConsolePacksOnly Then
 		      Var Selections As New Dictionary
-		      Var AllPacks() As Ark.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
-		      For Each Pack As Ark.ContentPack In AllPacks
+		      Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
+		      For Each Pack As Beacon.ContentPack In AllPacks
 		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
 		      Next
 		      
@@ -475,7 +475,7 @@ Inherits Beacon.Project
 		  Self.mContentPacks = New Dictionary
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  If (DataSource Is Nil) = False Then
-		    Var Packs() As Ark.ContentPack = DataSource.GetContentPacks
+		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks
 		    For Idx As Integer = 0 To Packs.LastIndex
 		      Self.mContentPacks.Value(Packs(Idx).ContentPackId) = Packs(Idx).IsDefaultEnabled
 		    Next Idx
@@ -491,13 +491,13 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ContentPackEnabled(Pack As Ark.ContentPack) As Boolean
+		Function ContentPackEnabled(Pack As Beacon.ContentPack) As Boolean
 		  Return Self.ContentPackEnabled(Pack.ContentPackId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ContentPackEnabled(Pack As Ark.ContentPack, Assigns Value As Boolean)
+		Sub ContentPackEnabled(Pack As Beacon.ContentPack, Assigns Value As Boolean)
 		  If Pack Is Nil Then
 		    Return
 		  End If
@@ -822,7 +822,7 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EmbeddedBlueprints(Pack As Ark.ContentPack) As Ark.Blueprint()
+		Function EmbeddedBlueprints(Pack As Beacon.ContentPack) As Ark.Blueprint()
 		  Var Blueprints() As Ark.Blueprint
 		  If Pack Is Nil Or Self.mEmbeddedBlueprints.HasKey(Pack.ContentPackId) = False Then
 		    Return Blueprints
@@ -832,8 +832,8 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EmbeddedContentPacks() As Ark.ContentPack()
-		  Var Packs() As Ark.ContentPack
+		Function EmbeddedContentPacks() As Beacon.ContentPack()
+		  Var Packs() As Beacon.ContentPack
 		  For Each Entry As DictionaryEntry In Self.mEmbeddedContentPacks
 		    Packs.Add(Entry.Value)
 		  Next
@@ -994,7 +994,7 @@ Inherits Beacon.Project
 		      Continue
 		    End If
 		    
-		    Var Pack As Ark.ContentPack = Ark.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
 		    If Pack Is Nil Then
 		      Continue
 		    End If
