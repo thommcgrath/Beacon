@@ -3,10 +3,11 @@
 namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet, JsonSerializable;
 
-class ModDiscoveryResult extends DatabaseObject implements JsonSerializable {
+class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializable {
 	protected string $contentPackId;
 	protected string $gameId;
-	protected int $steamId;
+	protected string $marketplace;
+	protected string $marketplaceId;
 	protected string $name;
 	protected int $lastUpdate;
 	protected int $minVersion;
@@ -14,9 +15,10 @@ class ModDiscoveryResult extends DatabaseObject implements JsonSerializable {
 	protected bool $deleted;
 	
 	protected function __construct(BeaconRecordSet $row) {
-		$this->contentPackId = $row->Field('mod_id');
+		$this->contentPackId = $row->Field('content_pack_id');
 		$this->gameId = $row->Field('game_id');
-		$this->steamId = $row->Field('workshop_id');
+		$this->marketplace = $row->Field('marketplace');
+		$this->marketplaceId = $row->Field('marketplace_id');
 		$this->name = $row->Field('name');
 		$this->lastUpdate = round($row->Field('last_update'));
 		$this->minVersion = $row->Field('min_version');
@@ -25,10 +27,11 @@ class ModDiscoveryResult extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('public', 'mod_discovery_results', [
-			new DatabaseObjectProperty('contentPackId', ['primaryKey' => true, 'columnName' => 'mod_id']),
+		return new DatabaseSchema('public', 'content_pack_discovery_results', [
+			new DatabaseObjectProperty('contentPackId', ['primaryKey' => true, 'columnName' => 'content_pack_id']),
 			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
-			new DatabaseObjectProperty('steamId', ['columnName' => 'workshop_id']),
+			new DatabaseObjectProperty('marketplace'),
+			new DatabaseObjectProperty('marketplaceId', ['columnName' => 'marketplace_id']),
 			new DatabaseObjectProperty('name'),
 			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
@@ -41,7 +44,8 @@ class ModDiscoveryResult extends DatabaseObject implements JsonSerializable {
 		$schema = static::DatabaseSchema();
 		$parameters->orderBy = $schema->Table() . '.name';
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
-		$parameters->AddFromFilter($schema, $filters, 'steamId');
+		$parameters->AddFromFilter($schema, $filters, 'marketplace');
+		$parameters->AddFromFilter($schema, $filters, 'marketplaceId');
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
 		$parameters->allowAll = true;
 	}
@@ -50,7 +54,8 @@ class ModDiscoveryResult extends DatabaseObject implements JsonSerializable {
 		return [
 			'contentPackId' => $this->contentPackId,
 			'gameId' => $this->gameId,
-			'steamId' => $this->steamId,
+			'marketplace' => $this->marketplace,
+			'marketplaceId' => $this->marketplaceId,
 			'name' => $this->name,
 			'lastUpdate' => $this->lastUpdate,
 			'minVersion' => $this->minVersion
@@ -58,30 +63,31 @@ class ModDiscoveryResult extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public static function Save(array $contentPackInfo, string $gameId): ?static {
-		if (BeaconCommon::HasAllKeys($contentPackInfo, 'contentPackId', 'steamId', 'name', 'minVersion', 'lastUpdate') === false) {
+		if (BeaconCommon::HasAllKeys($contentPackInfo, 'contentPackId', 'marketplace', 'marketplaceId', 'name', 'minVersion', 'lastUpdate') === false) {
 			return null;
 		}
 		
 		$contentPackId = strtolower($contentPackInfo['contentPackId']);
-		$steamId = $contentPackInfo['steamId'];
+		$marketplace = $contentPackInfo['marketplace'];
+		$marketplaceId = $contentPackInfo['marketplaceId'];
 		$lastUpdate = $contentPackInfo['lastUpdate'];
 		
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT game_id, workshop_id, EXTRACT(EPOCH FROM last_update) AS last_update FROM public.mod_discovery_results WHERE mod_id = $1;', $contentPackId);
+		$rows = $database->Query('SELECT game_id, marketplace, marketplace_id, EXTRACT(EPOCH FROM last_update) AS last_update FROM public.content_pack_discovery_results WHERE content_pack_id = $1;', $contentPackId);
 		if ($rows->RecordCount() === 0) {
 			$storagePath = '/Discovery/' . $contentPackId . '.beacondata';
 			$database->BeginTransaction();
-			$database->Query('INSERT INTO public.mod_discovery_results (mod_id, game_id, workshop_id, name, last_update, min_version, storage_path) VALUES ($1, $2, $3, $4, TO_TIMESTAMP($5), $6, $7);', $contentPackId, $gameId, $steamId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion'], $storagePath);
+			$database->Query('INSERT INTO public.ontent_pack_discovery_results (ontent_pack_id, game_id, marketplace, marketplace_id, name, last_update, min_version, storage_path) VALUES ($1, $2, $3, $4, $5, TO_TIMESTAMP($6), $7, $8);', $contentPackId, $gameId, $marketplace, $marketplaceId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion'], $storagePath);
 			$database->Commit();
 			return static::Fetch($contentPackId);
 		}
 		
-		if ($rows->Field('game_id') !== $gameId || $rows->Field('workshop_id') !== $steamId || $rows->Field('lastUpdate') > $lastUpdate) {
+		if ($rows->Field('game_id') !== $gameId || $rows->Field('marketplace') !== $marketplace || $rows->Field('marketplace_id') !== $marketplaceId || $rows->Field('lastUpdate') > $lastUpdate) {
 			return null;
 		}
 		
 		$database->BeginTransaction();
-		$database->Query('UPDATE public.mod_discovery_results SET name = $2, last_update = $3, min_version = $4 WHERE mod_id = $1;', $contentPackId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion']);
+		$database->Query('UPDATE public.content_pack_discovery_results SET name = $2, last_update = $3, min_version = $4 WHERE content_pack_id = $1;', $contentPackId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion']);
 		$database->Commit();
 		return static::Fetch($contentPackId);
 	}
@@ -94,8 +100,12 @@ class ModDiscoveryResult extends DatabaseObject implements JsonSerializable {
 		return $this->gameId;
 	}
 	
-	public function SteamId(): int {
-		return $this->steamId;
+	public function Marketplace(): string {
+		return $this->marketplace;
+	}
+	
+	public function MarketplaceId(): string {
+		return $this->marketplaceId;
 	}
 	
 	public function Name(): string {

@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Core, ModDiscoveryResult, Response};
+use BeaconAPI\v4\{Core, ContentPackDiscoveryResult, Response};
 	
 function handleRequest(array $context): Response {
 	$contentPackId = strtolower($context['pathParameters']['contentPackId']);
@@ -48,22 +48,23 @@ function handleRequest(array $context): Response {
 				return Response::NewJsonError('Wrong mod included for this url.', null, 400);
 			}
 			
-			$steamId = $contentPackInfo['steamId'];
-			$expectedContentPackId = BeaconUUID::v5('local ' . $steamId);
+			$marketplace = $contentPackInfo['marketplace'];
+			$marketplaceId = $contentPackInfo['marketplaceId'];
+			$expectedContentPackId = BeaconUUID::v5('Local ' . $marketplace . ': ' . $marketplaceId);
 			if ($contentPackId !== $expectedContentPackId) {
 				unlink($archivePath);
 				return Response::NewJsonError('Wrong contentPackId for this url.', null, 400);
 			}
 			
 			$database->BeginTransaction();
-			$modDiscoveryResult = ModDiscoveryResult::Save($contentPackInfo, $gameId);
-			if (is_null($modDiscoveryResult)) {
+			$ContentPackDiscoveryResult = ContentPackDiscoveryResult::Save($contentPackInfo, $gameId);
+			if (is_null($ContentPackDiscoveryResult)) {
 				$database->Rollback();
 				unlink($archivePath);
 				return Response::NewJsonError('Could not save mod info to database. Newer data may already be saved.', null, 400);
 			}
 			
-			if (BeaconCloudStorage::PutFile($modDiscoveryResult->StoragePath(), file_get_contents($archivePath)) === false) {
+			if (BeaconCloudStorage::PutFile($ContentPackDiscoveryResult->StoragePath(), file_get_contents($archivePath)) === false) {
 				$database->Rollback();
 				unlink($archivePath);
 				return Response::NewJsonError('Could not upload mod data to cold storage.', null, 500);
@@ -71,7 +72,7 @@ function handleRequest(array $context): Response {
 			
 			$database->Commit();
 			unlink($archivePath);
-			return Response::NewJson($modDiscoveryResult, 200);
+			return Response::NewJson($ContentPackDiscoveryResult, 200);
 		}
 	} catch (Exception $err) {
 		if ($database->InTransaction()) {

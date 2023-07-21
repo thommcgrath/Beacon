@@ -1,11 +1,11 @@
 <?php
 
-use BeaconAPI\v4\{Core, ModDiscoveryResult, Response};
+use BeaconAPI\v4\{Core, ContentPackDiscoveryResult, Response};
 
 function handleRequest(array $context): ?Response {
 	$contentPackId = $context['pathParameters']['contentPackId'];
 	
-	$result = ModDiscoveryResult::Fetch($contentPackId);
+	$result = ContentPackDiscoveryResult::Fetch($contentPackId);
 	if (is_null($result)) {
 		return Response::NewJsonError('Result not found.', $contentPackId, 404);
 	}
