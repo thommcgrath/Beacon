@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.6
--- Dumped by pg_dump version 13.6
+-- Dumped from database version 14.8 (Ubuntu 14.8-1.pgdg22.04+1)
+-- Dumped by pg_dump version 14.8 (Ubuntu 14.8-0ubuntu0.22.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -112,6 +112,17 @@ CREATE TYPE public.article_type AS ENUM (
 
 
 ALTER TYPE public.article_type OWNER TO thommcgrath;
+
+--
+-- Name: authenticator_type; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.authenticator_type AS ENUM (
+    'TOTP'
+);
+
+
+ALTER TYPE public.authenticator_type OWNER TO thommcgrath;
 
 --
 -- Name: download_platform; Type: TYPE; Schema: public; Owner: thommcgrath
@@ -734,10 +745,10 @@ CREATE FUNCTION ark.update_event_last_update_from_children() RETURNS trigger
     AS $$
 BEGIN
 	IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-		UPDATE events SET last_update = CURRENT_TIMESTAMP WHERE event_id = NEW.event_id;
+		UPDATE ark.events SET last_update = CURRENT_TIMESTAMP WHERE event_id = NEW.event_id;
 	END IF;
 	IF TG_OP = 'DELETE' OR (TG_OP = 'UPDATE' AND NEW.event_id != OLD.event_id) THEN
-		UPDATE events SET last_update = CURRENT_TIMESTAMP WHERE event_id = OLD.event_id;
+		UPDATE ark.events SET last_update = CURRENT_TIMESTAMP WHERE event_id = OLD.event_id;
 	END IF;
 	IF TG_OP = 'DELETE' THEN
 		RETURN OLD;
@@ -932,36 +943,44 @@ $$;
 ALTER FUNCTION ark.update_support_article_timestamp() OWNER TO thommcgrath;
 
 --
--- Name: documents_search_sync(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+-- Name: email_needs_update(uuid); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
-CREATE FUNCTION public.documents_search_sync() RETURNS trigger
+CREATE FUNCTION public.email_needs_update(p_email_id uuid) RETURNS boolean
     LANGUAGE plpgsql
     AS $$
+DECLARE
+	v_precision INTEGER;
+	v_alg CITEXT;
 BEGIN
-	IF TG_OP = 'DELETE' THEN
-		IF OLD.published = 'Approved' AND OLD.deleted = FALSE THEN
-			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.document_id, TG_TABLE_NAME, 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-		END IF;
-		RETURN OLD;
-	ELSIF TG_OP = 'INSERT' THEN
-		IF NEW.published = 'Approved' AND NEW.deleted = FALSE THEN
-			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.document_id, TG_TABLE_NAME, 'Save') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-		END IF;
-		RETURN NEW;
-	ELSIF TG_OP = 'UPDATE' THEN
-		IF NEW.published = 'Approved' AND NEW.deleted = FALSE THEN
-			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.document_id, TG_TABLE_NAME, 'Save') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-		ELSIF OLD.published = 'Approved' AND OLD.deleted = FALSE THEN
-			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.document_id, TG_TABLE_NAME, 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-		END IF;
-		RETURN NEW;
+	SELECT group_key_precision, group_key_alg INTO v_precision, v_alg FROM email_addresses WHERE email_id = p_email_id;
+	IF FOUND THEN
+		RETURN v_precision != 4 OR v_alg != 'sha3-512';
 	END IF;
+	RETURN FALSE;
 END;
 $$;
 
 
-ALTER FUNCTION public.documents_search_sync() OWNER TO thommcgrath;
+ALTER FUNCTION public.email_needs_update(p_email_id uuid) OWNER TO thommcgrath;
+
+--
+-- Name: email_needs_update(public.email); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.email_needs_update(p_address public.email) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_email_id UUID;
+BEGIN
+	v_email_id := public.uuid_for_email(p_address);
+	RETURN public.email_needs_update(v_email_id);
+END;
+$$;
+
+
+ALTER FUNCTION public.email_needs_update(p_address public.email) OWNER TO thommcgrath;
 
 --
 -- Name: generate_username(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -1038,38 +1057,6 @@ $$;
 ALTER FUNCTION public.generate_uuid_from_text(p_input text) OWNER TO thommcgrath;
 
 --
--- Name: group_key_for_email(public.email, integer); Type: FUNCTION; Schema: public; Owner: thommcgrath
---
-
-CREATE FUNCTION public.group_key_for_email(p_address public.email, p_precision integer) RETURNS public.hex
-    LANGUAGE plpgsql IMMUTABLE
-    AS $_$
-DECLARE
-	v_user TEXT;
-	v_domain TEXT;
-	v_kvalue TEXT;
-BEGIN
-	IF p_precision > 5 THEN
-		RETURN SUBSTRING(ENCODE(SHA512(LOWER(TRIM(p_address))::bytea), 'hex'), 1, p_precision);
-	ELSE
-		v_user := SUBSTRING(p_address, '^([^@]+)@.+$');
-		v_domain := SUBSTRING(p_address, '^[^@]+@(.+)$');
-		
-		IF LENGTH(v_user) <= p_precision THEN
-			v_kvalue := '@' || v_domain;
-		ELSE
-			v_kvalue := SUBSTRING(v_user, 1, p_precision) || '*@' || v_domain;
-		END IF;
-	
-		RETURN MD5(LOWER(v_kvalue));
-	END IF;
-END;
-$_$;
-
-
-ALTER FUNCTION public.group_key_for_email(p_address public.email, p_precision integer) OWNER TO thommcgrath;
-
---
 -- Name: group_key_for_email(public.email, integer, text); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -1125,6 +1112,38 @@ END; $_$;
 
 
 ALTER FUNCTION public.os_version_as_integer(p_version public.os_version) OWNER TO thommcgrath;
+
+--
+-- Name: projects_search_sync(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.projects_search_sync() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'DELETE' THEN
+		IF OLD.published = 'Approved' AND OLD.deleted = FALSE THEN
+			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.project_id, TG_TABLE_NAME, 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		END IF;
+		RETURN OLD;
+	ELSIF TG_OP = 'INSERT' THEN
+		IF NEW.published = 'Approved' AND NEW.deleted = FALSE THEN
+			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.project_id, TG_TABLE_NAME, 'Save') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		END IF;
+		RETURN NEW;
+	ELSIF TG_OP = 'UPDATE' THEN
+		IF NEW.published = 'Approved' AND NEW.deleted = FALSE THEN
+			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.project_id, TG_TABLE_NAME, 'Save') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		ELSIF OLD.published = 'Approved' AND OLD.deleted = FALSE THEN
+			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.project_id, TG_TABLE_NAME, 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		END IF;
+		RETURN NEW;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.projects_search_sync() OWNER TO thommcgrath;
 
 --
 -- Name: set_slug_from_article_subject(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -1308,12 +1327,14 @@ CREATE FUNCTION public.uuid_for_email(p_address public.email) RETURNS uuid
     LANGUAGE plpgsql STABLE
     AS $$
 DECLARE
-	v_row RECORD;
 	v_uuid UUID;
+	v_group_params TEXT[][] := array[array['sha3-512', '4'], array['md5', '5'], array['md5', '2']];
+	i INTEGER;
+	v_group_key TEXT;
 BEGIN
-	FOR v_row IN SELECT DISTINCT group_key_precision, group_key_alg FROM email_addresses ORDER BY group_key_precision DESC
-	LOOP
-		SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address, v_row.group_key_precision, v_row.group_key_alg) AND CRYPT(LOWER(p_address), address) = address;
+	FOR i IN ARRAY_LOWER(v_group_params, 1)..ARRAY_UPPER(v_group_params, 1) LOOP
+		v_group_key := public.group_key_for_email(p_address, v_group_params[i][2]::INTEGER, v_group_params[i][1]);
+		SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = v_group_key AND CRYPT(LOWER(p_address), address) = address;
 		IF FOUND THEN
 			RETURN v_uuid;
 		END IF;
@@ -1337,21 +1358,21 @@ DECLARE
 	v_uuid UUID;
 	v_precision INTEGER;
 	v_alg TEXT;
-	k_target_precision CONSTANT INTEGER := 5;
-	k_target_alg CONSTANT TEXT := 'md5';
+	k_target_precision CONSTANT INTEGER := 4;
+	k_target_alg CONSTANT TEXT := 'sha3-512';
 BEGIN
 	v_uuid := uuid_for_email(p_address);
 	IF v_uuid IS NULL THEN
 		IF p_create = TRUE THEN
-			INSERT INTO email_addresses (address, group_key, group_key_precision, group_key_alg) VALUES (CRYPT(LOWER(p_address), GEN_SALT('bf')), group_key_for_email(p_address, k_target_precision, k_target_alg), k_target_precision, k_target_alg) RETURNING email_id INTO v_uuid;
+			INSERT INTO email_addresses (address, group_key, group_key_precision, group_key_alg) VALUES (CRYPT(LOWER(p_address), GEN_SALT('bf', 8)), public.group_key_for_email(p_address, k_target_precision, k_target_alg), k_target_precision, k_target_alg) RETURNING email_id INTO v_uuid;
 		END IF;
 	ELSE
 		SELECT group_key_precision, group_key_alg INTO v_precision, v_alg FROM email_addresses WHERE email_id = v_uuid;
 		IF v_precision != k_target_precision OR v_alg != k_target_alg THEN
-			UPDATE email_addresses SET group_key = group_key_for_email(p_address, k_target_precision, k_target_alg), group_key_precision = k_target_precision, group_key_alg = k_target_alg WHERE email_id = v_uuid;
+			UPDATE email_addresses SET group_key = public.group_key_for_email(p_address, k_target_precision, k_target_alg), group_key_precision = k_target_precision, group_key_alg = k_target_alg, address = CRYPT(LOWER(p_address), GEN_SALT('bf', 8)) WHERE email_id = v_uuid;
 		END IF;
 	END IF;
-	RETURN v_uuid;	
+	RETURN v_uuid;
 END;
 $$;
 
@@ -1423,6 +1444,7 @@ CREATE TABLE ark.engrams (
     required_level integer,
     stack_size integer,
     item_id integer,
+    gfi text,
     CONSTRAINT engrams_check CHECK ((((entry_string IS NULL) AND (required_points IS NULL) AND (required_level IS NULL)) OR (entry_string IS NOT NULL))),
     CONSTRAINT engrams_entry_string_check CHECK ((entry_string OPERATOR(public.~) '_C$'::public.citext)),
     CONSTRAINT engrams_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
@@ -1745,6 +1767,7 @@ CREATE TABLE ark.ini_options (
     constraints jsonb,
     custom_sort public.citext,
     gsa_placeholder public.citext,
+    uwp_changes jsonb,
     CONSTRAINT ini_options_check CHECK ((((nitrado_path IS NULL) AND (nitrado_format IS NULL) AND (nitrado_deploy_style IS NULL)) OR ((nitrado_path IS NOT NULL) AND (nitrado_format IS NOT NULL) AND (nitrado_deploy_style IS NOT NULL)))),
     CONSTRAINT ini_options_check1 CHECK (((file IS DISTINCT FROM 'CommandLineFlag'::public.ini_file) OR ((file = 'CommandLineFlag'::public.ini_file) AND (value_type = 'Boolean'::public.ini_value_type)))),
     CONSTRAINT ini_options_max_allowed_check CHECK (((max_allowed IS NULL) OR (max_allowed >= 1)))
@@ -2009,6 +2032,33 @@ CREATE TABLE ark.spawn_point_sets (
 ALTER TABLE ark.spawn_point_sets OWNER TO thommcgrath;
 
 --
+-- Name: affiliate_links; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.affiliate_links (
+    code public.citext NOT NULL,
+    user_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.affiliate_links OWNER TO thommcgrath;
+
+--
+-- Name: affiliate_tracking; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.affiliate_tracking (
+    track_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    code public.citext NOT NULL,
+    client_reference_id uuid NOT NULL,
+    click_time timestamp with time zone NOT NULL,
+    purchase_id uuid
+);
+
+
+ALTER TABLE public.affiliate_tracking OWNER TO thommcgrath;
+
+--
 -- Name: guest_projects; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -2036,7 +2086,8 @@ CREATE TABLE public.projects (
     download_count integer DEFAULT 0 NOT NULL,
     published public.publish_status DEFAULT 'Private'::public.publish_status NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
-    game_specific jsonb DEFAULT '{}'::jsonb NOT NULL
+    game_specific jsonb DEFAULT '{}'::jsonb NOT NULL,
+    storage_path text
 );
 
 
@@ -2059,6 +2110,7 @@ CREATE VIEW public.allowed_projects AS
     projects.download_count,
     projects.published,
     projects.game_specific,
+    projects.storage_path,
     'Owner'::text AS role
    FROM public.projects
   WHERE (projects.deleted = false)
@@ -2075,6 +2127,7 @@ UNION
     projects.download_count,
     projects.published,
     projects.game_specific,
+    projects.storage_path,
     'Guest'::text AS role
    FROM (public.guest_projects
      JOIN public.projects ON ((guest_projects.project_id = projects.project_id)))
@@ -2130,6 +2183,22 @@ CREATE TABLE public.corrupt_files (
 
 
 ALTER TABLE public.corrupt_files OWNER TO thommcgrath;
+
+--
+-- Name: currencies; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.currencies (
+    code public.citext NOT NULL,
+    name text NOT NULL,
+    usd_conversion_rate numeric(20,10) NOT NULL,
+    rounding_multiplier numeric(6,2) DEFAULT 1.00 NOT NULL,
+    fee_multiplier numeric(6,2) DEFAULT 1.01 NOT NULL,
+    stripe_multiplier integer DEFAULT 100 NOT NULL
+);
+
+
+ALTER TABLE public.currencies OWNER TO thommcgrath;
 
 --
 -- Name: deletions; Type: VIEW; Schema: public; Owner: thommcgrath
@@ -2204,6 +2273,18 @@ CREATE TABLE public.email_verification (
 
 
 ALTER TABLE public.email_verification OWNER TO thommcgrath;
+
+--
+-- Name: endpoint_git_hashes; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.endpoint_git_hashes (
+    branch public.citext NOT NULL,
+    hash public.citext NOT NULL
+);
+
+
+ALTER TABLE public.endpoint_git_hashes OWNER TO thommcgrath;
 
 --
 -- Name: exception_comments; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -2283,13 +2364,26 @@ CREATE TABLE public.gift_code_log (
 ALTER TABLE public.gift_code_log OWNER TO thommcgrath;
 
 --
+-- Name: gift_code_products; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.gift_code_products (
+    code public.citext NOT NULL,
+    product_id uuid NOT NULL,
+    quantity integer NOT NULL,
+    CONSTRAINT gift_code_products_quantity_check CHECK ((quantity >= 1))
+);
+
+
+ALTER TABLE public.gift_code_products OWNER TO thommcgrath;
+
+--
 -- Name: gift_codes; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
 CREATE TABLE public.gift_codes (
     code public.citext NOT NULL,
     source_purchase_id uuid NOT NULL,
-    product_id uuid NOT NULL,
     redemption_date timestamp with time zone,
     redemption_purchase_id uuid,
     CONSTRAINT gift_codes_check CHECK ((((redemption_date IS NULL) AND (redemption_purchase_id IS NULL)) OR ((redemption_date IS NOT NULL) AND (redemption_purchase_id IS NOT NULL))))
@@ -2460,10 +2554,13 @@ CREATE TABLE public.products (
     product_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     product_name text NOT NULL,
     retail_price numeric(6,2) NOT NULL,
-    stripe_sku text NOT NULL,
     child_seat_count integer DEFAULT 0 NOT NULL,
     updates_length interval,
-    flags integer
+    flags integer,
+    round_to numeric(6,2) DEFAULT 1.0 NOT NULL,
+    game_id public.citext NOT NULL,
+    tag public.citext NOT NULL,
+    active boolean DEFAULT false NOT NULL
 );
 
 
@@ -2557,27 +2654,18 @@ ALTER TABLE public.purchases OWNER TO thommcgrath;
 --
 
 CREATE VIEW public.purchased_products AS
- SELECT DISTINCT ON (p.purchaser_email, p.product_id) p.product_id,
-    p.product_name,
-    p.purchase_id,
-    p.purchase_date,
-    p.purchaser_email,
-    p.client_reference_id,
+ SELECT licenses.product_id,
+    products.product_name,
+    licenses.purchase_id,
+    purchases.purchase_date,
+    purchases.purchaser_email,
+    purchases.client_reference_id,
     licenses.expiration,
-    p.flags
-   FROM (( SELECT purchases.purchase_id,
-            purchases.purchaser_email,
-            purchases.purchase_date,
-            purchases.client_reference_id,
-            products.product_id,
-            products.product_name,
-            products.flags
-           FROM ((public.purchases
-             JOIN public.purchase_items ON ((purchases.purchase_id = purchase_items.purchase_id)))
-             JOIN public.products ON ((purchase_items.product_id = products.product_id)))
-          WHERE (purchases.refunded = false)) p
-     JOIN public.licenses ON ((p.purchase_id = licenses.purchase_id)))
-  ORDER BY p.purchaser_email, p.product_id, p.purchase_date DESC;
+    products.flags
+   FROM ((public.licenses
+     JOIN public.products ON ((licenses.product_id = products.product_id)))
+     JOIN public.purchases ON ((licenses.purchase_id = purchases.purchase_id)))
+  WHERE (purchases.refunded <> true);
 
 
 ALTER TABLE public.purchased_products OWNER TO thommcgrath;
@@ -2859,6 +2947,18 @@ CREATE VIEW public.templates AS
 ALTER TABLE public.templates OWNER TO thommcgrath;
 
 --
+-- Name: trusted_devices; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.trusted_devices (
+    device_id_hash text NOT NULL,
+    user_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.trusted_devices OWNER TO thommcgrath;
+
+--
 -- Name: update_files; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -2873,6 +2973,34 @@ CREATE TABLE public.update_files (
 
 
 ALTER TABLE public.update_files OWNER TO thommcgrath;
+
+--
+-- Name: user_authenticators; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.user_authenticators (
+    authenticator_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    type public.authenticator_type NOT NULL,
+    nickname text NOT NULL,
+    date_added timestamp with time zone NOT NULL,
+    metadata jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+ALTER TABLE public.user_authenticators OWNER TO thommcgrath;
+
+--
+-- Name: user_backup_codes; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.user_backup_codes (
+    user_id uuid NOT NULL,
+    code text NOT NULL
+);
+
+
+ALTER TABLE public.user_backup_codes OWNER TO thommcgrath;
 
 --
 -- Name: user_challenges; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -2897,7 +3025,8 @@ CREATE TABLE public.usercloud (
     hash public.hex NOT NULL,
     modified timestamp with time zone NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
-    header public.hex
+    header public.hex,
+    bucket text NOT NULL
 );
 
 
@@ -2952,6 +3081,7 @@ CREATE TABLE public.users (
     parent_account_id uuid,
     enabled boolean DEFAULT true NOT NULL,
     require_password_change boolean DEFAULT false NOT NULL,
+    two_factor_key text,
     CONSTRAINT users_check CHECK ((((email_id IS NULL) AND (username IS NULL) AND (private_key_iterations IS NULL) AND (private_key_salt IS NULL) AND (private_key IS NULL)) OR ((email_id IS NOT NULL) AND (username IS NOT NULL) AND (private_key_iterations IS NOT NULL) AND (private_key_salt IS NOT NULL) AND (private_key IS NOT NULL))))
 );
 
@@ -3288,6 +3418,14 @@ ALTER TABLE ONLY ark.spawn_points ALTER COLUMN tags SET DEFAULT '{}'::public.cit
 
 
 --
+-- Name: color_sets color_sets_class_string_key; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY ark.color_sets
+    ADD CONSTRAINT color_sets_class_string_key UNIQUE (class_string);
+
+
+--
 -- Name: color_sets color_sets_pkey; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
 --
 
@@ -3453,6 +3591,14 @@ ALTER TABLE ONLY ark.ini_options
 
 ALTER TABLE ONLY ark.loot_item_set_entries
     ADD CONSTRAINT loot_item_set_entries_pkey PRIMARY KEY (loot_item_set_entry_id);
+
+
+--
+-- Name: loot_item_set_entries loot_item_set_entries_sort_idx; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY ark.loot_item_set_entries
+    ADD CONSTRAINT loot_item_set_entries_sort_idx UNIQUE (loot_item_set_id, sync_sort_key) DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -3648,6 +3794,30 @@ ALTER TABLE ONLY ark.spawn_points
 
 
 --
+-- Name: affiliate_links affiliate_links_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_links
+    ADD CONSTRAINT affiliate_links_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: affiliate_tracking affiliate_tracking_client_reference_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_tracking
+    ADD CONSTRAINT affiliate_tracking_client_reference_id_key UNIQUE (client_reference_id);
+
+
+--
+-- Name: affiliate_tracking affiliate_tracking_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_tracking
+    ADD CONSTRAINT affiliate_tracking_pkey PRIMARY KEY (track_id);
+
+
+--
 -- Name: blog_articles blog_articles_article_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -3685,6 +3855,14 @@ ALTER TABLE ONLY public.client_notices
 
 ALTER TABLE ONLY public.corrupt_files
     ADD CONSTRAINT corrupt_files_pkey PRIMARY KEY (file_id);
+
+
+--
+-- Name: currencies currencies_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.currencies
+    ADD CONSTRAINT currencies_pkey PRIMARY KEY (code);
 
 
 --
@@ -3728,6 +3906,14 @@ ALTER TABLE ONLY public.email_verification
 
 
 --
+-- Name: endpoint_git_hashes endpoint_git_hashes_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.endpoint_git_hashes
+    ADD CONSTRAINT endpoint_git_hashes_pkey PRIMARY KEY (branch);
+
+
+--
 -- Name: exception_comments exception_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -3749,6 +3935,14 @@ ALTER TABLE ONLY public.exception_signatures
 
 ALTER TABLE ONLY public.exceptions
     ADD CONSTRAINT exceptions_pkey1 PRIMARY KEY (exception_id);
+
+
+--
+-- Name: gift_code_products gift_code_products_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.gift_code_products
+    ADD CONSTRAINT gift_code_products_pkey PRIMARY KEY (code, product_id);
 
 
 --
@@ -3824,19 +4018,19 @@ ALTER TABLE ONLY public.products
 
 
 --
--- Name: products products_stripe_sku_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
---
-
-ALTER TABLE ONLY public.products
-    ADD CONSTRAINT products_stripe_sku_key UNIQUE (stripe_sku);
-
-
---
 -- Name: projects projects_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.projects
     ADD CONSTRAINT projects_pkey PRIMARY KEY (project_id);
+
+
+--
+-- Name: projects projects_storage_path_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.projects
+    ADD CONSTRAINT projects_storage_path_key UNIQUE (storage_path);
 
 
 --
@@ -4008,6 +4202,14 @@ ALTER TABLE ONLY public.support_videos
 
 
 --
+-- Name: trusted_devices trusted_devices_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.trusted_devices
+    ADD CONSTRAINT trusted_devices_pkey PRIMARY KEY (device_id_hash);
+
+
+--
 -- Name: update_files update_files_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -4029,6 +4231,22 @@ ALTER TABLE ONLY public.updates
 
 ALTER TABLE ONLY public.updates
     ADD CONSTRAINT updates_pkey PRIMARY KEY (update_id);
+
+
+--
+-- Name: user_authenticators user_authenticators_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.user_authenticators
+    ADD CONSTRAINT user_authenticators_pkey PRIMARY KEY (authenticator_id);
+
+
+--
+-- Name: user_backup_codes user_backup_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.user_backup_codes
+    ADD CONSTRAINT user_backup_codes_pkey PRIMARY KEY (user_id, code);
 
 
 --
@@ -4186,13 +4404,6 @@ CREATE INDEX loot_item_set_entries_loot_item_set_id_idx ON ark.loot_item_set_ent
 
 
 --
--- Name: loot_item_set_entries_sort_idx; Type: INDEX; Schema: ark; Owner: thommcgrath
---
-
-CREATE UNIQUE INDEX loot_item_set_entries_sort_idx ON ark.loot_item_set_entries USING btree (loot_item_set_id, sync_sort_key);
-
-
---
 -- Name: loot_item_set_entry_options_loot_item_set_entry_id_idx; Type: INDEX; Schema: ark; Owner: thommcgrath
 --
 
@@ -4347,6 +4558,20 @@ CREATE INDEX email_addresses_group_key_idx ON public.email_addresses USING btree
 
 
 --
+-- Name: email_verification_code_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX email_verification_code_idx ON public.email_verification USING btree (code);
+
+
+--
+-- Name: exception_signatures_exception_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX exception_signatures_exception_id_idx ON public.exception_signatures USING btree (exception_id);
+
+
+--
 -- Name: exception_users_exception_id_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -4375,6 +4600,13 @@ CREATE INDEX projects_user_id_idx ON public.projects USING btree (user_id);
 
 
 --
+-- Name: public_game_id_tag_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX public_game_id_tag_idx ON public.products USING btree (game_id, tag);
+
+
+--
 -- Name: purchases_purchaser_email_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -4396,6 +4628,13 @@ CREATE UNIQUE INDEX stw_purchases_original_purchase_id_generated_purchase_id_idx
 
 
 --
+-- Name: trusted_devices_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX trusted_devices_user_id_idx ON public.trusted_devices USING btree (user_id);
+
+
+--
 -- Name: update_files_unique_completes_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -4407,6 +4646,20 @@ CREATE UNIQUE INDEX update_files_unique_completes_idx ON public.update_files USI
 --
 
 CREATE UNIQUE INDEX update_files_unique_deltas_idx ON public.update_files USING btree (created, version) WHERE (type = 'Delta'::public.update_file_type);
+
+
+--
+-- Name: user_authenticators_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX user_authenticators_user_id_idx ON public.user_authenticators USING btree (user_id);
+
+
+--
+-- Name: user_backup_codes_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX user_backup_codes_user_id_idx ON public.user_backup_codes USING btree (user_id);
 
 
 --
@@ -4490,7 +4743,7 @@ CREATE TRIGGER creatures_search_sync_trigger BEFORE INSERT OR DELETE ON ark.crea
 -- Name: creatures creatures_search_sync_update_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
 --
 
-CREATE TRIGGER creatures_search_sync_update_trigger BEFORE UPDATE ON ark.creatures FOR EACH ROW WHEN ((((old.label IS DISTINCT FROM new.label) OR (old.min_version IS DISTINCT FROM new.min_version)) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
+CREATE TRIGGER creatures_search_sync_update_trigger BEFORE UPDATE ON ark.creatures FOR EACH ROW WHEN ((((old.label)::text IS DISTINCT FROM (new.label)::text) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
 
 
 --
@@ -4560,7 +4813,7 @@ CREATE TRIGGER engrams_search_sync_trigger BEFORE INSERT OR DELETE ON ark.engram
 -- Name: engrams engrams_search_sync_update_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
 --
 
-CREATE TRIGGER engrams_search_sync_update_trigger BEFORE UPDATE ON ark.engrams FOR EACH ROW WHEN ((((old.label IS DISTINCT FROM new.label) OR (old.min_version IS DISTINCT FROM new.min_version)) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
+CREATE TRIGGER engrams_search_sync_update_trigger BEFORE UPDATE ON ark.engrams FOR EACH ROW WHEN (((old.label IS DISTINCT FROM new.label) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
 
 
 --
@@ -4700,7 +4953,7 @@ CREATE TRIGGER loot_sources_search_sync_trigger BEFORE INSERT OR DELETE ON ark.l
 -- Name: loot_sources loot_sources_search_sync_update_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
 --
 
-CREATE TRIGGER loot_sources_search_sync_update_trigger BEFORE UPDATE ON ark.loot_sources FOR EACH ROW WHEN ((((old.label IS DISTINCT FROM new.label) OR (old.min_version IS DISTINCT FROM new.min_version)) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
+CREATE TRIGGER loot_sources_search_sync_update_trigger BEFORE UPDATE ON ark.loot_sources FOR EACH ROW WHEN ((((old.label)::text IS DISTINCT FROM (new.label)::text) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
 
 
 --
@@ -4861,7 +5114,7 @@ CREATE TRIGGER spawn_points_search_sync_trigger BEFORE INSERT OR DELETE ON ark.s
 -- Name: spawn_points spawn_points_search_sync_update_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_points_search_sync_update_trigger BEFORE UPDATE ON ark.spawn_points FOR EACH ROW WHEN ((((old.label IS DISTINCT FROM new.label) OR (old.min_version IS DISTINCT FROM new.min_version)) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
+CREATE TRIGGER spawn_points_search_sync_update_trigger BEFORE UPDATE ON ark.spawn_points FOR EACH ROW WHEN ((((old.label)::text IS DISTINCT FROM (new.label)::text) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.mod_id IS DISTINCT FROM new.mod_id))) EXECUTE FUNCTION ark.objects_search_sync();
 
 
 --
@@ -4907,6 +5160,20 @@ CREATE TRIGGER insert_blog_article_timestamp_trigger BEFORE INSERT ON public.blo
 
 
 --
+-- Name: projects projects_search_sync_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER projects_search_sync_insert_trigger AFTER INSERT ON public.projects FOR EACH ROW EXECUTE FUNCTION public.projects_search_sync();
+
+
+--
+-- Name: projects projects_search_sync_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER projects_search_sync_update_trigger AFTER UPDATE ON public.projects FOR EACH ROW WHEN (((old.title IS DISTINCT FROM new.title) OR (old.description IS DISTINCT FROM new.description) OR (old.published IS DISTINCT FROM new.published))) EXECUTE FUNCTION public.projects_search_sync();
+
+
+--
 -- Name: support_articles support_articles_search_sync_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -4917,7 +5184,7 @@ CREATE TRIGGER support_articles_search_sync_trigger BEFORE INSERT OR DELETE ON p
 -- Name: support_articles support_articles_search_sync_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER support_articles_search_sync_update_trigger BEFORE UPDATE ON public.support_articles FOR EACH ROW WHEN ((((((((old.article_slug)::text IS DISTINCT FROM (new.article_slug)::text) OR (old.subject IS DISTINCT FROM new.subject)) OR (old.preview IS DISTINCT FROM new.preview)) OR (old.published IS DISTINCT FROM new.published)) OR (old.min_version IS DISTINCT FROM new.min_version)) OR (old.max_version IS DISTINCT FROM new.max_version))) EXECUTE FUNCTION public.support_articles_search_sync();
+CREATE TRIGGER support_articles_search_sync_update_trigger BEFORE UPDATE ON public.support_articles FOR EACH ROW WHEN ((((old.article_slug)::text IS DISTINCT FROM (new.article_slug)::text) OR ((old.subject)::text IS DISTINCT FROM (new.subject)::text) OR ((old.preview)::text IS DISTINCT FROM (new.preview)::text) OR (old.published IS DISTINCT FROM new.published) OR (old.min_version IS DISTINCT FROM new.min_version) OR (old.max_version IS DISTINCT FROM new.max_version))) EXECUTE FUNCTION public.support_articles_search_sync();
 
 
 --
@@ -4931,7 +5198,7 @@ CREATE TRIGGER support_videos_search_sync_trigger BEFORE INSERT OR DELETE ON pub
 -- Name: support_videos support_videos_search_sync_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER support_videos_search_sync_update_trigger BEFORE UPDATE ON public.support_videos FOR EACH ROW WHEN ((((old.video_slug)::text IS DISTINCT FROM (new.video_slug)::text) OR (old.video_title IS DISTINCT FROM new.video_title))) EXECUTE FUNCTION public.support_videos_search_sync();
+CREATE TRIGGER support_videos_search_sync_update_trigger BEFORE UPDATE ON public.support_videos FOR EACH ROW WHEN ((((old.video_slug)::text IS DISTINCT FROM (new.video_slug)::text) OR ((old.video_title)::text IS DISTINCT FROM (new.video_title)::text))) EXECUTE FUNCTION public.support_videos_search_sync();
 
 
 --
@@ -4945,7 +5212,7 @@ CREATE TRIGGER update_blog_article_hash_trigger BEFORE INSERT OR UPDATE ON publi
 -- Name: blog_articles update_blog_article_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE UPDATE ON public.blog_articles FOR EACH ROW WHEN ((old.content_markdown IS DISTINCT FROM new.content_markdown)) EXECUTE FUNCTION public.update_blog_article_timestamp();
+CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE UPDATE ON public.blog_articles FOR EACH ROW WHEN (((old.content_markdown)::text IS DISTINCT FROM (new.content_markdown)::text)) EXECUTE FUNCTION public.update_blog_article_timestamp();
 
 
 --
@@ -4982,7 +5249,7 @@ ALTER TABLE ONLY ark.crafting_costs
 --
 
 ALTER TABLE ONLY ark.crafting_costs
-    ADD CONSTRAINT crafting_costs_ingredient_id_fkey FOREIGN KEY (ingredient_id) REFERENCES ark.engrams(object_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT crafting_costs_ingredient_id_fkey FOREIGN KEY (ingredient_id) REFERENCES ark.engrams(object_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5134,7 +5401,7 @@ ALTER TABLE ONLY ark.loot_item_set_entries
 --
 
 ALTER TABLE ONLY ark.loot_item_set_entry_options
-    ADD CONSTRAINT loot_item_set_entry_options_engram_id_fkey FOREIGN KEY (engram_id) REFERENCES ark.engrams(object_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT loot_item_set_entry_options_engram_id_fkey FOREIGN KEY (engram_id) REFERENCES ark.engrams(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5330,6 +5597,30 @@ ALTER TABLE ONLY ark.spawn_points
 
 
 --
+-- Name: affiliate_links affiliate_links_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_links
+    ADD CONSTRAINT affiliate_links_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: affiliate_tracking affiliate_tracking_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_tracking
+    ADD CONSTRAINT affiliate_tracking_code_fkey FOREIGN KEY (code) REFERENCES public.affiliate_links(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: affiliate_tracking affiliate_tracking_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.affiliate_tracking
+    ADD CONSTRAINT affiliate_tracking_purchase_id_fkey FOREIGN KEY (purchase_id) REFERENCES public.purchases(purchase_id);
+
+
+--
 -- Name: download_signatures download_signatures_download_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -5394,11 +5685,19 @@ ALTER TABLE ONLY public.exception_users
 
 
 --
--- Name: gift_codes gift_codes_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: gift_code_products gift_code_products_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY public.gift_codes
-    ADD CONSTRAINT gift_codes_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE ONLY public.gift_code_products
+    ADD CONSTRAINT gift_code_products_code_fkey FOREIGN KEY (code) REFERENCES public.gift_codes(code) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: gift_code_products gift_code_products_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.gift_code_products
+    ADD CONSTRAINT gift_code_products_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE;
 
 
 --
@@ -5463,6 +5762,14 @@ ALTER TABLE ONLY public.oauth_tokens
 
 ALTER TABLE ONLY public.product_prices
     ADD CONSTRAINT product_prices_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: projects projects_storage_path_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.projects
+    ADD CONSTRAINT projects_storage_path_fkey FOREIGN KEY (storage_path) REFERENCES public.usercloud(remote_path) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5610,6 +5917,30 @@ ALTER TABLE ONLY public.support_table_of_contents
 
 
 --
+-- Name: trusted_devices trusted_devices_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.trusted_devices
+    ADD CONSTRAINT trusted_devices_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_authenticators user_authenticators_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.user_authenticators
+    ADD CONSTRAINT user_authenticators_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: user_backup_codes user_backup_codes_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.user_backup_codes
+    ADD CONSTRAINT user_backup_codes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: user_challenges user_challenges_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -5639,6 +5970,7 @@ ALTER TABLE ONLY public.users
 
 GRANT USAGE ON SCHEMA ark TO thezaz_website;
 GRANT USAGE ON SCHEMA ark TO beacon_updater;
+GRANT USAGE ON SCHEMA ark TO beacon_readonly;
 
 
 --
@@ -5646,6 +5978,7 @@ GRANT USAGE ON SCHEMA ark TO beacon_updater;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.objects TO thezaz_website;
+GRANT SELECT ON TABLE ark.objects TO beacon_readonly;
 
 
 --
@@ -5654,6 +5987,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.objects TO thezaz_website;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creatures TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creatures TO beacon_updater;
+GRANT SELECT ON TABLE ark.creatures TO beacon_readonly;
 
 
 --
@@ -5662,6 +5996,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creatures TO beacon_updater;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.engrams TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.engrams TO beacon_updater;
+GRANT SELECT ON TABLE ark.engrams TO beacon_readonly;
 
 
 --
@@ -5670,6 +6005,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.engrams TO beacon_updater;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_sources TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_sources TO beacon_updater;
+GRANT SELECT ON TABLE ark.loot_sources TO beacon_readonly;
 
 
 --
@@ -5678,6 +6014,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_sources TO beacon_updater;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_points TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_points TO beacon_updater;
+GRANT SELECT ON TABLE ark.spawn_points TO beacon_readonly;
 
 
 --
@@ -5686,6 +6023,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_points TO beacon_updater;
 
 GRANT SELECT ON TABLE ark.blueprints TO thezaz_website;
 GRANT SELECT ON TABLE ark.blueprints TO beacon_updater;
+GRANT SELECT ON TABLE ark.blueprints TO beacon_readonly;
 
 
 --
@@ -5693,6 +6031,7 @@ GRANT SELECT ON TABLE ark.blueprints TO beacon_updater;
 --
 
 GRANT SELECT ON TABLE ark.color_sets TO thezaz_website;
+GRANT SELECT ON TABLE ark.color_sets TO beacon_readonly;
 
 
 --
@@ -5700,6 +6039,7 @@ GRANT SELECT ON TABLE ark.color_sets TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE ark.colors TO thezaz_website;
+GRANT SELECT ON TABLE ark.colors TO beacon_readonly;
 
 
 --
@@ -5708,6 +6048,7 @@ GRANT SELECT ON TABLE ark.colors TO thezaz_website;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.crafting_costs TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.crafting_costs TO beacon_updater;
+GRANT SELECT ON TABLE ark.crafting_costs TO beacon_readonly;
 
 
 --
@@ -5716,6 +6057,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.crafting_costs TO beacon_updater;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creature_engrams TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creature_engrams TO beacon_updater;
+GRANT SELECT ON TABLE ark.creature_engrams TO beacon_readonly;
 
 
 --
@@ -5724,6 +6066,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creature_engrams TO beacon_update
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creature_stats TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creature_stats TO beacon_updater;
+GRANT SELECT ON TABLE ark.creature_stats TO beacon_readonly;
 
 
 --
@@ -5732,6 +6075,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.creature_stats TO beacon_updater;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.deletions TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.deletions TO beacon_updater;
+GRANT SELECT ON TABLE ark.deletions TO beacon_readonly;
 
 
 --
@@ -5739,6 +6083,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.deletions TO beacon_updater;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.diet_contents TO thezaz_website;
+GRANT SELECT ON TABLE ark.diet_contents TO beacon_readonly;
 
 
 --
@@ -5746,6 +6091,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.diet_contents TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.diets TO thezaz_website;
+GRANT SELECT ON TABLE ark.diets TO beacon_readonly;
 
 
 --
@@ -5753,6 +6099,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.diets TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE ark.event_colors TO thezaz_website;
+GRANT SELECT ON TABLE ark.event_colors TO beacon_readonly;
 
 
 --
@@ -5760,6 +6107,7 @@ GRANT SELECT ON TABLE ark.event_colors TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE ark.event_engrams TO thezaz_website;
+GRANT SELECT ON TABLE ark.event_engrams TO beacon_readonly;
 
 
 --
@@ -5767,6 +6115,7 @@ GRANT SELECT ON TABLE ark.event_engrams TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE ark.event_rates TO thezaz_website;
+GRANT SELECT ON TABLE ark.event_rates TO beacon_readonly;
 
 
 --
@@ -5774,6 +6123,7 @@ GRANT SELECT ON TABLE ark.event_rates TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE ark.events TO thezaz_website;
+GRANT SELECT ON TABLE ark.events TO beacon_readonly;
 
 
 --
@@ -5781,6 +6131,7 @@ GRANT SELECT ON TABLE ark.events TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE ark.game_variables TO thezaz_website;
+GRANT SELECT ON TABLE ark.game_variables TO beacon_readonly;
 
 
 --
@@ -5788,6 +6139,7 @@ GRANT SELECT ON TABLE ark.game_variables TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.ini_options TO thezaz_website;
+GRANT SELECT ON TABLE ark.ini_options TO beacon_readonly;
 
 
 --
@@ -5796,6 +6148,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.ini_options TO thezaz_website;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_set_entries TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_set_entries TO beacon_updater;
+GRANT SELECT ON TABLE ark.loot_item_set_entries TO beacon_readonly;
 
 
 --
@@ -5804,6 +6157,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_set_entries TO beacon_u
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_set_entry_options TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_set_entry_options TO beacon_updater;
+GRANT SELECT ON TABLE ark.loot_item_set_entry_options TO beacon_readonly;
 
 
 --
@@ -5812,6 +6166,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_set_entry_options TO be
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_sets TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_sets TO beacon_updater;
+GRANT SELECT ON TABLE ark.loot_item_sets TO beacon_readonly;
 
 
 --
@@ -5819,6 +6174,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.loot_item_sets TO beacon_updater;
 --
 
 GRANT SELECT ON TABLE ark.loot_source_icons TO thezaz_website;
+GRANT SELECT ON TABLE ark.loot_source_icons TO beacon_readonly;
 
 
 --
@@ -5827,6 +6183,7 @@ GRANT SELECT ON TABLE ark.loot_source_icons TO thezaz_website;
 
 GRANT SELECT ON TABLE ark.maps TO thezaz_website;
 GRANT SELECT ON TABLE ark.maps TO beacon_updater;
+GRANT SELECT ON TABLE ark.maps TO beacon_readonly;
 
 
 --
@@ -5835,6 +6192,7 @@ GRANT SELECT ON TABLE ark.maps TO beacon_updater;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mod_relationships TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mod_relationships TO beacon_updater;
+GRANT SELECT ON TABLE ark.mod_relationships TO beacon_readonly;
 
 
 --
@@ -5843,6 +6201,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mod_relationships TO beacon_updat
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods TO beacon_updater;
+GRANT SELECT ON TABLE ark.mods TO beacon_readonly;
 
 
 --
@@ -5850,6 +6209,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods TO beacon_updater;
 --
 
 GRANT SELECT ON TABLE ark.preset_modifiers TO thezaz_website;
+GRANT SELECT ON TABLE ark.preset_modifiers TO beacon_readonly;
 
 
 --
@@ -5857,6 +6217,7 @@ GRANT SELECT ON TABLE ark.preset_modifiers TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.presets TO thezaz_website;
+GRANT SELECT ON TABLE ark.presets TO beacon_readonly;
 
 
 --
@@ -5865,6 +6226,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.presets TO thezaz_website;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_limits TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_limits TO beacon_updater;
+GRANT SELECT ON TABLE ark.spawn_point_limits TO beacon_readonly;
 
 
 --
@@ -5873,6 +6235,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_limits TO beacon_upda
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_populations TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_populations TO beacon_updater;
+GRANT SELECT ON TABLE ark.spawn_point_populations TO beacon_readonly;
 
 
 --
@@ -5881,6 +6244,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_populations TO beacon
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_entries TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_entries TO beacon_updater;
+GRANT SELECT ON TABLE ark.spawn_point_set_entries TO beacon_readonly;
 
 
 --
@@ -5889,6 +6253,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_entries TO beacon
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_entry_levels TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_entry_levels TO beacon_updater;
+GRANT SELECT ON TABLE ark.spawn_point_set_entry_levels TO beacon_readonly;
 
 
 --
@@ -5897,6 +6262,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_entry_levels TO b
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_replacements TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_replacements TO beacon_updater;
+GRANT SELECT ON TABLE ark.spawn_point_set_replacements TO beacon_readonly;
 
 
 --
@@ -5905,6 +6271,23 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_set_replacements TO b
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_sets TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_sets TO beacon_updater;
+GRANT SELECT ON TABLE ark.spawn_point_sets TO beacon_readonly;
+
+
+--
+-- Name: TABLE affiliate_links; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.affiliate_links TO thezaz_website;
+GRANT SELECT ON TABLE public.affiliate_links TO beacon_readonly;
+
+
+--
+-- Name: TABLE affiliate_tracking; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,UPDATE ON TABLE public.affiliate_tracking TO thezaz_website;
+GRANT SELECT ON TABLE public.affiliate_tracking TO beacon_readonly;
 
 
 --
@@ -5912,6 +6295,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.spawn_point_sets TO beacon_update
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.guest_projects TO thezaz_website;
+GRANT SELECT ON TABLE public.guest_projects TO beacon_readonly;
 
 
 --
@@ -5919,6 +6303,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.guest_projects TO thezaz_websi
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.projects TO thezaz_website;
+GRANT SELECT ON TABLE public.projects TO beacon_readonly;
 
 
 --
@@ -5926,6 +6311,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.projects TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.allowed_projects TO thezaz_website;
+GRANT SELECT ON TABLE public.allowed_projects TO beacon_readonly;
 
 
 --
@@ -5933,6 +6319,7 @@ GRANT SELECT ON TABLE public.allowed_projects TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.blog_articles TO thezaz_website;
+GRANT SELECT ON TABLE public.blog_articles TO beacon_readonly;
 
 
 --
@@ -5940,6 +6327,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.blog_articles TO thezaz_websit
 --
 
 GRANT SELECT ON TABLE public.client_notices TO thezaz_website;
+GRANT SELECT ON TABLE public.client_notices TO beacon_readonly;
 
 
 --
@@ -5947,6 +6335,15 @@ GRANT SELECT ON TABLE public.client_notices TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.corrupt_files TO thezaz_website;
+GRANT SELECT ON TABLE public.corrupt_files TO beacon_readonly;
+
+
+--
+-- Name: TABLE currencies; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.currencies TO beacon_readonly;
+GRANT SELECT,UPDATE ON TABLE public.currencies TO thezaz_website;
 
 
 --
@@ -5954,6 +6351,7 @@ GRANT SELECT,INSERT ON TABLE public.corrupt_files TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.deletions TO thezaz_website;
+GRANT SELECT ON TABLE public.deletions TO beacon_readonly;
 
 
 --
@@ -5961,6 +6359,7 @@ GRANT SELECT ON TABLE public.deletions TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.download_signatures TO thezaz_website;
+GRANT SELECT ON TABLE public.download_signatures TO beacon_readonly;
 
 
 --
@@ -5968,6 +6367,7 @@ GRANT SELECT ON TABLE public.download_signatures TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.download_urls TO thezaz_website;
+GRANT SELECT ON TABLE public.download_urls TO beacon_readonly;
 
 
 --
@@ -5975,6 +6375,7 @@ GRANT SELECT ON TABLE public.download_urls TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_addresses TO thezaz_website;
+GRANT SELECT ON TABLE public.email_addresses TO beacon_readonly;
 
 
 --
@@ -5982,6 +6383,15 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_addresses TO thezaz_webs
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_verification TO thezaz_website;
+GRANT SELECT ON TABLE public.email_verification TO beacon_readonly;
+
+
+--
+-- Name: TABLE endpoint_git_hashes; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.endpoint_git_hashes TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.endpoint_git_hashes TO thezaz_website;
 
 
 --
@@ -5989,6 +6399,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_verification TO thezaz_w
 --
 
 GRANT SELECT,INSERT ON TABLE public.exception_comments TO thezaz_website;
+GRANT SELECT ON TABLE public.exception_comments TO beacon_readonly;
 
 
 --
@@ -5996,6 +6407,7 @@ GRANT SELECT,INSERT ON TABLE public.exception_comments TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.exception_signatures TO thezaz_website;
+GRANT SELECT ON TABLE public.exception_signatures TO beacon_readonly;
 
 
 --
@@ -6003,6 +6415,7 @@ GRANT SELECT,INSERT ON TABLE public.exception_signatures TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.exception_users TO thezaz_website;
+GRANT SELECT ON TABLE public.exception_users TO beacon_readonly;
 
 
 --
@@ -6010,6 +6423,7 @@ GRANT SELECT,INSERT ON TABLE public.exception_users TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,UPDATE ON TABLE public.exceptions TO thezaz_website;
+GRANT SELECT ON TABLE public.exceptions TO beacon_readonly;
 
 
 --
@@ -6017,6 +6431,15 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public.exceptions TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.gift_code_log TO thezaz_website;
+GRANT SELECT ON TABLE public.gift_code_log TO beacon_readonly;
+
+
+--
+-- Name: TABLE gift_code_products; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.gift_code_products TO beacon_readonly;
+GRANT SELECT,INSERT ON TABLE public.gift_code_products TO thezaz_website;
 
 
 --
@@ -6024,6 +6447,7 @@ GRANT SELECT,INSERT ON TABLE public.gift_code_log TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.gift_codes TO thezaz_website;
+GRANT SELECT ON TABLE public.gift_codes TO beacon_readonly;
 
 
 --
@@ -6031,6 +6455,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.gift_codes TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.help_topics TO thezaz_website;
+GRANT SELECT ON TABLE public.help_topics TO beacon_readonly;
 
 
 --
@@ -6045,6 +6470,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.imported_obelisk_files TO beac
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.licenses TO thezaz_website;
+GRANT SELECT ON TABLE public.licenses TO beacon_readonly;
 
 
 --
@@ -6052,6 +6478,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.licenses TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.updates TO thezaz_website;
+GRANT SELECT ON TABLE public.updates TO beacon_readonly;
 
 
 --
@@ -6059,6 +6486,7 @@ GRANT SELECT ON TABLE public.updates TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.news TO thezaz_website;
+GRANT SELECT ON TABLE public.news TO beacon_readonly;
 
 
 --
@@ -6066,6 +6494,7 @@ GRANT SELECT ON TABLE public.news TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE ON TABLE public.oauth_requests TO thezaz_website;
+GRANT SELECT ON TABLE public.oauth_requests TO beacon_readonly;
 
 
 --
@@ -6073,13 +6502,15 @@ GRANT SELECT,INSERT,DELETE ON TABLE public.oauth_requests TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.oauth_tokens TO thezaz_website;
+GRANT SELECT ON TABLE public.oauth_tokens TO beacon_readonly;
 
 
 --
 -- Name: TABLE product_prices; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,UPDATE ON TABLE public.product_prices TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.product_prices TO thezaz_website;
+GRANT SELECT ON TABLE public.product_prices TO beacon_readonly;
 
 
 --
@@ -6087,6 +6518,7 @@ GRANT SELECT,UPDATE ON TABLE public.product_prices TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.products TO thezaz_website;
+GRANT SELECT ON TABLE public.products TO beacon_readonly;
 
 
 --
@@ -6094,6 +6526,7 @@ GRANT SELECT ON TABLE public.products TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.purchase_items TO thezaz_website;
+GRANT SELECT ON TABLE public.purchase_items TO beacon_readonly;
 
 
 --
@@ -6101,6 +6534,7 @@ GRANT SELECT,INSERT ON TABLE public.purchase_items TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.purchase_items_old TO thezaz_website;
+GRANT SELECT ON TABLE public.purchase_items_old TO beacon_readonly;
 
 
 --
@@ -6108,12 +6542,14 @@ GRANT SELECT,INSERT ON TABLE public.purchase_items_old TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,UPDATE ON TABLE public.purchases TO thezaz_website;
+GRANT SELECT ON TABLE public.purchases TO beacon_readonly;
 
 
 --
 -- Name: TABLE purchased_products; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
+GRANT SELECT ON TABLE public.purchased_products TO beacon_readonly;
 GRANT SELECT ON TABLE public.purchased_products TO thezaz_website;
 
 
@@ -6122,6 +6558,7 @@ GRANT SELECT ON TABLE public.purchased_products TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_articles TO thezaz_website;
+GRANT SELECT ON TABLE public.support_articles TO beacon_readonly;
 
 
 --
@@ -6129,6 +6566,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_articles TO thezaz_web
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_videos TO thezaz_website;
+GRANT SELECT ON TABLE public.support_videos TO beacon_readonly;
 
 
 --
@@ -6136,6 +6574,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_videos TO thezaz_websi
 --
 
 GRANT SELECT ON TABLE public.search_contents TO thezaz_website;
+GRANT SELECT ON TABLE public.search_contents TO beacon_readonly;
 
 
 --
@@ -6144,6 +6583,7 @@ GRANT SELECT ON TABLE public.search_contents TO thezaz_website;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.search_sync TO thezaz_website;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.search_sync TO beacon_updater;
+GRANT SELECT ON TABLE public.search_sync TO beacon_readonly;
 
 
 --
@@ -6151,6 +6591,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.search_sync TO beacon_updater;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.sessions TO thezaz_website;
+GRANT SELECT ON TABLE public.sessions TO beacon_readonly;
 
 
 --
@@ -6158,6 +6599,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.sessions TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.stw_applicants TO thezaz_website;
+GRANT SELECT ON TABLE public.stw_applicants TO beacon_readonly;
 
 
 --
@@ -6165,6 +6607,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.stw_applicants TO thezaz_websi
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.stw_purchases TO thezaz_website;
+GRANT SELECT ON TABLE public.stw_purchases TO beacon_readonly;
 
 
 --
@@ -6172,6 +6615,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.stw_purchases TO thezaz_websit
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_article_groups TO thezaz_website;
+GRANT SELECT ON TABLE public.support_article_groups TO beacon_readonly;
 
 
 --
@@ -6179,6 +6623,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_article_groups TO thez
 --
 
 GRANT SELECT ON TABLE public.support_article_modules TO thezaz_website;
+GRANT SELECT ON TABLE public.support_article_modules TO beacon_readonly;
 
 
 --
@@ -6186,6 +6631,7 @@ GRANT SELECT ON TABLE public.support_article_modules TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.support_images TO thezaz_website;
+GRANT SELECT ON TABLE public.support_images TO beacon_readonly;
 
 
 --
@@ -6193,6 +6639,7 @@ GRANT SELECT,INSERT ON TABLE public.support_images TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_table_of_contents TO thezaz_website;
+GRANT SELECT ON TABLE public.support_table_of_contents TO beacon_readonly;
 
 
 --
@@ -6200,6 +6647,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_table_of_contents TO t
 --
 
 GRANT SELECT ON TABLE public.template_selectors TO thezaz_website;
+GRANT SELECT ON TABLE public.template_selectors TO beacon_readonly;
 
 
 --
@@ -6207,6 +6655,15 @@ GRANT SELECT ON TABLE public.template_selectors TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.templates TO thezaz_website;
+GRANT SELECT ON TABLE public.templates TO beacon_readonly;
+
+
+--
+-- Name: TABLE trusted_devices; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.trusted_devices TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.trusted_devices TO thezaz_website;
 
 
 --
@@ -6214,6 +6671,23 @@ GRANT SELECT ON TABLE public.templates TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,UPDATE ON TABLE public.update_files TO thezaz_website;
+GRANT SELECT ON TABLE public.update_files TO beacon_readonly;
+
+
+--
+-- Name: TABLE user_authenticators; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.user_authenticators TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.user_authenticators TO thezaz_website;
+
+
+--
+-- Name: TABLE user_backup_codes; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.user_backup_codes TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.user_backup_codes TO thezaz_website;
 
 
 --
@@ -6221,6 +6695,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public.update_files TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.user_challenges TO thezaz_website;
+GRANT SELECT ON TABLE public.user_challenges TO beacon_readonly;
 
 
 --
@@ -6228,6 +6703,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.user_challenges TO thezaz_webs
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud TO thezaz_website;
+GRANT SELECT ON TABLE public.usercloud TO beacon_readonly;
 
 
 --
@@ -6235,6 +6711,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud_cache TO thezaz_website;
+GRANT SELECT ON TABLE public.usercloud_cache TO beacon_readonly;
 
 
 --
@@ -6242,6 +6719,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud_cache TO thezaz_webs
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud_queue TO thezaz_website;
+GRANT SELECT ON TABLE public.usercloud_queue TO beacon_readonly;
 
 
 --
@@ -6249,6 +6727,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud_queue TO thezaz_webs
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.users TO thezaz_website;
+GRANT SELECT ON TABLE public.users TO beacon_readonly;
 
 
 --
@@ -6256,6 +6735,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.users TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.wordlist TO thezaz_website;
+GRANT SELECT ON TABLE public.wordlist TO beacon_readonly;
 
 
 --
