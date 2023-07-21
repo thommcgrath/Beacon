@@ -1,12 +1,13 @@
 <?php
 
-namespace BeaconAPI\v4\Ark;
-use BeaconAPI\v4\{Core, DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, MutableDatabaseObject, User};
+namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet, BeaconWorkshopItem, JsonSerializable;
 
 class ContentPack extends DatabaseObject implements JsonSerializable {
 	protected string $contentPackId;
-	protected int $steamId;
+	protected string $gameId;
+	protected string $marketplace;
+	protected string $marketplaceId;
 	protected string $userId;
 	protected string $name;
 	protected bool $isConfirmed;
@@ -17,11 +18,13 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 	protected int $lastUpdate;
 	protected bool $isOfficial;
 	protected bool $isIncludedInDeltas;
-	protected bool $isApp;
+	protected array $gameSpecific;
 	
 	protected function __construct(BeaconRecordSet $row) {
-		$this->contentPackId = $row->Field('mod_id');
-		$this->steamId = abs($row->Field('workshop_id'));
+		$this->contentPackId = $row->Field('content_pack_id');
+		$this->gameId = $row->Field('game_id');
+		$this->marketplace = $row->Field('marketplace');
+		$this->marketplaceId = $row->Field('marketplace_id');
 		$this->userId = $row->Field('user_id');
 		$this->name = $row->Field('name');
 		$this->isConfirmed = filter_var($row->Field('confirmed'), FILTER_VALIDATE_BOOL);
@@ -32,13 +35,15 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$this->lastUpdate = round($row->Field('last_update'));
 		$this->isOfficial = filter_var($row->Field('is_official'), FILTER_VALIDATE_BOOL);
 		$this->isIncludedInDeltas = filter_var($row->Field('include_in_deltas'), FILTER_VALIDATE_BOOL);
-		$this->isApp = filter_var($row->Field('is_app'), FILTER_VALIDATE_BOOL);
+		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
-		return new DatabaseSchema('ark', 'mods', [
-			new DatabaseObjectProperty('contentPackId', ['primaryKey' => true, 'columnName' => 'mod_id']),
-			new DatabaseObjectProperty('steamId', ['columnName' => 'workshop_id']),
+		return new DatabaseSchema('public', 'content_packs', [
+			new DatabaseObjectProperty('contentPackId', ['primaryKey' => true, 'columnName' => 'content_pack_id']),
+			new DatabaseObjectProperty('gameId', ['columnName' => 'game_id']),
+			new DatabaseObjectProperty('marketplace'),
+			new DatabaseObjectProperty('marketplaceId', ['columnName' => 'marketplace_id']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('isConfirmed', ['columnName' => 'confirmed']),
@@ -49,7 +54,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official']),
 			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas']),
-			new DatabaseObjectProperty('isApp', ['columnName' => 'is_app'])
+			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific'])
 		]);
 	}
 	
@@ -57,7 +62,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		if (BeaconCommon::IsUUID($uuid)) {
 			return parent::Fetch($uuid);
 		} else {
-			$packs = static::Search(['steamId' => $uuid], true);
+			$packs = static::Search(['marketplaceId' => $uuid], true);
 			if (count($packs) === 1) {
 				return $packs[0];
 			}
@@ -74,16 +79,10 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'isOfficial', '=');
 		$parameters->AddFromFilter($schema, $filters, 'isIncludedInDeltas', '=');
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
+		$parameters->AddFromFilter($schema, $filters, 'marketplace', '=');
+		$parameters->AddFromFilter($schema, $filters, 'marketplaceId', '=');
+		$parameters->AddFromFilter($schema, $filters, 'gameId', '=');
 			
-		if (isset($filters['steamId'])) {
-			$steamId = filter_var($filters['steamId'], FILTER_VALIDATE_INT);
-			if ($steamId !== false) {
-				$steamIdProperty = $schema->Property('steamId');
-				$parameters->clauses[] = $schema->Comparison('steamId', '=', $parameters->placeholder++);
-				$parameters->values[] = $steamId;
-			}
-		}
-		
 		if (isset($filters['contentPackId']) && BeaconCommon::IsUUID($filters['contentPackId']) === true) {
 			$parameters->clauses[] = $schema->Comparison('contentPackId', '=', $parameters->placeholder++);
 			$parameters->values[] = $filters['contentPackId'];
@@ -106,15 +105,26 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		return $this->contentPackId;
 	}
 	
-	public function SteamId(): string {
-		return $this->steamId;
+	public function GameId(): string {
+		return $this->gameId;
 	}
 	
-	public function SteamUrl(): string {
-		if ($this->isApp) {
-			return "https://store.steampowered.com/app/{$this->steamId}";
-		} else {
-			return "https://steamcommunity.com/sharedfiles/filedetails/?id={$this->steamId}";
+	public function Marketplace(): string {
+		return $this->marketplace;
+	}
+	
+	public function MarketplaceId(): string {
+		return $this->marketplaceId;
+	}
+	
+	public function MarketplaceUrl(): string {
+		switch ($this->marketplace) {
+		case 'Steam':
+			return "https://store.steampowered.com/app/{$this->marketplaceId}";
+		case 'Steam Workshop':
+			return "https://steamcommunity.com/sharedfiles/filedetails/?id={$this->marketplaceId}";
+		default:
+			return '';
 		}
 	}
 	
@@ -138,10 +148,6 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		return $this->minVersion;
 	}
 	
-	public function IsApp(): bool {
-		return $this->isApp;
-	}
-	
 	public function IsIncludedInDeltas(): bool {
 		return $this->isIncludedInDeltas;
 	}
@@ -150,22 +156,26 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		return $this->isOfficial;
 	}
 	
+	public function GameSpecific(): array {
+		return $this->gameSpecific;
+	}
+	
 	public function AttemptConfirmation(): bool {
-		if ($this->isApp) {
-			return true;
-		}
-		
-		$workshop_item = BeaconWorkshopItem::Load($this->steamId);
-		if (is_null($workshop_item)) {
-			return false;
-		}
-		if (BeaconCommon::InDevelopment() || $workshop_item->ContainsString($this->confirmationCode)) {
-			$database = BeaconCommon::Database();
-			$database->BeginTransaction();
-			$database->Query('UPDATE ark.mods SET confirmed = TRUE WHERE mod_id = $1;', $this->contentPackId);
-			$database->Commit();
-			$this->isConfirmed = true;
-			return true;
+		switch ($this->marketplace) {
+		case 'Steam Workshop':
+			$workshop_item = BeaconWorkshopItem::Load($this->marketplaceId);
+			if (is_null($workshop_item)) {
+				return false;
+			}
+			if (BeaconCommon::InDevelopment() || $workshop_item->ContainsString($this->confirmationCode)) {
+				$database = BeaconCommon::Database();
+				$database->BeginTransaction();
+				$database->Query('UPDATE public.content_packs SET confirmed = TRUE WHERE content_pack_id = $1;', $this->contentPackId);
+				$database->Commit();
+				$this->isConfirmed = true;
+				return true;
+			}
+			break;
 		}
 		
 		return false;
@@ -174,10 +184,11 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return [
 			'contentPackId' => $this->contentPackId,
-			'steamId' => $this->steamId,
-			'steamUrl' => $this->SteamUrl(),
+			'gameId' => $this->gameId,
+			'marketplace' => $this->marketplace,
+			'marketplaceId' => $this->marketplaceId,
+			'marketplaceUrl' => $this->MarketplaceUrl(),
 			'name' => $this->name,
-			'isApp' => $this->isApp,
 			'isConfirmed' => $this->isConfirmed,
 			'isConsoleSafe' => $this->isConsoleSafe,
 			'isDefaultEnabled' => $this->isDefaultEnabled,
@@ -185,7 +196,8 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			'isOfficial' => $this->isOfficial,
 			'confirmationCode' => $this->confirmationCode,
 			'minVersion' => $this->minVersion,
-			'lastUpdate' => $this->lastUpdate
+			'lastUpdate' => $this->lastUpdate,
+			'gameSpecific' => $this->gameSpecific
 		];
 	}
 }

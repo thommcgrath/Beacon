@@ -1,7 +1,7 @@
 <?php
 
-use BeaconAPI\v4\{Core, Template, TemplateSelector};
-use BeaconAPI\v4\Ark\{Color, ColorSet, ConfigOption, ContentPack, Creature, Engram, Event, GameVariable, LootDrop, LootDropIcon, Map, SpawnPoint};
+use BeaconAPI\v4\{ContentPack, Core, Template, TemplateSelector};
+use BeaconAPI\v4\Ark\{Color, ColorSet, ConfigOption, Creature, Engram, Event, GameVariable, LootDrop, LootDropIcon, Map, SpawnPoint};
 
 $root = "/v{$version}";
 if (BeaconCommon::InProduction() == false) {
@@ -159,8 +159,7 @@ function BuildFile(array $settings): void {
 			'spawnPoints' => SpawnPoint::Search($filters, true)
 		];
 		
-		$packName = BeaconCommon::SanitizeFilename($pack->SteamId() . ' - ' . $pack->Name());
-		$localName = "$packName.beacondata";
+		$localName = "{$pack->ContentPackId()}.beacondata";
 		break;
 	default:
 		throw new Exception("Unknown class {$class}");

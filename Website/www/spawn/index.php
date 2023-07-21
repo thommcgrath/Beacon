@@ -6,7 +6,8 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('spawncodes.css'));
 $mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
 $database = BeaconCommon::Database();
 
-use BeaconAPI\v4\Ark\{Blueprint, ContentPack};
+use BeaconAPI\v4\ContentPack;
+use BeaconAPI\v4\Ark\Blueprint;
 
 $id = $_GET['modId'] ?? $_GET['steamId'] ?? $_GET['mod_id'] ?? $_GET['workshop_id'] ?? '';
 $pack = null;
@@ -57,14 +58,19 @@ $lastDatabaseUpdate = new DateTime($results->Field("max"), new DateTimeZone('UTC
 $includeModNames = true;
 
 if (is_null($pack)) {
-	$filters['contentPackId'] = ContentPack::Search(['isOfficial' => true, 'minVersion' => $build], true);
+	$packs = ContentPack::Search(['isOfficial' => true, 'minVersion' => $build], true);
+	$packIds = [];
+	foreach ($packs as $pack) {
+		$packIds[] = $pack->ContentPackId();
+	}
+	$filters['contentPackId'] = implode(',', $packIds);
 	$title = 'Ark Spawn Codes';
 	$baseUrl = '/spawn/';
 } else {
-	$filters['contentPackId'] = $pack;
+	$filters['contentPackId'] = $pack->ContentPackId();
 	$title = 'Spawn codes for ' . $pack->Name();
 	$includeModNames = false;
-	$baseUrl = '/mods/' . urlencode($pack->SteamId()) . '/spawncodes';
+	$baseUrl = '/mods/' . urlencode($pack->MarketplaceId()) . '/spawncodes';
 }
 
 $results = Blueprint::Search($filters);

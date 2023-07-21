@@ -65,7 +65,7 @@ if (is_null($obj)) {
 BeaconTemplate::SetTitle($obj->Label());
 
 $properties = [
-	'Mod' => '[' . $obj->ContentPackName() . '](/mods/' . urlencode($obj->ContentPackSteamId()) . ')'
+	'Mod' => '[' . $obj->ContentPackName() . '](/mods/' . urlencode($obj->ContentPackMarketplaceId()) . ')'
 ];
 $tags = $obj->Tags();
 if (count($tags) > 0) {

@@ -2,7 +2,8 @@
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
-use BeaconAPI\v4\Ark\{Blueprint, ContentPack};
+use BeaconAPI\v4\ContentPack;
+use BeaconAPI\v4\Ark\Blueprint;
 
 $mod = null;
 $tagHuman = '';
@@ -71,8 +72,8 @@ if (empty($modSteamId)) {
 	$baseUrl = '/mods/' . $modSteamId . '/{{group}}';
 	$pageTitle = $groupHumanNames[$group] . ' From ' . $mod->Name();
 	
-	$modSteamUrl = htmlentities($mod->SteamUrl());
-	$modSteamId = urlencode($mod->SteamId());
+	$modSteamUrl = htmlentities($mod->MarketplaceUrl());
+	$modSteamId = urlencode($mod->MarketplaceId());
 	$modName = htmlentities($mod->Name());
 	
 	$pageDescriptionPlain = "Beacon has built-in support for {$modName}. This means its engrams are already part of Beacon's database and you can begin using them immediately.";
@@ -158,7 +159,7 @@ $clearSearchUrl = BuildUrl($baseUrl, $group, array_filter($queryParams, function
 			echo '</thead>';
 			echo '<tbody>';
 			foreach ($pageContents['results'] as $result) {
-				$modLink = '<a href="' . htmlentities('/mods/' . $result->ContentPackSteamId()) . '">' . htmlentities($result->ContentPackName()) . '</a>';
+				$modLink = '<a href="' . htmlentities('/mods/' . $result->ContentPackMarketplaceId()) . '">' . htmlentities($result->ContentPackName()) . '</a>';
 				$modDetailLink = '';
 				if (is_null($mod)) {
 					$modDetailLink = "<span class=\"detail\">Mod: {$modLink}</span>";

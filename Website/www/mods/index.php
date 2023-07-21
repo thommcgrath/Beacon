@@ -3,7 +3,7 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Supported Mods');
 
-use BeaconAPI\v4\Ark\ContentPack;
+use BeaconAPI\v4\ContentPack;
 
 $packs = ContentPack::Search(['confirmed' => true, 'isIncludedInDeltas' => true], true);
 
@@ -12,12 +12,12 @@ $packs = ContentPack::Search(['confirmed' => true, 'isIncludedInDeltas' => true]
 <table class="generic">
 	<thead>
 		<th>Mod</th>
-		<th>Workshop ID</th>
+		<th>Marketplace Id</th>
 	</thead>
 	<tbody>
 		<?php foreach ($packs as $pack) { ?><tr>
-			<td><a href="/mods/<?php echo htmlentities(urlencode($pack->SteamId())); ?>"><?php echo htmlentities($pack->Name()); ?></a></td>
-			<td><a href="<?php echo htmlentities($pack->SteamUrl()); ?>" target="_blank"><?php echo htmlentities($pack->SteamId()); ?></a></td>
+			<td><a href="/mods/<?php echo htmlentities(urlencode($pack->MarketplaceId())); ?>"><?php echo htmlentities($pack->Name()); ?></a></td>
+			<td><a href="<?php echo htmlentities($pack->MarketplaceUrl()); ?>" target="_blank"><?php echo htmlentities($pack->MarketplaceId()); ?></a></td>
 		</tr><?php } ?>
 	</tbody>
 </table>

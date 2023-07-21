@@ -12,7 +12,8 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 	protected int $minVersion;
 	protected string $contentPackId;
 	protected string $contentPackName;
-	protected string $contentPackSteamId;
+	protected string $contentPackMarketplace;
+	protected string $contentPackMarketplaceId;
 	protected array $tags;
 	protected int $lastUpdate;
 	
@@ -32,9 +33,10 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$this->label = $row->Field('label');
 		$this->alternateLabel = $row->Field('alternate_label');
 		$this->minVersion = intval($row->Field('min_version'));
-		$this->contentPackId = $row->Field('mod_id');
-		$this->contentPackName = $row->Field('mod_name');
-		$this->contentPackSteamId = $row->Field('mod_workshop_id');
+		$this->contentPackId = $row->Field('content_pack_id');
+		$this->contentPackName = $row->Field('content_pack_name');
+		$this->contentPackMarketplace = $row->Field('content_pack_marketplace');
+		$this->contentPackMarketplaceId = $row->Field('content_pack_marketplace_id');
 		$this->tags = array_values($tags);
 		$this->lastUpdate = round($row->Field('last_update'));
 	}
@@ -51,13 +53,14 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('label'),
 			new DatabaseObjectProperty('alternateLabel', ['columnName' => 'alternate_label']),
 			new DatabaseObjectProperty('tags'),
-			new DatabaseObjectProperty('minVersion', ['accessor' => 'GREATEST(%%TABLE%%.min_version, mods.min_version)', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'min_version']),
-			new DatabaseObjectProperty('contentPackId', ['accessor' => 'mods.mod_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'mod_id']),
-			new DatabaseObjectProperty('contentPackName', ['accessor' => 'mods.name', 'columnName' => 'mod_name']),
-			new DatabaseObjectProperty('contentPackSteamId', ['accessor' => 'ABS(mods.workshop_id)', 'columnName' => 'mod_workshop_id']),
+			new DatabaseObjectProperty('minVersion', ['accessor' => 'GREATEST(%%TABLE%%.min_version, content_packs.min_version)', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'min_version']),
+			new DatabaseObjectProperty('contentPackId', ['accessor' => 'content_packs.content_pack_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'content_pack_id']),
+			new DatabaseObjectProperty('contentPackName', ['accessor' => 'content_packs.name', 'columnName' => 'content_pack_name']),
+			new DatabaseObjectProperty('contentPackMarketplace', ['accessor' => 'content_packs.marketplace', 'columnName' => 'content_pack_marketplace']),
+			new DatabaseObjectProperty('contentPackMarketplaceId', ['accessor' => 'content_packs.marketplace_id', 'columnName' => 'content_pack_marketplace_id']),
 			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)'])
 		], [
-			'INNER JOIN ark.mods ON (%%TABLE%%.mod_id = mods.mod_id)'
+			'INNER JOIN public.content_packs ON (%%TABLE%%.mod_id = content_packs.content_pack_id)'
 		]);
 	}
 	
@@ -66,23 +69,19 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('label');
 		$parameters->allowAll = true;
 		$parameters->AddFromFilter($schema, $filters, 'lastUpdate', '>');
+		$parameters->AddFromFilter($schema, $filters, 'contentPackMarketplace', '=');
 		$prefix = static::CustomVariablePrefix();
 			
 		if (isset($filters['contentPackId'])) {
 			if (is_array($filters['contentPackId'])) {
 				$packs = $filters['contentPackId'];
 			} else {
-				$packs = [$filters['contentPackId']];
+				$packs = explode(',', $filters['contentPackId']);
 			}
 			$packIds = [];
-			$packSteamIds = [];
 			foreach ($packs as $pack) {
 				if (is_string($pack) && BeaconCommon::IsUUID($pack)) {
 					$packIds[] = $pack;
-				} else if (filter_var($pack, FILTER_VALIDATE_INT) !== false) {
-					$packSteamIds[] = $pack;
-				} else if ($pack instanceof ContentPack) {
-					$packIds[] = $pack->ContentPackId();
 				}
 			}
 			
@@ -94,12 +93,29 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 				$clauses[] = $schema->Comparison('contentPackId', '=', $parameters->placeholder++);
 				$parameters->values[] = $packIds[array_key_first($packIds)];
 			}
-			if (count($packSteamIds) > 1) {
-				$clauses[] = $schema->Accessor('contentPackSteamId') . ' = ANY(' . $schema->Setter('contentPackSteamId', $parameters->placeholder++) . ')';
-				$parameters->values[] = '{' . implode(',', $packSteamIds) . '}';
-			} else if (count($packSteamIds) === 1) {
-				$clauses[] = $schema->Comparison('contentPackSteamId', '=', $parameters->placeholder++);
-				$parameters->values[] = $packSteamIds[array_key_first($packSteamIds)];
+			if (count($clauses) > 0) {
+				$parameters->clauses[] = '(' . implode(' OR ', $clauses) . ')';
+			}
+		}
+		
+		if (isset($filters['contentPackMarketplaceId'])) {
+			if (is_array($filters['contentPackMarketplaceId'])) {
+				$packs = $filters['contentPackMarketplaceId'];
+			} else {
+				$marketplaceId = str_replace('\\,', '73f2d6ad-0070-44df-8d9a-c8838da050d2', $filters['contentPackMarketplaceId']);
+				$packs = explode(',', $marketplaceId);
+			}
+			for ($idx = 0; $idx < count($packs); $idx++) {
+				$packs[$idx] = str_replace(['73f2d6ad-0070-44df-8d9a-c8838da050d2', '{', '}'], ['\\,', '\\{', '\\}'], $packs[$idx]);
+			}
+			
+			$clauses = [];
+			if (count($packs) > 1) {
+				$clauses[] = $schema->Accessor('contentPackMarketplaceId') . ' = ANY(' . $schema->Setter('contentPackMarketplaceId', $parameters->placeholder++) . ')';
+				$parameters->values[] = '{' . implode(',', $packs) . '}';
+			} else if (count($packs) === 1) {
+				$clauses[] = $schema->Comparison('contentPackMarketplaceId', '=', $parameters->placeholder++);
+				$parameters->values[] = $packs[array_key_first($packs)];
 			}
 			if (count($clauses) > 0) {
 				$parameters->clauses[] = '(' . implode(' OR ', $clauses) . ')';
@@ -630,8 +646,12 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		return $this->contentPackName;
 	}
 	
-	public function ContentPackSteamId(): string {
-		return $this->contentPackSteamId;
+	public function ContentPackMarketplace(): string {
+		return $this->contentPackMarketplace;
+	}
+	
+	public function ContentPackMarketplaceId(): string {
+		return $this->contentPackMarketplaceId;
 	}
 	
 	public static function NormalizeTag(string $tag): string {
@@ -674,7 +694,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$escaped_table = $database->EscapeIdentifier(static::TableName());
 		
 		$database->BeginTransaction();
-		$results = $database->Query('SELECT mods.user_id, ' . $escaped_table . '.object_id FROM ' . $escaped_schema . '.' . $escaped_table . ' INNER JOIN ' . $escaped_schema . '.mods ON (' . $escaped_table . '.mod_id = mods.mod_id) WHERE ' . $escaped_table . '.object_id = ANY($1) FOR UPDATE OF ' . $escaped_table . ';', '{' . $object_id . '}');
+		$results = $database->Query('SELECT content_packs.user_id, ' . $escaped_table . '.object_id FROM ' . $escaped_schema . '.' . $escaped_table . ' INNER JOIN public.content_packs ON (' . $escaped_table . '.mod_id = content_packs.content_pack_id) WHERE ' . $escaped_table . '.object_id = ANY($1) FOR UPDATE OF ' . $escaped_table . ';', '{' . $object_id . '}');
 		$objects = array();
 		while (!$results->EOF()) {
 			if ($results->Field('user_id') !== $user_id) {

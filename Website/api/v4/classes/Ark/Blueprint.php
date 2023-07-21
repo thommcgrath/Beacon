@@ -207,7 +207,7 @@ class Blueprint extends GenericObject {
 	}
 	
 	public function Fingerprint(): string {
-		return base64_encode(hash('sha1', $this->contentPackSteamId . ':' . strtolower($this->path), true));
+		return base64_encode(hash('sha1', $this->contentPackMarketplace . ':' . $this->contentPackMarketplaceId . ':' . strtolower($this->path), true));
 	}
 }
 
