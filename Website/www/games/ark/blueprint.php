@@ -1,113 +1,150 @@
 <?php
 
-require(dirname(__FILE__, 3) . '/framework/loader.php');
+require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-use BeaconAPI\v4\Ark\{Blueprint, Creature, Engram, GenericObject, LootDrop, Map, SpawnPoint, Template};
+use BeaconAPI\v4\Ark\{Blueprint, Creature, Engram, GenericObject, LootDrop, Map, SpawnPoint};
 
-$object_id = null;
 $objects = [];
 
-if (isset($_GET['object_id'])) {
+$useModUrl = false;
+if (isset($_GET['objectId'])) {
 	// find object by its id
-	$object_id = $_GET['object_id'];
-} elseif (isset($_GET['class_string'])) {
+	$object = Blueprint::Fetch($_GET['objectId']);
+	if (is_null($object) === false) {
+		$objects[] = $object;
+	}
+	$useModUrl = true;
+} elseif (isset($_GET['classString'])) {
 	// find all objects matching this class string
 	$database = BeaconCommon::Database();
 	try {
-		if (isset($_GET['workshop_id'])) {
-			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM ark.blueprints INNER JOIN ark.mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 AND ABS(mods.workshop_id) = $2 ORDER BY blueprints.label;', $_GET['class_string'], abs($_GET['workshop_id']));
-		} else {
-			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM ark.blueprints INNER JOIN ark.mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 ORDER BY blueprints.label;', $_GET['class_string']);
-		}
-		if ($results->RecordCount() === 1) {
-			$object_id = $results->Field('object_id');
-		} else {
-			while (!$results->EOF()) {
-				$objects[] = [
-					'id' => $results->Field('object_id'),
-					'label' => $results->Field('label'),
-					'mod_name' => $results->Field('mod_name')
-				];
-				$results->MoveNext();
+		$filters = [
+			'classString' => $_GET['classString']
+		];
+		if (isset($_GET['contentPackId'])) {
+			$contentPackId = trim($_GET['contentPackId']);
+			if (BeaconUUID::Validate($contentPackId)) {
+				$filters['contentPackId'] = $contentPackId;
+			} elseif (filter_var($contentPackId, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]])) {
+				$filters['contentPackMarketplaceId'] = $contentPackId;
 			}
+			$useModUrl = true;
 		}
+		
+		$objects = Blueprint::Search($filters, true);
 	} catch (Exception $err) {
 	}
 }
 
-if (is_null($object_id) === false && BeaconCommon::IsUUID($object_id)) {
-	$correct_path = '/object/' . urlencode($object_id);
-	if ($_SERVER['REQUEST_URI'] !== $correct_path) {
-		header('Location: ' . $correct_path, true, 301);
-		exit;
-	}
-} elseif (count($objects) > 0) {
-	echo '<h1>' . htmlentities($_GET['class_string']) . ' Disambiguation</h1>';
+if (count($objects) === 0) {
+	http_response_code(404);
+	echo 'Object not found';
+	exit;
+}
+
+/*
+If there are multiple results, we need to determine if they belong to the same mod or not.
+If they do, we show them all on the same page. If not, we allow the user to choose between mods
+*/
+
+$contentPackNames = [];
+foreach ($objects as $object) {
+	$contentPackNames[$object->ContentPackMarketplaceId()] = $object->ContentPackName();
+}
+if (count($contentPackNames) > 1) {
+	$classString = $objects[0]->ClassString();
+	BeaconTemplate::SetCanonicalPath('/Games/Ark/' . urlencode($classString));
+	$title = 'Disambiguation for class ' . $classString;
+	BeaconTemplate::SetTitle($title);
+	echo '<h1>' . htmlentities($title) . '</h1>';
+	echo '<p>The class ' . htmlentities($classString) . ' was found in multiple mods.</p>';
 	echo '<ul>';
-	foreach ($objects as $obj) {
-		echo '<li><a href="/object/' . urlencode($obj['id']) . '">' . htmlentities($obj['label']) . '</a> <span class="text-lighter">(' . htmlentities($obj['mod_name']) . ')</span></li>';
+	foreach ($contentPackNames as $marketplaceId => $name) {
+		echo '<li><a href="/Games/Ark/Mods/' . htmlentities(urlencode($marketplaceId)) . '/' . htmlentities(urlencode($classString)) . '">' . htmlentities($name) . '</a>';
 	}
 	echo '</ul>';
 	exit;
+}
+
+BeaconTemplate::SetCanonicalPath('/Games/Ark/Mods/' . $objects[0]->ContentPackMarketplaceId() . '/' . urlencode($objects[0]->ClassString()));
+
+$titleClass = 'h1';
+if (count($objects) === 1) {
+	BeaconTemplate::SetTitle($objects[0]->Label());
 } else {
-	http_response_code(404);
-	echo 'Object not found';
-	exit;
-}
-
-$obj = BeaconCommon::ResolveObjectIdentifier($object_id);
-if (is_null($obj)) {
-	http_response_code(404);
-	echo 'Object not found';
-	exit;
-}
-
-BeaconTemplate::SetTitle($obj->Label());
-
-$properties = [
-	'Mod' => '[' . $obj->ContentPackName() . '](/mods/' . urlencode($obj->ContentPackMarketplaceId()) . ')'
-];
-$tags = $obj->Tags();
-if (count($tags) > 0) {
-	$links = [];
-	foreach ($tags as $tag) {
-		$links[] = '[' . ucwords(str_replace('_', ' ', $tag)) . '](/tags/' . urlencode($tag) . ')';
-	}
-	$properties['Tags'] = implode(', ', $links);
-}
-
-if ($obj instanceof Blueprint) {
-	PrepareBlueprintTable($obj, $properties);
-}
-
-if ($obj instanceof Creature) {
-	$type = 'Creature';
-	PrepareCreatureTable($obj, $properties);
-} elseif ($obj instanceof Engram) {
-	$type = 'Engram';
-	PrepareEngramTable($obj, $properties);
-} elseif ($obj instanceof LootDrop) {
-	$type = 'Loot Drop';
-	PrepareLootDropTable($obj, $properties);
-} elseif ($obj instanceof Template) {
-	$type = 'Template';
-	PreparePresetTable($obj, $properties);
-} elseif ($obj instanceof SpawnPoint) {
-	$type = 'Spawn Point';
-	PrepareSpawnPointTable($obj, $properties);
+	$title = 'Multiple objects for class ' . $objects[0]->ClassString();
+	BeaconTemplate::SetTitle($title);
+	echo '<h1>' . htmlentities($title) . '</h1>';
+	$titleClass = 'h2';
 }
 
 $parser = new Parsedown();
-
-echo '<h1><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . (is_null($obj->AlternateLabel()) ? '' : '<br><span class="subtitle">AKA ' . htmlentities($obj->AlternateLabel()) . '</span>') . '</h1>';
-if ($obj instanceof LootDrop && $obj->Experimental()) {
-	echo '<p class="notice-block notice-warning">This loot drop is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
+foreach ($objects as $object) {
+	$objectGroup = '';
+	switch ($object->ObjectGroup()) {
+	case 'creatures':
+		$type = 'Creature';
+		$objectGroup = 'Creatures';
+		$obj = Creature::Fetch($object->ObjectId());
+		break;
+	case 'engrams':
+		$type = 'Engram';
+		$objectGroup = 'Engrams';
+		$obj = Engram::Fetch($object->ObjectId());
+		break;
+	case 'lootDrops':
+		$type = 'Loot Drop';
+		$objectGroup = 'LootDrops';
+		$obj = LootDrop::Fetch($object->ObjectId());
+		break;
+	case 'spawnPoints':
+		$type = 'Spawn Point';
+		$objectGroup = 'SpawnPoints';
+		$obj = SpawnPoint::Fetch($object->ObjectId());
+		break;
+	default:
+		continue;
+	}
+	
+	$properties = [
+		'Mod' => '[' . $obj->ContentPackName() . '](/Games/Ark/Mods/' . urlencode($obj->ContentPackMarketplaceId()) . '/' . urlencode($objectGroup) . ')'
+	];
+	$tags = $obj->Tags();
+	if (count($tags) > 0) {
+		$links = [];
+		foreach ($tags as $tag) {
+			$tagInfo = Blueprint::ConvertTag($tag);
+			$links[] = '[' . $tagInfo['human'] . '](/Games/Ark/Tags/' . urlencode($tagInfo['url']) . '/' . urlencode($objectGroup) . ')';
+		}
+		$properties['Tags'] = implode(', ', $links);
+	}
+	
+	if ($obj instanceof Blueprint) {
+		PrepareBlueprintTable($obj, $properties);
+	}
+	if ($obj instanceof Creature) {
+		PrepareCreatureTable($obj, $properties);
+	}
+	if ($obj instanceof Engram) {
+		PrepareEngramTable($obj, $properties);
+	}
+	if ($obj instanceof LootDrop) {
+		PrepareLootDropTable($obj, $properties);
+	}
+	if ($obj instanceof SpawnPoint) {
+		PrepareSpawnPointTable($obj, $properties);
+	}
+	
+	echo '<' . $titleClass . '><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . (is_null($obj->AlternateLabel()) ? '' : '<br><span class="subtitle">AKA ' . htmlentities($obj->AlternateLabel()) . '</span>') . '</' . $titleClass . '>';
+	if ($obj instanceof LootDrop && $obj->Experimental()) {
+		echo '<p class="notice-block notice-warning">This loot drop is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
+	}
+	echo '<table id="object_details" class="generic">';
+	foreach ($properties as $key => $value) {
+		echo '<tr><td class="label">' . htmlentities($key) . '</td><td class="break-code">' . $parser->text($value) . '</td></tr>';
+	}
+	echo '</table>';
 }
-echo '<table id="object_details" class="generic">';
-foreach ($properties as $key => $value) {
-	echo '<tr><td class="label">' . htmlentities($key) . '</td><td class="break-code">' . $parser->text($value) . '</td></tr>';
-}
-echo '</table>';
 
 function PrepareBlueprintTable(Blueprint $blueprint, array &$properties) {
 	$properties['Class'] = $blueprint->ClassString();
@@ -192,9 +229,6 @@ function PrepareEngramTable(Engram $engram, array &$properties) {
 function PrepareLootDropTable(LootDrop $lootDrop, array &$properties) {
 	$properties['Multipliers'] = sprintf('%F - %F', $lootDrop->MultiplierMin(), $lootDrop->MultiplierMax());
 	$properties['Spawn Code'] = '`' . $lootDrop->SpawnCode() . '`';
-}
-
-function PreparePresetTable(Template $preset, array &$properties) {
 }
 
 function PrepareSpawnPointTable(SpawnPoint $spawnPoint, array &$properties) {
@@ -284,7 +318,7 @@ function ExpandRecipe(Engram $engram, bool $asArray = false, int $level = 1, int
 }
 
 function MarkdownLinkToObject(GenericObject $obj) {
-	return '[' . $obj->Label() . '](/object/' . urlencode($obj->UUID()) . ')';
+	return '[' . $obj->Label() . '](/Games/Ark/Mods/' . urlencode($obj->ContentPackMarketplaceId()) . '/' . urlencode($obj->ClassString()) . ')';
 }
 
 ?>

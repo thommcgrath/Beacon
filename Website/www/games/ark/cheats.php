@@ -1,27 +1,25 @@
 <?php
-require(dirname(__FILE__, 3) . '/framework/loader.php');
+require(dirname(__FILE__, 4) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Item Spawn Codes');
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('spawncodes.js'));
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('spawncodes.css'));
-$mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
-$database = BeaconCommon::Database();
 
 use BeaconAPI\v4\ContentPack;
 use BeaconAPI\v4\Ark\Blueprint;
 
-$id = $_GET['modId'] ?? $_GET['steamId'] ?? $_GET['mod_id'] ?? $_GET['workshop_id'] ?? '';
 $pack = null;
-
-if (empty($id) === false) {
-	if (BeaconCommon::IsUUID($id) === false && filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
-		header('Location: https://www.youtube.com/watch?v=dQw4w9WgXcQ');
-		http_response_code(302);
-		echo 'caught';
-		exit;
+$contentPackId = $_GET['contentPackId'] ?? null;
+if (is_null($contentPackId) === false) {
+	if (BeaconCommon::IsUUID($contentPackId)) {
+		$pack = ContentPack::Fetch($contentPackId);
+	} elseif (filter_var($contentPackId, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]])) {
+		$packs = ContentPack::Search(['gameId' => 'Ark', 'marketplaceId' => $contentPackId, 'isConfirmed' => true], true);
+		if (count($packs) === 1) {
+			$pack = $packs[0];
+		}
 	}
 	
-	$pack = ContentPack::Fetch($id);
-	if (is_null($pack)) {
+	if (is_null($pack) || $pack->GameId() !== 'Ark') {
 		http_response_code(404);
 		echo '<h1>Mod is not registered with Beacon.</h1>';
 		echo '<p>If you are the mod owner, see <a href="' . BeaconCommon::AbsoluteURL('/help/registering_your_mod_with_beacon') . '">Registering your mod with Beacon</a> for help.</p>';
@@ -65,12 +63,12 @@ if (is_null($pack)) {
 	}
 	$filters['contentPackId'] = implode(',', $packIds);
 	$title = 'Ark Spawn Codes';
-	$baseUrl = '/spawn/';
+	$baseUrl = '/Games/Ark/Cheats';
 } else {
 	$filters['contentPackId'] = $pack->ContentPackId();
 	$title = 'Spawn codes for ' . $pack->Name();
 	$includeModNames = false;
-	$baseUrl = '/mods/' . urlencode($pack->MarketplaceId()) . '/spawncodes';
+	$baseUrl = '/Games/Ark/Mods/' . urlencode($pack->MarketplaceId()) . '/Cheats';
 }
 
 $results = Blueprint::Search($filters);
@@ -82,8 +80,7 @@ $pageCount = $results['pages'];
 $rangeStart = min(1 + (($pageNum - 1) * $pageSize), $blueprintCount);
 $rangeEnd = min($rangeStart + ($pageSize - 1), $blueprintCount);
 
-$canonicalUrl = BeaconCommon::AbsoluteUrl(BuildPaginationLink($pageNum));
-BeaconTemplate::AddHeaderLine('<link rel="canonical" href="' . htmlentities($canonicalUrl) . '">');
+BeaconTemplate::SetCanonicalPath(BuildPaginationLink($pageNum, false));
 
 ?><h1><?php echo htmlentities($title); ?><br><span class="subtitle">Up to date as of <?php echo '<time datetime="' . $lastDatabaseUpdate->format('c') . '">' . $lastDatabaseUpdate->format('F jS, Y') . ' at ' . $lastDatabaseUpdate->format('g:i A') . ' UTC</time>'; ?></span></h1>
 <?php if (is_null($pack) || $pack->IsOfficial() === true) { ?><div class="notice-block notice-info">
@@ -244,7 +241,7 @@ function CreateSpawnCode(Blueprint $blueprint): string {
 	}
 }
 
-function BuildPaginationLink(int $pageNum): string {
+function BuildPaginationLink(int $pageNum, bool $absolute = true): string {
 	global $baseUrl, $urlParams;
 	
 	$params = array_filter($_GET, function($value, $key) {
@@ -260,10 +257,16 @@ function BuildPaginationLink(int $pageNum): string {
 		return false;
 	}, ARRAY_FILTER_USE_BOTH);
 	
-	$params['page'] = $pageNum;
-	ksort($params);
+	$url = ($absolute ? BeaconCommon::AbsoluteUrl($baseUrl) : $baseUrl);
+	if ($pageNum > 1) {
+		$url .= '/' . $pageNum;
+	}
+	if (count($params) > 0) {
+		ksort($params);
+		$url .= '?' . http_build_query($params);
+	}
 	
-	return $baseUrl . '?' . http_build_query($params);
+	return $url;
 }
 
 ?>

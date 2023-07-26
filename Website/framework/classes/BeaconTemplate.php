@@ -203,6 +203,15 @@ abstract class BeaconTemplate {
 		static::$page_description = $page_description;
 	}
 	
+	public static function SetCanonicalPath(string $path, bool $redirectToCorrect = true): void {
+		$url = BeaconCommon::AbsoluteURL($path);
+		if ($_SERVER['REQUEST_URI'] !== $path && $redirectToCorrect) {
+			header('Location: ' . $url, true, 301);
+			exit;
+		}
+		static::AddHeaderLine('<link rel="canonical" href="' . $url . '">');
+	}
+	
 	public static function PhotoSwipeDOM(): void {
 		if (!static::$use_photoswipe) {
 			return;

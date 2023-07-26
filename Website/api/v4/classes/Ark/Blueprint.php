@@ -219,6 +219,30 @@ class Blueprint extends GenericObject {
 	public function Fingerprint(): string {
 		return base64_encode(hash('sha1', $this->contentPackMarketplace . ':' . $this->contentPackMarketplaceId . ':' . strtolower($this->path), true));
 	}
+	
+	public static function ConvertTag(string $tag): array {
+		// Could be in the format of no_fibercraft or NoFibercraft
+		
+		if (str_contains($tag, '_')) {
+			// lowercase
+			$tagHuman = ucwords(str_replace('_', ' ', strtolower($tag)));
+			
+		} else {
+			$tagWords = preg_split('/(?=[A-Z])/', $tag);
+			if (empty($tagWords[0])) {
+				unset($tagWords[0]);
+			}
+			$tagHuman = ucwords(implode(' ', $tagWords));
+			$tag = strtolower(implode('_', $tagWords));
+		}
+		$tagUrl = str_replace(' ', '', $tagHuman);
+		
+		return [
+			'tag' => $tag,
+			'human' => $tagHuman,
+			'url' => $tagUrl
+		];
+	}
 }
 
 ?>
