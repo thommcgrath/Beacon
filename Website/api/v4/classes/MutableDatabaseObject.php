@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, Exception;
+use BeaconCommon, BeaconUUID, Exception;
 
 abstract class MutableDatabaseObject extends DatabaseObject {
 	protected $changedProperties = [];
@@ -25,13 +25,15 @@ abstract class MutableDatabaseObject extends DatabaseObject {
 	}
 	
 	public static function Create(array $properties): DatabaseObject {
+		static::Validate($properties);
+		
 		$schema = static::DatabaseSchema();
 		$primaryKeyColumn = $schema->PrimaryColumn();
 		$primaryKeyName = $primaryKeyColumn->PropertyName();
 		if (isset($properties[$primaryKeyName])) {
 			$primaryKey = $properties[$primaryKeyName];
 		} else {
-			$primaryKey = BeaconCommon::GenerateUUID();
+			$primaryKey = BeaconUUID::v4();
 		}
 		
 		$primaryKeyPlaceholder = $primaryKeyColumn->Setter(1);
@@ -48,7 +50,11 @@ abstract class MutableDatabaseObject extends DatabaseObject {
 			
 			$propertyName = $definition->PropertyName();
 			if (isset($properties[$propertyName]) === false) {
-				continue;
+				$defaultValue = $definition->DefaultValue();
+				if (is_null($defaultValue)) {
+					continue;
+				}
+				$properties[$propertyName] = $defaultValue;
 			}
 			
 			$valuePlaceholder = $definition->Setter($placeholder++);
@@ -75,7 +81,7 @@ abstract class MutableDatabaseObject extends DatabaseObject {
 		}
 	}
 	
-	public function Edit(array $properties): void {
+	public function Edit(array $properties, bool $restoreDefaults = false): void {
 		$whitelist = static::EditableProperties(DatabaseObjectProperty::kEditableLater);
 		foreach ($whitelist as $definition) {
 			$propertyName = $definition->PropertyName();
@@ -83,13 +89,15 @@ abstract class MutableDatabaseObject extends DatabaseObject {
 				$this->SetProperty($propertyName, $properties[$propertyName]);
 			}
 		}
-		$this->Save();
+		$this->Save($restoreDefaults);
 	}
 	
-	public function Save(): void {
-		if ($this->HasPendingChanges() === false) {
+	public function Save(bool $restoreDefaults = false): void {
+		if ($this->HasPendingChanges() === false && $restoreDefaults === false) {
 			return;
 		}
+		
+		static::Validate($this->jsonSerialize());
 		
 		$schema = static::DatabaseSchema();
 		$placeholder = 1;
@@ -102,6 +110,17 @@ abstract class MutableDatabaseObject extends DatabaseObject {
 			$values[] = $this->$propertyName;
 		}
 		$values[] = $primaryKey;
+		
+		if ($restoreDefaults) {
+			$whitelist = static::EditableProperties(DatabaseObjectProperty::kEditableLater);
+			foreach ($whitelist as $definition) {
+				if (in_array($definition->PropertyName(), $this->changedProperties)) {
+					continue;
+				}
+				
+				$assignments[] = $definition->ColumnName() . ' = DEFAULT';
+			}
+		}
 		
 		$database = BeaconCommon::Database();
 		try {
@@ -129,6 +148,14 @@ abstract class MutableDatabaseObject extends DatabaseObject {
 		}
 	}
 	
+	public function Delete(): void {
+		$schema = static::DatabaseSchema();
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
+		$database->Commit();
+	}
+	
 	protected static function EditableProperties(int $flags): array {
 		return static::DatabaseSchema()->EditableColumns($flags);
 	}
@@ -141,6 +168,22 @@ abstract class MutableDatabaseObject extends DatabaseObject {
 	}
 	
 	protected function CleanupChildObjects(): void {
+	}
+	
+	protected static function Validate(array $properties): void {
+		$requiredProperties = static::DatabaseSchema()->RequiredColumns();
+		$missingProperties = [];
+		foreach ($requiredProperties as $definition) {
+			if (array_key_exists($definition->PropertyName(), $properties) === false) {
+				$missingProperties[] = $definition->PropertyName();
+			}
+		}
+		sort($missingProperties);
+		if (count($missingProperties) > 1) {
+			throw new Exception('Missing properties ' . BeaconCommon::ArrayToEnglish($missingProperties) . '.');
+		} elseif (count($missingProperties) === 1) {
+			throw new Exception('Missing property ' . $missingProperties[0] . '.');
+		}
 	}
 }
 

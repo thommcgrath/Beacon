@@ -59,10 +59,12 @@ abstract class DatabaseObject {
 		}
 	}
 	
-	// Need a way to check incoming array data for permission
+	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
+		return self::kPermissionRead;
+	}
 	
-	public static function CheckClassPermission(?User $user, array $members, int $desiredPermissions): bool {
-		return $desiredPermissions === static::kPermissionRead;
+	public function GetPermissionsForUser(User $user): int {
+		return self::kPermissionRead;
 	}
 	
 	public function PrimaryKey(): string {
@@ -72,8 +74,8 @@ abstract class DatabaseObject {
 	
 	// Deprecated
 	public function UUID(): string {
-		$primary_key = static::DatabaseSchema()->PrimaryColumn()->PropertyName();
-		return $this->$primary_key;
+		$primaryKeyName = static::DatabaseSchema()->PrimaryColumn()->PropertyName();
+		return $this->$primaryKeyName;
 	}
 	
 	public static function Search(array $filters = [], bool $legacyMode = false): array {
@@ -199,14 +201,6 @@ abstract class DatabaseObject {
 				'results' => $members
 			];
 		}
-	}
-	
-	public function Delete(): void {
-		$schema = static::DatabaseSchema();
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$database->Query('DELETE FROM ' . $schema->WriteableTable() . ' WHERE ' . $schema->PrimaryColumn()->ColumnName() . ' = ' . $schema->PrimarySetter('$1') . ';', $this->PrimaryKey());
-		$database->Commit();
 	}
 	
 	public function HasProperty(string $propertyName): bool {

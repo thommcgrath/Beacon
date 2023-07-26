@@ -49,7 +49,7 @@ if (sem_acquire($sem) === false) {
 define('MIN_VERSION', 99999999);
 
 $database->BeginTransaction();
-$rows = $database->Query('UPDATE ark.mods SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM ark.objects WHERE objects.mod_id = mods.mod_id) > 0 RETURNING mod_id;');
+$rows = $database->Query('UPDATE public.content_packs SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM ark.objects WHERE objects.mod_id = content_packs.content_pack_id) > 0 RETURNING content_pack_id;');
 if ($rows->RecordCount() > 0) {
 	$database->Commit();
 } else {

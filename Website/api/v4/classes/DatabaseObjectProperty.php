@@ -8,13 +8,14 @@ class DatabaseObjectProperty {
 	const kEditableLater = 2;
 	const kEditableAlways = self::kEditableAtCreation | self::kEditableLater;
 	
-	protected $propertyName;
-	protected $columnName;
-	protected $alias = null;
-	protected $accessor = null;
-	protected $setter = null;
-	protected $editable = self::kEditableAtCreation;
-	protected $primaryKey = false;
+	protected string $propertyName;
+	protected string $columnName;
+	protected ?string $alias = null;
+	protected ?string $accessor = null;
+	protected ?string $setter = null;
+	protected int $editable = self::kEditableAtCreation;
+	protected bool $primaryKey = false;
+	protected bool $required = true;
 	
 	public function __construct(string $propertyName, array $options = []) {
 		$this->propertyName = $propertyName;
@@ -42,6 +43,12 @@ class DatabaseObjectProperty {
 		
 		if (isset($options['alias'])) {
 			$this->alias = $options['alias'];
+		}
+		
+		if (isset($options['required'])) {
+			$this->required = $options['required'];
+		} elseif ($this->editable === self::kEditableNever) {
+			$this->required = false;
 		}
 	}
 	
@@ -98,8 +105,12 @@ class DatabaseObjectProperty {
 		return $this->primaryKey;
 	}
 	
-	public function IsSettable() {
+	public function IsSettable(): bool {
 		return is_null($this->accessor) || is_null($this->setter) === false;
+	}
+	
+	public function IsRequired(): bool {
+		return $this->required;
 	}
 }
 

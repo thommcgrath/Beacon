@@ -1,9 +1,9 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconRecordSet, BeaconWorkshopItem, JsonSerializable;
+use BeaconCommon, BeaconRecordSet, BeaconUUID, BeaconWorkshopItem, Exception, JsonSerializable;
 
-class ContentPack extends DatabaseObject implements JsonSerializable {
+class ContentPack extends MutableDatabaseObject implements JsonSerializable {
 	protected string $contentPackId;
 	protected string $gameId;
 	protected string $marketplace;
@@ -46,15 +46,15 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('marketplaceId', ['columnName' => 'marketplace_id']),
 			new DatabaseObjectProperty('userId', ['columnName' => 'user_id']),
 			new DatabaseObjectProperty('name', ['editable' => DatabaseObjectProperty::kEditableAlways]),
-			new DatabaseObjectProperty('isConfirmed', ['columnName' => 'confirmed']),
-			new DatabaseObjectProperty('confirmationCode', ['columnName' => 'confirmation_code']),
-			new DatabaseObjectProperty('isConsoleSafe', ['columnName' => 'console_safe']),
-			new DatabaseObjectProperty('isDefaultEnabled', ['columnName' => 'default_enabled']),
-			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version']),
-			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
-			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official']),
-			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas']),
-			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific'])
+			new DatabaseObjectProperty('isConfirmed', ['columnName' => 'confirmed', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('confirmationCode', ['columnName' => 'confirmation_code', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('isConsoleSafe', ['columnName' => 'console_safe', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('isDefaultEnabled', ['columnName' => 'default_enabled', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('minVersion', ['columnName' => 'min_version', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			New DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('isOfficial', ['columnName' => 'is_official', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('isIncludedInDeltas', ['columnName' => 'include_in_deltas', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('gameSpecific', ['columnName' => 'game_specific', 'editable' => DatabaseObjectProperty::kEditableNever])
 		]);
 	}
 	
@@ -92,14 +92,82 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		$parameters->orderBy = $schema->Accessor('name');
 	}
 	
-	public static function CheckClassPermission(?User $user, array $members, int $desiredPermissions): bool {
-		if ($desiredPermissions === DatabaseObject::kPermissionCreate || $desiredPermissions === DatabaseObject::kPermissionRead) {
-			return true;
+	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
+		return static::kPermissionRead | static::kPermissionCreate;
+	}
+	
+	public function GetPermissionsForUser(User $user): int {
+		if ($this->userId === $user->UserId()) {
+			return static::kPermissionAll;
+		} else {
+			return static::kPermissionRead;
+		}
+	}
+	
+	public static function GenerateLocalId(string $marketplace, string $marketplaceId): string {
+		return BeaconUUID::v5('Local ' . $marketplace . ': ' . $marketplaceId);	
+	}
+	
+	protected static function Validate(array $properties): void {
+		parent::Validate($properties);
+		
+		$validMarketplaces = [];
+		switch ($properties['gameId']) {
+		case 'Ark':
+			$validMarketplaces = ['Steam Workshop'];
+			break;
+		default:
+			throw new Exception('Property gameId should be one of: ' . BeaconCommon::ArrayToEnglish(['Ark']) . '.');
+		}
+		if (in_array($properties['marketplace'], $validMarketplaces) === false) {
+			throw new Exception('Property marketplace should be one of: ' . BeaconCommon::ArrayToEnglish($validMarketplaces) . '.');
 		}
 		
-		// This is incomplete
-		return false;
+		if ($properties['contentPackId'] === static::GenerateLocalId($properties['marketplace'], $properties['marketplaceId'])) {
+			throw new Exception('This contentPackId is reserved for local content packs.');
+		}
 	}
+	
+	/*public static function Create(array $propertyValues): ?static {
+		$requiredKeys = ['marketplace', 'marketplaceId', 'gameId', 'name'];
+		if (BeaconCommon::HasAllKeys($propertyValues, ...$requiredKeys) === false) {
+			throw new Exception('Properties ' . BeaconCommon::ArrayToEnglish($requiredKeys) . ' keys are required.');
+		}
+		
+		$marketplace = $propertyValues['marketplace'];
+		$marketplaceId = $propertyValues['marketplaceId'];
+		$gameId = $propertyValues['gameId'];
+		$userId = $propertyValues['userId'];
+		$name = $propertyValues['name'];
+		
+		$validMarketplaces = [];
+		switch ($gameId) {
+		case 'Ark':
+			$validMarketplaces = ['Steam Workshop'];
+			break;
+		default:
+			throw new Exception('Property gameId should be one of: ' . BeaconCommon::ArrayToEnglish(['Ark']) . '.');
+		}
+		if (in_array($marketplace, $validMarketplaces) === false) {
+			throw new Exception('Property marketplace should be one of: ' . BeaconCommon::ArrayToEnglish($validMarketplaces) . '.');
+		}
+		
+		if (isset($propertyValues['contentPackId'])) {
+			$contentPackId = strtolower($propertyValues['contentPackId']);
+			if ($contentPackId === static::GenerateLocalId($marketplace, $marketplaceId)) {
+				throw new Exception('This contentPackId is reserved for local content packs.');
+			}
+		} else {
+			$contentPackId = BeaconUUID::v4();
+		}
+		
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('INSERT INTO public.content_packs (content_pack_id, marketplace, marketplace_id, game_id, user_id, name, console_safe, default_enabled, min_version, include_in_deltas, is_official) VALUES ($1, $2, $3, $4, $5, $6, FALSE, FALSE, 10500000, FALSE, FALSE);', $contentPackId, $marketplace, $marketplaceId, $gameId, $userId, $name);
+		$database->Commit();
+		
+		return static::Fetch($contentPackId);
+	}*/
 	
 	public function ContentPackId(): string {
 		return $this->contentPackId;
@@ -188,6 +256,7 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 			'marketplace' => $this->marketplace,
 			'marketplaceId' => $this->marketplaceId,
 			'marketplaceUrl' => $this->MarketplaceUrl(),
+			'userId' => $this->userId,
 			'name' => $this->name,
 			'isConfirmed' => $this->isConfirmed,
 			'isConsoleSafe' => $this->isConsoleSafe,

@@ -1,8 +1,8 @@
 <?php
 
 namespace BeaconAPI\v4\Ark;
-use BeaconAPI\v4\{DatabaseObject, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
-use BeaconCommon, BeaconDatabase, BeaconRecordSet, DateTime, Exception, JsonSerializable;
+use BeaconAPI\v4\{DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
+use BeaconCommon, BeaconDatabase, BeaconRecordSet, BeaconUUID, DateTime, Exception, JsonSerializable;
 
 class GenericObject extends DatabaseObject implements JsonSerializable {
 	protected string $objectId;
@@ -196,46 +196,16 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		}
 	}*/
 	
-	public static function CheckClassPermission(?User $user, array $members, int $desiredPermissions): bool {
-		// If the only thing the user wants is read, that will be allowed
-		if ($desiredPermissions === DatabaseObject::kPermissionRead) {
-			return true;
+	public function GetPermissionsForUser(User $user): int {
+		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $this->contentPackId, user: $user);
+	}
+	
+	public static function GetNewObjectPermissionsForUser(User $user, ?array $newObjectProperties): int {
+		if (is_null($newObjectProperties) || isset($newObjectProperties['contentPackId']) === false) {
+			return static::kPermissionRead;
 		}
 		
-		if (is_null($user) || count($members) === 0) {
-			return false;
-		}
-		
-		$contentPacks = [];
-		foreach ($members as $memberData) {
-			if (isset($memberData['contentPackId']) === false) {
-				return false;
-			}
-			
-			$contentPackId = $memberData['contentPackId'];
-			if (isset($contentPacks[$contentPackId])) {
-				// Already confirmed ok
-				continue;
-			}
-			
-			if (BeaconCommon::IsUUID($contentPackId) === false) {
-				return false;
-			}
-			
-			$contentPack = ContentPack::Fetch($contentPackId);
-			if (is_null($contentPack)) {
-				return false;
-			}
-			
-			if ($contentPack->UserId() !== $contentPack->UserId()) {
-				return false;
-			}
-			
-			// approved
-			$contentPacks[$contentPackId] = $contentPack;
-		}
-		
-		return true;
+		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $newObjectProperties['contentPackId'], user: $user);
 	}
 	
 	/*protected static function BuildSQL(...$clauses) {

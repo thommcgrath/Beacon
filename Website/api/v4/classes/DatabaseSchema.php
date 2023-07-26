@@ -199,6 +199,16 @@ class DatabaseSchema {
 		}
 		return $columns;
 	}
+	
+	public function RequiredColumns(): array {
+		$columns = [];
+		foreach ($this->columns as $columnName => $definition) {
+			if ($definition->IsRequired()) {
+				$columns[] = $definition;
+			}
+		}
+		return $columns;
+	}
 }
 
 ?>

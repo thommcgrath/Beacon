@@ -1,6 +1,6 @@
 <?php
 
-use BeaconAPI\v4\{Core, ContentPackDiscoveryResult, Response};
+use BeaconAPI\v4\{ContentPack, ContentPackDiscoveryResult, Core, Response};
 	
 function handleRequest(array $context): Response {
 	$contentPackId = strtolower($context['pathParameters']['contentPackId']);
@@ -50,7 +50,7 @@ function handleRequest(array $context): Response {
 			
 			$marketplace = $contentPackInfo['marketplace'];
 			$marketplaceId = $contentPackInfo['marketplaceId'];
-			$expectedContentPackId = BeaconUUID::v5('Local ' . $marketplace . ': ' . $marketplaceId);
+			$expectedContentPackId = ContentPack::GenerateLocalId($marketplace, $marketplaceId);
 			if ($contentPackId !== $expectedContentPackId) {
 				unlink($archivePath);
 				return Response::NewJsonError('Wrong contentPackId for this url.', null, 400);

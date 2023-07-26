@@ -13,22 +13,22 @@ class Response {
 		$this->code = $code;
 	}
 	
-	public static function NewJson(mixed $obj, int $code): Response {
+	public static function NewJson(mixed $obj, int $code): static {
 		return new static($code, json_encode($obj, JSON_PRETTY_PRINT), ['Content-Type' => 'application/json']);
 	}
 	
-	public static function NewJsonError(string $message, mixed $details, int $code): Response {
-		return Response::NewJson([
+	public static function NewJsonError(string $message, mixed $details, int $code): static {
+		return static::NewJson([
 			'message' => $message,
 			'details' => $details
 		], $code);
 	}
 	
-	public static function NewNoContent(): Response {
+	public static function NewNoContent(): static {
 		return new static(204);
 	}
 	
-	public static function NewRedirect(string $destination, bool $temporary = true): Response {
+	public static function NewRedirect(string $destination, bool $temporary = true): static {
 		return new static(($temporary ? 302 : 301), "Redirect to {$destination}", ['Location' => $destination]);
 	}
 	

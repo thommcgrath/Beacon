@@ -144,7 +144,7 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 		return static::Fetch($userId);
 	}
 	
-	public function Edit(array $properties): void {
+	public function Edit(array $properties, bool $restoreDefaults = false): void {
 		if (empty($properties['email']) === false) {
 			$email = $properties['email'];
 			if (BeaconEmail::IsEmailValid($email) === false) {
@@ -159,7 +159,7 @@ class User extends MutableDatabaseObject implements JsonSerializable {
 			$properties['emailId'] = $rows->Field('email_id');
 		}
 		
-		parent::Edit($properties);
+		parent::Edit($properties, $restoreDefaults);
 	}
 	
 	/* !Basic Properties */

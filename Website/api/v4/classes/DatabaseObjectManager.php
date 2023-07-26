@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, Exception;
+use BeaconCommon, BeaconUUID, Exception;
 
 class DatabaseObjectManager {
 	const kFeatureCreate = 1;
@@ -49,17 +49,17 @@ class DatabaseObjectManager {
 		if ($bulk) {
 			$methods = [];
 			
-			if ($create) {
-				$methods['POST'] = [$this, 'HandleCreate'];
+			if ($create || $update) {
+				$methods['POST'] = [$this, 'HandleBulkUpdate'];
 			}
 			if ($read) {
 				$methods['GET'] = [$this, 'HandleList'];
 			}
 			if ($update) {
-				$methods['PATCH'] = [$this, 'HandleUpdate'];
+				$methods['PATCH'] = [$this, 'HandleBulkUpdate'];
 			}
 			if ($delete) {
-				$methods['DELETE'] = [$this, 'HandleDelete'];
+				$methods['DELETE'] = [$this, 'HandleBulkDelete'];
 			}
 			
 			Core::RegisterRoutes(["/{$this->path}" => $methods]);
@@ -73,6 +73,9 @@ class DatabaseObjectManager {
 			if ($read) {
 				$methods['GET'] = [$this, 'HandleFetch'];
 			}
+			if ($update) {
+				$methods['PATCH'] = [$this, 'HandleUpdate'];
+			}
 			if ($delete) {
 				$methods['DELETE'] = [$this, 'HandleDelete'];
 			}
@@ -81,15 +84,84 @@ class DatabaseObjectManager {
 		}
 	}
 	
-	public function HandleCreate(array $context): Response {
-		Core::Authorize();
+	public function HandleList(array $context): Response {
+		return Response::NewJson($this->className::Search($_GET), 200);
+	}
+	
+	public function HandleFetch(array $context): Response {
+		$uuid = $context['pathParameters'][$this->varName];
+		try {
+			$obj = $this->className::Fetch($uuid);
+			if ($obj) {
+				return Response::NewJson($obj, 200);
+			} else {
+				return Response::NewJsonError('Not found', null, 404);
+			}
+		} catch (Exception $err) {
+			return Response::NewJsonError($err->getMessage(), null, 500);
+		}
+	}
+	
+	protected function WriteObject(User $user, string $primaryKeyProperty, array $member, bool $replace): array {
+		if (isset($member[$primaryKeyProperty]) === false) {
+			$member[$primaryKeyProperty] = BeaconUUID::v4();
+		}
+		$primaryKey = $member[$primaryKeyProperty];
 		
+		$obj = $this->className::Fetch($primaryKey);
+		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: $this->className, objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch, newObjectProperties: $member);
+		$requiredPermissions = is_null($obj) ? DatabaseObject::kPermissionCreate : DatabaseObject::kPermissionUpdate;
+		if (($permissions & $requiredPermissions) !== $requiredPermissions) {
+			return [
+				'status' => 403,
+				'success' => false,
+				'keyProperty' => $primaryKeyProperty,
+				$primaryKeyProperty => $primaryKey,
+				'object' => $member,
+				'reason' => 'Forbidden'
+			];
+		}
+		
+		if (is_null($obj)) {
+			echo 'creating';
+			$member['userId'] = $user->UserId(); // In case it is needed
+			$obj = $this->className::Create($member);
+			if (is_null($obj)) {
+				return [
+					'status' => 500,
+					'success' => false,
+					'keyProperty' => $primaryKeyProperty,
+					$primaryKeyProperty => $primaryKey,
+					'object' => $member,
+					'reason' => 'Object was not created'
+				];
+			}
+			return [
+				'status' => 201,
+				'success' => true,
+				'keyProperty' => $primaryKeyProperty,
+				$primaryKeyProperty => $primaryKey,
+				'object' => $obj
+			];
+		} else {
+			$obj->Edit($member, $replace);
+			return [
+				'status' => 200,
+				'success' => true,
+				'keyProperty' => $primaryKeyProperty,
+				$primaryKeyProperty => $primaryKey,
+				'object' => $obj
+			];
+		}
+	}
+	
+	/*public function HandleCreate(array $context): Response {
 		if (Core::IsJsonContentType() === false) {
 			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
 		}
 		
 		$body = Core::BodyAsJSON();
-		if (BeaconCommon::IsAssoc($body)) {
+		if (BeaconCommon::IsAssoc($body) || count($body) === 0) {
 			$members = [$body];
 			$multi = false;
 		} else {
@@ -98,10 +170,6 @@ class DatabaseObjectManager {
 		}
 		
 		$user = Core::User();
-		if ($this->className::CheckClassPermission($user, $members, DatabaseObject::kPermissionCreate) === false) {
-			return Response::NewJsonError('Forbidden', $members, 403);
-		}
-			
 		$schema = $this->className::DatabaseSchema();
 		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
 		$newObjects = [];
@@ -110,8 +178,16 @@ class DatabaseObjectManager {
 		foreach ($members as $memberData) {
 			try {
 				if (isset($memberData[$primaryKeyProperty]) === false) {
-					$memberData[$primaryKeyProperty] = BeaconCommon::GenerateUUID();
+					$memberData[$primaryKeyProperty] = BeaconUUID::v4();
 				}
+				$primaryKey = $memberData[$primaryKeyProperty];
+				$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser($this->className, $primaryKey, $user);
+				if (($permissions & DatabaseObject::kPermissionCreate) !== DatabaseObject::kPermissionCreate) {
+					$database->Rollback();
+					return Response::NewJsonError('Forbidden', $memberData, 403);
+				}
+				
+				$memberData['userId'] = $user->UserId();
 				
 				$created = $this->className::Create($memberData);
 				if (is_null($created)) {
@@ -135,35 +211,115 @@ class DatabaseObjectManager {
 		} else {
 			return Response::NewJson($newObjects[0], 201);
 		}
-	}
+	}*/
 	
-	public function HandleList(array $context): Response {
-		return Response::NewJson($this->className::Search($_GET), 200);
-	}
-	
-	public function HandleUpdate(array $context): Response {
+	protected function HandleWrite(array $context, bool $replace): Response {
+		if (Core::IsJsonContentType() === false) {
+			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
+		}
 		
-	}
-	
-	public function HandleReplace(array $context): Response {
-		
-	}
-	
-	public function HandleFetch(array $context): Response {
-		$uuid = $context['pathParameters'][$this->varName];
 		try {
-			$obj = $this->className::Fetch($uuid);
-			if ($obj) {
-				return Response::NewJson($obj, 200);
+			$schema = $this->className::DatabaseSchema();
+			$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+			$primaryKey = $context['pathParameters'][$this->varName];
+			$user = Core::User();
+			
+			$member = Core::BodyAsJSON();
+			$member[$primaryKeyProperty] = $primaryKey;
+			
+			$status = $this->WriteObject($user, $primaryKeyProperty, $member, $replace);
+			if ($status['success'] === true) {
+				return Response::NewJson($status['object'], $status['status']);
 			} else {
-				return Response::NewJsonError('Not found', null, 404);
+				return Response::NewJsonError($status['reason'], $status['object'], $status['status']);
 			}
 		} catch (Exception $err) {
 			return Response::NewJsonError($err->getMessage(), null, 500);
 		}
 	}
 	
-	public function HandleDelete(array $contet): Response {
+	protected function HandleBulkWrite(array $context, bool $replace): Response {
+		if (Core::IsJsonContentType() === false) {
+			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
+		}
+		
+		$members = Core::BodyAsJSON();
+		if (count($members) === 0) {
+			return Response::NewJsonError('No objects to save', null, 400);
+		}
+		if (BeaconCommon::IsAssoc($members)) {
+			$members = [$members];
+		}
+		
+		$user = Core::User();
+		$schema = $this->className::DatabaseSchema();
+		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+		$newObjects = [];
+		$updatedObjects = [];
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		foreach ($members as $member) {
+			try {
+				$response = $this->WriteObject($user, $primaryKeyProperty, $member, $replace);
+				if ($response['success'] === false) {
+					$database->Rollback();
+					return Response::NewJsonError($response['reason'], $response['object'], $response['status']);
+				}
+				if ($response['status'] === 201) {
+					$newObjects[] = $response['object'];
+				} else {
+					$updatedObjects[] = $response['object'];
+				}
+			} catch (Exception $err) {
+				$database->Rollback();
+				return Response::NewJsonError($err->getMessage(), $member, 500);
+			}
+		}
+		$database->Commit();
+		
+		return Response::NewJson([
+			'created' => $newObjects,
+			'updated' => $updatedObjects
+		], 200);
+	}
+	
+	public function HandleUpdate(array $context): Response {
+		return $this->HandleWrite($context, false);
+	}
+	
+	public function HandleBulkUpdate(array $context): Response {
+		return $this->HandleBulkWrite($context, false);
+	}
+	
+	public function HandleReplace(array $context): Response {
+		return $this->HandleWrite($context, true);
+	}
+	
+	public function HandleBulkReplace(array $context): Response {
+		return $this->HandleBulkWrite($context, true);
+	}
+	
+	public function HandleDelete(array $context): Response {
+		try {
+			$uuid = $context['pathParameters'][$this->varName];
+			$obj = $this->className::Fetch($uuid);
+			if (is_null($obj)) {
+				return Response::NewJsonError('Not found', null, 404);
+			}
+			
+			$user = Core::User();
+			if ($obj->CheckPermission($user, DatabaseObject::kPermissionDelete) === false) {
+				return Response::NewJsonError('Forbidden', null, 403);
+			}
+			
+			$obj->Delete();
+			return Response::NewNoContent();
+		} catch (Exception $err) {
+			return Response::NewJsonError($err->getMessage(), null, 500);
+		}
+	}
+	
+	public function HandleBulkDelete(array $context): Response {
 		
 	}
 }
