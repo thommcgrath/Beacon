@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{DatabaseObject, DatabaseObjectAuthorizer, DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters, User};
-use BeaconCommon, BeaconDatabase, BeaconRecordSet, BeaconUUID, DateTime, Exception, JsonSerializable;
+use BeaconCommon, BeaconDatabase, BeaconRecordSet, DateTime, Exception, JsonSerializable;
 
 class GenericObject extends DatabaseObject implements JsonSerializable {
 	protected string $objectId;
@@ -33,7 +33,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$this->label = $row->Field('label');
 		$this->alternateLabel = $row->Field('alternate_label');
 		$this->minVersion = intval($row->Field('min_version'));
-		$this->contentPackId = $row->Field('content_pack_id');
+		$this->contentPackId = $row->Field('mod_id');
 		$this->contentPackName = $row->Field('content_pack_name');
 		$this->contentPackMarketplace = $row->Field('content_pack_marketplace');
 		$this->contentPackMarketplaceId = $row->Field('content_pack_marketplace_id');
@@ -49,16 +49,16 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$prefix = static::CustomVariablePrefix();
 		return new DatabaseSchema('ark', 'objects', [
 			new DatabaseObjectProperty($prefix . 'Id', ['primaryKey' => true, 'columnName' => 'object_id']),
-			new DatabaseObjectProperty($prefix . 'Group', ['accessor' => 'ark.table_to_group(SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5))', 'columnName' => 'object_group']),
+			new DatabaseObjectProperty($prefix . 'Group', ['accessor' => 'ark.table_to_group(SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5))', 'columnName' => 'object_group', 'editable' => DatabaseObjectProperty::kEditableNever]),
 			new DatabaseObjectProperty('label'),
-			new DatabaseObjectProperty('alternateLabel', ['columnName' => 'alternate_label']),
-			new DatabaseObjectProperty('tags'),
-			new DatabaseObjectProperty('minVersion', ['accessor' => 'GREATEST(%%TABLE%%.min_version, content_packs.min_version)', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'min_version']),
-			new DatabaseObjectProperty('contentPackId', ['accessor' => 'content_packs.content_pack_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'content_pack_id']),
-			new DatabaseObjectProperty('contentPackName', ['accessor' => 'content_packs.name', 'columnName' => 'content_pack_name']),
-			new DatabaseObjectProperty('contentPackMarketplace', ['accessor' => 'content_packs.marketplace', 'columnName' => 'content_pack_marketplace']),
-			new DatabaseObjectProperty('contentPackMarketplaceId', ['accessor' => 'content_packs.marketplace_id', 'columnName' => 'content_pack_marketplace_id']),
-			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)'])
+			new DatabaseObjectProperty('alternateLabel', ['columnName' => 'alternate_label', 'required' => false]),
+			new DatabaseObjectProperty('tags', ['required' => false]),
+			new DatabaseObjectProperty('minVersion', ['accessor' => 'GREATEST(%%TABLE%%.min_version, content_packs.min_version)', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'min_version', 'required' => false]),
+			new DatabaseObjectProperty('contentPackId', ['accessor' => 'content_packs.content_pack_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'mod_id']),
+			new DatabaseObjectProperty('contentPackName', ['accessor' => 'content_packs.name', 'columnName' => 'content_pack_name', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('contentPackMarketplace', ['accessor' => 'content_packs.marketplace', 'columnName' => 'content_pack_marketplace', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('contentPackMarketplaceId', ['accessor' => 'content_packs.marketplace_id', 'columnName' => 'content_pack_marketplace_id', 'editable' => DatabaseObjectProperty::kEditableNever]),
+			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)', 'editable' => DatabaseObjectProperty::kEditableNever])
 		], [
 			'INNER JOIN public.content_packs ON (%%TABLE%%.mod_id = content_packs.content_pack_id)'
 		]);
@@ -205,7 +205,7 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			return static::kPermissionRead;
 		}
 		
-		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $newObjectProperties['contentPackId'], user: $user);
+		return DatabaseObjectAuthorizer::GetPermissionsForUser(className: '\BeaconAPI\v4\ContentPack', objectId: $newObjectProperties['contentPackId'], user: $user, options: DatabaseObjectAuthorizer::kOptionMustExist);
 	}
 	
 	/*protected static function BuildSQL(...$clauses) {

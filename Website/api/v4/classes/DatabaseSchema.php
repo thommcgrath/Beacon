@@ -34,8 +34,11 @@ class DatabaseSchema {
 		return $this->table;
 	}
 	
-	public function SetTable(string $table): void {
+	public function SetTable(string $table, bool $updateWriteable = true): void {
 		$this->table = $table;
+		if ($updateWriteable) {
+			$this->writeableTable = $table;
+		}
 	}
 	
 	public function WriteableTable(): string {

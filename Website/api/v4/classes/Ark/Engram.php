@@ -4,7 +4,7 @@ namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{Core, DatabaseObjectProperty, DatabaseSchema};
 use BeaconCommon, BeaconDatabase, BeaconRecordSet, Exception;
 
-class Engram extends Blueprint {
+class Engram extends MutableBlueprint {
 	protected ?array $recipe;
 	protected ?string $entryString;
 	protected ?int $requiredPoints;
@@ -45,13 +45,13 @@ class Engram extends Blueprint {
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
 		$schema->SetTable('engrams');
-		$schema->AddColumn(new DatabaseObjectProperty('recipe', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id AS "engramId", quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template)', 'columnName' => 'recipe']));
-		$schema->AddColumn(new DatabaseObjectProperty('entryString', ['columnName' => 'entry_string']));
-		$schema->AddColumn(new DatabaseObjectProperty('requiredPoints', ['columnName' => 'required_points']));
-		$schema->AddColumn(new DatabaseObjectProperty('requiredLevel', ['columnName' => 'required_level']));
-		$schema->AddColumn(new DatabaseObjectProperty('stackSize', ['columnName' => 'stack_size']));
-		$schema->AddColumn(new DatabaseObjectProperty('itemId', ['columnName' => 'item_id']));
-		$schema->AddColumn(new DatabaseObjectProperty('gfi'));
+		$schema->AddColumn(new DatabaseObjectProperty('recipe', ['accessor' => '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id AS "engramId", quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template)', 'columnName' => 'recipe', 'required' => false]));
+		$schema->AddColumn(new DatabaseObjectProperty('entryString', ['columnName' => 'entry_string', 'required' => false]));
+		$schema->AddColumn(new DatabaseObjectProperty('requiredPoints', ['columnName' => 'required_points', 'required' => false]));
+		$schema->AddColumn(new DatabaseObjectProperty('requiredLevel', ['columnName' => 'required_level', 'required' => false]));
+		$schema->AddColumn(new DatabaseObjectProperty('stackSize', ['columnName' => 'stack_size', 'required' => false]));
+		$schema->AddColumn(new DatabaseObjectProperty('itemId', ['columnName' => 'item_id', 'required' => false]));
+		$schema->AddColumn(new DatabaseObjectProperty('gfi', ['required' => false]));
 		return $schema;
 	}
 	

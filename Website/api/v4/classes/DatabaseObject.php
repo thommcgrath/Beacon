@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCommon, BeaconRecordSet, Exception;
+use BeaconCommon, BeaconRecordSet, BeaconUUID, Exception;
 
 abstract class DatabaseObject {
 	const kPermissionCreate = 1;
@@ -65,6 +65,10 @@ abstract class DatabaseObject {
 	
 	public function GetPermissionsForUser(User $user): int {
 		return self::kPermissionRead;
+	}
+	
+	public static function GenerateObjectId(array $properties): string {
+		return BeaconUUID::v4();
 	}
 	
 	public function PrimaryKey(): string {

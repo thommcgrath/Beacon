@@ -2,7 +2,7 @@
 	
 namespace BeaconAPI\v4\Ark;
 use BeaconAPI\v4\{DatabaseObjectProperty, DatabaseSchema, DatabaseSearchParameters};
-use BeaconCommon, BeaconRecordSet, DateTime;
+use BeaconCommon, BeaconRecordSet, BeaconUUID, DateTime;
 
 class Blueprint extends GenericObject {
 	protected int $availability;
@@ -27,9 +27,19 @@ class Blueprint extends GenericObject {
 		$schema->AddColumns([
 			'availability',
 			'path',
-			new DatabaseObjectProperty('classString', ['columnName' => 'class_string'])
+			new DatabaseObjectProperty('classString', ['columnName' => 'class_string', 'editable' => DatabaseObjectProperty::kEditableNever])
 		]);
 		return $schema;
+	}
+	
+	public static function GenerateObjectId(array $properties): string {
+		if (isset($properties['contentPackId']) === false || isset($properties['path']) === false) {
+			return '00000000-0000-0000-0000-000000000000';
+		}
+		
+		$contentPackId = strtolower(trim($properties['contentPackId']));
+		$path = strtolower(trim($properties['path']));
+		return BeaconUUID::v5("{$contentPackId}:{$path}");
 	}
 	
 	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {

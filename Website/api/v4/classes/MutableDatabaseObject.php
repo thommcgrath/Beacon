@@ -3,7 +3,7 @@
 namespace BeaconAPI\v4;
 use BeaconCommon, BeaconUUID, Exception;
 
-abstract class MutableDatabaseObject extends DatabaseObject {
+trait MutableDatabaseObject {
 	protected $changedProperties = [];
 	
 	protected static function PreparePropertyValue(DatabaseObjectProperty $definition, mixed $value): mixed {
@@ -50,11 +50,7 @@ abstract class MutableDatabaseObject extends DatabaseObject {
 			
 			$propertyName = $definition->PropertyName();
 			if (isset($properties[$propertyName]) === false) {
-				$defaultValue = $definition->DefaultValue();
-				if (is_null($defaultValue)) {
-					continue;
-				}
-				$properties[$propertyName] = $defaultValue;
+				continue;
 			}
 			
 			$valuePlaceholder = $definition->Setter($placeholder++);

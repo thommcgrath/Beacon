@@ -3,7 +3,9 @@
 namespace BeaconAPI\v4;
 use BeaconCloudStorage, BeaconCommon, BeaconEmail, BeaconEncryption, BeaconRecordSet, BeaconShop, Exception, JsonSerializable;
 
-class User extends MutableDatabaseObject implements JsonSerializable {
+class User extends DatabaseObject implements JsonSerializable {
+	use MutableDatabaseObject;
+	
 	protected $backupCodes = null;
 	protected $backupCodesAdded = [];
 	protected $backupCodesRemoved = [];

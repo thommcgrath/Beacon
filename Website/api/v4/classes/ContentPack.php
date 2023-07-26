@@ -3,7 +3,11 @@
 namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet, BeaconUUID, BeaconWorkshopItem, Exception, JsonSerializable;
 
-class ContentPack extends MutableDatabaseObject implements JsonSerializable {
+class ContentPack extends DatabaseObject implements JsonSerializable {
+	use MutableDatabaseObject {
+		Validate as protected MutableDatabaseObjectValidate;
+	}
+	
 	protected string $contentPackId;
 	protected string $gameId;
 	protected string $marketplace;
@@ -109,7 +113,7 @@ class ContentPack extends MutableDatabaseObject implements JsonSerializable {
 	}
 	
 	protected static function Validate(array $properties): void {
-		parent::Validate($properties);
+		static::MutableDatabaseObjectValidate($properties);
 		
 		$validMarketplaces = [];
 		switch ($properties['gameId']) {

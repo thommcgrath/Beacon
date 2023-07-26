@@ -104,7 +104,7 @@ class DatabaseObjectManager {
 	
 	protected function WriteObject(User $user, string $primaryKeyProperty, array $member, bool $replace): array {
 		if (isset($member[$primaryKeyProperty]) === false) {
-			$member[$primaryKeyProperty] = BeaconUUID::v4();
+			$member[$primaryKeyProperty] = $this->className::GenerateObjectId($member);
 		}
 		$primaryKey = $member[$primaryKeyProperty];
 		
@@ -123,7 +123,6 @@ class DatabaseObjectManager {
 		}
 		
 		if (is_null($obj)) {
-			echo 'creating';
 			$member['userId'] = $user->UserId(); // In case it is needed
 			$obj = $this->className::Create($member);
 			if (is_null($obj)) {
