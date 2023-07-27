@@ -55,6 +55,10 @@ $results = $database->Query("SELECT MAX(last_update) FROM ark.objects WHERE min_
 $lastDatabaseUpdate = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 $includeModNames = true;
 
+$breadcrumbs = new BeaconBreadcrumbs();
+$breadcrumbs->AddComponent('/Games', 'Games');
+$breadcrumbs->AddComponent('Ark', 'Ark: Survival Evolved');
+
 if (is_null($pack)) {
 	$packs = ContentPack::Search(['isOfficial' => true, 'minVersion' => $build], true);
 	$packIds = [];
@@ -69,7 +73,12 @@ if (is_null($pack)) {
 	$title = 'Spawn codes for ' . $pack->Name();
 	$includeModNames = false;
 	$baseUrl = '/Games/Ark/Mods/' . urlencode($pack->MarketplaceId()) . '/Cheats';
+	$breadcrumbs->AddComponent('Mods', 'Mods');
+	$breadcrumbs->AddComponent(urlencode($pack->MarketplaceId()), $pack->Name());
 }
+
+$breadcrumbs->AddComponent('Cheats', 'Spawn Codes');
+echo $breadcrumbs->Render();
 
 $results = Blueprint::Search($filters);
 $blueprints = $results['results'];

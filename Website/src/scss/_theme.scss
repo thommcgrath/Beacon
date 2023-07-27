@@ -2722,6 +2722,32 @@ body.no-navigation {
 	}
 }
 
+.breadcrumbs {
+	$breadcrumb-track-color: color.mix($foreground-color, $background-color, 2%);
+	border-radius: $border-radius-sm;
+	display: flex;
+	gap: $input-padding-x-sm;
+	background-color: $breadcrumb-track-color;
+	font-size: $font-size-sm;
+	padding: $input-padding-y-sm $input-padding-x-sm;
+	flex-wrap: wrap;
+	
+	.breadcrumb {
+		display: inline-block;
+		white-space: nowrap;
+	}
+	
+	.divider {
+		$arrow-color: color.mix($foreground-color, $breadcrumb-track-color, 30%);
+		display: inline-block;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23#{str-slice(#{$arrow-color}, 2)}' class='bi bi-chevron-right' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");	
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: 16px 16px;
+		width: 8px;
+	}
+}
+
 @media (min-width: $breakpoint_desktop) {
 	div.double_column div.column {
 		display: table-cell;

@@ -42,6 +42,10 @@ if (count($objects) === 0) {
 	exit;
 }
 
+$breadcrumbs = new BeaconBreadcrumbs();
+$breadcrumbs->AddComponent('/Games', 'Games');
+$breadcrumbs->AddComponent('Ark', 'Ark: Survival Evolved');
+
 /*
 If there are multiple results, we need to determine if they belong to the same mod or not.
 If they do, we show them all on the same page. If not, we allow the user to choose between mods
@@ -54,6 +58,8 @@ foreach ($objects as $object) {
 if (count($contentPackNames) > 1) {
 	$classString = $objects[0]->ClassString();
 	BeaconTemplate::SetCanonicalPath('/Games/Ark/' . urlencode($classString));
+	$breadcrumbs->AddComponent(urlencode($classString), $classString);
+	echo $breadcrumbs->Render();
 	$title = 'Disambiguation for class ' . $classString;
 	BeaconTemplate::SetTitle($title);
 	echo '<h1>' . htmlentities($title) . '</h1>';
@@ -67,15 +73,21 @@ if (count($contentPackNames) > 1) {
 }
 
 BeaconTemplate::SetCanonicalPath('/Games/Ark/Mods/' . $objects[0]->ContentPackMarketplaceId() . '/' . urlencode($objects[0]->ClassString()));
+$breadcrumbs->AddComponent('Mods', 'Mods');
+$breadcrumbs->AddComponent(urlencode($objects[0]->ContentPackMarketplaceId()), $objects[0]->ContentPackName());
 
 $titleClass = 'h1';
 if (count($objects) === 1) {
 	BeaconTemplate::SetTitle($objects[0]->Label());
+	$breadcrumbs->AddComponent(urlencode($objects[0]->ClassString()), $objects[0]->Label());
+	echo $breadcrumbs->Render();
 } else {
 	$title = 'Multiple objects for class ' . $objects[0]->ClassString();
 	BeaconTemplate::SetTitle($title);
-	echo '<h1>' . htmlentities($title) . '</h1>';
 	$titleClass = 'h2';
+	$breadcrumbs->AddComponent(urlencode($objects[0]->ClassString()), $objects[0]->ClassString());
+	echo $breadcrumbs->Render();
+	echo '<h1>' . htmlentities($title) . '</h1>';
 }
 
 $parser = new Parsedown();

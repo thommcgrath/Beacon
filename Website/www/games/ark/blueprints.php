@@ -88,6 +88,16 @@ BeaconTemplate::SetCanonicalPath(BuildUrl($baseUrl, $currentGroup, $queryParams,
 BeaconTemplate::SetTitle($pageTitle);
 BeaconTemplate::SetPageDescription($pageDescriptionPlain);
 	
+$breadcrumbs = new BeaconBreadcrumbs();
+$breadcrumbs->AddComponent('/Games', 'Games');
+$breadcrumbs->AddComponent('Ark', 'Ark: Survival Evolved');
+if (is_null($pack) === false) {
+	$breadcrumbs->AddComponent('Mods', 'Mods');
+	$breadcrumbs->AddComponent(urlencode($pack->MarketplaceId()), $pack->Name());
+}
+$breadcrumbs->AddComponent($currentGroup->UrlVersion(), $currentGroup->HumanVersion());
+echo $breadcrumbs->Render();
+	
 echo '<h1>' . htmlentities($pageTitle) . '</h1>';
 echo '<p>' . $pageDescriptionHtml . '</p>';
 

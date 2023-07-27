@@ -55,16 +55,17 @@ abstract class BeaconTemplate {
 	}
 	
 	public static function Title(): string {
-		$title = 'Beacon';
 		if (self::$title !== '') {
-			$title .= ': ' . self::$title;
+			return self::$title;
 		} else {
-			$title .= ' for Ark';
+			return 'Beacon Server Manager';
 		}
-		return $title;
 	}
 	
-	public static function SetTitle(string $title): void {
+	public static function SetTitle(string $title, bool $usePrefix = true): void {
+		if ($usePrefix) {
+			$title = 'Beacon: ' . $title;
+		}
 		self::$title = $title;
 	}
 	
