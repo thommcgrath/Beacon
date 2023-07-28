@@ -154,64 +154,6 @@ class DatabaseObjectManager {
 		}
 	}
 	
-	/*public function HandleCreate(array $context): Response {
-		if (Core::IsJsonContentType() === false) {
-			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
-		}
-		
-		$body = Core::BodyAsJSON();
-		if (BeaconCommon::IsAssoc($body) || count($body) === 0) {
-			$members = [$body];
-			$multi = false;
-		} else {
-			$members = $body;
-			$multi = true;
-		}
-		
-		$user = Core::User();
-		$schema = $this->className::DatabaseSchema();
-		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
-		$newObjects = [];
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		foreach ($members as $memberData) {
-			try {
-				if (isset($memberData[$primaryKeyProperty]) === false) {
-					$memberData[$primaryKeyProperty] = BeaconUUID::v4();
-				}
-				$primaryKey = $memberData[$primaryKeyProperty];
-				$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser($this->className, $primaryKey, $user);
-				if (($permissions & DatabaseObject::kPermissionCreate) !== DatabaseObject::kPermissionCreate) {
-					$database->Rollback();
-					return Response::NewJsonError('Forbidden', $memberData, 403);
-				}
-				
-				$memberData['userId'] = $user->UserId();
-				
-				$created = $this->className::Create($memberData);
-				if (is_null($created)) {
-					$database->Rollback();
-					return Response::NewJsonError('Object was not created', $memberData, 500);
-				}
-				$newObjects[] = $created;
-			} catch (Exception $err) {
-				$database->Rollback();
-				return Response::NewJsonError($err->getMessage(), $err, 500);
-			}
-		}
-		if (count($newObjects) !== count($members)) {
-			$database->Rollback();
-			return Response::NewJsonError('Incorrect number of objects created', ['sent' => $members, 'created' => $newObjects], 500);
-		}
-		$database->Commit();
-		
-		if ($multi) {
-			return Response::NewJson($newObjects, 201);
-		} else {
-			return Response::NewJson($newObjects[0], 201);
-		}
-	}*/
-	
 	protected function HandleWrite(array $context, bool $replace): Response {
 		if (Core::IsJsonContentType() === false) {
 			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
@@ -298,28 +240,103 @@ class DatabaseObjectManager {
 		return $this->HandleBulkWrite($context, true);
 	}
 	
+	protected function DeleteObject(User $user, string $primaryKeyProperty, array $member): array {
+		if (array_key_exists($primaryKeyProperty, $member) === false) {
+			return [
+				'status' => 400,
+				'success' => false,
+				'keyProperty' => $primaryKeyProperty,
+				'object' => $member,
+				'reason' => 'No key property present'
+			];
+		}
+		$primaryKey = $member[$primaryKeyProperty];
+		
+		$obj = $this->className::Fetch($primaryKey);
+		if (is_null($obj)) {
+			return [
+				'status' => 404,
+				'success' => false,
+				'keyProperty' => $primaryKeyProperty,
+				$primaryKeyProperty => $primaryKey,
+				'object' => $member,
+				'reason' => 'Object not found'
+			];
+		}
+		
+		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: $this->className, objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch);
+		if (($permissions & DatabaseObject::kPermissionDelete) !== DatabaseObject::kPermissionDelete) {
+			return [
+				'status' => 403,
+				'success' => false,
+				'keyProperty' => $primaryKeyProperty,
+				$primaryKeyProperty => $primaryKey,
+				'object' => $member,
+				'reason' => 'Forbidden'
+			];
+		}
+		
+		$obj->Delete();
+		return [
+			'status' => 200,
+			'success' => true,
+			'keyProperty' => $primaryKeyProperty,
+			$primaryKeyProperty => $primaryKey,
+			'object' => $obj
+		];
+	}
+	
 	public function HandleDelete(array $context): Response {
 		try {
 			$uuid = $context['pathParameters'][$this->varName];
-			$obj = $this->className::Fetch($uuid);
-			if (is_null($obj)) {
-				return Response::NewJsonError('Not found', null, 404);
-			}
-			
 			$user = Core::User();
-			if ($obj->CheckPermission($user, DatabaseObject::kPermissionDelete) === false) {
-				return Response::NewJsonError('Forbidden', null, 403);
-			}
+			$schema = $this->className::DatabaseSchema();
+			$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
 			
-			$obj->Delete();
-			return Response::NewNoContent();
+			$status = $this->DeleteObject($user, $primaryKeyProperty, [$primaryKeyProperty => $uuid]);
+			if ($status['success'] === true) {
+				return Response::NewNoContent();
+			} else {
+				return Response::NewJsonError($status['reason'], $status['object'], $status['status']);
+			}
 		} catch (Exception $err) {
 			return Response::NewJsonError($err->getMessage(), null, 500);
 		}
 	}
 	
 	public function HandleBulkDelete(array $context): Response {
+		if (Core::IsJsonContentType() === false) {
+			return Response::NewJsonError('This endpoint expects a JSON body. Make sure the Content-Type header is application/json.', $_SERVER['HTTP_CONTENT_TYPE'], 400);
+		}
 		
+		$members = Core::BodyAsJSON();
+		if (count($members) === 0) {
+			return Response::NewJsonError('No objects to delete', null, 400);
+		}
+		if (BeaconCommon::IsAssoc($members)) {
+			$members = [$members];
+		}
+		
+		$user = Core::User();
+		$schema = $this->className::DatabaseSchema();
+		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		foreach ($members as $member) {
+			try {
+				$status = $this->DeleteObject($user, $primaryKeyProperty, $member);
+				if ($status['success'] === false) {
+					$database->Rollback();
+					return Response::NewJsonError($status['reason'], $status['object'], $status['status']);
+				}
+			} catch (Exception $err) {
+				$database->Rollback();
+				return Response::NewJsonError($err->getMessage(), $member, 500);
+			}
+		}
+		$database->Commit();
+		
+		return Response::NewNoContent();
 	}
 }
 

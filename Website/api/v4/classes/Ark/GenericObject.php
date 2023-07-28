@@ -576,6 +576,10 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		];
 	}
 	
+	public function PrimaryKey(): string {
+		return $this->objectId;
+	}
+	
 	public function UUID(): string {
 		return $this->objectId;
 	}
