@@ -1,17 +1,20 @@
 <?php
 
 abstract class BeaconTemplate {
-	protected static $template_name = 'default';
-	protected static $title = '';
-	protected static $script_lines = [];
-	protected static $header_lines = [];
-	protected static $body_class = '';
-	protected static $page_description = '';
-	protected static $use_photoswipe = false;
-	protected static $current_modal = null;
-	protected static $modals = [];
-	protected static $extra_vars = [];
-	protected static $globalize_loaded = false;
+	protected static string $templateName = 'default';
+	protected static string $title = '';
+	protected static array $scriptLines = [];
+	protected static array $headerLines = [];
+	protected static string $bodyClass = '';
+	protected static string $pageDescription = '';
+	protected static bool $usePhotoswipe = false;
+	protected static ?string $currentModal = null;
+	protected static array $modals = [];
+	protected static array $extraVars = [];
+	protected static bool $globalizeLoaded = false;
+	protected static string $canonicalUrl = '';
+	protected static bool $isArticle = false;
+	protected static string $heroUrl = '';
 	
 	protected static function CacheKey(): string {
 		return md5($_SERVER['REQUEST_URI']);
@@ -24,33 +27,33 @@ abstract class BeaconTemplate {
 	
 	public static function Cancel(): void {
 		ob_end_clean();
-		self::$template_name = null;
+		self::$templateName = null;
 	}
 	
-	public static function SetTemplate(string $template_name): void {
-		$template_name = preg_replace('/[^a-zA-Z0-9]+/', '', $template_name);
-		$file = BeaconCommon::FrameworkPath() . '/templates/' . $template_name . '.php';
+	public static function SetTemplate(string $templateName): void {
+		$templateName = preg_replace('/[^a-zA-Z0-9]+/', '', $templateName);
+		$file = BeaconCommon::FrameworkPath() . '/templates/' . $templateName . '.php';
 		if (!file_exists($file)) {
 			trigger_error('No such template ' . $file, E_USER_ERROR);
 		}
-		self::$template_name = $template_name;
+		self::$templateName = $templateName;
 	}
 	
 	public static function Finish(): void {
-		if (ob_get_level() === 0 || is_null(self::$template_name)) {
+		if (ob_get_level() === 0 || is_null(self::$templateName)) {
 			return;
 		}
 		
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		
-		foreach (static::$header_lines as $line) {
+		foreach (static::$headerLines as $line) {
 			if (strpos($line, 'photoswipe.min.js') !== false) {
-				static::$use_photoswipe = true;
+				static::$usePhotoswipe = true;
 			}
 		}
 		
-		$file = BeaconCommon::FrameworkPath() . '/templates/' . self::$template_name . '.php';
+		$file = BeaconCommon::FrameworkPath() . '/templates/' . self::$templateName . '.php';
 		require($file);
 	}
 	
@@ -70,18 +73,44 @@ abstract class BeaconTemplate {
 	}
 	
 	public static function AddHeaderLine(string $line): void {
-		self::$header_lines[] = $line;
+		self::$headerLines[] = $line;
 	}
 	
 	public static function ExtraHeaderLines(): array {
+		$title = static::Title();
+		$canonicalUrl = static::CanonicalUrl();
+		$pageDescription = static::PageDescription();
+		$isArticle = static::IsArticle();
+		$heroUrl = static::HeroUrl();
+		
+		$metadata = [
+			'<title>' . htmlentities($title) . '</title>',
+			'<meta name="title" content="' . htmlentities($title) . '">',
+			'<meta property="og:title" content="' . htmlentities($title) . '">',
+			'<meta name="twitter:title" content="' . htmlentities($title) . '">',
+			'<link rel="canonical" href="' . htmlentities($canonicalUrl) . '">',
+			'<meta property="og:url" content="' . htmlentities($canonicalUrl) . '">',
+			'<meta name="twitter:url" content="' . htmlentities($canonicalUrl) . '">',
+			'<meta property="og:type" content="' . ($isArticle ? 'article' : 'website') . '">',
+			'<meta name="twitter:card" content="summary_large_image">',
+			'<meta property="og:image" content="' . htmlentities($heroUrl) . '">',
+			'<meta name="twitter:image" content="' . htmlentities($heroUrl) . '">',
+		];
+		
+		if (empty($pageDescription) === false) {
+			$metadata[] = '<meta name="description" content="' . htmlentities($pageDescription) . '">';
+			$metadata[] = '<meta property="og:description" content="' . htmlentities($pageDescription) . '">';
+			$metadata[] = '<meta name="twitter:description" content="' . htmlentities($pageDescription) . '">';
+		}
+		
 		$script = [];
-		if (count(self::$script_lines) > 0) {
-			$script = self::$script_lines;
+		if (count(self::$scriptLines) > 0) {
+			$script = self::$scriptLines;
 			array_unshift($script, '<script nonce="' . htmlentities($_SERVER['CSP_NONCE']) . '">');
 			$script[] = '</script>';
 		}
 		
-		return array_merge(self::$header_lines, $script);
+		return array_merge($metadata, self::$headerLines, $script);
 	}
 	
 	public static function ExtraHeaderContent(string $separator = "\n"): string {
@@ -114,11 +143,11 @@ abstract class BeaconTemplate {
  	}
 	
 	public static function AddStylesheet(string $url): void {
-		self::$header_lines[] = '<link href="' . htmlentities(static::URLWithModificationTime($url)) . '" type="text/css" rel="stylesheet" nonce="' . $_SERVER['CSP_NONCE'] . '">';
+		self::$headerLines[] = '<link href="' . htmlentities(static::URLWithModificationTime($url)) . '" type="text/css" rel="stylesheet" nonce="' . $_SERVER['CSP_NONCE'] . '">';
 	}
 	
 	public static function AddScript(string $url): void {
-		self::$header_lines[] = '<script src="' . htmlentities(static::URLWithModificationTime($url)) . '" nonce="' . $_SERVER['CSP_NONCE'] . '"></script>';
+		self::$headerLines[] = '<script src="' . htmlentities(static::URLWithModificationTime($url)) . '" nonce="' . $_SERVER['CSP_NONCE'] . '"></script>';
 	}
 	
 	public static function StartScript(): void {
@@ -135,12 +164,12 @@ abstract class BeaconTemplate {
 				continue;
 			}
 			
-			self::$script_lines[] = $line;
+			self::$scriptLines[] = $line;
 		}
 	}
 	
 	public static function StartModal(string $id): void {
-		self::$current_modal = $id;
+		self::$currentModal = $id;
 		ob_start();
 	}
 	
@@ -148,8 +177,8 @@ abstract class BeaconTemplate {
 		$content = trim(ob_get_contents());
 		ob_end_clean();
 		
-		$id = self::$current_modal;
-		self::$current_modal = null;
+		$id = self::$currentModal;
+		self::$currentModal = null;
 		self::$modals[$id] = $content;
 	}
 	
@@ -189,32 +218,65 @@ abstract class BeaconTemplate {
 	}
 	
 	public static function BodyClass(): string {
-		return static::$body_class;
+		return static::$bodyClass;
 	}
 	
 	public static function SetBodyClass(string $class_name): void {
-		static::$body_class = $class_name;
+		static::$bodyClass = $class_name;
 	}
 	
 	public static function PageDescription(): string {
-		return static::$page_description;
+		return static::$pageDescription;
 	}
 	
-	public static function SetPageDescription(string $page_description): void {
-		static::$page_description = $page_description;
+	public static function SetPageDescription(string $pageDescription): void {
+		static::$pageDescription = $pageDescription;
 	}
 	
-	public static function SetCanonicalPath(string $path, bool $redirectToCorrect = true): void {
-		$url = BeaconCommon::AbsoluteURL($path);
-		if ($_SERVER['REQUEST_URI'] !== $path && $redirectToCorrect) {
+	public static function CanonicalUrl(): string {
+		if (empty(static::$canonicalUrl)) {
+			return BeaconCommon::AbsoluteUrl($_SERVER['REQUEST_URI']);
+		} else {
+			return static::$canonicalUrl;
+		}	
+	}
+	
+	public static function SetCanonicalUrl(string $url, bool $redirectToCorrect = true): void {
+		static::$canonicalUrl = $url;
+		if ($redirectToCorrect && BeaconCommon::AbsoluteUrl($_SERVER['REQUEST_URI']) !== $url) {
 			header('Location: ' . $url, true, 301);
 			exit;
 		}
-		static::AddHeaderLine('<link rel="canonical" href="' . $url . '">');
+	}
+	
+	public static function SetCanonicalPath(string $path, bool $redirectToCorrect = true): void {
+		static::SetCanonicalUrl(BeaconCommon::AbsoluteURL($path), $redirectToCorrect);
+	}
+	
+	public static function IsArticle(): bool {
+		return static::$isArticle;
+	}
+	
+	public static function SetIsArticle(bool $value): void {
+		static::$isArticle = $value;
+	}
+	
+	public static function HeroUrl(): string {
+		if (empty(static::$heroUrl)) {
+			static::$heroUrl = BeaconCommon::AbsoluteUrl(BeaconCommon::AssetUri('social-hero.png'));
+		}
+		return static::$heroUrl;
+	}
+	
+	public static function SetHeroUrl(string $url): void {
+		if (str_starts_with($url, 'https://') === false) {
+			$url = BeaconCommon::AbsoluteUrl($url);
+		}
+		static::$heroUrl = $url;
 	}
 	
 	public static function PhotoSwipeDOM(): void {
-		if (!static::$use_photoswipe) {
+		if (!static::$usePhotoswipe) {
 			return;
 		}
 		
@@ -258,22 +320,22 @@ abstract class BeaconTemplate {
 	}
 	
 	public static function SetVar(string $varName, mixed $value): void {
-		static::$extra_vars[$varName] = $value;
+		static::$extraVars[$varName] = $value;
 	}
 	
 	public static function GetVar(string $varName): mixed {
-		if (array_key_exists($varName, static::$extra_vars)) {
-			return static::$extra_vars[$varName];
+		if (array_key_exists($varName, static::$extraVars)) {
+			return static::$extraVars[$varName];
 		} else {
 			return null;
 		}
 	}
 
 	public static function LoadGlobalize() {
-		if (static::$globalize_loaded === true) {
+		if (static::$globalizeLoaded === true) {
 			return;
 		}
-		static::$globalize_loaded = true;
+		static::$globalizeLoaded = true;
 		
 		$assets = [
 			'cldr.js',

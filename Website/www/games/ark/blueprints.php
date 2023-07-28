@@ -80,8 +80,8 @@ if (is_null($pack)) {
 	$baseUrl = '/Games/Ark/Mods/' . $modSteamId . '/{{group}}';
 	$pageTitle = $currentGroup->HumanVersion() . ' From ' . $pack->Name();
 	
-	$pageDescriptionPlain = "Beacon has built-in support for {$modName}. This means its engrams are already part of Beacon's database and you can begin using them immediately.";
-	$pageDescriptionHtml = "Beacon has built-in support for <a href=\"{$modSteamUrl}\">{$modName}</a>. This means its engrams are already part of Beacon's database and you can begin using them immediately. We also have a full list of <a href=\"/Games/Ark/Mods/{$modSteamId}/cheats\">spawn codes for {$modName}</a>.";
+	$pageDescriptionPlain = "Beacon has built-in support for {$modName}. This means its blueprints are already part of Beacon's database and you can begin using them immediately.";
+	$pageDescriptionHtml = "Beacon has built-in support for <a href=\"{$modSteamUrl}\">{$modName}</a>. This means its blueprints are already part of Beacon's database and you can begin using them immediately. We also have a full list of <a href=\"/Games/Ark/Mods/{$modSteamId}/Cheats\">spawn codes for {$modName}</a>.";
 }
 
 BeaconTemplate::SetCanonicalPath(BuildUrl($baseUrl, $currentGroup, $queryParams, $page, false));

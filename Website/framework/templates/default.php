@@ -34,13 +34,12 @@ if ($body_class === 'purple') {
 $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 
 ?><!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: http://ogp.me/ns#">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<?php if (!empty($description)) { ?><meta name="description" content="<?php echo htmlentities($description); ?>">
-		<?php } ?><link rel="icon" type="image/png" sizes="32x32" href="<?php echo BeaconCommon::AssetURI('favicon-32x32.png'); ?>">
+		<link rel="icon" type="image/png" sizes="32x32" href="<?php echo BeaconCommon::AssetURI('favicon-32x32.png'); ?>">
 		<link rel="icon" type="image/png" sizes="16x16" href="<?php echo BeaconCommon::AssetURI('favicon-16x16.png'); ?>">
 		<link rel="mask-icon" href="<?php echo BeaconCommon::AssetURI('safari-pinned-tab.svg'); ?>" color="#9c0fb0">
 		<link rel="shortcut icon" href="<?php echo BeaconCommon::AssetURI('favicon.ico'); ?>">
@@ -68,7 +67,6 @@ $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 		?><meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
 		<script src="<?php echo BeaconCommon::AssetURI('default.js'); ?>"></script>
-		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>
 		<?php
 		$header_lines = BeaconTemplate::ExtraHeaderLines();
 		for ($i = 0; $i < count($header_lines); $i++) {

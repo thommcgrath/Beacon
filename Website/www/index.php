@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
-BeaconTemplate::SetPageDescription('Beacon is Ark\'s easiest server manager that can update and control your Xbox, PS4, and PC Ark servers with a couple clicks.');
+BeaconTemplate::SetPageDescription('Beacon is Ark\'s easiest server manager that can update and control your Xbox, PS4, PC, and Switch Ark servers with a few clicks.');
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('index.css'));
 
