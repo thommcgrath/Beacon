@@ -15,7 +15,7 @@ Inherits Ark.ServerProfile
 		  Self.mPassword = Dict.Value("Pass")
 		  Self.mGameIniPath = Dict.Value("Game.ini Path")
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
-		  Self.mMode = Dict.Lookup("Mode", Beacon.FTPModeInsecure)
+		  Self.mMode = Dict.Lookup("Mode", Beacon.FTPModeOptionalTLS)
 		  Self.mMask = Dict.Lookup("Mask", 0)
 		  Self.mVerifyHost = Dict.Lookup("Verify Host", True)
 		  Self.mPrivateKey = Dict.Lookup("Private Key", "")
@@ -57,7 +57,7 @@ Inherits Ark.ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Do not call Super.Constructor()
-		  Self.mMode = Beacon.FTPModeInsecure
+		  Self.mMode = Beacon.FTPModeOptionalTLS
 		  Self.mPort = 21
 		End Sub
 	#tag EndMethod
@@ -296,10 +296,10 @@ Inherits Ark.ServerProfile
 		#tag Setter
 			Set
 			  Select Case Value
-			  Case Beacon.FTPModeInsecure, Beacon.FTPModeExplicitTLS, Beacon.FTPModeSSH, Beacon.FTPModeImplicitTLS
+			  Case Beacon.FTPModeOptionalTLS, Beacon.FTPModeExplicitTLS, Beacon.FTPModeSSH, Beacon.FTPModeImplicitTLS, Beacon.FTPModeInsecure
 			    // Whitelist
 			  Else
-			    Value = Beacon.FTPModeInsecure
+			    Value = Beacon.FTPModeOptionalTLS
 			  End Select
 			  
 			  If Self.mMode.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
