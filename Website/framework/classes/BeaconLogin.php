@@ -61,9 +61,13 @@ class BeaconLogin {
 		}
 		
 		BeaconTemplate::StartScript();
-		echo "<script>\n";
-		echo "const loginParams = " . json_encode($params, JSON_PRETTY_PRINT) . ";\n";
-		echo "</script>";
+		?><script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const event = new Event('beaconRunLoginPage');
+			event.loginParams = <?php echo json_encode($params); ?>;
+			document.dispatchEvent(event);
+		});
+		</script><?php
 		BeaconTemplate::FinishScript();
 			
 		if (is_null($session) === false && is_null($flow) === false) {

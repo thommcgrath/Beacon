@@ -1,6 +1,9 @@
 "use strict";
 
-document.addEventListener('DOMContentLoaded', () => {
+import { BeaconDialog } from "./classes/BeaconDialog.js";
+import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
+
+document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 	let currentPage = '';
 	const pages = ['login', 'totp', 'recover', 'verify', 'password', 'loading', 'authorize'];
 	pages.forEach((pageName) => {
@@ -46,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 	let knownVulnerablePassword = '';
 	
-	const loginPage = document.getElementById('page_login');
 	const loginForm = document.getElementById('login_form_intro');
 	const loginEmailField = document.getElementById('login_email_field');
 	const loginPasswordField = document.getElementById('login_password_field');
@@ -55,11 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const loginCancelButton = document.getElementById('login_cancel_button');
 	const loginActionButton = document.getElementById('login_action_button');
 	
-	const totpPage = document.getElementById('page_totp');
 	const totpForm = document.getElementById('login_form_totp');
 	const totpCodeField = document.getElementById('totp_code_field');
 	const totpRememberCheck = document.getElementById('totp_remember_check');
-	const totpActionButton = document.getElementById('totp_action_button');
 	const totpCancelButton = document.getElementById('totp_cancel_button');
 	
 	const recoverForm = document.getElementById('login_recover_form');
@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const passwordAuthenticatorCodeLabel = document.getElementById('password_totp_label');
 	const passwordAuthenticatorCodeField = document.getElementById('password_totp_field');
 	
-	const authorizePage = document.getElementById('page_authorize');
 	const authorizeActionButton = document.getElementById('authorize_action_button');
 	const authorizeCancelButton = document.getElementById('authorize_cancel_button');
 	const authorizeSwitchButton = document.getElementById('authorize_switch_button');
@@ -139,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				loginRemember = loginRememberCheck.checked;
 			}
 			
-			if (loginRemember == false && localStorage) {
+			if (loginRemember === false && localStorage) {
 				localStorage.removeItem('email');
 			}
 			if (sessionStorage) {
@@ -159,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				challenge: loginParams.challenge,
 				challengeExpiration: loginParams.challengeExpiration,
 				deviceId: loginParams.deviceId,
-				loginId: loginParams.loginId
+				loginId: loginParams.loginId,
 			};
 			if (loginParams.flowId) {
 				sessionBody.flowId = loginParams.flowId;
@@ -188,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
 					}
 					url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
-					url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
+					url = url.replace('{{temporary}}', (loginRemember === false ? 'true' : 'false'));
 					
 					if (loginParams.flowRequiresPassword && sessionStorage) {
 						sessionStorage.setItem('account_password', sessionBody.password);	
@@ -201,9 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			}).catch((error) => {
 				console.log(JSON.stringify(error));
 				
+				let loginErrorExplanation;
 				switch (error.status) {
 				case 400:
-					let loginErrorExplanation = 'There was an expected error.';
+					loginErrorExplanation = 'There was an expected error.';
 					try {
 						const obj = JSON.parse(error.body);
 						const code = obj.details.code;
@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				
 				const alert = {
 					message: 'Unable to continue',
-					explanation: `There was a ${error.status} error while trying to send the verification email.`
+					explanation: `There was a ${error.status} error while trying to send the verification email.`,
 				};
 				
 				try {
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			form.append('verification_code', passwordAuthenticatorCode);
 			
 			showPage('loading');
-			BeaconWebRequest.post('/account/auth/password', form).then((response) => {
+			BeaconWebRequest.post('/account/auth/password', form).then(() => {
 				try {
 					if (localStorage && loginRemember) {
 						localStorage.setItem('email', passwordEmail);
@@ -590,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 	// !Authorization form
 	if (authorizeCancelButton) {
-		authorizeCancelButton.addEventListener('click', (ev) => {
+		authorizeCancelButton.addEventListener('click', () => {
 			if (loginPasswordField) {
 				loginPasswordField.value = '';
 			}
@@ -612,18 +612,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	
 	if (authorizeActionButton) {
-		authorizeActionButton.addEventListener('click', (ev) => {
+		authorizeActionButton.addEventListener('click', () => {
 			const authorizationBody = {
 				deviceId: loginParams.deviceId,
 				flowId: loginParams.flowId,
 				challenge: loginParams.challenge,
-				challengeExpiration: loginParams.challengeExpiration
+				challengeExpiration: loginParams.challengeExpiration,
 			};
 			
 			let authPromise = null;
 			if (loginParams.userPassword) {
 				authorizationBody.password = loginParams.userPassword;
-				authPromise = new Promise((resolve, reject) => {
+				authPromise = new Promise((resolve) => {
 					resolve();
 				});
 			} else {
@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 	
-	if (window.location.hash == '#create') {
+	if (window.location.hash === '#create') {
 		if (recoverEmailField && explicitEmail) {
 			recoverEmailField.value = explicitEmail;
 		}

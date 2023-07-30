@@ -26,7 +26,7 @@ rules:
     - always
   no-duplicate-imports: error
   eqeqeq:
-    - error
+    - warn
     - smart
   no-eval: error
   no-implied-eval: error

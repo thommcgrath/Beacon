@@ -5,6 +5,11 @@
 
   ],
   "index.enabled" : true,
+  "index.ignored_file_patterns" : [
+    "www\/assets\/scripts",
+    "www\/assets\/css",
+    "node_modules"
+  ],
   "index.symbolicate" : true,
   "index.use_scm_ignored_files" : true,
   "php.interpreter" : "\/opt\/homebrew\/bin\/php",
