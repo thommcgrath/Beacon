@@ -136,6 +136,6 @@ $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 			echo '<div id="' . $modal_id . '" class="modal">' . $modal_content . '</div>';
 		}
 		
-		BeaconTemplate::PhotoSwipeDOM(); ?>
+		?>
 	</body>
 </html>

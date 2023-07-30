@@ -1441,7 +1441,7 @@ div.select {
 		}
 		
 		span:after {
-			top: $input-padding-y-sm / 2;
+			top:  math.div($input-padding-y-lg, 2);
 			right: $input-padding-x-sm;
 			font-size: $input-font-size-sm;
 		}
@@ -1455,7 +1455,7 @@ div.select {
 		}
 		
 		span:after {
-			top: $input-padding-y-lg / 2;
+			top: math.div($input-padding-y-lg, 2);
 			right: $input-padding-x-lg;
 			font-size: $input-font-size-lg;
 		}

@@ -7,7 +7,6 @@ abstract class BeaconTemplate {
 	protected static array $headerLines = [];
 	protected static string $bodyClass = '';
 	protected static string $pageDescription = '';
-	protected static bool $usePhotoswipe = false;
 	protected static ?string $currentModal = null;
 	protected static array $modals = [];
 	protected static array $extraVars = [];
@@ -46,12 +45,6 @@ abstract class BeaconTemplate {
 		
 		$buffer = ob_get_contents();
 		ob_end_clean();
-		
-		foreach (static::$headerLines as $line) {
-			if (strpos($line, 'photoswipe.min.js') !== false) {
-				static::$usePhotoswipe = true;
-			}
-		}
 		
 		$file = BeaconCommon::FrameworkPath() . '/templates/' . self::$templateName . '.php';
 		require($file);
@@ -301,50 +294,6 @@ abstract class BeaconTemplate {
 			$url = BeaconCommon::AbsoluteUrl($url);
 		}
 		static::$heroUrl = $url;
-	}
-	
-	public static function PhotoSwipeDOM(): void {
-		if (!static::$usePhotoswipe) {
-			return;
-		}
-		
-		?><div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
-			<div class="pswp__bg"></div>
-			<div class="pswp__scroll-wrap">
-				<div class="pswp__container">
-		            <div class="pswp__item"></div>
-		            <div class="pswp__item"></div>
-		            <div class="pswp__item"></div>
-		        </div>
-				<div class="pswp__ui pswp__ui--hidden">
-					<div class="pswp__top-bar">
-						<div class="pswp__counter"></div>
-						<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-						<button class="pswp__button pswp__button--share" title="Share"></button>
-						<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-						<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-						<div class="pswp__preloader">
-		                    <div class="pswp__preloader__icn">
-		                      <div class="pswp__preloader__cut">
-		                        <div class="pswp__preloader__donut"></div>
-		                      </div>
-		                    </div>
-		                </div>
-		            </div>
-					<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-		                <div class="pswp__share-tooltip"></div> 
-		            </div>
-					<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-		            </button>
-					<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-		            </button>
-					<div class="pswp__caption">
-		                <div class="pswp__caption__center"></div>
-		            </div>
-				</div>
-			</div>
-		</div>
-<?php
 	}
 	
 	public static function SetVar(string $varName, mixed $value): void {

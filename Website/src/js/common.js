@@ -24,5 +24,11 @@ export const epochToDate = (epoch) => {
 };
 
 export const formatDate = (date, withTime) => {
-	return Intl.DateTimeFormat(Intl.DateTimeFormat().resolvedOptions().locale, { dateStyle: 'medium', timeStyle: (withTime ? 'short' : null) }).format(date);
+	const options = {
+		dateStyle: 'medium',
+	};
+	if (withTime) {
+		options.timeStyle = 'short';
+	}
+	return Intl.DateTimeFormat(Intl.DateTimeFormat().resolvedOptions().locale, options).format(date);
 };
