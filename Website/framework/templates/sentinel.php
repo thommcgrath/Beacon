@@ -58,7 +58,6 @@ $sidebar_items = [
 		<script nonce="<?php echo htmlentities($_SERVER['CSP_NONCE']); ?>">
 		window.browserSupported = false;
 		</script>
-		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
 		<script src="<?php echo BeaconCommon::AssetURI('sentinel-core.js'); ?>"></script>
 		<script nonce="<?php echo htmlentities($_SERVER['CSP_NONCE']); ?>">
 		document.addEventListener('DOMContentLoaded', () => {

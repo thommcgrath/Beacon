@@ -19,16 +19,20 @@ $user = $session->User();
 BeaconTemplate::SetTitle('Account: ' . $user->Username());
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
+BeaconTemplate::AddScript(BeaconCommon::AssetUri('account.js'));
 BeaconTemplate::StartScript(); ?>
 <script>
-const deviceId = <?php echo json_encode(BeaconCommon::DeviceId()); ?>;
-const sessionId = <?php echo json_encode($session->AccessToken()); ?>;
-const apiDomain = <?php echo json_encode(BeaconCommon::APIDomain()); ?>;
+document.addEventListener('DOMContentLoaded', () => {
+	const event = new Event('beaconRunAccountPanel');
+	event.accountProperties = <?php echo json_encode([
+		'deviceId' => BeaconCommon::DeviceId(),
+		'sessionId' => $session->AccessToken(),
+		'apiDomain' => BeaconCommon::APIDomain()
+	]); ?>;
+	document.dispatchEvent(event);
+});
 </script><?php
 BeaconTemplate::FinishScript();
-	
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('account.js'));
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
 

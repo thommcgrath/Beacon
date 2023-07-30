@@ -6,8 +6,6 @@ $two_factor_enabled = BeaconCommon::GetGlobal('2FA Enabled');
 $authenticators = Authenticator::Search(['userId' => $user->UserId()], true);
 $has_authenticators = count($authenticators) > 0;
 
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('jsOTP-es5-min.js'));
-
 ?><div class="visual-group">
 	<h3>Change Password</h3>
 	<p class="notice-block notice-warning"><strong>Important</strong>: Do not give any user access to your Beacon account for any reason. The only way to forcefully remove somebody from your account is to replace your private key. See below for why you don't want to do this. To safely share access to one or more of your Beacon documents, please follow <a href="/help/sharing_beacon_documents">these instructions</a>.</p>

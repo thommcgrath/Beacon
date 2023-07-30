@@ -1,6 +1,9 @@
 {
   "apexskier.eslint.config.eslintConfigPath" : ".eslintrc.yml",
   "apexskier.eslint.config.eslintPath" : "node_modules\/.bin\/eslint",
+  "apexskier.eslint.config.eslintRulesDirs" : [
+
+  ],
   "index.enabled" : true,
   "index.symbolicate" : true,
   "index.use_scm_ignored_files" : true,

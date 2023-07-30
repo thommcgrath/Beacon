@@ -2,11 +2,11 @@
   "actions" : {
     "build" : {
       "enabled" : true,
-      "script" : "node_modules\/.bin\/babel --minified --no-comments src\/js -d www\/assets\/scripts\nnode_modules\/.bin\/sass --style compressed --no-source-map src\/scss:www\/assets\/css"
+      "script" : "node_modules\/.bin\/webpack\nnode_modules\/.bin\/sass --style compressed --no-source-map src\/scss:www\/assets\/css"
     },
     "run" : {
       "enabled" : true,
-      "script" : "node_modules\/.bin\/babel --watch src\/js -d www\/assets\/scripts &\nnode_modules\/.bin\/sass --watch --style compressed --no-source-map src\/scss:www\/assets\/css"
+      "script" : "node_modules\/.bin\/webpack --watch &\nnode_modules\/.bin\/sass --watch --style compressed --no-source-map src\/scss:www\/assets\/css"
     }
   },
   "openLogOnRun" : "fail"

@@ -1,18 +1,9 @@
 "use strict";
 
-let numberOfChecks = 0;
+import { BeaconDialog } from "./classes/BeaconDialog.js";
+import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
 
-document.addEventListener('DOMContentLoaded', () => {
-	let clientReferenceId = null;
-	if (sessionStorage) {
-		clientReferenceId = sessionStorage.getItem('clientReferenceId');
-	}
-	setTimeout(() => {
-		checkPurchaseStatus(clientReferenceId);
-	}, 1000);
-	
-	localStorage.removeItem('beaconCart');
-});
+let numberOfChecks = 0;
 
 const checkPurchaseStatus = (clientReferenceId) => {
 	const checkingContainer = document.getElementById('checking_container');
@@ -39,7 +30,7 @@ const checkPurchaseStatus = (clientReferenceId) => {
 			
 			const obj = JSON.parse(response.body);
 			const userId = obj.user_id;
-			const email = obj.email
+			const email = obj.email;
 			const returnUrl = `${window.location.origin}/account/#omni`;
 			let accountUrl = `${window.location.origin}/account/login?return=${encodeURIComponent(returnUrl)}`;
 			if (email !== null) {
@@ -60,7 +51,7 @@ const checkPurchaseStatus = (clientReferenceId) => {
 			console.log(e);
 			BeaconDialog.show('There was an error checking your purchase status.');
 		}
-	}).catch((error) => {
+	}).catch(() => {
 		setTimeout(() => {
 			if (numberOfChecks === 1) {
 				checkingSubtext.innerText = "\nWaiting for purchase details from Stripe…";
@@ -71,4 +62,16 @@ const checkPurchaseStatus = (clientReferenceId) => {
 			checkPurchaseStatus(clientReferenceId);
 		}, 5000);
 	});
-}
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+	let clientReferenceId = null;
+	if (sessionStorage) {
+		clientReferenceId = sessionStorage.getItem('clientReferenceId');
+	}
+	setTimeout(() => {
+		checkPurchaseStatus(clientReferenceId);
+	}, 1000);
+	
+	localStorage.removeItem('beaconCart');
+});

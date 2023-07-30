@@ -11,10 +11,10 @@ abstract class BeaconTemplate {
 	protected static ?string $currentModal = null;
 	protected static array $modals = [];
 	protected static array $extraVars = [];
-	protected static bool $globalizeLoaded = false;
 	protected static string $canonicalUrl = '';
 	protected static bool $isArticle = false;
 	protected static string $heroUrl = '';
+	protected static array $modules = [];
 	
 	protected static function CacheKey(): string {
 		return md5($_SERVER['REQUEST_URI']);
@@ -110,7 +110,7 @@ abstract class BeaconTemplate {
 			$script[] = '</script>';
 		}
 		
-		return array_merge($metadata, self::$headerLines, $script);
+		return array_merge($metadata, self::$headerLines, $script, static::$modules);
 	}
 	
 	public static function ExtraHeaderContent(string $separator = "\n"): string {
@@ -166,6 +166,34 @@ abstract class BeaconTemplate {
 			
 			self::$scriptLines[] = $line;
 		}
+	}
+	
+	public static function StartModule(): void {
+		ob_start();
+	}
+	
+	public static function FinishModule(): void {
+		$content = trim(ob_get_contents());
+		ob_end_clean();
+		
+		$lines = explode("\n", $content);
+		$linesBound = count($lines) - 1;
+		
+		if (str_starts_with(strtolower(trim($lines[0])), '<script') === true) {
+			unset($lines[0]);
+		}
+		array_unshift($lines, '<script type="module" nonce="' . htmlentities($_SERVER['CSP_NONCE']) . '">');
+		
+		if (strtolower(trim($lines[$linesBound])) !== '</script>') {
+			array_push($lines);
+		}
+		
+		static::$modules[] = implode("\n", $lines);
+	}
+	
+	// Just an alias
+	public static function EndModule(): void {
+		static::FinishModule();	
 	}
 	
 	public static function StartModal(string $id): void {
@@ -328,28 +356,6 @@ abstract class BeaconTemplate {
 			return static::$extraVars[$varName];
 		} else {
 			return null;
-		}
-	}
-
-	public static function LoadGlobalize() {
-		if (static::$globalizeLoaded === true) {
-			return;
-		}
-		static::$globalizeLoaded = true;
-		
-		$assets = [
-			'cldr.js',
-			'cldr/event.js',
-			'cldr/supplemental.js',
-			'globalize.js',
-			'globalize/number.js',
-			'globalize/plural.js',
-			'globalize/currency.js',
-			'currency.js'
-		];
-		
-		foreach ($assets as $asset) {
-			static::AddScript(BeaconCommon::AssetURI($asset));
 		}
 	}
 }

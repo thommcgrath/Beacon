@@ -19,11 +19,16 @@ if ($purchase->RecordCount() === 0) {
 }
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
-BeaconTemplate::LoadGlobalize();
+BeaconTemplate::AddScript(BeaconCommon::AssetUri('viewpurchase.js'));
 
 BeaconTemplate::StartScript();
 ?><script>
-BeaconCurrency.currencyCode = <?php echo json_encode($purchase->Field('currency')); ?>;
+document.addEventListener('DOMContentLoaded', () => {
+	const event = new Event('beaconViewPurchase');
+	//event.currencyCode = <?php echo json_encode($purchase->Field('currency')); ?>;
+	event.currencyCode = 'JPY';
+	document.dispatchEvent(event);
+});
 </script><?php
 BeaconTemplate::FinishScript();
 

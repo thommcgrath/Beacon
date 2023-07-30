@@ -1,5 +1,7 @@
 "use strict";
 
+import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
+
 class ExplorePopover {
 	static container = null;
 	static popover = null;

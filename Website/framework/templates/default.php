@@ -65,7 +65,6 @@ $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 			}
 		}
 		?><meta name="x-beacon-health" content="5ce75a54-428c-4f4c-a0a9-b73c868dc9e7">
-		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
 		<script src="<?php echo BeaconCommon::AssetURI('default.js'); ?>"></script>
 		<?php
 		$header_lines = BeaconTemplate::ExtraHeaderLines();

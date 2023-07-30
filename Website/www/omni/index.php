@@ -76,23 +76,27 @@ foreach ($supported_payment_methods as $payment_method) {
 	];
 }
 
-BeaconTemplate::LoadGlobalize();
-
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 BeaconTemplate::StartScript();
 ?>
 <script>
-BeaconCurrency.currencyCode = <?php echo json_encode($currency); ?>;
-const Currencies = <?php echo json_encode($_SESSION['store_currency_options']); ?>;
-const PaymentMethods = <?php echo json_encode($payment_method_info); ?>;
-const Products = <?php echo json_encode($product_details); ?>;
-const ProductIds = <?php echo json_encode($product_ids); ?>;
+
+document.addEventListener('DOMContentLoaded', () => {
+	const event = new Event('beaconRunCheckout');
+	event.checkoutProperties = <?php echo json_encode([
+		'currencyCode' => $currency,
+		'currencies' => $_SESSION['store_currency_options'],
+		'paymentMethods' => $payment_method_info,
+		'products' => $product_details,
+		'productIds' => $product_ids,
+	]); ?>;
+	document.dispatchEvent(event);
+});
 </script>
 <?php
 BeaconTemplate::FinishScript();
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 
 ?>
 <div id="storefront">
