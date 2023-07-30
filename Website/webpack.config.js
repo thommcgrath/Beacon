@@ -31,7 +31,7 @@ module.exports = {
           options: {
             presets: [
               ['@babel/preset-env', {
-                targets: {browsers: ["> 4%", "safari 10"]},
+                targets: {browsers: ["> 0.05%, last 2 versions, Firefox ESR, not dead"]},
                 modules: false,
               }],
             ]

@@ -2,7 +2,7 @@
 
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
-import { getCurrencyFormatter, formatPrices, formatDate, epochToDate } from "./common.js";
+import { getCurrencyFormatter, formatPrices, formatDate, epochToDate, randomUUID } from "./common.js";
 
 const StatusOwns = 'owns'; // User has a license for the item
 const StatusBuying = 'buying'; // The user is buying it in this cart item
@@ -32,7 +32,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 				this.#products = config.products;
 				this.#isGift = config.isGift;
 			} else {
-				this.#id = crypto.randomUUID();
+				this.#id = randomUUID();
 			}
 		}
 		

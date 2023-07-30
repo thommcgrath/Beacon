@@ -3,7 +3,7 @@
     [
       '@babel/preset-env',
       {
-        "targets": ["defaults, Safari >= 10"]
+        "targets": ["> 0.05%, last 2 versions, Firefox ESR, not dead"]
       }
     ]
   ]

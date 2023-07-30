@@ -3,7 +3,7 @@
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
-import { formatDate } from "./common.js";
+import { formatDate, randomUUID } from "./common.js";
 import totp from "totp-generator";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
@@ -416,7 +416,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			};
 			
 			const authenticator = {
-				authenticatorId: self.crypto.randomUUID(),
+				authenticatorId: randomUUID(),
 				type: 'TOTP',
 				nickname: 'Google Authenticator',
 				metadata: {
