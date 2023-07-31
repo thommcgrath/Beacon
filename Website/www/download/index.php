@@ -62,12 +62,16 @@ if ($legacy) {
 	$download_links['legacy'] = BuildLinks($legacy);
 }
 
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('download.js'));
 BeaconTemplate::StartScript();
 ?><script>
-const downloadData = <?php echo json_encode($download_links, JSON_PRETTY_PRINT); ?>;
+document.addEventListener('DOMContentLoaded', () => {
+	const event = new Event('beaconRunDownloads');
+	event.downloadData = <?php echo json_encode($download_links); ?>;
+	document.dispatchEvent(event);
+});
 </script><?php
 BeaconTemplate::FinishScript();
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('download.js'));
 
 function BuildLinks(array $update): array {
 	$build = $update['build_number'];

@@ -50,21 +50,21 @@ class ExplorePopover {
 			}, 1000);
 		});
 		
-		document.getElementById('explore_results_back').addEventListener('click', (ev) => {
+		document.getElementById('explore_results_back').addEventListener('click', () => {
 			this.search('');
 		});
 		
-		document.getElementById('explore_results_more').addEventListener('click', (ev) => {
+		document.getElementById('explore_results_more').addEventListener('click', () => {
 			window.location = this.searchMoreURL;
 		});
 		
-		window.addEventListener('blur', (ev) => {
+		window.addEventListener('blur', () => {
 			this.dismiss();
 		});
 	}
 	
 	static toggle() {
-		if (this.container.style.display == 'none' || this.container.style.display == '') {
+		if (this.container.style.display === 'none' || this.container.style.display === '') {
 			this.present();
 		} else {
 			this.dismiss();
@@ -72,7 +72,7 @@ class ExplorePopover {
 	}
 	
 	static dismiss() {
-		if (this.container.style.display == 'none') {
+		if (this.container.style.display === 'none') {
 			return;
 		}
 		
@@ -83,7 +83,7 @@ class ExplorePopover {
 	}
 	
 	static present() {
-		if (this.container.style.display == 'block') {
+		if (this.container.style.display === 'block') {
 			return;
 		}
 		
@@ -117,7 +117,7 @@ class ExplorePopover {
 				console.log(e);
 				this.displayResults();
 			}
-		}).catch((error) => {
+		}).catch(() => {
 			this.displayResults();
 		});
 	}
@@ -164,7 +164,7 @@ class ExplorePopover {
 				}
 				
 				const node = document.createElement('li');
-				if ((i % 2) == 0) {
+				if ((i % 2) === 0) {
 					node.className = 'result even';
 				} else {
 					node.className = 'result odd';
