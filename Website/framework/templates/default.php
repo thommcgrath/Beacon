@@ -46,7 +46,6 @@ $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 		<link rel="apple-touch-icon" href="<?php echo BeaconCommon::AssetURI('apple-touch-icon.png'); ?>">
 		<link rel="alternate" type="application/json" title="Beacon Developer Blog" href="/blog/json.php">
 		<link rel="alternate" type="application/rss+xml" title="Beacon Developer Blog" href="/blog/rss.php">
-		<meta name="application-name" content="Beacon">
 		<meta name="msapplication-config" content="<?php echo BeaconCommon::AssetURI('browserconfig.xml'); ?>">
 		<?php
 		foreach ($theme_colors as $media => $color) {
