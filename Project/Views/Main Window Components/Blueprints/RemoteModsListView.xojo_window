@@ -26,6 +26,7 @@ Begin ModsListView RemoteModsListView
    Visible         =   True
    Width           =   600
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -44,6 +45,7 @@ Begin ModsListView RemoteModsListView
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   0
@@ -54,6 +56,10 @@ Begin ModsListView RemoteModsListView
       Transparent     =   False
       Visible         =   True
       Width           =   250
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -61,6 +67,7 @@ Begin ModsListView RemoteModsListView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -71,6 +78,7 @@ Begin ModsListView RemoteModsListView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
@@ -121,6 +129,7 @@ Begin ModsListView RemoteModsListView
       LockTop         =   True
       PageSize        =   100
       PreferencesKey  =   ""
+      RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
       TabIndex        =   2
@@ -132,7 +141,9 @@ Begin ModsListView RemoteModsListView
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   600
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin OmniBar ModsToolbar
@@ -142,6 +153,8 @@ Begin ModsListView RemoteModsListView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -154,6 +167,7 @@ Begin ModsListView RemoteModsListView
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
@@ -203,6 +217,7 @@ Begin ModsListView RemoteModsListView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -213,6 +228,7 @@ Begin ModsListView RemoteModsListView
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
@@ -286,7 +302,7 @@ End
 		    End Try
 		    
 		    For Each Dict As Dictionary In Results
-		      Var ModInfo As New BeaconAPI.WorkshopMod(Dict)
+		      Var ModInfo As New BeaconAPI.ContentPack(Dict)
 		      Var GameName As String = Language.GameName(ModInfo.GameId)
 		      Var LastUpdate As New DateTime(ModInfo.LastUpdate, TimeZone.Current)
 		      Var Status As String = If(ModInfo.Confirmed, "Confirmed", "Waiting Confirmation")
@@ -338,7 +354,7 @@ End
 		    Params.Value("search") = Filter
 		  End If
 		  
-		  Var Request As New BeaconAPI.Request("/ark/contentPacks", "GET", Params, AddressOf APICallback_ListMods)
+		  Var Request As New BeaconAPI.Request("contentPacks", "GET", Params, AddressOf APICallback_ListMods)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent
@@ -354,7 +370,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Idx)
+		    Var ModInfo As BeaconAPI.ContentPack = Me.RowTagAt(Idx)
 		    Self.ShowMod(ModInfo)
 		  Next
 		End Sub
@@ -381,9 +397,9 @@ End
 		        Continue
 		      End If
 		      
-		      Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Row)
+		      Var ModInfo As BeaconAPI.ContentPack = Me.RowTagAt(Row)
 		      Names.Add(ModInfo.Name)
-		      ModIds.Add(ModInfo.ModID)
+		      ModIds.Add(ModInfo.ContentPackId)
 		    Next
 		    
 		    If Not Self.ShowDeleteConfirmation(Names, "mod", "mods") Then
@@ -398,7 +414,7 @@ End
 		    End If
 		    
 		    Self.StartJob
-		    Var Request As New BeaconAPI.Request("/ark/contentPacks/" + ModIds(Idx), "DELETE", WeakAddressOf APICallback_DeleteMod)
+		    Var Request As New BeaconAPI.Request("contentPacks/" + ModIds(Idx), "DELETE", WeakAddressOf APICallback_DeleteMod)
 		    BeaconAPI.Send(Request)
 		  Next
 		End Sub

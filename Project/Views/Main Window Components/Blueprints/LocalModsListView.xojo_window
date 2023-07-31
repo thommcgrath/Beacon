@@ -118,6 +118,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -165,6 +166,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -176,6 +178,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
@@ -188,6 +191,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   600
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -206,6 +210,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   4
@@ -216,6 +221,10 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Transparent     =   False
       Visible         =   True
       Width           =   250
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin OmniBarSeparator FilterSeparator
       AllowAutoDeactivate=   True
@@ -223,6 +232,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -233,6 +243,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
@@ -263,7 +274,7 @@ End
 		      Continue
 		    End If
 		    
-		    SelectedModIds.Add(BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Idx)).ModID)
+		    SelectedModIds.Add(BeaconAPI.ContentPack(Self.ModsList.RowTagAt(Idx)).ContentPackId)
 		  Next
 		  
 		  Var Filter As String = Self.FilterField.Text.Trim
@@ -273,7 +284,7 @@ End
 		  For Each Pack As Beacon.ContentPack In Packs
 		    Var GameName As String = Language.GameName("Ark")
 		    Var LastUpdate As New DateTime(Pack.LastUpdate, TimeZone.Current)
-		    Var ModInfo As New BeaconAPI.WorkshopMod(Pack)
+		    Var ModInfo As New BeaconAPI.ContentPack(Pack)
 		    
 		    Self.ModsList.AddRow(Pack.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium))
 		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
@@ -361,12 +372,12 @@ End
 		      Continue
 		    End If
 		    
-		    Var WorkshopMod As BeaconAPI.WorkshopMod = Self.ModsList.RowTagAt(Idx)
+		    Var WorkshopMod As BeaconAPI.ContentPack = Self.ModsList.RowTagAt(Idx)
 		    If WorkshopMod Is Nil Then
 		      Continue
 		    End If
 		    
-		    Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(WorkshopMod.ModID)
+		    Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(WorkshopMod.ContentPackId)
 		    If Pack Is Nil Then
 		      Continue
 		    End If
@@ -453,7 +464,7 @@ End
 #tag Events ModsList
 	#tag Event
 		Function CanDelete() As Boolean
-		  If Me.SelectedRowCount = 1 And BeaconAPI.WorkshopMod(Me.RowTagAt(Me.SelectedRowIndex)).ModID = Ark.UserContentPackId Then
+		  If Me.SelectedRowCount = 1 And BeaconAPI.ContentPack(Me.RowTagAt(Me.SelectedRowIndex)).ContentPackId = Ark.UserContentPackId Then
 		    Return False
 		  Else
 		    Return Me.SelectedRowCount > 0
@@ -467,12 +478,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var Mods() As BeaconAPI.WorkshopMod
+		  Var Mods() As BeaconAPI.ContentPack
 		  If Warn Then
 		    Var Names() As String
 		    For Row As Integer = 0 To Me.LastRowIndex
-		      Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Row)
-		      If Me.RowSelectedAt(Row) And ModInfo.ModID <> Ark.UserContentPackId Then
+		      Var ModInfo As BeaconAPI.ContentPack = Me.RowTagAt(Row)
+		      If Me.RowSelectedAt(Row) And ModInfo.ContentPackId <> Ark.UserContentPackId Then
 		        Names.Add(ModInfo.Name)
 		        Mods.Add(ModInfo)
 		      End If
@@ -485,12 +496,12 @@ End
 		  
 		  // Make sure they do not have unsaved changes
 		  For Idx As Integer = Mods.LastIndex DownTo 0
-		    If Self.CloseModView(Mods(Idx).ModID) = False Then
+		    If Self.CloseModView(Mods(Idx).ContentPackId) = False Then
 		      Mods.RemoveAt(Idx)
 		      Continue
 		    End If
 		    
-		    Self.mModUUIDsToDelete.Add(Mods(Idx).ModID)
+		    Self.mModUUIDsToDelete.Add(Mods(Idx).ContentPackId)
 		  Next
 		  
 		  If Self.mModUUIDsToDelete.Count > 0 And Self.ModDeleterThread.ThreadState = Thread.ThreadStates.NotRunning Then
@@ -500,7 +511,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
-		  Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Me.SelectedRowIndex)
+		  Var ModInfo As BeaconAPI.ContentPack = Me.RowTagAt(Me.SelectedRowIndex)
 		  Self.ShowMod(ModInfo)
 		End Sub
 	#tag EndEvent
@@ -578,7 +589,7 @@ End
 		    Case "Mod Deleted"
 		      Var ModUUID As String = Dict.Value("Mod UUID")
 		      For Row As Integer = Self.ModsList.LastRowIndex DownTo 0
-		        If BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Row)).ModID = ModUUID Then
+		        If BeaconAPI.ContentPack(Self.ModsList.RowTagAt(Row)).ContentPackId = ModUUID Then
 		          Self.ModsList.RemoveRowAt(Row)
 		          Exit For Row
 		        End If

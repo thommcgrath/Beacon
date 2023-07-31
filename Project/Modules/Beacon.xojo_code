@@ -1494,6 +1494,12 @@ Protected Module Beacon
 	#tag Constant, Name = FTPModeSSH, Type = String, Dynamic = False, Default = \"sftp", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = MarketplaceSteam, Type = String, Dynamic = False, Default = \"Steam", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = MarketplaceSteamWorkshop, Type = String, Dynamic = False, Default = \"Steam Workshop", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 

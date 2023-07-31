@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ModsListView
 Inherits BeaconSubview
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) )
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  Self.HasBeenShown = True
@@ -84,7 +84,7 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShowMod(ModInfo As BeaconAPI.WorkshopMod)
+		Protected Sub ShowMod(ModInfo As BeaconAPI.ContentPack)
 		  RaiseEvent ShowMod(ModInfo)
 		End Sub
 	#tag EndMethod
@@ -169,7 +169,7 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShowMod(ModInfo As BeaconAPI.WorkshopMod)
+		Event ShowMod(ModInfo As BeaconAPI.ContentPack)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

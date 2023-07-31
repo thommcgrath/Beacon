@@ -49,7 +49,7 @@ Begin BeaconDialog RegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   3
       Visible         =   True
       Width           =   520
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -1054,7 +1054,7 @@ End
 		    Self.ShowConfirmation()
 		    If Self.mModInfo.Confirmed Then
 		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your Steam page.")
-		      Self.mModId = Self.mModInfo.ModID
+		      Self.mModId = Self.mModInfo.ContentPackId
 		      Self.Hide
 		      Return
 		    Else
@@ -1088,7 +1088,7 @@ End
 		    Try
 		      Var Mods() As Dictionary = Response.JSON.DictionaryArrayValue
 		      If Mods.Count = 1 Then
-		        Self.mModInfo = New BeaconAPI.WorkshopMod(Mods(0))
+		        Self.mModInfo = New BeaconAPI.ContentPack(Mods(0))
 		        Self.ShowConfirmation()
 		        Return
 		      End If
@@ -1105,7 +1105,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ModInfo As BeaconAPI.WorkshopMod, Mode As Integer)
+		Private Sub Constructor(ModInfo As BeaconAPI.ContentPack, Mode As Integer)
 		  Self.mModInfo = ModInfo
 		  Self.mMode = Mode
 		  Super.Constructor
@@ -1149,12 +1149,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ModInfo As BeaconAPI.WorkshopMod) As Boolean
+		Shared Function Present(Parent As DesktopWindow, ModInfo As BeaconAPI.ContentPack) As Boolean
 		  If (Parent Is Nil) = False Then
 		    Parent = Parent.TrueWindow
 		  End If
 		  
-		  Var Mode As Integer = If(ModInfo.IsLocalMod, ModeLocal, ModeRemote)
+		  Var Mode As Integer = If(ModInfo.IsLocal, ModeLocal, ModeRemote)
 		  Var Win As New RegisterModDialog(ModInfo, Mode)
 		  Win.SwapButtons()
 		  Win.ShowModal(Parent)
@@ -1217,7 +1217,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModInfo As BeaconAPI.WorkshopMod
+		Private mModInfo As BeaconAPI.ContentPack
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1406,7 +1406,7 @@ End
 #tag Events ConfirmActionButton
 	#tag Event
 		Sub Pressed()
-		  Var Request As New BeaconAPI.Request("/contentPacks/" + Self.mModInfo.ModID + "/confirm", "GET", AddressOf APICallback_ConfirmMod)
+		  Var Request As New BeaconAPI.Request("/contentPacks/" + Self.mModInfo.ContentPackId + "/confirm", "GET", AddressOf APICallback_ConfirmMod)
 		  Self.ConfirmSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1449,10 +1449,6 @@ End
 		  Self.IntroSkipButton.Enabled = True
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events IntroMessageLabel
-#tag EndEvents
-#tag Events IntroExplanationLabel
 #tag EndEvents
 #tag Events IntroIdField
 	#tag Event
@@ -1516,7 +1512,7 @@ End
 		    PackData.Value("marketplaceId") = Self.mSteamId
 		    PackData.Value("gameId") = Ark.Identifier
 		    
-		    Var Request As New BeaconAPI.Request("contentPacks", "POST", PackData)
+		    Var Request As New BeaconAPI.Request("contentPacks", "POST", Beacon.GenerateJSON(PackData, False), "application/json")
 		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		    If Not Response.Success Then
 		      Var Reason As String = Response.Message

@@ -135,12 +135,17 @@ Begin BeaconPagedSubview BlueprintsComponent
          Height          =   448
          Index           =   -2147483648
          InitialParent   =   "Views"
+         IsFrontmost     =   False
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Modified        =   False
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -166,12 +171,17 @@ Begin BeaconPagedSubview BlueprintsComponent
          Height          =   448
          Index           =   -2147483648
          InitialParent   =   "Views"
+         IsFrontmost     =   False
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Modified        =   False
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
@@ -275,7 +285,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowMod(Sender As ModsListView, ModInfo As BeaconAPI.WorkshopMod)
+		Private Sub ShowMod(Sender As ModsListView, ModInfo As BeaconAPI.ContentPack)
 		  If ModInfo.Confirmed = False Then
 		    If RegisterModDialog.Present(Self, ModInfo) Then
 		      Sender.RefreshMods()
@@ -285,15 +295,15 @@ End
 		  End If
 		  
 		  Var View As BeaconSubview
-		  Var Idx As Integer = Self.Nav.IndexOf(ModInfo.ModID)
+		  Var Idx As Integer = Self.Nav.IndexOf(ModInfo.ContentPackId)
 		  If Idx > -1 Then
 		    View = Self.Page(Idx - 1) // Don't forget the separator
 		  Else
 		    Var Controller As BlueprintController
-		    If ModInfo.IsLocalMod Then
-		      Controller = New LocalBlueprintController(ModInfo.ModID, ModInfo.Name)
+		    If ModInfo.IsLocal Then
+		      Controller = New LocalBlueprintController(ModInfo.ContentPackId, ModInfo.Name)
 		    Else
-		      Controller = New RemoteBlueprintController(ModInfo.ModID, ModInfo.Name)
+		      Controller = New RemoteBlueprintController(ModInfo.ContentPackId, ModInfo.Name)
 		    End If
 		    
 		    View = New ModEditorView(Controller)
@@ -375,7 +385,7 @@ End
 #tag EndEvents
 #tag Events LocalModsView
 	#tag Event
-		Sub ShowMod(ModInfo As BeaconAPI.WorkshopMod)
+		Sub ShowMod(ModInfo As BeaconAPI.ContentPack)
 		  Self.ShowMod(Me, ModInfo)
 		End Sub
 	#tag EndEvent
@@ -387,7 +397,7 @@ End
 #tag EndEvents
 #tag Events CommunityModsView
 	#tag Event
-		Sub ShowMod(ModInfo As BeaconAPI.WorkshopMod)
+		Sub ShowMod(ModInfo As BeaconAPI.ContentPack)
 		  Self.ShowMod(Me, ModInfo)
 		End Sub
 	#tag EndEvent
@@ -404,7 +414,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub ShowMod(ModInfo As BeaconAPI.WorkshopMod)
+		Sub ShowMod(ModInfo As BeaconAPI.ContentPack)
 		  Self.ShowMod(Me, ModInfo)
 		End Sub
 	#tag EndEvent

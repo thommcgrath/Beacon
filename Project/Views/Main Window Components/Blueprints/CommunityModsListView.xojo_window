@@ -32,6 +32,8 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -44,6 +46,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -61,6 +64,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -71,6 +75,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
@@ -83,6 +88,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin DelayedSearchField FilterField
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -101,6 +107,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
+      PanelIndex      =   0
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
       TabIndex        =   2
@@ -111,6 +118,10 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       Transparent     =   False
       Visible         =   True
       Width           =   250
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin FadedSeparator StatusSeparator
       AllowAutoDeactivate=   True
@@ -118,6 +129,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -128,6 +140,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
@@ -210,6 +223,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       LockTop         =   True
       PageSize        =   100
       PreferencesKey  =   ""
+      RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
       TabIndex        =   5
@@ -221,7 +235,9 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   600
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
 End
@@ -314,12 +330,12 @@ End
 		    
 		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    For Each Dict As Dictionary In Results
-		      Var ModInfo As New BeaconAPI.WorkshopMod(Dict)
+		      Var ModInfo As New BeaconAPI.ContentPack(Dict)
 		      Var GameName As String = Language.GameName(ModInfo.GameId)
 		      Var LastUpdate As New DateTime(ModInfo.LastUpdate, TimeZone.Current)
 		      Var Status As String = ""
 		      
-		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(ModInfo.ModID)
+		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(ModInfo.ContentPackId)
 		      If (Pack Is Nil) = False Then
 		        If Pack.LastUpdate < ModInfo.LastUpdate Then
 		          Status = "Update Available"
@@ -357,7 +373,7 @@ End
 		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(Self.mPendingDownloads(Idx))
 		      If (Pack Is Nil) = False Then
 		        If OpenEditors Then
-		          Var ModInfo As New BeaconAPI.WorkshopMod(Pack)
+		          Var ModInfo As New BeaconAPI.ContentPack(Pack)
 		          Self.ShowMod(ModInfo)
 		        End If
 		        Self.mPendingDownloads.RemoveAt(Idx)
@@ -455,12 +471,12 @@ End
 		    End If
 		    
 		    Self.StartJob()
-		    Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Idx)
-		    Var Request As New BeaconAPI.Request("/discovery/" + ModInfo.ModID, "GET", AddressOf APICallback_DownloadMod)
+		    Var ModInfo As BeaconAPI.ContentPack = Me.RowTagAt(Idx)
+		    Var Request As New BeaconAPI.Request("/discovery/" + ModInfo.ContentPackId, "GET", AddressOf APICallback_DownloadMod)
 		    BeaconAPI.Send(Request)
 		    
-		    If Self.mPendingDownloads.IndexOf(ModInfo.ModID) = -1 Then
-		      Self.mPendingDownloads.Add(ModInfo.ModID)
+		    If Self.mPendingDownloads.IndexOf(ModInfo.ContentPackId) = -1 Then
+		      Self.mPendingDownloads.Add(ModInfo.ContentPackId)
 		    End If
 		  Next
 		End Sub

@@ -1,9 +1,17 @@
 #tag Class
-Protected Class WorkshopMod
+Protected Class ContentPack
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function AsDictionary() As Dictionary
+		Function AsDictionary() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("mod_id") = Self.mModID
+		  Dict.Value("contentPackId") = Self.mContentPackId
+		  Dict.Value("gameId") = Self.mGameId
+		  Dict.Value("marketplace") = Self.mMarketplace
+		  Dict.Value("marketplaceId") = Self.mMarketplaceId
+		  Dict.Value("name") = Self.mName
+		  Dict.Value("isConfirmed") = Self.mConfirmed
+		  Dict.Value("confirmationCode") = Self.mConfirmationCode
+		  Dict.Value("minVersion") = Self.mMinVersion
+		  Dict.Value("lastUpdate") = Self.mLastUpdate
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -28,16 +36,16 @@ Protected Class WorkshopMod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Details As Beacon.ContentPack)
-		  Self.mModID = Details.ContentPackId
+		  Self.mContentPackId = Details.ContentPackId
 		  Self.mName = Details.Name
-		  If Details.MarketplaceId.IsEmpty = False Then
-		    Self.mWorkshopID = Details.MarketplaceId
-		  End If
-		  Self.mIsLocalMod = Details.IsLocal
+		  Self.mMarketplace = Details.Marketplace
+		  Self.mMarketplaceId = Details.MarketplaceId
+		  Self.mIsLocal = Details.IsLocal
 		  Self.mConfirmed = True
 		  Self.mLastUpdate = Details.LastUpdate
-		  Self.mGameId = Ark.Identifier
+		  Self.mGameId = Details.GameId
 		  Self.mMinVersion = 0
+		  
 		End Sub
 	#tag EndMethod
 
@@ -45,22 +53,24 @@ Protected Class WorkshopMod
 		Sub Constructor(Source As Dictionary)
 		  // For mod info from the API
 		  
+		  Self.mMarketplace = Source.Lookup("marketplace", "")
+		  Self.mMarketplaceId = Source.Lookup("marketplaceId", "")
 		  Self.mConfirmationCode = Source.Lookup("confirmationCode", "")
 		  Self.mConfirmed = Source.Lookup("isConfirmed", "")
 		  Self.mGameId = Source.Lookup("gameId", Ark.Identifier)
-		  Self.mIsLocalMod = False
+		  Self.mIsLocal = False
 		  Self.mLastUpdate = Source.Lookup("lastUpdate", 0)
 		  Self.mMinVersion = Source.Lookup("minVersion", 0)
-		  Self.mModID = Source.Value("contentPackId")
+		  Self.mContentPackId = Source.Value("contentPackId")
 		  Self.mName = Source.Value("name")
-		  Self.mWorkshopId = Source.Value("steamId").DoubleValue.ToString(Locale.Raw, "0")
 		  
-		  If Source.HasKey("steamUrl") Then
-		    Self.mWorkshopURL = Source.Value("steamUrl")
-		  ElseIf (Self.mWorkshopId Is Nil) = False Then
-		    Self.mWorkshopURL = "https://steamcommunity.com/sharedfiles/filedetails/?id=" + Self.mWorkshopId.StringValue
-		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackId() As String
+		  Return Self.mContentPackId
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -70,8 +80,8 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsLocalMod() As Boolean
-		  Return Self.mIsLocalMod
+		Function IsLocal() As Boolean
+		  Return Self.mIsLocal
 		End Function
 	#tag EndMethod
 
@@ -82,8 +92,25 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As String
-		  Return Self.mModID
+		Function Marketplace() As String
+		  Return Self.mMarketplace
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MarketplaceId() As String
+		  Return Self.mMarketplaceId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MarketplaceUrl() As String
+		  Select Case Self.mMarketplace
+		  Case Beacon.MarketplaceSteam
+		    Return "https://store.steampowered.com/app/" + Self.mMarketplaceId
+		  Case Beacon.MarketplaceSteamWorkshop
+		    Return "https://steamcommunity.com/sharedfiles/filedetails/?id=" + Self.mMarketplaceId
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -94,37 +121,33 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As BeaconAPI.WorkshopMod) As Integer
+		Function Operator_Compare(Other As BeaconAPI.ContentPack) As Integer
 		  If Other = Nil Then
 		    Return 1
 		  End If
 		  
-		  Return Self.mModID.Compare(Other.mModID, ComparisonOptions.CaseSensitive)
+		  Return Self.mContentPackId.Compare(Other.mContentPackId, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function UserBlueprintsMod() As BeaconAPI.WorkshopMod
-		  Var ModInfo As New BeaconAPI.WorkshopMod
-		  ModInfo.mConfirmed = True
-		  ModInfo.mModID = Ark.UserContentPackId
-		  ModInfo.mName = Ark.UserContentPackName
-		  ModInfo.mWorkshopID = Nil
-		  Return ModInfo
+		Shared Function UserBlueprintsContentPack() As BeaconAPI.ContentPack
+		  Var PackInfo As New BeaconAPI.ContentPack
+		  PackInfo.mConfirmed = True
+		  PackInfo.mContentPackId = Ark.UserContentPackId
+		  PackInfo.mName = Ark.UserContentPackName
+		  PackInfo.mMarketplace = Beacon.MarketplaceSteamWorkshop
+		  PackInfo.mMarketplaceId = ""
+		  Return PackInfo
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function WorkshopID() As NullableString
-		  Return Self.mWorkshopID
-		End Function
-	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function WorkshopURL() As String
-		  Return Self.mWorkshopURL
-		End Function
-	#tag EndMethod
+	#tag Note, Name = What
+		This class exists because the normal Beacon.ContentPack represents an actual mod that exists in the database. This
+		object exists at the api.
+		
+	#tag EndNote
 
 
 	#tag Property, Flags = &h21
@@ -136,11 +159,15 @@ Protected Class WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mContentPackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mGameId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIsLocalMod As Boolean
+		Private mIsLocal As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -148,23 +175,19 @@ Protected Class WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mMarketplace As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMarketplaceId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMinVersion As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModID As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWorkshopID As NullableString
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWorkshopURL As String
 	#tag EndProperty
 
 
