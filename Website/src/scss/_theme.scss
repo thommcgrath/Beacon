@@ -725,7 +725,11 @@ table.generic {
 #header_wrapper {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
-	position: fixed;
+	position: -webkit-sticky;
+	position: -moz-sticky;
+	position: -ms-sticky;
+	position: -o-sticky;
+	position: sticky;
 	top: 0px;
 	left: 0px;
 	right: 0px;
@@ -857,7 +861,7 @@ table.generic {
 }
 
 #content_wrapper {
-	margin-top: calc(126px + max(10px, env(safe-area-inset-top, 10px)));
+	margin-top: $page_margins;
 	line-height: 1.7rem;
 }
 
@@ -2296,10 +2300,6 @@ img.avatar {
 	#header_logo {
 		height: 80px;
 	}
-	
-	#content_wrapper {
-		margin-top: calc(146px + max(10px, env(safe-area-inset-top, 10px)));
-	}
 }
 
 @media (min-width: $breakpoint_mobile) {
@@ -2352,10 +2352,6 @@ img.avatar {
 		-webkit-box-flex: 0;
 		-ms-flex: 0 0 0px;
 		flex: 0 0 0;
-	}
-	
-	#content_wrapper {
-		margin-top: calc(131px + max(10px, env(safe-area-inset-top, 10px)));
 	}
 	
 	:target:before {
