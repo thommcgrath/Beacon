@@ -738,8 +738,6 @@ table.generic {
 	padding-bottom: 10px;
 	background-color: $background-color;
 	border-color: rgba($foreground-color, 0.1);
-	
-	@include backdrop-blur(30px, rgba($background-color, 0.5));
 }
 
 #header {
