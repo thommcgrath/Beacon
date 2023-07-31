@@ -153,7 +153,8 @@ abstract class BeaconTemplate {
 		
 		$lines = explode("\n", $content);
 		foreach ($lines as $line) {
-			if (substr($line, 0, 8) == '<script ' || substr($line, 0, 8) == '<script>' || $line == '</script>') {
+			$trimmed = strtolower(trim($line));
+			if (str_starts_with($trimmed, '<script') || $trimmed === '</script>') {
 				continue;
 			}
 			

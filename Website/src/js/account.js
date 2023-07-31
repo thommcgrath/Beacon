@@ -3,7 +3,7 @@
 import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
 import { BeaconDialog } from "./classes/BeaconDialog.js";
 import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
-import { formatDate, randomUUID } from "./common.js";
+import { formatDates, randomUUID } from "./common.js";
 import totp from "totp-generator";
 
 document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
@@ -490,17 +490,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 	const authenticatorRows = document.querySelectorAll('#authenticators-table tbody tr');
 	let numAuthenticators = authenticatorRows.length;
 	if (numAuthenticators > 0) {
-		const timeElements = document.querySelectorAll('time');
-		for (const timeElement of timeElements) {
-			if (timeElement.classList.contains('no-localize')) {
-				continue;
-			}
-			
-			const dateTime = new Date(timeElement.getAttribute('datetime'));
-			if (dateTime) {
-				timeElement.innerText = formatDate(dateTime, true);
-			}
-		}
+		formatDates(true, false);
 		
 		if (timeZoneName) {
 			timeZoneName.innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;

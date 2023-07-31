@@ -152,7 +152,7 @@ if (is_null($articleData)) {
 		}
 		
 		$parser = new Parsedown();
-		$articleData['html'] = '<div class="header-with-subtitle"><h1>' . htmlentities($results->Field('subject')) . '</h1><div class="subtitle text-lighter">Last updated <time datetime="' . htmlentities($lastModified->format('c')) . '">' . htmlentities($lastModified->format('l F jS, Y \a\t g:i:s A T')) . '</time></div></div>' . "\n" . '<p class="help-summary">' . htmlentities($articleData['preview']) . "</p>\n" . str_replace('<table>', '<table class="generic">', $parser->text($markdown));
+		$articleData['html'] = '<div class="header-with-subtitle"><h1>' . htmlentities($results->Field('subject')) . '</h1><div class="subtitle text-lighter">Last updated <time datetime="' . htmlentities($lastModified->format(DATE_ISO8601)) . '">' . htmlentities($lastModified->format('l F jS, Y \a\t g:i:s A T')) . '</time></div></div>' . "\n" . '<p class="help-summary">' . htmlentities($articleData['preview']) . "</p>\n" . str_replace('<table>', '<table class="generic">', $parser->text($markdown));
 		
 		if ($results->Field('affected_keys') != '') {
 			// Want these keys on the page for SEO purposes

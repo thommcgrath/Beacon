@@ -25,8 +25,7 @@ BeaconTemplate::StartScript();
 ?><script>
 document.addEventListener('DOMContentLoaded', () => {
 	const event = new Event('beaconViewPurchase');
-	//event.currencyCode = <?php echo json_encode($purchase->Field('currency')); ?>;
-	event.currencyCode = 'JPY';
+	event.currencyCode = <?php echo json_encode($purchase->Field('currency')); ?>;
 	document.dispatchEvent(event);
 });
 </script><?php
@@ -41,7 +40,7 @@ $purchase_total = $purchase->Field('total_paid');
 $purchase_refunded = $purchase->Field('refunded');
 $purchase_notes = $purchase->Field('notes');
 
-echo '<h1>Purchase on ' . date('F jS Y', $purchase_seconds) . ' at ' . date('g:i:s A e', $purchase_seconds);
+echo '<h1>Purchase on <time datetime="' . date(DATE_ISO8601, $purchase_seconds) . '">' . date('F jS Y', $purchase_seconds) . ' at ' . date('g:i:s A e', $purchase_seconds) . '</time>';
 if ($purchase_refunded) {
 	echo '<span class="tag red">Refunded</span>';
 }

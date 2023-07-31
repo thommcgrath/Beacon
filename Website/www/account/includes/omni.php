@@ -140,7 +140,7 @@ function ShowPurchases() {
 		$purchase_id = $purchases->Field('purchase_id');
 		$actions = ['View' => '/account/purchase/' . $purchase_id];
 		$purchase_time = intval($purchases->Field('purchase_date'));
-		$purchase_time_str = '<time datetime="' . date('Y-m-d H:i:s.000O', $purchase_time) . '">' . htmlentities(date('F jS Y g:i:s A e', $purchase_time)) . '</time>';
+		$purchase_time_str = '<time datetime="' . date(DATE_ISO8601, $purchase_time) . '">' . htmlentities(date('F jS Y g:i:s A e', $purchase_time)) . '</time>';
 		$refunded = $purchases->Field('refunded');
 		
 		$actions_html_members = [];

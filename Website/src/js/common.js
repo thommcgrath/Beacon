@@ -23,14 +23,27 @@ export const epochToDate = (epoch) => {
 	return new Date(epoch * 1000);
 };
 
-export const formatDate = (date, withTime) => {
+export const formatDate = (date, withTime = false, withTimeZone = false) => {
+	const resolvedOptions = Intl.DateTimeFormat().resolvedOptions();
 	const options = {
 		dateStyle: 'medium',
 	};
 	if (withTime) {
 		options.timeStyle = 'short';
 	}
-	return Intl.DateTimeFormat(Intl.DateTimeFormat().resolvedOptions().locale, options).format(date);
+	let formatted = Intl.DateTimeFormat(resolvedOptions.locale, options).format(date);
+	if (withTimeZone) {
+		formatted = `${formatted} ${resolvedOptions.timeZone}`;
+	}
+	return formatted;
+};
+
+export const formatDates = (withTime = false, withTimeZone = false) => {
+	const timeElements = document.querySelectorAll('time');
+	timeElements.forEach((elem) => {
+		const timestamp = new Date(elem.getAttribute('datetime'));
+		elem.innerText = formatDate(timestamp, withTime, withTimeZone);
+	});
 };
 
 export const randomUUID = () => {
