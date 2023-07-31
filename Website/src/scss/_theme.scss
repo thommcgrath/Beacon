@@ -18,7 +18,7 @@ $button-yellow: #ffc107 !default;
 
 @mixin source-code-pro() {
 	font-family: 'Source Code Pro', monospace;
-	font-weight: $font-weight;;
+	font-weight: $font-weight;
 	font-style: normal;
 }
 
@@ -435,8 +435,8 @@ a {
 	max-width: $max_content_width;
 	margin-left: auto;
 	margin-right: auto;
-	padding-left: $page_margins;
-	padding-right: $page_margins;
+	padding-left: max($page_margins, env(safe-area-inset-left, $page_margins));
+	padding-right: max($page_margins, env(safe-area-inset-right, $page_margins));
 	box-sizing: border-box;
 }
 
@@ -730,7 +730,7 @@ table.generic {
 	left: 0px;
 	right: 0px;
 	z-index: 99;
-	padding-top: 10px;
+	padding-top: max(10px, env(safe-area-inset-top, 10px));
 	padding-bottom: 10px;
 	background-color: $background-color;
 	border-color: rgba($foreground-color, 0.1);
@@ -857,7 +857,7 @@ table.generic {
 }
 
 #content_wrapper {
-	margin-top: 136px;
+	margin-top: calc(126px + max(10px, env(safe-area-inset-top, 10px)));
 	line-height: 1.7rem;
 }
 
@@ -865,7 +865,7 @@ table.generic {
 	font-size: 0.8em;
 	text-align: center;
 	margin-top: $page_margins * 2;
-	margin-bottom: $page_margins;
+	margin-bottom: max($page_margins, env(safe-area-inset-bottom, $page_margins));
 	
 	a.external_logo {
 		margin-left: 6px;
@@ -2298,7 +2298,7 @@ img.avatar {
 	}
 	
 	#content_wrapper {
-		margin-top: 156px;
+		margin-top: calc(146px + max(10px, env(safe-area-inset-top, 10px)));
 	}
 }
 
@@ -2355,7 +2355,7 @@ img.avatar {
 	}
 	
 	#content_wrapper {
-		margin-top: 141px;
+		margin-top: calc(131px + max(10px, env(safe-area-inset-top, 10px)));
 	}
 	
 	:target:before {
@@ -2717,8 +2717,8 @@ body.no-navigation {
 	}
 	
 	#content_wrapper {
-		margin-top: $page_margins;
-		margin-bottom: $page_margins;
+		margin-top: max($page_margins, env(safe-area-inset-top, $page_margins));
+		margin-bottom: max($page_margins, env(safe-area-inset-bottom, $page_margins));
 	}
 }
 
@@ -2943,8 +2943,8 @@ body.no-navigation {
 	}
 	
 	#content_wrapper {
-		margin-top: 20px;
-		margin-bottom: 20px;
+		margin-top: max(20px, env(safe-area-inset-top, 20px));
+		margin-bottom: max(20px, env(safe-area-inset-bottom, 20px));
 	}
 	
 	table.generic {

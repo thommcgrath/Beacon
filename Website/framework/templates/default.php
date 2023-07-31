@@ -37,7 +37,7 @@ $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 <html lang="en" prefix="og: http://ogp.me/ns#">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<link rel="icon" type="image/png" sizes="32x32" href="<?php echo BeaconCommon::AssetURI('favicon-32x32.png'); ?>">
 		<link rel="icon" type="image/png" sizes="16x16" href="<?php echo BeaconCommon::AssetURI('favicon-16x16.png'); ?>">
@@ -46,7 +46,6 @@ $noNavigation = BeaconTemplate::GetVar('No Navigation') === true;
 		<link rel="apple-touch-icon" href="<?php echo BeaconCommon::AssetURI('apple-touch-icon.png'); ?>">
 		<link rel="alternate" type="application/json" title="Beacon Developer Blog" href="/blog/json.php">
 		<link rel="alternate" type="application/rss+xml" title="Beacon Developer Blog" href="/blog/rss.php">
-		<meta name="apple-mobile-web-app-title" content="Beacon">
 		<meta name="application-name" content="Beacon">
 		<meta name="msapplication-config" content="<?php echo BeaconCommon::AssetURI('browserconfig.xml'); ?>">
 		<?php
