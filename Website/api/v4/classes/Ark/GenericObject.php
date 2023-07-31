@@ -686,6 +686,18 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		$database->Commit();
 		return true;
 	}
+	
+	public function GetPropertyValue(string $propertyName): mixed {
+		$prefix = static::CustomVariablePrefix();
+		switch ($propertyName) {
+		case $prefix . 'Id':
+			return $this->objectId;
+		case $prefix . 'Group':
+			return $this->objectGroup;
+		default:
+			return parent::GetPropertyValue($propertyName);
+		}
+	}
 }
 
 ?>

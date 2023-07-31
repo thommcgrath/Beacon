@@ -8,134 +8,134 @@ Core::RegisterRoutes(
 	[
 		'/applications' => [
 			'GET' => 'applications/list',
-			'POST' => 'applications/create'
+			'POST' => 'applications/create',
 		],
 		'/applications/{applicationId}' => [
 			'GET' => 'applications/get',
 			'PATCH' => 'applications/edit',
-			'DELETE' => 'applications/delete'
+			'DELETE' => 'applications/delete',
 		],
 		'/applications/{applicationId}/avatar' => [
-			'PUT' => 'applications/avatar'
-		],
-		'/ark/contentPacks/{contentPackId}/confirm' => [
-			'GET' => 'ark/confirmContentPack'
+			'PUT' => 'applications/avatar',
 		],
 		'/ark/projects/{projectId}/Game.ini' => [
 			'GET' => 'ark/generate',
-			'PUT' => 'ark/generate'
+			'PUT' => 'ark/generate',
 		],
 		'/authenticators' => [
 			'POST' => 'authenticators/create',
-			'GET' => 'authenticators/list'
+			'GET' => 'authenticators/list',
 		],
 		'/authenticators/{authenticatorId}' => [
 			'POST' => 'authenticators/edit',
 			'GET' => 'authenticators/get',
-			'DELETE' => 'authenticators/delete'
+			'DELETE' => 'authenticators/delete',
+		],
+		'/contentPacks/{contentPackId}/confirm' => [
+			'GET' => 'ark/confirmContentPack',
 		],
 		'/deltas' => [
-			'GET' => 'deltas'
+			'GET' => 'deltas',
 		],
 		'/deltas/{version}' => [
-			'GET' => 'deltas'
+			'GET' => 'deltas',
 		],
 		'/discovery' => [
-			'GET' => 'discovery/list'
+			'GET' => 'discovery/list',
 		],
 		'/discovery/{contentPackId}' => [
 			'PUT' => 'discovery/edit',
 			'GET' => 'discovery/get',
-			'HEAD' => 'discovery/get'
+			'HEAD' => 'discovery/get',
 		],
 		'/files' => [
-			'GET' => 'file'
+			'GET' => 'file',
 		],
 		'/files/{...filePath}' => [
 			'GET' => 'file',
 			'PUT' => 'file',
-			'DELETE' => 'file'
+			'DELETE' => 'file',
 		],
 		'/login' => [
 			'GET' => 'login',
-			'POST' => 'login'
+			'POST' => 'login',
 		],
 		'/now' => [
-			'GET' => 'now'
+			'GET' => 'now',
 		],
 		'/projects' => [
 			'GET' => 'projects/list',
 			'DELETE' => 'projects/delete',
-			'POST' => 'projects/write'
+			'POST' => 'projects/write',
 		],
 		'/projects/{projectId}' => [
 			'GET' => 'projects/get',
 			'DELETE' => 'projects/delete',
-			'HEAD' => 'projects/exists'
+			'HEAD' => 'projects/exists',
 		],
 		'/projects/{projectId}/guests' => [
-			'GET' => 'projects/guests/list'
+			'GET' => 'projects/guests/list',
 		],
 		'/projects/{projectId}/guests/{userId}' => [
 			'GET' => 'projects/guests/get',
 			'PUT' => 'projects/guests/create',
-			'DELETE' => 'projects/guests/delete'
+			'DELETE' => 'projects/guests/delete',
 		],
 		'/projects/{projectId}/metadata' => [
-			'GET' => 'projects/get'
+			'GET' => 'projects/get',
 		],
 		'/projects/{projectId}/versions' => [
-			'GET' => 'projects/get'
+			'GET' => 'projects/get',
 		],
 		'/projects/{projectId}/versions/{versionId}' => [
-			'GET' => 'projects/get'
+			'GET' => 'projects/get',
 		],
 		'/sentinel/services/{serviceId}/logs' => [
-			'GET' => 'sentinel/service/logs'
+			'GET' => 'sentinel/service/logs',
 		],
 		'/sentinel/serviceGroups/{serviceGroupId}/members' => [
 			'GET' => 'sentinel/serviceGroups/members/list',
-			'POST' => 'sentinel/serviceGroups/members/edit'
+			'POST' => 'sentinel/serviceGroups/members/edit',
 		],
 		'/sessions/{sessionId}' => [
 			'GET' => 'sessions/get',
-			'DELETE' => 'sessions/delete'
+			'DELETE' => 'sessions/delete',
 		],
 		'/templateSelectors' => [
-			'GET' => 'templateSelectors/list'
+			'GET' => 'templateSelectors/list',
 		],
 		'/templateSelectors/{templateSelectorId}' => [
-			'GET' => 'templateSelectors/get'
+			'GET' => 'templateSelectors/get',
 		],
 		'/templates' => [
-			'GET' => 'templates/list'
+			'GET' => 'templates/list',
 		],
 		'/templates/{templateId}' => [
-			'GET' => 'templates/get'
+			'GET' => 'templates/get',
 		],
 		'/tokens/{tokenId}' => [
 			'GET' => 'tokens/get',
-			'DELETE' => 'tokens/delete'
+			'DELETE' => 'tokens/delete',
 		],
 		'/users/{userId}' => [
 			'GET' => 'users/get',
-			'PATCH' => 'users/edit'
+			'PATCH' => 'users/edit',
 		],
 		'/users/{userId}/merge' => [
-			'POST' => 'users/merge'
+			'POST' => 'users/merge',
 		],
 		'/users/{userId}/projects' => [
-			'GET' => 'projects/list'
+			'GET' => 'projects/list',
 		],
 		'/users/{userId}/tokens' => [
 			'GET' => 'tokens/list',
-			'POST' => 'tokens/create'
+			'POST' => 'tokens/create',
 		]
 	]
 );
 
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\ContentPack', 'contentPacks', 'contentPackId');
-DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Blueprint', 'ark/blueprints', 'blueprintId');
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Blueprint', 'ark/blueprints', 'blueprintId', DatabaseObjectManager::kFeatureAll, 'blueprintGroup', ['creatures' => 'BeaconAPI\v4\Ark\Creature', 'engrams' => 'BeaconAPI\v4\Ark\Engram', 'lootDrops' => 'BeaconAPI\v4\Ark\LootDrop', 'spawnPoints' => 'BeaconAPI\v4\Ark\SpawnPoint']);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\Color', 'ark/colors', 'colorId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ColorSet', 'ark/colorSets', 'colorSetId', DatabaseObjectManager::kFeatureReadOnly);
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Ark\ConfigOption', 'ark/configOptions', 'configOptionId');

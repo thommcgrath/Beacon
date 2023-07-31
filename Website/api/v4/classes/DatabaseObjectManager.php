@@ -13,12 +13,14 @@ class DatabaseObjectManager {
 	const kFeatureReadOnly = self::kFeatureRead | self::kFeatureSingle | self::kFeatureBulk;
 	const kFeatureAll = self::kFeatureCreate | self::kFeatureRead | self::kFeatureUpdate | self::kFeatureDelete | self::kFeatureSingle | self::kFeatureBulk;
 	
-	protected $className = null;
-	protected $features = self::kFeatureAll;
-	protected $path = null;
-	protected $varName = null;
+	protected string $className;
+	protected int $features = self::kFeatureAll;
+	protected string $path;
+	protected string $varName;
+	protected ?string $subclassProperty = null;
+	protected array $subclassMap = [];
 	
-	public function __construct(string $className, string $path, string $varName, int $features = self::kFeatureAll) {
+	public function __construct(string $className, string $path, string $varName, int $features = self::kFeatureAll, ?string $subclassProperty = null, array $subclassMap = []) {
 		if (class_exists($className) === false) {
 			throw new Exception('Class `' . $className . '` does not exist.');
 		}
@@ -31,10 +33,17 @@ class DatabaseObjectManager {
 		$this->path = $path;
 		$this->varName = $varName;
 		$this->features = ($features & self::kFeatureAll);
+		
+		if (is_null($subclassProperty) === false && count($subclassMap) === 0) {
+			throw new Exception('Subclass map must include members if using a subclass property.');
+		}
+		
+		$this->subclassProperty = $subclassProperty;
+		$this->subclassMap = $subclassMap;
 	}
 	
-	public static function RegisterRoutes(string $className, string $path, string $varName, int $features = self::kFeatureAll) {
-		$manager = new static($className, $path, $varName, $features);
+	public static function RegisterRoutes(string $className, string $path, string $varName, int $features = self::kFeatureAll, ?string $subclassProperty = null, array $subclassMap = []) {
+		$manager = new static($className, $path, $varName, $features, $subclassProperty, $subclassMap);
 		$manager->SetupRoutes();
 	}
 	
@@ -84,32 +93,102 @@ class DatabaseObjectManager {
 		}
 	}
 	
+	protected function GetClassName(array $member): string {
+		if (is_null($this->subclassProperty) === false && array_key_exists($this->subclassProperty, $member)) {
+			$subclassValue = $member[$this->subclassProperty];
+			if (array_key_exists($subclassValue, $this->subclassMap)) {
+				return $this->subclassMap[$subclassValue];
+			}
+		}
+		return $this->className;
+	}
+	
 	public function HandleList(array $context): Response {
-		return Response::NewJson($this->className::Search($_GET), 200);
+		$results = $this->className::Search($_GET);
+		if (is_null($this->subclassProperty)) {
+			return Response::NewJson($results, 200);
+		}
+		
+		$objects = $results['results'];
+		$objectsBound = count($objects) - 1;
+		$indexes = [];
+		$classObjectIds = [];
+		for ($idx = 0; $idx <= $objectsBound; $idx++) {
+			$subclassValue = $objects[$idx]->GetPropertyValue($this->subclassProperty);
+			if (array_key_exists($subclassValue, $this->subclassMap) === false) {
+				$continue;
+			}
+			
+			$className = $this->subclassMap[$subclassValue];
+			$primaryKey = $objects[$idx]->PrimaryKey();
+			$indexes[$primaryKey] = $idx;
+			if (array_key_exists($className, $classObjectIds) === false) {
+				$classObjectIds[$className] = [];
+			}
+			$classObjectIds[$className][] = $primaryKey;
+		}
+		
+		foreach ($classObjectIds as $className => $objectIds) {
+			$schema = $className::DatabaseSchema();
+			$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+			
+			$filters = $_GET;
+			$filters[$primaryKeyProperty] = $objectIds;
+			$instances = $className::Search($filters, true);
+			
+			foreach ($instances as $instance) {
+				$primaryKey = $instance->PrimaryKey();
+				$idx = $indexes[$primaryKey];
+				$objects[$idx] = $instance;
+			}
+		}
+		
+		$results['results'] = $objects;
+		return Response::NewJson($results, 200);
+	}
+	
+	protected function FetchObject(string $objectId): ?DatabaseObject {
+		try {
+			$obj = $this->className::Fetch($objectId);
+			if (!$obj) {
+				return null;
+			}
+			
+			if (is_null($this->subclassProperty)) {
+				return $obj;
+			}
+				
+			$subclassValue = $obj->GetPropertyValue($this->subclassProperty);
+			if (array_key_exists($subclassValue, $this->subclassMap)) {
+				return $this->subclassMap[$subclassValue]::Fetch($objectId);
+			} else {
+				return $obj;
+			}
+		} catch (Exception $err) {
+			return null;
+		}
 	}
 	
 	public function HandleFetch(array $context): Response {
-		$uuid = $context['pathParameters'][$this->varName];
-		try {
-			$obj = $this->className::Fetch($uuid);
-			if ($obj) {
-				return Response::NewJson($obj, 200);
-			} else {
-				return Response::NewJsonError('Not found', null, 404);
-			}
-		} catch (Exception $err) {
-			return Response::NewJsonError($err->getMessage(), null, 500);
+		$objectId = $context['pathParameters'][$this->varName];
+		$obj = $this->FetchObject($objectId);
+		if (is_null($obj) === false) {
+			return Response::NewJson($obj, 200);
+		} else {
+			return Response::NewJsonError('Not found', null, 404);
 		}
 	}
 	
 	protected function WriteObject(User $user, string $primaryKeyProperty, array $member, bool $replace): array {
+		$className = $this->GetClassName($member);
+		
 		if (isset($member[$primaryKeyProperty]) === false) {
-			$member[$primaryKeyProperty] = $this->className::GenerateObjectId($member);
+			$member[$primaryKeyProperty] = $className::GenerateObjectId($member);
 		}
 		$primaryKey = $member[$primaryKeyProperty];
 		
-		$obj = $this->className::Fetch($primaryKey);
-		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: $this->className, objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch, newObjectProperties: $member);
+		$obj = $className::Fetch($primaryKey);
+		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: $className, objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch, newObjectProperties: $member);
 		$requiredPermissions = is_null($obj) ? DatabaseObject::kPermissionCreate : DatabaseObject::kPermissionUpdate;
 		if (($permissions & $requiredPermissions) !== $requiredPermissions) {
 			return [
@@ -124,7 +203,7 @@ class DatabaseObjectManager {
 		
 		if (is_null($obj)) {
 			$member['userId'] = $user->UserId(); // In case it is needed
-			$obj = $this->className::Create($member);
+			$obj = $className::Create($member);
 			if (is_null($obj)) {
 				return [
 					'status' => 500,
@@ -160,12 +239,14 @@ class DatabaseObjectManager {
 		}
 		
 		try {
-			$schema = $this->className::DatabaseSchema();
+			$member = Core::BodyAsJSON();
+			$className = $this->GetClassName($member);
+			
+			$schema = $className::DatabaseSchema();
 			$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
 			$primaryKey = $context['pathParameters'][$this->varName];
 			$user = Core::User();
 			
-			$member = Core::BodyAsJSON();
 			$member[$primaryKeyProperty] = $primaryKey;
 			
 			$status = $this->WriteObject($user, $primaryKeyProperty, $member, $replace);
@@ -193,13 +274,21 @@ class DatabaseObjectManager {
 		}
 		
 		$user = Core::User();
-		$schema = $this->className::DatabaseSchema();
-		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+		$primaryKeyProperties = [];
 		$newObjects = [];
 		$updatedObjects = [];
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		foreach ($members as $member) {
+			$className = $this->GetClassName($member);
+			if (array_key_exists($className, $primaryKeyProperties) === false) {
+				$primaryKeyProperty = $primaryKeyProperties[$className];
+			} else {
+				$schema = $className::DatabaseSchema();
+				$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+				$primaryKeyProperties[$className] = $primaryKeyProperty;
+			}
+			
 			try {
 				$response = $this->WriteObject($user, $primaryKeyProperty, $member, $replace);
 				if ($response['success'] === false) {
@@ -240,65 +329,24 @@ class DatabaseObjectManager {
 		return $this->HandleBulkWrite($context, true);
 	}
 	
-	protected function DeleteObject(User $user, string $primaryKeyProperty, array $member): array {
-		if (array_key_exists($primaryKeyProperty, $member) === false) {
-			return [
-				'status' => 400,
-				'success' => false,
-				'keyProperty' => $primaryKeyProperty,
-				'object' => $member,
-				'reason' => 'No key property present'
-			];
-		}
-		$primaryKey = $member[$primaryKeyProperty];
-		
-		$obj = $this->className::Fetch($primaryKey);
-		if (is_null($obj)) {
-			return [
-				'status' => 404,
-				'success' => false,
-				'keyProperty' => $primaryKeyProperty,
-				$primaryKeyProperty => $primaryKey,
-				'object' => $member,
-				'reason' => 'Object not found'
-			];
-		}
-		
-		$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: $this->className, objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch);
-		if (($permissions & DatabaseObject::kPermissionDelete) !== DatabaseObject::kPermissionDelete) {
-			return [
-				'status' => 403,
-				'success' => false,
-				'keyProperty' => $primaryKeyProperty,
-				$primaryKeyProperty => $primaryKey,
-				'object' => $member,
-				'reason' => 'Forbidden'
-			];
-		}
-		
-		$obj->Delete();
-		return [
-			'status' => 200,
-			'success' => true,
-			'keyProperty' => $primaryKeyProperty,
-			$primaryKeyProperty => $primaryKey,
-			'object' => $obj
-		];
-	}
-	
 	public function HandleDelete(array $context): Response {
 		try {
-			$uuid = $context['pathParameters'][$this->varName];
-			$user = Core::User();
-			$schema = $this->className::DatabaseSchema();
-			$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
-			
-			$status = $this->DeleteObject($user, $primaryKeyProperty, [$primaryKeyProperty => $uuid]);
-			if ($status['success'] === true) {
-				return Response::NewNoContent();
-			} else {
-				return Response::NewJsonError($status['reason'], $status['object'], $status['status']);
+			$objectId = $context['pathParameters'][$this->varName];
+			$obj = $this->FetchObject($objectId);
+			if (is_null($obj)) {
+				return Response::NewJsonError('Object not found', $objectId, 404);
 			}
+			$primaryKeyProperty = $obj->PrimaryKeyProperty();
+			$primaryKey = $obj->PrimaryKey();
+			
+			$user = Core::User();
+			$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: get_class($obj), objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch);
+			if (($permissions & DatabaseObject::kPermissionDelete) !== DatabaseObject::kPermissionDelete) {
+				return Response::NewJsonError('Forbidden', $obj, 403);
+			}
+			
+			$obj->Delete();
+			return Response::NewNoContent();
 		} catch (Exception $err) {
 			return Response::NewJsonError($err->getMessage(), null, 500);
 		}
@@ -318,20 +366,36 @@ class DatabaseObjectManager {
 		}
 		
 		$user = Core::User();
-		$schema = $this->className::DatabaseSchema();
-		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+		$primaryKeyProperties = [];
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		foreach ($members as $member) {
 			try {
-				$status = $this->DeleteObject($user, $primaryKeyProperty, $member);
-				if ($status['success'] === false) {
-					$database->Rollback();
-					return Response::NewJsonError($status['reason'], $status['object'], $status['status']);
+				$className = $this->GetClassName($member);
+				if (array_key_exists($className, $primaryKeyProperties) === false) {
+					$primaryKeyProperty = $primaryKeyProperties[$className];
+				} else {
+					$schema = $className::DatabaseSchema();
+					$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+					$primaryKeyProperties[$className] = $primaryKeyProperty;
 				}
+				$primaryKey = $member[$primaryKeyProperty];
+				$obj = $className::Fetch($primaryKey);
+				if (is_null($obj)) {
+					$database->Rollback();
+					return Response::NewJsonError('Object not found', $member, 404);
+				}
+				
+				$permissions = DatabaseObjectAuthorizer::GetPermissionsForUser(object: $obj, className: get_class($obj), objectId: $primaryKey, user: $user, options: DatabaseObjectAuthorizer::kOptionNoFetch);
+				if (($permissions & DatabaseObject::kPermissionDelete) !== DatabaseObject::kPermissionDelete) {
+					$database->Rollback();
+					return Response::NewJsonError('Forbidden', $member, 403);
+				}
+				
+				$obj->Delete();
 			} catch (Exception $err) {
 				$database->Rollback();
-				return Response::NewJsonError($err->getMessage(), $member, 500);
+				return Response::NewJsonError('Internal server error', $member, 500);
 			}
 		}
 		$database->Commit();

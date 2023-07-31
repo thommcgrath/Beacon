@@ -71,6 +71,10 @@ abstract class DatabaseObject {
 		return BeaconUUID::v4();
 	}
 	
+	public function PrimaryKeyProperty(): string {
+		return static::DatabaseSchema()->PrimaryColumn()->PropertyName();
+	}
+	
 	public function PrimaryKey(): string {
 		$primaryKey = static::DatabaseSchema()->PrimaryColumn()->PropertyName();
 		return $this->$primaryKey;
@@ -95,6 +99,17 @@ abstract class DatabaseObject {
 			$page = filter_var($filters['page'], FILTER_VALIDATE_INT);
 			if ($page !== false) {
 				$params->pageNum = $page;
+			}
+		}
+		
+		$primaryKeyProperty = $schema->PrimaryColumn()->PropertyName();
+		if (isset($filters[$primaryKeyProperty])) {
+			if (is_array($filters[$primaryKeyProperty])) {
+				$params->clauses[] = $schema->Accessor($primaryKeyProperty) . ' = ANY($' . $params->placeholder++ . ')';
+				$params->values[] = '{' . implode(',', $filters[$primaryKeyProperty]) . '}';
+			} else {
+				$params->clauses[] = $schema->Accessor($primaryKeyProperty) . ' = ' . $params->placeholder++;
+				$params->values[] = $filters[$primaryKeyProperty];
 			}
 		}
 		
@@ -211,6 +226,17 @@ abstract class DatabaseObject {
 		$schema = static::DatabaseSchema();
 		$property = $schema->Property($propertyName);
 		return is_null($property) === false;
+	}
+	
+	public function GetPropertyValue(string $propertyName): mixed {
+		$schema = static::DatabaseSchema();
+		$property = $schema->Property($propertyName);
+		if (is_null($property)) {
+			return null;
+		}
+		
+		$propertyName = $property->PropertyName();
+		return $this->$propertyName;
 	}
 }
 
