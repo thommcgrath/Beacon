@@ -457,21 +457,7 @@ class User extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public static function ValidatePassword(string $password): bool {
-		$passlen = strlen($password);
-		
-		if ($passlen < 8 || $passlen > 256) {
-			return false;
-		}
-		
-		$chars = count_chars($password);
-		foreach ($chars as $char => $count) {
-			$percent = $count / $passlen;
-			if ($percent > 0.3) {
-				return false;
-			}
-		}
-		
-		return true;
+		return mb_strlen($password) >= 8;
 	}
 	
 	public static function IsExtendedUsername(string $username): bool {
