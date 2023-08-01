@@ -624,6 +624,7 @@ Begin BeaconDialog ArkExportWindow
    End
    Begin Ark.Rewriter SharedRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""
@@ -1247,7 +1248,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ReadOnly = True
 		End Sub
 	#tag EndEvent

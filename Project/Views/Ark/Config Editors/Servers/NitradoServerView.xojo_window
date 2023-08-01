@@ -220,6 +220,7 @@ Begin ServerViewContainer NitradoServerView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Modified        =   False
          Scope           =   2
          SettingUp       =   False
          ShowsMapMenu    =   False
@@ -581,25 +582,27 @@ End
 		    
 		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Account.AccessToken
+		    Headers.Value("Connection") = "close"
 		    
 		    If Self.mServerState = "started" Then
 		      Var StopMessage As String = StopMessageDialog.Present(Self)
-		      If StopMessage = "" Then
+		      If StopMessage.IsEmpty Then
 		        Return
 		      End If
 		      
 		      Var FormData As New Dictionary
-		      FormData.Value("message") = "Server stopped by Beacon (https://usebeacon.app)"
+		      FormData.Value("message") = "Server stopped by Beacon"
 		      FormData.Value("stop_message") = StopMessage
 		      
-		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
+		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", "application/json; charset=utf-8", Beacon.GenerateJSON(FormData, False), AddressOf Callback_ServerToggle, Nil, Headers)
 		      
 		      Self.mServerState = "stopping"
 		    ElseIf Self.mServerState = "stopped" Then
 		      Var FormData As New Dictionary
-		      FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
+		      FormData.Value("message") = "Server started by Beacon"
+		      FormData.Value("restart_message") = Nil
 		      
-		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
+		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", "application/json; charset=utf-8", Beacon.GenerateJSON(FormData, False), AddressOf Callback_ServerToggle, Nil, Headers)
 		      
 		      Self.mServerState = "restarting"
 		    Else

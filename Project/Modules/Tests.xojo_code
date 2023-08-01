@@ -13,13 +13,13 @@ Protected Module Tests
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CreateEncryptionTest()
-		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(40)
+		Private Sub CreateEncryptionTest(Name As String, KeySizeBytes As Integer)
+		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(KeySizeBytes)
 		  Var Message As String = v4UUID.Create.StringValue
 		  Var EncryptedLegacy As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 1)
 		  Var EncryptedModern As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 2)
 		  
-		  System.DebugLog("TestEncryptionPortability(""ciphermbs"", """ + EncodeBase64(Key, 0) + """, """ + Message + """, """ + EncodeBase64(EncryptedLegacy, 0) + """, """ + EncodeBase64(EncryptedModern, 0) + """)")
+		  System.DebugLog("TestEncryptionPortability(""" + Name + """, """ + EncodeBase64(Key, 0) + """, """ + Message + """, """ + EncodeBase64(EncryptedLegacy, 0) + """, """ + EncodeBase64(EncryptedModern, 0) + """)")
 		End Sub
 	#tag EndMethod
 
@@ -177,7 +177,8 @@ Protected Module Tests
 		  TestSymmetricEncryption(40) // Too much for both
 		  
 		  // These values come from from Beacon with a small key size
-		  TestEncryptionPortability("beacon-small-key", "MTIzNDU2Nzg=", "a49cca4c-e54e-409e-8ff2-bfb975880277", "igFksmQ/OMMlfAAAACSrekGOXwt+4f3YWLm++2XmjFken3KKQ5UpTvfs/YFow5rKlFbNcJbYjo+tgA==", "igKD8tXIBZlOmV2wcHDRjX6jAAAAJKt6QY4hPbD7RIv9ExD9QrJE2C5NCr5KexWjY8nIsvooO6CW8wacFrOYI0WGdTmUyXDydbs=")
+		  TestEncryptionPortability("ciphermbs", "qQ23fPYb+g8wwsFeGpN3AsOn1+BMlXgR3SuwcdMrnQUwFyzIzVva4g==", "5816ee7a-3f6f-4f9b-97b6-a88ed37b970b", "igFZ8b5/g/RMGgAAACT/EkJO3XHIp0vvpPN9avbjfrL9968SkmkgcHbSSR+ua4N1VbKfRlE6993ZWQ==", "igJDzasT1dzBjUcPef2nW+4ZAAAAJP8SQk7hQaKY5TwH5kMB4S0IZb9HMvVtNGuavDaWbEb9jXoC4CSlC9TewsjSSj84zzcXTB0=")
+		  TestEncryptionPortability("ciphermbs-small-key", "v/5Zs+9xnaU=", "6a38eb67-145d-4ff4-a270-e42ba0758e63", "igEbMzNWKJSVgAAAACR0JWyyZF7FKoaN0zgoDZ46MHpeczJuckDkvEmh5dAfPSMCj+Wj2Vi9ExOjRg==", "igLdb7Q4sr6V31D1mXX1vm76AAAAJHQlbLK4BBQOKdFad/mcjcDVQI7yR+ak8tw3ktPZ209/ar4f5qwAel3chTdhlfRy2dvpfXM=")
 		  
 		  // These values come from PHP
 		  TestEncryptionPortability("php", "xNPUcwVM+TrisKjmQtYb6hQoYG+6LnCZYp2qZYgtqRSLSBSDOCZBvw==", "ecf83b98-8285-418f-88f8-5b789392b30b", "igHRJFCVtL2H3AAAACS1SWEOrO2a2eul3N+cB4GhmCOETi4lqt/z8vyQfP6uWxRvnYsDDd5O9dHe1A==", "igLzyZkDYLaDRNUhYYWH0X12AAAAJLVJYQ7pVEuanCARqgMPPGVcQkKvdS3HXW461MbYN9/ooG88LzXClOHYRUE8arDyI7mhhEQ=")
@@ -186,7 +187,8 @@ Protected Module Tests
 		  TestEncryptionPortability("m_crypto", "Eq/Ypo2Kw3RNA2te31fp19EP/dMGSR4IlWmjtoYn8tBnKYgA+Sr2LA==", "3456efca-c48c-41cc-a01e-3713301d9a38", "igEeFJyHv42YOAAAACQTaroA7hSPqLmalHvZflHwhZtOiTYNUZD4JOdfusagXzlKt5PH2j8vUhxV0Q==", "igKh3O68LgyGZPABtA7OI0pzAAAAJBNqugBO2kDGdvIXrkfA5femIzmdRnDSSWI3xFA9diRZiHqdbbjH+qS/5Hi9Acjh26lGfmg=")
 		  
 		  // Create a test usable by other versions (don't need it enabled right now)
-		  // CreateEncryptionTest()
+		  // CreateEncryptionTest("ciphermbs", 40)
+		  // CreateEncryptionTest("ciphermbs-small-key", 8)
 		  
 		  // Make sure slow encryption works
 		  Try

@@ -183,6 +183,7 @@ Begin BeaconWindow SupportTicketWindow
    End
    Begin Thread SubmitThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -838,74 +839,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function AddToArchive(Path As String, File As FolderItem) As Boolean
-		  If File Is Nil Or File.Exists = False Then
-		    Return True
-		  End If
-		  
-		  If File.IsFolder Then
-		    For Each Child As FolderItem In File.Children
-		      If Not Self.AddToArchive(Path + "/" + File.Name, Child) Then
-		        Return False
-		      End If
-		    Next
-		    Return True
-		  End If
-		  
-		  Try
-		    Var Bytes As MemoryBlock = File.Read
-		    Return Self.AddToArchive(Path + "/" + File.Name, Bytes)
-		  Catch Err As RuntimeException
-		    Self.SetError("Unable to add " + File.NativePath + " to archive.")
-		    App.Log(Err, CurrentMethodName, "Trying to add file " + File.NativePath + " to archive at " + Path + ".")
-		    Return False
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function AddToArchive(Path As String, Data As MemoryBlock) As Boolean
-		  If Data Is Nil Or Data.Size = 0 Then
-		    Return True
-		  End If
-		  
-		  Var Entry As New ArchiveEntryMBS
-		  Entry.PathName = Path
-		  Entry.Size = CType(Data.Size, UInt64)
-		  Entry.Permissions = &o0644
-		  Entry.FileType = ArchiveEntryMBS.kFileTypeRegular
-		  
-		  Self.mTicketArchive.WriteHeader(Entry)
-		  Call Self.mTicketArchive.WriteData(Data)
-		  If Self.mTicketArchive.LastError <> ArchiverMBS.kArchiveOK Then
-		    Self.SetError("Unable to add " + Path + " to archive: " + Self.ArchiveErrorReason)
-		    Return False
-		  End If
-		  Self.mTicketArchive.FinishEntry
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function ArchiveErrorReason() As String
-		  Select Case Self.mTicketArchive.LastError
-		  Case ArchiverMBS.kArchiveEOF
-		    Return "Found end of archive"
-		  Case ArchiverMBS.kArchiveFailed
-		    Return "Current operation cannot complete"
-		  Case ArchiverMBS.kArchiveFatal
-		    Return "No more operations are possible"
-		  Case ArchiverMBS.kArchiveRetry
-		    Return "Retry might succeed"
-		  Case ArchiverMBS.kArchiveWarn
-		    Return "Partial success"
-		  Else
-		    Return "Unknown code " + Self.mTicketArchive.LastError.ToString
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub RefreshDocumentMenu()
 		  Var SelectedDocumentID As String
 		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
@@ -1107,21 +1040,19 @@ End
 #tag Events SubmitThread
 	#tag Event
 		Sub Run()
-		  Self.mTicketArchive = New ArchiveWriterMBS
-		  Self.mTicketArchive.SetFormatZip
-		  Self.mTicketArchive.ZipSetCompressionDeflate
-		  
+		  Var Password, EncryptedPassword As String
 		  #if Self.EncryptArchive
-		    Var Password As String = v4UUID.Create
-		    Var EncryptedPassword As String = EncodeBase64(Crypto.RSAEncrypt(Password, Self.SupportPublicKey), 0)
-		    Self.mTicketArchive.SetOption("zip", "encryption", "aes256")
-		    Self.mTicketArchive.SetPassphrase(Password)
+		    Password = Beacon.UUID.v4
+		    EncryptedPassword = EncodeBase64(Crypto.RSAEncrypt(Password, Self.SupportPublicKey), 0)
 		  #endif
 		  
-		  If Not Self.mTicketArchive.CreateMemoryFile Then
-		    Self.SetError("Unable to create diagnostic archive: " + Self.ArchiveErrorReason)
+		  Var Archive As Beacon.Archive
+		  Try
+		    Archive = Beacon.Archive.Create(Password)
+		  Catch Err As RuntimeException
+		    Self.SetError(Err.Message)
 		    Return
-		  End If
+		  End Try
 		  
 		  If (Self.mTicketDocument Is Nil) = False Then
 		    Var Identity As Beacon.Identity
@@ -1133,10 +1064,7 @@ End
 		    Self.mProgress.Detail = "Attaching project…"
 		    Var FileName As String = Self.mTicketDocument.Title + ".beacon"
 		    Var FileContent As String = Beacon.GenerateJSON(Self.mTicketDocument.SaveData(Identity), True)
-		    
-		    If Not Self.AddtoArchive(Beacon.SanitizeFilename(FileName), FileContent) Then
-		      Return
-		    End If
+		    Archive.AddFile(Beacon.SanitizeFilename(FileName), FileContent)
 		    
 		    Self.mProgress.Detail = "Attaching backup files…"
 		    Var ProfileBound As Integer = Self.mTicketDocument.ServerProfileCount - 1
@@ -1145,9 +1073,7 @@ End
 		      For Idx As Integer = 0 To ProfileBound
 		        Var Profile As Beacon.ServerProfile = Self.mTicketDocument.ServerProfile(Idx)
 		        Var Folder As FolderItem = BackupsFolder.Child(Profile.BackupFolderName)
-		        If Not Self.AddToArchive("Backups", Folder) Then
-		          Return
-		        End If
+		        Archive.AddFile("Backups", Folder)
 		      Next
 		    End If
 		  End If
@@ -1157,10 +1083,7 @@ End
 		  Var LogsFolder As FolderItem = App.LogsFolder
 		  If (LogsFolder Is Nil) = False And LogsFolder.Exists Then
 		    For Each File As FolderItem In LogsFolder.Children
-		      If Not Self.AddToArchive("Logs", File) Then
-		        // Error will have been set already
-		        Return
-		      End If
+		      Archive.AddFile("Logs", File)
 		    Next
 		  End If
 		  
@@ -1168,10 +1091,7 @@ End
 		    Self.mProgress.Detail = "Attaching other files…"
 		    For Idx As Integer = Self.mAttachments.FirstIndex To Self.mAttachments.LastIndex
 		      Self.mProgress.Detail = "Attaching " + Self.mAttachments(Idx).Name + "…"
-		      If Not Self.AddToArchive("Other", Self.mAttachments(Idx)) Then
-		        // Error will have been set already
-		        Return
-		      End If
+		      Archive.AddFile("Other", Self.mAttachments(Idx))
 		    Next Idx
 		  End If
 		  
@@ -1184,15 +1104,12 @@ End
 		    For Each FileEntry As DictionaryEntry In FilesDict
 		      Var Filename As String = FileEntry.Key
 		      Var Data As MemoryBlock = FileEntry.Value
-		      If Not Self.AddToArchive("Game Data/" + DataSource.Identifier + "/" + Filename, Data) Then
-		        Return
-		      End If
+		      Archive.AddFile("Game Data/" + DataSource.Identifier + "/" + Filename, Data)
 		    Next FileEntry
 		  Next DataSource
 		  
-		  Self.mTicketArchive.Close
-		  
-		  Var ArchiveBytes As MemoryBlock = Self.mTicketArchive.MemoryData
+		  Var ArchiveBytes As MemoryBlock = Archive.Finalize
+		  Archive = Nil
 		  
 		  Var Boundary As String = new v4UUID
 		  Var ContentType As String = "multipart/form-data; charset=utf-8; boundary=" + Boundary

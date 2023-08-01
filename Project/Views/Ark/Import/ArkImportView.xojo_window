@@ -66,7 +66,7 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   720
       Begin DesktopRadioButton SourceRadio

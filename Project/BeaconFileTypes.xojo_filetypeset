@@ -34,7 +34,7 @@
 
 	#tag FileType
 		CodeName=BeaconIdentity
-		DocIcon=Beacon.xojo_resources;&h67413
+		DocIcon=Beacon.xojo_resources;&h6738C
 		Extension=.beaconidentity
 		Flags=&h5
 		MacCreator=
@@ -51,7 +51,7 @@
 
 	#tag FileType
 		CodeName=BeaconPreset
-		DocIcon=Beacon.xojo_resources;&hA6775
+		DocIcon=Beacon.xojo_resources;&hA66D2
 		Extension=.beacontemplate;.beaconpreset
 		Flags=&h5
 		MacCreator=
@@ -84,7 +84,7 @@
 
 	#tag FileType
 		CodeName=Text
-		Extension=.asc;.ascii;.bas;.c;.class;.cp;.cpp;.h;.hp;.hpp;.i3;.java;.m2;.m3;.mak;.text;.txt
+		Extension=.asc;.ascii;.bas;.c;.class;.cp;.cpp;.h;.hp;.hpp;.i3;.java;.m2;.m3;.mak;.text;.txt;.xml
 		Flags=&h9
 		MacCreator=????
 		MacType=TEXT
@@ -116,7 +116,7 @@
 
 	#tag FileType
 		CodeName=BeaconAuth
-		DocIcon=Beacon.xojo_resources;&hE6362
+		DocIcon=Beacon.xojo_resources;&hE62A4
 		Extension=.beaconauth
 		Flags=&h9
 		MacCreator=
@@ -133,7 +133,7 @@
 
 	#tag FileType
 		CodeName=BeaconData
-		DocIcon=Beacon.xojo_resources;&h125242
+		DocIcon=Beacon.xojo_resources;&h125145
 		Extension=.beacondata
 		Flags=&h9
 		MacCreator=
@@ -145,6 +145,22 @@
 		MimeType=
 		Imported=False
 		HandlerRank=&h11
+		UTIPhysicalType=public.data
+	#tag EndFileType
+
+	#tag FileType
+		CodeName=Any
+		Extension=.*
+		Flags=&h2
+		MacCreator=
+		MacType=????
+		Name=special/any
+		UTI=public.data
+		UTIConformsTo=,public.data
+		Description=
+		MimeType=
+		Imported=True
+		HandlerRank=&h9
 		UTIPhysicalType=public.data
 	#tag EndFileType
 

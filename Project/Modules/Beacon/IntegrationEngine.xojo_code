@@ -227,18 +227,26 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Log(Message As String, ReplaceLast As Boolean = False)
-		  App.Log(Self.mID + Encodings.ASCII.Chr(9) + Message)
-		  
-		  If Self.mLogMessages.Count > 0 And Self.mLogMessages(Self.mLogMessages.LastIndex) = Message Then
-		    // Don't duplicate the logs
-		    Return
-		  End If
-		  
-		  If ReplaceLast And Self.mLogMessages.Count > 0 Then
-		    Self.mLogMessages(Self.mLogMessages.LastIndex) = Message
-		  Else
-		    Self.mLogMessages.Add(Message)
-		  End If
+		  Var Lines() As String = Message.Trim.Split(EndOfLine)
+		  For Each Line As String In Lines
+		    Line = Line.Trim
+		    If Line.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    App.Log(Self.mID + Encodings.ASCII.Chr(9) + Line)
+		    
+		    If Self.mLogMessages.Count > 0 And Self.mLogMessages(Self.mLogMessages.LastIndex) = Line Then
+		      // Don't duplicate the logs
+		      Return
+		    End If
+		    
+		    If ReplaceLast And Self.mLogMessages.Count > 0 Then
+		      Self.mLogMessages(Self.mLogMessages.LastIndex) = Line
+		    Else
+		      Self.mLogMessages.Add(Line)
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 

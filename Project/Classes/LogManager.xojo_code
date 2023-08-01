@@ -108,12 +108,16 @@ Protected Class LogManager
 		      Var Filename As String = Entry.Key
 		      Var Messages() As String = Entry.Value
 		      
-		      Var Stream As TextOutputStream = TextOutputStream.Open(Self.mFolder.Child(Filename))
-		      While Messages.Count > 0
-		        Stream.WriteLine(Messages(0))
-		        Messages.RemoveAt(0)
-		      Wend
-		      Stream.Close
+		      Try
+		        Var Stream As TextOutputStream = TextOutputStream.Open(Self.mFolder.Child(Filename))
+		        While Messages.Count > 0
+		          Stream.WriteLine(Messages(0))
+		          Messages.RemoveAt(0)
+		        Wend
+		        Stream.Close
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Writing to log file")
+		      End Try
 		    Next
 		  #endif
 		End Sub

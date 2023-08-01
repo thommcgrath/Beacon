@@ -668,7 +668,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.MouseDwellTime = 1500
 		End Sub
 	#tag EndEvent
