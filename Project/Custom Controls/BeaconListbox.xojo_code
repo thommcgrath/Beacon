@@ -1,6 +1,7 @@
 #tag Class
 Protected Class BeaconListbox
 Inherits DesktopListBox
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
 		  If Self.mCellActionCascading Then
@@ -490,11 +491,21 @@ Inherits DesktopListBox
 		  
 		  Self.mScrollWatchTimer = New Timer
 		  Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
-		  Self.mScrollWatchTimer.Period = 100
+		  Self.mScrollWatchTimer.Period = 250
 		  AddHandler mScrollWatchTimer.Action, WeakAddressOf mScrollWatchTimer_Action
 		  
 		  Super.Constructor
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CurrentPage() As Integer
+		  If Self.AllowInfiniteScroll = False Or Self.PageSize = 0 Then
+		    Return -1
+		  End If
+		  
+		  Return Ceiling(Self.ScrollPosition / Self.PageSize)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -690,10 +701,13 @@ Inherits DesktopListBox
 		  Self.mLastScrollPosition = Self.ScrollPosition
 		  Self.mLastViewportHeight = ViewportHeight
 		  
-		  If Self.ScrollPosition + ViewportHeight + (LoadAheadFactor * Self.PageSize) > Self.mUpperRequestedBound Then
+		  Var PreloadBound As Integer = Self.ScrollPosition + ViewportHeight + (LoadAheadFactor * Self.PageSize)
+		  System.DebugLog("PreloadBound is now " + PreloadBound.ToString(Locale.Raw, "0"))
+		  If PreloadBound > Self.mUpperRequestedBound Then
 		    Var NextPage As Integer = Ceiling(Self.mUpperRequestedBound / Self.PageSize) + 1
 		    RaiseEvent LoadMoreRows(NextPage)
 		    Self.mUpperRequestedBound = Self.mUpperRequestedBound + Self.PageSize
+		    System.DebugLog("UpperRequestedBound is now " + Self.mUpperRequestedBound.ToString(Locale.Raw, "0"))
 		  End If
 		End Sub
 	#tag EndMethod

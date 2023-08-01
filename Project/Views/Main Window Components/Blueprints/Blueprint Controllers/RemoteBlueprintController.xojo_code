@@ -1,6 +1,19 @@
 #tag Class
 Protected Class RemoteBlueprintController
 Inherits BlueprintController
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag Event
+		Sub FetchBlueprints(Page As Integer, PageSize As Integer)
+		  If Preferences.OnlineEnabled = False Then
+		    Self.CacheBlueprints()
+		    Return
+		  End If
+		  
+		  Var Request As New BeaconAPI.Request("ark/blueprints?contentPackId=" + EncodeURLComponent(Self.ContentPackId) + "&page=" + Page.ToString(Locale.Raw, "0") + "&pageSize=" + PageSize.ToString(Locale.Raw, "0"), "GET", WeakAddressOf APICallback_LoadBlueprints)
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
 		  Var Engrams(), Creatures(), SpawnPoints(), LootSources() As Dictionary
@@ -65,18 +78,6 @@ Inherits BlueprintController
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub RefreshBlueprints()
-		  If Preferences.OnlineEnabled = False Then
-		    Self.CacheBlueprints()
-		    Return
-		  End If
-		  
-		  Var Request As New BeaconAPI.Request("ark/blueprints?contentPackId=" + EncodeURLComponent(Self.ModID), "GET", WeakAddressOf APICallback_LoadBlueprints)
-		  BeaconAPI.Send(Request)
-		End Sub
-	#tag EndEvent
-
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_LoadBlueprints(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
@@ -102,17 +103,10 @@ Inherits BlueprintController
 		  
 		  Var Blueprints() As Ark.Blueprint
 		  Var Dict As Dictionary = Parsed
+		  Self.mTotalResults = Dict.Value("totalResults")
+		  Var Results() As Variant = Dict.Value("results")
 		  
-		  If Not Self.Unpack(Blueprints, Dict, "engrams") Then
-		    Return
-		  End If
-		  If Not Self.Unpack(Blueprints, Dict, "creatures") Then
-		    Return
-		  End If
-		  If Not Self.Unpack(Blueprints, Dict, "spawn_points") Then
-		    Return
-		  End If
-		  If Not Self.Unpack(Blueprints, Dict, "loot_sources") Then
+		  If Not Self.Unpack(Results, Blueprints) Then
 		    Return
 		  End If
 		  
@@ -145,26 +139,33 @@ Inherits BlueprintController
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function Unpack(Blueprints() As Ark.Blueprint, Dict As Dictionary, Key As String) As Boolean
-		  If Dict.HasKey(Key) Then
-		    Try
-		      Var Definitions() As Dictionary = Dict.Value(Key).DictionaryArrayValue
-		      For Each Definition As Dictionary In Definitions
-		        Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Definition)
-		        If (Blueprint Is Nil) = False Then
-		          Blueprints.Add(Blueprint)
-		        End If
-		      Next
-		    Catch Err As RuntimeException
-		      Self.CacheError(Err.Message)
-		      Return False
-		    End Try
-		  End If
-		  
-		  Return True
+	#tag Method, Flags = &h0
+		Function BlueprintCount() As Integer
+		  Return Self.mTotalResults
 		End Function
 	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Unpack(Definitions() As Variant, Blueprints() As Ark.Blueprint) As Boolean
+		  Try
+		    For Each Definition As Dictionary In Definitions
+		      Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Definition)
+		      If (Blueprint Is Nil) = False Then
+		        Blueprints.Add(Blueprint)
+		      End If
+		    Next
+		    Return True
+		  Catch Err As RuntimeException
+		    Self.CacheError(Err.Message)
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mTotalResults As Integer
+	#tag EndProperty
 
 
 	#tag ViewBehavior

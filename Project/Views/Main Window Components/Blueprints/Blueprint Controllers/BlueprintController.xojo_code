@@ -1,9 +1,9 @@
 #tag Class
 Protected Class BlueprintController
 	#tag Method, Flags = &h0
-		Function Blueprint(ObjectID As String) As Ark.Blueprint
-		  If Self.mBlueprints.HasKey(ObjectID) Then
-		    Return Self.mBlueprints.Value(ObjectID)
+		Function Blueprint(BlueprintId As String) As Ark.Blueprint
+		  If Self.mBlueprints.HasKey(BlueprintId) Then
+		    Return Self.mBlueprints.Value(BlueprintId)
 		  End If
 		End Function
 	#tag EndMethod
@@ -34,13 +34,10 @@ Protected Class BlueprintController
 
 	#tag Method, Flags = &h1
 		Protected Sub CacheBlueprints(Blueprints() As Ark.Blueprint)
-		  Self.mBlueprints.RemoveAll
-		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Self.mBlueprints.Value(Blueprint.BlueprintId) = Blueprint
+		    Self.mOriginalBlueprints.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
-		  
-		  Self.mOriginalBlueprints = Self.mBlueprints.Clone
 		  
 		  Self.mCacheErrored = False
 		  Self.mCacheErrorMessage = ""
@@ -53,7 +50,7 @@ Protected Class BlueprintController
 	#tag Method, Flags = &h1
 		Protected Sub CacheError(Message As String)
 		  Self.mBlueprints.RemoveAll
-		  Self.mOriginalBlueprints = Self.mBlueprints.Clone
+		  Self.mOriginalBlueprints.RemoveAll
 		  
 		  Self.mCacheErrored = True
 		  Self.mCacheErrorMessage = Message
@@ -80,15 +77,28 @@ Protected Class BlueprintController
 		  Self.mBlueprints = New Dictionary
 		  Self.mBlueprintsToSave = New Dictionary
 		  Self.mBlueprintsToDelete = New Dictionary
+		  Self.mOriginalBlueprints = New Dictionary
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ModUUID As String, ModName As String)
-		  Self.mModUUID = ModUUID
-		  Self.mModName = ModName
+		Sub Constructor(ContentPackId As String, Name As String)
+		  Self.mContentPackId = ContentPackId
+		  Self.mContentPackName = Name
 		  Self.Constructor()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackId() As String
+		  Return Self.mContentPackId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackName() As String
+		  Return Self.mContentPackName
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -118,16 +128,16 @@ Protected Class BlueprintController
 		  End If
 		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var ObjectID As String = Blueprint.BlueprintId
+		    Var BlueprintId As String = Blueprint.BlueprintId
 		    
-		    If Self.mBlueprints.HasKey(ObjectID) Then
-		      Self.mBlueprints.Remove(ObjectID)
+		    If Self.mBlueprints.HasKey(BlueprintId) Then
+		      Self.mBlueprints.Remove(BlueprintId)
 		    End If
-		    If Self.mBlueprintsToSave.HasKey(ObjectID) Then
-		      Self.mBlueprintsToSave.Remove(ObjectID)
+		    If Self.mBlueprintsToSave.HasKey(BlueprintId) Then
+		      Self.mBlueprintsToSave.Remove(BlueprintId)
 		    End If
 		    
-		    Self.mBlueprintsToDelete.Value(ObjectID) = Blueprint
+		    Self.mBlueprintsToDelete.Value(BlueprintId) = Blueprint
 		  Next
 		End Sub
 	#tag EndMethod
@@ -140,15 +150,9 @@ Protected Class BlueprintController
 		    Raise Err
 		  End If
 		  
-		  If Self.mOriginalBlueprints Is Nil Then
-		    Self.mBlueprints = New Dictionary
-		  Else
-		    Self.mBlueprints = Self.mOriginalBlueprints.Clone
-		  End If
+		  Self.mBlueprints = Self.mOriginalBlueprints.Clone
 		  Self.mBlueprintsToSave = New Dictionary
 		  Self.mBlueprintsToDelete = New Dictionary
-		  
-		  Self.LoadBlueprints()
 		End Sub
 	#tag EndMethod
 
@@ -185,7 +189,7 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadBlueprints()
+		Sub LoadBlueprints(Page As Integer, PageSize As Integer)
 		  If Self.IsWorking Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Another action is already running"
@@ -196,8 +200,13 @@ Protected Class BlueprintController
 		  
 		  RaiseEvent WorkStarted()
 		  
-		  If IsEventImplemented("RefreshBlueprints") Then
-		    RaiseEvent RefreshBlueprints()
+		  If Page = 1 Then
+		    Self.mBlueprints.RemoveAll
+		    Self.mOriginalBlueprints.RemoveAll
+		  End If
+		  
+		  If IsEventImplemented("FetchBlueprints") Then
+		    RaiseEvent FetchBlueprints(Page, PageSize)
 		  Else
 		    Var Blueprints() As Ark.Blueprint
 		    Self.CacheBlueprints(Blueprints)
@@ -214,18 +223,6 @@ Protected Class BlueprintController
 		    End If
 		  Next
 		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModID() As String
-		  Return Self.mModUUID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModName() As String
-		  Return Self.mModName
 		End Function
 	#tag EndMethod
 
@@ -275,11 +272,11 @@ Protected Class BlueprintController
 		    Var OriginalBlueprintId As String = Blueprint.BlueprintId
 		    Var BlueprintId As String = Blueprint.BlueprintId
 		    
-		    If Blueprint.ContentPackId <> Self.ModID Then
+		    If Blueprint.ContentPackId <> Self.ContentPackId Then
 		      // Need to adjust the mod info to match
 		      Var MutableVersion As Ark.MutableBlueprint = Blueprint.MutableVersion
-		      MutableVersion.ContentPackId = Self.ModID
-		      MutableVersion.ContentPackName = Self.ModName
+		      MutableVersion.ContentPackId = Self.ContentPackId
+		      MutableVersion.ContentPackName = Self.ContentPackName
 		      MutableVersion.RegenerateBlueprintId()
 		      BlueprintId = MutableVersion.BlueprintId
 		      Blueprint = MutableVersion.ImmutableVersion
@@ -323,15 +320,15 @@ Protected Class BlueprintController
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event FetchBlueprints(Page As Integer, PageSize As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event PublishFinished(Success As Boolean, Reason As String)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event RefreshBlueprints()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -391,15 +388,15 @@ Protected Class BlueprintController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mContentPackId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPackName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLoading As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mModName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mModUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

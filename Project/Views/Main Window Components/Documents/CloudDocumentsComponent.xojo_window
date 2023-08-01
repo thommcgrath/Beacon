@@ -28,6 +28,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    Visible         =   True
    Width           =   804
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -434,7 +435,7 @@ End
 		Private Sub UpdateStatusbar()
 		  Var Status As String
 		  If Self.List.SelectedRowCount > 0 Then
-		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "0,##") + " of " + Language.NounWithQuantity(Self.mTotalResults, "project", "projects") + " selected"
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.mTotalResults, "project", "projects") + " selected"
 		  Else
 		    Status = Language.NounWithQuantity(Self.mTotalResults, "project", "projects")
 		  End If

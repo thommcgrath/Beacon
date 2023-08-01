@@ -3,6 +3,20 @@ Protected Class LocalBlueprintController
 Inherits BlueprintController
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
+		Sub FetchBlueprints(Page As Integer, PageSize As Integer)
+		  #Pragma Unused Page
+		  #Pragma Unused PageSize
+		  
+		  Var Mods As New Beacon.StringList(0)
+		  Mods(0) = Self.ContentPackId
+		  
+		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints("", Mods, "")
+		  
+		  Self.CacheBlueprints(Blueprints)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
 		  Self.mSave = BlueprintsToSave
 		  Self.mDelete = BlueprintsToDelete
@@ -10,17 +24,6 @@ Inherits BlueprintController
 		  AddHandler Self.mSaveThread.Run, WeakAddressOf mSaveThread_Run
 		  AddHandler Self.mSaveThread.UserInterfaceUpdate, WeakAddressOf mSaveThread_UserInterfaceUpdate
 		  Self.mSaveThread.Start
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub RefreshBlueprints()
-		  Var Mods As New Beacon.StringList(0)
-		  Mods(0) = Self.ModID
-		  
-		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints("", Mods, "")
-		  
-		  Self.CacheBlueprints(Blueprints)
 		End Sub
 	#tag EndEvent
 

@@ -118,7 +118,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -316,7 +315,7 @@ End
 		Sub UpdateUI()
 		  Var Status As String
 		  If Self.ModsList.SelectedRowCount > 0 Then
-		    Status = Self.ModsList.SelectedRowCount.ToString(Locale.Current, "0,##") + " of " + Language.NounWithQuantity(Self.TotalResults, "mod", "mods") + " selected"
+		    Status = Self.ModsList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.TotalResults, "mod", "mods") + " selected"
 		  Else
 		    Status = Language.NounWithQuantity(Self.TotalResults, "mod", "mods")
 		  End If

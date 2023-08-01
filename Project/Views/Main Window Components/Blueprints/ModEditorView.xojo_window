@@ -32,7 +32,7 @@ Begin BeaconSubview ModEditorView
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   False
-      AllowInfiniteScroll=   False
+      AllowInfiniteScroll=   True
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
@@ -54,7 +54,7 @@ Begin BeaconSubview ModEditorView
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   391
+      Height          =   360
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Name	Type"
@@ -138,16 +138,76 @@ Begin BeaconSubview ModEditorView
       ThreadID        =   0
       ThreadState     =   0
    End
+   Begin DesktopLabel StatusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Loading Blueprints"
+      TextAlignment   =   2
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   407
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   804
+   End
+   Begin FadedSeparator StatusSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   401
+      Transparent     =   True
+      Visible         =   True
+      Width           =   844
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.ViewTitle = Self.mController.ModName
+		  Self.ViewTitle = Self.mController.ContentPackName
 		  
 		  Self.UpdatePublishButton()
-		  Self.mController.LoadBlueprints()
 		End Sub
 	#tag EndEvent
 
@@ -155,6 +215,19 @@ End
 		Sub ShouldSave(CloseWhenFinished As Boolean)
 		  Self.mCloseAfterPublish = CloseWhenFinished
 		  Self.mController.Publish
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  RaiseEvent Shown(UserData)
+		  
+		  If Self.mHasBeenShown = False Then
+		    Self.BlueprintList.ScrollPosition = 0
+		    Self.BlueprintList.RemoveAllRows
+		  End If
+		  
+		  Self.mHasBeenShown = True
 		End Sub
 	#tag EndEvent
 
@@ -185,14 +258,20 @@ End
 		  AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
 		  
 		  Self.mController = Controller
-		  Self.ViewID = Controller.ModID
+		  Self.ViewID = Controller.ContentPackId
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackId() As String
+		  Return Self.mController.ContentPackId
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Export()
 		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ModName) + Beacon.FileExtensionDelta
+		  Dialog.SuggestedFileName = Beacon.SanitizeFilename(Self.mController.ContentPackName) + Beacon.FileExtensionDelta
 		  Dialog.Filter = BeaconFileTypes.BeaconData
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
@@ -313,11 +392,12 @@ End
 		    Self.ShowAlert("Your changes have been published.", "Because Beacon generates new update files every 15 minutes, it may take some time for the changes to be available to users.")
 		  End If
 		  
+		  // No reason to load the blueprints if we're about to close
 		  If Self.mCloseAfterPublish Then
 		    Self.RequestClose()
 		  Else
-		    // No reason to load the blueprints if we're about to close
-		    Self.mController.LoadBlueprints()
+		    Self.BlueprintList.RemoveAllRows
+		    Self.BlueprintList.ScrollPosition = 0
 		  End If
 		End Sub
 	#tag EndMethod
@@ -325,6 +405,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mController_WorkFinished(Sender As BlueprintController)
 		  Self.Progress = Self.ProgressNone
+		  Self.UpdateUI
 		  
 		  If Sender.CacheErrored Then
 		    Self.ShowAlert("There was an error loading the blueprints.", Sender.CacheErrorMessage)
@@ -335,15 +416,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mController_WorkStarted(Sender As BlueprintController)
 		  #Pragma Unused Sender
+		  Self.UpdateUI
 		  
 		  Self.Progress = Self.ProgressIndeterminate
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModID() As String
-		  Return Self.mController.ModID
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -463,6 +539,20 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  Var Status As String
+		  If Self.BlueprintList.SelectedRowCount > 0 Then
+		    Status = Self.BlueprintList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.mController.BlueprintCount, "blueprint", "blueprints") + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(Self.mController.BlueprintCount, "blueprint", "blueprints")
+		  End If
+		  If Self.StatusLabel.Text <> Status Then
+		    Self.StatusLabel.Text = Status
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
 		  If Plural Then
@@ -472,6 +562,11 @@ End
 		  End If
 		End Function
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
+	#tag EndHook
 
 
 	#tag Property, Flags = &h21
@@ -484,6 +579,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mController As BlueprintController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasBeenShown As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -580,6 +679,20 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub LoadMoreRows(Page As Integer)
+		  If Self.mHasBeenShown = False Then
+		    Return
+		  End If
+		  
+		  Self.mController.LoadBlueprints(Page, Me.PageSize)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Self.UpdateUI()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events Watcher
 	#tag Event
@@ -617,7 +730,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "AddBlueprint"
-		    Var Blueprint As Ark.Blueprint = BlueprintEditorDialog.Present(Self, Self.mController.ModID, Self.mController.ModName)
+		    Var Blueprint As Ark.Blueprint = BlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
 		    If (Blueprint Is Nil) = False Then
 		      Self.mController.SaveBlueprint(Blueprint)
 		      Self.UpdateList()

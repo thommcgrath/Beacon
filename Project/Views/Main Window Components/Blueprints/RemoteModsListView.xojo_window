@@ -259,7 +259,7 @@ End
 		Sub UpdateUI()
 		  Var Status As String
 		  If Self.List.SelectedRowCount > 0 Then
-		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "0,##") + " of " + Language.NounWithQuantity(Self.TotalResults, "mod", "mods") + " selected"
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.TotalResults, "mod", "mods") + " selected"
 		  Else
 		    Status = Language.NounWithQuantity(Self.TotalResults, "mod", "mods")
 		  End If
@@ -380,6 +380,8 @@ End
 		  If (Self.ModsToolbar.Item("EditModBlueprints") Is Nil) = False Then
 		    Self.ModsToolbar.Item("EditModBlueprints").Enabled = (Me.SelectedRowCount > 0)
 		  End If
+		  
+		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent
 	#tag Event
