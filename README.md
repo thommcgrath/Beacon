@@ -20,6 +20,7 @@ Grab MBS-Xojo-Plugins233.zip from https://www.monkeybreadsoftware.de/xojo/downlo
 - MacExtras
 - MacFrameworks
 - Main
+- RegEx
 - Scintilla
 - Tools
 - Util
