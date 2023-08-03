@@ -356,7 +356,7 @@ Protected Class BlueprintController
 		    End If
 		    
 		    // If the blueprint id is unchanged, the first change will be replaced
-		    Self.mChanges.Value(OriginalBlueprintId) = False
+		    Self.mChanges.Value(OriginalBlueprintId) = Blueprint.Category
 		    Self.mChanges.Value(BlueprintId) = Blueprint
 		  Next
 		End Sub

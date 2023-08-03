@@ -298,14 +298,23 @@ End
 		Sub Opening()
 		  Self.ViewTitle = Self.mController.ContentPackName
 		  Self.SwitchMode(BlueprintController.ModeEngrams)
-		  Self.UpdatePublishButton()
+		  
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub ShouldSave(CloseWhenFinished As Boolean)
 		  Self.mCloseAfterPublish = CloseWhenFinished
-		  Self.mController.Publish
+		  Try
+		    Self.mController.Publish
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Publishing blueprints")
+		    If Self.mController.UseSaveTerminology Then
+		      Self.ShowAlert("Could not save changes", Err.Message)
+		    Else
+		      Self.ShowAlert("Could not publish changes", Err.Message)
+		    End If
+		  End Try
 		End Sub
 	#tag EndEvent
 
@@ -510,7 +519,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mController_PublishFinished(Sender As BlueprintController, Task As BlueprintPublishTask)
 		  If Task.Errored Then
-		    Self.UpdatePublishButton()
+		    Self.UpdateUI()
 		    
 		    If Sender.UseSaveTerminology Then
 		      Self.ShowAlert("Beacon was unable to save the changes.", Task.ErrorMessage)
@@ -531,8 +540,7 @@ End
 		  If Self.mCloseAfterPublish Then
 		    Self.RequestClose()
 		  Else
-		    Self.BlueprintList.RemoveAllRows
-		    Self.BlueprintList.ScrollPosition = 0
+		    Self.UpdateList()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -718,19 +726,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdatePublishButton()
-		  Var PublishEnabled As Boolean = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
-		  If (Self.ButtonsToolbar.Item("Publish") Is Nil) = False Then
-		    Self.ButtonsToolbar.Item("Publish").Enabled = PublishEnabled
-		  End If
-		  If (Self.ButtonsToolbar.Item("Discard") Is Nil) = False Then
-		    Self.ButtonsToolbar.Item("Discard").Enabled = PublishEnabled
-		  End If
-		  Self.Modified = PublishEnabled
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Var NounSingle, NounPlural As String
 		  Select Case Self.mMode
@@ -775,6 +770,15 @@ End
 		  If Self.StatusLabel.Text <> Status Then
 		    Self.StatusLabel.Text = Status
 		  End If
+		  
+		  Var PublishEnabled As Boolean = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
+		  If (Self.ButtonsToolbar.Item("Publish") Is Nil) = False Then
+		    Self.ButtonsToolbar.Item("Publish").Enabled = PublishEnabled
+		  End If
+		  If (Self.ButtonsToolbar.Item("Discard") Is Nil) = False Then
+		    Self.ButtonsToolbar.Item("Discard").Enabled = PublishEnabled
+		  End If
+		  Self.Modified = PublishEnabled
 		  
 		End Sub
 	#tag EndMethod
@@ -885,6 +889,14 @@ End
 		    Return
 		  End If
 		  
+		  Try
+		    Self.mController.DeleteBlueprints(Blueprints)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Deleting blueprints")
+		    Self.ShowAlert("Could not delete " + Language.NounWithQuantity(Blueprints.Count, "blueprint", "blueprints"), Err.Message)
+		    Return
+		  End Try
+		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Var Dict As Dictionary = Self.BlueprintDictionary(Blueprint)
 		    If Dict.HasKey(Blueprint.BlueprintId) Then
@@ -892,8 +904,6 @@ End
 		    End If
 		  Next
 		  Self.UpdateList()
-		  
-		  Self.mController.DeleteBlueprints(Blueprints)
 		  
 		End Sub
 	#tag EndEvent
@@ -915,7 +925,13 @@ End
 		      Return
 		    End If
 		    
-		    Self.mController.SaveBlueprint(Blueprint)
+		    Try
+		      Self.mController.SaveBlueprint(Blueprint)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Saving edited blueprint")
+		      Self.ShowAlert("Could not save blueprint", Err.Message)
+		      Return
+		    End Try
 		    
 		    Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Blueprint)
 		    CurrentBlueprints.Value(Blueprint.BlueprintId) = Blueprint
@@ -941,7 +957,13 @@ End
 		      Return
 		    End If
 		    
-		    Self.mController.SaveBlueprints(ModifiedBlueprints)
+		    Try
+		      Self.mController.SaveBlueprints(ModifiedBlueprints)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Saving edited blueprints")
+		      Self.ShowAlert("Could not save blueprints", Err.Message)
+		      Return
+		    End Try
 		    
 		    For Each Blueprint As Ark.Blueprint In ModifiedBlueprints
 		      Var Dict As Dictionary = Self.BlueprintDictionary(Blueprint)
@@ -981,7 +1003,14 @@ End
 		  Case "AddBlueprint"
 		    Var Blueprint As Ark.Blueprint = BlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
 		    If (Blueprint Is Nil) = False Then
-		      Self.mController.SaveBlueprint(Blueprint)
+		      Try
+		        Self.mController.SaveBlueprint(Blueprint)
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Saving new blueprint")
+		        Self.ShowAlert("Could not save blueprint", Err.Message)
+		        Return
+		      End Try
+		      
 		      Var DesiredMode As Integer = Self.ModeForBlueprint(Blueprint)
 		      Var Blueprints As Dictionary = Self.BlueprintDictionary(DesiredMode)
 		      Blueprints.Value(Blueprint.BlueprintId) = Blueprint
@@ -1028,9 +1057,25 @@ End
 		  Case "ExportFile"
 		    Self.Export()
 		  Case "Publish"
-		    Self.mController.Publish()
+		    Try
+		      Self.mController.Publish()
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Publishing changes")
+		      If Self.mController.UseSaveTerminology Then
+		        Self.ShowAlert("Could not save changes", Err.Message)
+		      Else
+		        Self.ShowAlert("Could not publish changes", Err.Message)
+		      End If
+		      Return
+		    End Try
 		  Case "Discard"
-		    Self.mController.DiscardChanges()
+		    Try
+		      Self.mController.DiscardChanges()
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reverting changes")
+		      Self.ShowAlert("Could not revert changes", Err.Message)
+		      Return
+		    End Try
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1063,9 +1108,14 @@ End
 		        ElseIf Self.mImporter.ModCount = 1 Then
 		          // Just import what was found
 		          Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
-		          Self.mController.SaveBlueprints(FoundBlueprints)
-		          Self.UpdateList(FoundBlueprints, True)
-		          Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(FoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
+		          Try
+		            Self.mController.SaveBlueprints(FoundBlueprints)
+		            Self.UpdateList(FoundBlueprints, True)
+		            Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(FoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
+		          Catch Err As RuntimeException
+		            App.Log(Err, CurrentMethodName, "Saving imported blueprints")
+		            Self.ShowAlert("Could not save imported blueprints", Err.Message)
+		          End Try
 		        Else
 		          // Show a prompt
 		          Var ChosenTags() As String = SelectModPrefixDialog.Present(Self, Self.mImporter)
@@ -1083,9 +1133,14 @@ End
 		              Next Blueprint
 		            Next Tag
 		            
-		            Self.mController.SaveBlueprints(ChosenBlueprints)
-		            Self.UpdateList(ChosenBlueprints, True)
-		            Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(ChosenBlueprints.Count, "blueprint", "blueprints") + " to import.")
+		            Try
+		              Self.mController.SaveBlueprints(ChosenBlueprints)
+		              Self.UpdateList(ChosenBlueprints, True)
+		              Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(ChosenBlueprints.Count, "blueprint", "blueprints") + " to import.")
+		            Catch Err As RuntimeException
+		              App.Log(Err, CurrentMethodName, "Saving imported blueprints")
+		              Self.ShowAlert("Could not save imported blueprints", Err.Message)
+		            End Try
 		          End If
 		        End If
 		      End If
