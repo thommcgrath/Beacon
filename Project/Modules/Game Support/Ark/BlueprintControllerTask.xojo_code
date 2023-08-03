@@ -1,5 +1,5 @@
 #tag Class
-Protected Class BlueprintTask
+Protected Class BlueprintControllerTask
 	#tag Method, Flags = &h0
 		Sub Constructor(Mode As Integer)
 		  Self.mMode = Mode

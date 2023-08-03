@@ -1,9 +1,9 @@
 #tag Class
 Protected Class RemoteBlueprintController
-Inherits BlueprintController
+Inherits Ark.BlueprintController
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
-		Sub FetchBlueprints(Task As BlueprintFetchTask)
+		Sub FetchBlueprints(Task As Ark.BlueprintControllerFetchTask)
 		  If Preferences.OnlineEnabled = False Then
 		    Self.FinishTask(Task)
 		    Return
@@ -19,15 +19,15 @@ Inherits BlueprintController
 	#tag EndEvent
 
 	#tag Event
-		Sub Publish(Tasks() As BlueprintPublishTask)
+		Sub Publish(Tasks() As Ark.BlueprintControllerPublishTask)
 		  If Preferences.OnlineEnabled = False Then
-		    For Each Task As BlueprintPublishTask In Tasks
+		    For Each Task As Ark.BlueprintControllerPublishTask In Tasks
 		      Self.FinishTask(Task)
 		    Next
 		    Return
 		  End If
 		  
-		  For Each Task As BlueprintPublishTask In Tasks
+		  For Each Task As Ark.BlueprintControllerPublishTask In Tasks
 		    Var PublishThread As New Beacon.Thread
 		    PublishThread.UserData = Task
 		    AddHandler PublishThread.Run, WeakAddressOf PublishThread_Run
@@ -42,7 +42,7 @@ Inherits BlueprintController
 
 	#tag Method, Flags = &h21
 		Private Sub FetchThread_Run(Sender As Beacon.Thread)
-		  Var Task As BlueprintFetchTask = Sender.UserData
+		  Var Task As Ark.BlueprintControllerFetchTask = Sender.UserData
 		  Var PathComponent As String = Self.PathComponent(Task)
 		  
 		  Var Params As New Dictionary
@@ -107,7 +107,7 @@ Inherits BlueprintController
 		      Continue
 		    End If
 		    
-		    Var Task As BlueprintFetchTask = Sender.UserData
+		    Var Task As Ark.BlueprintControllerFetchTask = Sender.UserData
 		    Self.FinishTask(Task)
 		    
 		    For Idx As Integer = Self.mThreads.LastIndex DownTo 0
@@ -121,37 +121,37 @@ Inherits BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function IdProperty(Task As BlueprintTask) As String
+		Private Function IdProperty(Task As Ark.BlueprintControllerTask) As String
 		  Select Case Task.Mode
-		  Case BlueprintController.ModeCreatures
+		  Case Self.ModeCreatures
 		    Return "creatureId"
-		  Case BlueprintController.ModeEngrams
+		  Case Self.ModeEngrams
 		    Return "engramId"
-		  Case BlueprintController.ModeLootDrops
+		  Case Self.ModeLootDrops
 		    Return "lootDropId"
-		  Case BlueprintController.ModeSpawnPoints
+		  Case Self.ModeSpawnPoints
 		    Return "spawnPointId"
 		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function PathComponent(Task As BlueprintTask) As String
+		Private Function PathComponent(Task As Ark.BlueprintControllerTask) As String
 		  Select Case Task.Mode
-		  Case BlueprintController.ModeCreatures
+		  Case Self.ModeCreatures
 		    Return "creatures"
-		  Case BlueprintController.ModeEngrams
+		  Case Self.ModeEngrams
 		    Return "engrams"
-		  Case BlueprintController.ModeLootDrops
+		  Case Self.ModeLootDrops
 		    Return "lootDrops"
-		  Case BlueprintController.ModeSpawnPoints
+		  Case Self.ModeSpawnPoints
 		    Return "spawnPoints"
 		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PublishDelete(Task As BlueprintPublishTask)
+		Private Sub PublishDelete(Task As Ark.BlueprintControllerPublishTask)
 		  Var PathComponent As String = Self.PathComponent(Task)
 		  Var IdProperty As String = Self.IdProperty(Task)
 		  Var Objects() As Dictionary
@@ -172,7 +172,7 @@ Inherits BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PublishSave(Task As BlueprintPublishTask)
+		Private Sub PublishSave(Task As Ark.BlueprintControllerPublishTask)
 		  Var PathComponent As String = Self.PathComponent(Task)
 		  Var Blueprints() As Ark.Blueprint = Task.Blueprints
 		  Var Objects() As Dictionary
@@ -193,7 +193,7 @@ Inherits BlueprintController
 
 	#tag Method, Flags = &h21
 		Private Sub PublishThread_Run(Sender As Beacon.Thread)
-		  Var Task As BlueprintPublishTask = Sender.UserData
+		  Var Task As Ark.BlueprintControllerPublishTask = Sender.UserData
 		  If Task.DeleteMode Then
 		    Self.PublishDelete(Task)
 		  Else
@@ -212,7 +212,7 @@ Inherits BlueprintController
 		      Continue
 		    End If
 		    
-		    Var Task As BlueprintPublishTask = Sender.UserData
+		    Var Task As Ark.BlueprintControllerPublishTask = Sender.UserData
 		    Self.FinishTask(Task)
 		    
 		    For Idx As Integer = Self.mThreads.LastIndex DownTo 0
@@ -226,7 +226,7 @@ Inherits BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Unpack(Definitions() As Variant, Task As BlueprintFetchTask) As Boolean
+		Private Function Unpack(Definitions() As Variant, Task As Ark.BlueprintControllerFetchTask) As Boolean
 		  Try
 		    For Each Definition As Dictionary In Definitions
 		      Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Definition)

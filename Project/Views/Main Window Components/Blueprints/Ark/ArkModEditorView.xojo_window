@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconSubview ArkModEditorView
+Begin ModEditorView ArkModEditorView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -7,9 +7,7 @@ Begin BeaconSubview ArkModEditorView
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   432
    Index           =   -2147483648
@@ -297,7 +295,7 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.ViewTitle = Self.mController.ContentPackName
-		  Self.SwitchMode(BlueprintController.ModeEngrams)
+		  Self.SwitchMode(Ark.BlueprintController.ModeEngrams)
 		  
 		End Sub
 	#tag EndEvent
@@ -377,11 +375,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Controller As BlueprintController)
-		  Self.mBlueprints.ResizeTo(BlueprintController.LastMode)
-		  Self.mHasRequestBlueprints.ResizeTo(BlueprintController.LastMode)
-		  Self.mLoadTotals.ResizeTo(BlueprintController.LastMode)
-		  For Idx As Integer = BlueprintController.FirstMode To BlueprintController.LastMode
+		Sub Constructor(Controller As Ark.BlueprintController)
+		  Self.mBlueprints.ResizeTo(Ark.BlueprintController.LastMode)
+		  Self.mHasRequestBlueprints.ResizeTo(Ark.BlueprintController.LastMode)
+		  Self.mLoadTotals.ResizeTo(Ark.BlueprintController.LastMode)
+		  For Idx As Integer = Ark.BlueprintController.FirstMode To Ark.BlueprintController.LastMode
 		    Self.mBlueprints(Idx) = New Dictionary
 		  Next
 		  
@@ -498,7 +496,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_BlueprintsLoaded(Sender As BlueprintController, Task As BlueprintFetchTask)
+		Private Sub mController_BlueprintsLoaded(Sender As Ark.BlueprintController, Task As Ark.BlueprintControllerFetchTask)
 		  Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Task.Mode)
 		  Var Blueprints() As Ark.Blueprint = Task.Blueprints
 		  For Idx As Integer = 0 To Blueprints.LastIndex
@@ -517,7 +515,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_PublishFinished(Sender As BlueprintController, Task As BlueprintPublishTask)
+		Private Sub mController_PublishFinished(Sender As Ark.BlueprintController, Task As Ark.BlueprintControllerPublishTask)
 		  If Task.Errored Then
 		    Self.UpdateUI()
 		    
@@ -546,14 +544,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_WorkFinished(Sender As BlueprintController)
+		Private Sub mController_WorkFinished(Sender As Ark.BlueprintController)
 		  Self.Progress = Self.ProgressNone
 		  Self.UpdateUI
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_WorkStarted(Sender As BlueprintController)
+		Private Sub mController_WorkStarted(Sender As Ark.BlueprintController)
 		  #Pragma Unused Sender
 		  Self.UpdateUI
 		  
@@ -569,13 +567,13 @@ End
 		  
 		  Select Case Blueprint
 		  Case IsA Ark.Engram
-		    Return BlueprintController.ModeEngrams
+		    Return Ark.BlueprintController.ModeEngrams
 		  Case IsA Ark.Creature
-		    Return BlueprintController.ModeCreatures
+		    Return Ark.BlueprintController.ModeCreatures
 		  Case IsA Ark.LootContainer
-		    Return BlueprintController.ModeLootDrops
+		    Return Ark.BlueprintController.ModeLootDrops
 		  Case IsA Ark.SpawnPoint
-		    Return BlueprintController.ModeSpawnPoints
+		    Return Ark.BlueprintController.ModeSpawnPoints
 		  End Select
 		  
 		  Return Self.mMode
@@ -620,16 +618,16 @@ End
 		  Var SpawnPointsButton As OmniBarItem = Self.TabsToolbar.Item("SpawnPointsButton") 
 		  
 		  If (EngramsButton Is Nil) = False Then
-		    EngramsButton.Toggled = (Mode = BlueprintController.ModeEngrams)
+		    EngramsButton.Toggled = (Mode = Ark.BlueprintController.ModeEngrams)
 		  End If
 		  If (CreaturesButton Is Nil) = False Then
-		    CreaturesButton.Toggled = (Mode = BlueprintController.ModeCreatures)
+		    CreaturesButton.Toggled = (Mode = Ark.BlueprintController.ModeCreatures)
 		  End If
 		  If (LootDropsButton Is Nil) = False Then
-		    LootDropsButton.Toggled = (Mode = BlueprintController.ModeLootDrops)
+		    LootDropsButton.Toggled = (Mode = Ark.BlueprintController.ModeLootDrops)
 		  End If
 		  If (SpawnPointsButton Is Nil) = False Then
-		    SpawnPointsButton.Toggled = (Mode = BlueprintController.ModeSpawnPoints)
+		    SpawnPointsButton.Toggled = (Mode = Ark.BlueprintController.ModeSpawnPoints)
 		  End If
 		  
 		  If Self.mHasRequestBlueprints(Mode) = False Then
@@ -729,16 +727,16 @@ End
 		Private Sub UpdateUI()
 		  Var NounSingle, NounPlural As String
 		  Select Case Self.mMode
-		  Case BlueprintController.ModeEngrams
+		  Case Ark.BlueprintController.ModeEngrams
 		    NounSingle = "engram"
 		    NounPlural = "engrams"
-		  Case BlueprintController.ModeCreatures
+		  Case Ark.BlueprintController.ModeCreatures
 		    NounSingle = "creature"
 		    NounPlural = "creatures"
-		  Case BlueprintController.ModeLootDrops
+		  Case Ark.BlueprintController.ModeLootDrops
 		    NounSingle = "loot drop"
 		    NounPlural = "loot drops"
-		  Case BlueprintController.ModeSpawnPoints
+		  Case Ark.BlueprintController.ModeSpawnPoints
 		    NounSingle = "spawn point"
 		    NounPlural = "spawn points"
 		  End Select
@@ -812,7 +810,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mController As BlueprintController
+		Private mController As Ark.BlueprintController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1171,13 +1169,13 @@ End
 		  Self.BlueprintList.ScrollPosition = 0
 		  Select Case Item.Name
 		  Case "EngramsButton"
-		    Self.SwitchMode(BlueprintController.ModeEngrams)
+		    Self.SwitchMode(Ark.BlueprintController.ModeEngrams)
 		  Case "CreaturesButton"
-		    Self.SwitchMode(BlueprintController.ModeCreatures)
+		    Self.SwitchMode(Ark.BlueprintController.ModeCreatures)
 		  Case "LootDropsButton"
-		    Self.SwitchMode(BlueprintController.ModeLootDrops)
+		    Self.SwitchMode(Ark.BlueprintController.ModeLootDrops)
 		  Case "SpawnPointsButton"
-		    Self.SwitchMode(BlueprintController.ModeSpawnPoints)
+		    Self.SwitchMode(Ark.BlueprintController.ModeSpawnPoints)
 		  End Select
 		  
 		End Sub

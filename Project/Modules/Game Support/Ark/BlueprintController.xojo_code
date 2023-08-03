@@ -1,7 +1,7 @@
 #tag Class
 Protected Class BlueprintController
 	#tag Method, Flags = &h21
-		Private Sub AddTask(Task As BlueprintTask)
+		Private Sub AddTask(Task As Ark.BlueprintControllerTask)
 		  Self.mPendingTasks.Add(Task)
 		  If Self.mPendingTasks.Count = 1 Then
 		    RaiseEvent WorkStarted()
@@ -80,7 +80,7 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function FindTask(TaskId As String) As BlueprintTask
+		Protected Function FindTask(TaskId As String) As Ark.BlueprintControllerTask
 		  For Idx As Integer = 0 To Self.mPendingTasks.LastIndex
 		    If Self.mPendingTasks(Idx).TaskId = TaskId Then
 		      Return Self.mPendingTasks(Idx)
@@ -90,7 +90,7 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub FinishTask(Task As BlueprintFetchTask)
+		Protected Sub FinishTask(Task As Ark.BlueprintControllerFetchTask)
 		  Var Clone() As Ark.Blueprint
 		  Clone.ResizeTo(Task.Blueprints.LastIndex)
 		  For Idx As Integer = 0 To Task.Blueprints.LastIndex
@@ -117,7 +117,7 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub FinishTask(Task As BlueprintPublishTask)
+		Protected Sub FinishTask(Task As Ark.BlueprintControllerPublishTask)
 		  If Task.Errored = False Then
 		    If Task.DeleteMode Then
 		      Var DeleteIds() As String = Task.DeleteIds
@@ -143,7 +143,7 @@ Protected Class BlueprintController
 		      Continue For Idx
 		    End If
 		    
-		    If Self.mPendingTasks(Idx) IsA BlueprintPublishTask Then
+		    If Self.mPendingTasks(Idx) IsA Ark.BlueprintControllerPublishTask Then
 		      RemainingPublishTasks = RemainingPublishTasks + 1
 		    End If
 		  Next
@@ -164,7 +164,7 @@ Protected Class BlueprintController
 
 	#tag Method, Flags = &h0
 		Sub LoadBlueprints(Mode As Integer, Page As Integer, PageSize As Integer)
-		  Var Task As New BlueprintFetchTask(Mode, Page, PageSize)
+		  Var Task As New Ark.BlueprintControllerFetchTask(Mode, Page, PageSize)
 		  Self.AddTask(Task)
 		  
 		  RaiseEvent FetchBlueprints(Task)
@@ -289,37 +289,37 @@ Protected Class BlueprintController
 		    End If
 		  Next
 		  
-		  Var Tasks() As BlueprintPublishTask
+		  Var Tasks() As Ark.BlueprintControllerPublishTask
 		  If SaveEngrams.Count > 0 Then
-		    Tasks.Add(New BlueprintPublishTask(Self.ModeEngrams, SaveEngrams))
+		    Tasks.Add(New Ark.BlueprintControllerPublishTask(Self.ModeEngrams, SaveEngrams))
 		  End If
 		  If SaveCreatures.Count > 0 Then
-		    Tasks.Add(New BlueprintPublishTask(Self.ModeCreatures, SaveCreatures))
+		    Tasks.Add(New Ark.BlueprintControllerPublishTask(Self.ModeCreatures, SaveCreatures))
 		  End If
 		  If SaveLootDrops.Count > 0 Then
-		    Tasks.Add(New BlueprintPublishTask(Self.ModeLootDrops, SaveLootDrops))
+		    Tasks.Add(New Ark.BlueprintControllerPublishTask(Self.ModeLootDrops, SaveLootDrops))
 		  End If
 		  If SaveSpawnPoints.Count > 0 Then
-		    Tasks.Add(New BlueprintPublishTask(Self.ModeSpawnPoints, SaveSpawnPoints))
+		    Tasks.Add(New Ark.BlueprintControllerPublishTask(Self.ModeSpawnPoints, SaveSpawnPoints))
 		  End If
 		  If DeleteEngrams.Count > 0 Then
-		    Tasks.Add(New BlueprintPublishTask(Self.ModeEngrams, DeleteEngrams))
+		    Tasks.Add(New Ark.BlueprintControllerPublishTask(Self.ModeEngrams, DeleteEngrams))
 		  End If
 		  If DeleteCreatures.Count > 0 Then
-		    Tasks.Add(New BlueprintPublishTask(Self.ModeCreatures, DeleteCreatures))
+		    Tasks.Add(New Ark.BlueprintControllerPublishTask(Self.ModeCreatures, DeleteCreatures))
 		  End If
 		  If DeleteLootDrops.Count > 0 Then
-		    Tasks.Add(New BlueprintPublishTask(Self.ModeLootDrops, DeleteLootDrops))
+		    Tasks.Add(New Ark.BlueprintControllerPublishTask(Self.ModeLootDrops, DeleteLootDrops))
 		  End If
 		  If DeleteSpawnPoints.Count > 0 Then
-		    Tasks.Add(New BlueprintPublishTask(Self.ModeSpawnPoints, DeleteSpawnPoints))
+		    Tasks.Add(New Ark.BlueprintControllerPublishTask(Self.ModeSpawnPoints, DeleteSpawnPoints))
 		  End If
 		  
 		  If Tasks.Count = 0 Then
 		    Return
 		  End If
 		  
-		  For Each Task As BlueprintTask In Tasks
+		  For Each Task As Ark.BlueprintControllerTask In Tasks
 		    Self.AddTask(Task)
 		  Next
 		  
@@ -370,19 +370,19 @@ Protected Class BlueprintController
 
 
 	#tag Hook, Flags = &h0
-		Event BlueprintsLoaded(Task As BlueprintFetchTask)
+		Event BlueprintsLoaded(Task As Ark.BlueprintControllerFetchTask)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event FetchBlueprints(Task As BlueprintFetchTask)
+		Event FetchBlueprints(Task As Ark.BlueprintControllerFetchTask)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Publish(Tasks() As BlueprintPublishTask)
+		Event Publish(Tasks() As Ark.BlueprintControllerPublishTask)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PublishFinished(Task As BlueprintPublishTask)
+		Event PublishFinished(Task As Ark.BlueprintControllerPublishTask)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -436,7 +436,7 @@ Protected Class BlueprintController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPendingTasks() As BlueprintTask
+		Private mPendingTasks() As Ark.BlueprintControllerTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1,9 +1,9 @@
 #tag Class
 Protected Class LocalBlueprintController
-Inherits BlueprintController
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+Inherits Ark.BlueprintController
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
-		Sub FetchBlueprints(Task As BlueprintFetchTask)
+		Sub FetchBlueprints(Task As Ark.BlueprintControllerFetchTask)
 		  Var FetchThread As New Beacon.Thread
 		  FetchThread.UserData = Task
 		  AddHandler FetchThread.Run, WeakAddressOf FetchThread_Run
@@ -15,8 +15,8 @@ Inherits BlueprintController
 	#tag EndEvent
 
 	#tag Event
-		Sub Publish(Tasks() As BlueprintPublishTask)
-		  For Each Task As BlueprintPublishTask In Tasks
+		Sub Publish(Tasks() As Ark.BlueprintControllerPublishTask)
+		  For Each Task As Ark.BlueprintControllerPublishTask In Tasks
 		    Var PublishThread As New Beacon.Thread
 		    PublishThread.UserData = Task
 		    AddHandler PublishThread.Run, WeakAddressOf PublishThread_Run
@@ -31,7 +31,7 @@ Inherits BlueprintController
 
 	#tag Method, Flags = &h21
 		Private Sub FetchThread_Run(Sender As Beacon.Thread)
-		  Var Task As BlueprintFetchTask = Sender.UserData
+		  Var Task As Ark.BlueprintControllerFetchTask = Sender.UserData
 		  Var Mods As New Beacon.StringList(Self.ContentPackId)
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
@@ -59,7 +59,7 @@ Inherits BlueprintController
 		      Continue
 		    End If
 		    
-		    Var Task As BlueprintFetchTask = Sender.UserData
+		    Var Task As Ark.BlueprintControllerFetchTask = Sender.UserData
 		    Self.FinishTask(Task)
 		    
 		    For Idx As Integer = Self.mThreads.LastIndex DownTo 0
@@ -73,7 +73,7 @@ Inherits BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PublishDelete(Task As BlueprintPublishTask)
+		Private Sub PublishDelete(Task As Ark.BlueprintControllerPublishTask)
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  Var Blueprints() As Ark.Blueprint
 		  Var Errors As New Dictionary
@@ -103,7 +103,7 @@ Inherits BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PublishSave(Task As BlueprintPublishTask)
+		Private Sub PublishSave(Task As Ark.BlueprintControllerPublishTask)
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  Var Blueprints() As Ark.Blueprint = Task.Blueprints
 		  Var DeleteIds() As String
@@ -140,7 +140,7 @@ Inherits BlueprintController
 
 	#tag Method, Flags = &h21
 		Private Sub PublishThread_Run(Sender As Beacon.Thread)
-		  Var Task As BlueprintPublishTask = Sender.UserData
+		  Var Task As Ark.BlueprintControllerPublishTask = Sender.UserData
 		  If Task.DeleteMode Then
 		    Self.PublishDelete(Task)
 		  Else
@@ -158,7 +158,7 @@ Inherits BlueprintController
 		      Continue
 		    End If
 		    
-		    Var Task As BlueprintPublishTask = Sender.UserData
+		    Var Task As Ark.BlueprintControllerPublishTask = Sender.UserData
 		    Self.FinishTask(Task)
 		    
 		    For Idx As Integer = Self.mThreads.LastIndex DownTo 0

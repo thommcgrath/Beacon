@@ -252,8 +252,8 @@ End
 		  End If
 		  
 		  Var View As BeaconSubview = Self.Page(Idx - 1) // Don't forget the separator
-		  If View IsA ArkModEditorView Then
-		    Return Self.CloseView(ArkModEditorView(View))
+		  If View IsA ModEditorView Then
+		    Return Self.CloseView(ModEditorView(View))
 		  End If
 		  Return True
 		End Function
@@ -287,7 +287,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowMod(Sender As ModsListView, ModInfo As BeaconAPI.ContentPack)
 		  If ModInfo.Confirmed = False Then
-		    If ArkRegisterModDialog.Present(Self, ModInfo) Then
+		    If ModInfo.GameId = Ark.Identifier And ArkRegisterModDialog.Present(Self, ModInfo) Then
 		      Sender.RefreshMods()
 		    Else
 		      Return
@@ -299,15 +299,18 @@ End
 		  If Idx > -1 Then
 		    View = Self.Page(Idx - 1) // Don't forget the separator
 		  Else
-		    Var Controller As BlueprintController
-		    If ModInfo.IsLocal Then
-		      Controller = New LocalBlueprintController(ModInfo)
-		    Else
-		      Controller = New RemoteBlueprintController(ModInfo)
-		    End If
-		    
-		    View = New ArkModEditorView(Controller)
-		    Self.EmbedView(View)
+		    Select Case ModInfo.GameId
+		    Case Ark.Identifier
+		      Var Controller As Ark.BlueprintController
+		      If ModInfo.IsLocal Then
+		        Controller = New Ark.LocalBlueprintController(ModInfo)
+		      Else
+		        Controller = New Ark.RemoteBlueprintController(ModInfo)
+		      End If
+		      
+		      View = New ArkModEditorView(Controller)
+		      Self.EmbedView(View)
+		    End Select
 		  End If
 		  Self.ShowView(View)
 		End Sub
@@ -360,8 +363,8 @@ End
 		  For Idx As Integer = 0 To Self.LastPageIndex
 		    If Self.Page(Idx).LinkedOmniBarItem = Item Then
 		      Var View As BeaconSubview = Self.Page(Idx)
-		      If View IsA ArkModEditorView Then
-		        Call Self.CloseView(ArkModEditorView(View))
+		      If View IsA ModEditorView Then
+		        Call Self.CloseView(ModEditorView(View))
 		      End If
 		      Return
 		    End If
