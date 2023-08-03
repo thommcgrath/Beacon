@@ -83,7 +83,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   1420
       Begin DashboardPane DashboardPane1
@@ -154,7 +154,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Top             =   38
          Transparent     =   True
          ViewIcon        =   0
-         ViewTitle       =   "Blueprints"
+         ViewTitle       =   "Mods"
          Visible         =   True
          Width           =   1420
       End
@@ -976,7 +976,7 @@ End
 		  Var Documents As OmniBarItem = OmniBarItem.CreateTab("NavDocuments", "Projects")
 		  Self.DocumentsComponent1.LinkedOmniBarItem = Documents
 		  
-		  Var Blueprints As OmniBarItem = OmniBarItem.CreateTab("NavBlueprints", "Blueprints")
+		  Var Blueprints As OmniBarItem = OmniBarItem.CreateTab("NavBlueprints", "Mods")
 		  Self.BlueprintsComponent1.LinkedOmniBarItem = Blueprints
 		  
 		  Var Templates As OmniBarItem = OmniBarItem.CreateTab("NavTemplates", "Templates")
