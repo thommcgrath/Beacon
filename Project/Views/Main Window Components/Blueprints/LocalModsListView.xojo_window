@@ -73,6 +73,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -417,11 +418,11 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RunModDiscovery()
 		  If Self.mDiscoveryDialog Is Nil Or Self.mDiscoveryDialog.Value Is Nil Then
-		    Var Dialog As New ModDiscoveryDialog(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted)
+		    Var Dialog As New ArkModDiscoveryDialog(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted)
 		    Self.mDiscoveryDialog = New WeakRef(Dialog)
 		  End If
 		  
-		  ModDiscoveryDialog(Self.mDiscoveryDialog.Value).Show()
+		  ArkModDiscoveryDialog(Self.mDiscoveryDialog.Value).Show()
 		End Sub
 	#tag EndMethod
 
@@ -551,7 +552,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "RegisterMod"
-		    Var ModId As String =  RegisterModDialog.Present(Self, RegisterModDialog.ModeLocal)
+		    Var ModId As String =  ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeLocal)
 		    If ModId.IsEmpty = False Then
 		      Self.mOpenModWhenRefreshed = ModId
 		      Self.RefreshMods()

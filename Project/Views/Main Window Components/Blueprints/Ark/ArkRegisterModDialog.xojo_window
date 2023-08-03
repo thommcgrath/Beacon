@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog RegisterModDialog
+Begin BeaconDialog ArkRegisterModDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -1155,7 +1155,7 @@ End
 		  End If
 		  
 		  Var Mode As Integer = If(ModInfo.IsLocal, ModeLocal, ModeRemote)
-		  Var Win As New RegisterModDialog(ModInfo, Mode)
+		  Var Win As New ArkRegisterModDialog(ModInfo, Mode)
 		  Win.SwapButtons()
 		  Win.ShowModal(Parent)
 		  Var ModId As String = Win.mModId
@@ -1170,7 +1170,7 @@ End
 		    Parent = Parent.TrueWindow
 		  End If
 		  
-		  Var Win As New RegisterModDialog(Nil, Mode)
+		  Var Win As New ArkRegisterModDialog(Nil, Mode)
 		  Win.SwapButtons()
 		  Win.ShowModal(Parent)
 		  Var ModId As String = Win.mModId

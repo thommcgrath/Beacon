@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog DefineStatDialog
+Begin BeaconDialog ArkDefineStatDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -569,7 +569,7 @@ End
 		    Return Nil
 		  End If
 		  
-		  Var Win As New DefineStatDialog(UsedStats, Values)
+		  Var Win As New ArkDefineStatDialog(UsedStats, Values)
 		  Win.ShowModal(Parent)
 		  If Win.mCancelled Then
 		    Win.Close

@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog SelectModPrefixDialog
+Begin BeaconDialog ArkSelectModPrefixDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -138,6 +138,7 @@ Begin BeaconDialog SelectModPrefixDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   84
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -229,7 +230,7 @@ End
 		    Return ChosenTags
 		  End If
 		  
-		  Var Win As New SelectModPrefixDialog(Importer)
+		  Var Win As New ArkSelectModPrefixDialog(Importer)
 		  Win.ShowModal(Parent)
 		  ChosenTags = Win.mChosenTags
 		  Return ChosenTags

@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog ModDiscoveryDialog
+Begin BeaconDialog ArkModDiscoveryDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -710,7 +710,7 @@ End
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
-		Sub Constructor(CheckCallback As ModDiscoveryDialog.CheckModDelegate, CompleteCallback As ModDiscoveryDialog.CompletedDelegate)
+		Sub Constructor(CheckCallback As ArkModDiscoveryDialog.CheckModDelegate, CompleteCallback As ArkModDiscoveryDialog.CompletedDelegate)
 		  // Calling the overridden superclass constructor.
 		  Self.mCheckCallback = CheckCallback
 		  Self.mCompletedCallback = CompleteCallback
@@ -877,11 +877,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCheckCallback As ModDiscoveryDialog.CheckModDelegate
+		Private mCheckCallback As ArkModDiscoveryDialog.CheckModDelegate
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCompletedCallback As ModDiscoveryDialog.CompletedDelegate
+		Private mCompletedCallback As ArkModDiscoveryDialog.CompletedDelegate
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

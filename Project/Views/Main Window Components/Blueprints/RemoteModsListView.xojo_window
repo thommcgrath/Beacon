@@ -137,6 +137,7 @@ Begin ModsListView RemoteModsListView
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -495,7 +496,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "RegisterMod"
-		    Var ModId As String =  RegisterModDialog.Present(Self, RegisterModDialog.ModeRemote)
+		    Var ModId As String =  ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeRemote)
 		    If ModId.IsEmpty = False Then
 		      Self.RefreshMods()
 		    End If

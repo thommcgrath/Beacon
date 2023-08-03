@@ -252,8 +252,8 @@ End
 		  End If
 		  
 		  Var View As BeaconSubview = Self.Page(Idx - 1) // Don't forget the separator
-		  If View IsA ModEditorView Then
-		    Return Self.CloseView(ModEditorView(View))
+		  If View IsA ArkModEditorView Then
+		    Return Self.CloseView(ArkModEditorView(View))
 		  End If
 		  Return True
 		End Function
@@ -287,7 +287,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowMod(Sender As ModsListView, ModInfo As BeaconAPI.ContentPack)
 		  If ModInfo.Confirmed = False Then
-		    If RegisterModDialog.Present(Self, ModInfo) Then
+		    If ArkRegisterModDialog.Present(Self, ModInfo) Then
 		      Sender.RefreshMods()
 		    Else
 		      Return
@@ -306,7 +306,7 @@ End
 		      Controller = New RemoteBlueprintController(ModInfo)
 		    End If
 		    
-		    View = New ModEditorView(Controller)
+		    View = New ArkModEditorView(Controller)
 		    Self.EmbedView(View)
 		  End If
 		  Self.ShowView(View)
@@ -360,8 +360,8 @@ End
 		  For Idx As Integer = 0 To Self.LastPageIndex
 		    If Self.Page(Idx).LinkedOmniBarItem = Item Then
 		      Var View As BeaconSubview = Self.Page(Idx)
-		      If View IsA ModEditorView Then
-		        Call Self.CloseView(ModEditorView(View))
+		      If View IsA ArkModEditorView Then
+		        Call Self.CloseView(ArkModEditorView(View))
 		      End If
 		      Return
 		    End If

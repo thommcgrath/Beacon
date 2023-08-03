@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconSubview ModEditorView
+Begin BeaconSubview ArkModEditorView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -920,7 +920,7 @@ End
 		      Return
 		    End If
 		    
-		    Blueprint = BlueprintEditorDialog.Present(Self, Blueprint)
+		    Blueprint = ArkBlueprintEditorDialog.Present(Self, Blueprint)
 		    If Blueprint Is Nil Then
 		      Return
 		    End If
@@ -952,7 +952,7 @@ End
 		      Blueprints.Add(Blueprint)
 		    Next
 		    
-		    Var ModifiedBlueprints() As Ark.Blueprint = BlueprintMultiEditor.Present(Self, Blueprints)
+		    Var ModifiedBlueprints() As Ark.Blueprint = ArkBlueprintMultiEditor.Present(Self, Blueprints)
 		    If ModifiedBlueprints Is Nil Or ModifiedBlueprints.Count = 0 Then
 		      Return
 		    End If
@@ -1001,7 +1001,7 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Select Case Item.Name
 		  Case "AddBlueprint"
-		    Var Blueprint As Ark.Blueprint = BlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
+		    Var Blueprint As Ark.Blueprint = ArkBlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
 		    If (Blueprint Is Nil) = False Then
 		      Try
 		        Self.mController.SaveBlueprint(Blueprint)
@@ -1118,7 +1118,7 @@ End
 		          End Try
 		        Else
 		          // Show a prompt
-		          Var ChosenTags() As String = SelectModPrefixDialog.Present(Self, Self.mImporter)
+		          Var ChosenTags() As String = ArkSelectModPrefixDialog.Present(Self, Self.mImporter)
 		          If ChosenTags.Count > 0 Then
 		            Var ChosenBlueprints() As Ark.Blueprint
 		            Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints

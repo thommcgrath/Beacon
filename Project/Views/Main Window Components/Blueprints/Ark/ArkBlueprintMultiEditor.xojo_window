@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog BlueprintMultiEditor
+Begin BeaconDialog ArkBlueprintMultiEditor
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -372,7 +372,7 @@ End
 		    Return Nil
 		  End If
 		  
-		  Var Win As New BlueprintMultiEditor(Blueprints)
+		  Var Win As New ArkBlueprintMultiEditor(Blueprints)
 		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprints() As Ark.Blueprint

@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog BlueprintEditorDialog
+Begin BeaconDialog ArkBlueprintEditorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -1275,6 +1275,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabStop         =   True
          Tooltip         =   ""
          Top             =   194
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -1332,6 +1333,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabStop         =   True
          Tooltip         =   ""
          Top             =   194
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -2332,7 +2334,7 @@ End
 		    Raise Err
 		  End If
 		  
-		  Var Win As New BlueprintEditorDialog(Blueprint)
+		  Var Win As New ArkBlueprintEditorDialog(Blueprint)
 		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As Ark.Blueprint
@@ -2350,7 +2352,7 @@ End
 		    Return Nil
 		  End If
 		  
-		  Var Win As New BlueprintEditorDialog(ContentPackId, ContentPackName)
+		  Var Win As New ArkBlueprintEditorDialog(ContentPackId, ContentPackName)
 		  Win.ShowModal(Parent)
 		  
 		  Var EditedBlueprint As Ark.Blueprint
@@ -3011,7 +3013,7 @@ End
 		    UsedStats = UsedStats Or Values.Mask
 		  Next
 		  
-		  Var NewStat As Ark.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats)
+		  Var NewStat As Ark.CreatureStatValue = ArkDefineStatDialog.Present(Self, UsedStats)
 		  If NewStat Is Nil Then
 		    Return
 		  End If
@@ -3177,7 +3179,7 @@ End
 		    UsedStats = UsedStats Or Ark.CreatureStatValue(Self.CreatureStatsList.RowTagAt(Row)).Mask
 		  Next
 		  
-		  Var NewStat As Ark.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats, Values)
+		  Var NewStat As Ark.CreatureStatValue = ArkDefineStatDialog.Present(Self, UsedStats, Values)
 		  If NewStat Is Nil Then
 		    Return
 		  End If
