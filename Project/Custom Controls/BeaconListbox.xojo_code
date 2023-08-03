@@ -484,6 +484,15 @@ Inherits DesktopListBox
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CompleteRowLoadRequest(RequestToken As String)
+		  Var Idx As Integer = Self.mOutstandingRequestTokens.IndexOf(RequestToken)
+		  If Idx > -1 Then
+		    Self.mOutstandingRequestTokens.RemoveAt(Idx)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mTypeaheadTimer = New Timer
 		  Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off
@@ -493,6 +502,8 @@ Inherits DesktopListBox
 		  Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
 		  Self.mScrollWatchTimer.Period = 250
 		  AddHandler mScrollWatchTimer.Action, WeakAddressOf mScrollWatchTimer_Action
+		  
+		  Self.mRequestedPages = New Dictionary
 		  
 		  Super.Constructor
 		End Sub
@@ -504,7 +515,7 @@ Inherits DesktopListBox
 		    Return -1
 		  End If
 		  
-		  Return Ceiling(Self.ScrollPosition / Self.PageSize)
+		  Return Self.PageOfRowIndex(Self.ScrollPosition)
 		End Function
 	#tag EndMethod
 
@@ -651,6 +662,12 @@ Inherits DesktopListBox
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsLoading() As Boolean
+		  Return Self.mOutstandingRequestTokens.Count > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MaxSelectedRow() As Integer
 		  If Self.SelectedRowCount = 0 Then
 		    Return -1
@@ -692,23 +709,26 @@ Inherits DesktopListBox
 		  
 		  Var ViewportHeight As Integer = Self.VisibleRowCount
 		  
-		  If Self.ScrollPosition = Self.mLastScrollPosition And ViewportHeight = Self.mLastViewportHeight Then
+		  If Self.IsLoading Or (Self.ScrollPosition = Self.mLastScrollPosition And ViewportHeight = Self.mLastViewportHeight) Then
 		    Return
 		  End If
 		  
-		  Const LoadAheadFactor = 0.25 // Number of pages below the viewport ahead to load
+		  Var MinPage As Integer = Self.CurrentPage - 1
+		  Var MaxPage As Integer = Self.PageOfRowIndex(Self.ScrollPosition + ViewportHeight) + 1
+		  If Self.TotalPages > -1 Then
+		    MinPage = Min(MinPage, Self.TotalPages)
+		    MaxPage = Min(MaxPage, Self.TotalPages)
+		  End If
+		  For Page As Integer = MinPage To MaxPage
+		    If Page > 0 And Self.mRequestedPages.HasKey(Page) = False Then
+		      Self.ReloadPage(Page)
+		      Return
+		    End If
+		  Next
 		  
 		  Self.mLastScrollPosition = Self.ScrollPosition
 		  Self.mLastViewportHeight = ViewportHeight
 		  
-		  Var PreloadBound As Integer = Self.ScrollPosition + ViewportHeight + (LoadAheadFactor * Self.PageSize)
-		  System.DebugLog("PreloadBound is now " + PreloadBound.ToString(Locale.Raw, "0"))
-		  If PreloadBound > Self.mUpperRequestedBound Then
-		    Var NextPage As Integer = Ceiling(Self.mUpperRequestedBound / Self.PageSize) + 1
-		    RaiseEvent LoadMoreRows(NextPage)
-		    Self.mUpperRequestedBound = Self.mUpperRequestedBound + Self.PageSize
-		    System.DebugLog("UpperRequestedBound is now " + Self.mUpperRequestedBound.ToString(Locale.Raw, "0"))
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -720,10 +740,57 @@ Inherits DesktopListBox
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function PageOfRowIndex(RowIndex As Integer) As Integer
+		  Return Ceiling((RowIndex + 1) / Self.PageSize)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PauseScrollWatching()
+		  If Self.AllowInfiniteScroll = False Or Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off Then
+		    Return
+		  End If
+		  
+		  Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub PostOpenInvalidate()
 		  Self.ScrollPosition = Self.ScrollPosition
 		  Self.Refresh()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReloadAllPages()
+		  Self.mRequestedPages = New Dictionary
+		  Self.ReloadCurrentPage()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReloadCurrentPage()
+		  Self.ReloadPage(Self.CurrentPage)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReloadPage(Page As Integer)
+		  If Self.AllowInfiniteScroll = False Then
+		    Return
+		  End If
+		  
+		  Var RequestToken As String = EncodeHex(Crypto.GenerateRandomBytes(8)).Lowercase
+		  Self.mOutstandingRequestTokens.Add(RequestToken)
+		  Var Cancelled As Boolean = RaiseEvent LoadMoreRows(Page, RequestToken)
+		  If Cancelled Then
+		    Self.mOutstandingRequestTokens.RemoveAt(Self.mOutstandingRequestTokens.LastIndex)
+		    Return
+		  End If
+		  Self.mRequestedPages.Value(Page) = True
 		End Sub
 	#tag EndMethod
 
@@ -740,6 +807,17 @@ Inherits DesktopListBox
 		  Self.mLastScrollPosition = -1
 		  Self.mUpperRequestedBound = Xojo.Max(Self.mUpperRequestedBound - 1, 0)
 		  Super.RemoveRowAt(index)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResumeScrollWatching()
+		  If Self.AllowInfiniteScroll = False Or Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple Then
+		    Return
+		  End If
+		  
+		  Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
+		  Self.mScrollWatchTimer_Action(Self.mScrollWatchTimer) // Trigger it now
 		End Sub
 	#tag EndMethod
 
@@ -779,6 +857,12 @@ Inherits DesktopListBox
 		  
 		  Self.SelectionChangeBlocked = False
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RowIndexOfPage(Page As Integer) As Integer
+		  Return (Page - 1) * Self.PageSize
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -865,7 +949,7 @@ Inherits DesktopListBox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event LoadMoreRows(Page As Integer)
+		Event LoadMoreRows(Page As Integer, RequestToken As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -912,20 +996,20 @@ Inherits DesktopListBox
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.mScrollWatchTimer Is Nil) = False And Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
+			  Return Self.mAllowInfiniteScroll
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If (Self.mScrollWatchTimer Is Nil) Or Value = Self.AllowInfiniteScroll Then
+			  If Value = Self.AllowInfiniteScroll Then
 			    Return
 			  End If
 			  
+			  Self.mAllowInfiniteScroll = Value
 			  If Value Then
-			    Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
-			    Self.mLastScrollPosition = Self.ScrollPosition
+			    Self.ResumeScrollWatching()
 			  Else
-			    Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
+			    Self.PauseScrollWatching()
 			  End If
 			End Set
 		#tag EndSetter
@@ -955,6 +1039,10 @@ Inherits DesktopListBox
 		#tag EndSetter
 		EditCaption As String
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAllowInfiniteScroll As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChangeCount As Integer
@@ -997,6 +1085,10 @@ Inherits DesktopListBox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOutstandingRequestTokens() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPageSize As Integer
 	#tag EndProperty
 
@@ -1005,11 +1097,19 @@ Inherits DesktopListBox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRequestedPages As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mScrollTask As AnimationKit.ScrollTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mScrollWatchTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTotalPages As Integer = -1
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1048,6 +1148,20 @@ Inherits DesktopListBox
 	#tag Property, Flags = &h0
 		PreferencesKey As String
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return If(Self.mTotalPages <= 0, -1, Self.mTotalPages)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mTotalPages = If(Value <= 0, -1, Value)
+			End Set
+		#tag EndSetter
+		TotalPages As Integer
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		TypeaheadColumn As Integer = 0
@@ -1489,6 +1603,14 @@ Inherits DesktopListBox
 			Visible=true
 			Group="Behavior"
 			InitialValue="100"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TotalPages"
+			Visible=true
+			Group="Behavior"
+			InitialValue="-1"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -117,6 +117,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       TabStop         =   True
       Tooltip         =   ""
       Top             =   63
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   "#ColumnName"
       Underline       =   False
@@ -295,6 +296,7 @@ End
 		  
 		  If Not Response.Success Then
 		    Break
+		    Self.List.CompleteRowLoadRequest(Request.Tag)
 		    Return
 		  End If
 		  
@@ -307,6 +309,7 @@ End
 		    Results = Parsed.Value("results")
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Parsing page of results.")
+		    Self.List.CompleteRowLoadRequest(Request.Tag)
 		    Return
 		  End Try
 		  
@@ -343,6 +346,7 @@ End
 		    End Try
 		  Next
 		  
+		  Self.List.CompleteRowLoadRequest(Request.Tag)
 		  Self.List.InvalidateScrollPosition
 		  Self.UpdateStatusbar()
 		End Sub
@@ -732,9 +736,10 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub LoadMoreRows(Page As Integer)
+		Function LoadMoreRows(Page As Integer, RequestToken As String) As Boolean
 		  If Self.mHasBeenShown = False Or (Page > 1 And Page > Self.mTotalPages) Then
-		    Return
+		    Me.PauseScrollWatching()
+		    Return True
 		  End If
 		  
 		  #if DebugBuild
@@ -784,8 +789,9 @@ End
 		  End If
 		  
 		  Var Request As New BeaconAPI.Request("/user/projects", "GET", Params, AddressOf APICallback_ListProjects)
+		  Request.Tag = RequestToken
 		  Self.APISocket.Start(Request)
-		End Sub
+		End Function
 	#tag EndEvent
 	#tag Event
 		Sub SelectionChanged()

@@ -95,6 +95,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1

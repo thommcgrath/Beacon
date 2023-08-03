@@ -280,6 +280,14 @@ Inherits BeaconListbox
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="PageSize"
+			Visible=true
+			Group="Behavior"
+			InitialValue="100"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"

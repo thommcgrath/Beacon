@@ -441,6 +441,7 @@ Begin BeaconDialog ArkExperienceWizard
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0

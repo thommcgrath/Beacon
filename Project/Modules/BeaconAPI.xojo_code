@@ -121,15 +121,15 @@ Protected Module BeaconAPI
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  Var URL As String = SetupSocket(Socket, Request, AuthHeader)
 		  Var ResponseBody As String
+		  Var ResponseHeaders As New Dictionary
 		  Try
 		    Socket.Send(Request.Method, URL)
 		    ResponseBody = Socket.LastContent
+		    For Each Header As Pair In Socket.ResponseHeaders
+		      ResponseHeaders.Value(Header.Left) = Header.Right
+		    Next
 		  Catch Err As RuntimeException
 		  End Try
-		  Var ResponseHeaders As New Dictionary
-		  For Each Header As Pair In Socket.ResponseHeaders
-		    ResponseHeaders.Value(Header.Left) = Header.Right
-		  Next
 		  Return New BeaconAPI.Response(URL, Socket.LastHTTPStatus, ResponseBody, ResponseHeaders)
 		End Function
 	#tag EndMethod

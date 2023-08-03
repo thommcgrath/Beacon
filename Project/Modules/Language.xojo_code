@@ -176,6 +176,10 @@ Protected Module Language
 	#tag EndMethod
 
 
+	#tag Constant, Name = Clipboard, Type = String, Dynamic = False, Default = \"Clipboard", Scope = Protected
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"Pasteboard"
+	#tag EndConstant
+
 	#tag Constant, Name = ExperimentalWarningActionCaption, Type = String, Dynamic = False, Default = \"Continue", Scope = Protected
 	#tag EndConstant
 

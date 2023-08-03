@@ -706,7 +706,7 @@ End
 	#tag EndDelegateDeclaration
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Sub CompletedDelegate(DiscoveredMods() As Beacon.ContentPack)
+		Private Delegate Sub CompletedDelegate(DiscoveredMods() As Beacon . ContentPack)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0

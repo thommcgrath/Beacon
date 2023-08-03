@@ -1,90 +1,36 @@
 #tag Class
 Protected Class BlueprintController
-	#tag Method, Flags = &h0
-		Function Blueprint(BlueprintId As String) As Ark.Blueprint
-		  If Self.mBlueprints.HasKey(BlueprintId) Then
-		    Return Self.mBlueprints.Value(BlueprintId)
+	#tag Method, Flags = &h21
+		Private Sub AddTask(Task As BlueprintTask)
+		  Self.mPendingTasks.Add(Task)
+		  If Self.mPendingTasks.Count = 1 Then
+		    RaiseEvent WorkStarted()
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function BlueprintCount() As Integer
-		  Return Self.mBlueprints.KeyCount
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Blueprints() As Ark.Blueprint()
-		  Var Results() As Ark.Blueprint
-		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    Results.Add(Entry.Value)
-		  Next
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub CacheBlueprints()
-		  // This is a convenience method to finish loading an empty set.
-		  Var Blueprints() As Ark.Blueprint
-		  Self.CacheBlueprints(Blueprints)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub CacheBlueprints(Blueprints() As Ark.Blueprint)
-		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Self.mBlueprints.Value(Blueprint.BlueprintId) = Blueprint
-		    Self.mOriginalBlueprints.Value(Blueprint.BlueprintId) = Blueprint
-		  Next
-		  
-		  Self.mCacheErrored = False
-		  Self.mCacheErrorMessage = ""
-		  Self.mLoading = False
-		  RaiseEvent BlueprintsLoaded()
-		  RaiseEvent WorkFinished()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub CacheError(Message As String)
-		  Self.mBlueprints.RemoveAll
-		  Self.mOriginalBlueprints.RemoveAll
-		  
-		  Self.mCacheErrored = True
-		  Self.mCacheErrorMessage = Message
-		  Self.mLoading = False
-		  RaiseEvent BlueprintsLoaded()
-		  RaiseEvent WorkFinished()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CacheErrored() As Boolean
-		  Return Self.mCacheErrored
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function CacheErrorMessage() As String
-		  Return Self.mCacheErrorMessage
-		End Function
+		Sub CancelAllTasks()
+		  If Self.mPendingTasks.Count > 0 Then
+		    Self.mPendingTasks.ResizeTo(-1)
+		    RaiseEvent WorkFinished()
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
-		  Self.mBlueprints = New Dictionary
-		  Self.mBlueprintsToSave = New Dictionary
-		  Self.mBlueprintsToDelete = New Dictionary
+		  Self.mChanges = New Dictionary
 		  Self.mOriginalBlueprints = New Dictionary
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ContentPackId As String, Name As String)
-		  Self.mContentPackId = ContentPackId
-		  Self.mContentPackName = Name
+		Sub Constructor(ContentPack As BeaconAPI.ContentPack)
+		  Self.mContentPackId = ContentPack.ContentPackId
+		  Self.mContentPackName = ContentPack.Name
+		  Self.mMarketplace = ContentPack.Marketplace
+		  Self.mMarketplaceId = ContentPack.MarketplaceId
 		  Self.Constructor()
 		End Sub
 	#tag EndMethod
@@ -102,18 +48,6 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Creatures() As Ark.Creature()
-		  Var Results() As Ark.Creature
-		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    If Entry.Value IsA Ark.Creature Then
-		      Results.Add(Entry.Value)
-		    End If
-		  Next
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub DeleteBlueprint(ParamArray Blueprints() As Ark.Blueprint)
 		  Self.DeleteBlueprints(Blueprints)
 		End Sub
@@ -121,136 +55,275 @@ Protected Class BlueprintController
 
 	#tag Method, Flags = &h0
 		Sub DeleteBlueprints(Blueprints() As Ark.Blueprint)
-		  If Self.IsWorking Then
+		  If Self.IsBusy Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Another action is already running"
 		    Raise Err
 		  End If
 		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var BlueprintId As String = Blueprint.BlueprintId
-		    
-		    If Self.mBlueprints.HasKey(BlueprintId) Then
-		      Self.mBlueprints.Remove(BlueprintId)
-		    End If
-		    If Self.mBlueprintsToSave.HasKey(BlueprintId) Then
-		      Self.mBlueprintsToSave.Remove(BlueprintId)
-		    End If
-		    
-		    Self.mBlueprintsToDelete.Value(BlueprintId) = Blueprint
+		    Self.mChanges.Value(Blueprint.BlueprintId) = Blueprint.Category
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub DiscardChanges()
-		  If Self.IsWorking Then
+		  If Self.IsBusy Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Another action is already running"
 		    Raise Err
 		  End If
 		  
-		  Self.mBlueprints = Self.mOriginalBlueprints.Clone
-		  Self.mBlueprintsToSave = New Dictionary
-		  Self.mBlueprintsToDelete = New Dictionary
+		  Self.mChanges = New Dictionary
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Engrams() As Ark.Engram()
-		  Var Results() As Ark.Engram
-		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    If Entry.Value IsA Ark.Engram Then
-		      Results.Add(Entry.Value)
+	#tag Method, Flags = &h1
+		Protected Function FindTask(TaskId As String) As BlueprintTask
+		  For Idx As Integer = 0 To Self.mPendingTasks.LastIndex
+		    If Self.mPendingTasks(Idx).TaskId = TaskId Then
+		      Return Self.mPendingTasks(Idx)
 		    End If
 		  Next
-		  Return Results
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub FinishPublishing(Success As Boolean, ErrorMessage As String)
-		  Self.mPublishing = False
+		Protected Sub FinishTask(Task As BlueprintFetchTask)
+		  Var Clone() As Ark.Blueprint
+		  Clone.ResizeTo(Task.Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Task.Blueprints.LastIndex
+		    Clone(Idx) = Task.Blueprints(Idx)
+		  Next
 		  
-		  If Success Then
-		    Self.mBlueprintsToSave = New Dictionary
-		    Self.mBlueprintsToDelete = New Dictionary
+		  RaiseEvent BlueprintsLoaded(Task)
+		  
+		  For Each Blueprint As Ark.Blueprint In Task.Blueprints
+		    Self.mOriginalBlueprints.Value(Blueprint.BlueprintId) = Blueprint
+		  Next
+		  
+		  For Idx As Integer = 0 To Self.mPendingTasks.LastIndex
+		    If Self.mPendingTasks(Idx).TaskId = Task.TaskId Then
+		      Self.mPendingTasks.RemoveAt(Idx)
+		      Exit For Idx
+		    End If
+		  Next
+		  
+		  If Self.mPendingTasks.Count = 0 Then
+		    RaiseEvent WorkFinished()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub FinishTask(Task As BlueprintPublishTask)
+		  If Task.Errored = False Then
+		    If Task.DeleteMode Then
+		      Var DeleteIds() As String = Task.DeleteIds
+		      For Each Id As String In DeleteIds
+		        If Self.mChanges.HasKey(Id) Then
+		          Self.mChanges.Remove(Id)
+		        End If
+		      Next
+		    Else
+		      Var Blueprints() As Ark.Blueprint = Task.Blueprints
+		      For Each Blueprint As Ark.Blueprint In Blueprints
+		        If Self.mChanges.HasKey(Blueprint.BlueprintId) Then
+		          Self.mChanges.Remove(Blueprint.BlueprintId)
+		        End If
+		      Next
+		    End If
 		  End If
 		  
-		  RaiseEvent WorkFinished()
-		  RaiseEvent PublishFinished(Success, ErrorMessage)
+		  Var RemainingPublishTasks As Integer
+		  For Idx As Integer = Self.mPendingTasks.LastIndex DownTo 0
+		    If Self.mPendingTasks(Idx).TaskId = Task.TaskId Then
+		      Self.mPendingTasks.RemoveAt(Idx)
+		      Continue For Idx
+		    End If
+		    
+		    If Self.mPendingTasks(Idx) IsA BlueprintPublishTask Then
+		      RemainingPublishTasks = RemainingPublishTasks + 1
+		    End If
+		  Next
+		  
+		  RaiseEvent PublishFinished(Task)
+		  
+		  If Self.mPendingTasks.Count = 0 Then
+		    RaiseEvent WorkFinished()
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function HasUnpublishedChanges() As Boolean
-		  Return Self.mBlueprintsToSave.KeyCount > 0 Or Self.mBlueprintsToDelete.KeyCount > 0
+		  Return Self.mChanges.KeyCount > 0
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadBlueprints(Page As Integer, PageSize As Integer)
-		  If Self.IsWorking Then
-		    Var Err As New UnsupportedOperationException
-		    Err.Message = "Another action is already running"
-		    Raise Err
-		  End If
+		Sub LoadBlueprints(Mode As Integer, Page As Integer, PageSize As Integer)
+		  Var Task As New BlueprintFetchTask(Mode, Page, PageSize)
+		  Self.AddTask(Task)
 		  
-		  Self.mLoading = True
-		  
-		  RaiseEvent WorkStarted()
-		  
-		  If Page = 1 Then
-		    Self.mBlueprints.RemoveAll
-		    Self.mOriginalBlueprints.RemoveAll
-		  End If
-		  
-		  If IsEventImplemented("FetchBlueprints") Then
-		    RaiseEvent FetchBlueprints(Page, PageSize)
-		  Else
-		    Var Blueprints() As Ark.Blueprint
-		    Self.CacheBlueprints(Blueprints)
-		  End If
+		  RaiseEvent FetchBlueprints(Task)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LootContainers() As Ark.LootContainer()
-		  Var Results() As Ark.LootContainer
-		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    If Entry.Value IsA Ark.LootContainer Then
-		      Results.Add(Entry.Value)
-		    End If
+		Sub LoadCreatures(Page As Integer, PageSize As Integer)
+		  Self.LoadBlueprints(Self.ModeCreatures, Page, PageSize)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LoadedBlueprintCount(Mode As Integer) As Integer
+		  Var IncludeEngrams As Boolean = (Mode = Self.ModeEngrams)
+		  Var IncludeCreatures As Boolean = (Mode = Self.ModeCreatures)
+		  Var IncludeLootDrops As Boolean = (Mode = Self.ModeLootDrops)
+		  Var IncludeSpawnPoints As Boolean = (Mode = Self.ModeSpawnPoints)
+		  
+		  Var Total As Integer
+		  For Each Entry As DictionaryEntry In Self.mOriginalBlueprints
+		    Var Blueprint As Ark.Blueprint = Entry.Value
+		    Select Case Blueprint
+		    Case IsA Ark.Engram
+		      If IncludeEngrams Then
+		        Total = Total + 1
+		      End If
+		    Case IsA Ark.Creature
+		      If IncludeCreatures Then
+		        Total = Total + 1
+		      End If
+		    Case IsA Ark.LootContainer
+		      If IncludeLootDrops Then
+		        Total = Total + 1
+		      End If
+		    Case IsA Ark.SpawnPoint
+		      If IncludeSpawnPoints Then
+		        Total = Total + 1
+		      End If
+		    End Select
 		  Next
-		  Return Results
+		  Return Total
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadEngrams(Page As Integer, PageSize As Integer)
+		  Self.LoadBlueprints(Self.ModeEngrams, Page, PageSize)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadLootDrops(Page As Integer, PageSize As Integer)
+		  Self.LoadBlueprints(Self.ModeLootDrops, Page, PageSize)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadSpawnPoints(Page As Integer, PageSize As Integer)
+		  Self.LoadBlueprints(Self.ModeSpawnPoints, Page, PageSize)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Marketplace() As String
+		  Return Self.mMarketplace
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MarketplaceId() As String
+		  Return Self.mMarketplaceId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OriginalBlueprint(BlueprintId As String) As Ark.Blueprint
+		  If Self.mOriginalBlueprints.HasKey(BlueprintId) Then
+		    Return Self.mOriginalBlueprints.Value(BlueprintId)
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Publish()
-		  If Self.IsWorking Then
+		  If Self.IsBusy Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Another action is already running"
 		    Raise Err
 		  End If
 		  
-		  Self.mPublishing = True
+		  Var SaveEngrams(), SaveCreatures(), SaveLootDrops(), SaveSpawnPoints() As Ark.Blueprint
+		  Var DeleteEngrams(), DeleteCreatures(), DeleteLootDrops(), DeleteSpawnPoints() As String
 		  
-		  RaiseEvent WorkStarted()
-		  
-		  If IsEventImplemented("Publish") Then 
-		    Var BlueprintsToSave(), BlueprintsToDelete() As Ark.Blueprint
-		    For Each Entry As DictionaryEntry In Self.mBlueprintsToSave
-		      BlueprintsToSave.Add(Entry.Value)
-		    Next
-		    For Each Entry As DictionaryEntry In Self.mBlueprintsToDelete
-		      BlueprintsToDelete.Add(Entry.Value)
-		    Next
+		  For Each Entry As DictionaryEntry In Self.mChanges
+		    Var BlueprintId As String = Entry.Key
+		    Var Value As Variant = Entry.Value
 		    
-		    RaiseEvent Publish(BlueprintsToSave, BlueprintsToDelete)
-		  Else
-		    Self.FinishPublishing(False, "The code to perform this action is unfinished.")
+		    If Value.Type = Variant.TypeString Then
+		      Select Case Value.StringValue
+		      Case Ark.CategoryEngrams
+		        DeleteEngrams.Add(BlueprintId)
+		      Case Ark.CategoryCreatures
+		        DeleteCreatures.Add(BlueprintId)
+		      Case Ark.CategoryLootContainers
+		        DeleteLootDrops.Add(BlueprintId)
+		      Case Ark.CategorySpawnPoints
+		        DeleteSpawnPoints.Add(BlueprintId)
+		      End Select
+		    Else
+		      Var Obj As Object = Value.ObjectValue
+		      Select Case Obj
+		      Case IsA Ark.Engram
+		        SaveEngrams.Add(Ark.Engram(Obj))
+		      Case IsA Ark.Creature
+		        SaveCreatures.Add(Ark.Creature(Obj))
+		      Case IsA Ark.LootContainer
+		        SaveLootDrops.Add(Ark.LootContainer(Obj))
+		      Case IsA Ark.SpawnPoint
+		        SaveSpawnPoints.Add(Ark.SpawnPoint(Obj))
+		      End Select
+		    End If
+		  Next
+		  
+		  Var Tasks() As BlueprintPublishTask
+		  If SaveEngrams.Count > 0 Then
+		    Tasks.Add(New BlueprintPublishTask(Self.ModeEngrams, SaveEngrams))
 		  End If
+		  If SaveCreatures.Count > 0 Then
+		    Tasks.Add(New BlueprintPublishTask(Self.ModeCreatures, SaveCreatures))
+		  End If
+		  If SaveLootDrops.Count > 0 Then
+		    Tasks.Add(New BlueprintPublishTask(Self.ModeLootDrops, SaveLootDrops))
+		  End If
+		  If SaveSpawnPoints.Count > 0 Then
+		    Tasks.Add(New BlueprintPublishTask(Self.ModeSpawnPoints, SaveSpawnPoints))
+		  End If
+		  If DeleteEngrams.Count > 0 Then
+		    Tasks.Add(New BlueprintPublishTask(Self.ModeEngrams, DeleteEngrams))
+		  End If
+		  If DeleteCreatures.Count > 0 Then
+		    Tasks.Add(New BlueprintPublishTask(Self.ModeCreatures, DeleteCreatures))
+		  End If
+		  If DeleteLootDrops.Count > 0 Then
+		    Tasks.Add(New BlueprintPublishTask(Self.ModeLootDrops, DeleteLootDrops))
+		  End If
+		  If DeleteSpawnPoints.Count > 0 Then
+		    Tasks.Add(New BlueprintPublishTask(Self.ModeSpawnPoints, DeleteSpawnPoints))
+		  End If
+		  
+		  If Tasks.Count = 0 Then
+		    Return
+		  End If
+		  
+		  For Each Task As BlueprintTask In Tasks
+		    Self.AddTask(Task)
+		  Next
+		  
+		  RaiseEvent Publish(Tasks)
 		End Sub
 	#tag EndMethod
 
@@ -262,7 +335,7 @@ Protected Class BlueprintController
 
 	#tag Method, Flags = &h0
 		Sub SaveBlueprints(Blueprints() As Ark.Blueprint)
-		  If Self.IsWorking Then
+		  If Self.IsBusy Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Another action is already running"
 		    Raise Err
@@ -282,30 +355,11 @@ Protected Class BlueprintController
 		      Blueprint = MutableVersion.ImmutableVersion
 		    End If
 		    
-		    Self.mBlueprints.Value(BlueprintId) = Blueprint
-		    Self.mBlueprintsToSave.Value(BlueprintId) = Blueprint
-		    
-		    If Self.mBlueprintsToDelete.HasKey(BlueprintId) Then
-		      Self.mBlueprintsToDelete.Remove(BlueprintId)
-		    End If
-		    
-		    If BlueprintId <> OriginalBlueprintId And Self.mBlueprintsToDelete.HasKey(OriginalBlueprintId) Then
-		      Self.mBlueprintsToDelete.Remove(OriginalBlueprintId)
-		    End If
+		    // If the blueprint id is unchanged, the first change will be replaced
+		    Self.mChanges.Value(OriginalBlueprintId) = False
+		    Self.mChanges.Value(BlueprintId) = Blueprint
 		  Next
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SpawnPoints() As Ark.SpawnPoint()
-		  Var Results() As Ark.SpawnPoint
-		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    If Entry.Value IsA Ark.SpawnPoint Then
-		      Results.Add(Entry.Value)
-		    End If
-		  Next
-		  Return Results
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -316,19 +370,19 @@ Protected Class BlueprintController
 
 
 	#tag Hook, Flags = &h0
-		Event BlueprintsLoaded()
+		Event BlueprintsLoaded(Task As BlueprintFetchTask)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event FetchBlueprints(Page As Integer, PageSize As Integer)
+		Event FetchBlueprints(Task As BlueprintFetchTask)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
+		Event Publish(Tasks() As BlueprintPublishTask)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PublishFinished(Success As Boolean, Reason As String)
+		Event PublishFinished(Task As BlueprintPublishTask)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -343,41 +397,11 @@ Protected Class BlueprintController
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mLoading
+			  Return Self.mPendingTasks.Count > 0
 			End Get
 		#tag EndGetter
-		IsLoading As Boolean
+		IsBusy As Boolean
 	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mPublishing
-			End Get
-		#tag EndGetter
-		IsPublishing As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mLoading Or Self.mPublishing
-			End Get
-		#tag EndGetter
-		IsWorking As Boolean
-	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private mBlueprints As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBlueprintsToDelete As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBlueprintsToSave As Dictionary
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCacheErrored As Boolean
@@ -385,6 +409,10 @@ Protected Class BlueprintController
 
 	#tag Property, Flags = &h21
 		Private mCacheErrorMessage As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mChanges As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -396,7 +424,11 @@ Protected Class BlueprintController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLoading As Boolean
+		Private mMarketplace As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMarketplaceId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -404,8 +436,31 @@ Protected Class BlueprintController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPendingTasks() As BlueprintTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPublishing As Boolean
 	#tag EndProperty
+
+
+	#tag Constant, Name = FirstMode, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = LastMode, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeCreatures, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeEngrams, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeLootDrops, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeSpawnPoints, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
@@ -450,23 +505,7 @@ Protected Class BlueprintController
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="IsLoading"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsPublishing"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsWorking"
+			Name="IsBusy"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

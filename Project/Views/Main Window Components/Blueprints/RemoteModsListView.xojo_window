@@ -245,13 +245,26 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Hidden()
+		  Self.List.PauseScrollWatching()
+		  RaiseEvent Hidden()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub RefreshMods()
 		  If Self.List Is Nil Then
 		    Return
 		  End If
 		  
-		  Self.List.ScrollPosition = 0
-		  Self.List.RemoveAllRows()
+		  Self.List.ReloadAllPages()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  RaiseEvent Shown(UserData)
+		  Self.List.ResumeScrollWatching()
 		End Sub
 	#tag EndEvent
 
@@ -291,8 +304,10 @@ End
 		  
 		  If Response.Success Then
 		    Var Results() As Variant
+		    Var Page As Integer
 		    Try
 		      Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
+		      Page = Parsed.Value("page")
 		      Self.TotalResults = Parsed.Value("totalResults")
 		      Self.TotalPages = Parsed.Value("pages")
 		      Results = Parsed.Value("results")
@@ -301,18 +316,27 @@ End
 		      Return
 		    End Try
 		    
-		    For Each Dict As Dictionary In Results
+		    Var StartIdx As Integer = Self.List.RowIndexOfPage(Page)
+		    
+		    For Idx As Integer = 0 To Results.LastIndex
+		      Var Dict As Dictionary = Results(Idx)
+		      Var RowIdx As Integer = StartIdx + Idx
+		      
 		      Var ModInfo As New BeaconAPI.ContentPack(Dict)
 		      Var GameName As String = Language.GameName(ModInfo.GameId)
 		      Var LastUpdate As New DateTime(ModInfo.LastUpdate, TimeZone.Current)
 		      Var Status As String = If(ModInfo.Confirmed, "Confirmed", "Waiting Confirmation")
 		      
-		      Self.List.AddRow(ModInfo.Name, GameName, LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium), Status)
-		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = ModInfo
+		      Self.List.RowTagAt(RowIdx) = ModInfo
+		      Self.List.CellTextAt(RowIdx, 0) = ModInfo.Name
+		      Self.List.CellTextAt(RowIdx, 1) = GameName
+		      Self.List.CellTextAt(RowIdx, 2) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		      Self.List.CellTextAt(RowIdx, 3) = Status
 		    Next
 		  End If
 		  
-		  Self.List.InvalidateScrollPosition
+		  Self.List.CompleteRowLoadRequest(Request.Tag)
+		  Self.UpdateUI
 		End Sub
 	#tag EndMethod
 
@@ -322,6 +346,39 @@ End
 		  Super.Constructor()
 		End Sub
 	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TotalPages() As Integer
+		  Return Self.List.TotalPages
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TotalPages(Assigns Value As Integer)
+		  Self.List.TotalPages = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TotalResults() As Integer
+		  Return Self.List.RowCount
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub TotalResults(Assigns Value As Integer)
+		  Self.List.RowCount = Value
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Hidden()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
+	#tag EndHook
 
 
 #tag EndWindowCode
@@ -337,9 +394,10 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub LoadMoreRows(Page As Integer)
-		  If Self.HasBeenShown = False Or (Page > 1 And Page > Self.TotalPages) Then
-		    Return
+		Function LoadMoreRows(Page As Integer, RequestToken As String) As Boolean
+		  If Self.HasBeenShown = False Then
+		    Me.PauseScrollWatching()
+		    Return True // Cancel
 		  End If
 		  
 		  Self.StartJob()
@@ -355,8 +413,9 @@ End
 		  End If
 		  
 		  Var Request As New BeaconAPI.Request("contentPacks", "GET", Params, AddressOf APICallback_ListMods)
+		  Request.Tag = RequestToken
 		  BeaconAPI.Send(Request)
-		End Sub
+		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean

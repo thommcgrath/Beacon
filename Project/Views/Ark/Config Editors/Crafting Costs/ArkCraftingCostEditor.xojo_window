@@ -70,6 +70,7 @@ Begin BeaconContainer ArkCraftingCostEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1

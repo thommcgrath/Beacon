@@ -26,19 +26,19 @@ Begin BeaconSubview ModEditorView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   844
+   Width           =   900
    Begin BeaconListbox BlueprintList
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   False
-      AllowInfiniteScroll=   True
+      AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
       ColumnCount     =   2
-      ColumnWidths    =   "*,120"
+      ColumnWidths    =   "*,*"
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
       DefaultSortDirection=   0
@@ -53,11 +53,11 @@ Begin BeaconSubview ModEditorView
       HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   360
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Name	Type"
+      InitialValue    =   "Name	Class String"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -75,25 +75,17 @@ Begin BeaconSubview ModEditorView
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   844
+      Width           =   900
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin ClipboardWatcher Watcher
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Period          =   1000
-      RunMode         =   2
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin OmniBar ModToolbar
+   Begin OmniBar ButtonsToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -111,9 +103,9 @@ Begin BeaconSubview ModEditorView
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
-      RightPadding    =   -1
+      RightPadding    =   0
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False
@@ -125,7 +117,7 @@ Begin BeaconSubview ModEditorView
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   844
+      Width           =   360
    End
    Begin Thread ImporterThread
       DebugIdentifier =   ""
@@ -168,7 +160,7 @@ Begin BeaconSubview ModEditorView
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   804
+      Width           =   860
    End
    Begin FadedSeparator StatusSeparator
       AllowAutoDeactivate=   True
@@ -197,7 +189,106 @@ Begin BeaconSubview ModEditorView
       Top             =   401
       Transparent     =   True
       Visible         =   True
-      Width           =   844
+      Width           =   900
+   End
+   Begin OmniBar TabsToolbar
+      Alignment       =   1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      BackgroundColor =   ""
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      Left            =   360
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   180
+   End
+   Begin DelayedSearchField FilterField
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      AllowTabStop    =   True
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Engrams"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   630
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      PanelIndex      =   0
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   10
+      Transparent     =   False
+      Visible         =   True
+      Width           =   250
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   540
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   360
    End
 End
 #tag EndDesktopWindow
@@ -206,7 +297,7 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.ViewTitle = Self.mController.ContentPackName
-		  
+		  Self.SwitchMode(BlueprintController.ModeEngrams)
 		  Self.UpdatePublishButton()
 		End Sub
 	#tag EndEvent
@@ -221,16 +312,42 @@ End
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  RaiseEvent Shown(UserData)
-		  
-		  If Self.mHasBeenShown = False Then
-		    Self.BlueprintList.ScrollPosition = 0
-		    Self.BlueprintList.RemoveAllRows
-		  End If
-		  
 		  Self.mHasBeenShown = True
+		  Self.SwitchMode(Self.mMode)
+		  
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function BlueprintDictionary() As Dictionary
+		  Return Self.mBlueprints(Self.mMode)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function BlueprintDictionary(Blueprint As Ark.Blueprint) As Dictionary
+		  Return Self.BlueprintDictionary(Self.ModeForBlueprint(Blueprint))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function BlueprintDictionary(Mode As Integer) As Dictionary
+		  Return Self.mBlueprints(Mode)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function BuildRegEx(Pattern As String) As PCRE2CodeMBS
+		  Try
+		    Var Compiler As New PCRE2CompilerMBS
+		    Compiler.Pattern = Pattern
+		    Return Compiler.Compile
+		  Catch Err As RuntimeException
+		    Break
+		  End Try
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Shared Function ClipboardHasCodes() As Boolean
@@ -252,6 +369,13 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As BlueprintController)
+		  Self.mBlueprints.ResizeTo(BlueprintController.LastMode)
+		  Self.mHasRequestBlueprints.ResizeTo(BlueprintController.LastMode)
+		  Self.mLoadTotals.ResizeTo(BlueprintController.LastMode)
+		  For Idx As Integer = BlueprintController.FirstMode To BlueprintController.LastMode
+		    Self.mBlueprints(Idx) = New Dictionary
+		  Next
+		  
 		  AddHandler Controller.BlueprintsLoaded, WeakAddressOf mController_BlueprintsLoaded
 		  AddHandler Controller.PublishFinished, WeakAddressOf mController_PublishFinished
 		  AddHandler Controller.WorkStarted, WeakAddressOf mController_WorkStarted
@@ -286,8 +410,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var BlueprintId As String = Self.BlueprintList.RowTagAt(Idx)
-		    Blueprints.Add(Self.mController.Blueprint(BlueprintId))
+		    Var Blueprint As Ark.Blueprint = Self.BlueprintList.RowTagAt(Idx)
+		    Blueprints.Add(Blueprint)
 		  Next
 		  
 		  If Ark.BuildExport(Blueprints, File) = False Then
@@ -365,22 +489,33 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_BlueprintsLoaded(Sender As BlueprintController)
-		  #Pragma Unused Sender
+		Private Sub mController_BlueprintsLoaded(Sender As BlueprintController, Task As BlueprintFetchTask)
+		  Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Task.Mode)
+		  Var Blueprints() As Ark.Blueprint = Task.Blueprints
+		  For Idx As Integer = 0 To Blueprints.LastIndex
+		    CurrentBlueprints.Value(Blueprints(Idx).BlueprintId) = Blueprints(Idx)
+		  Next
+		  
+		  If Task.Page < Task.TotalPages Then
+		    Self.mLoadTotals(Task.Mode) = Task.TotalResults
+		    Sender.LoadBlueprints(Task.Mode, Task.Page + 1, Task.PageSize)
+		  Else
+		    Self.mLoadTotals(Task.Mode) = -1
+		  End If
 		  
 		  Self.UpdateList()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_PublishFinished(Sender As BlueprintController, Success As Boolean, Reason As String)
-		  If Success = False Then
+		Private Sub mController_PublishFinished(Sender As BlueprintController, Task As BlueprintPublishTask)
+		  If Task.Errored Then
 		    Self.UpdatePublishButton()
 		    
 		    If Sender.UseSaveTerminology Then
-		      Self.ShowAlert("Beacon was unable to save the changes.", Reason)
+		      Self.ShowAlert("Beacon was unable to save the changes.", Task.ErrorMessage)
 		    Else
-		      Self.ShowAlert("Beacon was unable to publish the requested changes.", Reason)
+		      Self.ShowAlert("Beacon was unable to publish the requested changes.", Task.ErrorMessage)
 		    End If
 		    
 		    Return
@@ -406,10 +541,6 @@ End
 		Private Sub mController_WorkFinished(Sender As BlueprintController)
 		  Self.Progress = Self.ProgressNone
 		  Self.UpdateUI
-		  
-		  If Sender.CacheErrored Then
-		    Self.ShowAlert("There was an error loading the blueprints.", Sender.CacheErrorMessage)
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -420,6 +551,27 @@ End
 		  
 		  Self.Progress = Self.ProgressIndeterminate
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ModeForBlueprint(Blueprint As Ark.Blueprint) As Integer
+		  If Blueprint Is Nil Then
+		    Return Self.mMode
+		  End If
+		  
+		  Select Case Blueprint
+		  Case IsA Ark.Engram
+		    Return BlueprintController.ModeEngrams
+		  Case IsA Ark.Creature
+		    Return BlueprintController.ModeCreatures
+		  Case IsA Ark.LootContainer
+		    Return BlueprintController.ModeLootDrops
+		  Case IsA Ark.SpawnPoint
+		    Return BlueprintController.ModeSpawnPoints
+		  End Select
+		  
+		  Return Self.mMode
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -453,87 +605,126 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SwitchMode(Mode As Integer, UpdateUI As Boolean = True)
+		  Var EngramsButton As OmniBarItem = Self.TabsToolbar.Item("EngramsButton")
+		  Var CreaturesButton As OmniBarItem = Self.TabsToolbar.Item("CreaturesButton")
+		  Var LootDropsButton As OmniBarItem = Self.TabsToolbar.Item("LootDropsButton")
+		  Var SpawnPointsButton As OmniBarItem = Self.TabsToolbar.Item("SpawnPointsButton") 
+		  
+		  If (EngramsButton Is Nil) = False Then
+		    EngramsButton.Toggled = (Mode = BlueprintController.ModeEngrams)
+		  End If
+		  If (CreaturesButton Is Nil) = False Then
+		    CreaturesButton.Toggled = (Mode = BlueprintController.ModeCreatures)
+		  End If
+		  If (LootDropsButton Is Nil) = False Then
+		    LootDropsButton.Toggled = (Mode = BlueprintController.ModeLootDrops)
+		  End If
+		  If (SpawnPointsButton Is Nil) = False Then
+		    SpawnPointsButton.Toggled = (Mode = BlueprintController.ModeSpawnPoints)
+		  End If
+		  
+		  If Self.mHasRequestBlueprints(Mode) = False Then
+		    Self.mLoadTotals(Mode) = -2
+		    Self.mController.LoadBlueprints(Mode, 1, Self.PageSize)
+		    Self.mHasRequestBlueprints(Mode) = True
+		  End If
+		  
+		  Self.mMode = Mode
+		  
+		  If UpdateUI Then
+		    Self.UpdateList()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var SelectedBlueprints() As String
-		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
-		    If Self.BlueprintList.RowSelectedAt(Row) Then
-		      SelectedBlueprints.Add(Self.BlueprintList.RowTagAt(Row))
+		  Var List As BeaconListbox = Self.BlueprintList
+		  Var SelectedBlueprintIds() As String
+		  For RowIdx As Integer = 0 To List.LastRowIndex
+		    If List.RowSelectedAt(RowIdx) = False Then
+		      Continue
 		    End If
-		  Next
-		  
-		  Self.UpdateList(SelectedBlueprints)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateList(Selected() As Ark.Blueprint)
-		  Var SelectedBlueprints() As String
-		  For Each Blueprint As Ark.Blueprint In Selected
-		    SelectedBlueprints.Add(Blueprint.BlueprintId)
-		  Next
-		  
-		  Self.UpdateList(SelectedBlueprints)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateList(Selected As Ark.Blueprint)
-		  Var SelectedBlueprints() As String = Array(Selected.BlueprintId)
-		  Self.UpdateList(SelectedBlueprints)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateList(Selected() As String)
-		  Var Blueprints() As Ark.Blueprint = Self.mController.Blueprints
-		  
-		  Self.BlueprintList.SelectionChangeBlocked = True
-		  Self.BlueprintList.RowCount = Blueprints.Count
-		  
-		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
-		    Var Blueprint As Ark.Blueprint = Blueprints(Row)
-		    Var ObjectID As String = Blueprint.BlueprintId
 		    
-		    Var Type As String = "Blueprint"
-		    Select Case Blueprint
-		    Case IsA Ark.Engram
-		      Type = "Engram"
-		    Case IsA Ark.Creature
-		      Type = "Creature"
-		    Case IsA Ark.SpawnPoint
-		      Type = "Spawn"
-		    Case IsA Ark.LootContainer
-		      Type = "Loot Drop"
-		    End Select
-		    
-		    Self.BlueprintList.CellTextAt(Row, 0) = Blueprint.Label
-		    Self.BlueprintList.CellTextAt(Row, 1) = Type
-		    Self.BlueprintList.RowTagAt(Row) = ObjectID
-		    Self.BlueprintList.RowSelectedAt(Row) = Selected.IndexOf(ObjectID) > -1
+		    Var Blueprint As Ark.Blueprint = List.RowTagAt(RowIdx)
+		    SelectedBlueprintIds.Add(Blueprint.BlueprintId)
 		  Next
+		  Self.UpdateList(SelectedBlueprintIds, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(SelectedBlueprints() As Ark.Blueprint, ScrollToSelection As Boolean)
+		  Var SelectedBlueprintIds() As String
+		  For Each Blueprint As Ark.Blueprint In SelectedBlueprints
+		    SelectedBlueprintIds.Add(Blueprint.BlueprintId)
+		  Next
+		  Self.UpdateList(SelectedBlueprintIds, ScrollToSelection)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(SelectedBlueprintIds() As String, ScrollToSelection As Boolean)
+		  Var Blueprints As Dictionary = Self.BlueprintDictionary()
 		  
-		  Self.BlueprintList.SortingColumn = 0
-		  Self.BlueprintList.Sort
-		  If Self.BlueprintList.SelectedRowCount > 0 Then
-		    Self.BlueprintList.EnsureSelectionIsVisible
-		  End If
-		  Self.BlueprintList.SelectionChangeBlocked = False
-		  If (Self.ModToolbar.Item("ExportFile") Is Nil) = False Then
-		    Self.ModToolbar.Item("ExportFile").Enabled = Self.BlueprintList.RowCount > 0
+		  Var List As BeaconListbox = Self.BlueprintList
+		  Var ScrollPosition As Integer = List.ScrollPosition
+		  List.SelectionChangeBlocked = True
+		  
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  Var Filtered As Boolean = Filter.IsEmpty = False
+		  Var Rx As PCRE2CodeMBS
+		  If Filtered Then
+		    List.RemoveAllRows
+		    
+		    If Filter.BeginsWith("/") And Filter.EndsWith("/") Then
+		      Rx = Self.BuildRegEx(Filter.Middle(1, Filter.Length - 2))
+		    End If
+		  Else
+		    List.RowCount = Blueprints.KeyCount
 		  End If
 		  
-		  Self.UpdatePublishButton()
+		  Var BlueprintIds() As Variant = Blueprints.Keys
+		  For Idx As Integer = 0 To BlueprintIds.LastIndex
+		    Var BlueprintId As String = BlueprintIds(Idx)
+		    Var Blueprint As Ark.Blueprint = Blueprints.Value(BlueprintId)
+		    
+		    Var RowIdx As Integer = Idx
+		    If Filtered Then
+		      If ((Rx Is Nil) = False And Blueprint.Matches(Rx) = False) Or (Rx Is Nil And Blueprint.Matches(Filter) = False) Then
+		        Continue
+		      End If
+		      List.AddRow("")
+		      RowIdx = List.LastAddedRowIndex
+		    End If
+		    
+		    List.RowTagAt(RowIdx) = Blueprint
+		    List.CellTextAt(RowIdx, 0) = Blueprint.Label
+		    List.CellTextAt(RowIdx, 1) = Blueprint.ClassString
+		    List.RowSelectedAt(RowIdx) = SelectedBlueprintIds.IndexOf(BlueprintId) > -1
+		  Next
+		  
+		  List.Sort
+		  List.ScrollPosition = ScrollPosition
+		  List.SelectionChangeBlocked(False) = False
+		  
+		  If ScrollToSelection Then
+		    List.EnsureSelectionIsVisible
+		  End If
+		  
+		  Self.UpdateUI
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdatePublishButton()
 		  Var PublishEnabled As Boolean = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
-		  If (Self.ModToolbar.Item("Publish") Is Nil) = False Then
-		    Self.ModToolbar.Item("Publish").Enabled = PublishEnabled
+		  If (Self.ButtonsToolbar.Item("Publish") Is Nil) = False Then
+		    Self.ButtonsToolbar.Item("Publish").Enabled = PublishEnabled
 		  End If
-		  If (Self.ModToolbar.Item("Discard") Is Nil) = False Then
-		    Self.ModToolbar.Item("Discard").Enabled = PublishEnabled
+		  If (Self.ButtonsToolbar.Item("Discard") Is Nil) = False Then
+		    Self.ButtonsToolbar.Item("Discard").Enabled = PublishEnabled
 		  End If
 		  Self.Modified = PublishEnabled
 		End Sub
@@ -541,15 +732,50 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
+		  Var NounSingle, NounPlural As String
+		  Select Case Self.mMode
+		  Case BlueprintController.ModeEngrams
+		    NounSingle = "engram"
+		    NounPlural = "engrams"
+		  Case BlueprintController.ModeCreatures
+		    NounSingle = "creature"
+		    NounPlural = "creatures"
+		  Case BlueprintController.ModeLootDrops
+		    NounSingle = "loot drop"
+		    NounPlural = "loot drops"
+		  Case BlueprintController.ModeSpawnPoints
+		    NounSingle = "spawn point"
+		    NounPlural = "spawn points"
+		  End Select
+		  Self.FilterField.Hint = "Filter " + NounPlural.Titlecase
+		  
 		  Var Status As String
-		  If Self.BlueprintList.SelectedRowCount > 0 Then
-		    Status = Self.BlueprintList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.mController.BlueprintCount, "blueprint", "blueprints") + " selected"
-		  Else
-		    Status = Language.NounWithQuantity(Self.mController.BlueprintCount, "blueprint", "blueprints")
+		  Var TotalResults As Integer = Self.mLoadTotals(Self.mMode)
+		  If TotalResults = -1 Then
+		    TotalResults = Self.BlueprintList.RowCount
+		  ElseIf TotalResults = -2 Then
+		    Status = "Loading " + NounPlural + "…"
+		    If Self.StatusLabel.Text <> Status Then
+		      Self.StatusLabel.Text = Status
+		    End If
+		    Return
 		  End If
+		  
+		  If Self.BlueprintList.SelectedRowCount > 0 Then
+		    Status = Self.BlueprintList.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(TotalResults, NounSingle, NounPlural) + " selected"
+		  Else
+		    Status = Language.NounWithQuantity(TotalResults, NounSingle, NounPlural)
+		  End If
+		  
+		  If Self.BlueprintList.RowCount < TotalResults Then
+		    // Partial results
+		    Status = Status + " (" + Self.BlueprintList.RowCount.ToString(Locale.Current, "#,##0") + " loaded)"
+		  End If
+		  
 		  If Self.StatusLabel.Text <> Status Then
 		    Self.StatusLabel.Text = Status
 		  End If
+		  
 		End Sub
 	#tag EndMethod
 
@@ -570,6 +796,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mBlueprints() As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCloseAfterPublish As Boolean
 	#tag EndProperty
 
@@ -586,7 +816,23 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHasRequestBlueprints() As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mImporter As Ark.BlueprintImporter
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoadRequestToken As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoadTotals() As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMode As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -594,14 +840,13 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = PageSize, Type = Double, Dynamic = False, Default = \"100", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events BlueprintList
-	#tag Event
-		Sub Opening()
-		  Me.ColumnAlignmentAt(1) = DesktopListbox.Alignments.Right
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
 		  Return Me.SelectedRowCount > 0
@@ -614,7 +859,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Self.mController Is Nil Then
+		  If Self.mController Is Nil Or Me.SelectedRowCount = 0 Then
 		    Return
 		  End If
 		  
@@ -624,8 +869,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var ObjectID As String = Me.RowTagAt(Row)
-		    Var Blueprint As Ark.Blueprint = Self.mController.Blueprint(ObjectID)
+		    Var Blueprint As Ark.Blueprint = Me.RowTagAt(Row)
 		    If Blueprint Is Nil Then
 		      Continue
 		    End If
@@ -633,12 +877,24 @@ End
 		    Blueprints.Add(Blueprint)
 		  Next
 		  
+		  If Blueprints.Count = 0 Then
+		    Return
+		  End If
+		  
 		  If Warn And Not Self.ShowDeleteConfirmation(Blueprints, "blueprint", "blueprints") Then
 		    Return
 		  End If
 		  
-		  Self.mController.DeleteBlueprints(Blueprints)
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var Dict As Dictionary = Self.BlueprintDictionary(Blueprint)
+		    If Dict.HasKey(Blueprint.BlueprintId) Then
+		      Dict.Remove(Blueprint.BlueprintId)
+		    End If
+		  Next
 		  Self.UpdateList()
+		  
+		  Self.mController.DeleteBlueprints(Blueprints)
+		  
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -648,8 +904,8 @@ End
 		  End If
 		  
 		  If Me.SelectedRowCount = 1 Then
-		    Var ObjectID As String = Me.RowTagAt(Me.SelectedRowIndex)
-		    Var Blueprint As Ark.Blueprint = Self.mController.Blueprint(ObjectID)
+		    Var RowIdx As Integer = Me.SelectedRowIndex
+		    Var Blueprint As Ark.Blueprint = Me.RowTagAt(RowIdx)
 		    If Blueprint Is Nil Then
 		      Return
 		    End If
@@ -660,32 +916,40 @@ End
 		    End If
 		    
 		    Self.mController.SaveBlueprint(Blueprint)
-		    Self.UpdateList(Blueprint)
+		    
+		    Var CurrentBlueprints As Dictionary = Self.BlueprintDictionary(Blueprint)
+		    CurrentBlueprints.Value(Blueprint.BlueprintId) = Blueprint
+		    
+		    Var BlueprintIds(0) As String
+		    BlueprintIds(0) = Blueprint.BlueprintId
+		    Self.UpdateList(BlueprintIds, True)
 		  ElseIf Me.SelectedRowCount > 1 Then
 		    Var Blueprints() As Ark.Blueprint
+		    Var Indexes As New Dictionary
 		    For Row As Integer = 0 To Me.LastRowIndex
-		      If Me.RowSelectedAt(Row) Then
-		        Blueprints.Add(Self.mController.Blueprint(Me.RowTagAt(Row).StringValue))
+		      If Me.RowSelectedAt(Row) = False Then
+		        Continue
 		      End If
+		      
+		      Var Blueprint As Ark.Blueprint = Me.RowTagAt(Row)
+		      Indexes.Value(Blueprint.BlueprintId) = Row
+		      Blueprints.Add(Blueprint)
 		    Next
 		    
 		    Var ModifiedBlueprints() As Ark.Blueprint = BlueprintMultiEditor.Present(Self, Blueprints)
-		    If (ModifiedBlueprints Is Nil) = False Then
-		      For Each Blueprint As Ark.Blueprint In ModifiedBlueprints
-		        Self.mController.SaveBlueprint(Blueprint)
-		      Next
+		    If ModifiedBlueprints Is Nil Or ModifiedBlueprints.Count = 0 Then
+		      Return
 		    End If
-		    Self.UpdateList(ModifiedBlueprints)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub LoadMoreRows(Page As Integer)
-		  If Self.mHasBeenShown = False Then
-		    Return
+		    
+		    Self.mController.SaveBlueprints(ModifiedBlueprints)
+		    
+		    For Each Blueprint As Ark.Blueprint In ModifiedBlueprints
+		      Var Dict As Dictionary = Self.BlueprintDictionary(Blueprint)
+		      Dict.Value(Blueprint.BlueprintId) = Blueprint
+		    Next
+		    Self.UpdateList(ModifiedBlueprints, True)
 		  End If
 		  
-		  Self.mController.LoadBlueprints(Page, Me.PageSize)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -694,18 +958,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Watcher
-	#tag Event
-		Sub ClipboardChanged(Content As String)
-		  #Pragma Unused Content
-		  
-		  If (Self.ModToolbar.Item("ImportClipboard") Is Nil) = False Then
-		    Self.ModToolbar.Item("ImportClipboard").Enabled = Self.ClipboardHasCodes
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ModToolbar
+#tag Events ButtonsToolbar
 	#tag Event
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateButton("AddBlueprint", "New Blueprint", IconToolbarAdd, "Create a new blueprint."))
@@ -717,30 +970,61 @@ End
 		  End If
 		  Me.Append(OmniBarItem.CreateButton("Discard", "Revert", IconToolbarRevert, "Revert your changes.", False))
 		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("ImportFile", "Import File", IconToolbarFile, "Import blueprints from a file on your computer."))
-		  Me.Append(OmniBarItem.CreateButton("ImportURL", "Import URL", IconToolbarLink, "Import blueprints from cheat codes on a website."))
-		  Me.Append(OmniBarItem.CreateButton("ImportClipboard", "Import Copied", IconToolbarCopied, "Import blueprints from copied cheat codes.", Self.ClipboardHasCodes))
-		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("Import", "Import", IconToolbarImport, "Import blueprints from a file, url, or your " + Language.Clipboard.Lowercase + "."))
 		  Me.Append(OmniBarItem.CreateButton("ExportFile", "Export", IconToolbarExport, "Export selected blueprints to a file on your computer."))
+		  
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
-		  
 		  Select Case Item.Name
 		  Case "AddBlueprint"
 		    Var Blueprint As Ark.Blueprint = BlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
 		    If (Blueprint Is Nil) = False Then
 		      Self.mController.SaveBlueprint(Blueprint)
-		      Self.UpdateList()
+		      Var DesiredMode As Integer = Self.ModeForBlueprint(Blueprint)
+		      Var Blueprints As Dictionary = Self.BlueprintDictionary(DesiredMode)
+		      Blueprints.Value(Blueprint.BlueprintId) = Blueprint
+		      If DesiredMode <> Self.mMode Then
+		        Self.SwitchMode(DesiredMode, False)
+		      End If
+		      Var BlueprintIds(0) As String
+		      BlueprintIds(0) = Blueprint.BlueprintId
+		      Self.UpdateList(BlueprintIds, True)
 		    End If
-		  Case "ImportFile"
-		    Self.ImportFromFile()
-		  Case "ImportURL"
-		    Self.ImportFromURL()
-		  Case "ImportClipboard"
-		    Self.ImportFromClipboard()
+		  Case "Import"
+		    Var ImportFileItem As New DesktopMenuItem("Import From File")
+		    Var ImportUrlItem As New DesktopMenuItem("Import From URL")
+		    Var ImportClipboardItem As New DesktopMenuItem("Import From " + Language.Clipboard)
+		    ImportClipboardItem.Enabled = Self.ClipboardHasCodes
+		    Var DiscoverItem As New DesktopMenuItem("Run Mod Discovery")
+		    DiscoverItem.Enabled = Self.mController.Marketplace = Beacon.MarketplaceSteamWorkshop And Self.mController.MarketplaceId.IsEmpty = False
+		    
+		    Var ImportMenu As New DesktopMenuItem
+		    ImportMenu.AddMenu(ImportFileItem)
+		    ImportMenu.AddMenu(ImportUrlItem)
+		    ImportMenu.AddMenu(ImportClipboardItem)
+		    ImportMenu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
+		    ImportMenu.AddMenu(DiscoverItem)
+		    
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = ImportMenu.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    If (Choice Is Nil) = False Then
+		      Select Case Choice
+		      Case ImportFileItem
+		        Self.ImportFromFile()
+		      Case ImportUrlItem
+		        Self.ImportFromURL()
+		      Case ImportClipboardItem
+		        Self.ImportFromClipboard()
+		      Case DiscoverItem
+		        #if DebugBuild
+		          #Pragma Warning "Not Implemented"
+		        #else
+		          #Pragma Error "Not Implemented"
+		        #endif
+		      End Select
+		    End If
 		  Case "ExportFile"
 		    Self.Export()
 		  Case "Publish"
@@ -780,7 +1064,7 @@ End
 		          // Just import what was found
 		          Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
 		          Self.mController.SaveBlueprints(FoundBlueprints)
-		          Self.UpdateList(FoundBlueprints)
+		          Self.UpdateList(FoundBlueprints, True)
 		          Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(FoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
 		        Else
 		          // Show a prompt
@@ -800,7 +1084,7 @@ End
 		            Next Tag
 		            
 		            Self.mController.SaveBlueprints(ChosenBlueprints)
-		            Self.UpdateList(ChosenBlueprints)
+		            Self.UpdateList(ChosenBlueprints, True)
 		            Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(ChosenBlueprints.Count, "blueprint", "blueprints") + " to import.")
 		          End If
 		        End If
@@ -809,6 +1093,45 @@ End
 		      Self.mImporter = Nil
 		    End Select
 		  Next Dict
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TabsToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateTab("EngramsButton", "Engrams"))
+		  Me.Append(OmniBarItem.CreateTab("CreaturesButton", "Creatures"))
+		  Me.Append(OmniBarItem.CreateTab("LootDropsButton", "Loot Drops"))
+		  Me.Append(OmniBarItem.CreateTab("SpawnPointsButton", "Spawn Points"))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  
+		  Me.Item("EngramsButton").Toggled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Self.BlueprintList.ScrollPosition = 0
+		  Select Case Item.Name
+		  Case "EngramsButton"
+		    Self.SwitchMode(BlueprintController.ModeEngrams)
+		  Case "CreaturesButton"
+		    Self.SwitchMode(BlueprintController.ModeCreatures)
+		  Case "LootDropsButton"
+		    Self.SwitchMode(BlueprintController.ModeLootDrops)
+		  Case "SpawnPointsButton"
+		    Self.SwitchMode(BlueprintController.ModeSpawnPoints)
+		  End Select
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

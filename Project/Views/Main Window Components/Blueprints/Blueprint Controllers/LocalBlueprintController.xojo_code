@@ -1,89 +1,172 @@
 #tag Class
 Protected Class LocalBlueprintController
 Inherits BlueprintController
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
-		Sub FetchBlueprints(Page As Integer, PageSize As Integer)
-		  #Pragma Unused Page
-		  #Pragma Unused PageSize
+		Sub FetchBlueprints(Task As BlueprintFetchTask)
+		  Var FetchThread As New Beacon.Thread
+		  FetchThread.UserData = Task
+		  AddHandler FetchThread.Run, WeakAddressOf FetchThread_Run
+		  AddHandler FetchThread.UserInterfaceUpdate, WeakAddressOf FetchThread_UserInterfaceUpdate
+		  Self.mThreads.Add(FetchThread)
+		  FetchThread.Start
 		  
-		  Var Mods As New Beacon.StringList(0)
-		  Mods(0) = Self.ContentPackId
-		  
-		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints("", Mods, "")
-		  
-		  Self.CacheBlueprints(Blueprints)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
-		  Self.mSave = BlueprintsToSave
-		  Self.mDelete = BlueprintsToDelete
-		  Self.mSaveThread = New Thread
-		  AddHandler Self.mSaveThread.Run, WeakAddressOf mSaveThread_Run
-		  AddHandler Self.mSaveThread.UserInterfaceUpdate, WeakAddressOf mSaveThread_UserInterfaceUpdate
-		  Self.mSaveThread.Start
+		Sub Publish(Tasks() As BlueprintPublishTask)
+		  For Each Task As BlueprintPublishTask In Tasks
+		    Var PublishThread As New Beacon.Thread
+		    PublishThread.UserData = Task
+		    AddHandler PublishThread.Run, WeakAddressOf PublishThread_Run
+		    AddHandler PublishThread.UserInterfaceUpdate, WeakAddressOf PublishThread_UserInterfaceUpdate
+		    Self.mThreads.Add(PublishThread)
+		    PublishThread.Start
+		  Next
+		  
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Sub mSaveThread_Run(Sender As Thread)
-		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
+		Private Sub FetchThread_Run(Sender As Beacon.Thread)
+		  Var Task As BlueprintFetchTask = Sender.UserData
+		  Var Mods As New Beacon.StringList(Self.ContentPackId)
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
-		  Var Errors As New Dictionary
-		  Var Success As Boolean = Database.SaveBlueprints(Self.mSave, Self.mDelete, Errors)
-		  If Success Then
-		    Self.mSave.ResizeTo(-1)
-		    Self.mDelete.ResizeTo(-1)
-		    Sender.AddUserInterfaceUpdate(New Dictionary("Action": "Save Complete", "Success": True))
-		    Return
-		  End If
+		  Select Case Task.Mode
+		  Case Self.ModeCreatures
+		    Task.Blueprints = DataSource.GetCreatures("", Mods, "")
+		  Case Self.ModeEngrams
+		    Task.Blueprints = DataSource.GetEngrams("", Mods, "")
+		  Case Self.ModeLootDrops
+		    Task.Blueprints = DataSource.GetLootContainers("", Mods, "")
+		  Case Self.ModeSpawnPoints
+		    Task.Blueprints = DataSource.GetSpawnPoints("", Mods, "")
+		  End Select
 		  
-		  Var BlueprintMap As New Dictionary
-		  For Idx As Integer = 0 To Self.mSave.LastIndex
-		    BlueprintMap.Value(Self.mSave(Idx).BlueprintId) = Self.mSave(Idx)
-		  Next Idx
-		  For Idx As Integer = 0 To Self.mDelete.LastIndex
-		    BlueprintMap.Value(Self.mDelete(Idx).BlueprintId) = Self.mDelete(Idx)
-		  Next Idx
+		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		  
-		  Var Reasons() As String
-		  For Each Entry As DictionaryEntry In Errors
-		    Var Err As RuntimeException = Entry.Value
-		    Var Blueprint As Ark.Blueprint = BlueprintMap.Value(Entry.Key)
-		    
-		    If Err.Message.BeginsWith("Unique constraint failed") Then
-		      Reasons.Add(Blueprint.Label + ": A blueprint already exists with this path.")
-		    Else
-		      Reasons.Add(Blueprint.Label + ": Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + " " + Err.Message.NthField(EndOfLine, 1))
-		    End If
-		  Next
-		  
-		  Self.mSave.ResizeTo(-1)
-		  Self.mDelete.ResizeTo(-1)
-		  Sender.AddUserInterfaceUpdate(New Dictionary("Action": "Save Complete", "Success": False, "Reasons": Reasons))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSaveThread_UserInterfaceUpdate(Sender As Thread, Dictionaries() As Dictionary)
-		  #Pragma Unused Sender
-		  
-		  For Each Dict As Dictionary In Dictionaries
-		    Var Action As String = Dict.Lookup("Action", "").StringValue
+		Private Sub FetchThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		  For Each Update As Dictionary In Updates
+		    Var Finished As Boolean = Update.Value("Finished")
+		    If Finished = False Then
+		      Continue
+		    End If
 		    
-		    Select Case Action
-		    Case "Save Complete"
-		      Var Success As Boolean = Dict.Value("Success")
-		      If Success Then
-		        Self.FinishPublishing(True, "")
-		      Else
-		        Var Reasons() As String = Dict.Value("Reasons")
-		        Self.FinishPublishing(False, "The following blueprints had saving errors: " + EndOfLine + EndOfLine + Reasons.Join(EndOfLine))
+		    Var Task As BlueprintFetchTask = Sender.UserData
+		    Self.FinishTask(Task)
+		    
+		    For Idx As Integer = Self.mThreads.LastIndex DownTo 0
+		      If Self.mThreads(Idx) = Sender Then
+		        Self.mThreads.RemoveAt(Idx)
+		        Exit For Idx
 		      End If
-		    End Select
+		    Next
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PublishDelete(Task As BlueprintPublishTask)
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
+		  Var Blueprints() As Ark.Blueprint
+		  Var Errors As New Dictionary
+		  Call DataSource.SaveBlueprints(Blueprints, Task.DeleteIds, Errors)
+		  
+		  If Errors.KeyCount > 0 Then
+		    Var Reasons() As String
+		    For Each Entry As DictionaryEntry In Errors
+		      Var BlueprintId As String = Entry.Key
+		      Var Blueprint As Ark.Blueprint = Self.OriginalBlueprint(BlueprintId)
+		      If Blueprint Is Nil Then
+		        // Not really an error, it never existed in the first place
+		        Continue
+		      End If
+		      
+		      Var Err As RuntimeException = Entry.Value
+		      Reasons.Add(Blueprint.Label + ": Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + " " + Err.Message.NthField(EndOfLine, 1))
+		    Next
+		    
+		    If Reasons.Count > 0 Then
+		      Task.Errored = True
+		      Task.ErrorMessage = String.FromArray(Reasons, EndOfLine)
+		    End If
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PublishSave(Task As BlueprintPublishTask)
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
+		  Var Blueprints() As Ark.Blueprint = Task.Blueprints
+		  Var DeleteIds() As String
+		  Var Errors As New Dictionary
+		  Call DataSource.SaveBlueprints(Blueprints, DeleteIds, Errors)
+		  
+		  If Errors.KeyCount > 0 Then
+		    Var BlueprintMap As New Dictionary
+		    For Each Blueprint As Ark.Blueprint In Blueprints
+		      BlueprintMap.Value(Blueprint.BlueprintId) = Blueprint
+		    Next
+		    
+		    Var Reasons() As String
+		    For Each Entry As DictionaryEntry In Errors
+		      Var BlueprintId As String = Entry.Key
+		      Var Blueprint As Ark.Blueprint = BlueprintMap.Value(BlueprintId)
+		      
+		      Var Err As RuntimeException = Entry.Value
+		      If Err.Message.BeginsWith("Unique constraint failed") Then
+		        Reasons.Add(Blueprint.Label + ": A blueprint already exists with this path.")
+		      Else
+		        Reasons.Add(Blueprint.Label + ": Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + " " + Err.Message.NthField(EndOfLine, 1))
+		      End If
+		    Next
+		    
+		    If Reasons.Count > 0 Then
+		      Task.Errored = True
+		      Task.ErrorMessage = String.FromArray(Reasons, EndOfLine)
+		    End If
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PublishThread_Run(Sender As Beacon.Thread)
+		  Var Task As BlueprintPublishTask = Sender.UserData
+		  If Task.DeleteMode Then
+		    Self.PublishDelete(Task)
+		  Else
+		    Self.PublishSave(Task)
+		  End If
+		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PublishThread_UserInterfaceUpdate(Sender As Beacon.Thread, Updates() As Dictionary)
+		  For Each Update As Dictionary In Updates
+		    Var Finished As Boolean = Update.Value("Finished")
+		    If Finished = False Then
+		      Continue
+		    End If
+		    
+		    Var Task As BlueprintPublishTask = Sender.UserData
+		    Self.FinishTask(Task)
+		    
+		    For Idx As Integer = Self.mThreads.LastIndex DownTo 0
+		      If Self.mThreads(Idx) = Sender Then
+		        Self.mThreads.RemoveAt(Idx)
+		        Exit For Idx
+		      End If
+		    Next
 		  Next
 		End Sub
 	#tag EndMethod
@@ -96,19 +179,19 @@ Inherits BlueprintController
 
 
 	#tag Property, Flags = &h21
-		Private mDelete() As Ark.Blueprint
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSave() As Ark.Blueprint
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSaveThread As Thread
+		Private mThreads() As Beacon.Thread
 	#tag EndProperty
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsBusy"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -147,30 +230,6 @@ Inherits BlueprintController
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsLoading"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsPublishing"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsWorking"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

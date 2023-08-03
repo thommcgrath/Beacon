@@ -65,6 +65,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1
@@ -123,6 +124,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       Composited      =   False
       ConsoleSafe     =   False
       Enabled         =   True
+      GameId          =   ""
       HasBackgroundColor=   False
       Height          =   62
       Index           =   -2147483648

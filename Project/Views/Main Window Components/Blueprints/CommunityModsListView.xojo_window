@@ -231,6 +231,7 @@ Begin ModsListView CommunityModsListView Implements NotificationKit.Receiver
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -325,6 +326,7 @@ End
 		      Results = Parsed.Value("results")
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing page of results.")
+		      Self.List.CompleteRowLoadRequest(Request.Tag)
 		      Return
 		    End Try
 		    
@@ -349,6 +351,7 @@ End
 		    Next
 		  End If
 		  
+		  Self.List.CompleteRowLoadRequest(Request.Tag)
 		  Self.List.InvalidateScrollPosition
 		End Sub
 	#tag EndMethod
@@ -438,9 +441,10 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub LoadMoreRows(Page As Integer)
+		Function LoadMoreRows(Page As Integer, RequestToken As String) As Boolean
 		  If Self.HasBeenShown = False Or (Page > 1 And Page > Self.TotalPages) Then
-		    Return
+		    Me.PauseScrollWatching()
+		    Return True
 		  End If
 		  
 		  Self.StartJob()
@@ -455,8 +459,9 @@ End
 		  End If
 		  
 		  Var Request As New BeaconAPI.Request("/discovery", "GET", Params, AddressOf APICallback_ListMods)
+		  Request.Tag = RequestToken
 		  BeaconAPI.Send(Request)
-		End Sub
+		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean

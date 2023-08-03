@@ -126,6 +126,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
@@ -344,6 +345,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0

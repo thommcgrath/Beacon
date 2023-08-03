@@ -301,9 +301,9 @@ End
 		  Else
 		    Var Controller As BlueprintController
 		    If ModInfo.IsLocal Then
-		      Controller = New LocalBlueprintController(ModInfo.ContentPackId, ModInfo.Name)
+		      Controller = New LocalBlueprintController(ModInfo)
 		    Else
-		      Controller = New RemoteBlueprintController(ModInfo.ContentPackId, ModInfo.Name)
+		      Controller = New RemoteBlueprintController(ModInfo)
 		    End If
 		    
 		    View = New ModEditorView(Controller)

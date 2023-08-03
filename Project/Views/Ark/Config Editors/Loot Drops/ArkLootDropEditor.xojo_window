@@ -70,6 +70,7 @@ Begin BeaconContainer ArkLootDropEditor Implements AnimationKit.ValueAnimator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   1

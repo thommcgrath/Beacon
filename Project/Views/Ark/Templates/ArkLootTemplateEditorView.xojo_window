@@ -587,6 +587,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabStop         =   True
          Tooltip         =   ""
          Top             =   103
+         TotalPages      =   -1
          Transparent     =   True
          TypeaheadColumn =   1
          Underline       =   False
@@ -644,6 +645,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          TabStop         =   True
          Tooltip         =   ""
          Top             =   101
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -896,8 +898,10 @@ End
 		      End If
 		    Next
 		    If OriginalIndex = -1 Then
-		      System.DebugLog("Unable to find original entry " + NewEntry.EntryId)
-		      Break
+		      #if DebugBuild
+		        System.DebugLog("Unable to find original entry " + NewEntry.EntryId)
+		        Break
+		      #endif
 		      Return
 		    End If
 		    

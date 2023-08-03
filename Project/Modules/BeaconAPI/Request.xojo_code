@@ -189,6 +189,10 @@ Protected Class Request
 		RequiresAuthentication As Boolean = True
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		Tag As Variant
+	#tag EndProperty
+
 
 	#tag Enum, Name = AuthTypes, Type = Integer, Flags = &h0
 		Unauthenticated

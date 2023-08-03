@@ -195,6 +195,7 @@ Begin BeaconDialog ArkBreedingTunerDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PageSize        =   100
       PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   0
