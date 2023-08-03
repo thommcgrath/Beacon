@@ -7,13 +7,37 @@ Protected Class BlueprintControllerTask
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Errored() As Boolean
+		  Return Self.mErrored
+		End Function
+	#tag EndMethod
 
-	#tag Property, Flags = &h0
-		Errored As Boolean
+	#tag Method, Flags = &h0
+		Sub Errored(Assigns Value As Boolean)
+		  Self.mErrored = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ErrorMessage() As String
+		  Return Self.mErrorMessage
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ErrorMessage(Assigns Value As String)
+		  Self.mErrorMessage = Value
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mErrored As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		ErrorMessage As String
+	#tag Property, Flags = &h21
+		Private mErrorMessage As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -101,7 +125,7 @@ Protected Class BlueprintControllerTask
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ErrorMessage"
+			Name="mErrorMessage"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
@@ -109,7 +133,7 @@ Protected Class BlueprintControllerTask
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Errored"
+			Name="mErrored"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

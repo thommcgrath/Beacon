@@ -19,6 +19,30 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub CleanupTask(Task As Ark.BlueprintControllerTask)
+		  For Idx As Integer = 0 To Self.mPendingTasks.LastIndex
+		    Var PendingTask As Ark.BlueprintControllerTask = Self.mPendingTasks(Idx)
+		    If PendingTask IsA Ark.BlueprintControllerTaskGroup Then
+		      Ark.BlueprintControllerTaskGroup(PendingTask).FinishTask(Task) // May not exist in this group, but that's ok.
+		      If Ark.BlueprintControllerTaskGroup(PendingTask).Finished Then
+		        Self.mPendingTasks.RemoveAt(Idx)
+		        Exit For Idx
+		      End If
+		    End If
+		    
+		    If Self.mPendingTasks(Idx).TaskId = Task.TaskId Then
+		      Self.mPendingTasks.RemoveAt(Idx)
+		      Exit For Idx
+		    End If
+		  Next
+		  
+		  If Self.mPendingTasks.Count = 0 Then
+		    RaiseEvent WorkFinished()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor()
 		  Self.mChanges = New Dictionary
 		  Self.mOriginalBlueprints = New Dictionary
@@ -80,10 +104,35 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function FindGroupForTask(Task As Ark.BlueprintControllerTask) As Ark.BlueprintControllerTaskGroup
+		  Return Self.FindGroupForTaskId(Task.TaskId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function FindGroupForTaskId(TaskId As String) As Ark.BlueprintControllerTaskGroup
+		  For Idx As Integer = 0 To Self.mPendingTasks.LastIndex
+		    If Self.mPendingTasks(Idx) IsA Ark.BlueprintControllerTaskGroup Then
+		      Var TaskGroup As Ark.BlueprintControllerTaskGroup = Ark.BlueprintControllerTaskGroup(Self.mPendingTasks(Idx))
+		      Var Task As Ark.BlueprintControllerTask = TaskGroup.FindTask(TaskId)
+		      If (Task Is Nil) = False Then
+		        Return TaskGroup
+		      End If
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function FindTask(TaskId As String) As Ark.BlueprintControllerTask
 		  For Idx As Integer = 0 To Self.mPendingTasks.LastIndex
 		    If Self.mPendingTasks(Idx).TaskId = TaskId Then
 		      Return Self.mPendingTasks(Idx)
+		    ElseIf Self.mPendingTasks(Idx) IsA Ark.BlueprintControllerTaskGroup Then
+		      Var Task As Ark.BlueprintControllerTask = Ark.BlueprintControllerTaskGroup(Self.mPendingTasks(Idx)).FindTask(TaskId)
+		      If (Task Is Nil) = False Then
+		        Return Task
+		      End If
 		    End If
 		  Next
 		End Function
@@ -103,16 +152,7 @@ Protected Class BlueprintController
 		    Self.mOriginalBlueprints.Value(Blueprint.BlueprintId) = Blueprint
 		  Next
 		  
-		  For Idx As Integer = 0 To Self.mPendingTasks.LastIndex
-		    If Self.mPendingTasks(Idx).TaskId = Task.TaskId Then
-		      Self.mPendingTasks.RemoveAt(Idx)
-		      Exit For Idx
-		    End If
-		  Next
-		  
-		  If Self.mPendingTasks.Count = 0 Then
-		    RaiseEvent WorkFinished()
-		  End If
+		  Self.CleanupTask(Task)
 		End Sub
 	#tag EndMethod
 
@@ -136,23 +176,13 @@ Protected Class BlueprintController
 		    End If
 		  End If
 		  
-		  Var RemainingPublishTasks As Integer
-		  For Idx As Integer = Self.mPendingTasks.LastIndex DownTo 0
-		    If Self.mPendingTasks(Idx).TaskId = Task.TaskId Then
-		      Self.mPendingTasks.RemoveAt(Idx)
-		      Continue For Idx
-		    End If
-		    
-		    If Self.mPendingTasks(Idx) IsA Ark.BlueprintControllerPublishTask Then
-		      RemainingPublishTasks = RemainingPublishTasks + 1
-		    End If
-		  Next
-		  
-		  RaiseEvent PublishFinished(Task)
-		  
-		  If Self.mPendingTasks.Count = 0 Then
-		    RaiseEvent WorkFinished()
+		  Var Group As Ark.BlueprintControllerTaskGroup = Self.FindGroupForTask(Task)
+		  Var WasFinished As Boolean = (Group Is Nil) = False And Group.Finished = True
+		  Self.CleanupTask(Task)
+		  If (Group Is Nil) = False And WasFinished = False And Group.Finished = True Then
+		    RaiseEvent PublishFinished(Group)
 		  End If
+		  
 		End Sub
 	#tag EndMethod
 
@@ -319,9 +349,7 @@ Protected Class BlueprintController
 		    Return
 		  End If
 		  
-		  For Each Task As Ark.BlueprintControllerTask In Tasks
-		    Self.AddTask(Task)
-		  Next
+		  Self.AddTask(New Ark.BlueprintControllerTaskGroup(Tasks))
 		  
 		  RaiseEvent Publish(Tasks)
 		End Sub
@@ -382,7 +410,7 @@ Protected Class BlueprintController
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PublishFinished(Task As Ark.BlueprintControllerPublishTask)
+		Event PublishFinished(Task As Ark.BlueprintControllerTaskGroup)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

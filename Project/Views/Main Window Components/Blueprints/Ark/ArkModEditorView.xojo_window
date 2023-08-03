@@ -515,14 +515,17 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_PublishFinished(Sender As Ark.BlueprintController, Task As Ark.BlueprintControllerPublishTask)
+		Private Sub mController_PublishFinished(Sender As Ark.BlueprintController, Task As Ark.BlueprintControllerTaskGroup)
 		  If Task.Errored Then
 		    Self.UpdateUI()
 		    
-		    If Sender.UseSaveTerminology Then
-		      Self.ShowAlert("Beacon was unable to save the changes.", Task.ErrorMessage)
+		    Var SaveOrPublish As String = If(Sender.UseSaveTerminology, "save", "publish")
+		    If Task.ErrorCount = Task.Count Then
+		      // All errored
+		      Self.ShowAlert("Beacon was unable to " + SaveOrPublish + " your changes.", Task.ErrorMessage)
 		    Else
-		      Self.ShowAlert("Beacon was unable to publish the requested changes.", Task.ErrorMessage)
+		      // Some errored
+		      Self.ShowAlert("Beacon was able to " + SaveOrPublish + " some of your changes, but there were errors.", Task.ErrorMessage)
 		    End If
 		    
 		    Return
@@ -608,6 +611,17 @@ End
 		    Values.Value(Key) = Value
 		  Wend
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Reload()
+		  For Idx As Integer = Ark.BlueprintController.FirstMode To Ark.BlueprintController.LastMode
+		    Self.mBlueprints(Idx) = New Dictionary
+		    Self.mHasRequestBlueprints(Idx) = False
+		  Next
+		  
+		  Self.SwitchMode(Self.mMode)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1069,6 +1083,7 @@ End
 		  Case "Discard"
 		    Try
 		      Self.mController.DiscardChanges()
+		      Self.Reload()
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Reverting changes")
 		      Self.ShowAlert("Could not revert changes", Err.Message)

@@ -225,24 +225,6 @@ Inherits Ark.BlueprintController
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function Unpack(Definitions() As Variant, Task As Ark.BlueprintControllerFetchTask) As Boolean
-		  Try
-		    For Each Definition As Dictionary In Definitions
-		      Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Definition)
-		      If (Blueprint Is Nil) = False Then
-		        Task.Blueprints.Add(Blueprint)
-		      End If
-		    Next
-		    Return True
-		  Catch Err As RuntimeException
-		    Task.Errored = True
-		    Task.ErrorMessage = Err.Message
-		    Return False
-		  End Try
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mThreads() As Beacon.Thread

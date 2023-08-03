@@ -604,6 +604,7 @@ MultiImage=IconToolbarGift;Icons/IconToolbarGift.xojo_image;&h000000003B445FFF;&
 DesktopWindow=ArkSaveBlueprintsDialog;Views/Ark/General Dialogs/ArkSaveBlueprintsDialog.xojo_window;&h0000000028453FFF;&h00000000524BBFFF;false
 Class=FileWriter;Modules/UserCloud/FileWriter.xojo_code;&h000000005F4627FF;&h0000000015A337FF;false
 Class=ContentPack;Modules/Beacon/ContentPack.xojo_code;&h0000000008752FFF;&h0000000055ADDFFF;false
+Class=BlueprintControllerTaskGroup;Modules/Game Support/Ark/BlueprintControllerTaskGroup.xojo_code;&h000000004E66D7FF;&h0000000016B997FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=7

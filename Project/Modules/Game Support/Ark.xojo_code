@@ -520,19 +520,16 @@ Protected Module Ark
 		    Return Nil
 		  End Select
 		  
-		  Var ContentPackInfo As New Dictionary
-		  ContentPackInfo.Value("id") = Blueprint.ContentPackId
-		  ContentPackInfo.Value("name") = Blueprint.ContentPackName
-		  
 		  Dict.Value(IdProperty) = Blueprint.BlueprintId
 		  Dict.Value("label") = Blueprint.Label
 		  Dict.Value("alternateLabel") = Blueprint.AlternateLabel
-		  Dict.Value("contentPack") = ContentPackInfo
 		  Dict.Value("tags") = Blueprint.Tags
 		  Dict.Value("availability") = Blueprint.Availability
 		  Dict.Value("path") = Blueprint.Path
 		  Dict.Value("minVersion") = 10700000
 		  Dict.Value("lastUpdate") = Blueprint.LastUpdate
+		  Dict.Value("contentPackId") = Blueprint.ContentPackId
+		  Dict.Value("contentPackName") = Blueprint.ContentPackName
 		  
 		  // Let the blueprint add whatever additional data it needs
 		  Blueprint.Pack(Dict)
@@ -1076,16 +1073,19 @@ Protected Module Ark
 		  
 		  Var BlueprintId As String
 		  Var AlternateLabel As NullableString
-		  Var ContentPackInfo As Dictionary
+		  Var ContentPackId, ContentPackName As String
 		  Var LastUpdate As Double
 		  If LegacyMode Then
 		    BlueprintId = Dict.Value("id")
 		    AlternateLabel = NullableString.FromVariant(Dict.Value("alternate_label"))
-		    ContentPackInfo = Dict.Value("mod")
-		  ElseIf Dict.HasAllKeys(IdProperty, "label", "alternateLabel", "path", "tags", "availability", "contentPack", "lastUpdate") Then
+		    Var ContentPackInfo As Dictionary = Dict.Value("mod")
+		    ContentPackId = ContentPackInfo.Value("id")
+		    ContentPackName = ContentPackInfo.Value("name")
+		  ElseIf Dict.HasAllKeys(IdProperty, "label", "alternateLabel", "path", "tags", "availability", "contentPackId", "contentPackName", "lastUpdate") Then
 		    BlueprintId = Dict.Value(IdProperty)
 		    AlternateLabel = NullableString.FromVariant(Dict.Value("alternateLabel"))
-		    ContentPackInfo = Dict.Value("contentPack")
+		    ContentPackId = Dict.Value("contentPackId")
+		    ContentPackName = Dict.Value("contentPackName")
 		    LastUpdate = Dict.Value("lastUpdate")
 		  Else
 		    Return Nil
@@ -1129,8 +1129,8 @@ Protected Module Ark
 		  Blueprint.AlternateLabel = AlternateLabel
 		  Blueprint.Availability = Dict.Value("availability").UInt64Value
 		  Blueprint.Label = Dict.Value("label").StringValue
-		  Blueprint.ContentPackId = ContentPackInfo.Value("id").StringValue
-		  Blueprint.ContentPackName = ContentPackInfo.Value("name").StringValue
+		  Blueprint.ContentPackId = ContentPackId
+		  Blueprint.ContentPackName = ContentPackName
 		  Blueprint.Tags = Tags
 		  Blueprint.LastUpdate = LastUpdate
 		  
