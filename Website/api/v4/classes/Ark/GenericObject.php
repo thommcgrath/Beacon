@@ -50,9 +50,9 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 		return new DatabaseSchema('ark', 'objects', [
 			new DatabaseObjectProperty($prefix . 'Id', ['primaryKey' => true, 'columnName' => 'object_id']),
 			new DatabaseObjectProperty($prefix . 'Group', ['accessor' => 'ark.table_to_group(SUBSTRING(%%TABLE%%.tableoid::regclass::TEXT, 5))', 'columnName' => 'object_group', 'editable' => DatabaseObjectProperty::kEditableNever]),
-			new DatabaseObjectProperty('label'),
-			new DatabaseObjectProperty('alternateLabel', ['columnName' => 'alternate_label', 'required' => false]),
-			new DatabaseObjectProperty('tags', ['required' => false]),
+			new DatabaseObjectProperty('label', ['editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('alternateLabel', ['columnName' => 'alternate_label', 'required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
+			new DatabaseObjectProperty('tags', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('minVersion', ['accessor' => 'GREATEST(%%TABLE%%.min_version, content_packs.min_version)', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'min_version', 'required' => false]),
 			new DatabaseObjectProperty('contentPackId', ['accessor' => 'content_packs.content_pack_id', 'setter' => '%%PLACEHOLDER%%', 'columnName' => 'mod_id']),
 			new DatabaseObjectProperty('contentPackName', ['accessor' => 'content_packs.name', 'columnName' => 'content_pack_name', 'editable' => DatabaseObjectProperty::kEditableNever]),
@@ -566,10 +566,10 @@ class GenericObject extends DatabaseObject implements JsonSerializable {
 			$prefix . 'Group' => $this->objectGroup,
 			'label' => $this->label,
 			'alternateLabel' => $this->alternateLabel,
-			'contentPack' => [
-				'id' => $this->contentPackId,
-				'name' => $this->contentPackName
-			],
+			'contentPackId' => $this->contentPackId,
+			'contentPackName' => $this->contentPackName,
+			'contentPackMarketplace' => $this->contentPackMarketplace,
+			'contentPackMarketplaceId' => $this->contentPackMarketplaceId,
 			'tags' => $this->tags,
 			'minVersion' => $this->minVersion,
 			'lastUpdate' => $this->lastUpdate

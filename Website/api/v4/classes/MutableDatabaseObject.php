@@ -19,7 +19,7 @@ trait MutableDatabaseObject {
 		
 		$propertyName = $property->PropertyName();
 		if ($this->$propertyName !== $value) {
-			$this->$propertyName = static::PreparePropertyValue($property, $value);
+			$this->$propertyName = $value;
 			$this->changedProperties[] = $propertyName;
 		}
 	}
@@ -103,7 +103,7 @@ trait MutableDatabaseObject {
 		foreach ($this->changedProperties as $propertyName) {
 			$definition = $schema->Property($propertyName);
 			$assignments[] = $definition->ColumnName() . ' = ' . $definition->Setter('$' . $placeholder++);
-			$values[] = $this->$propertyName;
+			$values[] = static::PreparePropertyValue($definition, $this->$propertyName);
 		}
 		$values[] = $primaryKey;
 		

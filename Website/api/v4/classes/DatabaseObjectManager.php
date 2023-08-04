@@ -281,7 +281,7 @@ class DatabaseObjectManager {
 		$database->BeginTransaction();
 		foreach ($members as $member) {
 			$className = $this->GetClassName($member);
-			if (array_key_exists($className, $primaryKeyProperties) === false) {
+			if (array_key_exists($className, $primaryKeyProperties)) {
 				$primaryKeyProperty = $primaryKeyProperties[$className];
 			} else {
 				$schema = $className::DatabaseSchema();
@@ -372,7 +372,7 @@ class DatabaseObjectManager {
 		foreach ($members as $member) {
 			try {
 				$className = $this->GetClassName($member);
-				if (array_key_exists($className, $primaryKeyProperties) === false) {
+				if (array_key_exists($className, $primaryKeyProperties)) {
 					$primaryKeyProperty = $primaryKeyProperties[$className];
 				} else {
 					$schema = $className::DatabaseSchema();
