@@ -384,6 +384,7 @@ End
 		  Next
 		  
 		  AddHandler Controller.BlueprintsLoaded, WeakAddressOf mController_BlueprintsLoaded
+		  AddHandler Controller.BlueprintsChanged, WeakAddressOf mController_BlueprintsChanged
 		  AddHandler Controller.PublishFinished, WeakAddressOf mController_PublishFinished
 		  AddHandler Controller.WorkStarted, WeakAddressOf mController_WorkStarted
 		  AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
@@ -397,6 +398,18 @@ End
 		Function ContentPackId() As String
 		  Return Self.mController.ContentPackId
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function DiscoveryCheckMod(WorkshopID As String) As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DiscoveryCompleted(DiscoveredMods() As Beacon.ContentPack)
+		  Self.UpdateList()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -492,6 +505,26 @@ End
 		  End If
 		  
 		  Self.Import(Contents)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mController_BlueprintsChanged(Sender As Ark.BlueprintController, BlueprintsSaved() As Ark.Blueprint, BlueprintsDeleted() As Ark.Blueprint)
+		  #Pragma Unused Sender
+		  
+		  For Each Blueprint As Ark.Blueprint In BlueprintsSaved
+		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
+		    Self.mBlueprints(Mode).Value(Blueprint.BlueprintId) = Blueprint
+		  Next
+		  
+		  For Each Blueprint As Ark.Blueprint In BlueprintsDeleted
+		    Var Mode As Integer = Self.ModeForBlueprint(Blueprint)
+		    If Self.mBlueprints(Mode).HasKey(Blueprint.BlueprintId) Then
+		      Self.mBlueprints(Mode).Remove(Blueprint.BlueprintId)
+		    End If
+		  Next
+		  
+		  Self.UpdateList(BlueprintsSaved, True)
 		End Sub
 	#tag EndMethod
 
@@ -621,6 +654,48 @@ End
 		  Next
 		  
 		  Self.SwitchMode(Self.mMode)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartDiscovery()
+		  #if DebugBuild
+		    #Pragma Warning "Not Implemented"
+		  #else
+		    #Pragma Error "Not Implemented"
+		  #endif
+		  
+		  Var Dialog As ArkModDiscoveryDialog = ArkModDiscoveryDialog.SharedInstance()
+		  If (Dialog Is Nil) = False Then
+		    Dialog.Show()
+		    Return
+		  End If
+		  
+		  If Self.mController.IsBusy Then
+		    Self.ShowAlert("The editor is currently busy", "Wait for the current task to complete before starting a mod discovery.")
+		    Return
+		  End If
+		  
+		  Var NotFullyLoaded As Boolean
+		  For Mode As Integer = Ark.BlueprintController.FirstMode To Ark.BlueprintController.LastMode
+		    If Self.mHasRequestBlueprints(Mode) = False Then
+		      NotFullyLoaded = True
+		      Self.mLoadTotals(Mode) = -2
+		      Self.mController.LoadBlueprints(Mode, 1, Self.PageSize)
+		      Self.mHasRequestBlueprints(Mode) = True
+		    End If
+		  Next
+		  If NotFullyLoaded Then
+		    Self.ShowAlert("Not all blueprints have been loaded", "Some blueprints have not yet been loaded. They will start to download now. Try mod discovery again in a moment.")
+		    Return
+		  End If
+		  
+		  Dialog = ArkModDiscoveryDialog.Create(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted, Self.mController)
+		  If Dialog Is Nil Then
+		    Return
+		  End If
+		  
+		  Dialog.Show()
 		End Sub
 	#tag EndMethod
 
@@ -909,13 +984,6 @@ End
 		    Return
 		  End Try
 		  
-		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var Dict As Dictionary = Self.BlueprintDictionary(Blueprint)
-		    If Dict.HasKey(Blueprint.BlueprintId) Then
-		      Dict.Remove(Blueprint.BlueprintId)
-		    End If
-		  Next
-		  Self.UpdateList()
 		  
 		End Sub
 	#tag EndEvent
@@ -976,12 +1044,6 @@ End
 		      Self.ShowAlert("Could not save blueprints", Err.Message)
 		      Return
 		    End Try
-		    
-		    For Each Blueprint As Ark.Blueprint In ModifiedBlueprints
-		      Var Dict As Dictionary = Self.BlueprintDictionary(Blueprint)
-		      Dict.Value(Blueprint.BlueprintId) = Blueprint
-		    Next
-		    Self.UpdateList(ModifiedBlueprints, True)
 		  End If
 		  
 		End Sub
@@ -1024,29 +1086,29 @@ End
 		      End Try
 		      
 		      Var DesiredMode As Integer = Self.ModeForBlueprint(Blueprint)
-		      Var Blueprints As Dictionary = Self.BlueprintDictionary(DesiredMode)
-		      Blueprints.Value(Blueprint.BlueprintId) = Blueprint
 		      If DesiredMode <> Self.mMode Then
-		        Self.SwitchMode(DesiredMode, False)
+		        Self.SwitchMode(DesiredMode)
 		      End If
-		      Var BlueprintIds(0) As String
-		      BlueprintIds(0) = Blueprint.BlueprintId
-		      Self.UpdateList(BlueprintIds, True)
 		    End If
 		  Case "Import"
 		    Var ImportFileItem As New DesktopMenuItem("Import From File")
 		    Var ImportUrlItem As New DesktopMenuItem("Import From URL")
 		    Var ImportClipboardItem As New DesktopMenuItem("Import From " + Language.Clipboard)
+		    Var DiscoverItem As DesktopMenuItem
 		    ImportClipboardItem.Enabled = Self.ClipboardHasCodes
-		    Var DiscoverItem As New DesktopMenuItem("Run Mod Discovery")
-		    DiscoverItem.Enabled = Self.mController.Marketplace = Beacon.MarketplaceSteamWorkshop And Self.mController.MarketplaceId.IsEmpty = False
 		    
 		    Var ImportMenu As New DesktopMenuItem
 		    ImportMenu.AddMenu(ImportFileItem)
 		    ImportMenu.AddMenu(ImportUrlItem)
 		    ImportMenu.AddMenu(ImportClipboardItem)
-		    ImportMenu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
-		    ImportMenu.AddMenu(DiscoverItem)
+		    
+		    #if TargetWindows
+		      ImportMenu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
+		      
+		      DiscoverItem = New DesktopMenuItem("Run Mod Discovery")
+		      DiscoverItem.Enabled = Self.mController.Marketplace = Beacon.MarketplaceSteamWorkshop And Self.mController.MarketplaceId.IsEmpty = False
+		      ImportMenu.AddMenu(DiscoverItem)
+		    #endif
 		    
 		    Var Position As Point = Me.GlobalPosition
 		    Var Choice As DesktopMenuItem = ImportMenu.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
@@ -1059,10 +1121,8 @@ End
 		      Case ImportClipboardItem
 		        Self.ImportFromClipboard()
 		      Case DiscoverItem
-		        #if DebugBuild
-		          #Pragma Warning "Not Implemented"
-		        #else
-		          #Pragma Error "Not Implemented"
+		        #if TargetWindows
+		          Self.StartDiscovery()
 		        #endif
 		      End Select
 		    End If
@@ -1123,7 +1183,6 @@ End
 		          Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
 		          Try
 		            Self.mController.SaveBlueprints(FoundBlueprints)
-		            Self.UpdateList(FoundBlueprints, True)
 		            Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(FoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
 		          Catch Err As RuntimeException
 		            App.Log(Err, CurrentMethodName, "Saving imported blueprints")
@@ -1148,7 +1207,6 @@ End
 		            
 		            Try
 		              Self.mController.SaveBlueprints(ChosenBlueprints)
-		              Self.UpdateList(ChosenBlueprints, True)
 		              Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(ChosenBlueprints.Count, "blueprint", "blueprints") + " to import.")
 		            Catch Err As RuntimeException
 		              App.Log(Err, CurrentMethodName, "Saving imported blueprints")

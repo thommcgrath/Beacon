@@ -671,6 +671,14 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Closing()
+		  If (mSharedInstance Is Nil) = False And IsNull(mSharedInstance.Value) = False And mSharedInstance.Value = Self Then
+		    mSharedInstance = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  Self.IntroArkPathField.Text = Preferences.ArkSteamPath
 		  
@@ -682,6 +690,11 @@ End
 		  Self.IntroModsField.Left = Self.IntroArkPathField.Left
 		  Self.IntroArkPathField.Width = Self.IntroArkPathButton.Left - (12 + Self.IntroArkPathField.Left)
 		  Self.IntroModsField.Width = Self.Width - (20 + Self.IntroModsField.Left)
+		  
+		  If (Self.mDestination Is Nil) = False Then
+		    Self.IntroModsField.Text = Self.mDestination.MarketplaceId
+		    Self.IntroModsField.ReadOnly = True
+		  End If
 		  
 		  Self.SwapButtons()
 		End Sub
@@ -709,14 +722,30 @@ End
 		Private Delegate Sub CompletedDelegate(DiscoveredMods() As Beacon . ContentPack)
 	#tag EndDelegateDeclaration
 
-	#tag Method, Flags = &h0
-		Sub Constructor(CheckCallback As ArkModDiscoveryDialog.CheckModDelegate, CompleteCallback As ArkModDiscoveryDialog.CompletedDelegate)
+	#tag Method, Flags = &h21
+		Private Sub Constructor(CheckCallback As ArkModDiscoveryDialog.CheckModDelegate, CompleteCallback As ArkModDiscoveryDialog.CompletedDelegate, Destination As Ark.BlueprintController)
 		  // Calling the overridden superclass constructor.
 		  Self.mCheckCallback = CheckCallback
 		  Self.mCompletedCallback = CompleteCallback
+		  Self.mDestination = Destination
 		  Super.Constructor
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Create(CheckCallback As ArkModDiscoveryDialog.CheckModDelegate, CompleteCallback As ArkModDiscoveryDialog.CompletedDelegate, Destination As Ark.BlueprintController = Nil) As ArkModDiscoveryDialog
+		  If (mSharedInstance Is Nil) = False And IsNull(mSharedInstance.Value) = False Then
+		    // Cannot create a new instance
+		    Return Nil
+		  End If
+		  
+		  #Pragma DisableBackgroundTasks True // Prevent context switching
+		  
+		  Var Instance As New ArkModDiscoveryDialog(CheckCallback, CompleteCallback, Destination)
+		  mSharedInstance = New WeakRef(Instance)
+		  Return Instance
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -728,21 +757,35 @@ End
 		    Return
 		  End If
 		  
-		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
+		  // We can skip some work if we have a destination
+		  Var SimplifiedImport As Boolean = (Self.mDestination Is Nil) = False
+		  
+		  // We only need write permission for a generic import
+		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(SimplifiedImport = False)
+		  
+		  // Always skip DataDumper
+		  Var ForbiddenWorkshopIDs As New Dictionary
+		  ForbiddenWorkshopIDs.Value("2171967557") = True
 		  
 		  Var TitleFinder As New Regex
 		  TitleFinder.SearchPattern = "<div class=""workshopItemTitle"">(.+)</div>"
 		  TitleFinder.Options.Greedy = False
 		  
 		  Var Packs As New Dictionary
-		  Var ForbiddenWorkshopIDs As New Dictionary
-		  ForbiddenWorkshopIDs.Value("2171967557") = True
+		  Var ModsFilter As New Beacon.StringList()
 		  For Each WorkshopId As String In Self.mMods
-		    If WorkshopID = "2171967557" Then
+		    If WorkshopId = "2171967557" Then
 		      Continue
 		    End If
 		    
 		    Var Pack As Beacon.ContentPack = Database.GetContentPackWithSteamId(WorkshopId)
+		    If SimplifiedImport Then
+		      If (Pack Is Nil) = False Then
+		        Packs.Value(WorkshopId) = Pack
+		        ModsFilter.Append(Pack.ContentPackId)
+		      End If
+		      Continue
+		    End If
 		    
 		    If Pack Is Nil Then
 		      Var PackName As String = Self.mTagsByMod.Lookup(WorkshopId, WorkshopId).StringValue
@@ -757,16 +800,25 @@ End
 		        End If
 		      End If
 		      
-		      Pack = Database.CreateLocalContentPack(PackName, WorkshopID)
+		      Pack = Database.CreateLocalContentPack(PackName, WorkshopId)
 		      Self.mNumAddedMods = Self.mNumAddedMods + 1
 		    ElseIf Pack.IsLocal = False Then
 		      ForbiddenWorkshopIDs.Value(WorkshopID) = True
 		    End If
 		    
-		    Packs.Value(WorkshopID) = Pack
+		    If Pack.IsLocal Then
+		      ModsFilter.Append(Pack.ContentPackId)
+		    End If
+		    
+		    Packs.Value(WorkshopId) = Pack
 		  Next
 		  
-		  Var CurrentBlueprints() As Ark.Blueprint = Database.GetBlueprints("", Self.mMods, "")
+		  Var CurrentBlueprints() As Ark.Blueprint
+		  If SimplifiedImport Then
+		    CurrentBlueprints = Self.mDestination.AllBlueprints()
+		  Else
+		    CurrentBlueprints = Database.GetBlueprints("", ModsFilter, "")
+		  End If
 		  Var CurrentBlueprintMap As New Dictionary
 		  For Each Blueprint As Ark.Blueprint In CurrentBlueprints
 		    CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
@@ -774,33 +826,38 @@ End
 		  
 		  Var BlueprintsToSave() As Ark.Blueprint
 		  Var Blueprints() As Ark.Blueprint = Importer.Blueprints
-		  Var NewBlueprintIDs As New Dictionary
+		  Var NewBlueprintIds As New Dictionary
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Try
 		      Var Path As String = Blueprint.Path
+		      Var OriginalBlueprint As Ark.Blueprint
 		      If CurrentBlueprintMap.HasKey(Path) Then
+		        OriginalBlueprint = CurrentBlueprintMap.Value(Path)
 		        CurrentBlueprintMap.Remove(Path)
 		      End If
 		      
 		      Var PathComponents() As String = Path.Split("/")
 		      Var Tag As String = PathComponents(3)
-		      Var WorkshopID As String = Self.mModsByTag.Value(Tag)
-		      If Packs.HasKey(WorkshopID) = False Or ForbiddenWorkshopIDs.HasKey(WorkshopID) Then
+		      Var WorkshopId As String = Self.mModsByTag.Value(Tag)
+		      If Packs.HasKey(WorkshopId) = False Or ForbiddenWorkshopIDs.HasKey(WorkshopId) Then
 		        Continue
 		      End If
 		      
-		      Var Pack As Beacon.ContentPack = Packs.Value(WorkshopID)
-		      Var ExistingBlueprints() As Ark.Blueprint = Database.GetBlueprints(Path, New Beacon.StringList(Pack.ContentPackId))
-		      If ExistingBlueprints.Count > 0 Then
-		        Continue
-		      End If
+		      Var Pack As Beacon.ContentPack = Packs.Value(WorkshopId)
 		      
-		      Var Mutable As Ark.MutableBlueprint = Blueprint.MutableVersion
-		      Mutable.ContentPackName = Pack.Name
-		      Mutable.ContentPackId = Pack.ContentPackId
-		      Mutable.RegenerateBlueprintId()
+		      Var Mutable As Ark.MutableBlueprint
+		      If (OriginalBlueprint Is Nil) = False Then
+		        Mutable = OriginalBlueprint.MutableVersion
+		        Mutable.Label = Blueprint.Label
+		        #Pragma Warning "Import more than just the name"
+		      Else
+		        Mutable = Blueprint.MutableVersion
+		        Mutable.ContentPackName = Pack.Name
+		        Mutable.ContentPackId = Pack.ContentPackId
+		        Mutable.RegenerateBlueprintId()
+		      End If
 		      BlueprintsToSave.Add(Mutable)
-		      NewBlueprintIDs.Value(Blueprint.BlueprintId) = True
+		      NewBlueprintIds.Value(Blueprint.BlueprintId) = True
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Pairing blueprint to mod")
 		    End Try
@@ -814,7 +871,12 @@ End
 		  Next
 		  
 		  Var Errors As New Dictionary
-		  Call Database.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
+		  If SimplifiedImport Then
+		    Self.mDestination.SaveBlueprints(BlueprintsToSave)
+		    Self.mDestination.DeleteBlueprints(BlueprintsToDelete)
+		  Else
+		    Call Database.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
+		  End If
 		  
 		  Self.mNumErrorBlueprints = Errors.KeyCount
 		  Self.mNumAddedBlueprints = BlueprintsToSave.Count
@@ -823,40 +885,45 @@ End
 		  For Each Entry As DictionaryEntry In Errors
 		    App.Log(RuntimeException(Entry.Value), CurrentMethodName, "Automatic mod discovery")
 		    
-		    Var BlueprintID As String = Entry.Key
-		    If NewBlueprintIDs.HasKey(BlueprintID) Then
+		    Var BlueprintId As String = Entry.Key
+		    If NewBlueprintIds.HasKey(BlueprintId) Then
 		      Self.mNumAddedBlueprints = Self.mNumAddedBlueprints - 1
-		    ElseIf DeleteBlueprintIDs.HasKey(BlueprintID) Then
+		    ElseIf DeleteBlueprintIDs.HasKey(BlueprintId) Then
 		      Self.mNumRemovedBlueprints = Self.mNumRemovedBlueprints - 1
 		    End If
 		  Next
 		  
-		  For Each Entry As DictionaryEntry In Packs
-		    Var WorkshopID As String = Entry.Key
-		    Var Pack As Beacon.ContentPack = Entry.Value
-		    
-		    If ForbiddenWorkshopIDs.HasKey(WorkshopID) Then
-		      Continue
-		    End If
-		    
-		    Self.mDiscoveredMods.Add(Pack)
-		    
-		    If Preferences.OnlineEnabled = False Then
-		      Continue
-		    End If
-		    
-		    Try
-		      Var Exported As MemoryBlock = Ark.BuildExport(Pack)
-		      If Exported Is Nil Then
+		  // Cannot upload in simplified mode, because the results are not yet saved.
+		  If SimplifiedImport = False Then
+		    For Each Entry As DictionaryEntry In Packs
+		      Var WorkshopId As String = Entry.Key
+		      Var Pack As Beacon.ContentPack = Entry.Value
+		      
+		      If ForbiddenWorkshopIDs.HasKey(WorkshopId) Then
 		        Continue
 		      End If
 		      
-		      Var Request As New BeaconAPI.Request("discovery/" + Pack.ContentPackId, "PUT", Exported, "application/octet-stream")
-		      Call BeaconAPI.SendSync(Request) // Response doesn't actually matter
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Uploading discovery results")
-		    End Try
-		  Next
+		      If SimplifiedImport = False Then
+		        Self.mDiscoveredMods.Add(Pack)
+		      End If
+		      
+		      If Preferences.OnlineEnabled = False Then
+		        Continue
+		      End If
+		      
+		      Try
+		        Var Exported As MemoryBlock = Ark.BuildExport(Pack)
+		        If Exported Is Nil Then
+		          Continue
+		        End If
+		        
+		        Var Request As New BeaconAPI.Request("discovery/" + Pack.ContentPackId, "PUT", Exported, "application/octet-stream")
+		        Call BeaconAPI.SendSync(Request) // Response doesn't actually matter
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Uploading discovery results")
+		      End Try
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -871,6 +938,16 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function SharedInstance() As ArkModDiscoveryDialog
+		  If mSharedInstance Is Nil Or IsNull(mSharedInstance.Value) Then
+		    Return Nil
+		  End If
+		  
+		  Return ArkModDiscoveryDialog(mSharedInstance.Value)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mArkRoot As FolderItem
@@ -882,6 +959,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCompletedCallback As ArkModDiscoveryDialog.CompletedDelegate
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDestination As Ark.BlueprintController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -933,6 +1014,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private Shared mSharedInstance As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTagsByMod As Dictionary
 	#tag EndProperty
 
@@ -977,68 +1062,72 @@ End
 		    Return
 		  End If
 		  
-		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  
-		  Var Matcher As New Regex
-		  Matcher.SearchPattern = "[^\d,]+"
-		  Matcher.ReplacementPattern = ""
-		  Matcher.Options.ReplaceAllMatches = True
-		  ModsString = Matcher.Replace(ModsString)
-		  
-		  Var OfficialModNames() As String
-		  Var OfficialModIds() As String
+		  Var ReducedValidation As Boolean = (Self.mDestination Is Nil) = False
 		  Var ModIds() As String = ModsString.Split(",")
-		  For Each ModId As String In ModIds
-		    If ModID = "2171967557" Then
-		      Continue
-		    End If
-		    
-		    Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithSteamId(ModId)
-		    If (Pack Is Nil) = False And Pack.IsLocal = False Then
-		      OfficialModNames.Add(Pack.Name + " (" + ModId + ")")
-		      OfficialModIds.Add(ModID)
-		    End If
-		    
-		    If (Beacon.SafeToInvoke(Self.mCheckCallback) And Self.mCheckCallback.Invoke(ModID)) = False Then
-		      Self.ShowAlert("Close your mod editors to continue", "There is an editor open for mod " + ModID + " that needs to be closed first.")
-		      Return
-		    End If
-		  Next
 		  
-		  If OfficialModNames.Count > 0 Then
-		    Var RemainingMods As Integer = ModIds.Count - OfficialModNames.Count
-		    Var SkipCaption As String = "Skip Them"
+		  If ReducedValidation = False Then
+		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		    
-		    Var Message As String = If(RemainingMods > 0, "Beacon already supports some of your mods", "Beacon already supports your mods")
-		    Var Explanation As String
-		    If OfficialModNames.Count > 8 Then
-		      Explanation = OfficialModNames.Count.ToString(Locale.Current, "#,##0") + " mods are already built into Beacon and do not need to be discovered."
-		    ElseIf OfficialModNames.Count > 1 Then
-		      Explanation = "The mods " + Language.EnglishOxfordList(OfficialModNames) + " are already built into Beacon and do not need to be discovered."
-		    Else
-		      Message = If(RemainingMods > 0, "Beacon already supports one of your mods", "Beacon already supports your mod")
-		      Explanation = "The mod " + OfficialModNames(0) + " is already built into Beacon and does not need to be discovered."
-		      SkipCaption = "Skip It"
-		    End If
+		    Var Matcher As New Regex
+		    Matcher.SearchPattern = "[^\d,]+"
+		    Matcher.ReplacementPattern = ""
+		    Matcher.Options.ReplaceAllMatches = True
+		    ModsString = Matcher.Replace(ModsString)
 		    
-		    Var ShouldSkip As Boolean
-		    Var Choice As BeaconUI.ConfirmResponses
-		    If RemainingMods > 0 Then
-		      Choice = BeaconUI.ShowConfirm(Message, Explanation, SkipCaption, "Cancel Discovery", "Discover Anyway")
-		      ShouldSkip = (Choice = BeaconUI.ConfirmResponses.Action)
-		    Else
-		      Choice = BeaconUI.ShowConfirm(Message, Explanation, "Discover Anyway", "Cancel Discovery", "")
-		    End If
-		    If Choice = BeaconUI.ConfirmResponses.Cancel Then
-		      Return
-		    End If
+		    Var OfficialModNames() As String
+		    Var OfficialModIds() As String
+		    For Each ModId As String In ModIds
+		      If ModID = "2171967557" Then
+		        Continue
+		      End If
+		      
+		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithSteamId(ModId)
+		      If (Pack Is Nil) = False And Pack.IsLocal = False Then
+		        OfficialModNames.Add(Pack.Name + " (" + ModId + ")")
+		        OfficialModIds.Add(ModID)
+		      End If
+		      
+		      If (Beacon.SafeToInvoke(Self.mCheckCallback) And Self.mCheckCallback.Invoke(ModID)) = False Then
+		        Self.ShowAlert("Close your mod editors to continue", "There is an editor open for mod " + ModID + " that needs to be closed first.")
+		        Return
+		      End If
+		    Next
 		    
-		    If ShouldSkip Then
-		      For Idx As Integer = ModIDs.LastIndex DownTo 0
-		        If OfficialModIds.IndexOf(ModIds(Idx)) > -1 Then
-		          ModIDs.RemoveAt(Idx)
-		        End If
-		      Next
+		    If OfficialModNames.Count > 0 Then
+		      Var RemainingMods As Integer = ModIds.Count - OfficialModNames.Count
+		      Var SkipCaption As String = "Skip Them"
+		      
+		      Var Message As String = If(RemainingMods > 0, "Beacon already supports some of your mods", "Beacon already supports your mods")
+		      Var Explanation As String
+		      If OfficialModNames.Count > 8 Then
+		        Explanation = OfficialModNames.Count.ToString(Locale.Current, "#,##0") + " mods are already built into Beacon and do not need to be discovered."
+		      ElseIf OfficialModNames.Count > 1 Then
+		        Explanation = "The mods " + Language.EnglishOxfordList(OfficialModNames) + " are already built into Beacon and do not need to be discovered."
+		      Else
+		        Message = If(RemainingMods > 0, "Beacon already supports one of your mods", "Beacon already supports your mod")
+		        Explanation = "The mod " + OfficialModNames(0) + " is already built into Beacon and does not need to be discovered."
+		        SkipCaption = "Skip It"
+		      End If
+		      
+		      Var ShouldSkip As Boolean
+		      Var Choice As BeaconUI.ConfirmResponses
+		      If RemainingMods > 0 Then
+		        Choice = BeaconUI.ShowConfirm(Message, Explanation, SkipCaption, "Cancel Discovery", "Discover Anyway")
+		        ShouldSkip = (Choice = BeaconUI.ConfirmResponses.Action)
+		      Else
+		        Choice = BeaconUI.ShowConfirm(Message, Explanation, "Discover Anyway", "Cancel Discovery", "")
+		      End If
+		      If Choice = BeaconUI.ConfirmResponses.Cancel Then
+		        Return
+		      End If
+		      
+		      If ShouldSkip Then
+		        For Idx As Integer = ModIDs.LastIndex DownTo 0
+		          If OfficialModIds.IndexOf(ModIds(Idx)) > -1 Then
+		            ModIDs.RemoveAt(Idx)
+		          End If
+		        Next
+		      End If
 		    End If
 		  End If
 		  

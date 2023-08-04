@@ -10,6 +10,46 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AllBlueprints() As Ark.Blueprint()
+		  Var Blueprints() As Ark.Blueprint
+		  
+		  For Each Entry As DictionaryEntry In Self.mChanges
+		    If Entry.Value.Type = Variant.TypeString Then
+		      Continue
+		    End If
+		    
+		    Blueprints.Add(Entry.Value)
+		  Next
+		  
+		  For Each Entry As DictionaryEntry In Self.mOriginalBlueprints
+		    If Self.mChanges.HasKey(Entry.Key) Then
+		      Continue
+		    End If
+		    
+		    Blueprints.Add(Entry.Value)
+		  Next
+		  
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Blueprint(BlueprintId As String) As Ark.Blueprint
+		  If Self.mChanges.HasKey(BlueprintId) Then
+		    If Self.mChanges.Value(BlueprintId).Type = Variant.TypeString Then
+		      Return Nil
+		    End If
+		    
+		    Return Self.mChanges.Value(BlueprintId)
+		  End If
+		  
+		  If Self.mOriginalBlueprints.HasKey(BlueprintId) Then
+		    Return Self.mOriginalBlueprints.Value(BlueprintId)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CancelAllTasks()
 		  If Self.mPendingTasks.Count > 0 Then
 		    Self.mPendingTasks.ResizeTo(-1)
@@ -72,7 +112,9 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteBlueprint(ParamArray Blueprints() As Ark.Blueprint)
+		Sub DeleteBlueprint(Blueprint As Ark.Blueprint)
+		  Var Blueprints(0) As Ark.Blueprint
+		  Blueprints(0) = Blueprint
 		  Self.DeleteBlueprints(Blueprints)
 		End Sub
 	#tag EndMethod
@@ -88,6 +130,13 @@ Protected Class BlueprintController
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Self.mChanges.Value(Blueprint.BlueprintId) = Blueprint.Category
 		  Next
+		  
+		  Var BlueprintsSaved() As Ark.Blueprint
+		  If Thread.Current Is Nil Then
+		    RaiseEvent BlueprintsChanged(BlueprintsSaved, Blueprints)
+		  Else
+		    Call CallLater.Schedule(1, WeakAddressOf TriggerBlueprintsChanged, New Dictionary("BlueprintsSaved": BlueprintsSaved, "BlueprintsDeleted": Blueprints))
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -356,7 +405,9 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveBlueprint(ParamArray Blueprints() As Ark.Blueprint)
+		Sub SaveBlueprint(Blueprint As Ark.Blueprint)
+		  Var Blueprints(0) As Ark.Blueprint
+		  Blueprints(0) = Blueprint
 		  Self.SaveBlueprints(Blueprints)
 		End Sub
 	#tag EndMethod
@@ -369,12 +420,15 @@ Protected Class BlueprintController
 		    Raise Err
 		  End If
 		  
+		  Var BlueprintsSaved(), BlueprintsDeleted() As Ark.Blueprint
+		  
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Var OriginalBlueprintId As String = Blueprint.BlueprintId
 		    Var BlueprintId As String = Blueprint.BlueprintId
 		    
 		    If Blueprint.ContentPackId <> Self.ContentPackId Then
 		      // Need to adjust the mod info to match
+		      BlueprintsDeleted.Add(Blueprint)
 		      Var MutableVersion As Ark.MutableBlueprint = Blueprint.MutableVersion
 		      MutableVersion.ContentPackId = Self.ContentPackId
 		      MutableVersion.ContentPackName = Self.ContentPackName
@@ -386,7 +440,22 @@ Protected Class BlueprintController
 		    // If the blueprint id is unchanged, the first change will be replaced
 		    Self.mChanges.Value(OriginalBlueprintId) = Blueprint.Category
 		    Self.mChanges.Value(BlueprintId) = Blueprint
+		    BlueprintsSaved.Add(Blueprint)
 		  Next
+		  
+		  If Thread.Current Is Nil Then
+		    RaiseEvent BlueprintsChanged(BlueprintsSaved, BlueprintsDeleted)
+		  Else
+		    Call CallLater.Schedule(1, WeakAddressOf TriggerBlueprintsChanged, New Dictionary("BlueprintsSaved": BlueprintsSaved, "BlueprintsDeleted": BlueprintsDeleted))
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TriggerBlueprintsChanged(Arg As Variant)
+		  Var BlueprintsSaved() As Ark.Blueprint = Dictionary(Arg).Value("BlueprintsSaved")
+		  Var BlueprintsDeleted() As Ark.Blueprint = Dictionary(Arg).Value("BlueprintsDeleted")
+		  RaiseEvent BlueprintsChanged(BlueprintsSaved, BlueprintsDeleted)
 		End Sub
 	#tag EndMethod
 
@@ -396,6 +465,10 @@ Protected Class BlueprintController
 		End Function
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event BlueprintsChanged(BlueprintsSaved() As Ark.Blueprint, BlueprintsDeleted() As Ark.Blueprint)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event BlueprintsLoaded(Task As Ark.BlueprintControllerFetchTask)

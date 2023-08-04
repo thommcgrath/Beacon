@@ -606,6 +606,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabStop         =   True
          Tooltip         =   ""
          Top             =   54
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -663,6 +664,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabStop         =   True
          Tooltip         =   ""
          Top             =   186
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -732,7 +734,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   510
+         Width           =   326
       End
    End
 End

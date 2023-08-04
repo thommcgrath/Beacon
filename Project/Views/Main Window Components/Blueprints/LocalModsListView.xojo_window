@@ -417,12 +417,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RunModDiscovery()
-		  If Self.mDiscoveryDialog Is Nil Or Self.mDiscoveryDialog.Value Is Nil Then
-		    Var Dialog As New ArkModDiscoveryDialog(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted)
-		    Self.mDiscoveryDialog = New WeakRef(Dialog)
+		  Var Dialog As ArkModDiscoveryDialog = ArkModDiscoveryDialog.SharedInstance()
+		  If (Dialog Is Nil) = False Then
+		    Dialog.Show()
+		    Return
 		  End If
 		  
-		  ArkModDiscoveryDialog(Self.mDiscoveryDialog.Value).Show()
+		  Dialog = ArkModDiscoveryDialog.Create(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted)
+		  If Dialog Is Nil Then
+		    Return
+		  End If
+		  
+		  Dialog.Show()
 		End Sub
 	#tag EndMethod
 
@@ -445,10 +451,6 @@ End
 		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
 
-
-	#tag Property, Flags = &h21
-		Private mDiscoveryDialog As WeakRef
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mModUUIDsToDelete() As String

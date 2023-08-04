@@ -313,7 +313,7 @@ Inherits Beacon.DataSource
 		      End If
 		      
 		      Var ConfigOptionId As String = Dict.Value("configOptionId")
-		      Var ContentPackId As String = Dictionary(Dict.Value("contentPack")).Value("id")
+		      Var ContentPackId As String = Dict.Value("contentPackId")
 		      Var File As String = Dict.Value("file")
 		      Var Header As String = Dict.Value("header")
 		      Var Key As String = Dict.Value("key")
