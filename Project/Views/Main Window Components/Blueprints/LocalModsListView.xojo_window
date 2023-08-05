@@ -255,6 +255,12 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   270
    End
+   Begin Ark.ModDiscoveryEngine DiscoveryEngine
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -350,19 +356,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function DiscoveryCheckMod(WorkshopID As String) As Boolean
-		  Return Self.CloseModView(WorkshopID)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub DiscoveryCompleted(DiscoveredMods() As Beacon.ContentPack)
-		  #Pragma Unused DiscoveredMods
-		  Self.RefreshMods()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ExportSelectedMods()
 		  Var Packs() As Beacon.ContentPack
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
@@ -405,6 +398,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mProgress_CancelPressed(Sender As ProgressWindow)
+		  Self.DiscoveryEngine.Cancel
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
@@ -417,18 +416,75 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RunModDiscovery()
-		  Var Dialog As ArkModDiscoveryDialog = ArkModDiscoveryDialog.SharedInstance()
-		  If (Dialog Is Nil) = False Then
-		    Dialog.Show()
+		  Var Settings As Ark.ModDiscoverySettings = ArkModDiscoveryDialog.Present(Self)
+		  If Settings Is Nil Then
 		    Return
 		  End If
 		  
-		  Dialog = ArkModDiscoveryDialog.Create(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted)
-		  If Dialog Is Nil Then
-		    Return
+		  Var ModIds() As String = Settings.ModIds
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  Var OfficialModNames() As String
+		  Var OfficialModIds() As String
+		  For Each ModId As String In ModIds
+		    If ModId = "2171967557" Then
+		      Continue
+		    End If
+		    
+		    Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithSteamId(ModId)
+		    If (Pack Is Nil) = False And Pack.IsLocal = False Then
+		      OfficialModNames.Add(Pack.Name + " (" + ModId + ")")
+		      OfficialModIds.Add(ModID)
+		    End If
+		    
+		    If Self.CloseModView(ModID) = False Then
+		      Self.ShowAlert("Close your mod editors to continue", "There is an editor open for mod " + ModID + " that needs to be closed first.")
+		      Return
+		    End If
+		  Next
+		  
+		  If OfficialModNames.Count > 0 Then
+		    Var RemainingMods As Integer = ModIds.Count - OfficialModNames.Count
+		    Var SkipCaption As String = "Skip Them"
+		    
+		    Var Message As String = If(RemainingMods > 0, "Beacon already supports some of your mods", "Beacon already supports your mods")
+		    Var Explanation As String
+		    If OfficialModNames.Count > 8 Then
+		      Explanation = OfficialModNames.Count.ToString(Locale.Current, "#,##0") + " mods are already built into Beacon and do not need to be discovered."
+		    ElseIf OfficialModNames.Count > 1 Then
+		      Explanation = "The mods " + Language.EnglishOxfordList(OfficialModNames) + " are already built into Beacon and do not need to be discovered."
+		    Else
+		      Message = If(RemainingMods > 0, "Beacon already supports one of your mods", "Beacon already supports your mod")
+		      Explanation = "The mod " + OfficialModNames(0) + " is already built into Beacon and does not need to be discovered."
+		      SkipCaption = "Skip It"
+		    End If
+		    
+		    Var ShouldSkip As Boolean
+		    Var Choice As BeaconUI.ConfirmResponses
+		    If RemainingMods > 0 Then
+		      Choice = BeaconUI.ShowConfirm(Message, Explanation, SkipCaption, "Cancel Discovery", "Discover Anyway")
+		      ShouldSkip = (Choice = BeaconUI.ConfirmResponses.Action)
+		    Else
+		      Choice = BeaconUI.ShowConfirm(Message, Explanation, "Discover Anyway", "Cancel Discovery", "")
+		    End If
+		    If Choice = BeaconUI.ConfirmResponses.Cancel Then
+		      Return
+		    End If
+		    
+		    If ShouldSkip Then
+		      For Idx As Integer = ModIDs.LastIndex DownTo 0
+		        If OfficialModIds.IndexOf(ModIds(Idx)) > -1 Then
+		          ModIDs.RemoveAt(Idx)
+		        End If
+		      Next
+		    End If
 		  End If
 		  
-		  Dialog.Show()
+		  Try
+		    Var ArkFolder As FolderItem = Settings.ArkFolder
+		    Self.DiscoveryEngine.Start(ArkFolder, ModIds)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Beacon could not start mod discovery", Err.Message)
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -453,11 +509,35 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mDiscoveredMods() As Beacon.ContentPack
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModUUIDsToDelete() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mNumAddedBlueprints As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNumAddedMods As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNumErrorBlueprints As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNumRemovedBlueprints As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOpenModWhenRefreshed As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProgress As ProgressWindow
 	#tag EndProperty
 
 
@@ -606,6 +686,197 @@ End
 	#tag Event
 		Sub TextChanged()
 		  Self.RefreshMods()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DiscoveryEngine
+	#tag Event
+		Sub Error(ErrorMessage As String)
+		  Self.ShowAlert("There was an error with mod discovery", ErrorMessage)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished()
+		  If (Self.mProgress Is Nil) = False Then
+		    Self.mProgress.Close
+		    Self.mProgress = Nil
+		  End If
+		  
+		  If Me.WasSuccessful Then
+		    Self.RefreshMods()
+		  Else
+		    Return
+		  End If
+		  
+		  Var Message As String = "Added " + Language.NounWithQuantity(Self.mNumAddedMods, "new mod", "new mods") + ", " + Language.NounWithQuantity(Self.mNumAddedBlueprints, "new blueprint", "new blueprints") + ", and removed " + Language.NounWithQuantity(Self.mNumRemovedBlueprints, "blueprint", "blueprints") + "."
+		  If Self.mNumErrorBlueprints > 0 Then
+		    Message = Message + " " + Language.NounWithQuantity(Self.mNumErrorBlueprints, "blueprint", "blueprints") + " had errors and could not be imported."
+		  End If
+		  
+		  Self.ShowAlert("Mod discovery has finished", Message)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Import(LogContents As String)
+		  Var Importer As Ark.BlueprintImporter = Ark.BlueprintImporter.ImportAsDataDumper(LogContents)
+		  If Importer Is Nil Or Importer.BlueprintCount = 0 Then
+		    Return
+		  End If
+		  
+		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
+		  
+		  // Always skip DataDumper
+		  Var ForbiddenWorkshopIds As New Dictionary
+		  ForbiddenWorkshopIds.Value("2171967557") = True
+		  
+		  Var TitleFinder As New Regex
+		  TitleFinder.SearchPattern = "<div class=""workshopItemTitle"">(.+)</div>"
+		  TitleFinder.Options.Greedy = False
+		  
+		  Var Packs As New Dictionary
+		  Var ModIds() As String = Me.ModIds
+		  Var ModsFilter As New Beacon.StringList()
+		  For Each WorkshopId As String In ModIds
+		    If WorkshopId = "2171967557" Then
+		      Continue
+		    End If
+		    
+		    Var Pack As Beacon.ContentPack = Database.GetContentPackWithSteamId(WorkshopId, Beacon.ContentPack.Types.Custom)
+		    If Pack Is Nil Then
+		      Var PackName As String = Me.GetTagForModId(WorkshopId)
+		      If PackName.IsEmpty Then
+		        PackName = WorkshopId
+		      End If
+		      
+		      Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		      Socket.RequestHeader("User-Agent") = App.UserAgent
+		      Socket.Send("GET", "https://steamcommunity.com/sharedfiles/filedetails/?id=" + WorkshopId)
+		      If Socket.LastHTTPStatus = 200 Then
+		        Var TitleMatch As RegexMatch = TitleFinder.Search(Socket.LastContent)
+		        If (TitleMatch Is Nil) = False Then
+		          PackName = DecodingFromHTMLMBS(TitleMatch.SubExpressionString(1))
+		        End If
+		      End If
+		      
+		      Pack = Database.CreateLocalContentPack(PackName, WorkshopId)
+		      Self.mNumAddedMods = Self.mNumAddedMods + 1
+		    Else
+		      ModsFilter.Append(Pack.ContentPackId)
+		    End If
+		    
+		    Packs.Value(WorkshopId) = Pack
+		  Next
+		  
+		  Var CurrentBlueprints() As Ark.Blueprint = Database.GetBlueprints("", ModsFilter, "")
+		  Var CurrentBlueprintMap As New Dictionary
+		  For Each Blueprint As Ark.Blueprint In CurrentBlueprints
+		    CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
+		  Next
+		  
+		  Var BlueprintsToSave() As Ark.Blueprint
+		  Var Blueprints() As Ark.Blueprint = Importer.Blueprints
+		  Var NewBlueprintIds As New Dictionary
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Try
+		      Var Path As String = Blueprint.Path
+		      Var OriginalBlueprint As Ark.Blueprint
+		      If CurrentBlueprintMap.HasKey(Path) Then
+		        OriginalBlueprint = CurrentBlueprintMap.Value(Path)
+		        CurrentBlueprintMap.Remove(Path)
+		      End If
+		      
+		      Var PathComponents() As String = Path.Split("/")
+		      Var Tag As String = PathComponents(3)
+		      Var WorkshopId As String = Me.GetModIdForTag(Tag)
+		      If Packs.HasKey(WorkshopId) = False Or ForbiddenWorkshopIDs.HasKey(WorkshopId) Then
+		        Continue
+		      End If
+		      
+		      Var Pack As Beacon.ContentPack = Packs.Value(WorkshopId)
+		      
+		      Var Mutable As Ark.MutableBlueprint
+		      If (OriginalBlueprint Is Nil) = False Then
+		        Mutable = OriginalBlueprint.MutableVersion
+		        Mutable.Label = Blueprint.Label
+		        #Pragma Warning "Import more than just the name"
+		      Else
+		        Mutable = Blueprint.MutableVersion
+		        Mutable.ContentPackName = Pack.Name
+		        Mutable.ContentPackId = Pack.ContentPackId
+		        Mutable.RegenerateBlueprintId()
+		      End If
+		      BlueprintsToSave.Add(Mutable)
+		      NewBlueprintIds.Value(Blueprint.BlueprintId) = True
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Pairing blueprint to mod")
+		    End Try
+		  Next
+		  
+		  Var BlueprintsToDelete() As Ark.Blueprint
+		  Var DeleteBlueprintIDs As New Dictionary
+		  For Each Entry As DictionaryEntry In CurrentBlueprintMap
+		    BlueprintsToDelete.Add(Ark.Blueprint(Entry.Value))
+		    DeleteBlueprintIDs.Value(Ark.Blueprint(Entry.Value).BlueprintId) = True
+		  Next
+		  
+		  Var Errors As New Dictionary
+		  Call Database.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
+		  Self.mNumErrorBlueprints = Errors.KeyCount
+		  Self.mNumAddedBlueprints = BlueprintsToSave.Count
+		  Self.mNumRemovedBlueprints = BlueprintsToDelete.Count
+		  
+		  For Each Entry As DictionaryEntry In Errors
+		    App.Log(RuntimeException(Entry.Value), CurrentMethodName, "Automatic mod discovery")
+		    
+		    Var BlueprintId As String = Entry.Key
+		    If NewBlueprintIds.HasKey(BlueprintId) Then
+		      Self.mNumAddedBlueprints = Self.mNumAddedBlueprints - 1
+		    ElseIf DeleteBlueprintIDs.HasKey(BlueprintId) Then
+		      Self.mNumRemovedBlueprints = Self.mNumRemovedBlueprints - 1
+		    End If
+		  Next
+		  
+		  For Each Entry As DictionaryEntry In Packs
+		    Var WorkshopId As String = Entry.Key
+		    Var Pack As Beacon.ContentPack = Entry.Value
+		    
+		    If ForbiddenWorkshopIds.HasKey(WorkshopId) Then
+		      Continue
+		    End If
+		    
+		    Self.mDiscoveredMods.Add(Pack)
+		    
+		    If Preferences.OnlineEnabled = False Then
+		      Continue
+		    End If
+		    
+		    Try
+		      Var Exported As MemoryBlock = Ark.BuildExport(Pack)
+		      If Exported Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var Request As New BeaconAPI.Request("discovery/" + Pack.ContentPackId, "PUT", Exported, "application/octet-stream")
+		      Call BeaconAPI.SendSync(Request) // Response doesn't actually matter
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Uploading discovery results")
+		    End Try
+		  Next
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.mProgress = New ProgressWindow("Running mod discovery", Me.StatusMessage)
+		  AddHandler mProgress.CancelPressed, WeakAddressOf mProgress_CancelPressed
+		  Self.mProgress.Show(Self)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub StatusUpdated()
+		  If (Self.mProgress Is Nil) = False Then
+		    Self.mProgress.Detail = Me.StatusMessage
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

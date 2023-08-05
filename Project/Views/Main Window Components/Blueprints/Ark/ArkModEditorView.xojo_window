@@ -659,18 +659,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub StartDiscovery()
-		  #if DebugBuild
-		    #Pragma Warning "Not Implemented"
-		  #else
-		    #Pragma Error "Not Implemented"
-		  #endif
-		  
-		  Var Dialog As ArkModDiscoveryDialog = ArkModDiscoveryDialog.SharedInstance()
-		  If (Dialog Is Nil) = False Then
-		    Dialog.Show()
-		    Return
-		  End If
-		  
 		  If Self.mController.IsBusy Then
 		    Self.ShowAlert("The editor is currently busy", "Wait for the current task to complete before starting a mod discovery.")
 		    Return
@@ -690,12 +678,16 @@ End
 		    Return
 		  End If
 		  
-		  Dialog = ArkModDiscoveryDialog.Create(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted)
-		  If Dialog Is Nil Then
+		  Var Settings As Ark.ModDiscoverySettings = ArkModDiscoveryDialog.Present(Self, Self.mController.MarketplaceId)
+		  If Settings Is Nil Then
 		    Return
 		  End If
 		  
-		  Dialog.Show()
+		  #if DebugBuild
+		    #Pragma Warning "Not Implemented"
+		  #else
+		    #Pragma Error "Not Implemented"
+		  #endif
 		End Sub
 	#tag EndMethod
 

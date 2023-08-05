@@ -163,6 +163,7 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       TabPanelIndex   =   0
    End
    Begin DesktopProgressBar SubIndicator
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowTabStop    =   True
       Enabled         =   True
@@ -177,6 +178,7 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       LockRight       =   True
       LockTop         =   True
       MaximumValue    =   100
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -186,6 +188,10 @@ Begin BeaconDialog ProgressWindow Implements Beacon.ProgressDisplayer
       Value           =   50.0
       Visible         =   False
       Width           =   460
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopLabel SubDetailLabel
       AllowAutoDeactivate=   True
@@ -526,6 +532,11 @@ End
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event CancelPressed()
+	#tag EndHook
+
+
 	#tag Property, Flags = &h21
 		Private mCancelPressed As Boolean
 	#tag EndProperty
@@ -574,6 +585,7 @@ End
 		Sub Pressed()
 		  Self.mCancelPressed = True
 		  Me.Enabled = False
+		  RaiseEvent CancelPressed
 		End Sub
 	#tag EndEvent
 #tag EndEvents

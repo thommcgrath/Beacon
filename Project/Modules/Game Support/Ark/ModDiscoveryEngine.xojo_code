@@ -14,6 +14,38 @@ Protected Class ModDiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Cancel()
+		  Self.mCancelled = True
+		  Self.StatusMessage = "Cancelling…"
+		  
+		  If (Self.mRCONSocket Is Nil) = False Then
+		    RemoveHandler mRCONSocket.Connected, WeakAddressOf mRCONSocket_Connected
+		    RemoveHandler mRCONSocket.DataAvailable, WeakAddressOf mRCONSocket_DataAvailable
+		    RemoveHandler mRCONSocket.Error, WeakAddressOf mRCONSocket_Error
+		    Self.mRCONSocket.Close
+		    Self.mRCONSocket = Nil
+		  End If
+		  
+		  If (Self.mRCONTimer Is Nil) = False Then
+		    RemoveHandler mRCONTimer.Action, WeakAddressOf mRCONTimer_Action
+		    Self.mRCONTimer.RunMode = Timer.RunModes.Off
+		    Self.mRCONTimer = Nil
+		  End If
+		  
+		  If (Self.mShell Is Nil) = False Then
+		    RemoveHandler mShell.Completed, WeakAddressOf mShell_Completed
+		    RemoveHandler mShell.DataAvailable, WeakAddressOf mShell_DataAvailable
+		    Self.mShell.Close
+		    Self.mShell = Nil
+		  End If
+		  
+		  If (Self.mThread Is Nil) = False And Self.mThread.ThreadState = Thread.ThreadStates.Paused Then
+		    Self.mThread.Resume
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetModIdForTag(Tag As String) As String
 		  If (Self.mModsByTag Is Nil) = False Then
 		    Return Self.mModsByTag.Lookup(Tag, "")
@@ -168,6 +200,11 @@ Protected Class ModDiscoveryEngine
 		  Project.AddConfigGroup(CustomConfig)
 		  Project.AddServerProfile(Profile)
 		  
+		  If Self.mCancelled Then
+		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		    Return
+		  End If
+		  
 		  Try
 		    If Self.mArkRoot.Exists = False Then
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Ark game files do not exist at " + Self.mArkRoot.NativePath + "."))
@@ -192,6 +229,11 @@ Protected Class ModDiscoveryEngine
 		  
 		  If Ark.DedicatedServer.Configure(Project, Profile, Self.mArkRoot, HostDir) = False Then
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Could not build server directory."))
+		    Return
+		  End If
+		  
+		  If Self.mCancelled Then
+		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		    Return
 		  End If
 		  
@@ -233,6 +275,11 @@ Protected Class ModDiscoveryEngine
 		    DownloadCommands.Add("+workshop_download_item 346110 " + ModId)
 		  Next
 		  
+		  If Self.mCancelled Then
+		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		    Return
+		  End If
+		  
 		  Self.StatusMessage = "Installing mods…"
 		  
 		  Var SteamShell As New Shell
@@ -244,6 +291,11 @@ Protected Class ModDiscoveryEngine
 		  SteamShell.Execute(DownloadCommand)
 		  
 		  While SteamShell.IsRunning
+		    If Self.mCancelled Then
+		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		      Return
+		    End If
+		    
 		    Sender.Sleep(10)
 		  Wend
 		  
@@ -262,6 +314,11 @@ Protected Class ModDiscoveryEngine
 		  End Try
 		  
 		  For Each ModId As String In Self.mModIds
+		    If Self.mCancelled Then
+		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		      Return
+		    End If
+		    
 		    Try
 		      Ark.DedicatedServer.InstallMod(ModId, WorkshopFolder, ModsFolder)
 		    Catch Err As RuntimeException
@@ -276,7 +333,9 @@ Protected Class ModDiscoveryEngine
 		  Var CommandLine As String = """TheIsland?listen?SessionName=Beacon?MaxPlayers=10?Port=" + Port.ToString(Locale.Raw, "0") + "?QueryPort=" + QueryPort.ToString(Locale.Raw, "0") + """ -server -servergamelog -nobattleye"
 		  
 		  #if TargetWindows
-		    Self.mShell.Execute("""" + Executable.NativePath + """ " + CommandLine)
+		    If (Self.mShell Is Nil) = False Then
+		      Self.mShell.Execute("""" + Executable.NativePath + """ " + CommandLine)
+		    End If
 		  #else
 		    #Pragma Unused Executable
 		  #endif
@@ -286,9 +345,16 @@ Protected Class ModDiscoveryEngine
 		  
 		  Self.mRCONPort = RCONPort
 		  Self.mRCONPassword = Password
-		  Self.mRCONTimer.RunMode = Timer.RunModes.Multiple
+		  If (Self.mRCONTimer Is Nil) = False Then
+		    Self.mRCONTimer.RunMode = Timer.RunModes.Multiple
+		  End If
 		  
 		  Sender.Pause
+		  
+		  If Self.mCancelled Then
+		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		    Return
+		  End If
 		  
 		  Self.mModsByTag = New Dictionary
 		  Self.mTagsByMod = New Dictionary
@@ -296,6 +362,11 @@ Protected Class ModDiscoveryEngine
 		    Self.StatusMessage = "Colling mod info…"
 		    
 		    For Each ModId As String In Self.mModIds
+		      If Self.mCancelled Then
+		        Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		        Return
+		      End If
+		      
 		      Try
 		        Var ModInfoFile As FolderItem = ModsFolder.Child(ModId).Child("mod.info")
 		        Var Stream As BinaryStream = BinaryStream.Open(ModInfoFile, False)
@@ -339,8 +410,18 @@ Protected Class ModDiscoveryEngine
 		    End If
 		  End If
 		  
+		  If Self.mCancelled Then
+		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		    Return
+		  End If
+		  
 		  Self.StatusMessage = "Discovering blueprints…"
 		  RaiseEvent Import(LogContents)
+		  
+		  If Self.mCancelled Then
+		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		    Return
+		  End If
 		  
 		  #if Not DebugBuild
 		    If ServerFolder.DeepDelete(False) = False Then
@@ -349,7 +430,7 @@ Protected Class ModDiscoveryEngine
 		  #endif
 		  
 		  Self.mSuccess = True
-		  Sender.AddUserInterfaceUpdate(New Dictionary("Error": False, "Finished" : True))
+		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished" : True))
 		  
 		  Exception TopLevelException As RuntimeException
 		    App.Log(TopLevelException, CurrentMethodName, "Running the discovery thread")
@@ -420,6 +501,7 @@ Protected Class ModDiscoveryEngine
 		  End If
 		  Self.mStatusMessage = "Initializing…"
 		  Self.mSuccess = False
+		  Self.mCancelled = False
 		  
 		  Self.mThread = New Thread
 		  AddHandler mThread.Run, WeakAddressOf mThread_Run
@@ -451,7 +533,11 @@ Protected Class ModDiscoveryEngine
 
 	#tag Method, Flags = &h0
 		Function StatusMessage() As String
-		  Return Self.mStatusMessage
+		  If Self.mCancelled Then
+		    Return "Cancelling…"
+		  Else
+		    Return Self.mStatusMessage
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -505,6 +591,10 @@ Protected Class ModDiscoveryEngine
 
 	#tag Property, Flags = &h21
 		Private mArkRoot As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
