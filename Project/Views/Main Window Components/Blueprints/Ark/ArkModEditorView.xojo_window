@@ -690,7 +690,7 @@ End
 		    Return
 		  End If
 		  
-		  Dialog = ArkModDiscoveryDialog.Create(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted, Self.mController)
+		  Dialog = ArkModDiscoveryDialog.Create(AddressOf DiscoveryCheckMod, AddressOf DiscoveryCompleted)
 		  If Dialog Is Nil Then
 		    Return
 		  End If

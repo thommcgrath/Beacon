@@ -69,9 +69,9 @@ Implements Iterable
 		  End If
 		  
 		  Var CurrentThread As Global.Thread = Thread.Current
-		  Var CurrentThreadID As Integer = CurrentThread.ThreadID
+		  Var CurrentThreadId As Integer = CurrentThread.ThreadID
 		  
-		  If Self.mInstances.HasKey(CurrentThreadID) = False Then
+		  If Self.mInstances.HasKey(CurrentThreadId) = False Or (Writeable And Beacon.DataSource(Self.mInstances.Value(CurrentThreadId)).Writeable = False) Then
 		    Var Instance As Beacon.DataSource = RaiseEvent NewInstance(Writeable)
 		    If Instance Is Nil Then
 		      Var Err As New NilObjectException
@@ -83,14 +83,14 @@ Implements Iterable
 		      Raise Err
 		    End If
 		    
-		    Self.mInstances.Value(CurrentThreadID) = Instance
+		    Self.mInstances.Value(CurrentThreadId) = Instance
 		  End If
 		  
-		  If Self.mThreads.HasKey(CurrentThreadID) = False Then
-		    Self.mThreads.Value(CurrentThreadID) = New WeakRef(CurrentThread)
+		  If Self.mThreads.HasKey(CurrentThreadId) = False Then
+		    Self.mThreads.Value(CurrentThreadId) = New WeakRef(CurrentThread)
 		  End If
 		  
-		  Return Self.mInstances.Value(CurrentThreadID)
+		  Return Self.mInstances.Value(CurrentThreadId)
 		End Function
 	#tag EndMethod
 

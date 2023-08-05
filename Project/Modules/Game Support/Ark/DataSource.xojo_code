@@ -1478,6 +1478,16 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetContentPackWithSteamId(SteamId As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack
+		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update FROM content_packs WHERE marketplace_id = ?1 AND is_local = ?2 ORDER BY is_local DESC LIMIT 1;", SteamId, Type = Beacon.ContentPack.Types.Custom)
+		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
+		  If Packs.Count = 1 Then
+		    Return Packs(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetCreatureByUUID(CreatureID As String, UseCache As Boolean = True) As Ark.Creature
 		  If UseCache And Self.mBlueprintCache.HasKey(CreatureID) Then
 		    Return Self.mBlueprintCache.Value(CreatureID)

@@ -605,6 +605,7 @@ DesktopWindow=ArkSaveBlueprintsDialog;Views/Ark/General Dialogs/ArkSaveBlueprint
 Class=FileWriter;Modules/UserCloud/FileWriter.xojo_code;&h000000005F4627FF;&h0000000015A337FF;false
 Class=ContentPack;Modules/Beacon/ContentPack.xojo_code;&h0000000008752FFF;&h0000000055ADDFFF;false
 Class=BlueprintControllerTaskGroup;Modules/Game Support/Ark/BlueprintControllerTaskGroup.xojo_code;&h000000004E66D7FF;&h0000000016B997FF;false
+Class=ModDiscoveryEngine;Modules/Game Support/Ark/ModDiscoveryEngine.xojo_code;&h000000004CCDD7FF;&h0000000016B997FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=7
