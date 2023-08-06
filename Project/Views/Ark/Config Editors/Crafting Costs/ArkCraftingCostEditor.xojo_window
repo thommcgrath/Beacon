@@ -381,10 +381,16 @@ End
 		  Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Row)
 		  Select Case Column
 		  Case Self.ColumnQuantity
+		    If IsNumeric(Me.CellTextAt(Row, Column)) = False Then
+		      System.Beep
+		      Return
+		    End If
+		    
 		    Var Quantity As Double
 		    Try
 		      Quantity = Double.FromString(Me.CellTextAt(Row, Column), Locale.Current)
 		    Catch Err As RuntimeException
+		      System.Beep
 		      Return
 		    End Try
 		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Max(Quantity, 0), Ingredient.RequireExact)

@@ -263,21 +263,8 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
          Width           =   399
       End
    End
-   Begin Thread FibercraftBuilderThread
-      DebugIdentifier =   ""
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   5
-      Scope           =   2
-      StackSize       =   0
-      TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
-   End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -437,12 +424,11 @@ End
 		  Select Case Tool.UUID
 		  Case "94eced5b-be7d-441a-a5b3-f4a9bf40a856"
 		    Self.CreateFibercraftServer()
-		  Case "24376f12-c256-440c-87ca-2c8309a7a754"
-		    Self.AdjustCosts()
 		  Case "3db64fe3-9134-4a19-a255-7712c8c70a83"
 		    Self.SetupTransferrableElement()
 		  Case "6600245b-54b4-4b85-8f26-3792084ca2fa"
 		    If ArkAdjustIngredientDialog.Present(Self, Self.Project) Then
+		      Self.Modified = True
 		      Self.SetupUI()
 		    End If
 		  End Select
@@ -473,25 +459,6 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub AdjustCosts()
-		  // We need to adjust the currently defined costs, as well as inject new costs at the adjusted rate
-		  Var Multiplier As Double = ArkAdjustCostDialog.Present(Self)
-		  If Multiplier = 1.0 Then
-		    Return
-		  End If
-		  
-		  If Self.AdjusterThread.ThreadState <> Thread.ThreadStates.NotRunning Then
-		    Return
-		  End If
-		  
-		  Self.mCostMultiplier = Multiplier
-		  Self.mProgressWindow = New ProgressWindow("Calculating new costs")
-		  Self.mProgressWindow.Show(Self)
-		  Self.AdjusterThread.Start
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As Ark.Configs.CraftingCosts
 		  Return Ark.Configs.CraftingCosts(Super.Config(ForWriting))
@@ -500,13 +467,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CreateFibercraftServer()
-		  If Self.FibercraftBuilderThread.ThreadState <> Thread.ThreadStates.NotRunning Then
-		    Return
+		  Var Fiber As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("244bc843-2540-486e-af4a-8824500c0e56")
+		  If ArkAdjustIngredientDialog.Present(Self, Self.Project, Nil, Fiber, 0.00001, ArkAdjustIngredientDialog.RoundUp, False) Then
+		    Self.Modified = True
+		    Self.SetupUI()
 		  End If
-		  
-		  Self.mProgressWindow = New ProgressWindow("Setting up fibercraft config")
-		  Self.mProgressWindow.Show(Self)
-		  Self.FibercraftBuilderThread.Start
 		End Sub
 	#tag EndMethod
 
@@ -878,81 +843,6 @@ End
 		    Return Self.Project.ContentPacks
 		  End If
 		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events FibercraftBuilderThread
-	#tag Event
-		Sub Run()
-		  Var Fiber As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("244bc843-2540-486e-af4a-8824500c0e56")
-		  
-		  Var Config As Ark.Configs.CraftingCosts = Self.Config(False)
-		  Var Engrams() As Ark.Engram = Config.Engrams
-		  Var EngramDict As New Dictionary
-		  For Each Engram As Ark.Engram In Engrams
-		    If Self.mProgressWindow.CancelPressed Then
-		      Self.mProgressWindow.Close
-		      Self.mProgressWindow = Nil
-		      Return
-		    End If
-		    
-		    If Engram.IsTagged("no_fibercraft") Or Engram.IsTagged("forged") Then
-		      Continue
-		    End If
-		    
-		    EngramDict.Value(Engram.ObjectID) = Engram
-		  Next
-		  
-		  Engrams = Ark.DataSource.Pool.Get(False).GetEngrams("", Self.Project.ContentPacks, "{""required"":[""blueprintable""],""excluded"":[""generic"",""no_fibercraft"",""forged""]}")
-		  For Each Engram As Ark.Engram In Engrams
-		    If Self.mProgressWindow.CancelPressed Then
-		      Self.mProgressWindow.Close
-		      Self.mProgressWindow = Nil
-		      Return
-		    End If
-		    
-		    EngramDict.Value(Engram.ObjectID) = Engram
-		  Next
-		  
-		  Config = New Ark.Configs.CraftingCosts
-		  Config.IsImplicit = False
-		  Var NumItems As Integer = EngramDict.KeyCount
-		  Var ProcessedItems As Integer
-		  Self.mProgressWindow.Progress = ProcessedItems / NumItems
-		  For Each Entry As DictionaryEntry In EngramDict
-		    If Self.mProgressWindow.CancelPressed Then
-		      Self.mProgressWindow.Close
-		      Self.mProgressWindow = Nil
-		      Return
-		    End If
-		    
-		    Var Engram As Ark.Engram = Entry.Value
-		    Var Cost As New Ark.MutableCraftingCost(Engram)
-		    Cost.Add(Fiber, 1.0, False)
-		    Config.Add(Cost)
-		    ProcessedItems = ProcessedItems + 1
-		    Self.mProgressWindow.Progress = ProcessedItems / NumItems
-		    Self.mProgressWindow.Detail = "Configured " + ProcessedItems.ToString(Locale.Current, "#,##0") + " of " + NumItems.ToString(Locale.Current, "#,##0") + " engrams"
-		  Next
-		  
-		  Self.Project.AddConfigGroup(Config)
-		  Self.InvalidateConfigRef
-		  
-		  Self.mProgressWindow.Close
-		  Self.mProgressWindow = Nil
-		  
-		  Var NotifyDict As New Dictionary
-		  NotifyDict.Value("Finished") = True
-		  Me.AddUserInterfaceUpdate(NotifyDict)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub UserInterfaceUpdate(data() as Dictionary)
-		  For Each Dict As Dictionary In Data
-		    If Dict.HasKey("Finished") And Dict.Value("Finished").BooleanValue = True THen
-		      Self.SetupUI()
-		    End If
-		  Next
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AdjusterThread

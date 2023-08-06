@@ -96,6 +96,32 @@ Inherits Ark.CraftingCost
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Simplify()
+		  Var Map As New Dictionary
+		  For Idx As Integer = Self.mIngredients.LastIndex DownTo 0
+		    Var Ingredient As Ark.CraftingCostIngredient = Self.mIngredients(Idx)
+		    Var Signature As String = Ingredient.Engram.ObjectId + ":" + If(Ingredient.RequireExact, "True", "False")
+		    If Map.HasKey(Signature) Then
+		      Var OtherIngredient As Ark.CraftingCostIngredient = Map.Value(Signature)
+		      Map.Value(Signature) = New Ark.CraftingCostIngredient(Ingredient.Engram, Ingredient.Quantity + OtherIngredient.Quantity, Ingredient.RequireExact)
+		    Else
+		      Map.Value(Signature) = Ingredient
+		    End If
+		  Next
+		  
+		  If Map.KeyCount = Self.mIngredients.Count Then
+		    Return
+		  End If
+		  
+		  Self.mIngredients.ResizeTo(-1)
+		  For Each Entry As DictionaryEntry In Map
+		    Self.Add(Ark.CraftingCostIngredient(Map.Value(Entry.Key)))
+		  Next
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
 
 	#tag ViewBehavior
 		#tag ViewProperty

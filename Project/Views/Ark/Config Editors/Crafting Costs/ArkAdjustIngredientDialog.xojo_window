@@ -10,20 +10,20 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   339
+   Height          =   371
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   1233248255
    MenuBarVisible  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
+   MinimumHeight   =   371
+   MinimumWidth    =   600
    Resizeable      =   False
-   Title           =   "Adjust Ingredient"
+   Title           =   "Adjust Crafting Costs"
    Type            =   8
    Visible         =   True
-   Width           =   600
+   Width           =   700
    Begin DesktopLabel MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
@@ -47,7 +47,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Adjust Crafting Ingredient"
+      Text            =   "Adjust Crafting Costs"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -55,7 +55,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   660
    End
    Begin UITweaks.ResizedPushButton TargetChooseButton
       AllowAutoDeactivate=   True
@@ -63,7 +63,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Cancel          =   False
       Caption         =   "Choose…"
       Default         =   False
-      Enabled         =   True
+      Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
@@ -71,15 +71,15 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   193
+      Left            =   590
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "The ingredient to be replaced."
@@ -88,39 +88,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Underline       =   False
       Visible         =   True
       Width           =   90
-   End
-   Begin UITweaks.ResizedLabel TargetField
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   True
-      Left            =   295
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Not Selected"
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   "The ingredient to be replaced."
-      Top             =   169
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   285
    End
    Begin UITweaks.ResizedLabel TargetLabel
       AllowAutoDeactivate=   True
@@ -142,7 +109,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Target Ingredient:"
@@ -175,7 +142,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Replacement Ingredient:"
@@ -194,7 +161,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Cancel          =   False
       Caption         =   "Choose…"
       Default         =   False
-      Enabled         =   True
+      Enabled         =   False
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
@@ -202,15 +169,15 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   193
+      Left            =   590
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "The new ingredient to replace the target ingredient."
@@ -219,39 +186,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Underline       =   False
       Visible         =   True
       Width           =   90
-   End
-   Begin UITweaks.ResizedLabel ReplacementField
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   True
-      Left            =   295
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Not Selected"
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   "The new ingredient to replace the target ingredient."
-      Top             =   201
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   285
    End
    Begin UITweaks.ResizedTextField ReplacementMultiplierField
       AllowAutoDeactivate=   True
@@ -280,7 +214,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -317,7 +251,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Replacement Multiplier:"
+      Text            =   "Cost Multiplier:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "This multiplier will adjust the quantity of the replacement ingredient."
@@ -347,10 +281,10 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Multiline       =   True
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "This tool will allow you to change an ingredient in all crafting requirements. Select a target ingredient to be replaced, then an ingredient to replace it with. A replacement multiplier can be used to increase or decrease the amount of the ingredient to be required. It's ok to select the same ingredient for both the target and replacement to use the multiplier to only change the cost. Finally, the ""Never remove ingredients"" checkbox will make sure the quantity will never be reduced to 0."
+      Text            =   "This tool will allow you to change ingredient requirements for all recipes on your server. Use ""Target Ingredient"" to choose between changing all ingredients or just a specific ingredient. Use ""Replacement Ingredient"" to change the target ingredient to something else, or leave it as ""No Replacement"" to keep the ingredient the same. Use the ""Cost Multiplier"" option to change the quantities of ingredients. Use the ""Rounding"" option to decide how partial quantities should be handled. And if you want ingredients with no quantity to be removed from recipes, check the ""Remove 0-quantity ingredients"" option."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -358,12 +292,12 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   660
    End
-   Begin DesktopCheckBox NeverRemoveCheckbox
+   Begin DesktopCheckBox RemoveIngredientsCheck
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Never remove ingredients"
+      Caption         =   "Remove 0-quantity ingredients"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -379,17 +313,17 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   "If the multiplier would reduce the replacement ingredient to 0 quantity, it would normally be removed from the recipe. With this option enabled, the quantity will never drop below 1."
-      Top             =   267
+      Top             =   299
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       VisualState     =   0
-      Width           =   387
+      Width           =   487
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
@@ -405,7 +339,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   600
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -413,11 +347,11 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   299
+      Top             =   331
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -437,7 +371,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   408
+      Left            =   508
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -445,11 +379,11 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   299
+      Top             =   331
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -457,7 +391,6 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    End
    Begin Thread ProcessorThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -467,21 +400,170 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       ThreadID        =   0
       ThreadState     =   0
    End
+   Begin UITweaks.ResizedPopupMenu RoundingMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialValue    =   "Round naturally (1.4 becomes 1 and 1.5 becomes 2)\nRound up (1.5 becomes 2)\nRound down (1.5 becomes 1)\nNo rounding"
+      Italic          =   False
+      Left            =   193
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   267
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   387
+   End
+   Begin UITweaks.ResizedLabel RoundingLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Rounding:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   "This multiplier will adjust the quantity of the replacement ingredient."
+      Top             =   267
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   161
+   End
+   Begin DesktopRadioGroup TargetIngredientGroup
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Horizontal      =   True
+      Index           =   -2147483648
+      InitialValue    =   "All Ingredients\nSelect Ingredient"
+      Italic          =   False
+      Left            =   193
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      SelectedIndex   =   0
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   169
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   385
+   End
+   Begin DesktopRadioGroup ReplacementIngredientGroup
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Horizontal      =   True
+      Index           =   -2147483648
+      InitialValue    =   "No Replacement\nSelect Ingredient"
+      Italic          =   False
+      Left            =   193
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      SelectedIndex   =   0
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   201
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   385
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  If (Self.mTarget Is Nil) = False Then
+		    Self.TargetIngredientGroup.SelectedIndex = 1
+		    Self.TargetIngredientGroup.ItemAt(1).Caption = Self.mTarget.Label
+		    Self.TargetIngredientGroup.ItemAt(1).Italic = False
+		    Self.TargetChooseButton.Enabled = True
+		  End If
+		  
+		  If (Self.mReplacement Is Nil) = False Then
+		    Self.ReplacementIngredientGroup.SelectedIndex = 1
+		    Self.ReplacementIngredientGroup.ItemAt(1).Caption = Self.mReplacement.Label
+		    Self.ReplacementIngredientGroup.ItemAt(1).Italic = False
+		    Self.ReplacementChooseButton.Enabled = True
+		  End If
+		  
+		  Self.ReplacementMultiplierField.Text = Self.mMultiplier.PrettyText(True)
+		  Self.RoundingMenu.SelectedRowIndex = Self.mRoundingMode
+		  Self.RemoveIngredientsCheck.Value = Self.mRemoveZeroQuantities
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Project As Ark.Project)
+		Private Sub Constructor(Project As Ark.Project, TargetIngredient As Ark.Engram = Nil, ReplacementIngredient As Ark.Engram = Nil, Multiplier As Double = 1.0, RoundingMode As Integer = 0, RemoveZeroQuantities As Boolean = False)
 		  // Calling the overridden superclass constructor.
+		  Self.mMultiplier = Multiplier
 		  Self.mProject = Project
+		  Self.mRemoveZeroQuantities = RemoveZeroQuantities
+		  Self.mReplacement = ReplacementIngredient
+		  Self.mRoundingMode = RoundingMode
+		  Self.mTarget = TargetIngredient
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project) As Boolean
-		  Var Win As New ArkAdjustIngredientDialog(Project)
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, TargetIngredient As Ark.Engram = Nil, ReplacementIngredient As Ark.Engram = Nil, Multiplier As Double = 1.0, RoundingMode As Integer = 0, RemoveZeroQuantities As Boolean = False) As Boolean
+		  Var Win As New ArkAdjustIngredientDialog(Project, TargetIngredient, ReplacementIngredient, Multiplier, RoundingMode, RemoveZeroQuantities)
 		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -489,13 +571,24 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function Round(Value As Double, Mode As Integer) As Double
+		  Select Case Mode
+		  Case Self.RoundDisabled
+		    Return Value
+		  Case Self.RoundDown
+		    Return Floor(Value)
+		  Case Self.RoundNatural
+		    Return Round(Value)
+		  Case Self.RoundUp
+		    Return Ceiling(Value)
+		  End Select
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMinimumQuantity As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -511,12 +604,33 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRemoveZeroQuantities As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mReplacement As Ark.Engram
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRoundingMode As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mTarget As Ark.Engram
 	#tag EndProperty
+
+
+	#tag Constant, Name = RoundDisabled, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = RoundDown, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = RoundNatural, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = RoundUp, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -528,8 +642,8 @@ End
 		  Var Engrams() As Ark.Engram = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mProject.ContentPacks, ArkBlueprintSelectorDialog.SelectModes.Single)
 		  If (Engrams Is Nil) = False And Engrams.Count = 1 Then
 		    Self.mTarget = Engrams(0)
-		    Self.TargetField.Text = Self.mTarget.Label
-		    Self.TargetField.Italic = False
+		    Self.TargetIngredientGroup.ItemAt(1).Caption = Self.mTarget.Label
+		    Self.TargetIngredientGroup.ItemAt(1).Italic = False
 		  End If
 		End Sub
 	#tag EndEvent
@@ -541,8 +655,8 @@ End
 		  Var Engrams() As Ark.Engram = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mProject.ContentPacks, ArkBlueprintSelectorDialog.SelectModes.Single)
 		  If (Engrams Is Nil) = False And Engrams.Count = 1 Then
 		    Self.mReplacement = Engrams(0)
-		    Self.ReplacementField.Text = Self.mReplacement.Label
-		    Self.ReplacementField.Italic = False
+		    Self.ReplacementIngredientGroup.ItemAt(1).Caption = Self.mReplacement.Label
+		    Self.ReplacementIngredientGroup.ItemAt(1).Italic = False
 		  End If
 		End Sub
 	#tag EndEvent
@@ -550,16 +664,26 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  If Self.mTarget Is Nil Or Self.mReplacement Is Nil Then
-		    Self.ShowAlert("Select both a target and replacement ingredient.", "It's ok to select the same ingredient for both if you just want to change quantity.")
+		  If Self.TargetIngredientGroup.SelectedIndex = 1 And Self.mTarget Is Nil Then
+		    Self.ShowAlert("Select a target ingredient.", "You have not chosen an ingredient to change. If you want to change all ingredients, choose the ""All Ingredients"" option next to ""Target Ingredient.""")
+		    Return
+		  End If
+		  
+		  If Self.ReplacementIngredientGroup.SelectedIndex = 1 And Self.mReplacement Is Nil Then
+		    Self.ShowAlert("Select a replacement ingredient.", "You have not chosen a replacement ingredient. Choose ""No Change"" if you do not want to replace ingredients.")
 		    Return
 		  End If
 		  
 		  Var Multiplier As Double
 		  If IsNumeric(Self.ReplacementMultiplierField.Text) Then
-		    Multiplier = CDbl(Self.ReplacementMultiplierField.Text)
+		    Try
+		      Multiplier = Double.FromString(Self.ReplacementMultiplierField.Text, Locale.Current)
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("The replacement multiplier does not appear to be a number.", "Check the format of the multiplier and try again.")
+		      Return
+		    End Try
 		  Else
-		    Self.ShowAlert("The replacement multiplier should be a number.", "If you want the ingredient removed, set the multiplier to 0.")
+		    Self.ShowAlert("The replacement multiplier does not appear to be a number.", "Check the format of the multiplier and try again.")
 		    Return
 		  End If
 		  
@@ -568,8 +692,15 @@ End
 		    Return
 		  End If
 		  
-		  Self.mMinimumQuantity = If(Self.NeverRemoveCheckbox.Value, 1, 0)
+		  If Self.TargetIngredientGroup.SelectedIndex = 0 Then
+		    Self.mTarget = Nil
+		  End If
+		  If Self.ReplacementIngredientGroup.SelectedIndex = 0 Then
+		    Self.mReplacement = Nil
+		  End If
 		  Self.mMultiplier = Multiplier
+		  Self.mRemoveZeroQuantities = Self.RemoveIngredientsCheck.Value
+		  Self.mRoundingMode = Self.RoundingMenu.SelectedRowIndex
 		  Self.mCancelled = False
 		  
 		  Me.Enabled = False
@@ -592,6 +723,12 @@ End
 #tag Events ProcessorThread
 	#tag Event
 		Sub Run()
+		  #if DebugBuild
+		    #Pragma Warning "This isn't ready yet: needs a tag picker"
+		  #else
+		    #Pragma Error "This isn't ready yet: needs a tag picker"
+		  #endif
+		  
 		  Var OriginalConfig As Ark.ConfigGroup = Self.mProject.ConfigGroup(Ark.Configs.NameCraftingCosts)
 		  Var WorkingConfig As Ark.Configs.CraftingCosts
 		  If OriginalConfig Is Nil Then
@@ -645,29 +782,38 @@ End
 		      Continue
 		    End If
 		    
+		    Var ReplacementIngredients As New Dictionary
 		    Var Changed As Boolean
 		    For IngredientIdx As Integer = Cost.LastIndex DownTo 0
 		      Var Ingredient As Ark.CraftingCostIngredient = Cost.Ingredient(IngredientIdx)
-		      If Ingredient.Engram <> Self.mTarget Then
+		      If (Self.mTarget Is Nil) = False And Ingredient.Engram <> Self.mTarget Then
 		        Continue
 		      End If
 		      
-		      Var OriginalQuantity As Integer = Ingredient.Quantity
-		      Var Quantity As Integer = OriginalQuantity
-		      Quantity = Max(Round(Quantity * Self.mMultiplier), Self.mMinimumQuantity)
+		      Var Replacement As Ark.Engram = If(Self.mReplacement Is Nil, Ingredient.Engram, Self.mReplacement)
+		      If ReplacementIngredients.HasKey(Replacement.ObjectID) Then
+		        Cost.Remove(IngredientIdx)
+		        Changed = True
+		        Continue
+		      End If
+		      ReplacementIngredients.Value(Replacement.ObjectID) = True
+		      
+		      Var OriginalQuantity As Double = Ingredient.Quantity
+		      Var Quantity As Double = Round(OriginalQuantity * Self.mMultiplier, Self.mRoundingMode)
 		      If OriginalQuantity = Quantity And IngredientIsChanging = False Then
 		        Continue
 		      End If
-		      If Quantity = 0 Then
+		      If Quantity = 0 And Self.mRemoveZeroQuantities = True Then
 		        Cost.Remove(IngredientIdx)
 		      Else
-		        Cost.Ingredient(IngredientIdx) = New Ark.CraftingCostIngredient(Self.mReplacement, Quantity, Ingredient.RequireExact)
+		        Cost.Ingredient(IngredientIdx) = New Ark.CraftingCostIngredient(Replacement, Quantity, Ingredient.RequireExact)
 		      End If
 		      
 		      Changed = True
 		    Next
 		    
 		    If Changed Then
+		      Cost.Simplify()
 		      WorkingConfig.Add(Cost)
 		    End If
 		    
@@ -702,6 +848,34 @@ End
 		      Return
 		    End If
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TargetIngredientGroup
+	#tag Event
+		Sub SelectionChanged(button As DesktopRadioButton)
+		  #Pragma Unused Button
+		  
+		  Self.TargetChooseButton.Enabled = (Me.SelectedIndex = 1)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ItemAt(1).Italic = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReplacementIngredientGroup
+	#tag Event
+		Sub SelectionChanged(button As DesktopRadioButton)
+		  #Pragma Unused Button
+		  
+		  Self.ReplacementChooseButton.Enabled = (Me.SelectedIndex = 1)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ItemAt(1).Italic = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
