@@ -18,7 +18,7 @@ Inherits Ark.CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Add(Resource As Ark.Engram, Quantity As Integer, RequireExact As Boolean)
+		Sub Add(Resource As Ark.Engram, Quantity As Double, RequireExact As Boolean)
 		  If Resource Is Nil Then
 		    Return
 		  End If

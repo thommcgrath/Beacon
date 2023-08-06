@@ -113,7 +113,7 @@ Implements Beacon.NamedItem
 		  ElseIf Dict.HasKey("Resources") Then
 		    Var Resources() As Dictionary = Dict.Value("Resources").DictionaryArrayValue
 		    For Each Resource As Dictionary In Resources
-		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
+		      Var Quantity As Double = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
 		      
 		      Cost.mIngredients.Add(New Ark.CraftingCostIngredient(Ark.ResolveEngram(Resource, "EngramID", "", "Class", Nil), Quantity, RequireExact))
@@ -138,7 +138,7 @@ Implements Beacon.NamedItem
 		      Var Resources() As Variant = Dict.Value("BaseCraftingResourceRequirements")
 		      For Each Resource As Dictionary In Resources
 		        Var ResourceEngram As Ark.Engram = Ark.ResolveEngram(Resource, "", "", "ResourceItemTypeString", ContentPacks)
-		        Var Quantity As Integer = Resource.Lookup("BaseResourceRequirement", 1)
+		        Var Quantity As Double = Resource.Lookup("BaseResourceRequirement", 1)
 		        Var RequireExact As Boolean = Resource.Lookup("bCraftingRequireExactResourceType", False)
 		        Cost.Add(ResourceEngram, Quantity, RequireExact)
 		      Next
@@ -235,7 +235,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Quantity(Idx As Integer) As Integer
+		Function Quantity(Idx As Integer) As Double
 		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return 0
 		  End If
@@ -269,7 +269,7 @@ Implements Beacon.NamedItem
 		  Var Components() As String
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Var ClassString As String = Self.mIngredients(Idx).ClassString
-		    Var QuantityString As String = Self.mIngredients(Idx).Quantity.ToString(Locale.Raw, "0")
+		    Var QuantityString As String = Self.mIngredients(Idx).Quantity.PrettyText
 		    Var RequireExactString As String = If(Self.mIngredients(Idx).RequireExact, "True", "False")
 		    Components.Add("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next

@@ -195,7 +195,7 @@ End
 		  Self.List.RemoveAllRows
 		  For Idx As Integer = 0 To Self.mTarget.LastIndex
 		    Var Ingredient As Ark.CraftingCostIngredient = Self.mTarget.Ingredient(Idx)
-		    Self.List.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Raw, "#,##0"))
+		    Self.List.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.PrettyText(True))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Ingredient.RequireExact
 		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Ingredient
@@ -381,7 +381,13 @@ End
 		  Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Row)
 		  Select Case Column
 		  Case Self.ColumnQuantity
-		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Max(Val(Me.CellTextAt(Row, Column)), 1), Ingredient.RequireExact)
+		    Var Quantity As Double
+		    Try
+		      Quantity = Double.FromString(Me.CellTextAt(Row, Column), Locale.Current)
+		    Catch Err As RuntimeException
+		      Return
+		    End Try
+		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Max(Quantity, 0), Ingredient.RequireExact)
 		  Case Self.ColumnRequireExact
 		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  Else
