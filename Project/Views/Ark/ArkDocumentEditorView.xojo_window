@@ -270,9 +270,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Closing()
-		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
-		    DocumentImportWindow(Self.mImportWindowRef.Value).Cancel
-		    Self.mImportWindowRef = Nil
+		  If (Self.mImportWindow Is Nil) = False Then
+		    Self.CleanupImportWindow()
+		    Self.mImportWindow.Close
+		    Self.mImportWindow = Nil
 		  End If
 		End Sub
 	#tag EndEvent
@@ -480,27 +481,46 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginImport(ForDeployment As Boolean)
-		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
-		    DocumentImportWindow(Self.mImportWindowRef.Value).Show()
-		  Else
-		    Var OtherProjects() As Beacon.Project
-		    For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
-		      Var Key As Variant = Self.mEditorRefs.Key(I)
-		      Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
-		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.UUID <> Self.Project.UUID Then
-		        OtherProjects.Add(DocumentEditorView(Ref.Value).Project)
-		      End If
-		    Next
-		    
-		    Var ImportView As New ArkImportView
-		    Var Ref As DocumentImportWindow
-		    If ForDeployment Then
-		      Ref = DocumentImportWindow.Present(ImportView, AddressOf ImportAndDeployCallback, Self.Project, OtherProjects)
-		    Else
-		      Ref = DocumentImportWindow.Present(ImportView, AddressOf ImportCallback, Self.Project, OtherProjects)
-		    End If
-		    Self.mImportWindowRef = New WeakRef(Ref)
+		  If (Self.mImportWindow Is Nil) = False Then
+		    Self.mImportWindow.Show()
+		    Return
 		  End If
+		  
+		  Var OtherProjects() As Beacon.Project
+		  For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
+		    Var Key As Variant = Self.mEditorRefs.Key(I)
+		    Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
+		    If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.UUID <> Self.Project.UUID Then
+		      OtherProjects.Add(DocumentEditorView(Ref.Value).Project)
+		    End If
+		  Next
+		  
+		  Var ImportView As New ArkImportView
+		  Var Ref As New DocumentImportWindow(ImportView, Self.Project, OtherProjects)
+		  AddHandler Ref.ProjectsImported, WeakAddressOf mImportWindow_ProjectsImported
+		  AddHandler Ref.Closing, WeakAddressOf mImportWindow_Closing
+		  Ref.UserData = ForDeployment
+		  Ref.Show()
+		  Self.mImportWindow = Ref
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CleanupImportWindow()
+		  If Self.mImportWindow Is Nil Then
+		    Return
+		  End If
+		  
+		  Try
+		    RemoveHandler mImportWindow.Closing, WeakAddressOf mImportWindow_Closing
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    RemoveHandler mImportWindow.ProjectsImported, WeakAddressOf mImportWindow_ProjectsImported
+		  Catch Err As RuntimeException
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -696,18 +716,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ImportAndDeployCallback(Projects() As Beacon.Project)
-		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocumentsAndDeploy, Projects)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ImportCallback(Projects() As Beacon.Project)
-		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocuments, Projects)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub MapsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
 		    Self.Project.MapMask = MapSelectionGrid(Sender.Container).Mask
@@ -743,6 +751,27 @@ End
 		  Self.Autosave()
 		  Self.UpdateConfigList()
 		  Self.Panel_ContentsChanged(Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImportWindow_Closing(Sender As DocumentImportWindow)
+		  #Pragma Unused Sender
+		  
+		  Self.CleanupImportWindow()
+		  Self.mImportWindow = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImportWindow_ProjectsImported(Sender As DocumentImportWindow, Projects() As Beacon.Project)
+		  #Pragma Unused Sender
+		  
+		  If Sender.UserData.BooleanValue Then
+		    Call CallLater.Schedule(0, WeakAddressOf CopyFromDocumentsAndDeploy, Projects)
+		  Else
+		    Call CallLater.Schedule(0, WeakAddressOf CopyFromDocuments, Projects)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1233,7 +1262,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mImportWindowRef As WeakRef
+		Private mImportWindow As DocumentImportWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
