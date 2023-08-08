@@ -590,6 +590,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       AllowTabs       =   False
       Backdrop        =   0
       Border          =   15
+      ContentHeight   =   0
       Enabled         =   True
       ExcludeTagCaption=   "Do not adjust ingredients that have the ""%%Tag%%"" tag"
       Height          =   30
@@ -603,8 +604,10 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       NeutralTagCaption=   "Adjusted ingredients may or may not have the ""%%Tag%%"" tag"
       RequireTagCaption=   "Only adjust ingredients that have the ""%%Tag%%"" tag"
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
+      Spec            =   ""
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
@@ -745,6 +748,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       AllowTabs       =   False
       Backdrop        =   0
       Border          =   15
+      ContentHeight   =   0
       Enabled         =   True
       ExcludeTagCaption=   "Do not adjust recipes that have the ""%%Tag%%"" tag"
       Height          =   30
@@ -758,8 +762,10 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       NeutralTagCaption=   "Adjusted recipes may or may not have the ""%%Tag%%"" tag"
       RequireTagCaption=   "Only adjust recipes that have the ""%%Tag%%"" tag"
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
+      Spec            =   ""
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1479,7 +1485,7 @@ End
 #tag Events HelpButton
 	#tag Event
 		Sub Pressed()
-		  System.GotoURL(Beacon.WebURL("/help/crafting_costs_editor"))
+		  System.GotoURL(Beacon.WebURL("/help/crafting_costs_editor#the-adjust-crafting-costs-tool"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
