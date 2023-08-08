@@ -20,7 +20,7 @@ First, use the **New Recipe**{:.ui-keyword} button at the top of the **Crafting 
 
 {% include image.html file="chooseingredients.png" file2x="chooseingredients@2x.png" caption="Adding Narcoberries and Spoiled Meat to the recipe." %}
 
-In the **Ingredients**{:.ui-keyword} list on the right, press the **Add Ingredient**{:.ui-keyword} button. This time you'll be presented with a similar dialog, except there is a new section on the right. This dialog allows you to add multiple items at the same time. Find _Narcoberry_ and either select it and press the **>>**{:.ui-keyword} button to move it to the right list, or double-click it. Next find _Spoiled Meat_ and do the same. The **Selected Engrams**{:.ui-keyword} list should show the two ingredients. Press the **Select**{:.ui-keyword} button to add them to the **Ingredients**{:.ui-keyword} list.
+In the **Ingredients**{:.ui-keyword} list on the right, press the **Add Ingredient**{:.ui-keyword} button. This time you'll be presented with a similar window, except there is a new section on the right. This window allows you to add multiple items at the same time. Find _Narcoberry_ and either select it and press the **>>**{:.ui-keyword} button to move it to the right list, or double-click it. Next find _Spoiled Meat_ and do the same. The **Selected Engrams**{:.ui-keyword} list should show the two ingredients. Press the **Select**{:.ui-keyword} button to add them to the **Ingredients**{:.ui-keyword} list.
 
 ### Step 3: Change the Ingredient Quantities
 
@@ -28,7 +28,7 @@ In the **Ingredients**{:.ui-keyword} list on the right, press the **Add Ingredie
 
 On the right side of each ingredient is a **Quantity**{:.ui-keyword} column and a **Prevent Substitutions**{:.ui-keyword} column. Click the quantity for _Narcoberry_, then after the row is selected, click the quantity again. This will allow you to edit the value. Increase it to 2. At this point the recipe is now a cheaper version of the default recipe.
 
-The **Prevent Substitutions**{:.ui-keyword} column, when checked, will not allow ingredient substitutions. In this case, leaving it unchecked allows _Ascerbic Mushrooms_ to be used in the place of _Narcoberries_, since the two are interchangeable. When checked, only _Narcoberries_ would be allowed.
+The **Prevent Substitutions**{:.ui-keyword} column, when checked, will not allow ingredient substitutions. In this case, leaving it unchecked allows _Ascerbic Mushrooms_ to be used in the place of _Narcoberry_, since the two are interchangeable. When checked, only _Narcoberry_ would be allowed.
 
 ## The Adjust Crafting Costs Tool
 
@@ -81,6 +81,6 @@ With the **Intermediate crafts into 1 element**{:.ui-keyword} option, the interm
 ## Tips and Tricks
 
 - The **Crafting Costs**{:.ui-keyword} editor supports copy and paste. You can copy ingredients from one recipe to another.
-- You can also duplicate recipes. Select a finished recipe, press the **Duplicate**{:.ui-keyword} button in the **Crafting Costs**{:.ui-keyword} list, and you'll be presented with the same multiple engram selection dialog. Select as many engrams as you want, and Beacon will clone the original recipe into all of them.
+- You can also duplicate recipes. Select a finished recipe, press the **Duplicate**{:.ui-keyword} button in the **Crafting Costs**{:.ui-keyword} list, and you'll be presented with the same multiple engram selection window. Select as many engrams as you want, and Beacon will clone the original recipe into all of them.
 
 {% include affectedkeys.html %}
