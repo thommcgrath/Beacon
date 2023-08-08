@@ -57,7 +57,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Visible         =   True
       Width           =   560
    End
-   Begin UITweaks.ResizedPushButton TargetChooseButton
+   Begin UITweaks.ResizedPushButton TargetIngredientChooseButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -89,7 +89,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Visible         =   True
       Width           =   90
    End
-   Begin UITweaks.ResizedLabel TargetLabel
+   Begin UITweaks.ResizedLabel TargetIngredientLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -461,7 +461,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Visible         =   True
       Width           =   161
    End
-   Begin UITweaks.ResizedPopupMenu TargetMenu
+   Begin UITweaks.ResizedPopupMenu TargetIngredientMenu
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -583,7 +583,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Visible         =   True
       Width           =   285
    End
-   Begin TagPicker TargetTagPicker
+   Begin TagPicker TargetIngredientTagPicker
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
@@ -620,15 +620,15 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.TargetTagPicker.Tags = Ark.DataSource.Pool.Get(False).GetTags(Self.mProject.ContentPacks, Ark.CategoryEngrams)
+		  Self.TargetIngredientTagPicker.Tags = Ark.DataSource.Pool.Get(False).GetTags(Self.mProject.ContentPacks, Ark.CategoryEngrams)
 		  
-		  If Self.mTargets.Count > 0 Then
-		    Self.TargetMenu.SelectedRowIndex = Self.TargetModeSelected
-		    Self.TargetIngredientField.Text = Language.EnglishOxfordList(Self.mTargets)
+		  If Self.mTargetIngredients.Count > 0 Then
+		    Self.TargetIngredientMenu.SelectedRowIndex = Self.TargetModeSelected
+		    Self.TargetIngredientField.Text = Language.EnglishOxfordList(Self.mTargetIngredients)
 		    Self.TargetIngredientField.Italic = False
-		  ElseIf Self.mTargetTags.IsEmpty = False Then
-		    Self.TargetMenu.SelectedRowIndex = Self.TargetModeTagged
-		    Self.TargetTagPicker.Spec = Self.mTargetTags
+		  ElseIf Self.mTargetIngredientTags.IsEmpty = False Then
+		    Self.TargetIngredientMenu.SelectedRowIndex = Self.TargetModeTagged
+		    Self.TargetIngredientTagPicker.Spec = Self.mTargetIngredientTags
 		  End If
 		  
 		  If (Self.mReplacement Is Nil) = False Then
@@ -647,7 +647,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Project As Ark.Project, TargetIngredients() As Ark.Engram, TargetTags As String, ReplacementIngredient As Ark.Engram, Multiplier As Double, RoundingMode As Integer, RemoveZeroQuantities As Boolean)
+		Private Sub Constructor(Project As Ark.Project, TargetIngredients() As Ark.Engram, TargetIngredientTags As String, ReplacementIngredient As Ark.Engram, Multiplier As Double, RoundingMode As Integer, RemoveZeroQuantities As Boolean)
 		  // Calling the overridden superclass constructor.
 		  Self.mMultiplier = Multiplier
 		  Self.mProject = Project
@@ -655,19 +655,19 @@ End
 		  Self.mReplacement = ReplacementIngredient
 		  Self.mRoundingMode = RoundingMode
 		  If (TargetIngredients Is Nil) = False Then
-		    Self.mTargets.ResizeTo(TargetIngredients.LastIndex)
-		    For Idx As Integer = 0 To Self.mTargets.LastIndex
-		      Self.mTargets(Idx) = TargetIngredients(Idx)
+		    Self.mTargetIngredients.ResizeTo(TargetIngredients.LastIndex)
+		    For Idx As Integer = 0 To Self.mTargetIngredients.LastIndex
+		      Self.mTargetIngredients(Idx) = TargetIngredients(Idx)
 		    Next
 		  End If
-		  Self.mTargetTags = TargetTags
+		  Self.mTargetIngredientTags = TargetIngredientTags
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, TargetIngredients() As Ark.Engram = Nil, TargetTags As String = "", ReplacementIngredient As Ark.Engram = Nil, Multiplier As Double = 1.0, RoundingMode As Integer = 0, RemoveZeroQuantities As Boolean = False) As Boolean
-		  Var Win As New ArkAdjustIngredientDialog(Project, TargetIngredients, TargetTags, ReplacementIngredient, Multiplier, RoundingMode, RemoveZeroQuantities)
+		Shared Function Present(Parent As DesktopWindow, Project As Ark.Project, TargetIngredients() As Ark.Engram = Nil, TargetIngredientTags As String = "", ReplacementIngredient As Ark.Engram = Nil, Multiplier As Double = 1.0, RoundingMode As Integer = 0, RemoveZeroQuantities As Boolean = False) As Boolean
+		  Var Win As New ArkAdjustIngredientDialog(Project, TargetIngredients, TargetIngredientTags, ReplacementIngredient, Multiplier, RoundingMode, RemoveZeroQuantities)
 		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -695,22 +695,22 @@ End
 		  Self.ExplanationLabel.Height = Self.ExplanationLabel.IdealHeight
 		  
 		  Var NextTop As Integer = Self.ExplanationLabel.Bottom + 12
-		  Self.TargetLabel.Top = NextTop
-		  Self.TargetMenu.Top = NextTop
-		  NextTop = TargetMenu.Bottom + 12
+		  Self.TargetIngredientLabel.Top = NextTop
+		  Self.TargetIngredientMenu.Top = NextTop
+		  NextTop = TargetIngredientMenu.Bottom + 12
 		  
-		  Var TargetMode As Integer = Self.TargetMenu.SelectedRowIndex
+		  Var TargetMode As Integer = Self.TargetIngredientMenu.SelectedRowIndex
 		  Self.TargetIngredientField.Visible = (TargetMode = Self.TargetModeSelected)
-		  Self.TargetChooseButton.Visible = (TargetMode = Self.TargetModeSelected)
-		  Self.TargetTagPicker.Visible = (TargetMode = Self.TargetModeTagged)
+		  Self.TargetIngredientChooseButton.Visible = (TargetMode = Self.TargetModeSelected)
+		  Self.TargetIngredientTagPicker.Visible = (TargetMode = Self.TargetModeTagged)
 		  Select Case TargetMode
 		  Case Self.TargetModeSelected
 		    Self.TargetIngredientField.Top = NextTop
-		    Self.TargetChooseButton.Top = NextTop
+		    Self.TargetIngredientChooseButton.Top = NextTop
 		    NextTop = Self.TargetIngredientField.Bottom + 12
 		  Case Self.TargetModeTagged
-		    Self.TargetTagPicker.Top = NextTop
-		    NextTop = Self.TargetTagPicker.Bottom + 12
+		    Self.TargetIngredientTagPicker.Top = NextTop
+		    NextTop = Self.TargetIngredientTagPicker.Bottom + 12
 		  End Select
 		  
 		  Self.ReplacementLabel.Top = NextTop
@@ -784,11 +784,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTargets() As Ark.Engram
+		Private mTargetIngredients() As Ark.Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTargetTags As String
+		Private mTargetIngredientTags As String
 	#tag EndProperty
 
 
@@ -822,20 +822,20 @@ End
 
 #tag EndWindowCode
 
-#tag Events TargetChooseButton
+#tag Events TargetIngredientChooseButton
 	#tag Event
 		Sub Pressed()
 		  Var Exclude() As Ark.Engram
-		  Exclude.ResizeTo(Self.mTargets.LastIndex)
+		  Exclude.ResizeTo(Self.mTargetIngredients.LastIndex)
 		  For Idx As Integer = 0 To Exclude.LastIndex
-		    Exclude(Idx) = Self.mTargets(Idx)
+		    Exclude(Idx) = Self.mTargetIngredients(Idx)
 		  Next
 		  
 		  Var Engrams() As Ark.Engram = ArkBlueprintSelectorDialog.Present(Self, "", Exclude, Self.mProject.ContentPacks, ArkBlueprintSelectorDialog.SelectModes.ExplicitMultipleWithExcluded)
 		  If (Engrams Is Nil) = False And Engrams.Count > 0 Then
-		    Self.mTargets.ResizeTo(Engrams.LastIndex)
-		    For Idx As Integer = 0 To Self.mTargets.LastIndex
-		      Self.mTargets(Idx) = Engrams(Idx)
+		    Self.mTargetIngredients.ResizeTo(Engrams.LastIndex)
+		    For Idx As Integer = 0 To Self.mTargetIngredients.LastIndex
+		      Self.mTargetIngredients(Idx) = Engrams(Idx)
 		    Next
 		    Self.TargetIngredientField.Text = Language.EnglishOxfordList(Engrams)
 		    Self.TargetIngredientField.Tooltip = Self.TargetIngredientField.Text
@@ -861,7 +861,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  If Self.TargetMenu.SelectedRowIndex = Self.TargetModeSelected And Self.mTargets.Count = 0 Then
+		  If Self.TargetIngredientMenu.SelectedRowIndex = Self.TargetModeSelected And Self.mTargetIngredients.Count = 0 Then
 		    Self.ShowAlert("Select a target ingredient.", "You have not chosen an ingredient to change. If you want to change all ingredients, choose the ""All Ingredients"" option next to ""Target Ingredient.""")
 		    Return
 		  End If
@@ -889,12 +889,12 @@ End
 		    Return
 		  End If
 		  
-		  Select Case Self.TargetMenu.SelectedRowIndex
+		  Select Case Self.TargetIngredientMenu.SelectedRowIndex
 		  Case Self.TargetModeAll
-		    Self.mTargets.ResizeTo(-1)
+		    Self.mTargetIngredients.ResizeTo(-1)
 		  Case Self.TargetModeTagged
-		    Self.mTargets.ResizeTo(-1)
-		    Self.mTargetTags = Self.TargetTagPicker.Spec
+		    Self.mTargetIngredients.ResizeTo(-1)
+		    Self.mTargetIngredientTags = Self.TargetIngredientTagPicker.Spec
 		  End Select
 		  If Self.ReplacementMenu.SelectedRowIndex = Self.TargetModeAll Then
 		    Self.mReplacement = Nil
@@ -958,10 +958,10 @@ End
 		  Next
 		  
 		  Var TargetIngredients() As Ark.Engram
-		  If Self.mTargets.Count > 0 Then
-		    TargetIngredients = Self.mTargets
-		  ElseIf Self.mTargetTags.IsEmpty = False Then
-		    TargetIngredients = DataSource.GetEngrams("", Self.mProject.ContentPacks, Self.mTargetTags)
+		  If Self.mTargetIngredients.Count > 0 Then
+		    TargetIngredients = Self.mTargetIngredients
+		  ElseIf Self.mTargetIngredientTags.IsEmpty = False Then
+		    TargetIngredients = DataSource.GetEngrams("", Self.mProject.ContentPacks, Self.mTargetIngredientTags)
 		  End If
 		  Var TargetMap As New Dictionary
 		  For Each Ingredient As Ark.Engram In TargetIngredients
@@ -1064,7 +1064,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events TargetMenu
+#tag Events TargetIngredientMenu
 	#tag Event
 		Sub SelectionChanged(item As DesktopMenuItem)
 		  #Pragma Unused Item
@@ -1082,7 +1082,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events TargetTagPicker
+#tag Events TargetIngredientTagPicker
 	#tag Event
 		Sub ShouldAdjustHeight(Delta As Integer)
 		  Me.Height = Me.Height + Delta
