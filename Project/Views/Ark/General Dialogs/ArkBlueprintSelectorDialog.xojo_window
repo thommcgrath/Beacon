@@ -108,6 +108,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   165
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -229,6 +230,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   165
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -441,7 +443,7 @@ End
 		      Continue
 		    End If
 		    
-		    Self.mExcluded.Add(Blueprint.ObjectID)
+		    Self.mExcluded.Add(Blueprint.BlueprintId)
 		  Next
 		  Self.mMods = Mods
 		  Self.mCategory = Category

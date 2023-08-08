@@ -490,7 +490,7 @@ End
 		  For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
 		    Var Key As Variant = Self.mEditorRefs.Key(I)
 		    Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
-		    If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.UUID <> Self.Project.UUID Then
+		    If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.ProjectId <> Self.Project.ProjectId Then
 		      OtherProjects.Add(DocumentEditorView(Ref.Value).Project)
 		    End If
 		  Next
