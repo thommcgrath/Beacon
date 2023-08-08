@@ -82,7 +82,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   "The ingredient to be replaced."
+      Tooltip         =   ""
       Top             =   307
       Transparent     =   False
       Underline       =   False
@@ -115,7 +115,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Text            =   "Target Ingredients:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   "The ingredient to be replaced."
+      Tooltip         =   "#TooltipTargetIngredients"
       Top             =   275
       Transparent     =   False
       Underline       =   False
@@ -148,7 +148,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Text            =   "Replacement Ingredient:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   "The new ingredient to replace the target ingredient."
+      Tooltip         =   "#TooltipReplacementIngredient"
       Top             =   381
       Transparent     =   False
       Underline       =   False
@@ -180,7 +180,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   "The new ingredient to replace the target ingredient."
+      Tooltip         =   ""
       Top             =   413
       Transparent     =   False
       Underline       =   False
@@ -220,7 +220,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Text            =   "1.0"
       TextAlignment   =   2
       TextColor       =   &c00000000
-      Tooltip         =   "This multiplier will adjust the quantity of the replacement ingredient."
+      Tooltip         =   "#TooltipMultiplier"
       Top             =   445
       Transparent     =   False
       Underline       =   False
@@ -254,7 +254,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Text            =   "Cost Multiplier:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   "This multiplier will adjust the quantity of the replacement ingredient."
+      Tooltip         =   "#TooltipMultiplier"
       Top             =   445
       Transparent     =   False
       Underline       =   False
@@ -316,7 +316,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   "If the multiplier would reduce the replacement ingredient to 0 quantity, it would normally be removed from the recipe. With this option enabled, the quantity will never drop below 1."
+      Tooltip         =   "#TooltipRemoveIngredients"
       Top             =   511
       Transparent     =   False
       Underline       =   False
@@ -422,7 +422,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#TooltipRounding"
       Top             =   479
       Transparent     =   False
       Underline       =   False
@@ -454,7 +454,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Text            =   "Rounding:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   "This multiplier will adjust the quantity of the replacement ingredient."
+      Tooltip         =   "#TooltipRounding"
       Top             =   479
       Transparent     =   False
       Underline       =   False
@@ -483,7 +483,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#TooltipTargetIngredients"
       Top             =   275
       Transparent     =   False
       Underline       =   False
@@ -512,7 +512,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#TooltipReplacementIngredient"
       Top             =   381
       Transparent     =   False
       Underline       =   False
@@ -639,7 +639,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       Text            =   "Target Recipes:"
       TextAlignment   =   3
       TextColor       =   &c00000000
-      Tooltip         =   "The ingredient to be replaced."
+      Tooltip         =   "#TooltipTargetRecipes"
       Top             =   169
       Transparent     =   False
       Underline       =   False
@@ -668,7 +668,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
+      Tooltip         =   "#TooltipTargetRecipes"
       Top             =   169
       Transparent     =   False
       Underline       =   False
@@ -699,7 +699,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   "The ingredient to be replaced."
+      Tooltip         =   ""
       Top             =   201
       Transparent     =   False
       Underline       =   False
@@ -1117,6 +1117,24 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = TargetModeTagged, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipMultiplier, Type = String, Dynamic = False, Default = \"Allows changing the quantity of ingredients. 1 is unchanged\x2C less than one reduces quantities\x2C and greater than one increases quantities. A value of 0 means ingredients will always require 1 no matter the blueprint quality.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipRemoveIngredients, Type = String, Dynamic = False, Default = \"Turn on if you would like to remove ingredients that have 0 quantity.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipReplacementIngredient, Type = String, Dynamic = False, Default = \"Allows replacing targeted ingredients with another ingredient.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipRounding, Type = String, Dynamic = False, Default = \"Decide how quantities should be rounded\x2C if at all.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipTargetIngredients, Type = String, Dynamic = False, Default = \"Controls which ingredients (the engrams on the right side of the crafting editor) should be replaced and/or have their quantities changed.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = TooltipTargetRecipes, Type = String, Dynamic = False, Default = \"Controls which recipes (the engrams on the left column of the crafting editor) should be changed.", Scope = Private
 	#tag EndConstant
 
 
