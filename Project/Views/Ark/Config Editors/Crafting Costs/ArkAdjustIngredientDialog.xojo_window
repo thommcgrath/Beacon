@@ -347,7 +347,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   22
+      TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -379,7 +379,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   21
+      TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -790,7 +790,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   23
+      TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
