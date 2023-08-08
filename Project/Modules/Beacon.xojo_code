@@ -1488,7 +1488,10 @@ Protected Module Beacon
 	#tag Constant, Name = FTPModeImplicitTLS, Type = String, Dynamic = False, Default = \"ftps", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = FTPModeInsecure, Type = String, Dynamic = False, Default = \"ftp", Scope = Protected
+	#tag Constant, Name = FTPModeInsecure, Type = String, Dynamic = False, Default = \"ftp-tls", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FTPModeOptionalTLS, Type = String, Dynamic = False, Default = \"ftp", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FTPModeSSH, Type = String, Dynamic = False, Default = \"sftp", Scope = Protected

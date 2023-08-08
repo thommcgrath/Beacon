@@ -437,15 +437,29 @@ End
 		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Ark.Blueprint, Mods As Beacon.StringList, SelectMode As ArkBlueprintSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
 		  Self.mSettingUp = True
 		  For Each Blueprint As Ark.Blueprint In Exclude
-		    If Blueprint <> Nil Then
-		      Self.mExcluded.Add(Blueprint.BlueprintId)
+		    If Blueprint Is Nil Then
+		      Continue
 		    End If
+		    
+		    Self.mExcluded.Add(Blueprint.ObjectID)
 		  Next
 		  Self.mMods = Mods
-		  Self.mSelectMode = SelectMode
 		  Self.mCategory = Category
 		  Self.mSubgroup = Subgroup
 		  Super.Constructor
+		  
+		  If SelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultipleWithExcluded Then
+		    For Each Blueprint As Ark.Blueprint In Exclude
+		      If Blueprint Is Nil Then
+		        Continue
+		      End If
+		      
+		      Self.SelectedList.AddRow(Blueprint.Label)
+		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Blueprint
+		    Next
+		    SelectMode = ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple
+		  End If
+		  Self.mSelectMode = SelectMode
 		  
 		  Self.WithDefaultsCheck.Visible = ShowLoadDefaults
 		  Self.WithDefaultsCheck.Value = ShowLoadDefaults
@@ -677,7 +691,8 @@ End
 	#tag Enum, Name = SelectModes, Type = Integer, Flags = &h0
 		Single
 		  ImpliedMultiple
-		ExplicitMultiple
+		  ExplicitMultiple
+		ExplicitMultipleWithExcluded
 	#tag EndEnum
 
 

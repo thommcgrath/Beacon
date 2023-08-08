@@ -89,6 +89,13 @@ Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\{#MyAppResources}"; Fl
 Source: "..\..\Artwork\BeaconAuth.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconData.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 
+[InstallDelete]
+Type: filesandordirs; Name: "{app}\Beacon Libs"
+Type: filesandordirs; Name: "{app}\Beacon Resources"
+Type: filesandordirs; Name: "{app}\Beacon.pdb"
+Type: filesandordirs; Name: "{app}\XojoGUIFramework64.dll"
+Type: filesandordirs; Name: "{app}\XojoGUIFrameworkARM.dll"
+
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 

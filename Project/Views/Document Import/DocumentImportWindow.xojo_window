@@ -29,7 +29,17 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Closing()
+		  Self.RemoveImportView()
+		  
+		  RaiseEvent Closing()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
+		  RaiseEvent Opening()
+		  
 		  AddHandler mImportView.ProjectsImported, WeakAddressOf mImportView_ProjectsImported
 		  AddHandler mImportView.ShouldDismiss, WeakAddressOf mImportView_ShouldDismiss
 		  AddHandler mImportView.ShouldResize, WeakAddressOf mImportView_ShouldResize
@@ -41,16 +51,27 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  Self.mImportView.Reset
 		  Self.Close
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ImportView As DocumentImportView, Callback As ImportFinishedDelegate)
-		  Self.mImportCallback = Callback
+		Sub Close()
+		  Self.RemoveImportView()
+		  Super.Close()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(ImportView As DocumentImportView, DestinationProject As Beacon.Project, OtherProjects() As Beacon.Project)
 		  Self.mImportView = ImportView
 		  Super.Constructor
+		  
+		  Self.mImportView.PullValuesFromProject(DestinationProject) // Give discovery views a chance to get stuff like oauth keys
+		  Self.mImportView.SetOtherProjects(OtherProjects)
+		  
 		End Sub
 	#tag EndMethod
 
@@ -62,9 +83,7 @@ End
 		Private Sub mImportView_ProjectsImported(Sender As DocumentImportView, Projects() As Beacon.Project)
 		  #Pragma Unused Sender
 		  
-		  If Beacon.SafeToInvoke(Self.mImportCallback) Then
-		    Self.mImportCallback.Invoke(Projects)
-		  End If
+		  RaiseEvent ProjectsImported(Projects)
 		End Sub
 	#tag EndMethod
 
@@ -73,6 +92,7 @@ End
 		  #Pragma Unused Sender
 		  
 		  Self.Close
+		  
 		End Sub
 	#tag EndMethod
 
@@ -86,26 +106,41 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function Present(ImportView As DocumentImportView, ImportCallback As ImportFinishedDelegate, DestinationProject As Beacon.Project, OtherProjects() As Beacon.Project, File As FolderItem = Nil) As DocumentImportWindow
-		  Var Win As New DocumentImportWindow(ImportView, ImportCallback)
-		  ImportView.PullValuesFromProject(DestinationProject) // Give discovery views a chance to get stuff like oauth keys
-		  ImportView.SetOtherProjects(OtherProjects)
-		  Win.Show
-		  If (File Is Nil) = False And File.Exists Then
-		    ImportView.Import(File)
+	#tag Method, Flags = &h21
+		Private Sub RemoveImportView()
+		  If Self.mImportView Is Nil Then
+		    Return
 		  End If
-		  Return Win
-		End Function
+		  
+		  RemoveHandler mImportView.ProjectsImported, WeakAddressOf mImportView_ProjectsImported
+		  RemoveHandler mImportView.ShouldDismiss, WeakAddressOf mImportView_ShouldDismiss
+		  RemoveHandler mImportView.ShouldResize, WeakAddressOf mImportView_ShouldResize
+		  
+		  Self.mImportView.Close
+		  Self.mImportView = Nil
+		End Sub
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
-		Private mImportCallback As ImportFinishedDelegate
-	#tag EndProperty
+	#tag Hook, Flags = &h0
+		Event Closing()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ProjectsImported(Projects() As Beacon.Project)
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
 		Private mImportView As DocumentImportView
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		UserData As Variant
 	#tag EndProperty
 
 

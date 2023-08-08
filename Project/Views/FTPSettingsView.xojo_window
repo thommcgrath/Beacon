@@ -66,7 +66,7 @@ Begin BeaconContainer FTPSettingsView
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
-      InitialValue    =   "FTP with Required TLS\nSFTP\nFTP with Implicit TLS\nFTP with Optional TLS"
+      InitialValue    =   "FTP with Required TLS\nSFTP\nFTP with Implicit TLS\nFTP with Optional TLS\nInsecure FTP"
       Italic          =   False
       Left            =   158
       LockBottom      =   False
@@ -716,7 +716,7 @@ End
 		        Var Protocol As Integer = Integer.FromString(Child.FirstChild.Value, Locale.Raw)
 		        Select Case Protocol
 		        Case 0
-		          Self.Mode = Beacon.FTPModeInsecure
+		          Self.Mode = Beacon.FTPModeOptionalTLS
 		        Case 1
 		          Self.Mode = Beacon.FTPModeSSH
 		        Case 3
@@ -749,7 +749,7 @@ End
 		  Self.PrivateKeyChooseButton.Visible = UsePublicKeyAuth
 		  Self.InternalizeKeyCheck.Visible = UsePublicKeyAuth
 		  Self.PassLabel.Text = If(UsePublicKeyAuth, "Key Password:", "Password:")
-		  Self.VerifyCertificateCheck.Visible = (RowIndex <> Self.IndexSFTP)
+		  Self.VerifyCertificateCheck.Visible = (RowIndex <> Self.IndexSFTP And RowIndex <> Self.IndexInsecureFTP)
 		  
 		  BeaconUI.SizeToFit(Self.ModeLabel, Self.HostLabel, Self.PortLabel, Self.UserLabel, Self.PrivateKeyLabel, Self.PassLabel)
 		  
@@ -872,13 +872,15 @@ End
 			Get
 			  Select Case Self.ModeMenu.SelectedRowIndex
 			  Case Self.IndexFTP
-			    Return Beacon.FTPModeInsecure
+			    Return Beacon.FTPModeOptionalTLS
 			  Case Self.IndexFTPTLS
 			    Return Beacon.FTPModeExplicitTLS
 			  Case Self.IndexSFTP
 			    Return Beacon.FTPModeSSH
 			  Case Self.IndexFTPS
 			    Return Beacon.FTPModeImplicitTLS
+			  Case Self.IndexInsecureFTP
+			    Return Beacon.FTPModeInsecure
 			  End Select
 			End Get
 		#tag EndGetter
@@ -895,6 +897,8 @@ End
 			    Self.ModeMenu.SelectedRowIndex = Self.IndexFTPTLS
 			  Case Beacon.FTPModeSSH
 			    Self.ModeMenu.SelectedRowIndex = Self.IndexSFTP
+			  Case Beacon.FTPModeInsecure
+			    Self.ModeMenu.SelectedRowIndex = Self.IndexInsecureFTP
 			  Else
 			    Self.ModeMenu.SelectedRowIndex = Self.IndexFTP
 			  End Select
@@ -940,7 +944,11 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Integer.FromString(Self.PortField.Text.Trim, Locale.Current)
+			  Try
+			    Return Integer.FromString(Self.PortField.Text.Trim, Locale.Current)
+			  Catch Err As RuntimeException
+			    Return 0
+			  End Try
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -1046,6 +1054,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = IndexFTPTLS, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IndexInsecureFTP, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = IndexSFTP, Type = Double, Dynamic = False, Default = \"1", Scope = Private

@@ -1,5 +1,22 @@
 #tag Module
 Protected Module Language
+	#tag Method, Flags = &h1
+		Protected Function EnglishOxfordList(Items() As Beacon.NamedItem, Conjunction As String = "and") As String
+		  Var Names() As String
+		  Names.ResizeTo(Items.LastIndex)
+		  For Idx As Integer = 0 To Names.LastIndex
+		    Names(Idx) = Items(Idx).Label
+		  Next
+		  Return EnglishOxfordList(Names, Conjunction)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EnglishOxfordList(Extends Items() As Beacon.NamedItem, Conjunction As String = "and") As String
+		  Return EnglishOxfordList(Items, Conjunction)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function EnglishOxfordList(Extends Items() As String, Conjunction As String = "and") As String
 		  Return EnglishOxfordList(Items, Conjunction)

@@ -40,12 +40,9 @@ Protected Module Configs
 	#tag Method, Flags = &h1
 		Protected Function AllTools() As Ark.ProjectTool()
 		  Static Tools() As Ark.ProjectTool
-		  Static Generated As DateTime
-		  Var Now As DateTime = DateTime.Now
-		  If Tools.LastIndex = -1 Or ((Generated Is Nil) = False And Generated.DayOfYear <> Now.DayOfYear) Then
+		  If Tools.LastIndex = -1 Then
 		    Tools.ResizeTo(-1)
-		    Tools.Add(New Ark.ProjectTool("Adjust All Crafting Costs", "24376f12-c256-440c-87ca-2c8309a7a754", NameCraftingCosts))
-		    Tools.Add(New Ark.ProjectTool("Replace Crafting Ingredient", "6600245b-54b4-4b85-8f26-3792084ca2fa", NameCraftingCosts))
+		    Tools.Add(New Ark.ProjectTool("Adjust Crafting Costs", "6600245b-54b4-4b85-8f26-3792084ca2fa", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Setup Fibercraft Server", "94eced5b-be7d-441a-a5b3-f4a9bf40a856", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Setup Transferrable Element", "3db64fe3-9134-4a19-a255-7712c8c70a83", NameCraftingCosts))
 		    Tools.Add(New Ark.ProjectTool("Convert Creature Replacements to Spawn Point Additions", "614cfc80-b7aa-437d-b17e-01534f2ab778", NameSpawnPoints, NameDinoAdjustments))
@@ -56,9 +53,6 @@ Protected Module Configs
 		    Tools.Add(New Ark.ProjectTool("Setup Guided Editors", "d29dc6f8-e834-4969-9cfe-b38e1c052156", NameCustomContent))
 		    Tools.Add(New Ark.ProjectTool("Convert Global Harvest Rate to Individual Rates", "5265adcd-5c7e-437c-bce2-d10721afde43", NameHarvestRates))
 		    Tools.Add(New Ark.ProjectTool("Rebuild Item Sets from Templates", "08efc49c-f39f-4147-820d-201637c206b5", NameLootDrops))
-		    If Now.Month = 4 And Now.Day = 1 Then
-		      Tools.Add(New Ark.ProjectTool("AI Config Generator", "c5c14eb8-41c9-4fd3-8f92-582e843ac9a0", NameOtherSettings))
-		    End If
 		    Tools.Add(New Ark.ProjectTool("Compute GFI Codes", "6bcf5785-b8e2-4889-91c8-545c34f30d8a", NameMetadataPsuedo))
 		    
 		    Var Names() As String
@@ -67,8 +61,6 @@ Protected Module Configs
 		      Names(Idx) = Language.LabelForConfig(Tools(Idx).FirstGroup) + " - " + Tools(Idx).Caption
 		    Next Idx
 		    Names.SortWith(Tools)
-		    
-		    Generated = Now
 		  End If
 		  Return Tools
 		End Function

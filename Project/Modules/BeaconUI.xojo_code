@@ -267,8 +267,41 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function IdealWidth(ParamArray Targets() As DesktopLabel) As Integer
-		  Return IdealWidth(Targets)
+		Protected Function IdealHeight(Targets() As DesktopLabel) As Integer
+		  Var MaxHeight As Integer
+		  Var Pic As New Picture(20, 20)
+		  Var G As Graphics = Pic.Graphics
+		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    If Targets(Idx) Is Nil Or Targets(Idx).Visible = False Then
+		      Continue
+		    End If
+		    
+		    G.FontName = Targets(Idx).FontName
+		    G.FontSize = Targets(Idx).FontSize
+		    G.FontUnit = Targets(Idx).FontUnit
+		    G.Bold = Targets(Idx).Bold
+		    G.Italic = Targets(Idx).Italic
+		    G.Underline = Targets(Idx).Underline
+		    
+		    MaxHeight = Max(MaxHeight, Ceiling(G.TextHeight(Targets(Idx).Text, Targets(Idx).Width)))
+		  Next Idx
+		  #if TargetMacOS
+		    Return Round(MaxHeight * 1.15)
+		  #else
+		    Return MaxHeight
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IdealHeight(ParamArray Targets() As DesktopLabel) As Integer
+		  Return IdealHeight(Targets)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function IdealHeight(Extends Target As DesktopLabel) As Integer
+		  Return IdealHeight(Target)
 		End Function
 	#tag EndMethod
 
@@ -296,6 +329,12 @@ Protected Module BeaconUI
 		  #else
 		    Return MaxWidth
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IdealWidth(ParamArray Targets() As DesktopLabel) As Integer
+		  Return IdealWidth(Targets)
 		End Function
 	#tag EndMethod
 

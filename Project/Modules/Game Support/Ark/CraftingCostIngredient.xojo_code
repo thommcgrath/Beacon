@@ -12,8 +12,8 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Reference As Ark.BlueprintReference, Quantity As Integer, RequireExact As Boolean)
-		  If Reference Is Nil Or Reference.IsEngram = False Or Quantity <= 0 Then
+		Sub Constructor(Reference As Ark.BlueprintReference, Quantity As Double, RequireExact As Boolean)
+		  If Reference Is Nil Or Reference.IsEngram = False Or Quantity < 0 Then
 		    Var Err As New RuntimeException
 		    Err.Message = "Invalid engram or quantity"
 		    Raise Err
@@ -26,7 +26,7 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Engram As Ark.Engram, Quantity As Integer, RequireExact As Boolean)
+		Sub Constructor(Engram As Ark.Engram, Quantity As Double, RequireExact As Boolean)
 		  Self.Constructor(New Ark.BlueprintReference(Engram.ImmutableVersion), Quantity, RequireExact)
 		End Sub
 	#tag EndMethod
@@ -51,7 +51,7 @@ Protected Class CraftingCostIngredient
 		      If Reference Is Nil Then
 		        Return Nil
 		      End If
-		      Var Quantity As Integer = Dict.Value("quantity")
+		      Var Quantity As Double = Dict.Value("quantity")
 		      Var Exact As Boolean = Dict.Value("exact")
 		      
 		      Return New Ark.CraftingCostIngredient(Reference, Quantity, Exact)
@@ -64,7 +64,7 @@ Protected Class CraftingCostIngredient
 		      If Reference Is Nil Then
 		        Return Nil
 		      End If
-		      Var Quantity As Integer = Dict.Value("Quantity")
+		      Var Quantity As Double = Dict.Value("Quantity")
 		      Var Exact As Boolean = Dict.Value("Exact")
 		      
 		      Return New Ark.CraftingCostIngredient(Reference, Quantity, Exact)
@@ -74,7 +74,7 @@ Protected Class CraftingCostIngredient
 		  ElseIf (Dict.HasKey("object_id") Or Dict.HasKey("path")) And Dict.HasKey("quantity") And Dict.HasKey("exact") Then
 		    Try
 		      Var Ref As Ark.BlueprintReference = Ark.BlueprintReference.CreateFromDict(Ark.BlueprintReference.KindEngram, Dict, "object_id", "path", "", "")
-		      Var Quantity As Integer = Dict.Value("quantity")
+		      Var Quantity As Double = Dict.Value("quantity")
 		      Var Exact As Boolean = Dict.Value("exact")
 		      Return New Ark.CraftingCostIngredient(Ref, Quantity, Exact)
 		    Catch Err As RuntimeException
@@ -151,8 +151,8 @@ Protected Class CraftingCostIngredient
 		    Return 1
 		  End If
 		  
-		  Var MyKey As String = Self.mEngramRef.ObjectID + ":" + Self.mQuantity.ToString(Locale.Raw, "00000000") + ":" + If(Self.mRequireExact, "True", "False")
-		  Var OtherKey As String = Other.mEngramRef.ObjectID + ":" + Other.mQuantity.ToString(Locale.Raw, "00000000") + ":" + If(Other.mRequireExact, "True", "False")
+		  Var MyKey As String = Self.mEngramRef.ObjectID + ":" + Self.mQuantity.PrettyText + ":" + If(Self.mRequireExact, "True", "False")
+		  Var OtherKey As String = Other.mEngramRef.ObjectID + ":" + Other.mQuantity.PrettyText + ":" + If(Other.mRequireExact, "True", "False")
 		  
 		  Return MyKey.Compare(OtherKey, ComparisonOptions.CaseInsensitive)
 		End Function
@@ -169,7 +169,7 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Quantity() As Integer
+		Function Quantity() As Double
 		  Return Self.mQuantity
 		End Function
 	#tag EndMethod
@@ -214,7 +214,7 @@ Protected Class CraftingCostIngredient
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mQuantity As Integer
+		Private mQuantity As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

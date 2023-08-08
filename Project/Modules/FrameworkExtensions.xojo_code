@@ -353,6 +353,37 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IdealScreen(Extends Win As DesktopWindow) As DesktopDisplay
+		  Var ScreenCount As Integer = DesktopDisplay.DisplayCount
+		  Var IdealScreen As DesktopDisplay = DesktopDisplay.DisplayAt(0)
+		  If ScreenCount = 1 Then
+		    Return IdealScreen
+		  End If
+		  
+		  Var WindowBounds As Rect = Win.Bounds
+		  Var MaxArea As Integer
+		  For Idx As Integer = 1 To ScreenCount - 1
+		    Var Screen As DesktopDisplay = DesktopDisplay.DisplayAt(Idx)
+		    Var ScreenBounds As New Rect(Screen.AvailableLeft, Screen.AvailableTop, Screen.AvailableWidth, Screen.AvailableHeight)
+		    Var Intersection As Rect = ScreenBounds.Intersection(WindowBounds)
+		    If Intersection Is Nil Then
+		      Continue
+		    End If
+		    Var Area As Integer = Intersection.Width * Intersection.Height
+		    If Area <= 0 Then
+		      Continue
+		    End If
+		    If Area > MaxArea Then
+		      MaxArea = Area
+		      IdealScreen = Screen
+		    End If
+		  Next
+		  
+		  Return IdealScreen
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IntegerValue(Extends Value As Variant) As Integer
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  Select Case Info.Name

@@ -459,13 +459,18 @@ End
 		  Select Case GameID
 		  Case Ark.Identifier
 		    Var ImportView As New ArkImportView
-		    Call DocumentImportWindow.Present(ImportView, WeakAddressOf LoadImportedDocuments, New Ark.Project, OtherProjects, File)
+		    Var ImportWindow As New DocumentImportWindow(ImportView, New Ark.Project, OtherProjects)
+		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
+		    ImportWindow.Show()
+		    ImportView.Import(File)
 		  End Select
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadImportedDocuments(Projects() As Beacon.Project)
+		Private Sub LoadImportedDocuments(Sender As DocumentImportWindow, Projects() As Beacon.Project)
+		  #Pragma Unused Sender
+		  
 		  For Each Project As Beacon.Project In Projects
 		    Self.NewProject(Project)
 		  Next

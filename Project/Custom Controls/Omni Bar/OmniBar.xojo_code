@@ -15,6 +15,12 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
+		Sub DoublePressed(x As Integer, y As Integer)
+		  Self.MouseUp(X, Y, True)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Self.mMouseDown = True
 		  Self.mMousePoint = New Point(X, Y)
@@ -193,71 +199,8 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
-		  If Not Self.mMouseDown Then
-		    Return
-		  End If
+		  Self.MouseUp(X, Y, False)
 		  
-		  Self.mMousePoint = New Point(X, Y)
-		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
-		  
-		  If Self.mMouseDownIndex > -1 And Self.mItems(Self.mMouseDownIndex).IsResizer Then
-		    RaiseEvent ResizeFinished(Self.mItems(Self.mMouseDownIndex))
-		  End If
-		  
-		  Var ReleasedOnPressedItem As Boolean = Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex
-		  If ReleasedOnPressedItem Then
-		    If Self.mMouseDownIndex > -1 And Self.mUsedLongAction = False And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
-		      Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
-		      Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
-		      Var FirePressed As Boolean = True
-		      If Item.CanBeClosed Then
-		        Var AccessoryRect As New Rect(ItemRect.Right - OmniBarItem.AccessoryIconSize, (Self.Height - OmniBarItem.AccessoryIconSize) / 2, OmniBarItem.AccessoryIconSize, OmniBarItem.AccessoryIconSize)
-		        If AccessoryRect.Contains(Self.mMousePoint) Then
-		          FirePressed = False
-		          RaiseEvent ShouldCloseItem(Item)
-		        End If
-		      End If
-		      
-		      If FirePressed Then
-		        Var InsetRect As Rect = ItemRect
-		        If (Item.InsetRect Is Nil) = False Then
-		          InsetRect = New Rect(ItemRect.Left + Item.InsetRect.Left, ItemRect.Top + Item.InsetRect.Top, Min(ItemRect.Width, Item.InsetRect.Width), Min(ItemRect.Height, Item.InsetRect.Height))
-		        End If
-		        RaiseEvent ItemPressed(Item, InsetRect)
-		      End If
-		    ElseIf Self.mMouseDownIndex = Self.OverflowItemIndex Then
-		      Var Base As New DesktopMenuItem
-		      For Idx As Integer = Self.mOverflowStopIndex + 1 To Self.mItems.LastIndex
-		        Var Item As OmniBarItem = Self.mItems(Idx)
-		        Select Case Item.Type
-		        Case OmniBarItem.Types.Button, OmniBarItem.Types.Tab
-		          Var Menu As New DesktopMenuItem(Item.Caption, Idx)
-		          Menu.HasCheckMark = Item.Toggled
-		          Base.AddMenu(Menu)
-		        Case OmniBarItem.Types.Separator
-		          Var Menu As New DesktopMenuItem(MenuItem.TextSeparator)
-		          Base.AddMenu(Menu)
-		        Case OmniBarItem.Types.Title
-		          Var Menu As New DesktopMenuItem(Item.Caption)
-		          Menu.Enabled = False
-		          Base.AddMenu(Menu)
-		        End Select
-		      Next
-		      
-		      Var Position As Point = Self.GlobalPosition
-		      Var Choice As DesktopMenuItem = Base.PopUp(Position.X + Self.mOverflowRect.Left, Position.Y + Self.mOverflowRect.Bottom)
-		      If (Choice Is Nil) = False And Choice.Tag.IsNull = False Then
-		        Var Item As OmniBarItem = Self.Item(Choice.Tag.IntegerValue)
-		        RaiseEvent ItemPressed(Item, Self.mOverflowRect)
-		      End If
-		    End If
-		  End If
-		  
-		  Self.mMouseDown = False
-		  Self.mMouseDownIndex = -1
-		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
-		  
-		  Self.Refresh
 		End Sub
 	#tag EndEvent
 
@@ -686,6 +629,78 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  End If
 		  
 		  Self.mUsedLongAction = RaiseEvent ItemHeld(Item, InsetRect)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MouseUp(X As Integer, Y As Integer, Double As Boolean)
+		  #Pragma Unused Double
+		  
+		  If Not Self.mMouseDown Then
+		    Return
+		  End If
+		  
+		  Self.mMousePoint = New Point(X, Y)
+		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
+		  
+		  If Self.mMouseDownIndex > -1 And Self.mItems(Self.mMouseDownIndex).IsResizer Then
+		    RaiseEvent ResizeFinished(Self.mItems(Self.mMouseDownIndex))
+		  End If
+		  
+		  Var ReleasedOnPressedItem As Boolean = Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex
+		  If ReleasedOnPressedItem Then
+		    If Self.mMouseDownIndex > -1 And Self.mUsedLongAction = False And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
+		      Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
+		      Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
+		      Var FirePressed As Boolean = True
+		      If Item.CanBeClosed Then
+		        Var AccessoryRect As New Rect(ItemRect.Right - OmniBarItem.AccessoryIconSize, (Self.Height - OmniBarItem.AccessoryIconSize) / 2, OmniBarItem.AccessoryIconSize, OmniBarItem.AccessoryIconSize)
+		        If AccessoryRect.Contains(Self.mMousePoint) Then
+		          FirePressed = False
+		          RaiseEvent ShouldCloseItem(Item)
+		        End If
+		      End If
+		      
+		      If FirePressed Then
+		        Var InsetRect As Rect = ItemRect
+		        If (Item.InsetRect Is Nil) = False Then
+		          InsetRect = New Rect(ItemRect.Left + Item.InsetRect.Left, ItemRect.Top + Item.InsetRect.Top, Min(ItemRect.Width, Item.InsetRect.Width), Min(ItemRect.Height, Item.InsetRect.Height))
+		        End If
+		        RaiseEvent ItemPressed(Item, InsetRect)
+		      End If
+		    ElseIf Self.mMouseDownIndex = Self.OverflowItemIndex Then
+		      Var Base As New DesktopMenuItem
+		      For Idx As Integer = Self.mOverflowStopIndex + 1 To Self.mItems.LastIndex
+		        Var Item As OmniBarItem = Self.mItems(Idx)
+		        Select Case Item.Type
+		        Case OmniBarItem.Types.Button, OmniBarItem.Types.Tab
+		          Var Menu As New DesktopMenuItem(Item.Caption, Idx)
+		          Menu.HasCheckMark = Item.Toggled
+		          Base.AddMenu(Menu)
+		        Case OmniBarItem.Types.Separator
+		          Var Menu As New DesktopMenuItem(MenuItem.TextSeparator)
+		          Base.AddMenu(Menu)
+		        Case OmniBarItem.Types.Title
+		          Var Menu As New DesktopMenuItem(Item.Caption)
+		          Menu.Enabled = False
+		          Base.AddMenu(Menu)
+		        End Select
+		      Next
+		      
+		      Var Position As Point = Self.GlobalPosition
+		      Var Choice As DesktopMenuItem = Base.PopUp(Position.X + Self.mOverflowRect.Left, Position.Y + Self.mOverflowRect.Bottom)
+		      If (Choice Is Nil) = False And Choice.Tag.IsNull = False Then
+		        Var Item As OmniBarItem = Self.Item(Choice.Tag.IntegerValue)
+		        RaiseEvent ItemPressed(Item, Self.mOverflowRect)
+		      End If
+		    End If
+		  End If
+		  
+		  Self.mMouseDown = False
+		  Self.mMouseDownIndex = -1
+		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
+		  
+		  Self.Refresh
 		End Sub
 	#tag EndMethod
 
