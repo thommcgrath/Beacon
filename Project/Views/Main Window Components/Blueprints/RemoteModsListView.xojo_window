@@ -318,7 +318,6 @@ End
 		    End Try
 		    
 		    Var StartIdx As Integer = Self.List.RowIndexOfPage(Page)
-		    
 		    For Idx As Integer = 0 To Results.LastIndex
 		      Var Dict As Dictionary = Results(Idx)
 		      Var RowIdx As Integer = StartIdx + Idx
