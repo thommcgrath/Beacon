@@ -4,9 +4,8 @@ require(dirname(__FILE__, 4) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Supported Mods');
 BeaconTemplate::SetCanonicalPath('/Games/Ark/Mods');
 
-use BeaconAPI\v4\ContentPack;
-
-$packs = ContentPack::Search(['gameId' => 'Ark', 'confirmed' => true, 'isIncludedInDeltas' => true], true);
+$database = BeaconCommon::Database();
+$rows = $database->Query('SELECT content_pack_id, marketplace, marketplace_id, name, type FROM public.content_packs_combined WHERE game_id = $1 ORDER BY name;', 'Ark');
 
 $breadcrumbs = new BeaconBreadcrumbs();
 $breadcrumbs->AddComponent('/Games', 'Games');
@@ -22,9 +21,41 @@ echo $breadcrumbs->Render();
 		<th>Steam Id</th>
 	</thead>
 	<tbody>
-		<?php foreach ($packs as $pack) { ?><tr>
-			<td><a href="/Games/Ark/Mods/<?php echo htmlentities(urlencode($pack->MarketplaceId())); ?>"><?php echo htmlentities($pack->Name()); ?></a></td>
-			<td><a href="<?php echo htmlentities($pack->MarketplaceUrl()); ?>" target="_blank"><?php echo htmlentities($pack->MarketplaceId()); ?></a></td>
-		</tr><?php } ?>
+		<?php
+			while (!$rows->EOF()) {
+				$marketplace = $rows->Field('marketplace');
+				$marketplaceId = $rows->Field('marketplace_id');
+				$contentPackId = $rows->Field('content_pack_id');
+				$name = $rows->Field('name');
+				$type = $rows->Field('type');
+				$nameHtml = '<a href="/Games/Ark/Mods/' . htmlentities(urlencode($marketplaceId)) . '">' . htmlentities($name) . '</a>';
+				
+				$marketplaceUrl = '';
+				switch ($marketplace) {
+				case 'Steam':
+					$marketplaceUrl = 'https://store.steampowered.com/app/' . urlencode($marketplaceId);
+					break;
+				case 'Steam Workshop':
+					$marketplaceUrl = 'https://steamcommunity.com/sharedfiles/filedetails/?id=' . urlencode($marketplaceId);
+					break;
+				}
+				
+				switch ($type) {
+				case 0:
+					break;
+				case 1:
+					$nameHtml .= '<span class="tag blue ml-3">Author Maintained</span>';
+					break;
+				case 2:
+					$nameHtml = htmlentities($name) . '<span class="tag grey ml-3">Community Maintained</span>';
+					break;
+				}
+				
+				?><tr>
+			<td><?php echo $nameHtml; ?></td>
+			<td><a href="<?php echo htmlentities($marketplaceUrl); ?>" target="_blank"><?php echo htmlentities($marketplaceId); ?></a></td>
+		</tr><?php
+			$rows->MoveNext();
+		} ?>
 	</tbody>
 </table>

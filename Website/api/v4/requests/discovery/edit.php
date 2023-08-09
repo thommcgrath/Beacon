@@ -23,7 +23,7 @@ function handleRequest(array $context): Response {
 			return Response::NewJsonError('Mod data is in a format that is too new for this API.', null, 400);
 		}
 		
-		$mainData = json_decode($archive['Main.beacondata']->getContent(), true);
+		$mainData = json_decode($archive['Main.json']->getContent(), true);
 		$archive = null;
 		$gameIds = ['ark'];
 		foreach ($gameIds as $gameId) {

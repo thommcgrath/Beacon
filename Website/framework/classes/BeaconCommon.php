@@ -1067,6 +1067,14 @@ abstract class BeaconCommon {
 		$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM public.updates WHERE build_number <= $1;', $allowedBuild);
 		return $results->Field('newest_build');
 	}
+	
+	public static function StandardizeGameId(string $gameId): string {
+		switch (strtolower(trim($gameId))) {
+		case 'ark':
+			return 'Ark';
+		}
+		return '';
+	}
 }
 
 ?>

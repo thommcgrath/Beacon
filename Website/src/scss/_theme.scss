@@ -205,12 +205,18 @@ $pressed-accent-text-color: color.adjust($accent-text-color, $lightness: -20%);
 $separator-color: color.mix($foreground-color, $background-color, 15%);
 $explore-color: $background-color;
 $explore-border-color: $separator-color;
-$tag-red-fill: contrasting-color($background-color, #a61c2c);
+$tag-red-fill: contrasting-color($background-color, #dc3545);
 $tag-red-text: contrasting-color($tag-red-fill, #ffffff);
-$tag-grey-fill: contrasting-color($background-color, #808080);
+$tag-grey-fill: contrasting-color($background-color, #6c757d);
 $tag-grey-text: contrasting-color($tag-grey-fill, #ffffff);
-$tag-blue-fill: contrasting-color($background-color, #1d4397);
+$tag-blue-fill: contrasting-color($background-color, #0d6efd);
 $tag-blue-text: contrasting-color($tag-blue-fill, #ffffff);
+$tag-green-fill: contrasting-color($background-color, #198754);
+$tag-green-text: contrasting-color($tag-green-fill, #ffffff);
+$tag-yellow-fill: contrasting-color($background-color, #ffc107);
+$tag-yellow-text: contrasting-color($tag-yellow-fill, #212529);
+$tag-cyan-fill: contrasting-color($background-color, #0dcaf0);
+$tag-cyan-text: contrasting-color($tag-cyan-fill, #212529);
 $button-primary-color: $accent-color;
 $button-primary-text-color: $accent-text-color;
 $button-secondary-color: color.mix($foreground-color, $background-color, 7%);
@@ -367,6 +373,21 @@ a {
 	&.blue {
 		background-color: $tag-blue-fill;
 		color: $tag-blue-text;
+	}
+	
+	&.green {
+		background-color: $tag-green-fill;
+		color: $tag-green-text;
+	}
+	
+	&.yellow {
+		background-color: $tag-yellow-fill;
+		color: $tag-yellow-text;
+	}
+	
+	&.cyan {
+		background-color: $tag-cyan-fill;
+		color: $tag-cyan-text;
 	}
 }
 

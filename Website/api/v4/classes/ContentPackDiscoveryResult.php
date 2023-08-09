@@ -67,6 +67,7 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 			return null;
 		}
 		
+		$gameId = BeaconCommon::StandardizeGameId($gameId);
 		$contentPackId = strtolower($contentPackInfo['contentPackId']);
 		$marketplace = $contentPackInfo['marketplace'];
 		$marketplaceId = $contentPackInfo['marketplaceId'];
@@ -77,7 +78,7 @@ class ContentPackDiscoveryResult extends DatabaseObject implements JsonSerializa
 		if ($rows->RecordCount() === 0) {
 			$storagePath = '/Discovery/' . $contentPackId . '.beacondata';
 			$database->BeginTransaction();
-			$database->Query('INSERT INTO public.ontent_pack_discovery_results (ontent_pack_id, game_id, marketplace, marketplace_id, name, last_update, min_version, storage_path) VALUES ($1, $2, $3, $4, $5, TO_TIMESTAMP($6), $7, $8);', $contentPackId, $gameId, $marketplace, $marketplaceId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion'], $storagePath);
+			$database->Query('INSERT INTO public.content_pack_discovery_results (content_pack_id, game_id, marketplace, marketplace_id, name, last_update, min_version, storage_path) VALUES ($1, $2, $3, $4, $5, TO_TIMESTAMP($6), $7, $8);', $contentPackId, $gameId, $marketplace, $marketplaceId, $contentPackInfo['name'], $lastUpdate, $contentPackInfo['minVersion'], $storagePath);
 			$database->Commit();
 			return static::Fetch($contentPackId);
 		}
