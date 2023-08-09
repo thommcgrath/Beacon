@@ -17,8 +17,9 @@ echo $breadcrumbs->Render();
 <p>Beacon supports mods, both officially and unofficially! This page lists the Ark mods that Beacon already supports. If you want to add mod items to your own copy of Beacon, <a href="/help/adding_blueprints_to_beacon">here's how</a>. If you are a mod developer and want to add your mod to Beacon for all users to enjoy, <a href="/help/registering_your_mod_with_beacon">it's pretty simple</a>.</p>
 <table class="generic">
 	<thead>
-		<th>Mod Name</th>
-		<th>Steam Id</th>
+		<th class="w-100">Mod Name</th>
+		<th class="w-0 nowrap not-mini">Support Type</th>
+		<th class="w-0 nowrap">Steam Id</th>
 	</thead>
 	<tbody>
 		<?php
@@ -40,20 +41,23 @@ echo $breadcrumbs->Render();
 					break;
 				}
 				
+				$typeHtml = '';
 				switch ($type) {
 				case 0:
 					break;
 				case 1:
-					$nameHtml .= '<span class="tag blue ml-3">Author Maintained</span>';
+					$typeHtml = '<span class="tag blue">Author Maintained</span>';
 					break;
 				case 2:
-					$nameHtml = htmlentities($name) . '<span class="tag grey ml-3">Community Maintained</span>';
+					$nameHtml = htmlentities($name);
+					$typeHtml = '<span class="tag grey">Community Maintained</span>';
 					break;
 				}
 				
 				?><tr>
-			<td><?php echo $nameHtml; ?></td>
-			<td><a href="<?php echo htmlentities($marketplaceUrl); ?>" target="_blank"><?php echo htmlentities($marketplaceId); ?></a></td>
+			<td><?php echo $nameHtml; ?><span class="mini-only"><br><?php echo $typeHtml; ?></span></td>
+			<td class="text-center w-0 nowrap not-mini"><?php echo $typeHtml; ?></td>
+			<td class="text-right nowrap"><a href="<?php echo htmlentities($marketplaceUrl); ?>" target="_blank"><?php echo htmlentities($marketplaceId); ?></a></td>
 		</tr><?php
 			$rows->MoveNext();
 		} ?>

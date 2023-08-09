@@ -312,7 +312,7 @@ a {
 	word-break: break-word;
 	
 	code {
-		display: initial;
+		display: revert;
 		word-break: break-all;
 		border: none;
 		padding: 0px;
@@ -1006,7 +1006,7 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 		}
 		
 		.spinner {
-			display: initial;
+			display: revert;
 		}
 	}
 }
@@ -2146,7 +2146,7 @@ ul.no-markings, ol.no-markings {
 }
 
 .mini-only {
-	display: initial;
+	display: revert;
 }
 
 .mobile-only {
@@ -2159,7 +2159,12 @@ ul.no-markings, ol.no-markings {
 
 // mini and mobile
 .small-only {
-	display: initial;
+	display: revert;
+}
+
+// mobile and desktop
+.not-mini {
+	display: none;
 }
 
 // desktop
@@ -2383,7 +2388,11 @@ img.avatar {
 	}
 	
 	.mobile-only {
-		display: initial;
+		display: revert;
+	}
+	
+	.not-mini {
+		display: revert;
 	}
 }
 
@@ -2831,7 +2840,7 @@ body.no-navigation {
 	}
 	
 	.desktop-only {
-		display: initial;
+		display: revert;
 	}
 	
 	.small-only {
@@ -2839,7 +2848,7 @@ body.no-navigation {
 	}
 	
 	.large-only {
-		display: initial;
+		display: revert;
 	}
 	
 	div.page-panel {
