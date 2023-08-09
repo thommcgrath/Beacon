@@ -49,7 +49,7 @@ Begin BeaconDialog ArkRegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   520
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -817,7 +817,7 @@ Begin BeaconDialog ArkRegisterModDialog
          Visible         =   True
          Width           =   480
       End
-      Begin DesktopButton IntroSkipButton
+      Begin UITweaks.ResizedPushButton IntroSkipButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False

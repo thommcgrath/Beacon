@@ -10,14 +10,14 @@ Begin BeaconDialog ArkModDiscoveryDialog
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   234
+   Height          =   266
    ImplicitInstance=   False
    MacProcID       =   0
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
+   MaximumHeight   =   266
+   MaximumWidth    =   600
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   234
+   MinimumHeight   =   266
    MinimumWidth    =   600
    Resizeable      =   False
    Title           =   "Mod Discovery"
@@ -71,18 +71,18 @@ Begin BeaconDialog ArkModDiscoveryDialog
       InitialParent   =   ""
       Italic          =   False
       Left            =   500
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   194
+      Top             =   226
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -103,18 +103,18 @@ Begin BeaconDialog ArkModDiscoveryDialog
       InitialParent   =   ""
       Italic          =   False
       Left            =   408
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   194
+      Top             =   226
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -132,11 +132,11 @@ Begin BeaconDialog ArkModDiscoveryDialog
       InitialParent   =   ""
       Italic          =   True
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
@@ -147,7 +147,7 @@ Begin BeaconDialog ArkModDiscoveryDialog
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   194
+      Top             =   226
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -402,6 +402,35 @@ Begin BeaconDialog ArkModDiscoveryDialog
       Visible         =   True
       Width           =   376
    End
+   Begin DesktopCheckBox AllowDeleteCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Delete blueprints that are not found by discovery"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   147
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   185
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   433
+   End
 End
 #tag EndDesktopWindow
 
@@ -413,11 +442,29 @@ End
 		  Self.SteamLabel.TextColor = SystemColors.SystemRedColor
 		  
 		  BeaconUI.SizeToFit(Self.ArkPathLabel, Self.ModsLabel)
+		  Self.ExplanationLabel.Height = Self.ExplanationLabel.IdealHeight
+		  
+		  Self.ArkPathField.Top = Self.ExplanationLabel.Bottom + 12
+		  Self.ArkPathLabel.Top = Self.ArkPathField.Top
+		  Self.ArkPathButton.Top = Self.ArkPathField.Top + ((Self.ArkPathField.Height - Self.ArkPathButton.Height) / 2)
+		  Self.ModsField.Top = Self.ArkPathField.Bottom + 12
+		  Self.ModsLabel.Top = Self.ModsField.Top
+		  Self.AllowDeleteCheck.Top = Self.ModsField.Bottom + 12
+		  Self.ActionButton.Top = Self.AllowDeleteCheck.Bottom + 20
+		  Self.CancelButton.Top = Self.ActionButton.Top
+		  Self.DisclaimerLabel.Top = Self.ActionButton.Top
+		  
+		  Var IdealHeight As Integer = Self.ActionButton.Bottom + 20
+		  Self.MinimumHeight = IdealHeight
+		  Self.Height = IdealHeight
+		  Self.MaximumHeight = IdealHeight
 		  
 		  Self.ArkPathField.Left = Self.ArkPathLabel.Left + Self.ArkPathLabel.Width + 12
 		  Self.ModsField.Left = Self.ArkPathField.Left
 		  Self.ArkPathField.Width = Self.ArkPathButton.Left - (12 + Self.ArkPathField.Left)
 		  Self.ModsField.Width = Self.Width - (20 + Self.ModsField.Left)
+		  Self.AllowDeleteCheck.Left = Self.ModsField.Left
+		  Self.AllowDeleteCheck.Width = Self.ModsField.Width
 		  
 		  If Self.mForcedModsString.IsEmpty = False Then
 		    Self.ModsField.Text = Self.mForcedModsString
@@ -522,7 +569,7 @@ End
 		  Matcher.Options.ReplaceAllMatches = True
 		  ModsString = Matcher.Replace(ModsString)
 		  
-		  Self.mSettings = New Ark.ModDiscoverySettings(ArkFolder, ModsString.Split(","), True)
+		  Self.mSettings = New Ark.ModDiscoverySettings(ArkFolder, ModsString.Split(","), Self.AllowDeleteCheck.Value)
 		  Preferences.ArkSteamPath = ArkFolder.NativePath
 		  Self.Hide
 		End Sub

@@ -1,8 +1,8 @@
 #tag Class
 Protected Class BlueprintControllerTaskGroup
 Inherits Ark.BlueprintControllerTask
-Implements Beacon.Countable, Iterable
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+Implements Beacon.Countable,Iterable
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Function Child(Idx As Integer) As Ark.BlueprintControllerTask
 		  Return Self.mChildren(Idx)
@@ -17,16 +17,7 @@ Implements Beacon.Countable, Iterable
 		    Raise Err
 		  End If
 		  
-		  Var Mode As Integer = Tasks(0).Mode
-		  For Idx As Integer = 1 To Tasks.LastIndex
-		    If Tasks(Idx).Mode <> Mode Then
-		      Var Err As New UnsupportedOperationException
-		      Err.Message = "All tasks in group must use the same mode."
-		      Raise Err
-		    End If
-		  Next
-		  
-		  Super.Constructor(Mode)
+		  Super.Constructor(-1)
 		  Self.mChildren.ResizeTo(Tasks.LastIndex)
 		  For Idx As Integer = 0 To Tasks.LastIndex
 		    Self.mChildren(Idx) = Tasks(Idx)
@@ -204,22 +195,6 @@ Implements Beacon.Countable, Iterable
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ErrorMessage"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Errored"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

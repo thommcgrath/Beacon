@@ -25,98 +25,6 @@ Begin ModEditorView ArkModEditorView
    Transparent     =   True
    Visible         =   True
    Width           =   900
-   Begin BeaconListbox BlueprintList
-      AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   False
-      AllowInfiniteScroll=   False
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
-      Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   "*,*"
-      DefaultRowHeight=   -1
-      DefaultSortColumn=   0
-      DefaultSortDirection=   0
-      DropIndicatorVisible=   False
-      EditCaption     =   "Edit"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      GridLineStyle   =   0
-      HasBorder       =   False
-      HasHeader       =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
-      HeadingIndex    =   0
-      Height          =   360
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   "Name	Class String"
-      Italic          =   False
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      PageSize        =   100
-      PreferencesKey  =   ""
-      RequiresSelection=   False
-      RowSelectionType=   1
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   41
-      TotalPages      =   -1
-      Transparent     =   False
-      TypeaheadColumn =   0
-      Underline       =   False
-      Visible         =   True
-      VisibleRowCount =   0
-      Width           =   900
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
-   Begin OmniBar ButtonsToolbar
-      Alignment       =   0
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BackgroundColor =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LeftPadding     =   -1
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      RightPadding    =   0
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   True
-      Visible         =   True
-      Width           =   360
-   End
    Begin Thread ImporterThread
       DebugIdentifier =   ""
       Index           =   -2147483648
@@ -128,165 +36,348 @@ Begin ModEditorView ArkModEditorView
       ThreadID        =   0
       ThreadState     =   0
    End
-   Begin DesktopLabel StatusLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
+   Begin Ark.ModDiscoveryEngine DiscoveryEngine
       Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Multiline       =   False
       Scope           =   2
-      Selectable      =   False
-      TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Loading Blueprints"
-      TextAlignment   =   2
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   407
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   860
    End
-   Begin FadedSeparator StatusSeparator
+   Begin DesktopPagePanel Pages
       AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
       Enabled         =   True
-      Height          =   1
+      Height          =   432
       Index           =   -2147483648
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   401
-      Transparent     =   True
-      Visible         =   True
-      Width           =   900
-   End
-   Begin OmniBar TabsToolbar
-      Alignment       =   1
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BackgroundColor =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      Left            =   360
-      LeftPadding     =   -1
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
       LockTop         =   True
-      RightPadding    =   -1
+      PanelCount      =   2
+      Panels          =   ""
       Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   8
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Tooltip         =   ""
       Top             =   0
-      Transparent     =   True
-      Visible         =   True
-      Width           =   180
-   End
-   Begin DelayedSearchField FilterField
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowRecentItems=   False
-      AllowTabStop    =   True
-      ClearMenuItemValue=   "Clear"
-      DelayPeriod     =   250
-      Enabled         =   True
-      Height          =   22
-      Hint            =   "Filter Engrams"
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   630
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MaximumRecentItems=   -1
-      PanelIndex      =   0
-      RecentItemsValue=   "Recent Searches"
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      Text            =   ""
-      Tooltip         =   ""
-      Top             =   10
       Transparent     =   False
+      Value           =   1
       Visible         =   True
-      Width           =   250
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
-   Begin OmniBarSeparator FilterSeparator
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   1
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   540
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   40
-      Transparent     =   True
-      Visible         =   True
-      Width           =   360
+      Width           =   900
+      Begin OmniBarSeparator FilterSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   540
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   40
+         Transparent     =   True
+         Visible         =   True
+         Width           =   360
+      End
+      Begin DelayedSearchField FilterField
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowRecentItems=   False
+         AllowTabStop    =   True
+         ClearMenuItemValue=   "Clear"
+         DelayPeriod     =   250
+         Enabled         =   True
+         Height          =   22
+         Hint            =   "Filter Engrams"
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   630
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MaximumRecentItems=   -1
+         PanelIndex      =   0
+         RecentItemsValue=   "Recent Searches"
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         Text            =   ""
+         Tooltip         =   ""
+         Top             =   10
+         Transparent     =   False
+         Visible         =   True
+         Width           =   250
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
+      End
+      Begin OmniBar TabsToolbar
+         Alignment       =   1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         BackgroundColor =   ""
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   41
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   360
+         LeftPadding     =   -1
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RightPadding    =   -1
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   180
+      End
+      Begin FadedSeparator StatusSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   401
+         Transparent     =   True
+         Visible         =   True
+         Width           =   900
+      End
+      Begin DesktopLabel StatusLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Loading Blueprints"
+         TextAlignment   =   2
+         TextColor       =   &c000000
+         Tooltip         =   ""
+         Top             =   407
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   860
+      End
+      Begin OmniBar ButtonsToolbar
+         Alignment       =   0
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         BackgroundColor =   ""
+         ContentHeight   =   0
+         Enabled         =   True
+         Height          =   41
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LeftPadding     =   -1
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         RightPadding    =   0
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   360
+      End
+      Begin BeaconListbox BlueprintList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   False
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   2
+         ColumnWidths    =   "*,*"
+         DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   False
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   0
+         Height          =   360
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Name	Class String"
+         Italic          =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PageSize        =   100
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   1
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         TotalPages      =   -1
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   900
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin DesktopLabel DiscoveryStatusLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   262
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Initializing"
+         TextAlignment   =   2
+         TextColor       =   &c000000
+         Tooltip         =   ""
+         Top             =   190
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   375
+      End
+      Begin DesktopProgressBar DiscoveryStatusBar
+         AllowAutoDeactivate=   True
+         AllowTabStop    =   True
+         Enabled         =   True
+         Height          =   20
+         Indeterminate   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   262
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumValue    =   100
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         Tooltip         =   ""
+         Top             =   222
+         Transparent     =   False
+         Value           =   0.0
+         Visible         =   True
+         Width           =   375
+      End
    End
 End
 #tag EndDesktopWindow
@@ -297,6 +388,16 @@ End
 		  Self.ViewTitle = Self.mController.ContentPackName
 		  Self.SwitchMode(Ark.BlueprintController.ModeEngrams)
 		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Var Group As New ControlGroup(Self.DiscoveryStatusLabel, Self.DiscoveryStatusBar)
+		  Group.Top = (Self.Height - Group.Height) / 3
+		  Group.Left = (Self.Width - Group.Width) / 2
 		End Sub
 	#tag EndEvent
 
@@ -377,7 +478,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Ark.BlueprintController)
 		  Self.mBlueprints.ResizeTo(Ark.BlueprintController.LastMode)
-		  Self.mHasRequestBlueprints.ResizeTo(Ark.BlueprintController.LastMode)
+		  Self.mHasRequestedBlueprints.ResizeTo(Ark.BlueprintController.LastMode)
 		  Self.mLoadTotals.ResizeTo(Ark.BlueprintController.LastMode)
 		  For Idx As Integer = Ark.BlueprintController.FirstMode To Ark.BlueprintController.LastMode
 		    Self.mBlueprints(Idx) = New Dictionary
@@ -650,7 +751,7 @@ End
 		Private Sub Reload()
 		  For Idx As Integer = Ark.BlueprintController.FirstMode To Ark.BlueprintController.LastMode
 		    Self.mBlueprints(Idx) = New Dictionary
-		    Self.mHasRequestBlueprints(Idx) = False
+		    Self.mHasRequestedBlueprints(Idx) = False
 		  Next
 		  
 		  Self.SwitchMode(Self.mMode)
@@ -664,30 +765,23 @@ End
 		    Return
 		  End If
 		  
-		  Var NotFullyLoaded As Boolean
-		  For Mode As Integer = Ark.BlueprintController.FirstMode To Ark.BlueprintController.LastMode
-		    If Self.mHasRequestBlueprints(Mode) = False Then
-		      NotFullyLoaded = True
-		      Self.mLoadTotals(Mode) = -2
-		      Self.mController.LoadBlueprints(Mode, 1, Self.PageSize)
-		      Self.mHasRequestBlueprints(Mode) = True
-		    End If
-		  Next
-		  If NotFullyLoaded Then
-		    Self.ShowAlert("Not all blueprints have been loaded", "Some blueprints have not yet been loaded. They will start to download now. Try mod discovery again in a moment.")
-		    Return
-		  End If
-		  
-		  Var Settings As Ark.ModDiscoverySettings = ArkModDiscoveryDialog.Present(Self, Self.mController.MarketplaceId)
+		  Var Settings As Ark.ModDiscoverySettings = ArkModDiscoveryDialog.Present(Self.TrueWindow, Self.mController.MarketplaceId)
 		  If Settings Is Nil Then
 		    Return
 		  End If
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Not Implemented"
-		  #else
-		    #Pragma Error "Not Implemented"
-		  #endif
+		  For Mode As Integer = Ark.BlueprintController.FirstMode To Ark.BlueprintController.LastMode
+		    If Self.mHasRequestedBlueprints(Mode) = False Then
+		      Self.mLoadTotals(Mode) = -2
+		      Self.mController.LoadBlueprints(Mode, 1, Self.PageSize)
+		      Self.mHasRequestedBlueprints(Mode) = True
+		    End If
+		  Next
+		  
+		  Var ModIds() As String = Settings.ModIds
+		  Var ArkFolder As FolderItem = Settings.ArkFolder
+		  Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
+		  Self.DiscoveryEngine.Start(ArkFolder, ModIds)
 		End Sub
 	#tag EndMethod
 
@@ -711,10 +805,10 @@ End
 		    SpawnPointsButton.Toggled = (Mode = Ark.BlueprintController.ModeSpawnPoints)
 		  End If
 		  
-		  If Self.mHasRequestBlueprints(Mode) = False Then
+		  If Self.mHasRequestedBlueprints(Mode) = False Then
 		    Self.mLoadTotals(Mode) = -2
 		    Self.mController.LoadBlueprints(Mode, 1, Self.PageSize)
-		    Self.mHasRequestBlueprints(Mode) = True
+		    Self.mHasRequestedBlueprints(Mode) = True
 		  End If
 		  
 		  Self.mMode = Mode
@@ -895,11 +989,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDiscoveryShouldDelete As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHasBeenShown As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHasRequestBlueprints() As Boolean
+		Private mHasRequestedBlueprints() As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -929,6 +1027,301 @@ End
 
 #tag EndWindowCode
 
+#tag Events ImporterThread
+	#tag Event
+		Sub Run()
+		  Self.mImporter = Ark.BlueprintImporter.Import(Self.mContentToImport, Self.mProgress)
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value("Action") = "Finished"
+		  Me.AddUserInterfaceUpdate(Dict)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    Var Action As String = Dict.Lookup("Action", "").StringValue
+		    Select Case Action
+		    Case "Finished"
+		      Var Cancelled As Boolean = Self.mProgress.CancelPressed
+		      Self.mProgress.Close
+		      Self.mProgress = Nil
+		      
+		      Self.Progress = BeaconSubview.ProgressNone
+		      
+		      If Cancelled = False Then
+		        If Self.mImporter Is Nil Or Self.mImporter.BlueprintCount = 0 Then
+		          Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
+		        ElseIf Self.mImporter.ModCount = 1 Then
+		          // Just import what was found
+		          Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
+		          Try
+		            Self.mController.SaveBlueprints(FoundBlueprints)
+		            Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(FoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
+		          Catch Err As RuntimeException
+		            App.Log(Err, CurrentMethodName, "Saving imported blueprints")
+		            Self.ShowAlert("Could not save imported blueprints", Err.Message)
+		          End Try
+		        Else
+		          // Show a prompt
+		          Var ChosenTags() As String = ArkSelectModPrefixDialog.Present(Self, Self.mImporter)
+		          If ChosenTags.Count > 0 Then
+		            Var ChosenBlueprints() As Ark.Blueprint
+		            Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
+		            For Each Tag As String In ChosenTags
+		              Var Prefix As String = "/Game/Mods/" + Tag + "/"
+		              For Each Blueprint As Ark.Blueprint In FoundBlueprints
+		                If Blueprint.Path.BeginsWith(Prefix) = False Then
+		                  Continue
+		                End If
+		                
+		                ChosenBlueprints.Add(Blueprint)
+		              Next Blueprint
+		            Next Tag
+		            
+		            Try
+		              Self.mController.SaveBlueprints(ChosenBlueprints)
+		              Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(ChosenBlueprints.Count, "blueprint", "blueprints") + " to import.")
+		            Catch Err As RuntimeException
+		              App.Log(Err, CurrentMethodName, "Saving imported blueprints")
+		              Self.ShowAlert("Could not save imported blueprints", Err.Message)
+		            End Try
+		          End If
+		        End If
+		      End If
+		      
+		      Self.mImporter = Nil
+		    End Select
+		  Next Dict
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DiscoveryEngine
+	#tag Event
+		Sub Error(ErrorMessage As String)
+		  Self.ShowAlert("There was an error with mod discovery", ErrorMessage)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished()
+		  Self.Pages.SelectedPanelIndex = 0
+		  Self.UpdateUI
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Import(LogContents As String)
+		  Var Importer As Ark.BlueprintImporter = Ark.BlueprintImporter.ImportAsDataDumper(LogContents)
+		  If Importer Is Nil Or Importer.BlueprintCount = 0 Then
+		    Return
+		  End If
+		  
+		  // Wait for the controller to be finished
+		  While Self.mController.IsBusy
+		    Thread.Current.Sleep(100)
+		  Wend
+		  
+		  Var CurrentBlueprints() As Ark.Blueprint = Self.mController.AllBlueprints
+		  Var CurrentBlueprintMap As New Dictionary
+		  For Each Blueprint As Ark.Blueprint In CurrentBlueprints
+		    CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
+		  Next
+		  
+		  Var Pack As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Self.mController.ContentPackId)
+		  Var PathPrefix As String = "/Game/Mods/" + Me.GetTagForModId(Self.mController.MarketplaceId) + "/"
+		  Var Blueprints() As Ark.Blueprint = Importer.Blueprints
+		  Var NewBlueprints() As Ark.Blueprint
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Try
+		      Var Path As String = Blueprint.Path
+		      If Path.BeginsWith(PathPrefix) = False Then
+		        Continue
+		      End If
+		      
+		      Var OriginalBlueprint As Ark.Blueprint
+		      If CurrentBlueprintMap.HasKey(Path) Then
+		        OriginalBlueprint = CurrentBlueprintMap.Value(Path)
+		        CurrentBlueprintMap.Remove(Path)
+		      End If
+		      
+		      Var Mutable As Ark.MutableBlueprint
+		      If (OriginalBlueprint Is Nil) = False Then
+		        Mutable = OriginalBlueprint.MutableVersion
+		        Mutable.Label = Blueprint.Label
+		        #Pragma Warning "Import more than just the name"
+		      Else
+		        Mutable = Blueprint.MutableVersion
+		        Mutable.ContentPackName = Pack.Name
+		        Mutable.ContentPackId = Pack.ContentPackId
+		        Mutable.RegenerateBlueprintId()
+		      End If
+		      NewBlueprints.Add(Mutable)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Preparing blueprint to save")
+		    End Try
+		  Next
+		  Self.mController.SaveBlueprints(NewBlueprints)
+		  
+		  If Self.mDiscoveryShouldDelete Then
+		    Var DeleteBlueprints() As Ark.Blueprint
+		    Var DeleteBlueprintIds As New Dictionary
+		    For Each Entry As DictionaryEntry In CurrentBlueprintMap
+		      DeleteBlueprints.Add(Ark.Blueprint(Entry.Value))
+		      DeleteBlueprintIds.Value(Ark.Blueprint(Entry.Value).BlueprintId) = True
+		    Next
+		    Self.mController.DeleteBlueprints(DeleteBlueprints)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		  Self.Pages.SelectedPanelIndex = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub StatusUpdated()
+		  Self.DiscoveryStatusLabel.Text = Me.StatusMessage
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TabsToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateTab("EngramsButton", "Engrams"))
+		  Me.Append(OmniBarItem.CreateTab("CreaturesButton", "Creatures"))
+		  Me.Append(OmniBarItem.CreateTab("LootDropsButton", "Loot Drops"))
+		  Me.Append(OmniBarItem.CreateTab("SpawnPointsButton", "Spawn Points"))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  
+		  Me.Item("EngramsButton").Toggled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Self.BlueprintList.ScrollPosition = 0
+		  Select Case Item.Name
+		  Case "EngramsButton"
+		    Self.SwitchMode(Ark.BlueprintController.ModeEngrams)
+		  Case "CreaturesButton"
+		    Self.SwitchMode(Ark.BlueprintController.ModeCreatures)
+		  Case "LootDropsButton"
+		    Self.SwitchMode(Ark.BlueprintController.ModeLootDrops)
+		  Case "SpawnPointsButton"
+		    Self.SwitchMode(Ark.BlueprintController.ModeSpawnPoints)
+		  End Select
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ButtonsToolbar
+	#tag Event
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateButton("AddBlueprint", "New Blueprint", IconToolbarAdd, "Create a new blueprint."))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  If Self.mController.UseSaveTerminology Then
+		    Me.Append(OmniBarItem.CreateButton("Publish", "Save", IconToolbarSaveToDisk, "Save your changes.", False))
+		  Else
+		    Me.Append(OmniBarItem.CreateButton("Publish", "Publish", IconToolbarPublish, "Publish your changes to Beacon's users.", False))
+		  End If
+		  Me.Append(OmniBarItem.CreateButton("Discard", "Revert", IconToolbarRevert, "Revert your changes.", False))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("Import", "Import", IconToolbarImport, "Import blueprints from a file, url, or your " + Language.Clipboard.Lowercase + "."))
+		  Me.Append(OmniBarItem.CreateButton("ExportFile", "Export", IconToolbarExport, "Export selected blueprints to a file on your computer."))
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "AddBlueprint"
+		    Var Blueprint As Ark.Blueprint = ArkBlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
+		    If (Blueprint Is Nil) = False Then
+		      Try
+		        Self.mController.SaveBlueprint(Blueprint)
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Saving new blueprint")
+		        Self.ShowAlert("Could not save blueprint", Err.Message)
+		        Return
+		      End Try
+		      
+		      Var DesiredMode As Integer = Self.ModeForBlueprint(Blueprint)
+		      If DesiredMode <> Self.mMode Then
+		        Self.SwitchMode(DesiredMode)
+		      End If
+		    End If
+		  Case "Import"
+		    Var ImportFileItem As New DesktopMenuItem("Import From File")
+		    Var ImportUrlItem As New DesktopMenuItem("Import From URL")
+		    Var ImportClipboardItem As New DesktopMenuItem("Import From " + Language.Clipboard)
+		    Var DiscoverItem As DesktopMenuItem
+		    ImportClipboardItem.Enabled = Self.ClipboardHasCodes
+		    
+		    Var ImportMenu As New DesktopMenuItem
+		    ImportMenu.AddMenu(ImportFileItem)
+		    ImportMenu.AddMenu(ImportUrlItem)
+		    ImportMenu.AddMenu(ImportClipboardItem)
+		    
+		    #if TargetWindows
+		      ImportMenu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
+		      
+		      DiscoverItem = New DesktopMenuItem("Run Mod Discovery")
+		      DiscoverItem.Enabled = Self.mController.Marketplace = Beacon.MarketplaceSteamWorkshop And Self.mController.MarketplaceId.IsEmpty = False
+		      ImportMenu.AddMenu(DiscoverItem)
+		    #endif
+		    
+		    Var Position As Point = Me.GlobalPosition
+		    Var Choice As DesktopMenuItem = ImportMenu.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    If (Choice Is Nil) = False Then
+		      Select Case Choice
+		      Case ImportFileItem
+		        Self.ImportFromFile()
+		      Case ImportUrlItem
+		        Self.ImportFromURL()
+		      Case ImportClipboardItem
+		        Self.ImportFromClipboard()
+		      Case DiscoverItem
+		        #if TargetWindows
+		          Self.StartDiscovery()
+		        #endif
+		      End Select
+		    End If
+		  Case "ExportFile"
+		    Self.Export()
+		  Case "Publish"
+		    Try
+		      Self.mController.Publish()
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Publishing changes")
+		      If Self.mController.UseSaveTerminology Then
+		        Self.ShowAlert("Could not save changes", Err.Message)
+		      Else
+		        Self.ShowAlert("Could not publish changes", Err.Message)
+		      End If
+		      Return
+		    End Try
+		  Case "Discard"
+		    Try
+		      Self.mController.DiscardChanges()
+		      Self.Reload()
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reverting changes")
+		      Self.ShowAlert("Could not revert changes", Err.Message)
+		      Return
+		    End Try
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events BlueprintList
 	#tag Event
 		Function CanDelete() As Boolean
@@ -1043,213 +1436,6 @@ End
 	#tag Event
 		Sub SelectionChanged()
 		  Self.UpdateUI()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ButtonsToolbar
-	#tag Event
-		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("AddBlueprint", "New Blueprint", IconToolbarAdd, "Create a new blueprint."))
-		  Me.Append(OmniBarItem.CreateSeparator)
-		  If Self.mController.UseSaveTerminology Then
-		    Me.Append(OmniBarItem.CreateButton("Publish", "Save", IconToolbarSaveToDisk, "Save your changes.", False))
-		  Else
-		    Me.Append(OmniBarItem.CreateButton("Publish", "Publish", IconToolbarPublish, "Publish your changes to Beacon's users.", False))
-		  End If
-		  Me.Append(OmniBarItem.CreateButton("Discard", "Revert", IconToolbarRevert, "Revert your changes.", False))
-		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("Import", "Import", IconToolbarImport, "Import blueprints from a file, url, or your " + Language.Clipboard.Lowercase + "."))
-		  Me.Append(OmniBarItem.CreateButton("ExportFile", "Export", IconToolbarExport, "Export selected blueprints to a file on your computer."))
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  Select Case Item.Name
-		  Case "AddBlueprint"
-		    Var Blueprint As Ark.Blueprint = ArkBlueprintEditorDialog.Present(Self, Self.mController.ContentPackId, Self.mController.ContentPackName)
-		    If (Blueprint Is Nil) = False Then
-		      Try
-		        Self.mController.SaveBlueprint(Blueprint)
-		      Catch Err As RuntimeException
-		        App.Log(Err, CurrentMethodName, "Saving new blueprint")
-		        Self.ShowAlert("Could not save blueprint", Err.Message)
-		        Return
-		      End Try
-		      
-		      Var DesiredMode As Integer = Self.ModeForBlueprint(Blueprint)
-		      If DesiredMode <> Self.mMode Then
-		        Self.SwitchMode(DesiredMode)
-		      End If
-		    End If
-		  Case "Import"
-		    Var ImportFileItem As New DesktopMenuItem("Import From File")
-		    Var ImportUrlItem As New DesktopMenuItem("Import From URL")
-		    Var ImportClipboardItem As New DesktopMenuItem("Import From " + Language.Clipboard)
-		    Var DiscoverItem As DesktopMenuItem
-		    ImportClipboardItem.Enabled = Self.ClipboardHasCodes
-		    
-		    Var ImportMenu As New DesktopMenuItem
-		    ImportMenu.AddMenu(ImportFileItem)
-		    ImportMenu.AddMenu(ImportUrlItem)
-		    ImportMenu.AddMenu(ImportClipboardItem)
-		    
-		    #if TargetWindows
-		      ImportMenu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
-		      
-		      DiscoverItem = New DesktopMenuItem("Run Mod Discovery")
-		      DiscoverItem.Enabled = Self.mController.Marketplace = Beacon.MarketplaceSteamWorkshop And Self.mController.MarketplaceId.IsEmpty = False
-		      ImportMenu.AddMenu(DiscoverItem)
-		    #endif
-		    
-		    Var Position As Point = Me.GlobalPosition
-		    Var Choice As DesktopMenuItem = ImportMenu.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
-		    If (Choice Is Nil) = False Then
-		      Select Case Choice
-		      Case ImportFileItem
-		        Self.ImportFromFile()
-		      Case ImportUrlItem
-		        Self.ImportFromURL()
-		      Case ImportClipboardItem
-		        Self.ImportFromClipboard()
-		      Case DiscoverItem
-		        #if TargetWindows
-		          Self.StartDiscovery()
-		        #endif
-		      End Select
-		    End If
-		  Case "ExportFile"
-		    Self.Export()
-		  Case "Publish"
-		    Try
-		      Self.mController.Publish()
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Publishing changes")
-		      If Self.mController.UseSaveTerminology Then
-		        Self.ShowAlert("Could not save changes", Err.Message)
-		      Else
-		        Self.ShowAlert("Could not publish changes", Err.Message)
-		      End If
-		      Return
-		    End Try
-		  Case "Discard"
-		    Try
-		      Self.mController.DiscardChanges()
-		      Self.Reload()
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reverting changes")
-		      Self.ShowAlert("Could not revert changes", Err.Message)
-		      Return
-		    End Try
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ImporterThread
-	#tag Event
-		Sub Run()
-		  Self.mImporter = Ark.BlueprintImporter.Import(Self.mContentToImport, Self.mProgress)
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("Action") = "Finished"
-		  Me.AddUserInterfaceUpdate(Dict)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub UserInterfaceUpdate(data() as Dictionary)
-		  For Each Dict As Dictionary In Data
-		    Var Action As String = Dict.Lookup("Action", "").StringValue
-		    Select Case Action
-		    Case "Finished"
-		      Var Cancelled As Boolean = Self.mProgress.CancelPressed
-		      Self.mProgress.Close
-		      Self.mProgress = Nil
-		      
-		      Self.Progress = BeaconSubview.ProgressNone
-		      
-		      If Cancelled = False Then
-		        If Self.mImporter Is Nil Or Self.mImporter.BlueprintCount = 0 Then
-		          Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
-		        ElseIf Self.mImporter.ModCount = 1 Then
-		          // Just import what was found
-		          Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
-		          Try
-		            Self.mController.SaveBlueprints(FoundBlueprints)
-		            Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(FoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
-		          Catch Err As RuntimeException
-		            App.Log(Err, CurrentMethodName, "Saving imported blueprints")
-		            Self.ShowAlert("Could not save imported blueprints", Err.Message)
-		          End Try
-		        Else
-		          // Show a prompt
-		          Var ChosenTags() As String = ArkSelectModPrefixDialog.Present(Self, Self.mImporter)
-		          If ChosenTags.Count > 0 Then
-		            Var ChosenBlueprints() As Ark.Blueprint
-		            Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
-		            For Each Tag As String In ChosenTags
-		              Var Prefix As String = "/Game/Mods/" + Tag + "/"
-		              For Each Blueprint As Ark.Blueprint In FoundBlueprints
-		                If Blueprint.Path.BeginsWith(Prefix) = False Then
-		                  Continue
-		                End If
-		                
-		                ChosenBlueprints.Add(Blueprint)
-		              Next Blueprint
-		            Next Tag
-		            
-		            Try
-		              Self.mController.SaveBlueprints(ChosenBlueprints)
-		              Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(ChosenBlueprints.Count, "blueprint", "blueprints") + " to import.")
-		            Catch Err As RuntimeException
-		              App.Log(Err, CurrentMethodName, "Saving imported blueprints")
-		              Self.ShowAlert("Could not save imported blueprints", Err.Message)
-		            End Try
-		          End If
-		        End If
-		      End If
-		      
-		      Self.mImporter = Nil
-		    End Select
-		  Next Dict
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TabsToolbar
-	#tag Event
-		Sub Opening()
-		  Me.Append(OmniBarItem.CreateFlexibleSpace)
-		  Me.Append(OmniBarItem.CreateTab("EngramsButton", "Engrams"))
-		  Me.Append(OmniBarItem.CreateTab("CreaturesButton", "Creatures"))
-		  Me.Append(OmniBarItem.CreateTab("LootDropsButton", "Loot Drops"))
-		  Me.Append(OmniBarItem.CreateTab("SpawnPointsButton", "Spawn Points"))
-		  Me.Append(OmniBarItem.CreateFlexibleSpace)
-		  
-		  Me.Item("EngramsButton").Toggled = True
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
-		  
-		  Self.BlueprintList.ScrollPosition = 0
-		  Select Case Item.Name
-		  Case "EngramsButton"
-		    Self.SwitchMode(Ark.BlueprintController.ModeEngrams)
-		  Case "CreaturesButton"
-		    Self.SwitchMode(Ark.BlueprintController.ModeCreatures)
-		  Case "LootDropsButton"
-		    Self.SwitchMode(Ark.BlueprintController.ModeLootDrops)
-		  Case "SpawnPointsButton"
-		    Self.SwitchMode(Ark.BlueprintController.ModeSpawnPoints)
-		  End Select
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FilterField
-	#tag Event
-		Sub TextChanged()
-		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -481,6 +481,7 @@ End
 		  
 		  Try
 		    Var ArkFolder As FolderItem = Settings.ArkFolder
+		    Self.mDiscoveryShouldDelete = Settings.DeleteBlueprints
 		    Self.DiscoveryEngine.Start(ArkFolder, ModIds)
 		  Catch Err As RuntimeException
 		    Self.ShowAlert("Beacon could not start mod discovery", Err.Message)
@@ -510,6 +511,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDiscoveredMods() As Beacon.ContentPack
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDiscoveryShouldDelete As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -814,10 +819,12 @@ End
 		  
 		  Var BlueprintsToDelete() As Ark.Blueprint
 		  Var DeleteBlueprintIDs As New Dictionary
-		  For Each Entry As DictionaryEntry In CurrentBlueprintMap
-		    BlueprintsToDelete.Add(Ark.Blueprint(Entry.Value))
-		    DeleteBlueprintIDs.Value(Ark.Blueprint(Entry.Value).BlueprintId) = True
-		  Next
+		  If Self.mDiscoveryShouldDelete Then
+		    For Each Entry As DictionaryEntry In CurrentBlueprintMap
+		      BlueprintsToDelete.Add(Ark.Blueprint(Entry.Value))
+		      DeleteBlueprintIDs.Value(Ark.Blueprint(Entry.Value).BlueprintId) = True
+		    Next
+		  End If
 		  
 		  Var Errors As New Dictionary
 		  Call Database.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
@@ -869,7 +876,7 @@ End
 		Sub Started()
 		  Self.mProgress = New ProgressWindow("Running mod discovery", Me.StatusMessage)
 		  AddHandler mProgress.CancelPressed, WeakAddressOf mProgress_CancelPressed
-		  Self.mProgress.Show(Self)
+		  Self.mProgress.Show(Self.TrueWindow)
 		End Sub
 	#tag EndEvent
 	#tag Event
