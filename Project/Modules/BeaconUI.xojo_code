@@ -684,6 +684,17 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ViewIcon(Extends Url As Beacon.ProjectUrl) As Picture
+		  Select Case Url.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared, Beacon.ProjectURL.TypeWeb
+		    Return IconCloudDocument
+		  Case Beacon.ProjectURL.TypeCommunity
+		    Return IconCommunityDocument
+		  End Select
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function WebContentSupported() As Boolean
 		  #if TargetMacOS

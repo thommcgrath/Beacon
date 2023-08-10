@@ -19,11 +19,18 @@ Protected Class Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Dictionary)
+		Sub Constructor(Source As Dictionary, ActiveUserId As String)
 		  Self.mProjectId = Source.Value("projectId")
 		  Self.mGameId = Source.Value("gameId")
-		  Self.mUserID = Source.Value("userId")
+		  Self.mUserId = Source.Value("userId")
 		  Self.mOwnerId = Source.Value("ownerId")
+		  If Self.mOwnerId = ActiveUserId Then
+		    Self.mType = Self.TypeOwned
+		  ElseIf Self.mUserId = ActiveUserId Then
+		    Self.mType = Self.TypeGuest
+		  Else
+		    Self.mType = Self.TypeCommunity
+		  End If
 		  Self.mName = Source.Value("name")
 		  Self.mDescription = Source.Value("description")
 		  Self.mRevision = Source.Value("revision")
@@ -59,8 +66,8 @@ Protected Class Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsGuest() As Boolean
-		  Return Self.mUserId <> Self.mOwnerId
+		Attributes( Deprecated = "Type" )  Function IsGuest() As Boolean
+		  Return Self.mType = Self.TypeGuest
 		End Function
 	#tag EndMethod
 
@@ -117,8 +124,22 @@ Protected Class Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function URL(Scheme As String = "https") As String
-		  Return BeaconAPI.URL("/projects/" + Self.mProjectId + "?name=" + EncodeURLComponent(Self.mName), True, Scheme)
+		Function Type() As Integer
+		  Return Self.mType
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function URL() As Beacon.ProjectUrl
+		  Var Type As String = Beacon.ProjectURL.TypeCloud
+		  Select Case Self.mType
+		  Case Self.TypeGuest
+		    Type = Beacon.ProjectURL.TypeShared
+		  Case Self.TypeCommunity
+		    Type = Beacon.ProjectURL.TypeCommunity
+		  End Select
+		  Return New Beacon.ProjectUrl(Self.mGameId, Self.mName, BeaconAPI.URL("/projects/" + EncodeURLComponent(Self.mProjectId)), Self.mProjectId, "", Type)
+		  
 		End Function
 	#tag EndMethod
 
@@ -184,6 +205,10 @@ Protected Class Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mType As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUserId As String
 	#tag EndProperty
 
@@ -201,6 +226,15 @@ Protected Class Project
 	#tag EndConstant
 
 	#tag Constant, Name = PublishStatePrivate, Type = String, Dynamic = False, Default = \"Private", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeCommunity, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeGuest, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeOwned, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
 

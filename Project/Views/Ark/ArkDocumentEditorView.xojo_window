@@ -323,7 +323,7 @@ End
 		    Var LastConfigName As String = Preferences.ProjectState(ProjectId, "Editor", "")
 		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(ProjectId, "Config Set", "").StringValue)
 		    If LastConfigName.IsEmpty Or LastConfigSet Is Nil Then
-		      If Self.URL.Scheme = Beacon.ProjectURL.TypeWeb Then
+		      If Self.URL.Type.OneOf(Beacon.ProjectURL.TypeWeb, Beacon.ProjectURL.TypeCommunity) Then
 		        LastConfigName = Ark.Configs.NameMetadataPsuedo
 		      Else
 		        LastConfigName = Ark.Configs.NameLootDrops
@@ -1091,7 +1091,7 @@ End
 			  Self.ConfigSetPicker.Refresh
 			  Self.UpdateConfigList
 			  
-			  If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
+			  If (Self.Project Is Nil) = False And Self.Controller.URL.Type <> Beacon.ProjectURL.TypeTransient Then
 			    Preferences.ProjectState(Self.Project.ProjectId, "Config Set") = Value.Name
 			  End If
 			  
@@ -1124,7 +1124,7 @@ End
 			  If Value.IsEmpty = False Then
 			    Var CacheKey As String = Self.ActiveConfigSet.ConfigSetId + ":" + Value
 			    
-			    If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
+			    If (Self.Project Is Nil) = False And Self.Controller.URL.Type <> Beacon.ProjectURL.TypeTransient Then
 			      Preferences.ProjectState(Self.Project.ProjectId, "Editor") = Value
 			    End If
 			    
@@ -1450,9 +1450,9 @@ End
 		  Case "ExportButton"
 		    Self.BeginExport()
 		  Case "ShareButton"
-		    If Self.URL.Scheme = Beacon.ProjectURL.TypeCloud Then
+		    If Self.URL.Type.OneOf(Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared) Then
 		      SharingDialog.Present(Self, Self.Project)
-		    ElseIf Self.URL.Scheme = Beacon.ProjectURL.TypeLocal Then
+		    ElseIf Self.URL.Type = Beacon.ProjectURL.TypeLocal Then
 		      Self.ShowAlert("Project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
 		    Else
 		      Self.ShowAlert("Project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")

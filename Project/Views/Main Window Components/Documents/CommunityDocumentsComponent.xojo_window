@@ -274,6 +274,7 @@ End
 		  End Try
 		  
 		  Var StartIdx As Integer = Self.List.RowIndexOfPage(Page)
+		  Var UserId As String = App.IdentityManager.CurrentUserId
 		  For Idx As Integer = 0 To Results.LastIndex
 		    Var RowIdx As Integer = StartIdx + Idx
 		    If IsNull(Results(Idx)) Or Results(Idx).Type <> Variant.TypeObject Or (Results(Idx) IsA Dictionary) = False Then
@@ -287,7 +288,7 @@ End
 		    End If
 		    
 		    Try
-		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue))
+		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue), UserId)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
 		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
 		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
@@ -453,7 +454,7 @@ End
 		    End If
 		    
 		    Var Project As BeaconAPI.Project = Me.RowTagAt(Row)
-		    Self.OpenProject(Project.URL)
+		    Self.OpenProject(Project.Url())
 		  Next
 		End Sub
 	#tag EndEvent

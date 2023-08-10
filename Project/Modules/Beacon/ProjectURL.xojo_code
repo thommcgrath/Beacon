@@ -1,83 +1,143 @@
 #tag Class
 Protected Class ProjectURL
 	#tag Method, Flags = &h0
+		Sub Constructor(Dict As Dictionary)
+		  Self.mGameId = Dict.Value("GameId")
+		  Self.mName = Dict.Value("Name")
+		  Self.mPath = Dict.Value("Path")
+		  Self.mProjectId = Dict.Value("ProjectId")
+		  Self.mSaveInfo = Dict.Value("SaveInfo")
+		  Self.mType = Dict.Value("Type")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(URL As String)
-		  Var Pos As Integer = URL.IndexOf("://")
-		  If Pos = -1 Then
-		    #if Not TargetIOS
-		      // Try as Xojo SaveInfo
-		      Try
-		        Var StringValue As String = URL
-		        Var File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(StringValue))
-		        If File <> Nil Then
-		          URL = URLForFile(New BookmarkedFolderItem(File))
-		          Pos = URL.IndexOf("://")
-		        End If
-		      Catch Err As RuntimeException
-		        
-		      End Try
-		    #endif
-		    
-		    If Pos = -1 Then
-		      Var Err As New UnsupportedFormatException
-		      Err.Message = "Unable to determine scheme from URL " + URL
-		      Raise Err
-		    End If
+		  If Url.BeginsWith("{") And Url.EndsWith("}") Then
+		    // Newer Json style
+		    Var Dict As Dictionary = Beacon.ParseJson(Url)
+		    Self.Constructor(Dict)
+		    Return
 		  End If
 		  
-		  Self.mOriginalURL = URL
-		  Self.mQueryParams = New Dictionary
+		  Var Pos As Integer = URL.IndexOf("://")
+		  If Pos = -1 Then
+		    Var Err As New UnsupportedFormatException
+		    Err.Message = "Unable to determine scheme from URL " + URL
+		    Raise Err
+		  End If
 		  
-		  Self.mScheme = URL.Left(Pos)
-		  Self.mPath = URL.Middle(Pos + 3)
-		  Select Case Self.mScheme
-		  Case Self.TypeWeb, Self.TypeCloud, Self.TypeLocal, Self.TypeTransient
-		    // official types
-		  Case "http", "beacon"
-		    // also supported, change the scheme
-		    Self.mScheme = Self.TypeWeb
-		    Self.mOriginalURL = Self.TypeWeb + URL.Middle(Pos)
+		  Self.mPath = Url
+		  
+		  Var Scheme As String = URL.Left(Pos)
+		  Select Case Scheme
+		  Case "file"
+		    Self.mType = Self.TypeLocal
+		  Case "http", "https"
+		    Self.mType = Self.TypeWeb
+		  Case "beacon", "beacon-cloud"
+		    Self.mType = Self.TypeCloud
+		    Self.mPath = "https" + Self.mPath.Middle(Scheme.Length)
 		  Else
 		    Var Err As New UnsupportedFormatException
 		    Err.Message = "Unknown url scheme " + Scheme
 		    Raise Err
 		  End Select
 		  
-		  Pos = Self.mPath.IndexOf("?")
+		  Pos = Url.IndexOf("?")
 		  If Pos > -1 Then
-		    Self.mQueryString = Self.mPath.Middle(Pos + 1)
+		    Var QueryString As String = Self.mPath.Middle(Pos + 1)
 		    Self.mPath = Self.mPath.Left(Pos)
-		    Var Parts() As String = Self.mQueryString.Split("&")
+		    Var Parts() As String = QueryString.Split("&")
+		    Var QueryParams As New Dictionary
 		    For Each Part As String In Parts
 		      Pos = Part.IndexOf("=")
 		      If Pos = -1 Then
 		        Continue
 		      End If
 		      
-		      Var Key As String = DecodeURLComponent(Part.Left(Pos)).DefineEncoding(Encodings.UTF8)
-		      Var Value As String = DecodeURLComponent(Part.Middle(Pos + 1)).DefineEncoding(Encodings.UTF8)
+		      Var Key As String = DecodeURLComponent(Part.Left(Pos).ReplaceAll("+", " ")).DefineEncoding(Encodings.UTF8)
+		      Var Value As String = DecodeURLComponent(Part.Middle(Pos + 1).ReplaceAll("+", " ")).DefineEncoding(Encodings.UTF8)
 		      
-		      Self.mQueryParams.Value(Key.Lowercase) = Value
+		      QueryParams.Value(Key.Lowercase) = Value
 		    Next
+		    
+		    If QueryParams.HasKey("name") Then
+		      Self.mName = QueryParams.Value("name")
+		    End If
+		    If QueryParams.HasKey("game") Then
+		      Self.mGameId = QueryParams.Value("game")
+		    End If
+		    If QueryParams.HasKey("saveinfo") Then
+		      Self.mSaveInfo = QueryParams.Value("saveinfo")
+		    End If
 		  End If
 		  
-		  Var HashData As String = Self.URL(Beacon.ProjectURL.URLTypes.Comparison)
-		  Self.mHash = EncodeHex(Crypto.MD5(HashData))
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(GameId As String, Name As String, Path As String, ProjectId As String, SaveInfo As String, Type As String)
+		  Self.mGameId = GameId
+		  Self.mName = Name
+		  Self.mPath = Path
+		  Self.mProjectId = ProjectId
+		  Self.mSaveInfo = SaveInfo
+		  Self.mType = Type
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Create(Project As Beacon.Project, Url As Beacon.ProjectUrl) As Beacon.ProjectUrl
+		  Var Copy As New Beacon.ProjectUrl(Project.GameId, Project.Title, Url.mPath, Project.ProjectId, Url.mSaveInfo, Url.mType)
+		  Copy.Autosave = Url.Autosave
+		  Return Copy
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Create(Project As Beacon.Project, Destination As BookmarkedFolderItem) As Beacon.ProjectUrl
+		  Return New Beacon.ProjectUrl(Project.GameId, Project.Title, Destination.UrlPath, Project.ProjectId, Destination.SaveInfo, TypeLocal)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Create(Project As Beacon.Project, Path As String, Type As String, SaveInfo As String = "") As Beacon.ProjectUrl
+		  Return New Beacon.ProjectUrl(Project.GameId, Project.Title, Path, Project.ProjectId, SaveInfo, Type)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Create(Source As BookmarkedFolderItem) As Beacon.ProjectUrl
+		  Return New Beacon.ProjectUrl("", Source.Name, Source.UrlPath, "", Source.SaveInfo, TypeLocal)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DictionaryValue() As Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("GameId") = Self.mGameId
+		  Dict.Value("Name") = Self.mName
+		  Dict.Value("Path") = Self.mPath
+		  Dict.Value("ProjectId") = Self.mProjectId
+		  Dict.Value("SaveInfo") = Self.mSaveInfo
+		  Dict.Value("Type") = Self.mType
+		  Return Dict
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function File() As BookmarkedFolderItem
 		  // Will return Nil if the scheme is not file
-		  If Self.Scheme <> Self.TypeLocal Then
+		  If Self.mType <> Self.TypeLocal Then
 		    Return Nil
 		  End If
 		  
 		  Var Result As BookmarkedFolderItem
-		  If Self.HasParam("saveinfo") Then
-		    Result = BookmarkedFolderItem.FromSaveInfo(Self.Param("saveinfo"))
+		  If Self.mSaveInfo.IsEmpty = False Then
+		    Result = BookmarkedFolderItem.FromSaveInfo(Self.mSaveInfo)
 		  Else
-		    Result = New BookmarkedFolderItem(Self.Path, FolderItem.PathModes.URL)
+		    Result = New BookmarkedFolderItem(Self.mPath, FolderItem.PathModes.URL)
 		  End If
 		  
 		  Return Result
@@ -85,51 +145,13 @@ Protected Class ProjectURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
-		  Var Value As String
-		  
-		  If Self.HasParam("game") Then
-		    Value = Self.Param("game").Lowercase
-		  End If
-		  
-		  If Value = "" Then
+		Function GameId() As String
+		  If Self.mGameId.IsEmpty Then
 		    // Assume Ark
-		    Value = Ark.Identifier.Lowercase
+		    Self.mGameId = Ark.Identifier
 		  End If
 		  
-		  Return DecodeURLComponent(Value.ReplaceAll("+", " ")).DefineEncoding(Encodings.UTF8)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GameID(Assigns Value As String)
-		  If Value.IsEmpty Then
-		    Self.mQueryParams.Value("name") = Ark.Identifier.Lowercase
-		  Else
-		    Self.mQueryParams.Value("name") = Value.Lowercase
-		  End If
-		  
-		  Self.mQueryString = SimpleHTTP.BuildFormData(Self.mQueryParams)
-		  
-		  Var Pos As Integer = Self.mOriginalURL.IndexOf("?")
-		  If Pos > -1 Then
-		    Self.mOriginalURL = Self.mOriginalURL.Left(Pos)
-		  End If
-		  If Self.mQueryString <> "" Then
-		    Self.mOriginalURL = Self.mOriginalURL + "?" + Self.mQueryString
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Hash() As String
-		  Return Self.mHash
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HasParam(Key As String) As Boolean
-		  Return Self.mQueryParams.HasKey(Key.Lowercase)
+		  Return Self.mGameId
 		End Function
 	#tag EndMethod
 
@@ -137,62 +159,69 @@ Protected Class ProjectURL
 		Function HumanPath() As String
 		  // Not suitable for restoring a file, just a visual reference
 		  
-		  Select Case Self.Scheme
-		  Case TypeLocal
+		  If Self.mType = Self.TypeLocal Then
 		    Var File As FolderItem = Self.File
 		    If (File Is Nil) = False Then
 		      Return File.NativePath
 		    End If
-		    
 		    Return "Invalid Path"
-		  Case TypeWeb, TypeCloud
-		    Return Self.URL(URLTypes.Reading)
-		  End Select
+		  Else
+		    Return Self.mPath
+		  End If
+		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Name() As String
-		  Var Name As String
-		  
-		  If Self.HasParam("name") Then
-		    Name = Self.Param("name")
-		  End If
-		  
-		  If Name = "" Then
+		  If Self.mName.IsEmpty Then
 		    // Get the last path component
-		    Var Components() As String = Self.Path.Split("/")
-		    Name = Components(Components.LastIndex)
+		    Var Components() As String = Self.mPath.Split("/")
+		    Var Name As String = Components(Components.LastIndex)
 		    
 		    If Name.EndsWith(".beacon") Then
 		      Name = Name.Left(Name.Length - 7)
 		    End If
+		    
+		    Name = DecodeURLComponent(Name.ReplaceAll("+", " ")).DefineEncoding(Encodings.UTF8)
+		    Self.mName = Name
 		  End If
 		  
-		  Return DecodeURLComponent(Name.ReplaceAll("+", " ")).DefineEncoding(Encodings.UTF8)
+		  Return Self.mName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Name(Assigns Value As String)
-		  Self.Param("name") = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.ProjectURL) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  Return Self.mHash.Compare(Other.mHash, ComparisonOptions.CaseSensitive)
+		  If Self.mProjectId.IsEmpty = False Then
+		    Return Self.mProjectId.Compare(Other.mProjectId, ComparisonOptions.CaseInsensitive)
+		  Else
+		    Return Self.mPath.Compare(Other.mPath, ComparisonOptions.CaseSensitive)
+		  End If
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Convert() As Dictionary
+		  Return Self.DictionaryValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As String
-		  Return Self.URL(Beacon.ProjectURL.URLTypes.Unmodified)
+		  Return Self.StringValue
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Operator_Convert(Dict As Dictionary)
+		  Self.Constructor(Dict)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -202,116 +231,40 @@ Protected Class ProjectURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Param(Key As String) As String
-		  If Not Self.mQueryParams.HasKey(Key.Lowercase) Then
-		    Var Err As New KeyNotFoundException
-		    Err.Message = "Key " + Key + " not found in query parameters"
-		    Raise Err
-		  End If
-		  
-		  Return Self.mQueryParams.Value(Key.Lowercase)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Param(Key As String, Assigns Value As String)
-		  If Value.IsEmpty Then
-		    If Self.mQueryParams.HasKey(Key) Then
-		      Self.mQueryParams.Remove(Key)
-		    End If
-		  Else
-		    Self.mQueryParams.Value(Key) = Value
-		  End If
-		  
-		  Self.mQueryString = SimpleHTTP.BuildFormData(Self.mQueryParams)
-		  
-		  Var Pos As Integer = Self.mOriginalURL.IndexOf("?")
-		  If Pos > -1 Then
-		    Self.mOriginalURL = Self.mOriginalURL.Left(Pos)
-		  End If
-		  If Self.mQueryString <> "" Then
-		    Self.mOriginalURL = Self.mOriginalURL + "?" + Self.mQueryString
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Path() As String
-		  Return Self.mScheme + "://" + Self.mPath
+		  Return Self.mPath
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Scheme() As String
-		  Return Self.mScheme
+		Function ProjectId() As String
+		  Return Self.mProjectId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function URL(Purpose As Beacon.ProjectURL.URLTypes) As String
-		  If Purpose = Beacon.ProjectURL.URLTypes.Unmodified Or Self.mScheme = Self.TypeLocal Or Self.mScheme = Self.TypeTransient Then
-		    Return Self.mOriginalURL
-		  End If
-		  
-		  Var Pattern As New Regex
-		  Pattern.SearchPattern = "((beaconapp\.cc)|(usebeacon\.app))/v\d/([0-9A-Za-z]+/)?((document)|(project))/([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12})(/versions/([^\?/]+))?"
-		  
-		  Var Matches As RegexMatch = Pattern.Search(Self.mOriginalURL)
-		  If Matches Is Nil Then
-		    Return Self.mOriginalURL
-		  End If
-		  
-		  Var UUID As String = Matches.SubExpressionString(8)
-		  Var Path As String = "projects/" + UUID.Lowercase
-		  
-		  Select Case Purpose
-		  Case Beacon.ProjectURL.URLTypes.Reading
-		    // Return simplified url with version
-		    If Matches.SubExpressionCount >= 10 Then
-		      Path = Path + "/versions/" + Matches.SubExpressionString(10)
-		    End If
-		    Return BeaconAPI.URL(Path)
-		  Case Beacon.ProjectURL.URLTypes.Writing
-		    // Return simplified url
-		    Return BeaconAPI.URL(Path)
-		  Case Beacon.ProjectURL.URLTypes.Comparison
-		    // Simplify the url, but keep the scheme
-		    Var FullURL As String = BeaconAPI.URL(Path)
-		    Var OriginalScheme As String = Self.mOriginalURL.Left(Self.mOriginalURL.IndexOf("://"))
-		    Return OriginalScheme + FullURL.Middle(FullURL.IndexOf("://"))
-		  Case Beacon.ProjectURL.URLTypes.Storage
-		    // Same as comparison, but we append the name
-		    Var FullURL As String = BeaconAPI.URL(Path)
-		    Var OriginalScheme As String = Self.mOriginalURL.Left(Self.mOriginalURL.IndexOf("://"))
-		    Return OriginalScheme + FullURL.Middle(FullURL.IndexOf("://")) + "?name=" + EncodeURLComponent(Self.Name)
-		  End Select
+		Function StringValue() As String
+		  Return Beacon.GenerateJson(Self.DictionaryValue, False)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function URLForFile(File As BookmarkedFolderItem) As Beacon.ProjectURL
-		  Var Path As String = File.URLPath
-		  #if TargetMacOS
-		    Var SaveInfo As String = File.SaveInfo
-		    If SaveInfo <> "" Then
-		      If Path.IndexOf("?") = -1 Then
-		        Path = Path + "?saveinfo=" + SaveInfo
-		      Else
-		        Path = Path + "&saveinfo=" + SaveInfo
-		      End If
-		    End If
-		  #endif
-		  Return New Beacon.ProjectURL(Path)
+		Function Type() As String
+		  Return Self.mType
 		End Function
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
-		Private mHash As String
+	#tag Property, Flags = &h0
+		Autosave As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOriginalURL As String
+		Private mGameId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -319,22 +272,28 @@ Protected Class ProjectURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mQueryParams As Dictionary
+		Private mProjectId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mQueryString As String
+		Private mSaveInfo As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mScheme As String
+		Private mType As String
 	#tag EndProperty
 
 
 	#tag Constant, Name = TypeCloud, Type = String, Dynamic = False, Default = \"beacon-cloud", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = TypeCommunity, Type = String, Dynamic = False, Default = \"beacon-community", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = TypeLocal, Type = String, Dynamic = False, Default = \"file", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TypeShared, Type = String, Dynamic = False, Default = \"beacon-shared", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = TypeTransient, Type = String, Dynamic = False, Default = \"temp", Scope = Public
@@ -342,15 +301,6 @@ Protected Class ProjectURL
 
 	#tag Constant, Name = TypeWeb, Type = String, Dynamic = False, Default = \"https", Scope = Public
 	#tag EndConstant
-
-
-	#tag Enum, Name = URLTypes, Type = Integer, Flags = &h0
-		Comparison
-		  Writing
-		  Reading
-		  Unmodified
-		Storage
-	#tag EndEnum
 
 
 	#tag ViewBehavior

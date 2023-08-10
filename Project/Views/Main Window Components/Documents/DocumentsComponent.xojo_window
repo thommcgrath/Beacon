@@ -288,16 +288,10 @@ End
 		  
 		  Var View As DocumentEditorView = DocumentEditorView.Create(Sender)
 		  View.Modified = Sender.Project.Modified
-		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  View.LinkedOmniBarItem.CanBeClosed = True
 		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Modified
-		  
-		  Select Case Sender.URL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
-		    View.ViewIcon = IconCloudDocument
-		  Case Beacon.ProjectURL.TypeWeb
-		    View.ViewIcon = IconCommunityDocument
-		  End Select
+		  View.ViewIcon = Sender.URL.ViewIcon
 		  
 		  // Self.Views.AddPanel
 		  // Var PanelIndex As Integer = Self.Views.LastAddedPanelIndex
@@ -314,7 +308,7 @@ End
 		Private Sub Controller_LoadError(Sender As Beacon.ProjectController, Reason As String)
 		  Self.DetachControllerEvents(Sender)
 		  
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  If (NavItem Is Nil) = False Then
 		    Self.Nav.Remove(NavItem)
 		  End If
@@ -349,7 +343,7 @@ End
 		Private Sub Controller_LoadProgress(Sender As Beacon.ProjectController, BytesReceived As Int64, BytesTotal As Int64)
 		  #Pragma Unused Sender
 		  
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  If (NavItem Is Nil) = False Then
 		    NavItem.Progress = BytesReceived / BytesTotal
 		  End If
@@ -358,7 +352,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_LoadStarted(Sender As Beacon.ProjectController)
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  If NavItem Is Nil Then
 		    Return
 		  End If
@@ -512,7 +506,7 @@ End
 	#tag Method, Flags = &h0
 		Sub NewProject(Project As Beacon.Project)
 		  Var Controller As New Beacon.ProjectController(Project, App.IdentityManager.CurrentIdentity)
-		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Path, Controller.Name)
 		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
@@ -545,7 +539,7 @@ End
 		    Return
 		  End If
 		  
-		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Path, Controller.Name)
 		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
@@ -583,8 +577,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub OpenProject(URL As Beacon.ProjectURL, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
-		  Var Hash As String = URL.Hash
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Url.Path)
 		  If (NavItem Is Nil) = False Then
 		    // We've already started loading this item
 		    For Idx As Integer = 0 To Self.LastPageIndex
@@ -633,7 +626,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub OpenProject(File As FolderItem, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
-		  Var URL As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(File))
+		  Var URL As Beacon.ProjectURL = Beacon.ProjectURL.Create(New BookmarkedFolderItem(File))
 		  Self.OpenProject(URL, AddToRecents, Actions)
 		End Sub
 	#tag EndMethod
@@ -661,8 +654,8 @@ End
 		    For Idx As Integer = 0 To Files.LastIndex
 		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(Files(Idx))
 		      
-		      Var FileURL As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(File)
-		      App.Log("Attempting to restore autosave " + FileURL.URL(Beacon.ProjectURL.URLTypes.Reading))
+		      Var FileURL As Beacon.ProjectURL = Beacon.ProjectURL.Create(File)
+		      App.Log("Attempting to restore autosave " + FileURL.Path)
 		      
 		      Var Controller As New Beacon.ProjectController(FileURL, App.IdentityManager.CurrentIdentity)
 		      Controller.AutosaveURL = FileURL
@@ -778,8 +771,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CloseProject(URL As Beacon.ProjectURL) As Boolean
-		  Var Hash As String = URL.Hash
-		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(URL.Path)
 		  If NavItem Is Nil Then
 		    // Document is not open
 		    Return True

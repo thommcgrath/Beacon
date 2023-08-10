@@ -2,7 +2,7 @@
 Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Sub AddToRecentDocuments(URL As Beacon.ProjectURL)
-		  If URL.Scheme = Beacon.ProjectURL.TypeTransient Then
+		  If URL.Type = Beacon.ProjectURL.TypeTransient Then
 		    Return
 		  End If
 		  
@@ -238,48 +238,48 @@ Protected Module Preferences
 		  // Once the array is updated, the local copy will return Text()
 		  
 		  Var Temp As Variant = mManager.VariantValue("Documents")
-		  Var StoredData() As String
-		  If Temp <> Nil Then
+		  Var Values() As Beacon.ProjectURL
+		  If (Temp Is Nil) = False Then
 		    If Temp.IsArray Then
 		      Select Case Temp.ArrayElementType
 		      Case Variant.TypeString
-		        StoredData = Temp
+		        Try
+		          Var StringValues() As String = Temp
+		          For Each StringValue As String In StringValues
+		            Values.Add(New Beacon.ProjectUrl(StringValue))
+		          Next
+		        Catch Err As RuntimeException
+		        End Try
 		      Case Variant.TypeObject
-		        Var Objects() As Variant = Temp
-		        For Each Element As Variant In Objects
-		          Try
-		            StoredData.Add(Element.StringValue)
-		          Catch Err As RuntimeException
-		            Continue
-		          End Try
-		        Next
+		        Try
+		          Var Members() As Variant = Temp
+		          For Each Member As Variant In Members
+		            If Member.Type = Variant.TypeString Then
+		              Values.Add(New Beacon.ProjectUrl(Member.StringValue))
+		            ElseIf Member.Type = Variant.TypeObject And Member.ObjectValue IsA Dictionary Then
+		              Values.Add(New Beacon.ProjectUrl(Dictionary(Member.ObjectValue)))
+		            End If
+		          Next
+		        Catch Err As RuntimeException
+		        End Try
 		      End Select
 		    Else
 		      Try
-		        StoredData.Add(Temp.StringValue)
+		        Values.Add(New Beacon.ProjectUrl(Temp.StringValue))
 		      Catch Err As RuntimeException
 		      End Try
 		    End If
 		  End If
-		  
-		  Var Values() As Beacon.ProjectURL
-		  For Each Value As String In StoredData
-		    Try
-		      Values.Add(New Beacon.ProjectURL(Value))
-		    Catch Err As RuntimeException
-		      
-		    End Try
-		  Next
 		  Return Values
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.ProjectURL)
-		  Var URLs() As String
-		  URLs.ResizeTo(Values.LastIndex)
-		  For I As Integer = 0 To Values.LastIndex
-		    URLs(I) = Values(I).URL(Beacon.ProjectURL.URLTypes.Storage)
+		  Var Urls() As Variant
+		  Urls.ResizeTo(Values.LastIndex)
+		  For Idx As Integer = 0 To Values.LastIndex
+		    URLs(Idx) = Values(Idx).DictionaryValue
 		  Next
 		  
 		  Init

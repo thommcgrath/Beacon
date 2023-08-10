@@ -275,7 +275,7 @@ End
 		    Var Recents() As Beacon.ProjectURL = Preferences.RecentDocuments
 		    Var Changed As Boolean
 		    For Idx As Integer = Recents.LastIndex DownTo 0
-		      If Recents(Idx).URL(Beacon.ProjectURL.URLTypes.Writing) = Request.URL Then
+		      If Recents(Idx).Path = Request.URL Then
 		        Recents.RemoveAt(Idx)
 		        Changed = True
 		      End If
@@ -323,6 +323,7 @@ End
 		  End Try
 		  
 		  Var StartIdx As Integer = Self.List.RowIndexOfPage(Page)
+		  Var UserId As String = App.IdentityManager.CurrentUserId
 		  For Idx As Integer = 0 To Results.LastIndex
 		    Var RowIdx As Integer = StartIdx + Idx
 		    If IsNull(Results(Idx)) Or Results(Idx).Type <> Variant.TypeObject Or (Results(Idx) IsA Dictionary) = False Then
@@ -336,7 +337,7 @@ End
 		    End If
 		    
 		    Try
-		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue))
+		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue), UserId)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
 		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
 		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
@@ -437,12 +438,6 @@ End
 		    Self.StatusbarLabel.Text = Status
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function URLForProject(Project As BeaconAPI.Project) As Beacon.ProjectURL
-		  Return Project.URL(Beacon.ProjectURL.TypeCloud)
-		End Function
 	#tag EndMethod
 
 
@@ -571,16 +566,12 @@ End
 		    Return
 		  End If
 		  
-		  Var IconColor As Color = TextColor.AtOpacity(0.5)
-		  Var Icon As Picture
-		  If Project.IsGuest Then
-		  Else
-		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
-		  End If
-		  
+		  Var Url As Beacon.ProjectUrl = Project.Url
+		  Var Icon As Picture = Url.ViewIcon
 		  If Icon Is Nil Then
 		    Return
 		  End If
+		  Icon = BeaconUI.IconWithColor(Icon, TextColor.AtOpacity(0.5))
 		  
 		  G.DrawPicture(Icon, (G.Width - Icon.Width) / 2, (G.Height - Icon.Height) / 2)
 		End Sub
@@ -649,7 +640,7 @@ End
 		    End If
 		    
 		    Var Project As BeaconAPI.Project = Me.RowTagAt(Row)
-		    URLs.Add(Self.URLForProject(Project))
+		    URLs.Add(Project.URL)
 		  Next
 		  
 		  If URLs.Count = 0 Then
@@ -673,7 +664,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Request As New BeaconAPI.Request(URL.URL(Beacon.ProjectURL.URLTypes.Writing), "DELETE", AddressOf APICallback_DeleteProject)
+		    Var Request As New BeaconAPI.Request(URL.Path, "DELETE", AddressOf APICallback_DeleteProject)
 		    Self.APISocket.Start(Request)
 		    ShouldRefresh = True
 		  Next
@@ -691,7 +682,7 @@ End
 		    End If
 		    
 		    Var Project As BeaconAPI.Project = Me.RowTagAt(Row)
-		    Self.OpenProject(Self.URLForProject(Project))
+		    Self.OpenProject(Project.URL)
 		  Next
 		End Sub
 	#tag EndEvent

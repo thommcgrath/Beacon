@@ -48,7 +48,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  
 		  RaiseEvent ShouldSave(CloseWhenFinished)
 		  
-		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then  
+		  If Self.mController.CanWrite And Self.mController.URL.Type <> Beacon.ProjectURL.TypeTransient Then  
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Self.mController.Save()
 		  Else
@@ -83,8 +83,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		      Call AutosaveFile.Write("")
 		    End If
 		    
-		    Self.mAutosaveURL = Beacon.ProjectURL.URLForFile(AutosaveFile)
-		    Self.mAutosaveURL.Param("autosave") = "true"
+		    Self.mAutosaveURL = Beacon.ProjectURL.Create(Self.Project, AutosaveFile)
+		    Self.mAutosaveURL.Autosave = True
 		  End If
 		  
 		  Var AutosaveController As Beacon.ProjectController = Self.mController.SaveACopy(Self.mAutosaveURL)
@@ -140,7 +140,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  Self.ViewTitle = Controller.Name
 		  Self.UpdateViewIcon
 		  
-		  Self.ViewID = Controller.URL.Hash
+		  Self.ViewID = Controller.URL.Path
 		  
 		  Self.mAutosaveTimer = New Timer
 		  Self.mAutosaveTimer.Period = 60000
@@ -201,15 +201,15 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Self.Modified = (Sender.Project Is Nil) = False And Sender.Project.Modified
 		    Self.ViewTitle = Sender.Name
 		    Self.Progress = BeaconSubview.ProgressNone
-		    If (Self.LinkedOmniBarItem Is Nil) = False And (Self.LinkedOmniBarItem.Name <> Self.mController.URL.Hash) Then
-		      Self.LinkedOmniBarItem.Name = Self.mController.URL.Hash
+		    If (Self.LinkedOmniBarItem Is Nil) = False And (Self.LinkedOmniBarItem.Name <> Self.mController.URL.Path) Then
+		      Self.LinkedOmniBarItem.Name = Self.mController.URL.Path
 		    End If
 		    Self.UpdateViewIcon()
 		  End If
 		  
 		  Preferences.AddToRecentDocuments(Sender.URL)
 		  
-		  Self.ViewID = Sender.URL.Hash
+		  Self.ViewID = Sender.URL.Path
 		  
 		  If Sender.Project Is Nil Or Sender.Project.Modified = False Then
 		    // Safe to cleanup the autosave
@@ -282,7 +282,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    
 		    Self.Project.NewIdentifier()
 		    Call File.Write("")
-		    Var Url As Beacon.ProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(File))
+		    Var Url As Beacon.ProjectURL = Beacon.ProjectURL.Create(Self.Project, New BookmarkedFolderItem(File))
 		    Self.mController.SaveAs(Url)
 		    Self.ViewTitle = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
@@ -298,14 +298,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateViewIcon()
-		  Select Case Self.mController.URL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
-		    Self.ViewIcon = IconCloudDocument
-		  Case Beacon.ProjectURL.TypeWeb
-		    Self.ViewIcon = IconCommunityDocument
-		  Else
-		    Self.ViewIcon = Nil
-		  End Select
+		  Self.ViewIcon = Self.mController.URL.ViewIcon
 		End Sub
 	#tag EndMethod
 

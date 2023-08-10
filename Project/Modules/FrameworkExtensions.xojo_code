@@ -518,6 +518,17 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function OneOf(Extends Target As String, ParamArray Options() As String) As Boolean
+		  For Each Option As String In Options
+		    If Target = Option Then
+		      Return True
+		    End If
+		  Next
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem) As MemoryBlock
 		  #Pragma BreakOnExceptions False
 		  Try

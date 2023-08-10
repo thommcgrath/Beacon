@@ -75,6 +75,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       TabStop         =   True
       Tooltip         =   ""
       Top             =   63
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   1
       Underline       =   False
@@ -204,8 +205,9 @@ End
 		    
 		    For Idx As Integer = 0 To Recents.LastIndex
 		      Var URL As Beacon.ProjectURL = Recents(Idx)
+		      
 		      Self.List.CellTextAt(Idx, Self.ColumnName) = URL.Name
-		      Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(URL.GameID)
+		      Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(URL.GameId)
 		      Self.List.CellTextAt(Idx, Self.ColumnPath) = URL.HumanPath
 		      Self.List.CellTooltipAt(Idx, Self.ColumnPath) = Self.List.CellTextAt(Idx, Self.ColumnPath)
 		      Self.List.RowTagAt(Idx) = URL
@@ -260,22 +262,15 @@ End
 		  End If
 		  
 		  Var URL As Beacon.ProjectURL = Me.RowTagAt(Row)
-		  If URL = Nil Then
+		  If URL Is Nil Then
 		    Return
 		  End If
 		  
-		  Var IconColor As Color = TextColor.AtOpacity(0.5)
-		  Var Icon As Picture
-		  Select Case URL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
-		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
-		  Case Beacon.ProjectURL.TypeWeb
-		    Icon = BeaconUI.IconWithColor(IconCommunityDocument, IconColor)
-		  End Select
-		  
-		  If Icon = Nil Then
+		  Var Icon As Picture = Url.ViewIcon
+		  If Icon Is Nil Then
 		    Return
 		  End If
+		  Icon = BeaconUI.IconWithColor(Icon, TextColor.AtOpacity(0.5))
 		  
 		  G.DrawPicture(Icon, (G.Width - Icon.Width) / 2, (G.Height - Icon.Height) / 2)
 		End Sub

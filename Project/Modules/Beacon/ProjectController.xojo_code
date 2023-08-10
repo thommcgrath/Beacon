@@ -38,8 +38,8 @@ Protected Class ProjectController
 		  End If
 		  
 		  Var SaveInfo As String
-		  Select Case Self.mProjectURL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeWeb
+		  Select Case Self.mProjectURL.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeWeb, Beacon.ProjectURL.TypeShared
 		    SaveInfo = Self.mProjectURL
 		  Case Beacon.ProjectURL.TypeLocal
 		    Var File As BookmarkedFolderItem = Self.mProjectURL.File
@@ -74,7 +74,7 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h0
 		Function CanWrite() As Boolean
-		  If Self.mProjectURL.Scheme = Beacon.ProjectURL.TypeWeb Then
+		  If Self.mProjectURL.Type = Beacon.ProjectURL.TypeWeb Or Self.mProjectURL.Type = Beacon.ProjectURL.TypeCommunity Then
 		    Return False
 		  End If
 		  
@@ -241,9 +241,10 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  If Self.mProject.Title <> "" Then
-		    Self.mProjectURL.Name = Self.mProject.Title
+		  If Self.mProject.Title.Compare(Self.mProjectUrl.Name, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mProjectUrl = Beacon.ProjectUrl.Create(Self.mProject, Self.mProjectUrl)
 		  End If
+		  
 		  Self.WriteTo(Self.mProjectURL, True)
 		End Sub
 	#tag EndMethod
@@ -256,13 +257,16 @@ Protected Class ProjectController
 		  End If
 		  
 		  Var Controller As New Beacon.ProjectController(Self.mProject, Self.mIdentity)
+		  If Self.mProject.Title.Compare(Destination.Name, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Destination = Beacon.ProjectUrl.Create(Self.mProject, Destination)
+		  End If
+		  
 		  Controller.mProjectURL = Destination
-		  If Destination.HasParam("autosave") And Destination.Param("autosave") = "true" Then
+		  If Destination.Autosave Then
+		    #Pragma Warning "This may be wrong, shouldn't this come before assigning mProjectUrl?"
 		    Controller.mOriginalUrl = Self.mProjectURL
 		  End If
-		  If Self.mProject.Title.IsEmpty = False Then
-		    Destination.Name = Self.mProject.Title
-		  End If
+		  
 		  Controller.WriteTo(Destination, False)
 		  Return Controller
 		End Function
@@ -288,9 +292,9 @@ Protected Class ProjectController
 		    Return
 		  End If
 		  
-		  Select Case Self.mProjectURL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
-		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Writing), "DELETE"))
+		  Select Case Self.mProjectURL.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.Path, "DELETE"))
 		    If Response.HTTPStatus = 200 Then
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		    Else
@@ -309,7 +313,7 @@ Protected Class ProjectController
 		  Case Beacon.ProjectURL.TypeTransient
 		    Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		  Else
-		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Unknown storage scheme " + Self.mProjectURL.Scheme)
+		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Unknown storage url type " + Self.mProjectURL.Type)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -320,10 +324,10 @@ Protected Class ProjectController
 		  
 		  Var FileContent As MemoryBlock
 		  
-		  Select Case Self.mProjectURL.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
+		  Select Case Self.mProjectURL.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared, Beacon.ProjectURL.TypeCommunity
 		    // authenticated api request
-		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading), "GET"))
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request(Self.mProjectURL.Path, "GET"))
 		    If Response.HTTPStatus >= 200 And Response.HTTPStatus < 300 Then
 		      FileContent = Response.Content
 		    Else
@@ -335,7 +339,7 @@ Protected Class ProjectController
 		    // basic https request
 		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
-		    Socket.Send("GET", Self.mProjectURL.URL(Beacon.ProjectURL.URLTypes.Reading))
+		    Socket.Send("GET", Self.mProjectURL.Path)
 		    If Socket.LastHTTPStatus >= 200 Then
 		      FileContent = Socket.LastContent
 		    Else
@@ -390,7 +394,8 @@ Protected Class ProjectController
 		  
 		  If AdditionalProperties.HasKey("OriginalUrl") Then
 		    Try
-		      Var OriginalUrl As New Beacon.ProjectURL(AdditionalProperties.Value("OriginalUrl"))
+		      Var OriginalUrlString As String = Beacon.Decompress(DecodeBase64MBS(AdditionalProperties.Value("OriginalUrl").StringValue)).DefineEncoding(Encodings.UTF8)
+		      Var OriginalUrl As New Beacon.ProjectURL(OriginalUrlString)
 		      Self.mProjectURL = OriginalUrl
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Restoring original url")
@@ -459,7 +464,7 @@ Protected Class ProjectController
 		  Try
 		    Var AdditionalProperties As New Dictionary
 		    If (Self.mOriginalUrl Is Nil) = False Then
-		      AdditionalProperties.Value("OriginalUrl") = Self.mOriginalUrl.URL(Beacon.ProjectURL.URLTypes.Storage)
+		      AdditionalProperties.Value("OriginalUrl") = EncodeBase64MBS(Beacon.Compress(Self.mOriginalUrl.StringValue))
 		    End If
 		    
 		    SaveData = Self.mProject.SaveData(Self.mIdentity, AdditionalProperties)
@@ -554,9 +559,9 @@ Protected Class ProjectController
 		    
 		    // Update the project url to regenerate saveinfo/bookmarks
 		    If Destination IsA BookmarkedFolderItem Then
-		      Self.mProjectURL = Beacon.ProjectURL.URLForFile(BookmarkedFolderItem(Destination))
+		      Self.mProjectURL = Beacon.ProjectURL.Create(Self.mProject, BookmarkedFolderItem(Destination))
 		    Else
-		      Self.mProjectURL = Beacon.ProjectURL.URLForFile(New BookmarkedFolderItem(Destination))
+		      Self.mProjectURL = Beacon.ProjectURL.Create(Self.mProject, New BookmarkedFolderItem(Destination))
 		    End If
 		    
 		    RaiseEvent WriteSuccess()
@@ -584,15 +589,15 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Sub WriteTo(Destination As Beacon.ProjectURL, ClearModified As Boolean)
-		  If Self.Busy Or Self.Loaded = False Or Destination.Scheme = Beacon.ProjectURL.TypeWeb Then
+		  If Self.Busy Or Self.Loaded = False Or Destination.Type.OneOf(Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared, Beacon.ProjectURL.TypeLocal) = False Then
 		    Return
 		  End If
 		  
 		  Self.mClearModifiedOnWrite = ClearModified
 		  Self.mDestination = Destination
 		  
-		  Select Case Destination.Scheme
-		  Case Beacon.ProjectURL.TypeCloud
+		  Select Case Destination.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared
 		    Self.mActiveThread = New Thread
 		    Self.mActiveThread.Priority = Thread.LowestPriority
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
