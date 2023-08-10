@@ -151,7 +151,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -223,6 +222,13 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Hidden()
+		  Self.List.PauseScrollWatching
+		  RaiseEvent Hidden
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  RaiseEvent Opening
 		  Self.UpdateStatusbar()
@@ -233,10 +239,12 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  If Self.mHasBeenShown = False Then
-		    Self.mHasBeenShown = True
-		    Self.Load
+		  Self.mHasBeenShown = True
+		  Self.List.ResumeScrollWatching
+		  If Self.List.IsLoading = False Then
+		    Self.List.ReloadAllPages
 		  End If
+		  RaiseEvent Shown
 		End Sub
 	#tag EndEvent
 
@@ -251,12 +259,13 @@ End
 		    Return
 		  End If
 		  
-		  Var TotalResults, TotalPages As Integer
+		  Var Page As Integer
 		  Var Results() As Variant
 		  Try
 		    Var Parsed As Dictionary = Beacon.ParseJSON(Response.Content)
-		    TotalResults = Parsed.Value("totalResults")
-		    TotalPages = Parsed.Value("pages")
+		    Self.List.RowCount = Parsed.Value("totalResults")
+		    Self.List.TotalPages = Parsed.Value("pages")
+		    Page = Parsed.Value("page")
 		    Results = Parsed.Value("results")
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Parsing page of results.")
@@ -264,33 +273,27 @@ End
 		    Return
 		  End Try
 		  
-		  Self.mTotalPages = TotalPages
-		  Self.mTotalResults = TotalResults
-		  
-		  Var SelectedProjects() As String
-		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.RowSelectedAt(Idx) Then
-		      Var Project As BeaconAPI.Project = Self.List.RowTagAt(Idx)
-		      SelectedProjects.Add(Project.ProjectId)
-		    End If
-		  Next
-		  
-		  For Each Member As Variant In Results
-		    If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
+		  Var StartIdx As Integer = Self.List.RowIndexOfPage(Page)
+		  For Idx As Integer = 0 To Results.LastIndex
+		    Var RowIdx As Integer = StartIdx + Idx
+		    If IsNull(Results(Idx)) Or Results(Idx).Type <> Variant.TypeObject Or (Results(Idx) IsA Dictionary) = False Then
+		      Self.List.RowTagAt(RowIdx) = Nil
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = ""
+		      Self.List.CellTextAt(RowIdx, Self.ColumnDownloads) = ""
 		      Continue
 		    End If
 		    
 		    Try
-		      Var Project As New BeaconAPI.Project(Dictionary(Member.ObjectValue))
-		      Self.List.AddRow("")
-		      Var RowIdx As Integer = Self.List.LastAddedRowIndex
+		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue))
 		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
 		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
 		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
 		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		      Self.List.CellTextAt(RowIdx, Self.ColumnDownloads) = Project.DownloadCount.ToString(Locale.Current, "#,##0")
 		      Self.List.RowTagAt(RowIdx) = Project
-		      Self.List.RowSelectedAt(RowIdx) = SelectedProjects.IndexOf(Project.ProjectId) > -1
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Adding result to list.")
 		      Continue
@@ -298,20 +301,7 @@ End
 		  Next
 		  
 		  Self.List.CompleteRowLoadRequest(Request.Tag)
-		  Self.List.InvalidateScrollPosition
 		  Self.UpdateStatusbar()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Load()
-		  If Not Self.mHasBeenShown Then
-		    Return
-		  End If
-		  
-		  // This should trigger List.LoadMoreRows which will do the actual work.
-		  Self.List.ScrollPosition = 0
-		  Self.List.RemoveAllRows()
 		End Sub
 	#tag EndMethod
 
@@ -319,9 +309,9 @@ End
 		Private Sub UpdateStatusbar()
 		  Var Status As String
 		  If Self.List.SelectedRowCount > 0 Then
-		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.mTotalResults, "project", "projects") + " selected"
+		    Status = Self.List.SelectedRowCount.ToString(Locale.Current, "#,##0") + " of " + Language.NounWithQuantity(Self.List.RowCount, "project", "projects") + " selected"
 		  Else
-		    Status = Language.NounWithQuantity(Self.mTotalResults, "project", "projects")
+		    Status = Language.NounWithQuantity(Self.List.RowCount, "project", "projects")
 		  End If
 		  If Self.StatusbarLabel.Text <> Status Then
 		    Self.StatusbarLabel.Text = Status
@@ -331,20 +321,20 @@ End
 
 
 	#tag Hook, Flags = &h0
+		Event Hidden()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
 		Private mHasBeenShown As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTotalPages As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTotalResults As Integer
 	#tag EndProperty
 
 
@@ -379,14 +369,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Changed()
-		  Self.Load()
+		  Self.List.ReloadAllPages
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
 		Function LoadMoreRows(Page As Integer, RequestToken As String) As Boolean
-		  If Self.mHasBeenShown = False Or (Page > 1 And Page > Self.mTotalPages) Then
+		  If Self.mHasBeenShown = False Then
 		    Me.PauseScrollWatching()
 		    Return True
 		  End If
@@ -446,8 +436,7 @@ End
 		Function HeaderPressed(column as Integer) As Boolean
 		  #Pragma Unused Column
 		  
-		  Self.Load()
-		  
+		  Call CallLater.Schedule(1, WeakAddressof List.ReloadAllPages)
 		  Return False
 		End Function
 	#tag EndEvent
@@ -477,6 +466,13 @@ End
 	#tag Event
 		Sub SelectionChanged()
 		  Self.UpdateStatusbar()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnConsole) = DesktopListBox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnDownloads) = DesktopListBox.Alignments.Right
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents

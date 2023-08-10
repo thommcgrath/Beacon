@@ -260,7 +260,9 @@ End
 		  
 		  Self.mHasBeenShown = True
 		  Self.List.ResumeScrollWatching
-		  Self.List.ReloadAllPages
+		  If Self.List.IsLoading = False Then
+		    Self.List.ReloadAllPages
+		  End If
 		  RaiseEvent Shown
 		End Sub
 	#tag EndEvent
@@ -333,13 +335,18 @@ End
 		      Continue
 		    End If
 		    
-		    Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue))
-		    Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
-		    Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
-		    Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
-		    Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
-		    Self.List.CellTextAt(RowIdx, Self.ColumnRevision) = Project.Revision.ToString(Locale.Current, "#,##0")
-		    Self.List.RowTagAt(RowIdx) = Project
+		    Try
+		      Var Project As New BeaconAPI.Project(Dictionary(Results(Idx).ObjectValue))
+		      Self.List.CellTextAt(RowIdx, Self.ColumnName) = Project.Name
+		      Self.List.CellTextAt(RowIdx, Self.ColumnMaps) = Ark.Maps.ForMask(Project.ArkMapMask).Label
+		      Self.List.CellTextAt(RowIdx, Self.ColumnConsole) = If(Project.ConsoleSafe, "Yes", "")
+		      Self.List.CellTextAt(RowIdx, Self.ColumnUpdated) = Project.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		      Self.List.CellTextAt(RowIdx, Self.ColumnRevision) = Project.Revision.ToString(Locale.Current, "#,##0")
+		      Self.List.RowTagAt(RowIdx) = Project
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Adding result to list.")
+		      Continue
+		    End Try
 		  Next
 		  
 		  Self.List.CompleteRowLoadRequest(Request.Tag)
@@ -779,6 +786,27 @@ End
 	#tag Event
 		Sub SelectionChanged()
 		  Self.UpdateStatusbar()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function HeaderPressed(column as Integer) As Boolean
+		  #Pragma Unused Column
+		  
+		  Call CallLater.Schedule(1, WeakAddressof List.ReloadAllPages)
+		  Return False
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ColumnSorted(column As Integer) As Boolean
+		  #Pragma Unused Column
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ColumnAlignmentAt(Self.ColumnConsole) = DesktopListBox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnRevision) = DesktopListBox.Alignments.Right
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
