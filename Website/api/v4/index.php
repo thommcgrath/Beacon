@@ -83,6 +83,7 @@ Core::RegisterRoutes(
 		],
 		'/projects/{projectId}/metadata' => [
 			'GET' => 'projects/get',
+			'PATCH' => 'projects/metadata',
 		],
 		'/projects/{projectId}/versions' => [
 			'GET' => 'projects/get',
@@ -151,6 +152,8 @@ DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Player', 'sentinel/
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\PlayerNote', 'sentinel/playerNotes', 'playerNoteId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\Service', 'sentinel/services', 'serviceId');
 DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\Sentinel\ServiceGroup', 'sentinel/serviceGroups', 'serviceGroupId');
+
+DatabaseObjectManager::RegisterRoutes('BeaconAPI\v4\SDTD\ConfigOption', '7dtd/configOptions', 'configOptionId');
 
 Core::HandleRequest(dirname(__FILE__) . '/requests');
 

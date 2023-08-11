@@ -208,7 +208,12 @@ class ContentPack extends DatabaseObject implements JsonSerializable {
 		return $this->name;
 	}
 	
+	// Should be IsConfirmed
 	public function Confirmed(): bool {
+		return $this->isConfirmed;
+	}
+	
+	public function IsConfirmed(): bool {
 		return $this->isConfirmed;
 	}
 	

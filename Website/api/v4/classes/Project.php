@@ -21,7 +21,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	protected int $lastUpdate;
 	protected int $revision;
 	protected int $downloadCount;
-	protected string $published;
+	protected string $communityStatus;
 	protected string $storagePath;
 	protected array $content = [];
 	
@@ -35,7 +35,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$this->lastUpdate = round($row->Field('last_update'));
 		$this->userId = $row->Field('user_id');
 		$this->ownerId = $row->Field('owner_id');
-		$this->published = $row->Field('published');
+		$this->communityStatus = $row->Field('published');
 		$this->consoleSafe = boolval($row->Field('console_safe'));
 		$this->gameSpecific = json_decode($row->Field('game_specific'), true);
 		$this->storagePath = $row->Field('storage_path');
@@ -54,8 +54,8 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('lastUpdate', ['columnName' => 'last_update', 'accessor' => 'EXTRACT(EPOCH FROM %%TABLE%%.%%COLUMN%%)', 'setter' => 'TO_TIMESTAMP(%%PLACEHOLDER%%)']),
 			new DatabaseObjectProperty('revision'),
 			new DatabaseObjectProperty('downloadCount', ['columnName' => 'download_count']),
-			new DatabaseObjectProperty('published'),
-			new DatabaseObjectProperty('storagePath', ['columnName' => 'storage_path'])
+			new DatabaseObjectProperty('communityStatus', ['columnName' => 'published']),
+			new DatabaseObjectProperty('storagePath', ['columnName' => 'storage_path']),
 		]);
 		$schema->SetWriteableTable('projects');
 		return $schema;
@@ -131,7 +131,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$parameters->clauses[] = $schema->Accessor('userId') . ' = ' . $schema->Accessor('ownerId');
 		}
 		
-		$parameters->AddFromFilter($schema, $filters, 'published');
+		$parameters->AddFromFilter($schema, $filters, 'communityStatus');
 		$parameters->AddFromFilter($schema, $filters, 'consoleSafe');
 		$parameters->AddFromFilter($schema, $filters, 'gameId');
 		$parameters->AddFromFilter($schema, $filters, 'name');
@@ -164,7 +164,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			'downloadCount' => $this->downloadCount,
 			'lastUpdate' => $this->lastUpdate,
 			'consoleSafe' => $this->consoleSafe,
-			'published' => $this->published
+			'communityStatus' => $this->communityStatus
 		];
 	}
 		
@@ -228,11 +228,11 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public function IsPublic(): bool {
-		return $this->published == self::kPublishStatusApproved;
+		return $this->communityStatus == self::kPublishStatusApproved;
 	}
 	
 	public function PublishStatus(): string {
-		return $this->published;
+		return $this->communityStatus;
 	}
 	
 	public function SetPublishStatus(string $desired_status): void {
@@ -312,7 +312,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			$database->Query('UPDATE ' . $schema->WriteableTable() . ' SET published = $2 WHERE project_id = $1;', $this->projectId, $new_status);
 			$database->Commit();
 		}
-		$this->published = $new_status;
+		$this->communityStatus = $new_status;
 	}
 	
 	public function PreloadContent($version_id = null): string {

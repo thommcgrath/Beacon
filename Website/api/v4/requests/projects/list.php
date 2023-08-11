@@ -13,7 +13,7 @@ function handleRequest(array $context): Response {
 		}
 	}
 	if ($public_only) {
-		$filters['published'] = 'Approved';	
+		$filters['communityStatus'] = 'Approved';	
 	}
 	
 	$results = Project::Search($filters);

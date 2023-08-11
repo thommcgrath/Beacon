@@ -100,7 +100,7 @@ abstract class BeaconCommon {
 	
 	public static function NewestUpdateTimestamp(int $build = 99999999): DateTime {
 		$database = static::Database();
-		$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM ark.objects INNER JOIN ark.mods ON (objects.mod_id = mods.mod_id) WHERE GREATEST(objects.min_version, mods.min_version) <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM ark.deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM ark.game_variables) UNION (SELECT MAX(last_update) AS stamp FROM ark.mods WHERE min_version <= $1 AND confirmed = TRUE AND include_in_deltas = TRUE) UNION (SELECT MAX(maps.last_update) AS stamp FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(last_update) AS stamp FROM ark.events) UNION (SELECT MAX(last_update) AS stamp FROM ark.colors) UNION (SELECT MAX(last_update) AS stamp FROM ark.color_sets)) AS merged;', $build);
+		$results = $database->Query('SELECT MAX(last_update) AS stamp FROM public.content_update_times WHERE min_version <= $1;', $build);
 		return new DateTime($results->Field('stamp'));
 	}
 	

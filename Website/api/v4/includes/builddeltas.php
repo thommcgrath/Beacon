@@ -1,7 +1,8 @@
 <?php
 
 use BeaconAPI\v4\{ContentPack, Core, Template, TemplateSelector};
-use BeaconAPI\v4\Ark\{Color, ColorSet, ConfigOption, Creature, Engram, Event, GameVariable, LootDrop, LootDropIcon, Map, SpawnPoint};
+use BeaconAPI\v4\Ark;
+use BeaconAPI\v4\SDTD;
 
 $root = "/v{$version}";
 if (BeaconCommon::InProduction() == false) {
@@ -25,11 +26,18 @@ $completeArchive = new Archiver('Complete', true, $lastDatabaseUpdate->getTimest
 BuildMainFile($completeArchive, null);
 
 // Need to find the mods that have changes since the last run
-$packs = ContentPack::Search(['isIncludedInDeltas' => true, 'isConfirmed' => true, 'gameId' => 'Ark'], true);
+$packs = ContentPack::Search(['isIncludedInDeltas' => true, 'isConfirmed' => true], true);
 $packIds = [];
 foreach ($packs as $pack) {
 	$packIds[$pack->ContentPackId()] = $pack;
-	BuildArkContentPackFile($completeArchive, null, $pack);
+	switch ($pack->GameId()) {
+	case 'Ark':
+		BuildArkContentPackFile($completeArchive, null, $pack);
+		break;
+	case '7DaysToDie':
+		Build7DTDContentPackFile($completeArchive, null, $pack);
+		break;
+	}
 }
 
 // And delta archive
@@ -38,7 +46,7 @@ if ($buildDeltas) {
 	$deltaArchive = new Archiver($deltaLabel, false, $lastDatabaseUpdate->getTimestamp());
 	BuildMainFile($deltaArchive, $since);
 	
-	$rows = $database->Query("SELECT content_pack_id FROM public.content_pack_id WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
+	$rows = $database->Query("SELECT DISTINCT content_pack_id FROM public.content_update_times WHERE last_update > $1;", $since->format('Y-m-d H:i:s'));
 	while (!$rows->EOF()) {
 		if (array_key_exists($rows->Field('content_pack_id'), $packIds) === false) {
 			$rows->MoveNext();
@@ -51,7 +59,15 @@ if ($buildDeltas) {
 			continue;
 		}
 		
-		BuildArkContentPackFile($deltaArchive, $since, $pack);
+		switch ($pack->GameId()) {
+		case 'Ark':
+			BuildArkContentPackFile($deltaArchive, $since, $pack);
+			break;
+		case '7DaysToDie':
+			Build7DTDContentPackFile($deltaArchive, $since, $pack);
+			break;
+		}
+		
 		$rows->MoveNext();
 	}
 }
@@ -82,6 +98,17 @@ function BuildArkContentPackFile(Archiver $archive, ?DateTime $since, ContentPac
 		'class' => 'Ark/Mod',
 		'since' => $since,
 		'ark' => [
+			'contentPack' => $contentPack
+		]
+	]);
+}
+
+function Build7DTDContentPackFile(Archiver $archive, ?DateTime $since, ContentPack $contentPack): void {
+	BuildFile([
+		'archive' => $archive,
+		'class' => '7DaysToDie/ContentPack',
+		'since' => $since,
+		'7DaysToDie' => [
 			'contentPack' => $contentPack
 		]
 	]);
@@ -120,20 +147,25 @@ function BuildFile(array $settings): void {
 	$file = [];
 	$ark = [];
 	$common = [];
+	$sdtd = [];
 	
 	switch ($class) {
 	case 'Main':
 		$ark = [
-			'colors' => Color::Search($filters, true),
-			'colorSets' => ColorSet::Search($filters, true),
-			'contentPacks' => ContentPack::Search($filters, true),
-			'events' => Event::Search($filters, true),
-			'gameVariables' => GameVariable::Search($filters, true)
+			'colors' => Ark\Color::Search($filters, true),
+			'colorSets' => Ark\ColorSet::Search($filters, true),
+			'contentPacks' => ContentPack::Search([...$filters, 'gameId' => 'Ark'], true),
+			'events' => Ark\Event::Search($filters, true),
+			'gameVariables' => Ark\GameVariable::Search($filters, true)
 		];
 		
 		$common = [
 			'templates' => Template::Search($filters, true),
 			'templateSelectors' => TemplateSelector::Search($filters, true)
+		];
+		
+		$sdtd = [
+			'contentPacks' => ContentPack::Search([...$filters, 'gameId' => '7DaysToDie'], true),
 		];
 		
 		if ($isComplete === false) {
@@ -150,13 +182,23 @@ function BuildFile(array $settings): void {
 		$filters['contentPackId'] = $pack->ContentPackId();
 		
 		$ark = [
-			'configOptions' => ConfigOption::Search($filters, true),
-			'creatures' => Creature::Search($filters, true),
-			'engrams' => Engram::Search($filters, true),
-			'lootDrops' => LootDrop::Search($filters, true),
-			'lootDropIcons' => LootDropIcon::Search($filters, true),
-			'maps' => Map::Search($filters, true),
-			'spawnPoints' => SpawnPoint::Search($filters, true)
+			'configOptions' => Ark\ConfigOption::Search($filters, true),
+			'creatures' => Ark\Creature::Search($filters, true),
+			'engrams' => Ark\Engram::Search($filters, true),
+			'lootDrops' => Ark\LootDrop::Search($filters, true),
+			'lootDropIcons' => Ark\LootDropIcon::Search($filters, true),
+			'maps' => Ark\Map::Search($filters, true),
+			'spawnPoints' => Ark\SpawnPoint::Search($filters, true)
+		];
+		
+		$localName = "{$pack->ContentPackId()}.json";
+		break;
+	case '7DaysToDie/ContentPack':
+		$pack = $settings['7DaysToDie']['contentPack'];
+		$filters['contentPackId'] = $pack->ContentPackId();
+		
+		$sdtd = [
+			'configOptions' => SDTD\ConfigOption::Search($filters, true),
 		];
 		
 		$localName = "{$pack->ContentPackId()}.json";
@@ -169,7 +211,8 @@ function BuildFile(array $settings): void {
 	
 	$sections = [
 		'ark' => $ark,
-		'common' => $common
+		'common' => $common,
+		'7DaysToDie' => $sdtd,
 	];
 	foreach ($sections as $sectionName => $groups) {
 		foreach ($groups as $groupName => $members) {

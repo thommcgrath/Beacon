@@ -18,7 +18,7 @@ echo $breadcrumbs->Render();
 <table class="generic">
 	<thead>
 		<th class="w-100">Mod Name</th>
-		<th class="w-0 nowrap not-mini">Support Type</th>
+		<th class="w-0 nowrap not-mini">Data Source</th>
 		<th class="w-0 nowrap">Steam Id</th>
 	</thead>
 	<tbody>
@@ -44,13 +44,14 @@ echo $breadcrumbs->Render();
 				$typeHtml = '';
 				switch ($type) {
 				case 0:
+					$typeHtml = '<span class="tag green">Game Files</span>';
 					break;
 				case 1:
-					$typeHtml = '<span class="tag blue">Author Maintained</span>';
+					$typeHtml = '<span class="tag blue">Mod Author</span>';
 					break;
 				case 2:
 					$nameHtml = htmlentities($name);
-					$typeHtml = '<span class="tag grey">Community Maintained</span>';
+					$typeHtml = '<span class="tag grey">Community</span>';
 					break;
 				}
 				
@@ -61,5 +62,22 @@ echo $breadcrumbs->Render();
 		</tr><?php
 			$rows->MoveNext();
 		} ?>
+	</tbody>
+</table>
+<h2>Legend</h2>
+<table>
+	<tbody>
+		<tr>
+			<td class="w-0 p-1 nowrap text-center"><span class="tag green">Game Files</span></td>
+			<td class="w-100 p-1">Data is extracted from the game files by the <a href="https://github.com/arkutils/Purlovia">Purlovia project</a>.</td>
+		</tr>
+		<tr>
+			<td class="w-0 p-1 nowrap text-center"><span class="tag blue">Mod Author</span></td>
+			<td class="w-100 p-1">Data is maintained by the mod author using Beacon's mod tools.</td>
+		</tr>
+		<tr>
+			<td class="w-0 p-1 nowrap text-center"><span class="tag grey">Community</span></td>
+			<td class="w-100 p-1">Data comes from Beacon's <a href="/help/adding_blueprints_to_beacon#using-mod-discovery">Mod Discovery</a> tool.</td>
+		</tr>
 	</tbody>
 </table>
