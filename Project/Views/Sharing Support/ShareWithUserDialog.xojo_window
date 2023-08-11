@@ -122,35 +122,7 @@ Begin BeaconDialog ShareWithUserDialog
       Visible         =   True
       Width           =   80
    End
-   Begin DesktopProgressWheel Spinner
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowTabStop    =   True
-      Enabled         =   True
-      Height          =   16
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      Tooltip         =   ""
-      Top             =   122
-      Transparent     =   False
-      Visible         =   False
-      Width           =   16
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
-   Begin UITweaks.ResizedTextField UserIDField
+   Begin UITweaks.ResizedTextField ValueField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
@@ -259,35 +231,40 @@ Begin BeaconDialog ShareWithUserDialog
       Visible         =   True
       Width           =   337
    End
-   Begin URLConnection UserLookupSocket
-      AllowCertificateValidation=   False
-      Enabled         =   True
-      HTTPStatusCode  =   0
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  Self.ValueField.Text = Self.mDefaultValue
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(DefaultValue As String)
+		  Self.mDefaultValue = DefaultValue
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, ByRef UserID As String, ByRef Username As String, ByRef PublicKey As String) As Boolean
-		  If Parent = Nil Then
-		    Return False
+		Shared Function Present(Parent As DesktopWindow, DefaultValue As String = "") As String
+		  If (Parent Is Nil) = False Then
+		    Parent = Parent.TrueWindow
 		  End If
 		  
-		  Var Win As New ShareWithUserDialog
+		  Var Win As New ShareWithUserDialog(DefaultValue)
 		  Win.ShowModal(Parent)
 		  Var Cancelled As Boolean = Win.mCancelled
+		  Var Value As String
 		  If Not Cancelled Then
-		    UserID = Win.mUserID
-		    PublicKey = Win.mPublicKey
-		    Username = Win.mUserName
+		    Value = Win.ValueField.Text
 		  End If
 		  Win.Close
-		  Return Not Cancelled
+		  Return Value
 		End Function
 	#tag EndMethod
 
@@ -297,15 +274,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPublicKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUserID As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUserName As String
+		Private mDefaultValue As String
 	#tag EndProperty
 
 
@@ -314,16 +283,8 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Var EnteredValue As String = Self.UserIDField.Text
-		  If v4UUID.IsValid(EnteredValue) Or (EnteredValue.Length > 9 And EnteredValue.Right(9).BeginsWith("#")) Or Beacon.ValidateEmail(EnteredValue) Then
-		    Self.UserLookupSocket.Send("GET", BeaconAPI.URL("/user/" + EncodeURLComponent(EnteredValue.ReplaceAll(",", ",,"))))
-		  Else
-		    Self.ShowAlert("User cannot be identified with the given value.", "Please enter the UUID, email address, or full username with suffix (such as User#ABCD1234) to continue.")
-		    Return
-		  End If
-		  
-		  Me.Enabled = False
-		  Self.Spinner.Visible = True
+		  Self.mCancelled = False
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -331,7 +292,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  Self.mCancelled = True
-		  Self.UserLookupSocket.Disconnect
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -340,46 +300,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  System.GotoURL(Beacon.WebURL("/help/sharing_beacon_documents"))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UserLookupSocket
-	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
-		  #Pragma Unused URL
-		  
-		  If HTTPStatus = 200 Then
-		    Try
-		      Var UserData As Dictionary = Beacon.ParseJSON(Content)
-		      Self.mUserID = UserData.Value("user_id")
-		      Self.mUserName = UserData.Value("username_full")
-		      Self.mPublicKey = BeaconEncryption.PEMDecodePublicKey(UserData.Value("public_key"))
-		      Self.mCancelled = False
-		      Self.Hide
-		      Return
-		    Catch Err As RuntimeException
-		      Self.ShowAlert("Unable to add user", "There was an error parsing the response: " + Err.Message)
-		    End Try
-		  End If
-		  
-		  Self.Spinner.Visible = False
-		  Self.ActionButton.Enabled = True
-		  
-		  Var Message As String
-		  Select Case HTTPStatus
-		  Case 404
-		    Message = "User not found"
-		  Else
-		    Message = Content
-		  End Select
-		  Self.ShowAlert("Unable to add user", Message)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Error(e As RuntimeException)
-		  Self.Spinner.Visible = False
-		  Self.ActionButton.Enabled = True
-		  Self.ShowAlert("Unable to connect to server", "Beacon was unable to connect to the server to download the user's private key. Reason: " + e.Message)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

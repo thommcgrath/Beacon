@@ -56,6 +56,7 @@ Begin ModEditorView ArkModEditorView
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   False
@@ -354,6 +355,7 @@ Begin ModEditorView ArkModEditorView
          Width           =   375
       End
       Begin DesktopProgressBar DiscoveryStatusBar
+         Active          =   False
          AllowAutoDeactivate=   True
          AllowTabStop    =   True
          Enabled         =   True
@@ -368,6 +370,7 @@ Begin ModEditorView ArkModEditorView
          LockRight       =   False
          LockTop         =   True
          MaximumValue    =   100
+         PanelIndex      =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
@@ -377,6 +380,10 @@ Begin ModEditorView ArkModEditorView
          Value           =   0.0
          Visible         =   True
          Width           =   375
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
       End
    End
 End

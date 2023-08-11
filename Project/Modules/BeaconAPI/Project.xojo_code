@@ -37,7 +37,7 @@ Protected Class Project
 		  Self.mDownloadCount = Source.Value("downloadCount")
 		  Self.mLastUpdated = Source.Value("lastUpdate")
 		  Self.mConsoleSafe = Source.Value("consoleSafe")
-		  Self.mPublishState = Source.Value("published")
+		  Self.mPublishState = Source.Value("communityStatus")
 		  
 		  Select Case Self.mGameId
 		  Case Ark.Identifier
