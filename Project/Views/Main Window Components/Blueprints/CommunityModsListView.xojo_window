@@ -469,7 +469,7 @@ End
 #tag Events ModsToolbar
 	#tag Event
 		Sub Opening()
-		  Var DownloadButton As OmniBarItem = OmniBarItem.CreateButton("DownloadButton", "Download", IconToolbarImport, "Copy the selected mod to your copy of Beacon.", False)
+		  Var DownloadButton As OmniBarItem = OmniBarItem.CreateButton("DownloadButton", "Download", IconToolbarUpdate, "Copy the selected mod to your copy of Beacon.", False)
 		  Me.Append(DownloadButton)
 		End Sub
 	#tag EndEvent

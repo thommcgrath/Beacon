@@ -38,6 +38,8 @@ Protected Class ProjectURL
 		  Case "beacon", "beacon-cloud"
 		    Self.mType = Self.TypeCloud
 		    Self.mPath = "https" + Self.mPath.Middle(Scheme.Length)
+		  Case "temp"
+		    Self.mType = Self.TypeTransient
 		  Else
 		    Var Err As New UnsupportedFormatException
 		    Err.Message = "Unknown url scheme " + Scheme
@@ -342,6 +344,14 @@ Protected Class ProjectURL
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Autosave"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
