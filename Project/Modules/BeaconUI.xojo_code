@@ -687,10 +687,14 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0
 		Function ViewIcon(Extends Url As Beacon.ProjectUrl) As Picture
 		  Select Case Url.Type
-		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared, Beacon.ProjectURL.TypeWeb
+		  Case Beacon.ProjectURL.TypeCloud
 		    Return IconCloudDocument
 		  Case Beacon.ProjectURL.TypeCommunity
 		    Return IconCommunityDocument
+		  Case Beacon.ProjectURL.TypeShared
+		    Return IconSharedDocument
+		  Case Beacon.ProjectURL.TypeWeb
+		    Return IconWebDocument
 		  End Select
 		End Function
 	#tag EndMethod
