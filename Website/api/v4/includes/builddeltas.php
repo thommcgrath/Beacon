@@ -97,7 +97,7 @@ function BuildArkContentPackFile(Archiver $archive, ?DateTime $since, ContentPac
 		'archive' => $archive,
 		'class' => 'Ark/Mod',
 		'since' => $since,
-		'ark' => [
+		'Ark' => [
 			'contentPack' => $contentPack
 		]
 	]);
@@ -178,7 +178,7 @@ function BuildFile(array $settings): void {
 		$localName = 'Main.json';
 		break;
 	case 'Ark/Mod':
-		$pack = $settings['ark']['contentPack'];
+		$pack = $settings['Ark']['contentPack'];
 		$filters['contentPackId'] = $pack->ContentPackId();
 		
 		$ark = [
@@ -210,8 +210,8 @@ function BuildFile(array $settings): void {
 	$totalItems = 0;
 	
 	$sections = [
-		'ark' => $ark,
-		'common' => $common,
+		'Ark' => $ark,
+		'Common' => $common,
 		'7DaysToDie' => $sdtd,
 	];
 	foreach ($sections as $sectionName => $groups) {
