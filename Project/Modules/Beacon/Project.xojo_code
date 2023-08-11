@@ -51,6 +51,37 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function AddGuest(Identity As Beacon.Identity) As Boolean
+		  If Identity Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.AddGuest(New Beacon.ProjectGuest(Identity))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AddGuest(Guest As Beacon.ProjectGuest) As Boolean
+		  If Guest Is Nil Then
+		    Return False
+		  End If
+		  
+		  // Need to set the password to generate the fingerprint
+		  Guest.SetPassword(Self.mProjectPassword)
+		  
+		  Var ExistingGuest As Beacon.ProjectGuest = Self.mEncryptedPasswords.Lookup(Guest.UserId.Lowercase, Nil)
+		  If (ExistingGuest Is Nil) = False And Guest.Fingerprint = ExistingGuest.Fingerprint Then
+		    // No change
+		    Return False
+		  End If
+		  
+		  Self.mEncryptedPasswords.Value(Guest.UserId.Lowercase) = Guest
+		  Self.Modified = True
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub AdditionalFilesLoaded()
 		  RaiseEvent AdditionalFilesLoaded()
@@ -106,13 +137,6 @@ Implements ObservationKit.Observable
 		  RaiseEvent AddingProfile(Profile)
 		  
 		  Self.mServerProfiles.Add(Profile)
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AddUser(UserId As String, PublicKey As String)
-		  Self.mEncryptedPasswords.Value(UserId.Lowercase) = EncodeBase64(Crypto.RSAEncrypt(Self.mProjectPassword, PublicKey), 0)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -374,7 +398,14 @@ Implements ObservationKit.Observable
 		    Var PossibleIdentities(0) As Beacon.Identity
 		    PossibleIdentities(0) = Identity
 		    
+		    Var Temp As New Dictionary
 		    For Each Entry As DictionaryEntry In Passwords
+		      If Entry.Value.Type = Variant.TypeString Then
+		        Temp.Value(Entry.Key) = New Beacon.ProjectGuest(Entry.Key.StringValue, "", "", Entry.Value.StringValue)
+		      Else
+		        Temp.Value(Entry.Key) = New Beacon.ProjectGuest(Dictionary(Entry.Value))
+		      End If
+		      
 		      Var UserId As String = Entry.Key
 		      If UserId = Identity.UserId Then
 		        Continue
@@ -385,21 +416,23 @@ Implements ObservationKit.Observable
 		        PossibleIdentities.Add(MergedIdentity)
 		      End If
 		    Next
+		    Passwords = Temp
 		    
 		    For Each PossibleIdentity As Beacon.Identity In PossibleIdentities
-		      Var UserId As String = PossibleIdentity.UserId
+		      Var UserId As String = PossibleIdentity.UserId.Lowercase
 		      If Passwords.HasKey(UserId) = False Then
 		        Continue
 		      End If
 		      
 		      Try
-		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(UserId)), PossibleIdentity.PrivateKey)
+		        Var Guest As Beacon.ProjectGuest = Passwords.Value(UserId)
+		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64MBS(Guest.EncryptedPassword), PossibleIdentity.PrivateKey)
 		        Project.mProjectPassword = DocumentPassword
 		        Project.mEncryptedPasswords = Passwords
 		        
 		        If Passwords.HasKey(UserId) = False Then
 		          // Add a password for the current user
-		          Project.AddUser(UserId, Identity.PublicKey)
+		          Call Project.AddGuest(New Beacon.ProjectGuest(PossibleIdentity))
 		        End If
 		        
 		        Exit
@@ -684,12 +717,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetUsers() As String()
-		  Var Users() As String
+		Function GetGuests() As Beacon.ProjectGuest()
+		  Var Guests() As Beacon.ProjectGuest
 		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
-		    Users.Add(Entry.Key)
+		    Guests.Add(Entry.Value)
 		  Next
-		  Return Users
+		  Return Guests
 		End Function
 	#tag EndMethod
 
@@ -710,7 +743,17 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasUser(UserId As String) As Boolean
+		Function HasGuest(Identity As Beacon.Identity) As Boolean
+		  If Identity Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.HasGuest(Identity.UserId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasGuest(UserId As String) As Boolean
 		  Return Self.mEncryptedPasswords.HasKey(UserId.Lowercase)
 		End Function
 	#tag EndMethod
@@ -972,6 +1015,37 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RemoveGuest(Identity As Beacon.Identity) As Boolean
+		  If Identity Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.RemoveGuest(Identity.UserId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RemoveGuest(Guest As Beacon.ProjectGuest) As Boolean
+		  If Guest Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.RemoveGuest(Guest.UserId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RemoveGuest(UserId As String) As Boolean
+		  UserId = UserId.Lowercase
+		  If Self.mEncryptedPasswords.HasKey(UserId) Then
+		    Self.mEncryptedPasswords.Remove(UserId)
+		    Self.Modified = True
+		    Return True
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
 		  // Part of the ObservationKit.Observable interface.
 		  
@@ -1018,16 +1092,6 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveUser(UserId As String)
-		  UserId = UserId.Lowercase
-		  If Self.mEncryptedPasswords.HasKey(UserId) Then
-		    Self.mEncryptedPasswords.Remove(UserId)
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub RenameConfigSet(Set As Beacon.ConfigSet, NewName As String)
 		  Var OldNameIdx As Integer = Self.IndexOf(Set)
 		  If OldNameIdx = -1 Then
@@ -1051,9 +1115,12 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function SaveData(Identity As Beacon.Identity, AdditionalProperties As Dictionary = Nil) As MemoryBlock
-		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserId) Then
-		    Self.AddUser(Identity.UserId, Identity.PublicKey)
-		  End If
+		  Call Self.AddGuest(Identity) // Adds self, does nothing if nothing is changing
+		  
+		  Var EncryptedPasswords As New Dictionary
+		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
+		    EncryptedPasswords.Value(Entry.Key) = Beacon.ProjectGuest(Entry.Value).DictionaryValue()
+		  Next
 		  
 		  Var Manifest, ProjectData As Dictionary = New Dictionary // Intentionally assigning both to the same dictionary
 		  If Self.mUseCompression Then
@@ -1067,7 +1134,7 @@ Implements ObservationKit.Observable
 		  Manifest.Value("name") = Self.mTitle
 		  Manifest.Value("description") = Self.mDescription
 		  Manifest.Value("gameId") = Self.GameID()
-		  Manifest.Value("encryptionKeys") = Self.mEncryptedPasswords
+		  Manifest.Value("encryptionKeys") = EncryptedPasswords
 		  Manifest.Value("savedWidth") = App.BuildNumber
 		  Manifest.Value("timestamp") = DateTime.Now.SecondsFrom1970
 		  If Self.mLegacyTrustKey.IsEmpty = False Then

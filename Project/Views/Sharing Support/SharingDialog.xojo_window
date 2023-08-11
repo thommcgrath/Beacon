@@ -182,7 +182,7 @@ Begin BeaconDialog SharingDialog
          Cancel          =   False
          Caption         =   "Refresh"
          Default         =   False
-         Enabled         =   True
+         Enabled         =   False
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
@@ -591,7 +591,7 @@ End
 		    
 		    Var Dict As Dictionary = MemberInfo
 		    Var UserId As String = Dict.Value("userId")
-		    Var Username As String = Dict.Value("usernameFull")
+		    Var Username As String = Dict.Value("username")
 		    Var PublicKey As String = Dict.Value("publicKey")
 		    
 		    Var UserInList As Boolean = False
@@ -606,7 +606,9 @@ End
 		      Self.UserList.Sort
 		    End If
 		    
-		    Self.mProject.AddUser(UserId, BeaconEncryption.PEMDecodePublicKey(PublicKey))
+		    If Self.mProject.AddGuest(New Beacon.ProjectGuest(UserId, Username, PublicKey)) Then
+		      Self.mUsersChanged = True
+		    End If
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
@@ -626,7 +628,9 @@ End
 		    Return
 		  End If
 		  
-		  Self.mProject.RemoveUser(UserId)
+		  If Self.mProject.RemoveGuest(UserId) Then
+		    Self.mUsersChanged = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -647,9 +651,15 @@ End
 		    Return
 		  End If
 		  
+		  Var ShouldLoadGuests As Boolean
+		  
 		  Try
 		    Var Payload As Dictionary = Response.JSON
 		    Var Status As String = Payload.Value("communityStatus")
+		    If Self.mOwnerId.IsEmpty Then
+		      Self.mOwnerId = Payload.Value("ownerId")
+		      ShouldLoadGuests = True
+		    End If
 		    
 		    Select Case Status
 		    Case "Requested"
@@ -675,6 +685,10 @@ End
 		    Self.CommunityShareButton.Enabled = False
 		    Return
 		  End Try
+		  
+		  If ShouldLoadGuests Then
+		    Self.LoadGuests()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -703,7 +717,15 @@ End
 		  Self.UserList.RemoveAllRows
 		  
 		  Try
-		    Var GuestsToRemove() As String = Self.mProject.GetUsers
+		    Var Guests() As Beacon.ProjectGuest = Self.mProject.GetGuests
+		    Var Map As New Dictionary
+		    For Each Guest As Beacon.ProjectGuest In Guests
+		      If Guest.UserId = Self.mOwnerId Then
+		        Continue
+		      End If
+		      
+		      Map.Value(Guest.UserId) = Guest
+		    Next
 		    
 		    Var Members() As Variant = Response.JSON
 		    For Each MemberInfo As Variant In Members
@@ -713,30 +735,37 @@ End
 		      
 		      Var Dict As Dictionary = MemberInfo
 		      Var UserId As String = Dict.Value("userId")
-		      Var Username As String = Dict.Value("usernameFull")
+		      Var Username As String = Dict.Value("username")
 		      Var PublicKey As String = Dict.Value("publicKey")
+		      Var Guest As New Beacon.ProjectGuest(UserId, Username, PublicKey)
 		      
-		      Var Idx As Integer = GuestsToRemove.IndexOf(UserId)
-		      If Idx > -1 Then
-		        GuestsToRemove.RemoveAt(Idx)
+		      If Map.HasKey(UserId) Then
+		        Map.Remove(UserId)
 		      End If
 		      
 		      Self.UserList.AddRow(Username, UserId)
 		      Self.UserList.RowSelectedAt(Self.UserList.LastAddedRowIndex) = (SelectedUserIds.IndexOf(UserId) > -1)
 		      
 		      // Add the user to make sure the public key is up to date
-		      Self.mProject.AddUser(UserId, BeaconEncryption.PEMDecodePublicKey(PublicKey))
+		      If Self.mProject.AddGuest(Guest) Then
+		        Self.mUsersChanged = True
+		      End If
 		    Next
 		    Self.UserList.Sort
 		    
-		    // Clean out unnecessary keys
-		    For Each GuestId As String In GuestsToRemove
-		      Self.mProject.RemoveUser(GuestId)
+		    // Clean out unnecessary keys, but don't remove the owner
+		    For Each Entry As DictionaryEntry In Map
+		      If Self.mProject.RemoveGuest(Entry.Key.StringValue) = False Then
+		        Continue
+		      End If
+		      
+		      Self.mUsersChanged = True
 		    Next
 		  Catch Err As RuntimeException
 		  End Try
 		  
 		  Self.AddUserButton.Enabled = True
+		  Self.UserListRefreshButton.Enabled = True
 		End Sub
 	#tag EndMethod
 
@@ -780,9 +809,9 @@ End
 		  Var Win As New SharingDialog(Project)
 		  Win.ShowModal(Parent)
 		  
-		  // If Win.mUsersChanged Then
-		  // Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your project.", "Adding or removing a user updates the encryption keys inside your project, so it is necessary to save the project before newly authorized users are able to access it.")
-		  // End If
+		  If Win.mUsersChanged Then
+		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your project.", "Adding or removing a user updates the encryption keys inside your project, so it is necessary to save the project before newly authorized users are able to access it.")
+		  End If
 		  
 		  Win.Close
 		End Sub
@@ -804,11 +833,19 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mOwnerId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProject As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mRequestCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUsersChanged As Boolean
 	#tag EndProperty
 
 
@@ -932,8 +969,6 @@ End
 #tag Events StatusCheckTimer
 	#tag Event
 		Sub Action()
-		  Self.LoadGuests()
-		  
 		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("projects/" + EncodeUrlComponent(Self.mProject.ProjectId) + "/metadata"), "GET", AddressOf APICallback_GetCommunityStatus)
 		  BeaconAPI.Send(Request)
 		  Self.IncrementRequestCount()

@@ -578,6 +578,7 @@ Class=ModDiscoveryEngine;Modules/Game Support/Ark/ModDiscoveryEngine.xojo_code;&
 Class=ModDiscoverySettings;Modules/Game Support/Ark/ModDiscoverySettings.xojo_code;&h0000000018F147FF;&h0000000016B997FF;false
 MultiImage=IconSharedDocument;Icons/IconSharedDocument.xojo_image;&h0000000008157FFF;&h0000000007F977FF;false
 MultiImage=IconWebDocument;Icons/IconWebDocument.xojo_image;&h00000000526827FF;&h0000000007F977FF;false
+Class=ProjectGuest;Modules/Beacon/ProjectGuest.xojo_code;&h000000006D1627FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=7
