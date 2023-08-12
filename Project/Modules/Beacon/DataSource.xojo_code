@@ -342,6 +342,51 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetContentPacks(Type As Beacon.ContentPack.Types) As Beacon.ContentPack()
+		  Return Self.GetContentPacks("", Type, 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  Return Self.GetContentPacks("", Type, Offset, Limit)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String = "") As Beacon.ContentPack()
+		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack()
+		  Return Self.GetContentPacks(Filter, Type, 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  // Subclasses are expected to override this one
+		  
+		  Var Packs() As Beacon.ContentPack
+		  Return Packs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), Offset, Limit)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPackWithId(ContentPackId As String) As Beacon.ContentPack
+		  // Subclasses are expected to override this one
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasContent() As Boolean
 		  Try
 		    Var Rows As RowSet = Self.SQLSelect("SELECT EXISTS(SELECT 1 FROM variables) AS populated;")
@@ -396,12 +441,12 @@ Implements NotificationKit.Receiver
 		      Next
 		    End If
 		    
-		    If Parsed.HasKey(Self.Identifier.Lowercase) = False Then
+		    If Parsed.HasKey(Self.Identifier) = False Then
 		      Continue
 		    End If
 		    
 		    Try
-		      Var ChangeDict As Dictionary = Parsed.Value(Self.Identifier.Lowercase)
+		      Var ChangeDict As Dictionary = Parsed.Value(Self.Identifier)
 		      If Import(ChangeDict, StatusData, Deletions) = False Then
 		        Self.RollbackTransaction
 		        Self.mImporting = False

@@ -251,6 +251,21 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ConsoleSafe() As Boolean
+		  Return Self.mConsoleSafe
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConsoleSafe(Assigns Value As Boolean)
+		  If Self.mConsoleSafe <> Value Then
+		    Self.mConsoleSafe = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  // This class should only be created as a subclass
@@ -268,9 +283,65 @@ Implements ObservationKit.Observable
 		  
 		  Self.mProviderTokenKeys = New Dictionary
 		  Self.mAdditionalFiles = New Dictionary
+		  Self.mEmbeddedContentPacks = New Dictionary
+		  
+		  Self.mContentPacks = New Dictionary
+		  Var DataSource As Beacon.DataSource = Self.DataSource(False)
+		  If (DataSource Is Nil) = False Then
+		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks
+		    For Idx As Integer = 0 To Packs.LastIndex
+		      Self.mContentPacks.Value(Packs(Idx).ContentPackId) = Packs(Idx).IsDefaultEnabled
+		    Next
+		  End If
 		  
 		  Self.mUseCompression = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackEnabled(Pack As Beacon.ContentPack) As Boolean
+		  Return Self.ContentPackEnabled(Pack.ContentPackId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackEnabled(Pack As Beacon.ContentPack, Assigns Value As Boolean)
+		  If Pack Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.ContentPackEnabled(Pack.ContentPackId) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackEnabled(ContentPackId As String) As Boolean
+		  Return Self.mContentPacks.Lookup(ContentPackId, False)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackEnabled(ContentPackId As String, Assigns Value As Boolean)
+		  Var WasEnabled As Boolean = Self.mContentPacks.Lookup(ContentPackId, False)
+		  If WasEnabled = Value Then
+		    Return
+		  End If
+		  
+		  Self.mContentPacks.Value(ContentPackId) = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPacks() As Beacon.StringList
+		  Var List As New Beacon.StringList
+		  For Each Entry As DictionaryEntry In Self.mContentPacks
+		    If Entry.Value.BooleanValue = True Then
+		      List.Append(Entry.Key.StringValue)
+		    End If
+		  Next
+		  Return List
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -279,6 +350,12 @@ Implements ObservationKit.Observable
 		  
 		  #Pragma Unused GameId
 		  Return New Ark.Project
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DataSource(AllowWriting As Boolean) As Beacon.DataSource
+		  // Subclasses should override
 		End Function
 	#tag EndMethod
 
@@ -303,6 +380,16 @@ Implements ObservationKit.Observable
 		    Self.NotifyObservers("Description", OldValue, Value)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EmbeddedContentPacks() As Beacon.ContentPack()
+		  Var Packs() As Beacon.ContentPack
+		  For Each Entry As DictionaryEntry In Self.mEmbeddedContentPacks
+		    Packs.Add(Entry.Value)
+		  Next
+		  Return Packs
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -387,6 +474,8 @@ Implements ObservationKit.Observable
 		  If SaveData.HasKey("keepLocalBackup") Then
 		    Project.mKeepLocalBackup = SaveData.Value("keepLocalBackup")
 		  End If
+		  
+		  Project.mConsoleSafe = SaveData.FirstValue("isConsole", "IsConsole", Project.mConsoleSafe).BooleanValue
 		  
 		  Var UseCompressionKey As Variant = SaveData.FirstKey("useCompression", "UseCompression")
 		  If UseCompressionKey.IsNull = False Then
@@ -473,6 +562,20 @@ Implements ObservationKit.Observable
 		    End If
 		  End If
 		  Project.AdditionalFilesLoaded()
+		  Project.ProcessEmbeddedContent()
+		  
+		  If SaveData.HasKey("modSelections") Or SaveData.HasKey("ModSelections") Then
+		    // Newest mod, keys are uuids and values are boolean
+		    Var AllPacks() As Beacon.ContentPack = Project.DataSource(False).GetContentPacks()
+		    Var Selections As Dictionary = SaveData.FirstValue("modSelections", "ModSelections", Nil)
+		    Var ConsoleMode As Boolean = Project.ConsoleSafe
+		    For Each Pack As Beacon.ContentPack In AllPacks
+		      If Selections.HasKey(Pack.ContentPackId) = False Then
+		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And (Pack.IsConsoleSafe Or ConsoleMode = False)
+		      End If
+		    Next
+		    Project.mContentPacks = Selections
+		  End If
 		  
 		  If SaveData.HasKey("configSetData") Then
 		    Project.mConfigSets.ResizeTo(-1)
@@ -743,6 +846,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasEmbeddedContentPacks() As Boolean
+		  Return Self.mEmbeddedContentPacks.KeyCount > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasGuest(Identity As Beacon.Identity) As Boolean
 		  If Identity Is Nil Then
 		    Return False
@@ -888,6 +997,46 @@ Implements ObservationKit.Observable
 		  Var OtherSort As String = Other.mTitle + ":" + Other.mDescription + ":" + Other.mProjectId
 		  Return MySort.Compare(OtherSort, ComparisonOptions.CaseInsensitive)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ProcessEmbeddedContent()
+		  Var ContentPacksJson As String = Self.GetFile("Content Packs.json")
+		  If ContentPacksJson.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var PackSaveData() As Variant
+		  Try
+		    PackSaveData = Beacon.ParseJSON(ContentPacksJson)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Self.mEmbeddedContentPacks = New Dictionary
+		  
+		  Var DataSource As Beacon.DataSource = Self.DataSource(False)
+		  For Each SaveData As Variant In PackSaveData
+		    If SaveData.Type <> Variant.TypeObject Or (SaveData.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
+		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
+		    If Pack Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var Filename As String = Pack.ContentPackId + ".json"
+		    Var FileContent As String = Self.GetFile(Filename)
+		    If FileContent.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    If RaiseEvent ProcessEmbeddedContentPack(Pack, FileContent) Then
+		      Self.mEmbeddedContentPacks.Value(Pack.ContentPackId) = Pack
+		    End If
+		  Next
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1137,12 +1286,16 @@ Implements ObservationKit.Observable
 		  Manifest.Value("encryptionKeys") = EncryptedPasswords
 		  Manifest.Value("savedWidth") = App.BuildNumber
 		  Manifest.Value("timestamp") = DateTime.Now.SecondsFrom1970
+		  Manifest.Value("modSelections") = Self.mContentPacks
+		  Manifest.Value("isConsole") = Self.mConsoleSafe
 		  If Self.mLegacyTrustKey.IsEmpty = False Then
 		    Manifest.Value("legacyTrustKey") = Self.mLegacyTrustKey
 		  End If
 		  
 		  Var EncryptedData As New Dictionary
 		  RaiseEvent AddSaveData(Manifest, ProjectData, EncryptedData)
+		  
+		  Self.SaveEmbeddedContent(Manifest)
 		  
 		  If Self.mServerProfiles.Count > 0 Then
 		    Var Profiles() As Dictionary
@@ -1229,6 +1382,75 @@ Implements ObservationKit.Observable
 		    Return Beacon.GenerateJSON(ProjectData, True)
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveEmbeddedContent(ManifestData As Dictionary)
+		  Var PackSaveData() As Variant
+		  Var PackSaveJson As String = Self.GetFile("Content Packs.json")
+		  If PackSaveJson.IsEmpty = False Then
+		    Try
+		      PackSaveData = Beacon.ParseJSON(PackSaveJson)
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Var PacksCache As New Dictionary
+		  Var PackSaveDicts As New Dictionary
+		  For Idx As Integer = PackSaveData.LastIndex DownTo 0
+		    If PackSaveData(Idx).Type = Variant.TypeObject And PackSaveData(Idx).ObjectValue IsA Dictionary Then
+		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(PackSaveData(Idx))
+		      If Pack Is Nil Then
+		        PackSaveData.RemoveAt(Idx)
+		        Continue
+		      End If
+		      
+		      If Self.ContentPackEnabled(Pack) = False Then
+		        PackSaveData.RemoveAt(Idx)
+		        Self.RemoveFile(Pack.ContentPackId + ".json")
+		        Continue
+		      End If
+		      
+		      PacksCache.Value(Pack.ContentPackId) = Pack
+		      PackSaveDicts.Value(Pack.ContentPackId) = PackSaveData(Idx)
+		    Else
+		      PackSaveData.RemoveAt(Idx)
+		    End If
+		  Next
+		  
+		  Var DataSource As Beacon.DataSource = Self.DataSource(False)
+		  Var LocalPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.Types.Custom)
+		  For Each LocalPack As Beacon.ContentPack In LocalPacks
+		    If Self.ContentPackEnabled(LocalPack) = False Then
+		      Continue
+		    End If
+		    
+		    If PacksCache.HasKey(LocalPack.ContentPackId) = True And Beacon.ContentPack(PacksCache.Value(LocalPack.ContentPackId)).LastUpdate >= LocalPack.LastUpdate Then
+		      Continue
+		    End If
+		    
+		    Var PackContent As String = RaiseEvent ExportContentPack(LocalPack)
+		    If PackContent.IsEmpty = False Then
+		      Self.AddFile(LocalPack.ContentPackId + ".json", PackContent)
+		      PackSaveDicts.Value(LocalPack.ContentPackId) = LocalPack.SaveData
+		    Else
+		      Self.RemoveFile(LocalPack.ContentPackId + ".json")
+		      If PackSaveDicts.HasKey(LocalPack.ContentPackId) Then
+		        PackSaveDicts.Remove(LocalPack.ContentPackId)
+		      End If
+		    End If
+		  Next
+		  
+		  If PackSaveDicts.KeyCount = 0 Then
+		    Self.RemoveFile("Content Packs.json")
+		  Else
+		    PackSaveData.ResizeTo(-1)
+		    For Each Entry As DictionaryEntry In PackSaveDicts
+		      PackSaveData.Add(Entry.Value)
+		    Next
+		    Self.AddFile("Content Packs.json", Beacon.GenerateJSON(PackSaveData, False))
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1330,7 +1552,15 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ExportContentPack(Pack As Beacon.ContentPack) As String
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ProcessEmbeddedContentPack(Pack As Beacon.ContentPack, FileContent As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -1371,7 +1601,19 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mConsoleSafe As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContentPacks As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDescription As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEmbeddedContentPacks As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

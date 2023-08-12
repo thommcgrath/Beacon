@@ -1396,30 +1396,6 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPacks(Type As Beacon.ContentPack.Types) As Beacon.ContentPack()
-		  Return Self.GetContentPacks("", Type, 0, 0)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetContentPacks(Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
-		  Return Self.GetContentPacks("", Type, Offset, Limit)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetContentPacks(Filter As String = "") As Beacon.ContentPack()
-		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), 0, 0)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types) As Beacon.ContentPack()
-		  Return Self.GetContentPacks(Filter, Type, 0, 0)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
 		  Var Clauses() As String
 		  Var Values() As Variant
@@ -1448,12 +1424,6 @@ Inherits Beacon.DataSource
 		  
 		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
 		  Return Beacon.ContentPack.FromDatabase(Results)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetContentPacks(Filter As String, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
-		  Return Self.GetContentPacks(Filter, CType(-1, Beacon.ContentPack.Types), Offset, Limit)
 		End Function
 	#tag EndMethod
 

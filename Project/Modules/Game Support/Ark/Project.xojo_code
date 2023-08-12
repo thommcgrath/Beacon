@@ -1,33 +1,21 @@
 #tag Class
 Protected Class Project
 Inherits Beacon.Project
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub AddingProfile(Profile As Beacon.ServerProfile)
 		  If Profile.IsConsole Then
 		    Self.ConsoleSafe = True
 		    
-		    For Each Entry As DictionaryEntry In Self.mContentPacks
-		      Var Pack As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Entry.Key.StringValue)
-		      If (Pack Is Nil Or Pack.IsConsoleSafe = False) And Self.mContentPacks.Value(Entry.Key).BooleanValue = True Then
-		        Self.mContentPacks.Value(Entry.Key) = False
+		    Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		    Var PackIds() As String = Self.ContentPacks()
+		    For Each PackId As String In PackIds
+		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(PackId)
+		      If Pack Is Nil Or Pack.IsConsoleSafe = False Then
+		        Self.ContentPackEnabled(PackId) = False
 		      End If
 		    Next
 		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub AdditionalFilesLoaded()
-		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  
-		  Self.ProcessEmbeddedBlueprints()
-		  
-		  For Each Entry As DictionaryEntry In Self.mEmbeddedBlueprints
-		    Var FreshBlueprints() As Ark.Blueprint = Entry.Value
-		    For Each Blueprint As Ark.Blueprint In FreshBlueprints
-		      DataSource.Cache(Blueprint)
-		    Next
-		  Next
 		End Sub
 	#tag EndEvent
 
@@ -37,9 +25,7 @@ Inherits Beacon.Project
 		  #Pragma Unused EncryptedData
 		  
 		  ManifestData.Value("allowUcs") = Self.AllowUCS2
-		  ManifestData.Value("isConsole") = Self.ConsoleSafe
 		  ManifestData.Value("map") = Self.MapMask
-		  ManifestData.Value("modSelections") = Self.mContentPacks
 		  ManifestData.Value("uwpCompatibilityMode") = CType(Self.UWPMode, Integer)
 		  
 		  Var ConfigSets() As Beacon.ConfigSet = Self.ConfigSets
@@ -59,81 +45,26 @@ Inherits Beacon.Project
 		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Beacon.ConfigSet.BaseConfigSet, True))
 		  ManifestData.Value("difficulty") = Difficulty.DifficultyValue
 		  
-		  Var PackSaveData() As Variant
-		  Var PackSaveJson As String = Self.GetFile("Content Packs.json")
-		  If PackSaveJson.IsEmpty = False Then
-		    Try
-		      PackSaveData = Beacon.ParseJSON(PackSaveJson)
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Var PacksCache As New Dictionary
-		  Var PackSaveDicts As New Dictionary
-		  For Idx As Integer = PackSaveData.LastIndex DownTo 0
-		    If PackSaveData(Idx).Type = Variant.TypeObject And PackSaveData(Idx).ObjectValue IsA Dictionary Then
-		      Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(PackSaveData(Idx))
-		      If Pack Is Nil Then
-		        PackSaveData.RemoveAt(Idx)
-		        Continue
-		      End If
-		      
-		      If Self.ContentPackEnabled(Pack) = False Then
-		        PackSaveData.RemoveAt(Idx)
-		        Self.RemoveFile(Pack.ContentPackId + ".json")
-		        Continue
-		      End If
-		      
-		      PacksCache.Value(Pack.ContentPackId) = Pack
-		      PackSaveDicts.Value(Pack.ContentPackId) = PackSaveData(Idx)
-		    Else
-		      PackSaveData.RemoveAt(Idx)
-		    End If
-		  Next
-		  
-		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  Var LocalPacks() As Beacon.ContentPack = DataSource.GetContentPacks(Beacon.ContentPack.Types.Custom)
-		  For Each LocalPack As Beacon.ContentPack In LocalPacks
-		    If Self.ContentPackEnabled(LocalPack) = False Then
-		      Continue
-		    End If
-		    
-		    If PacksCache.HasKey(LocalPack.ContentPackId) = True And Beacon.ContentPack(PacksCache.Value(LocalPack.ContentPackId)).LastUpdate >= LocalPack.LastUpdate Then
-		      Continue
-		    End If
-		    
-		    Var Blueprints() As Ark.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(LocalPack.ContentPackId), "")
-		    If Blueprints.Count = 0 Then
-		      If PackSaveDicts.HasKey(LocalPack.ContentPackId) Then
-		        PackSaveDicts.Remove(LocalPack.ContentPackId)
-		      End If
-		      Self.RemoveFile(LocalPack.ContentPackId + ".json")
-		      Continue
-		    End If
-		    
-		    Var PackedBlueprints() As Dictionary
-		    For Each Blueprint As Ark.Blueprint In Blueprints
-		      Var Packed As Dictionary = Blueprint.Pack
-		      If (Packed Is Nil) = False Then
-		        PackedBlueprints.Add(Packed)
-		      End If
-		    Next
-		    
-		    PackSaveDicts.Value(LocalPack.ContentPackId) = LocalPack.SaveData
-		    Self.AddFile(LocalPack.ContentPackId + ".json", Beacon.GenerateJSON(PackedBlueprints, False))
-		  Next
-		  
-		  If PackSaveDicts.KeyCount = 0 Then
-		    Self.RemoveFile("Content Packs.json")
-		  Else
-		    PackSaveData.ResizeTo(-1)
-		    For Each Entry As DictionaryEntry In PackSaveDicts
-		      PackSaveData.Add(Entry.Value)
-		    Next
-		    Self.AddFile("Content Packs.json", Beacon.GenerateJSON(PackSaveData, False))
-		  End If
-		  
 		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function ExportContentPack(Pack As Beacon.ContentPack) As String
+		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints("", New Beacon.StringList(Pack.ContentPackId), "")
+		  If Blueprints.Count = 0 Then
+		    Return ""
+		  End If
+		  
+		  Var PackedBlueprints() As Dictionary
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var Packed As Dictionary = Blueprint.Pack
+		    If (Packed Is Nil) = False Then
+		      PackedBlueprints.Add(Packed)
+		    End If
+		  Next
+		  
+		  Return Beacon.GenerateJson(PackedBlueprints, False)
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -190,6 +121,39 @@ Inherits Beacon.Project
 	#tag EndEvent
 
 	#tag Event
+		Function ProcessEmbeddedContentPack(Pack As Beacon.ContentPack, FileContent As String) As Boolean
+		  Var BlueprintDicts() As Variant
+		  Try
+		    BlueprintDicts = Beacon.ParseJSON(FileContent)
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  
+		  Var FreshBlueprints() As Ark.Blueprint
+		  For Each BlueprintDict As Variant In BlueprintDicts
+		    If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
+		    Var ProjectBlueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dictionary(BlueprintDict.ObjectValue))
+		    If ProjectBlueprint Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var StoredBlueprint As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprintById(ProjectBlueprint.BlueprintId, False)
+		    If StoredBlueprint Is Nil Or ProjectBlueprint.LastUpdate > StoredBlueprint.LastUpdate Then
+		      FreshBlueprints.Add(ProjectBlueprint)
+		    End If
+		  Next
+		  
+		  If FreshBlueprints.Count > 0 Then
+		    Self.mEmbeddedBlueprints.Value(Pack.ContentPackId) = FreshBlueprints
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
 		  #Pragma Unused EncryptedData
 		  #Pragma Unused SaveDataVersion
@@ -222,23 +186,12 @@ Inherits Beacon.Project
 		  End If
 		  
 		  Self.AllowUCS2 = PlainData.FirstValue("allowUcs", "AllowUCS", Self.AllowUCS2).BooleanValue
-		  Self.ConsoleSafe = PlainData.FirstValue("isConsole", "IsConsole", Self.ConsoleSafe).BooleanValue
 		  Self.UWPMode = CType(PlainData.FirstValue("uwpCompatibilityMode", "UWPCompatibilityMode", CType(Self.UWPMode, Integer)).IntegerValue, Ark.Project.UWPCompatibilityModes)
 		  
 		  Self.MapMask = PlainData.FirstValue("map", "Map", "MapPreference", 1)
 		  
 		  If PlainData.HasKey("modSelections") Or PlainData.HasKey("ModSelections") Then
-		    // Newest mod, keys are uuids and values are boolean
-		    Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
-		    Var Selections As Dictionary = PlainData.FirstValue("modSelections", "ModSelections", Nil)
-		    Var ConsoleMode As Boolean = Self.ConsoleSafe
-		    For Each Pack As Beacon.ContentPack In AllPacks
-		      If Selections.HasKey(Pack.ContentPackId) = False Then
-		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And (Pack.IsConsoleSafe Or ConsoleMode = False)
-		      End If
-		    Next
-		    
-		    Self.mContentPacks = Selections
+		    // Handled by the parent class
 		  ElseIf PlainData.HasKey("Mods") Then
 		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
 		    
@@ -246,23 +199,18 @@ Inherits Beacon.Project
 		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
 		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
-		    Var Selections As New Dictionary
 		    For Each Pack As Beacon.ContentPack In AllPacks
-		      Selections.Value(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
+		      Self.ContentPackEnabled(Pack.ContentPackId) = (Pack.IsConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.ContentPackId) > -1)
 		    Next
-		    
-		    Self.mContentPacks = Selections
 		  ElseIf PlainData.HasKey("ConsoleModsOnly") Then
 		    Var ConsolePacksOnly As Boolean = PlainData.Value("ConsoleModsOnly")
 		    If ConsolePacksOnly Then
-		      Var Selections As New Dictionary
 		      Var AllPacks() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks()
 		      For Each Pack As Beacon.ContentPack In AllPacks
-		        Selections.Value(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
+		        Self.ContentPackEnabled(Pack.ContentPackId) = Pack.IsDefaultEnabled And Pack.IsConsoleSafe
 		      Next
 		      
 		      Self.ConsoleSafe = True
-		      Self.mContentPacks = Selections
 		    End If
 		  End If
 		End Sub
@@ -454,86 +402,22 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  Return Self.mConsoleSafe
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConsoleSafe(Assigns Value As Boolean)
-		  If Self.mConsoleSafe <> Value Then
-		    Self.mConsoleSafe = Value
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMapMask = 1 // Play it safe, do not bother calling Ark.Maps here in case database access is fubar
 		  
-		  Self.mContentPacks = New Dictionary
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  If (DataSource Is Nil) = False Then
 		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks
 		    For Idx As Integer = 0 To Packs.LastIndex
-		      Self.mContentPacks.Value(Packs(Idx).ContentPackId) = Packs(Idx).IsDefaultEnabled
-		    Next Idx
+		      Self.ContentPackEnabled(Packs(Idx).ContentPackId) = Packs(Idx).IsDefaultEnabled
+		    Next
 		  End If
-		  If Self.mContentPacks.HasKey(Ark.UserContentPackId) Then
-		    Self.mContentPacks.Value(Ark.UserContentPackId) = True // Force this, if it exists
-		  End If
+		  Self.ContentPackEnabled(Ark.UserContentPackId) = True // Force it
+		  
 		  Self.mEmbeddedBlueprints = New Dictionary
-		  Self.mEmbeddedContentPacks = New Dictionary
 		  
 		  Super.Constructor
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ContentPackEnabled(Pack As Beacon.ContentPack) As Boolean
-		  Return Self.ContentPackEnabled(Pack.ContentPackId)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ContentPackEnabled(Pack As Beacon.ContentPack, Assigns Value As Boolean)
-		  If Pack Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.ContentPackEnabled(Pack.ContentPackId) = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ContentPackEnabled(ContentPackId As String) As Boolean
-		  Return Self.mContentPacks.Lookup(ContentPackId, False)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ContentPackEnabled(ContentPackId As String, Assigns Value As Boolean)
-		  Var WasEnabled As Boolean = Self.mContentPacks.Lookup(ContentPackId, False)
-		  If WasEnabled = Value Then
-		    Return
-		  End If
-		  
-		  Self.mContentPacks.Value(ContentPackId) = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ContentPacks() As Beacon.StringList
-		  Var List As New Beacon.StringList
-		  For Each Entry As DictionaryEntry In Self.mContentPacks
-		    If Entry.Value.BooleanValue = True Then
-		      List.Append(Entry.Key.StringValue)
-		    End If
-		  Next
-		  Return List
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -812,6 +696,12 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DataSource(AllowWriting As Boolean) As Beacon.DataSource
+		  Return Ark.DataSource.Pool.Get(AllowWriting)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Difficulty() As Ark.Configs.Difficulty
 		  Var Group As Ark.ConfigGroup = Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.ActiveConfigSet.IsBase)
 		  If Group Is Nil Then
@@ -832,24 +722,14 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EmbeddedContentPacks() As Beacon.ContentPack()
-		  Var Packs() As Beacon.ContentPack
-		  For Each Entry As DictionaryEntry In Self.mEmbeddedContentPacks
-		    Packs.Add(Entry.Value)
-		  Next
-		  Return Packs
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GameId() As String
 		  Return Ark.Identifier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasAvailableBlueprints() As Boolean
-		  Return Self.mEmbeddedContentPacks.KeyCount > 0
+		Attributes( Deprecated = "HasEmbeddedContentPacks" )  Function HasAvailableBlueprints() As Boolean
+		  Return Self.HasEmbeddedContentPacks
 		End Function
 	#tag EndMethod
 
@@ -972,68 +852,10 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ProcessEmbeddedBlueprints()
-		  Var ContentPacksJson As String = Self.GetFile("Content Packs.json")
-		  If ContentPacksJson.IsEmpty Then
-		    Return
-		  End If
-		  
-		  Var PackSaveData() As Variant
-		  Try
-		    PackSaveData = Beacon.ParseJSON(ContentPacksJson)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
+		Sub ProcessEmbeddedContent()
 		  Self.mEmbeddedBlueprints = New Dictionary
-		  Self.mEmbeddedContentPacks = New Dictionary
+		  Super.ProcessEmbeddedContent()
 		  
-		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  For Each SaveData As Variant In PackSaveData
-		    If SaveData.Type <> Variant.TypeObject Or (SaveData.ObjectValue IsA Dictionary) = False Then
-		      Continue
-		    End If
-		    
-		    Var Pack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(Dictionary(SaveData.ObjectValue))
-		    If Pack Is Nil Then
-		      Continue
-		    End If
-		    
-		    Var BlueprintsFilename As String = Pack.ContentPackId + ".json"
-		    Var BlueprintsJson As String = Self.GetFile(BlueprintsFilename)
-		    If BlueprintsJson.IsEmpty Then
-		      Continue
-		    End If
-		    
-		    Var BlueprintDicts() As Variant
-		    Try
-		      BlueprintDicts = Beacon.ParseJSON(BlueprintsJson)
-		    Catch Err As RuntimeException
-		      Continue
-		    End Try
-		    
-		    Var FreshBlueprints() As Ark.Blueprint
-		    For Each BlueprintDict As Variant In BlueprintDicts
-		      If BlueprintDict.Type <> Variant.TypeObject Or (BlueprintDict.ObjectValue IsA Dictionary) = False Then
-		        Continue
-		      End If
-		      
-		      Var ProjectBlueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dictionary(BlueprintDict.ObjectValue))
-		      If ProjectBlueprint Is Nil Then
-		        Continue
-		      End If
-		      
-		      Var StoredBlueprint As Ark.Blueprint = DataSource.GetBlueprintById(ProjectBlueprint.BlueprintId, False)
-		      If StoredBlueprint Is Nil Or ProjectBlueprint.LastUpdate > StoredBlueprint.LastUpdate Then
-		        FreshBlueprints.Add(ProjectBlueprint)
-		      End If
-		    Next
-		    
-		    If FreshBlueprints.Count > 0 Then
-		      Self.mEmbeddedBlueprints.Value(Pack.ContentPackId) = FreshBlueprints
-		      Self.mEmbeddedContentPacks.Value(Pack.ContentPackId) = Pack
-		    End If
-		  Next
 		End Sub
 	#tag EndMethod
 
@@ -1122,20 +944,8 @@ Inherits Beacon.Project
 		Protected mAllowUCS2 As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mConsoleSafe As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mContentPacks As Dictionary
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mEmbeddedBlueprints As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mEmbeddedContentPacks As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
