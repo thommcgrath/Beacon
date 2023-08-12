@@ -52,7 +52,7 @@ Begin DocumentEditorView ArkDocumentEditorView
       Value           =   0
       Visible         =   True
       Width           =   627
-      Begin DesktopCanvas OmniNoticeBanner
+      Begin OmniNoticeBar OmniNoticeBanner
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   True
@@ -69,6 +69,8 @@ Begin DocumentEditorView ArkDocumentEditorView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
@@ -204,7 +206,7 @@ Begin DocumentEditorView ArkDocumentEditorView
       Visible         =   True
       Width           =   230
    End
-   Begin ControlCanvas ConfigSetPicker
+   Begin ConfigSetPicker ConfigSetPicker
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
@@ -420,6 +422,27 @@ End
 	#tag EndMenuHandler
 
 
+	#tag Method, Flags = &h0
+		Sub ActiveConfigSet(Assigns Value As Beacon.ConfigSet)
+		  Var ConfigName As String = Self.CurrentConfigName
+		  If Value.IsBase = False And Ark.Configs.SupportsConfigSets(ConfigName) = False Then
+		    // If switching from base and on an editor that won't exist in the desired set, switch to something else
+		    ConfigName = Ark.Configs.NameLootDrops
+		  End If
+		  Self.CurrentConfigName = "" // To unload the current version
+		  
+		  Self.Project.ActiveConfigSet = Value
+		  Self.ConfigSetPicker.Refresh
+		  Self.UpdateConfigList
+		  
+		  If (Self.Project Is Nil) = False And Self.Controller.URL.Type <> Beacon.ProjectURL.TypeTransient Then
+		    Preferences.ProjectState(Self.Project.ProjectId, "Config Set") = Value.Name
+		  End If
+		  
+		  Self.CurrentConfigName = ConfigName
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
 		  Self.BeginDeploy(Preferences.NewDeploySettings)
@@ -486,13 +509,10 @@ End
 		    Return
 		  End If
 		  
+		  Var OtherEditors() As DocumentEditorView = Self.EditorsForGameId(Self.Project.GameId)
 		  Var OtherProjects() As Beacon.Project
-		  For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
-		    Var Key As Variant = Self.mEditorRefs.Key(I)
-		    Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
-		    If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.ProjectId <> Self.Project.ProjectId Then
-		      OtherProjects.Add(DocumentEditorView(Ref.Value).Project)
-		    End If
+		  For Each Editor As DocumentEditorView In OtherEditors
+		    OtherProjects.Add(Editor.Project)
 		  Next
 		  
 		  Var ImportView As New ArkImportView
@@ -539,11 +559,6 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.ProjectController)
-		  If Self.mEditorRefs Is Nil Then
-		    Self.mEditorRefs = New Dictionary
-		  End If
-		  Self.mEditorRefs.Value(Controller.Project.ProjectId) = New WeakRef(Self)
-		  
 		  Self.Panels = New Dictionary
 		  
 		  Super.Constructor(Controller)
@@ -600,11 +615,137 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Destructor()
-		  If (Self.mEditorRefs Is Nil) = False And Self.mEditorRefs.HasKey(Self.Project.ProjectId) Then
-		    Self.mEditorRefs.Remove(Self.Project.ProjectId)
+		Sub CurrentConfigName(Assigns Value As String)
+		  If Self.CurrentConfigName = Value Then
+		    Return
 		  End If
 		  
+		  If (Value = Ark.Configs.NameAccountsPsuedo Or Value = Ark.Configs.NameServersPseudo Or Value = Ark.Configs.NameMetadataPsuedo) And Self.ActiveConfigSet.IsBase = False Then
+		    Self.ActiveConfigSet = Beacon.ConfigSet.BaseConfigSet
+		  End If
+		  
+		  Super.CurrentConfigName = Value
+		  
+		  Var NewPanel As ArkConfigEditor
+		  Var Embed As Boolean
+		  If Value.IsEmpty = False Then
+		    Var CacheKey As String = Self.ActiveConfigSet.ConfigSetId + ":" + Value
+		    
+		    If (Self.Project Is Nil) = False And Self.Controller.URL.Type <> Beacon.ProjectURL.TypeTransient Then
+		      Preferences.ProjectState(Self.Project.ProjectId, "Editor") = Value
+		    End If
+		    
+		    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)
+		    If HistoryIndex > 0 Then
+		      Self.mPanelHistory.RemoveAt(HistoryIndex)
+		    End If
+		    Self.mPanelHistory.AddAt(0, CacheKey)
+		    
+		    // Close older panels
+		    If Self.mPanelHistory.LastIndex > 2 Then
+		      For I As Integer = Self.mPanelHistory.LastIndex DownTo 3
+		        Var PanelTag As String = Self.mPanelHistory(I)
+		        Self.DiscardConfigPanel(PanelTag)
+		      Next
+		    End If
+		    
+		    If Self.Panels.HasKey(CacheKey) Then
+		      NewPanel = Self.Panels.Value(CacheKey)
+		    Else
+		      Select Case Value
+		      Case Ark.Configs.NameServersPseudo
+		        NewPanel = New ArkServersEditor(Self.Project)
+		      Case Ark.Configs.NameAccountsPsuedo
+		        NewPanel = New ArkAccountsEditor(Self.Project)
+		      Case Ark.Configs.NameMetadataPsuedo
+		        NewPanel = New ArkProjectSettingsEditor(Self.Project)
+		      Case Ark.Configs.NameLootDrops
+		        NewPanel = New ArkLootDropsEditor(Self.Project)
+		      Case Ark.Configs.NameDifficulty
+		        NewPanel = New ArkDifficultyEditor(Self.Project)
+		      Case Ark.Configs.NameExperienceCurves
+		        NewPanel = New ArkExperienceEditor(Self.Project)
+		      Case Ark.Configs.NameCustomContent
+		        NewPanel = New ArkCustomConfigEditor(Self.Project)
+		      Case Ark.Configs.NameCraftingCosts
+		        NewPanel = New ArkCraftingCostsEditor(Self.Project)
+		      Case Ark.Configs.NameStackSizes
+		        NewPanel = New ArkStackSizesEditor(Self.Project)
+		      Case Ark.Configs.NameBreedingMultipliers
+		        NewPanel = New ArkBreedingMultipliersEditor(Self.Project)
+		      Case Ark.Configs.NameHarvestRates
+		        NewPanel = New ArkHarvestRatesEditor(Self.Project)
+		      Case Ark.Configs.NameDinoAdjustments
+		        NewPanel = New ArkDinoAdjustmentsEditor(Self.Project)
+		      Case Ark.Configs.NameStatMultipliers
+		        NewPanel = New ArkStatMultipliersEditor(Self.Project)
+		      Case Ark.Configs.NameDayCycle
+		        NewPanel = New ArkDayCycleEditor(Self.Project)
+		      Case Ark.Configs.NameSpawnPoints
+		        NewPanel = New ArkCreatureSpawnsEditor(Self.Project)
+		      Case Ark.Configs.NameStatLimits
+		        NewPanel = New ArkStatLimitsEditor(Self.Project)
+		      Case Ark.Configs.NameEngramControl
+		        NewPanel = New ArkEngramControlEditor(Self.Project)
+		      Case Ark.Configs.NameSpoilTimers
+		        NewPanel = New ArkSpoilTimersEditor(Self.Project)
+		      Case Ark.Configs.NameOtherSettings
+		        NewPanel = New ArkGeneralSettingsEditor(Self.Project)
+		      End Select
+		      If NewPanel <> Nil Then
+		        Self.Panels.Value(CacheKey) = NewPanel
+		        Embed = True
+		      End If
+		    End If
+		  End If
+		  
+		  If Self.CurrentPanel = NewPanel Then
+		    Return
+		  End If
+		  
+		  If (Self.CurrentPanel Is Nil) = False Then
+		    Self.CurrentPanel.SwitchedFrom()
+		    Self.CurrentPanel.Visible = False
+		    Self.CurrentPanel = Nil
+		  End If
+		  
+		  Self.CurrentPanel = NewPanel
+		  
+		  If (Self.CurrentPanel Is Nil) = False Then
+		    Var RequiresPurchase As Boolean
+		    If Value.Length > 0 Then
+		      RequiresPurchase = Not Ark.Configs.ConfigUnlocked(Value, App.IdentityManager.CurrentIdentity)
+		    End If
+		    Var TopOffset As Integer
+		    If RequiresPurchase Then
+		      TopOffset = (Self.OmniNoticeBanner.Top + Self.OmniNoticeBanner.Height) - Self.PagePanel1.Top
+		    End If
+		    If Embed Then
+		      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+		      If Self.CurrentPanel IsA ArkServersEditor Then
+		        AddHandler ArkServersEditor(Self.CurrentPanel).ShouldDeployProfiles, WeakAddressOf ServersEditor_ShouldDeployProfiles
+		      End If
+		      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, TopOffset, Self.PagePanel1.Width, Self.PagePanel1.Height - TopOffset)
+		    Else
+		      Self.CurrentPanel.Top = Self.PagePanel1.Top + TopOffset
+		      Self.CurrentPanel.Height = Self.PagePanel1.Height - TopOffset
+		    End If
+		    Self.OmniNoticeBanner.Visible = RequiresPurchase
+		    Self.CurrentPanel.Visible = True
+		    Self.CurrentPanel.SwitchedTo()
+		    Self.PagePanel1.SelectedPanelIndex = 1
+		  Else
+		    Self.PagePanel1.SelectedPanelIndex = 0
+		  End If
+		  
+		  Self.ConfigList.SelectedTag = Value
+		  
+		  Self.UpdateMinimumDimensions()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
 		  If (Self.mMapsPopoverController Is Nil) = False Then
 		    RemoveHandler mMapsPopoverController.Finished, WeakAddressOf MapsPopoverController_Finished
 		    Self.mModsPopoverController.Dismiss(True)
@@ -624,6 +765,8 @@ End
 		  If (Self.mDeployWindow Is Nil) = False And (Self.mDeployWindow.Value Is Nil) = False Then
 		    DeployManager(Self.mDeployWindow.Value).Close
 		  End If
+		  
+		  Super.Destructor()
 		End Sub
 	#tag EndMethod
 
@@ -636,92 +779,12 @@ End
 		  End If
 		  
 		  Var Panel As ArkConfigEditor = Self.Panels.Value(CacheKey)
-		  If Panel IsA ServersConfigEditor Then
-		    RemoveHandler ServersConfigEditor(Panel).ShouldDeployProfiles, WeakAddressOf ServersEditor_ShouldDeployProfiles
+		  If Panel IsA ArkServersEditor Then
+		    RemoveHandler ArkServersEditor(Panel).ShouldDeployProfiles, WeakAddressOf ServersEditor_ShouldDeployProfiles
 		  End If
 		  RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
 		  Panel.Close
 		  Self.Panels.Remove(CacheKey)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub HandleConfigPickerClick()
-		  Var Menu As New DesktopMenuItem
-		  Menu.AddMenu(New DesktopMenuItem("Create and switch to new config set…", "beacon:createandswitch"))
-		  Menu.AddMenu(New DesktopMenuItem("Manage config sets…", "beacon:manage"))
-		  Menu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
-		  
-		  Var Sets() As Beacon.ConfigSet = Self.Project.ConfigSets
-		  Var SetsMap As New Dictionary
-		  Var SetNames() As String
-		  For Each Set As Beacon.ConfigSet In Sets
-		    SetsMap.Value(Set.Name) = Set
-		    SetNames.Add(Set.Name)
-		  Next
-		  SetNames.SortWith(Sets)
-		  
-		  For Each Set As Beacon.ConfigSet In Sets
-		    Var Item As New DesktopMenuItem(Set.Name, Set)
-		    Item.HasCheckMark = Set = Self.ActiveConfigSet
-		    If Set.IsBase Then
-		      Item.Shortcut = "B"
-		    End If
-		    Menu.AddMenu(Item)
-		  Next
-		  
-		  Menu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
-		  Menu.AddMenu(New DesktopMenuItem("Learn more about config sets…", "beacon:help"))
-		  
-		  Var PickerOrigin As Point = Self.ConfigSetPicker.GlobalPosition
-		  Var Origin As Point = New Point(PickerOrigin.X + Self.mConfigPickerMenuOrigin.X, PickerOrigin.Y + Self.mConfigPickerMenuOrigin.Y)
-		  Var Choice As DesktopMenuItem = Menu.PopUp(Origin.X, Origin.Y)
-		  If (Choice Is Nil) = False Then
-		    If Choice.Tag.Type = Variant.TypeString And Choice.Tag.StringValue.BeginsWith("beacon:") Then
-		      Var Tag As String = Choice.Tag.StringValue.Middle(7)
-		      Select Case Tag
-		      Case "manage"
-		        If ConfigSetManagerWindow.Present(Self, Self.Project) Then
-		          Self.ActiveConfigSet = Self.ActiveConfigSet
-		          Self.Modified = Self.Project.Modified
-		        End If
-		      Case "help"
-		        Var HelpURL As String = Beacon.HelpURL("config_sets")
-		        If App.MainWindow Is Nil Then
-		          // No logical way for this to happen.
-		          System.GotoURL(HelpURL)
-		          Return
-		        End If
-		        
-		        Var Component As HelpComponent = App.MainWindow.Help(False)
-		        If Component Is Nil Then
-		          System.GotoURL(HelpURL)
-		          Return
-		        End If
-		        
-		        App.MainWindow.ShowHelp()
-		        Component.LoadURL(HelpURL)
-		      case "createandswitch"
-		        Var NewSetName As String = ConfigSetNamingWindow.Present(Self)
-		        If NewSetName.IsEmpty Then
-		          Return
-		        End If
-		        
-		        If SetsMap.HasKey(NewSetName) Then
-		          Self.ActiveConfigSet = SetsMap.Value(NewSetName)
-		          Self.ShowAlert("You have been switched to the " + NewSetName + " config set.", "This project already has a " + NewSetName + " config set, so it has been switched to.")
-		          Return
-		        End If
-		        
-		        Var Set As New Beacon.ConfigSet(NewSetName)
-		        Self.Project.AddConfigSet(Set)
-		        Self.ActiveConfigSet = Set
-		        Self.Modified = Self.Project.Modified
-		      End Select
-		    ElseIf Choice.Tag.Type = Variant.TypeObject And Choice.Tag.ObjectValue IsA Beacon.ConfigSet Then
-		      Self.ActiveConfigSet = Beacon.ConfigSet(Choice.Tag)
-		    End If
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -977,7 +1040,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Beacon.ServerProfile)
+		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ArkServersEditor, SelectedProfiles() As Beacon.ServerProfile)
 		  #Pragma Unused Sender
 		  Self.BeginDeploy(SelectedProfiles)
 		End Sub
@@ -1072,203 +1135,12 @@ End
 	#tag EndMethod
 
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.Project.ActiveConfigSet
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Var ConfigName As String = Self.CurrentConfigName
-			  If Value.IsBase = False And Ark.Configs.SupportsConfigSets(ConfigName) = False Then
-			    // If switching from base and on an editor that won't exist in the desired set, switch to something else
-			    ConfigName = Ark.Configs.NameLootDrops
-			  End If
-			  Self.CurrentConfigName = "" // To unload the current version
-			  
-			  Self.Project.ActiveConfigSet = Value
-			  Self.ConfigSetPicker.Refresh
-			  Self.UpdateConfigList
-			  
-			  If (Self.Project Is Nil) = False And Self.Controller.URL.Type <> Beacon.ProjectURL.TypeTransient Then
-			    Preferences.ProjectState(Self.Project.ProjectId, "Config Set") = Value.Name
-			  End If
-			  
-			  Self.CurrentConfigName = ConfigName
-			End Set
-		#tag EndSetter
-		ActiveConfigSet As Beacon.ConfigSet
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mCurrentConfigName
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mCurrentConfigName = Value Then
-			    Return
-			  End If
-			  
-			  If (Value = Ark.Configs.NameAccountsPsuedo Or Value = Ark.Configs.NameServersPseudo Or Value = Ark.Configs.NameMetadataPsuedo) And Self.ActiveConfigSet.IsBase = False Then
-			    Self.ActiveConfigSet = Beacon.ConfigSet.BaseConfigSet
-			  End If
-			  
-			  Self.mCurrentConfigName = Value
-			  
-			  Var NewPanel As ArkConfigEditor
-			  Var Embed As Boolean
-			  If Value.IsEmpty = False Then
-			    Var CacheKey As String = Self.ActiveConfigSet.ConfigSetId + ":" + Value
-			    
-			    If (Self.Project Is Nil) = False And Self.Controller.URL.Type <> Beacon.ProjectURL.TypeTransient Then
-			      Preferences.ProjectState(Self.Project.ProjectId, "Editor") = Value
-			    End If
-			    
-			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)
-			    If HistoryIndex > 0 Then
-			      Self.mPanelHistory.RemoveAt(HistoryIndex)
-			    End If
-			    Self.mPanelHistory.AddAt(0, CacheKey)
-			    
-			    // Close older panels
-			    If Self.mPanelHistory.LastIndex > 2 Then
-			      For I As Integer = Self.mPanelHistory.LastIndex DownTo 3
-			        Var PanelTag As String = Self.mPanelHistory(I)
-			        Self.DiscardConfigPanel(PanelTag)
-			      Next
-			    End If
-			    
-			    If Self.Panels.HasKey(CacheKey) Then
-			      NewPanel = Self.Panels.Value(CacheKey)
-			    Else
-			      Select Case Value
-			      Case Ark.Configs.NameServersPseudo
-			        NewPanel = New ServersConfigEditor(Self.Project)
-			      Case Ark.Configs.NameAccountsPsuedo
-			        NewPanel = New ArkAccountsEditor(Self.Project)
-			      Case Ark.Configs.NameMetadataPsuedo
-			        NewPanel = New ArkProjectSettingsEditor(Self.Project)
-			      Case Ark.Configs.NameLootDrops
-			        NewPanel = New ArkLootDropsEditor(Self.Project)
-			      Case Ark.Configs.NameDifficulty
-			        NewPanel = New ArkDifficultyEditor(Self.Project)
-			      Case Ark.Configs.NameExperienceCurves
-			        NewPanel = New ArkExperienceEditor(Self.Project)
-			      Case Ark.Configs.NameCustomContent
-			        NewPanel = New ArkCustomConfigEditor(Self.Project)
-			      Case Ark.Configs.NameCraftingCosts
-			        NewPanel = New ArkCraftingCostsEditor(Self.Project)
-			      Case Ark.Configs.NameStackSizes
-			        NewPanel = New ArkStackSizesEditor(Self.Project)
-			      Case Ark.Configs.NameBreedingMultipliers
-			        NewPanel = New ArkBreedingMultipliersEditor(Self.Project)
-			      Case Ark.Configs.NameHarvestRates
-			        NewPanel = New ArkHarvestRatesEditor(Self.Project)
-			      Case Ark.Configs.NameDinoAdjustments
-			        NewPanel = New ArkDinoAdjustmentsEditor(Self.Project)
-			      Case Ark.Configs.NameStatMultipliers
-			        NewPanel = New ArkStatMultipliersEditor(Self.Project)
-			      Case Ark.Configs.NameDayCycle
-			        NewPanel = New ArkDayCycleEditor(Self.Project)
-			      Case Ark.Configs.NameSpawnPoints
-			        NewPanel = New ArkCreatureSpawnsEditor(Self.Project)
-			      Case Ark.Configs.NameStatLimits
-			        NewPanel = New ArkStatLimitsEditor(Self.Project)
-			      Case Ark.Configs.NameEngramControl
-			        NewPanel = New ArkEngramControlEditor(Self.Project)
-			      Case Ark.Configs.NameSpoilTimers
-			        NewPanel = New ArkSpoilTimersEditor(Self.Project)
-			      Case Ark.Configs.NameOtherSettings
-			        NewPanel = New ArkGeneralSettingsEditor(Self.Project)
-			      End Select
-			      If NewPanel <> Nil Then
-			        Self.Panels.Value(CacheKey) = NewPanel
-			        Embed = True
-			      End If
-			    End If
-			  End If
-			  
-			  If Self.CurrentPanel = NewPanel Then
-			    Return
-			  End If
-			  
-			  If (Self.CurrentPanel Is Nil) = False Then
-			    Self.CurrentPanel.SwitchedFrom()
-			    Self.CurrentPanel.Visible = False
-			    Self.CurrentPanel = Nil
-			  End If
-			  
-			  Self.CurrentPanel = NewPanel
-			  
-			  If (Self.CurrentPanel Is Nil) = False Then
-			    Var RequiresPurchase As Boolean
-			    If Value.Length > 0 Then
-			      RequiresPurchase = Not Ark.Configs.ConfigUnlocked(Value, App.IdentityManager.CurrentIdentity)
-			    End If
-			    Var TopOffset As Integer
-			    If RequiresPurchase Then
-			      TopOffset = (Self.OmniNoticeBanner.Top + Self.OmniNoticeBanner.Height) - Self.PagePanel1.Top
-			    End If
-			    If Embed Then
-			      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
-			      If Self.CurrentPanel IsA ServersConfigEditor Then
-			        AddHandler ServersConfigEditor(Self.CurrentPanel).ShouldDeployProfiles, WeakAddressOf ServersEditor_ShouldDeployProfiles
-			      End If
-			      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, TopOffset, Self.PagePanel1.Width, Self.PagePanel1.Height - TopOffset)
-			    Else
-			      Self.CurrentPanel.Top = Self.PagePanel1.Top + TopOffset
-			      Self.CurrentPanel.Height = Self.PagePanel1.Height - TopOffset
-			    End If
-			    Self.OmniNoticeBanner.Visible = RequiresPurchase
-			    Self.CurrentPanel.Visible = True
-			    Self.CurrentPanel.SwitchedTo()
-			    Self.PagePanel1.SelectedPanelIndex = 1
-			  Else
-			    Self.PagePanel1.SelectedPanelIndex = 0
-			  End If
-			  
-			  Self.ConfigList.SelectedTag = Value
-			  
-			  Self.UpdateMinimumDimensions()
-			End Set
-		#tag EndSetter
-		CurrentConfigName As String
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private CurrentPanel As ArkConfigEditor
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigPickerMenuOrigin As Point
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mConfigPickerMouseDown As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mConfigPickerMouseHover As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mCurrentConfigName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mDeployWindow As WeakRef
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDrawOmniBannerPressed As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared mEditorRefs As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1281,10 +1153,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mModsPopoverController As PopoverController
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPagesAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1350,71 +1218,13 @@ End
 	#tag Constant, Name = kConfigGroupClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.configgroup", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LocalMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = OmniWarningText, Type = String, Dynamic = False, Default = \"This config type requires Beacon Omni. Click this banner to learn more.", Scope = Private
-	#tag EndConstant
-
 
 #tag EndWindowCode
 
 #tag Events OmniNoticeBanner
 	#tag Event
-		Sub Paint(g As Graphics, areas() As Rect)
-		  #Pragma Unused Areas
-		  
-		  Var BaseColor As Color = SystemColors.SystemYellowColor
-		  Var BackgroundColor As Color = BaseColor.AtOpacity(0.2)
-		  Var TextColor As Color = SystemColors.LabelColor
-		  Var BorderColor As Color = SystemColors.SeparatorColor
-		  
-		  G.DrawingColor = BackgroundColor
-		  G.FillRectangle(0, 0, G.Width, G.Height - 1)
-		  G.DrawingColor = BorderColor
-		  G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
-		  
-		  Var TextWidth As Double = G.TextWidth(Self.OmniWarningText)
-		  Var TextLeft As Double = (G.Width - TextWidth) / 2
-		  Var TextBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
-		  G.DrawingColor = TextColor
-		  G.DrawText(Self.OmniWarningText, TextLeft, TextBaseline, G.Width - 40, True)
-		  
-		  If Self.mDrawOmniBannerPressed Then
-		    G.DrawingColor = &c00000080
-		    G.FillRectangle(0, 0, G.Width, G.Height - 1)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseDown(x As Integer, y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Self.mDrawOmniBannerPressed = True
-		  Self.OmniNoticeBanner.Refresh
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub MouseDrag(x As Integer, y As Integer)
-		  Var ShouldBePressed As Boolean = X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height
-		  If Self.mDrawOmniBannerPressed <> ShouldBePressed Then
-		    Self.mDrawOmniBannerPressed = ShouldBePressed
-		    Self.OmniNoticeBanner.Refresh
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseUp(x As Integer, y As Integer)
-		  Self.mDrawOmniBannerPressed = False
-		  Self.OmniNoticeBanner.Refresh
-		  If X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height Then
-		    System.GotoURL(Beacon.WebURL("/omni"))
-		  End If
+		Sub Pressed()
+		  System.GotoURL(Beacon.WebURL("/omni"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1650,101 +1460,18 @@ End
 #tag EndEvents
 #tag Events ConfigSetPicker
 	#tag Event
-		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
-		  #Pragma Unused Areas
-		  #Pragma Unused SafeArea
-		  
-		  Var Caption As String = "Config Set: " + Self.ActiveConfigSet.Name
-		  Var CaptionBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
-		  Var CaptionLeft As Double = G.Height - CaptionBaseline
-		  
-		  Var DropdownLeft As Double = G.Width - (CaptionLeft + 8)
-		  Var DropdownTop As Double = (G.Height - 4) / 2
-		  
-		  Var Path As New GraphicsPath
-		  Path.MoveToPoint(NearestMultiple(DropdownLeft, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
-		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 2, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
-		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 4, G.ScaleX), NearestMultiple(DropdownTop + 2, G.ScaleY))
-		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 6, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
-		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 8, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
-		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 4, G.ScaleX), NearestMultiple(DropdownTop + 4, G.ScaleY))
-		  
-		  If Self.mConfigPickerMouseHover And Highlighted Then
-		    G.DrawingColor = SystemColors.ControlAccentColor
-		  Else
-		    G.DrawingColor = SystemColors.LabelColor
-		  End If
-		  
-		  G.DrawText(Caption, NearestMultiple(CaptionLeft, G.ScaleX), NearestMultiple(CaptionBaseline, G.ScaleY), NearestMultiple(G.Width - ((CaptionLeft * 3) + 8), G.ScaleX), True)
-		  G.FillPath(Path)
-		  
-		  If Self.mConfigPickerMouseDown Then
-		    G.DrawingColor = &c000000A5
-		    G.FillRectangle(0, 0, G.Width, G.Height)
-		  End If
-		  
-		  Self.mConfigPickerMenuOrigin = New Point(CaptionLeft, CaptionBaseline)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  If Self.mConfigPickerMouseDown = False Then
-		    Self.mConfigPickerMouseDown = True
-		    Me.Refresh
-		  End If
-		  Return True
+		Function GetProject() As Beacon.Project
+		  Return Self.Project
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
-		  Var Pressed As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height)
-		  If Self.mConfigPickerMouseDown <> Pressed Then
-		    Self.mConfigPickerMouseDown = Pressed
-		    Me.Refresh
-		  End If
+		Sub ManageConfigSets()
+		  Self.ManageConfigSets()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub MouseEnter()
-		  If Self.mConfigPickerMouseHover = False Then
-		    Self.mConfigPickerMouseHover = True
-		    Me.Refresh
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseExit()
-		  If Self.mConfigPickerMouseHover = True Then
-		    Self.mConfigPickerMouseHover = False
-		    Me.Refresh
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseMove(X As Integer, Y As Integer)
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  If Self.mConfigPickerMouseHover = False Then
-		    Self.mConfigPickerMouseHover = True
-		    Me.Refresh
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  Var Pressed As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height)
-		  If Pressed Then
-		    Call CallLater.Schedule(10, WeakAddressOf HandleConfigPickerClick)
-		  End If
-		  If Self.mConfigPickerMouseDown = True Or Self.mConfigPickerMouseHover <> Pressed Then
-		    Self.mConfigPickerMouseDown = False
-		    Self.mConfigPickerMouseHover = Pressed
-		    Me.Refresh
-		  End If
+		Sub NewConfigSet()
+		  Self.NewConfigSet()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2020,13 +1747,5 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CurrentConfigName"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

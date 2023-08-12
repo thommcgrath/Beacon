@@ -367,6 +367,11 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
+		  #Pragma Unused Filter
+		  #Pragma Unused Type
+		  #Pragma Unused Offset
+		  #Pragma Unused Limit
+		  
 		  // Subclasses are expected to override this one
 		  
 		  Var Packs() As Beacon.ContentPack
@@ -382,6 +387,8 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetContentPackWithId(ContentPackId As String) As Beacon.ContentPack
+		  #Pragma Unused ContentPackId
+		  
 		  // Subclasses are expected to override this one
 		End Function
 	#tag EndMethod

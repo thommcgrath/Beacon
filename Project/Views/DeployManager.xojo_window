@@ -74,6 +74,7 @@ Begin BeaconAutopositionWindow DeployManager
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   1
       Underline       =   False
@@ -818,8 +819,6 @@ End
 		      Engine = New Ark.NitradoIntegrationEngine(Profile)
 		    Case IsA Ark.FTPServerProfile
 		      Engine = New Ark.FTPIntegrationEngine(Profile)
-		    Case IsA Ark.ConnectorServerProfile
-		      //DeploymentEngine = New Beacon.ConnectorDeploymentEngine(Beacon.ConnectorServerProfile(Profile))
 		    Case IsA Ark.LocalServerProfile
 		      Engine = New Ark.LocalIntegrationEngine(Profile)
 		    Case IsA Ark.GSAServerProfile

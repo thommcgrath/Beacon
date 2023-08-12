@@ -142,8 +142,6 @@ Protected Class ServerProfile
 		      Return New Ark.NitradoServerProfile(Dict, Project)
 		    Case "FTP"
 		      Return New Ark.FTPServerProfile(Dict, Project)
-		    Case "Connector"
-		      Return New Ark.ConnectorServerProfile(Dict, Project)
 		    Case "Local", "Simple"
 		      Return New Ark.LocalServerProfile(Dict, Project)
 		    Case "GameServerApp"

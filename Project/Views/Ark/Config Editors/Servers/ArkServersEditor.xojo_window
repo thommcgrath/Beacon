@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ArkConfigEditor ServersConfigEditor
+Begin ArkConfigEditor ArkServersEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -77,6 +77,7 @@ Begin ArkConfigEditor ServersConfigEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   82
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -234,7 +235,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Hidden()
-		  Var Container As ServerViewContainer = Self.CurrentView
+		  Var Container As ArkServerViewContainer = Self.CurrentView
 		  If (Container Is Nil) = False Then
 		    Container.SwitchedFrom()
 		  End If
@@ -258,7 +259,7 @@ End
 		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
 		  #Pragma Unused FireSetupUI
 		  
-		  Var Container As ServerViewContainer = Self.CurrentView
+		  Var Container As ArkServerViewContainer = Self.CurrentView
 		  If (Container Is Nil) = False Then
 		    Container.SwitchedTo(UserData)
 		  End If
@@ -462,7 +463,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
+		Private Sub View_ContentsChanged(Sender As ArkServerViewContainer)
 		  Self.Modified = Sender.Modified
 		  Self.ServerList.UpdateList()
 		End Sub
@@ -487,7 +488,7 @@ End
 			  End If
 			  
 			  If Self.mCurrentProfileID <> "" Then
-			    Var View As ServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
+			    Var View As ArkServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
 			    View.Visible = False
 			    View.SwitchedFrom()
 			    Self.mCurrentProfileID = ""
@@ -497,7 +498,7 @@ End
 			    Return
 			  End If
 			  
-			  Var View As ServerViewContainer = Self.mViews.Value(Value)
+			  Var View As ArkServerViewContainer = Self.mViews.Value(Value)
 			  View.SwitchedTo()
 			  View.Visible = True
 			  Self.mCurrentProfileID = Value
@@ -510,11 +511,11 @@ End
 		#tag Getter
 			Get
 			  If Self.mViews.HasKey(Self.mCurrentProfileID) Then
-			    Return ServerViewContainer(Self.mViews.Value(Self.mCurrentProfileID))
+			    Return ArkServerViewContainer(Self.mViews.Value(Self.mCurrentProfileID))
 			  End If
 			End Get
 		#tag EndGetter
-		CurrentView As ServerViewContainer
+		CurrentView As ArkServerViewContainer
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -548,18 +549,16 @@ End
 		    Var ProfileID As String = Profile.ProfileID
 		    If Not Self.mViews.HasKey(ProfileID) Then
 		      // Create the view
-		      Var View As ServerViewContainer
+		      Var View As ArkServerViewContainer
 		      Select Case Profile
 		      Case IsA Ark.NitradoServerProfile
-		        View = New NitradoServerView(Self.Project, Ark.NitradoServerProfile(Profile))
+		        View = New ArkNitradoServerView(Self.Project, Ark.NitradoServerProfile(Profile))
 		      Case IsA Ark.FTPServerProfile
-		        View = New FTPServerView(Self.Project, Ark.FTPServerProfile(Profile))
-		      Case IsA Ark.ConnectorServerProfile
-		        View = New ConnectorServerView(Ark.ConnectorServerProfile(Profile))
+		        View = New ArkFTPServerView(Self.Project, Ark.FTPServerProfile(Profile))
 		      Case IsA Ark.LocalServerProfile
-		        View = New LocalServerView(Self.Project, Ark.LocalServerProfile(Profile))
+		        View = New ArkLocalServerView(Self.Project, Ark.LocalServerProfile(Profile))
 		      Case IsA Ark.GSAServerProfile
-		        View = New GSAServerView(Self.Project, Ark.GSAServerProfile(Profile))
+		        View = New ArkGSAServerView(Self.Project, Ark.GSAServerProfile(Profile))
 		      Else
 		        Self.CurrentProfileID = ""
 		        Return
@@ -584,7 +583,7 @@ End
 		    
 		    Var ProfileID As String = Parts.Join(",")
 		    If Not Self.mViews.HasKey(ProfileID) Then
-		      Var View As New MultiServerView(Self.Project, Profiles)
+		      Var View As New ArkMultiServerView(Self.Project, Profiles)
 		      View.EmbedWithin(Self, FadedSeparator1.Left + FadedSeparator1.Width, FadedSeparator1.Top, Self.Width - (FadedSeparator1.Left + FadedSeparator1.Width), FadedSeparator1.Height)
 		      AddHandler View.ContentsChanged, WeakAddressOf View_ContentsChanged
 		      Self.mViews.Value(ProfileID) = View
@@ -622,7 +621,7 @@ End
 		          Self.CurrentProfileID = ""
 		        End If
 		        
-		        Var Panel As ServerViewContainer = Self.mViews.Value(Profile.ProfileID)
+		        Var Panel As ArkServerViewContainer = Self.mViews.Value(Profile.ProfileID)
 		        Panel.Close
 		        Self.mViews.Remove(Profile.ProfileID)
 		      End If

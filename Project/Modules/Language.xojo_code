@@ -166,13 +166,13 @@ Protected Module Language
 		    Return "Engram Control"
 		  Case Ark.Configs.NameSpoilTimers
 		    Return "Decay and Spoil"
-		  Case Ark.Configs.NameOtherSettings
+		  Case Ark.Configs.NameOtherSettings, SDTD.Configs.NameGeneralSettings
 		    Return "General Settings"
-		  Case Ark.Configs.NameServersPseudo
+		  Case Ark.Configs.NameServersPseudo, SDTD.Configs.NameServers
 		    Return "Servers"
-		  Case Ark.Configs.NameAccountsPsuedo
+		  Case Ark.Configs.NameAccountsPsuedo, SDTD.Configs.NameAccounts
 		    Return "Accounts"
-		  Case Ark.Configs.NameMetadataPsuedo
+		  Case Ark.Configs.NameMetadataPsuedo, SDTD.Configs.NameMetadata
 		    Return "Project Settings"
 		  End Select
 		End Function

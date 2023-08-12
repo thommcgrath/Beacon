@@ -1,21 +1,15 @@
 #tag DesktopWindow
-Begin ServerViewContainer FTPServerView
-   AcceptFocus     =   "False"
-   AcceptTabs      =   "True"
+Begin ArkServerViewContainer ArkFTPServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
-   AutoDeactivate  =   "True"
-   BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   612
-   HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -29,7 +23,6 @@ Begin ServerViewContainer FTPServerView
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   600
    Begin DesktopPagePanel Pages
@@ -105,7 +98,7 @@ Begin ServerViewContainer FTPServerView
          Visible         =   True
          Width           =   560
       End
-      Begin CommonServerSettingsView SettingsView
+      Begin ArkCommonServerSettingsView SettingsView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False

@@ -56,7 +56,7 @@ Begin DocumentImportView ArkImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   8
+      PanelCount      =   7
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -66,7 +66,7 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   720
       Begin DesktopRadioButton SourceRadio
@@ -141,7 +141,7 @@ Begin DocumentImportView ArkImportView
          FontSize        =   0.0
          FontUnit        =   0
          Height          =   20
-         Index           =   4
+         Index           =   3
          InitialParent   =   "Views"
          Italic          =   False
          Left            =   20
@@ -155,7 +155,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   180
+         Top             =   148
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -171,7 +171,7 @@ Begin DocumentImportView ArkImportView
          FontSize        =   0.0
          FontUnit        =   0
          Height          =   20
-         Index           =   3
+         Index           =   2
          InitialParent   =   "Views"
          Italic          =   False
          Left            =   20
@@ -185,7 +185,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   148
+         Top             =   116
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -218,7 +218,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   244
+         Top             =   212
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -250,7 +250,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   244
+         Top             =   212
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -449,7 +449,7 @@ Begin DocumentImportView ArkImportView
          FontSize        =   0.0
          FontUnit        =   0
          Height          =   20
-         Index           =   5
+         Index           =   4
          InitialParent   =   "Views"
          Italic          =   False
          Left            =   20
@@ -463,7 +463,7 @@ Begin DocumentImportView ArkImportView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   212
+         Top             =   180
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -567,65 +567,6 @@ Begin DocumentImportView ArkImportView
          Visible         =   True
          Width           =   80
       End
-      Begin ArkConnectorDiscoveryView ConnectorDiscoveryView1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         Composited      =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   480
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   7
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   False
-         Visible         =   True
-         Width           =   720
-      End
-      Begin DesktopRadioButton SourceRadio
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Server with Beacon Connector"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   2
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   116
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   False
-         Width           =   680
-      End
       Begin BeaconListbox StatusList
          AllowAutoDeactivate=   True
          AllowAutoHideScrollbars=   True
@@ -674,6 +615,7 @@ Begin DocumentImportView ArkImportView
          TabStop         =   True
          Tooltip         =   ""
          Top             =   60
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -731,6 +673,7 @@ Begin DocumentImportView ArkImportView
          TabStop         =   True
          Tooltip         =   ""
          Top             =   60
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -761,7 +704,7 @@ Begin DocumentImportView ArkImportView
          LockTop         =   True
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   8
+         TabPanelIndex   =   7
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
@@ -858,7 +801,6 @@ End
 		  Self.FTPDiscoveryView1.PullValuesFromProject(ArkProject)
 		  Self.LocalDiscoveryView1.PullValuesFromProject(ArkProject)
 		  Self.NitradoDiscoveryView1.PullValuesFromProject(ArkProject)
-		  Self.ConnectorDiscoveryView1.PullValuesFromProject(ArkProject)
 		  Self.GSADiscoveryView1.PullValuesFromProject(ArkProject)
 		End Sub
 	#tag EndEvent
@@ -996,13 +938,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = PageConnector, Type = Double, Dynamic = False, Default = \"6", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = PageFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageGSA, Type = Double, Dynamic = False, Default = \"7", Scope = Private
+	#tag Constant, Name = PageGSA, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageLocal, Type = Double, Dynamic = False, Default = \"3", Scope = Private
@@ -1020,22 +959,19 @@ End
 	#tag Constant, Name = PageStatus, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioConnector, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RadioGSA, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioLocal, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = RadioLocal, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RadioNitrado, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioProject, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = RadioProject, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = StatusPageHeight, Type = Double, Dynamic = False, Default = \"456", Scope = Private
@@ -1058,8 +994,6 @@ End
 		    LocalDiscoveryView1.Begin
 		  Case Self.PageStatus, Self.PageOtherDocuments
 		    Self.SetPageHeight(Self.StatusPageHeight)
-		  Case Self.PageConnector
-		    ConnectorDiscoveryView1.Begin
 		  Case Self.PageGSA
 		    Self.GSADiscoveryView1.Begin
 		  End Select
@@ -1069,7 +1003,7 @@ End
 #tag Events SourceRadio
 	#tag Event
 		Sub ValueChanged(index as Integer)
-		  SourceActionButton.Enabled = SourceRadio(Self.RadioNitrado).Value Or SourceRadio(Self.RadioFTP).Value Or SourceRadio(Self.RadioLocal).Value Or (SourceRadio(Self.RadioProject).Value And SourceRadio(Self.RadioProject).Enabled And Self.mOtherProjects.Count > 0) Or SourceRadio(Self.RadioConnector).Value Or SourceRadio(Self.RadioGSA).Value
+		  SourceActionButton.Enabled = SourceRadio(Self.RadioNitrado).Value Or SourceRadio(Self.RadioFTP).Value Or SourceRadio(Self.RadioLocal).Value Or (SourceRadio(Self.RadioProject).Value And SourceRadio(Self.RadioProject).Enabled And Self.mOtherProjects.Count > 0) Or SourceRadio(Self.RadioGSA).Value
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
 	#tag EndEvent
@@ -1091,8 +1025,6 @@ End
 		    Views.SelectedPanelIndex = Self.PageFTP
 		  Case SourceRadio(Self.RadioLocal).Value
 		    Views.SelectedPanelIndex = Self.PageLocal
-		  Case SourceRadio(Self.RadioConnector).Value
-		    Views.SelectedPanelIndex = Self.PageConnector
 		  Case SourceRadio(Self.RadioProject).Value
 		    OtherDocsList.RemoveAllRows
 		    OtherDocsList.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
@@ -1221,32 +1153,6 @@ End
 		Sub Pressed()
 		  Views.SelectedPanelIndex = Self.PageSources
 		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ConnectorDiscoveryView1
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.QuickCancel Then
-		    Self.Dismiss
-		  Else
-		    Views.SelectedPanelIndex = 0
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  Self.SetPageHeight(NewHeight)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Finished(Data() As Beacon.DiscoveredData)
-		  Self.ImportFrom(Data)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function GetDestinationProject() As Ark.Project
-		  Return Self.mDestinationProject
-		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events OtherDocsList

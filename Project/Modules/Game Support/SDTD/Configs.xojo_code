@@ -65,10 +65,15 @@ Protected Module Configs
 		  
 		  Var RequiresOmni As Boolean
 		  If mConfigOmniCache.HasKey(InternalName) = False Then
-		    Var Instance As SDTD.ConfigGroup = CreateInstance(InternalName)
-		    If (Instance Is Nil) = False Then
-		      RequiresOmni = Instance.RequiresOmni
-		    End If
+		    Select Case InternalName
+		    Case NameServers, NameMetadata, NameAccounts
+		      RequiresOmni = False
+		    Else
+		      Var Instance As SDTD.ConfigGroup = CreateInstance(InternalName)
+		      If (Instance Is Nil) = False Then
+		        RequiresOmni = Instance.RequiresOmni
+		      End If
+		    End Select
 		    mConfigOmniCache.Value(InternalName) = RequiresOmni
 		  Else
 		    RequiresOmni = mConfigOmniCache.Value(InternalName)
@@ -251,7 +256,16 @@ Protected Module Configs
 	#tag EndProperty
 
 
-	#tag Constant, Name = NameGeneralSettings, Type = String, Dynamic = False, Default = \"GeneralSettings", Scope = Protected
+	#tag Constant, Name = NameAccounts, Type = String, Dynamic = False, Default = \"SDTD.Accounts", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameGeneralSettings, Type = String, Dynamic = False, Default = \"SDTD.GeneralSettings", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameMetadata, Type = String, Dynamic = False, Default = \"SDTD.Metadata", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameServers, Type = String, Dynamic = False, Default = \"SDTD.Servers", Scope = Protected
 	#tag EndConstant
 
 

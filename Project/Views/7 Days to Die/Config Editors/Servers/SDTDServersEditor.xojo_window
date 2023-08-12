@@ -1,23 +1,21 @@
 #tag DesktopWindow
-Begin ServerViewContainer MultiServerView
+Begin SDTDConfigEditor SDTDServersEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
+   BackgroundColor =   &cFFFFFF
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
-   Height          =   434
+   Height          =   300
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   True
+   LockBottom      =   False
    LockLeft        =   True
-   LockRight       =   True
+   LockRight       =   False
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
@@ -26,129 +24,18 @@ Begin ServerViewContainer MultiServerView
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   600
-   Begin OmniBar ConfigToolbar
-      Alignment       =   0
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BackgroundColor =   ""
-      ContentHeight   =   0
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LeftPadding     =   -1
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RightPadding    =   -1
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   True
-      Visible         =   True
-      Width           =   600
-   End
-   Begin CommonServerSettingsView SettingsView
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
-      Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
-      Composited      =   False
-      Enabled         =   True
-      HasBackgroundColor=   False
-      Height          =   393
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Modified        =   False
-      Scope           =   2
-      SettingUp       =   False
-      ShowsMapMenu    =   True
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   41
-      Transparent     =   True
-      Visible         =   True
-      Width           =   600
-   End
+   Width           =   300
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.SettingsView.RefreshUI()
-		End Sub
-	#tag EndEvent
-
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Document As Ark.Project, Profiles() As Ark.ServerProfile)
-		  Self.mDocument = Document
-		  Self.mProfiles = Profiles
-		End Sub
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mDocument As Ark.Project
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProfiles() As Ark.ServerProfile
-	#tag EndProperty
+	#tag Hook, Flags = &h0
+		Event ShouldDeployProfiles(SelectedProfiles() As Beacon.ServerProfile)
+	#tag EndHook
 
 
 #tag EndWindowCode
 
-#tag Events ConfigToolbar
-	#tag Event
-		Sub Opening()
-		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", "Multiple Servers"))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SettingsView
-	#tag Event
-		Sub ContentsChanged()
-		  Self.Modified = Me.Modified
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function GetProject() As Ark.Project
-		  Return Self.mDocument
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.Profiles = Self.mProfiles
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Modified"
@@ -159,27 +46,27 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composited"
-		Visible=true
-		Group="Window Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Index"
-		Visible=true
-		Group="ID"
-		InitialValue="-2147483648"
+		Name="MinimumWidth"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
 		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="IsFrontmost"
+		Name="MinimumHeight"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="Boolean"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -199,27 +86,11 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
+		Name="IsFrontmost"
 		Visible=false
 		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumWidth"
-		Visible=true
-		Group="Behavior"
-		InitialValue="400"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumHeight"
-		Visible=true
-		Group="Behavior"
-		InitialValue="300"
-		Type="Integer"
+		InitialValue=""
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -236,6 +107,14 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -419,6 +298,14 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

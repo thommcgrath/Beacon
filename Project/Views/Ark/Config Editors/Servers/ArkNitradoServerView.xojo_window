@@ -1,21 +1,15 @@
 #tag DesktopWindow
-Begin ServerViewContainer NitradoServerView
-   AcceptFocus     =   "False"
-   AcceptTabs      =   "True"
+Begin ArkServerViewContainer ArkNitradoServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
-   AutoDeactivate  =   "True"
-   BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   600
-   HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -29,7 +23,6 @@ Begin ServerViewContainer NitradoServerView
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   "False"
    Visible         =   True
    Width           =   600
    Begin DesktopPagePanel Pages
@@ -201,7 +194,7 @@ Begin ServerViewContainer NitradoServerView
          Visible         =   True
          Width           =   560
       End
-      Begin CommonServerSettingsView SettingsView
+      Begin ArkCommonServerSettingsView SettingsView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -270,7 +263,6 @@ Begin ServerViewContainer NitradoServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -278,11 +270,10 @@ Begin ServerViewContainer NitradoServerView
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -290,7 +281,7 @@ Begin ServerViewContainer NitradoServerView
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
 #tag EndDesktopWindow

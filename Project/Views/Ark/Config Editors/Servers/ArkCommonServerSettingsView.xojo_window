@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconContainer CommonServerSettingsView
+Begin BeaconContainer ArkCommonServerSettingsView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False

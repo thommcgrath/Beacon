@@ -2,6 +2,7 @@
 Protected Class DocumentEditorView
 Inherits BeaconSubview
 Implements NotificationKit.Receiver,ObservationKit.Observer
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 	#tag Event
 		Sub CleanupDiscardedChanges()
 		  Self.CleanupAutosave()
@@ -70,6 +71,18 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndMenuHandler
 
 
+	#tag Method, Flags = &h0
+		Function ActiveConfigSet() As Beacon.ConfigSet
+		  Return Self.Project.ActiveConfigSet
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ActiveConfigSet(Assigns Value As Beacon.ConfigSet)
+		  #Pragma Unused Value
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Autosave()
 		  If Not Self.Project.Modified Then
@@ -129,6 +142,11 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Controller As Beacon.ProjectController)
+		  If Self.mEditorRefs Is Nil Then
+		    Self.mEditorRefs = New Dictionary
+		  End If
+		  Self.mEditorRefs.Value(Controller.Project.ProjectId) = New WeakRef(Self)
+		  
 		  Self.mController = Controller
 		  If (Self.mController.AutosaveURL Is Nil) = False Then
 		    Self.mAutosaveURL = Self.mController.AutosaveURL
@@ -167,11 +185,87 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CurrentConfigName() As String
+		  Return Self.mCurrentConfigName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CurrentConfigName(Assigns Value As String)
+		  #Pragma Unused Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  If (Self.mEditorRefs Is Nil) = False And Self.mEditorRefs.HasKey(Self.Project.ProjectId) Then
+		    Self.mEditorRefs.Remove(Self.Project.ProjectId)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function EditorForProject(Project As Beacon.Project) As DocumentEditorView
+		  If Project Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return EditorForProject(Project.ProjectId)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function EditorForProject(ProjectId As String) As DocumentEditorView
+		  If mEditorRefs Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  For Idx As Integer = 0 To mEditorRefs.KeyCount - 1
+		    Var Key As Variant = mEditorRefs.Key(Idx)
+		    Var Ref As WeakRef = mEditorRefs.Value(Key)
+		    If (Ref Is Nil) = False And (Ref.Value Is Nil) = False And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.ProjectId = ProjectId Then
+		      Return DocumentEditorView(Ref.Value)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function EditorsForGameId(GameId As String) As DocumentEditorView()
+		  Var Editors() As DocumentEditorView
+		  If mEditorRefs Is Nil Then
+		    Return Editors
+		  End If
+		  
+		  For Idx As Integer = 0 To mEditorRefs.KeyCount - 1
+		    Var Key As Variant = mEditorRefs.Key(Idx)
+		    Var Ref As WeakRef = mEditorRefs.Value(Key)
+		    If (Ref Is Nil) = False And (Ref.Value Is Nil) = False And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.GameId = GameId Then
+		      Editors.Add(DocumentEditorView(Ref.Value))
+		    End If
+		  Next
+		  
+		  Return Editors
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameID() As String
 		  If (Self.mController Is Nil) = False And (Self.mController.Project Is Nil) = False Then
 		    Return Self.mController.Project.GameID
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ManageConfigSets()
+		  If ConfigSetManagerWindow.Present(Self, Self.Project) = False Then
+		    Return
+		  End If
+		  
+		  Self.ActiveConfigSet = Self.ActiveConfigSet
+		  Self.Modified = Self.Project.Modified
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -221,6 +315,27 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  If Self.mCloseAfterSave Then
 		    Self.RequestClose()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub NewConfigSet()
+		  Var NewSetName As String = ConfigSetNamingWindow.Present(Self)
+		  If NewSetName.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var Set As Beacon.ConfigSet = Self.Project.ConfigSet(NewSetName)
+		  If (Set Is Nil) = False Then
+		    Self.ActiveConfigSet = Set
+		    Self.ShowAlert("You have been switched to the " + NewSetName + " config set.", "This project already has a " + NewSetName + " config set, so it has been switched to.")
+		    Return
+		  End If
+		  
+		  Set = New Beacon.ConfigSet(NewSetName)
+		  Self.Project.AddConfigSet(Set)
+		  Self.ActiveConfigSet = Set
+		  Self.Modified = Self.Project.Modified
 		End Sub
 	#tag EndMethod
 
@@ -369,6 +484,21 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag Property, Flags = &h21
 		Private mController As Beacon.ProjectController
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCurrentConfigName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mEditorRefs As Dictionary
+	#tag EndProperty
+
+
+	#tag Constant, Name = LocalMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior

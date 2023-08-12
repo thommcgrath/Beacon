@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ServerViewContainer GSAServerView
+Begin ArkServerViewContainer ArkMultiServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -7,11 +7,9 @@ Begin ServerViewContainer GSAServerView
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
-   Height          =   600
+   Height          =   434
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -27,113 +25,7 @@ Begin ServerViewContainer GSAServerView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin DesktopPagePanel Pages
-      AllowAutoDeactivate=   True
-      Enabled         =   True
-      Height          =   559
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      PanelCount      =   2
-      Panels          =   ""
-      Scope           =   2
-      SelectedPanelIndex=   0
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   41
-      Transparent     =   False
-      Value           =   0
-      Visible         =   True
-      Width           =   600
-      Begin BeaconTextArea AdminNotesField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   True
-         AllowStyledText =   True
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         Height          =   519
-         HideSelection   =   True
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LineHeight      =   0.0
-         LineSpacing     =   1.0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Multiline       =   True
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   61
-         Transparent     =   False
-         Underline       =   False
-         UnicodeMode     =   1
-         ValidationMask  =   ""
-         Visible         =   True
-         Width           =   560
-      End
-      Begin CommonServerSettingsView SettingsView
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         Composited      =   False
-         Enabled         =   True
-         HasBackgroundColor=   False
-         Height          =   559
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Modified        =   False
-         Scope           =   2
-         SettingUp       =   False
-         ShowsMapMenu    =   True
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   41
-         Transparent     =   True
-         Visible         =   True
-         Width           =   600
-      End
-   End
-   Begin OmniBar ControlToolbar
+   Begin OmniBar ConfigToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -167,6 +59,38 @@ Begin ServerViewContainer GSAServerView
       Visible         =   True
       Width           =   600
    End
+   Begin ArkCommonServerSettingsView SettingsView
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      Composited      =   False
+      Enabled         =   True
+      HasBackgroundColor=   False
+      Height          =   393
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Modified        =   False
+      Scope           =   2
+      SettingUp       =   False
+      ShowsMapMenu    =   True
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   True
+      Visible         =   True
+      Width           =   600
+   End
 End
 #tag EndDesktopWindow
 
@@ -175,16 +99,15 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
 		  Self.SettingsView.RefreshUI()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Document As Ark.Project, Profile As Ark.GSAServerProfile)
+		Sub Constructor(Document As Ark.Project, Profiles() As Ark.ServerProfile)
 		  Self.mDocument = Document
-		  Self.mProfile = Profile
+		  Self.mProfiles = Profiles
 		End Sub
 	#tag EndMethod
 
@@ -194,35 +117,20 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProfile As Ark.GSAServerProfile
+		Private mProfiles() As Ark.ServerProfile
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events Pages
+#tag Events ConfigToolbar
 	#tag Event
-		Sub PanelChanged()
-		  For Idx As Integer = 0 To Self.ControlToolbar.LastIndex
-		    Self.ControlToolbar.Item(Idx).Toggled = Me.SelectedPanelIndex = Idx
-		  Next
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events AdminNotesField
-	#tag Event
-		Sub TextChanged()
-		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Modified = Self.mProfile.Modified
+		Sub Opening()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", "Multiple Servers"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SettingsView
-	#tag Event
-		Sub Opening()
-		  Me.Profile = Self.mProfile
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Sub ContentsChanged()
 		  Self.Modified = Me.Modified
@@ -233,25 +141,9 @@ End
 		  Return Self.mDocument
 		End Function
 	#tag EndEvent
-#tag EndEvents
-#tag Events ControlToolbar
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
-		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
-		  Me.Item("PageGeneral").Toggled = True
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
-		  
-		  Select Case Item.Name
-		  Case "PageGeneral"
-		    Self.Pages.SelectedPanelIndex = 0
-		  Case "PageNotes"
-		    Self.Pages.SelectedPanelIndex = 1
-		  End Select
+		  Me.Profiles = Self.mProfiles
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -308,7 +200,7 @@ End
 		Name="Progress"
 		Visible=false
 		Group="Behavior"
-		InitialValue=""
+		InitialValue="ProgressNone"
 		Type="Double"
 		EditorType=""
 	#tag EndViewProperty

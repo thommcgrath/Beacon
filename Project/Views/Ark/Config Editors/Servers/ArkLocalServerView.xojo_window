@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin ServerViewContainer LocalServerView
+Begin ArkServerViewContainer ArkLocalServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -7,9 +7,7 @@ Begin ServerViewContainer LocalServerView
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
    Height          =   600
    Index           =   -2147483648
@@ -314,7 +312,7 @@ Begin ServerViewContainer LocalServerView
          Visible         =   True
          Width           =   90
       End
-      Begin CommonServerSettingsView SettingsView
+      Begin ArkCommonServerSettingsView SettingsView
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False

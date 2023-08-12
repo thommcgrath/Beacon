@@ -157,6 +157,16 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConfigSet(Named As String) As Beacon.ConfigSet
+		  For Idx As Integer = 0 To Self.mConfigSets.LastIndex
+		    If Self.mConfigSets(Idx).Name = Named Then
+		      Return Self.mConfigSets(Idx)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ConfigSetCount() As Integer
 		  Return Self.mConfigSets.Count
 		End Function
@@ -357,6 +367,8 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function DataSource(AllowWriting As Boolean) As Beacon.DataSource
+		  #Pragma Unused AllowWriting
+		  
 		  // Subclasses should override
 		End Function
 	#tag EndMethod
@@ -1017,7 +1029,6 @@ Implements ObservationKit.Observable
 		  
 		  Self.mEmbeddedContentPacks = New Dictionary
 		  
-		  Var DataSource As Beacon.DataSource = Self.DataSource(False)
 		  For Each SaveData As Variant In PackSaveData
 		    If SaveData.Type <> Variant.TypeObject Or (SaveData.ObjectValue IsA Dictionary) = False Then
 		      Continue
@@ -1297,7 +1308,7 @@ Implements ObservationKit.Observable
 		  Var EncryptedData As New Dictionary
 		  RaiseEvent AddSaveData(Manifest, ProjectData, EncryptedData)
 		  
-		  Self.SaveEmbeddedContent(Manifest)
+		  Self.SaveEmbeddedContent()
 		  
 		  If Self.mServerProfiles.Count > 0 Then
 		    Var Profiles() As Dictionary
@@ -1387,7 +1398,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SaveEmbeddedContent(ManifestData As Dictionary)
+		Private Sub SaveEmbeddedContent()
 		  Var PackSaveData() As Variant
 		  Var PackSaveJson As String = Self.GetFile("Content Packs.json")
 		  If PackSaveJson.IsEmpty = False Then
