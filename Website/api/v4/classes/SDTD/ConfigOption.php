@@ -22,6 +22,7 @@ class ConfigOption extends GenericObject {
 	protected ?string $uiGroup;
 	protected ?array $constraints;
 	protected ?string $customSort;
+	protected ?int $nativeEditorVersion;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
@@ -35,6 +36,7 @@ class ConfigOption extends GenericObject {
 		$this->uiGroup = $row->Field('ui_group');
 		$this->constraints = is_null($row->Field('constraints')) ? null : json_decode($row->Field('constraints'), true);
 		$this->customSort = $row->Field('custom_sort');
+		$this->nativeEditorVersion = $row->Field('native_editor_version');
 	}
 	
 	protected static function CustomVariablePrefix(): string {
@@ -54,6 +56,7 @@ class ConfigOption extends GenericObject {
 			new DatabaseObjectProperty('uiGroup', ['columnName' => 'ui_group']),
 			new DatabaseObjectProperty('constraints'),
 			new DatabaseObjectProperty('customSort', ['columnName' => 'custom_sort']),
+			new DatabaseObjectProperty('nativeEditorVersion', ['columnName' => 'native_editor_version']),
 		]);
 		return $schema;
 	}
@@ -78,6 +81,7 @@ class ConfigOption extends GenericObject {
 		$json['uiGroup'] = $this->uiGroup;
 		$json['customSort'] = $this->customSort;
 		$json['constraints'] = $this->constraints;
+		$json['nativeEditorVersion'] = $this->nativeEditorVersion;
 		return $json;
 	}
 	
@@ -115,6 +119,10 @@ class ConfigOption extends GenericObject {
 	
 	public function Constraints(): ?array {
 		return $this->constraints;
+	}
+	
+	public function NativeEditorVersion(): ?int {
+		return $this->nativeEditorVersion;
 	}
 }
 
