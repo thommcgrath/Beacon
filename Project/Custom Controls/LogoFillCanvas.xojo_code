@@ -1,6 +1,7 @@
 #tag Class
 Protected Class LogoFillCanvas
 Inherits ControlCanvas
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 	#tag Event
 		Sub Paint(G As Graphics, Areas() As Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
@@ -10,21 +11,22 @@ Inherits ControlCanvas
 		  G.FontSize = 24
 		  
 		  Var ForeColor As Color = SystemColors.TertiaryLabelColor
-		  
 		  Var LogoForeground As Picture = BeaconUI.IconWithColor(LogoMask, ForeColor)
 		  
+		  Var MaxCaptionWidth As Integer = G.Width - 40
 		  Var LogoLeft As Integer = (G.Width - LogoMask.Width) / 2
-		  Var LogoTop As Integer = (G.Height - LogoMask.Height) / 2
+		  Var CaptionWidth As Double = Min(G.TextWidth(Self.mCaption), MaxCaptionWidth)
+		  Var CaptionHeight As Double = G.TextHeight(Self.mCaption, MaxCaptionWidth)
+		  Var CaptionLeft As Double = (G.Width - CaptionWidth) / 2
+		  Var CombinedHeight As Double = LogoMask.Height + G.CapHeight + CaptionHeight
 		  
-		  G.DrawPicture(LogoForeground, LogoLeft, LogoTop)
+		  Var LogoTop As Double = (G.Height - CombinedHeight) / 2
+		  Var CaptionTop As Double = LogoTop + LogoMask.Height + G.CapHeight
+		  Var CaptionBase As Double = CaptionTop + G.CapHeight
 		  
-		  Var CaptionTop As Integer = LogoTop + LogoMask.Height + 8
-		  Var CaptionBase As Integer = CaptionTop + G.CapHeight
-		  Var CaptionWidth As Integer = Min(Ceiling(G.TextWidth(Self.mCaption)), G.Width - 40)
-		  Var CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
-		  
+		  G.DrawPicture(LogoForeground, NearestMultiple(LogoLeft, G.ScaleX), NearestMultiple(LogoTop, G.ScaleY))
 		  G.DrawingColor = ForeColor
-		  G.DrawText(Self.mCaption, CaptionLeft, CaptionBase, CaptionWidth, False)
+		  G.DrawText(Self.mCaption, NearestMultiple(CaptionLeft, G.ScaleX), NearestMultiple(CaptionBase, G.ScaleY), MaxCaptionWidth, False)
 		End Sub
 	#tag EndEvent
 
