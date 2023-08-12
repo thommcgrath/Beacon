@@ -208,6 +208,63 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CountContentPacks(Filter As String, Type As Beacon.ContentPack.Types) As Integer
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("name LIKE :filter ESCAPE '\'")
+		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
+		  End If
+		  Select Case Type
+		  Case Beacon.ContentPack.Types.Official
+		    Clauses.Add("is_local = 0 AND console_safe = 1")
+		  Case Beacon.ContentPack.Types.ThirdParty
+		    Clauses.Add("is_local = 0 AND console_safe = 0")
+		  Case Beacon.ContentPack.Types.Custom
+		    Clauses.Add("is_local = 1")
+		  End Select
+		  
+		  Var SQL As String = "SELECT COUNT(content_pack_id) FROM content_packs"
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + String.FromArray(Clauses, " AND ")
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
+		  Return Results.ColumnAt(0).IntegerValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateLocalContentPack(PackName As String) As Beacon.ContentPack
+		  #Pragma Unused PackName
+		  
+		  Return Self.CreateLocalContentPack(PackName, "", "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateLocalContentPack(PackName As String, Marketplace As String, MarketplaceId As String) As Beacon.ContentPack
+		  Var ContentPackId As String
+		  If MarketplaceId.IsEmpty Then
+		    ContentPackId = Beacon.UUID.v4
+		  Else
+		    ContentPackId = Beacon.ContentPack.GenerateLocalContentPackId(Marketplace, MarketplaceId)
+		  End If
+		  Self.BeginTransaction()
+		  Var Rows As RowSet = Self.SQLSelect("INSERT OR IGNORE INTO content_packs (content_pack_id, game_id, marketplace, marketplace_id, name, console_safe, default_enabled, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9) RETURNING *;", ContentPackId, Ark.Identifier, Marketplace, MarketplaceId, PackName, False, False, True, DateTime.Now.SecondsFrom1970)
+		  If Rows.RowCount <> 1 Then
+		    Self.RollbackTransaction()
+		    Return Nil
+		  End If
+		  Self.CommitTransaction()
+		  Self.ExportCloudFiles()
+		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Rows)
+		  Return Packs(0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Destructor()
 		  NotificationKit.Ignore(Self, UserCloud.Notification_SyncFinished)
 		  
@@ -367,15 +424,33 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetContentPacks(Filter As String, Type As Beacon.ContentPack.Types, Offset As Integer, Limit As Integer) As Beacon.ContentPack()
-		  #Pragma Unused Filter
-		  #Pragma Unused Type
-		  #Pragma Unused Offset
-		  #Pragma Unused Limit
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("name LIKE :filter ESCAPE '\'")
+		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
+		  End If
+		  Select Case Type
+		  Case Beacon.ContentPack.Types.Official
+		    Clauses.Add("is_local = 0 AND console_safe = 1")
+		  Case Beacon.ContentPack.Types.ThirdParty
+		    Clauses.Add("is_local = 0 AND console_safe = 0")
+		  Case Beacon.ContentPack.Types.Custom
+		    Clauses.Add("is_local = 1")
+		  End Select
 		  
-		  // Subclasses are expected to override this one
+		  Var SQL As String = "SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update FROM content_packs"
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + String.FromArray(Clauses, " AND ")
+		  End If
+		  SQL = SQL + " ORDER BY name"
+		  If Limit > 0 Then
+		    SQL = SQL + " LIMIT " + Limit.ToString(Locale.Raw, "0") + " OFFSET " + Offset.ToString(Locale.Raw, "0")
+		  End If
+		  SQL = SQL + ";"
 		  
-		  Var Packs() As Beacon.ContentPack
-		  Return Packs
+		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
+		  Return Beacon.ContentPack.FromDatabase(Results)
 		End Function
 	#tag EndMethod
 
@@ -387,9 +462,11 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetContentPackWithId(ContentPackId As String) As Beacon.ContentPack
-		  #Pragma Unused ContentPackId
-		  
-		  // Subclasses are expected to override this one
+		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, game_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
+		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Results)
+		  If Packs.Count = 1 Then
+		    Return Packs(0)
+		  End If
 		End Function
 	#tag EndMethod
 

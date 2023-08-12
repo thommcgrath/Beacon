@@ -370,6 +370,10 @@ Implements ObservationKit.Observable
 		  #Pragma Unused AllowWriting
 		  
 		  // Subclasses should override
+		  
+		  Var Err As New UnsupportedOperationException
+		  Err.Message = "A subclass forgot to override Project.DataSource"
+		  Raise Err
 		End Function
 	#tag EndMethod
 

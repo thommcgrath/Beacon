@@ -1279,7 +1279,7 @@ End
 		      Return
 		    End If
 		    
-		    Var Editor As New ModSelectionGrid(Self.Project.ContentPacks)
+		    Var Editor As New ModSelectionGrid(Self.Project)
 		    Var Controller As New PopoverController("Select Mods", Editor)
 		    Controller.Show(Me, ItemRect)
 		    

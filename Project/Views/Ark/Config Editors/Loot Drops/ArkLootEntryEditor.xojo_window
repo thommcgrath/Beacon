@@ -170,6 +170,7 @@ Begin BeaconDialog ArkLootEntryEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   169
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   1
          Underline       =   False
@@ -445,6 +446,7 @@ Begin BeaconDialog ArkLootEntryEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   379
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -995,7 +997,7 @@ End
 		    Return
 		  End If
 		  
-		  Var ModPicker As New ModSelectionGrid(Self.mMods)
+		  Var ModPicker As New ModSelectionGrid(Ark.DataSource.Pool.Get(False), Self.mMods)
 		  Var Controller As New PopoverController("Select Mods", ModPicker)
 		  Controller.Show(Me)
 		  

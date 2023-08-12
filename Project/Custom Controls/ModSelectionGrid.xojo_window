@@ -268,10 +268,10 @@ End
 		  Next
 		  
 		  If Self.mOffset = 0 Then
-		    Self.mResultCount = Ark.DataSource.Pool.Get(False).CountContentPacks(Self.FilterField.Text.Trim, RequiredType)
+		    Self.mResultCount = Self.mDataSource.CountContentPacks(Self.FilterField.Text.Trim, RequiredType)
 		  End If
 		  
-		  Var Packs() As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
+		  Var Packs() As Beacon.ContentPack = Self.mDataSource.GetContentPacks(Self.FilterField.Text.Trim, RequiredType, Self.mOffset, Self.ResultsPerPage)
 		  Var Measure As New Picture(20, 20)
 		  Var MeasuredWidth As Double
 		  Self.CheckboxesBound = Packs.LastIndex
@@ -340,9 +340,25 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Constructor()
+		  // Calling the overridden superclass constructor.
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Sub Constructor(EnabledMods As Beacon.StringList)
+		Sub Constructor(DataSource As Beacon.DataSource, EnabledMods As Beacon.StringList)
+		  Self.mDataSource = DataSource
+		  Self.Constructor()
 		  Self.EnabledMods = EnabledMods
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Project As Beacon.Project)
+		  Self.Constructor(Project.DataSource(False), Project.ContentPacks)
 		End Sub
 	#tag EndMethod
 
@@ -398,6 +414,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private CheckboxesBound As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDataSource As Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

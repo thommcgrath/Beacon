@@ -470,6 +470,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
+		    Var ContentPacks() As Beacon.ContentPack = SDTD.DataSource.Pool.Get(False).GetContentPacks
+		    For Each Pack As Beacon.ContentPack In ContentPacks
+		      Self.Project.ContentPackEnabled(Pack.ContentPackId) = Editor.ModEnabled(Pack.ContentPackId)
+		    Next
+		    
+		    Self.Modified = Self.Project.Modified
+		  End If
+		  
+		  If (Self.CurrentPanel Is Nil) = False Then
+		    Self.CurrentPanel.SetupUI()
+		  End If
+		  
+		  Self.ProjectToolbar.Item("ModsButton").Toggled = False
+		  Self.mModsPopoverController = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Panel_ContentsChanged(Sender As SDTDConfigEditor)
 		  #Pragma Unused Sender
 		  
@@ -556,6 +577,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModsPopoverController As PopoverController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPanelHistory() As String
 	#tag EndProperty
 
@@ -614,6 +639,7 @@ End
 		  Me.Append(OmniBarItem.CreateSpace())
 		  Me.Append(OmniBarItem.CreateSeparator())
 		  Me.Append(OmniBarItem.CreateSpace())
+		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods."))
 		  Me.Append(OmniBarItem.CreateButton("ToolsButton", "Tools", IconToolbarTools, "Use convenience tools for this project."))
 		  
 		  Self.ShowEmbeddedContentButton = Self.Project.HasEmbeddedContentPacks
@@ -636,6 +662,22 @@ End
 		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()
+		  Case "ModsButton"
+		    If (Self.mModsPopoverController Is Nil) = False And Self.mModsPopoverController.Visible Then
+		      Self.mModsPopoverController.Dismiss(False)
+		      Self.mModsPopoverController = Nil
+		      Item.Toggled = False
+		      Return
+		    End If
+		    
+		    Var Editor As New ModSelectionGrid(Self.Project)
+		    Var Controller As New PopoverController("Select Mods", Editor)
+		    Controller.Show(Me, ItemRect)
+		    
+		    Item.Toggled = True
+		    
+		    AddHandler Controller.Finished, WeakAddressOf ModsPopoverController_Finished
+		    Self.mModsPopoverController = Controller
 		  Case "ToolsButton"
 		    Var Tools() As SDTD.ProjectTool = SDTD.Configs.AllTools
 		    Var LastEditor As String

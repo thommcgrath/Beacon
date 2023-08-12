@@ -122,6 +122,12 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DataSource(AllowWriting As Boolean) As Beacon.DataSource
+		  Return SDTD.DataSource.Pool.Get(AllowWriting)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameId() As String
 		  Return SDTD.Identifier
 		End Function
