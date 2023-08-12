@@ -1,19 +1,19 @@
 #tag DesktopWindow
-Begin SDTDConfigEditor SDTDGeneralSettingsEditor
+Begin SDTDSettingsListElement SDTDSettingsListBooleanElement
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF
+   BackgroundColor =   &cFFFFFF00
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   500
+   Height          =   62
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   True
+   LockBottom      =   False
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
@@ -24,27 +24,24 @@ Begin SDTDConfigEditor SDTDGeneralSettingsEditor
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   800
-   Begin OmniBar ConfigToolbar
-      Alignment       =   0
+   Width           =   300
+   Begin SwitchControl Switch
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
-      BackgroundColor =   ""
       ContentHeight   =   0
       Enabled         =   True
-      Height          =   41
+      Height          =   20
       Index           =   -2147483648
-      Left            =   0
-      LeftPadding     =   -1
+      InitialParent   =   ""
+      Left            =   212
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
-      RightPadding    =   -1
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False
@@ -53,52 +50,92 @@ Begin SDTDConfigEditor SDTDGeneralSettingsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   7
       Transparent     =   True
       Visible         =   True
-      Width           =   492
+      Width           =   40
    End
-   Begin SDTDSettingsListContainer List
+   Begin DesktopLabel mNameLabel
       AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
-      Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
-      Composited      =   False
+      Bold            =   False
       Enabled         =   True
-      HasBackgroundColor=   False
-      Height          =   459
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   True
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   6
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   180
+   End
+   Begin DesktopLabel mDescriptionLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   16
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Multiline       =   False
       Scope           =   2
-      ShowOfficialNames=   False
-      TabIndex        =   1
+      Selectable      =   True
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   41
-      Transparent     =   True
+      Top             =   40
+      Transparent     =   False
+      Underline       =   False
       Visible         =   True
-      Width           =   800
+      Width           =   260
    End
-   Begin OmniBarSeparator FilterSeparator
+   Begin IconCanvas mDismissButton
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      Clickable       =   True
       ContentHeight   =   0
       Enabled         =   True
-      Height          =   1
+      Height          =   16
+      Icon            =   1389395967
+      IconColor       =   8
       Index           =   -2147483648
-      Left            =   492
+      InitialParent   =   ""
+      Left            =   264
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -108,195 +145,138 @@ Begin SDTDConfigEditor SDTDGeneralSettingsEditor
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   40
-      Transparent     =   True
-      Visible         =   True
-      Width           =   308
-   End
-   Begin DelayedSearchField FilterField
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowRecentItems=   False
-      AllowTabStop    =   True
-      ClearMenuItemValue=   "Clear"
-      DelayPeriod     =   250
-      Enabled         =   True
-      Height          =   22
-      Hint            =   "Filter Settings"
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   501
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MaximumRecentItems=   -1
-      PanelIndex      =   0
-      RecentItemsValue=   "Recent Searches"
-      Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      Text            =   ""
-      Tooltip         =   ""
+      TabStop         =   True
+      Tooltip         =   "Restore this setting to the default."
       Top             =   9
-      Transparent     =   False
-      Visible         =   True
-      Width           =   290
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
+      Transparent     =   True
+      Visible         =   False
+      Width           =   16
    End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
 	#tag Event
-		Sub SetupUI()
-		  Self.List.ForceReload
+		Sub LockStateChanged()
+		  Self.Switch.Enabled = Self.Unlocked
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h1
-		Protected Function Config(ForWriting As Boolean) As SDTD.Configs.GeneralSettings
-		  Return SDTD.Configs.GeneralSettings(Super.Config(ForWriting))
+		Protected Function DescriptionLabel() As DesktopLabel
+		  Return Self.mDescriptionLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DismissButton() As IconCanvas
+		  Return Self.mDismissButton
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function InternalName() As String
-		  Return SDTD.Configs.NameGeneralSettings
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SettingChanged(Key As SDTD.ConfigOption, NewValue As Variant)
-		  Var Config As SDTD.Configs.GeneralSettings = Self.Config(True)
-		  Config.Value(Key) = NewValue
-		  Self.Modified = Config.Modified
+		Sub KeyNameWidth(Assigns KeyNameWidth As Integer)
+		  Super.KeyNameWidth = KeyNameWidth
+		  
+		  Self.mNameLabel.Width = KeyNameWidth
+		  Self.Switch.Left = Self.mNameLabel.Left + Self.mNameLabel.Width + 12
+		  Self.mDescriptionLabel.Left = Self.Switch.Left
+		  Self.mDescriptionLabel.Width = (Self.Width - 20) - Self.mDescriptionLabel.Left
 		End Sub
 	#tag EndMethod
 
-	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub SettingChangeDelegate(Key As SDTD.ConfigOption, Value As Variant)
-	#tag EndDelegateDeclaration
+	#tag Method, Flags = &h1
+		Protected Function NameLabel() As DesktopLabel
+		  Return Self.mNameLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Value() As Variant
+		  If Self.IsOverloaded Then
+		    Return Self.Switch.Value
+		  Else
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Value(Animated As Boolean = False, Assigns NewValue As Variant)
+		  Var BlockChanges As Boolean = Self.mBlockChanges
+		  Self.mBlockChanges = True
+		  
+		  Var BooleanValue As Boolean
+		  Try
+		    BooleanValue = NewValue.BooleanValue
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.Switch.Value(Animated) = BooleanValue
+		  Self.mBlockChanges = BlockChanges
+		End Sub
+	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mConfigRef As WeakRef
+		Private mBlockChanges As Boolean
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events ConfigToolbar
+#tag Events Switch
 	#tag Event
-		Sub Opening()
-		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
-		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("OfficialNamesButton", "Official Names", IconToolbarView, "Show official names instead of human names"))
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
+		Sub Pressed()
+		  If Self.mBlockChanges Then
+		    Return
+		  End If
 		  
-		  Select Case Item.Name
-		  Case "OfficialNamesButton"
-		    Var ShowOfficialNames As Boolean = Not Item.Toggled
-		    Self.List.ShowOfficialNames = ShowOfficialNames
-		    Item.Toggled = Not Item.Toggled
-		  End Select
+		  Self.UserValueChange(Me.Value)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events List
+#tag Events mDismissButton
 	#tag Event
-		Function GetProject() As SDTD.Project
-		  Return Self.Project
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function GetConfig(ForWriting As Boolean) As SDTD.Configs.GeneralSettings
-		  Return Self.Config(ForWriting)
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.SettingChangeDelegate = WeakAddressOf SettingChanged
-		  Me.Filter = ""
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FilterField
-	#tag Event
-		Sub TextChanged()
-		  Self.List.Filter = Me.Text.MakeUTF8
+		Sub Pressed()
+		  Self.Delete()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Modified"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumWidth"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumHeight"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ViewTitle"
+		Name="Composited"
 		Visible=true
-		Group="Behavior"
-		InitialValue="Untitled"
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ViewIcon"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Picture"
+		Group="Window Behavior"
+		InitialValue="False"
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="IsFrontmost"
+		Name="ShowOfficialName"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="IsOverloaded"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -313,14 +293,6 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Index"
-		Visible=true
-		Group="ID"
-		InitialValue="-2147483648"
-		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -504,14 +476,6 @@ End
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Composited"
-		Visible=true
-		Group="Window Behavior"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

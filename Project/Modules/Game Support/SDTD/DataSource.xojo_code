@@ -175,17 +175,17 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetConfigOptions(File As String, Key As String) As SDTD.ConfigOption()
-		  Var ContentPackIds() As String
-		  Return Self.GetConfigOptions(File, Key, ContentPackIds)
+		  Return Self.GetConfigOptions(File, Key, New Beacon.StringList)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigOptions(File As String, Key As String, ContentPackIds() As String) As SDTD.ConfigOption()
+		Function GetConfigOptions(File As String, Key As String, ContentPackIds As Beacon.StringList) As SDTD.ConfigOption()
 		  If (ContentPackIds Is Nil) = False Then
-		    For Idx As Integer = ContentPackIds.LastIndex DownTo 0
+		    ContentPackIds = New Beacon.StringList(ContentPackIds) // Make sure we don't edit the original
+		    For Idx As Integer = ContentPackIds.LastRowIndex DownTo 0
 		      If Beacon.UUID.Validate(ContentPackIds(Idx)) = False Then
-		        ContentPackIds.RemoveAt(Idx)
+		        ContentPackIds.Remove(Idx)
 		      End If
 		    Next
 		  End If

@@ -394,6 +394,7 @@ End
 		      Select Case Value
 		      Case SDTD.Configs.NameAccounts
 		      Case SDTD.Configs.NameGeneralSettings
+		        NewPanel = New SDTDGeneralSettingsEditor(Self.Project)
 		      Case SDTD.Configs.NameMetadata
 		      Case SDTD.Configs.NameServers
 		      End Select
