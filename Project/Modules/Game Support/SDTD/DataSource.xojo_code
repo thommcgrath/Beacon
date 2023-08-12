@@ -5,7 +5,7 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE config_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', file TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
+		  Self.SQLExecute("CREATE TABLE config_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', file TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, native_editor_version INTEGER, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
 		End Sub
 	#tag EndEvent
 
@@ -99,7 +99,7 @@ Inherits Beacon.DataSource
 		      Catch Err As RuntimeException
 		      End Try
 		      
-		      Var Values(13) As Variant
+		      Var Values(14) As Variant
 		      Values(0) = ConfigOptionId
 		      Values(1) = Dict.Value("label")
 		      Values(2) = ContentPackId
@@ -123,12 +123,15 @@ Inherits Beacon.DataSource
 		        Catch JSONErr As RuntimeException
 		        End Try
 		      End If
+		      If Dict.HasKey("nativeEditorVersion") Then
+		        Values(14) = Dict.Value("nativeEditorVersion")
+		      End If
 		      
 		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM config_options WHERE object_id = ?1;", ConfigOptionId)
 		      If Results.RowCount = 1 Then
-		        Self.SQLExecute("UPDATE config_options SET label = ?2, content_pack_id = ?3, file = ?4, key = ?5, value_type = ?6, max_allowed = ?7, description = ?8, default_value = ?9, alternate_label = ?10, tags = ?11, ui_group = ?12, custom_sort = ?13, constraints = ?14 WHERE object_id = ?1;", Values)
+		        Self.SQLExecute("UPDATE config_options SET label = ?2, content_pack_id = ?3, file = ?4, key = ?5, value_type = ?6, max_allowed = ?7, description = ?8, default_value = ?9, alternate_label = ?10, tags = ?11, ui_group = ?12, custom_sort = ?13, constraints = ?14, native_editor_version = ?15 WHERE object_id = ?1;", Values)
 		      Else
-		        Self.SQLExecute("INSERT INTO config_options (object_id, label, content_pack_id, file, key, value_type, max_allowed, description, default_value, alternate_label, tags, ui_group, custom_sort, constraints) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", Values)
+		        Self.SQLExecute("INSERT INTO config_options (object_id, label, content_pack_id, file, key, value_type, max_allowed, description, default_value, alternate_label, tags, ui_group, custom_sort, constraints, native_editor_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15);", Values)
 		      End If
 		    Next
 		  End If
@@ -253,6 +256,7 @@ Inherits Beacon.DataSource
 		  Var MaxAllowed As NullableDouble = NullableDouble.FromVariant(Row.Column("max_allowed").Value)
 		  Var Description As String = Row.Column("description").StringValue
 		  Var DefaultValue As Variant = Row.Column("default_value").Value
+		  Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Row.Column("native_editor_version").Value)
 		  Var UIGroup As NullableString = NullableString.FromVariant(Row.Column("ui_group").Value)
 		  Var CustomSort As NullableString = NullableString.FromVariant(Row.Column("custom_sort").Value)
 		  Var Constraints As Dictionary
@@ -277,7 +281,7 @@ Inherits Beacon.DataSource
 		    End Try
 		  End If
 		  
-		  Return New SDTD.ConfigOption(Label, File, Key, ValueType, MaxAllowed, Description, DefaultValue, UIGroup, CustomSort, Constraints, ContentPackId)
+		  Return New SDTD.ConfigOption(Label, File, Key, ValueType, MaxAllowed, Description, DefaultValue, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId)
 		End Function
 	#tag EndMethod
 

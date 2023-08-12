@@ -112,6 +112,10 @@ Inherits SDTD.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Shared Function KeySupported(Key As SDTD.ConfigOption, ContentPacks As Beacon.StringList) As Boolean
+		  If (Key.NativeEditorVersion Is Nil) = False And Key.NativeEditorVersion.IntegerValue <= App.BuildNumber Then
+		    // We have a native editor for this key
+		    Return False
+		  End If
 		  If Key.MaxAllowed Is Nil Or Key.MaxAllowed.IntegerValue <> 1 Then
 		    // Only support single value keys
 		    Return False

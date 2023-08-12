@@ -21,6 +21,7 @@ Protected Class ConfigOption
 		  Self.mKey = Source.mKey
 		  Self.mLabel = Source.mLabel
 		  Self.mMaxAllowed = Source.mMaxAllowed
+		  Self.mNativeEditorVersion = Source.mNativeEditorVersion
 		  Self.mObjectId = Source.mObjectId
 		  Self.mUIGroup = Source.mUIGroup
 		  Self.mValueType = Source.mValueType
@@ -30,12 +31,12 @@ Protected Class ConfigOption
 	#tag Method, Flags = &h0
 		Sub Constructor(File As String, Key As String)
 		  // Convenience method for quickly creating an unknown setting
-		  Self.Constructor(Key, File, Key, ValueTypes.TypeText, 1, "", "", "", "", Nil, SDTD.UserContentPackId)
+		  Self.Constructor(Key, File, Key, ValueTypes.TypeText, 1, "", "", Nil, Nil, Nil, Nil, SDTD.UserContentPackId)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Label As String, File As String, Key As String, ValueType As SDTD.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String)
+		Sub Constructor(Label As String, File As String, Key As String, ValueType As SDTD.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String)
 		  Self.mConstraints = If(Constraints Is Nil, Nil, Constraints.Clone)
 		  Self.mContentPackId = ContentPackId
 		  Self.mCustomSort = CustomSort
@@ -45,6 +46,7 @@ Protected Class ConfigOption
 		  Self.mKey = Key
 		  Self.mLabel = Label
 		  Self.mMaxAllowed = MaxAllowed
+		  Self.mNativeEditorVersion = NativeEditorVersion
 		  Self.mObjectId = Beacon.UUID.v5(ContentPackId.Lowercase + "." + File + "." + Key)
 		  Self.mUIGroup = UIGroup
 		  Self.mValueType = ValueType
@@ -82,6 +84,12 @@ Protected Class ConfigOption
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasNativeEditor() As Boolean
+		  Return (Self.mNativeEditorVersion Is Nil) = False And Self.mNativeEditorVersion.IntegerValue >= App.BuildNumber
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Key() As String
 		  Return Self.mKey
 		End Function
@@ -96,6 +104,12 @@ Protected Class ConfigOption
 	#tag Method, Flags = &h0
 		Function MaxAllowed() As NullableDouble
 		  Return Self.mMaxAllowed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function NativeEditorVersion() As NullableDouble
+		  Return Self.mNativeEditorVersion
 		End Function
 	#tag EndMethod
 
@@ -196,6 +210,10 @@ Protected Class ConfigOption
 
 	#tag Property, Flags = &h21
 		Private mMaxAllowed As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNativeEditorVersion As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
