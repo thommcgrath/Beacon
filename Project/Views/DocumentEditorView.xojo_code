@@ -160,6 +160,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  Select Case Controller.GameID
 		  Case Ark.Identifier
 		    Return New ArkDocumentEditorView(Controller)
+		  Case SDTD.Identifier
+		    Return New SDTDDocumentEditorView(Controller)
 		  End Select
 		End Function
 	#tag EndMethod

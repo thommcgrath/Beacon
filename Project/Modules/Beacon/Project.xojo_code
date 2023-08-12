@@ -346,10 +346,12 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Function CreateForGameId(GameId As String) As Beacon.Project
-		  // At the moment, only Ark is supported.
-		  
-		  #Pragma Unused GameId
-		  Return New Ark.Project
+		  Select Case GameId
+		  Case Ark.Identifier
+		    Return New Ark.Project()
+		  Case SDTD.Identifier
+		    Return New SDTD.Project()
+		  End Select
 		End Function
 	#tag EndMethod
 

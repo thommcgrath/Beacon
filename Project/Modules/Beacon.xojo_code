@@ -484,6 +484,7 @@ Protected Module Beacon
 		  Static GameList() As Beacon.Game
 		  If GameList.Count = 0 Then
 		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName))
+		    GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName))
 		  End If
 		  Return GameList
 		End Function

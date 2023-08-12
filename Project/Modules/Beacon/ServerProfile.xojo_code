@@ -134,8 +134,8 @@ Protected Class ServerProfile
 		  End If
 		  
 		  Var Provider As String = Dict.Value("Provider")
-		  Var GameID As String = Dict.Lookup("Game", Ark.Identifier)
-		  Select Case GameID
+		  Var GameId As String = Dict.Lookup("Game", Ark.Identifier)
+		  Select Case GameId
 		  Case Ark.Identifier
 		    Select Case Provider
 		    Case "Nitrado"
@@ -645,6 +645,14 @@ Protected Class ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Nickname"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ProviderTokenId"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

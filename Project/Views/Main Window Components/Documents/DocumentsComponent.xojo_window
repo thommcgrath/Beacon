@@ -438,10 +438,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Var GameID As String = Beacon.DetectGame(File)
-		  If GameID.IsEmpty Then
+		  Var GameId As String = Beacon.DetectGame(File)
+		  If GameId.IsEmpty Then
 		    // Show a game selection prompt later
-		    Return
+		    GameId = GameSelectorWindow.Present(Self.TrueWindow)
 		  End If
 		  
 		  Var OtherProjects() As Beacon.Project
@@ -450,7 +450,7 @@ End
 		    OtherProjects.Add(Editor.Project)
 		  Next Editor
 		  
-		  Select Case GameID
+		  Select Case GameId
 		  Case Ark.Identifier
 		    Var ImportView As New ArkImportView
 		    Var ImportWindow As New DocumentImportWindow(ImportView, New Ark.Project, OtherProjects)
@@ -498,8 +498,12 @@ End
 		Sub NewProject()
 		  // This version prompts the user to select a game
 		  
-		  // At the moment, since Ark is the only supported game, we'll just forward this to the game-specific version
-		  Self.NewProject(Ark.Identifier)
+		  Var GameId As String = GameSelectorWindow.Present(Self.TrueWindow)
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Self.NewProject(GameId)
 		End Sub
 	#tag EndMethod
 
@@ -518,11 +522,11 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewProject(GameId As String)
-		  If Self.CheckGameDatabase(GameID) = False Then
+		  If Self.CheckGameDatabase(GameId) = False Then
 		    Return
 		  End If
 		  
-		  Var Project As Beacon.Project = Beacon.Project.CreateForGameID(GameID)
+		  Var Project As Beacon.Project = Beacon.Project.CreateForGameId(GameId)
 		  
 		  Static NewDocumentNumber As Integer = 1
 		  Project.Title = "Untitled Project " + NewDocumentNumber.ToString

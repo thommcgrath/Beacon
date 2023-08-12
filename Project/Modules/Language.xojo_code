@@ -115,12 +115,14 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GameName(GameID As String) As String
-		  Select Case GameID
+		Protected Function GameName(GameId As String) As String
+		  Select Case GameId
 		  Case Ark.Identifier
-		    Return "Ark: Survival Evolved"
+		    Return Ark.FullName
+		  Case SDTD.Identifier
+		    Return SDTD.FullName
 		  Else
-		    Return GameID
+		    Return GameId
 		  End Select
 		End Function
 	#tag EndMethod

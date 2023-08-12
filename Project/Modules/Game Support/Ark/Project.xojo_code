@@ -404,6 +404,9 @@ Inherits Beacon.Project
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMapMask = 1 // Play it safe, do not bother calling Ark.Maps here in case database access is fubar
+		  Self.mEmbeddedBlueprints = New Dictionary
+		  
+		  Super.Constructor
 		  
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  If (DataSource Is Nil) = False Then
@@ -413,10 +416,6 @@ Inherits Beacon.Project
 		    Next
 		  End If
 		  Self.ContentPackEnabled(Ark.UserContentPackId) = True // Force it
-		  
-		  Self.mEmbeddedBlueprints = New Dictionary
-		  
-		  Super.Constructor
 		End Sub
 	#tag EndMethod
 

@@ -1,15 +1,15 @@
 #tag DesktopWindow
-Begin DesktopWindow GameSelectorWindow
+Begin BeaconDialog GameSelectorWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   0
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
-   HasCloseButton  =   True
+   HasCloseButton  =   False
    HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   400
    ImplicitInstance=   False
    MacProcID       =   0
@@ -19,27 +19,227 @@ Begin DesktopWindow GameSelectorWindow
    MenuBarVisible  =   True
    MinimumHeight   =   64
    MinimumWidth    =   64
-   Resizeable      =   True
-   Title           =   "Untitled"
-   Type            =   0
+   Resizeable      =   False
+   Title           =   "Choose Game"
+   Type            =   8
    Visible         =   True
-   Width           =   600
+   Width           =   300
+   Begin DesktopButton ActionButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "OK"
+      Default         =   True
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   200
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   360
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin DesktopButton CancelButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   108
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   360
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin DesktopLabel MessageLabel
+      AllowAutoDeactivate=   True
+      Bold            =   True
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Choose Game"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+   End
+   Begin DesktopRadioButton GameButtons
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Untitled"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   0
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   52
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   100
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  Self.SwapButtons
+		  
+		  Var NextTop As Integer = Self.MessageLabel.Bottom + 20
+		  
+		  Var Games() As Beacon.Game = Beacon.Games
+		  For Idx As Integer = 0 To Games.LastIndex
+		    Var Radio As DesktopRadioButton = Self.GameButtons(Idx)
+		    If Radio Is Nil Then
+		      Radio = New GameButtons
+		    End If
+		    Radio.Caption = Games(Idx).Name
+		    Radio.Top = NextTop
+		    Radio.Height = 20
+		    Radio.Width = Self.Width - 40
+		    Radio.Left = 20
+		    NextTop = Radio.Bottom + 12
+		  Next
+		  
+		  Self.ActionButton.Top = NextTop + 8
+		  Self.CancelButton.Top = Self.ActionButton.Top
+		  Self.Height = Self.ActionButton.Bottom + 20
+		  Self.MaximumHeight = Self.Height
+		  Self.MinimumHeight = Self.Height
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As DesktopWindow) As String
-		  #Pragma Unused Parent
+		  If (Parent Is Nil) = False Then
+		    Parent = Parent.TrueWindow
+		  End If
 		  
-		  // At the moment, there is only one game
-		  Return Ark.Identifier
+		  Var Win As New GameSelectorWindow
+		  Win.ShowModal(Parent)
+		  
+		  Var GameId As String
+		  If Win.mCancelled = False Then
+		    Var Games() As Beacon.Game = Beacon.Games
+		    For Idx As Integer = 0 To Games.LastIndex
+		      If Win.GameButtons(Idx).Value = False Then
+		        Continue
+		      End If
+		      
+		      GameId = Games(Idx).Identifier
+		      Exit For Idx
+		    Next
+		  End If
+		  Win.Close
+		  
+		  Return GameId
 		End Function
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events ActionButton
+	#tag Event
+		Sub Pressed()
+		  Self.mCancelled = False
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CancelButton
+	#tag Event
+		Sub Pressed()
+		  Self.mCancelled = True
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GameButtons
+	#tag Event
+		Sub ValueChanged(index as Integer)
+		  #Pragma Unused Index
+		  
+		  Self.ActionButton.Enabled = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Name"

@@ -197,6 +197,7 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   119
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -439,7 +440,7 @@ End
 		  Next
 		  Var Delete() As Ark.Blueprint
 		  Call DataSource.SaveBlueprints(Self.mBlueprints, Delete, Nil)
-		  Self.mProject.ProcessEmbeddedBlueprints()
+		  Self.mProject.ProcessEmbeddedContent()
 		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		End Sub
 	#tag EndEvent

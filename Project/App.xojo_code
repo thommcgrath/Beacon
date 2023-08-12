@@ -765,18 +765,18 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		    
 		    // Something could be done with the query and path
-		    Var GameID As String = Ark.Identifier
+		    Var GameId As String = Ark.Identifier
 		    If Parameters.HasKey("game") Then
 		      Try
-		        GameID = Parameters.Value("game").StringValue
+		        GameId = Parameters.Value("game").StringValue
 		      Catch Err As RuntimeException
 		      End Try
 		    End If
 		    
-		    Var FrontmostView As DocumentEditorView = Self.mMainWindow.FrontmostDocumentView(GameID)
+		    Var FrontmostView As DocumentEditorView = Self.mMainWindow.FrontmostDocumentView(GameId)
 		    If FrontmostView Is Nil Then
-		      Self.mMainWindow.Documents.NewProject(GameID)
-		      FrontmostView = Self.mMainWindow.FrontmostDocumentView(GameID)
+		      Self.mMainWindow.Documents.NewProject(GameId)
+		      FrontmostView = Self.mMainWindow.FrontmostDocumentView(GameId)
 		    End If
 		    If (FrontmostView Is Nil) = False Then
 		      FrontmostView.SwitchToEditor(ConfigName)
@@ -989,6 +989,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Try
 		    Self.mDataSources.Add(Ark.DataSource.Pool.Get(False))
 		    Self.mDataSources.Add(Beacon.CommonData.Pool.Get(False))
+		    Self.mDataSources.Add(SDTD.DataSource.Pool.Get(False))
 		  Catch Err As RuntimeException
 		    // Something is still wrong
 		    BeaconUI.ShowAlert("Beacon cannot start due to a problem with a local database.", "Beacon is unable to create or repair a local database. The database error was: `" + Err.Message + "`.")
