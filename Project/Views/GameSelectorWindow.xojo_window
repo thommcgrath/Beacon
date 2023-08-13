@@ -24,7 +24,7 @@ Begin BeaconDialog GameSelectorWindow
    Type            =   8
    Visible         =   True
    Width           =   300
-   Begin DesktopButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
@@ -55,7 +55,7 @@ Begin BeaconDialog GameSelectorWindow
       Visible         =   True
       Width           =   80
    End
-   Begin DesktopButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   True

@@ -334,8 +334,11 @@ Protected Module Beacon
 		Protected Function DetectGame(Content As String) As String
 		  // At the moment there is only one game supported, so the logic is really simple
 		  
-		  #Pragma Unused Content
-		  Return Ark.Identifier
+		  If Content.BeginsWith("<?xml") Then
+		    Return SDTD.Identifier
+		  Else
+		    Return Ark.Identifier
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1498,6 +1501,9 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = FileExtensionTemplate, Type = String, Dynamic = False, Default = \".beacontemplate", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionXml, Type = String, Dynamic = False, Default = \".xml", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FTPModeExplicitTLS, Type = String, Dynamic = False, Default = \"ftp+tls", Scope = Protected

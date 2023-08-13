@@ -515,7 +515,7 @@ Begin DocumentImportView ArkImportView
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Scope           =   2
          TabIndex        =   0
@@ -551,7 +551,7 @@ End
 
 	#tag Event
 		Sub Opening()
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  
 		  Self.SwapButtons
 		  Self.Reset
@@ -685,7 +685,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 

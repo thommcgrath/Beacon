@@ -408,13 +408,6 @@ Inherits Beacon.Project
 		  
 		  Super.Constructor
 		  
-		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  If (DataSource Is Nil) = False Then
-		    Var Packs() As Beacon.ContentPack = DataSource.GetContentPacks
-		    For Idx As Integer = 0 To Packs.LastIndex
-		      Self.ContentPackEnabled(Packs(Idx).ContentPackId) = Packs(Idx).IsDefaultEnabled
-		    Next
-		  End If
 		  Self.ContentPackEnabled(Ark.UserContentPackId) = True // Force it
 		End Sub
 	#tag EndMethod

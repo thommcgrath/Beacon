@@ -457,6 +457,12 @@ End
 		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
 		    ImportWindow.Show()
 		    ImportView.Import(File)
+		  Case SDTD.Identifier
+		    Var ImportView As New SDTDImportView
+		    Var ImportWindow As New DocumentImportWindow(ImportView, New SDTD.Project, OtherProjects)
+		    AddHandler ImportWindow.ProjectsImported, AddressOf LoadImportedDocuments
+		    ImportWindow.Show()
+		    ImportView.Import(File)
 		  End Select
 		End Sub
 	#tag EndMethod

@@ -122,6 +122,14 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Super.Constructor
+		  
+		  Self.ContentPackEnabled(SDTD.UserContentPackId) = True // Force it
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DataSource(AllowWriting As Boolean) As Beacon.DataSource
 		  Return SDTD.DataSource.Pool.Get(AllowWriting)
 		End Function

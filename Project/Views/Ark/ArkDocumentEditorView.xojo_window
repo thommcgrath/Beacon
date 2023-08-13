@@ -58,6 +58,7 @@ Begin DocumentEditorView ArkDocumentEditorView
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   31
          Index           =   -2147483648
@@ -69,6 +70,7 @@ Begin DocumentEditorView ArkDocumentEditorView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0

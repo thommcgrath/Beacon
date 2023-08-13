@@ -27,33 +27,6 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin CodeEditor ConfigArea
-      AutoDeactivate  =   True
-      Enabled         =   True
-      HasBorder       =   False
-      Height          =   221
-      HelpTag         =   ""
-      HorizontalScrollPosition=   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      SelectionLength =   0
-      ShowInfoBar     =   False
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   123
-      VerticalScrollPosition=   0
-      Visible         =   True
-      Width           =   560
-   End
    Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -293,6 +266,56 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
+   End
+   Begin DesktopRectangle BorderRect
+      AllowAutoDeactivate=   True
+      BorderColor     =   &c000000
+      BorderThickness =   1.0
+      CornerSize      =   0.0
+      Enabled         =   True
+      FillColor       =   &cFFFFFF
+      Height          =   221
+      Index           =   -2147483648
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   123
+      Transparent     =   False
+      Visible         =   True
+      Width           =   560
+      Begin CodeEditor ConfigArea
+         AutoDeactivate  =   True
+         Enabled         =   True
+         HasBorder       =   False
+         Height          =   219
+         HorizontalScrollPosition=   0
+         Index           =   -2147483648
+         InitialParent   =   "BorderRect"
+         Left            =   21
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SelectionLength =   0
+         ShowInfoBar     =   False
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   124
+         VerticalScrollPosition=   0
+         Visible         =   True
+         Width           =   558
+      End
    End
 End
 #tag EndDesktopWindow
@@ -567,51 +590,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events ConfigArea
-	#tag Event
-		Sub TextChanged()
-		  If Not Self.mSettingUp Then
-		    Var TextValue As String = Me.Text.Trim(Chr(0), Chr(10), Chr(13), Chr(32))
-		    Select Case Self.Switcher.SelectedIndex
-		    Case Self.GameIniIndex
-		      Self.mGameIniContent = TextValue
-		    Case Self.GameUserSettingsIniIndex
-		      Self.mGameUserSettingsIniContent = TextValue
-		    End Select
-		  End If
-		  
-		  If Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single Then
-		    Self.TextChangeDelayTrigger.Reset
-		  Else
-		    Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DropObject(obj As DragItem, action As DragItem.Types)
-		  Break
-		  
-		  #Pragma Unused Action
-		  Self.HandleDrop(Obj)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SetupNeeded()
-		  Ark.SetupCodeEditor(Me)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub URIDropped(text as String)
-		  Try
-		    Var File As FolderItem = New FolderItem(Text, FolderItem.PathModes.Native)
-		    Self.AddFile(File)
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
@@ -695,6 +673,58 @@ End
 	#tag Event
 		Sub Action()
 		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty) = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BorderRect
+	#tag Event
+		Sub Opening()
+		  Me.BorderColor = SystemColors.SeparatorColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigArea
+	#tag Event
+		Sub TextChanged()
+		  If Not Self.mSettingUp Then
+		    Var TextValue As String = Me.Text.Trim(Chr(0), Chr(10), Chr(13), Chr(32))
+		    Select Case Self.Switcher.SelectedIndex
+		    Case Self.GameIniIndex
+		      Self.mGameIniContent = TextValue
+		    Case Self.GameUserSettingsIniIndex
+		      Self.mGameUserSettingsIniContent = TextValue
+		    End Select
+		  End If
+		  
+		  If Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single Then
+		    Self.TextChangeDelayTrigger.Reset
+		  Else
+		    Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DropObject(obj As DragItem, action As DragItem.Types)
+		  Break
+		  
+		  #Pragma Unused Action
+		  Self.HandleDrop(Obj)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SetupNeeded()
+		  Ark.SetupCodeEditor(Me)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub URIDropped(text as String)
+		  Try
+		    Var File As FolderItem = New FolderItem(Text, FolderItem.PathModes.Native)
+		    Self.AddFile(File)
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents

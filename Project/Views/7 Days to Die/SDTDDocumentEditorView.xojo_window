@@ -347,7 +347,43 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginImport(ForDeployment As Boolean)
+		  If (Self.mImportWindow Is Nil) = False Then
+		    Self.mImportWindow.Show()
+		    Return
+		  End If
 		  
+		  Var OtherEditors() As DocumentEditorView = Self.EditorsForGameId(Self.Project.GameId)
+		  Var OtherProjects() As Beacon.Project
+		  For Each Editor As DocumentEditorView In OtherEditors
+		    OtherProjects.Add(Editor.Project)
+		  Next
+		  
+		  Var ImportView As New SDTDImportView
+		  Var Ref As New DocumentImportWindow(ImportView, Self.Project, OtherProjects)
+		  AddHandler Ref.ProjectsImported, WeakAddressOf mImportWindow_ProjectsImported
+		  AddHandler Ref.Closing, WeakAddressOf mImportWindow_Closing
+		  Ref.UserData = ForDeployment
+		  Ref.Show()
+		  Self.mImportWindow = Ref
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CleanupImportWindow()
+		  If Self.mImportWindow Is Nil Then
+		    Return
+		  End If
+		  
+		  Try
+		    RemoveHandler mImportWindow.Closing, WeakAddressOf mImportWindow_Closing
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    RemoveHandler mImportWindow.ProjectsImported, WeakAddressOf mImportWindow_ProjectsImported
+		  Catch Err As RuntimeException
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -356,6 +392,28 @@ End
 		  Self.Panels = New Dictionary
 		  
 		  Super.Constructor(Controller)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CopyFromDocuments(SourceProjects As Variant)
+		  Var Projects() As Beacon.Project
+		  Try
+		    Projects = SourceProjects
+		  Catch Err As RuntimeException
+		  End Try
+		  DocumentMergerWindow.Present(Self, Projects, Self.Project, WeakAddressOf MergeCallback)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CopyFromDocumentsAndDeploy(SourceProjects As Variant)
+		  Var Projects() As Beacon.Project
+		  Try
+		    Projects = SourceProjects
+		  Catch Err As RuntimeException
+		  End Try
+		  DocumentMergerWindow.Present(Self, Projects, Self.Project, WeakAddressOf MergeAndDeployCallback)
 		End Sub
 	#tag EndMethod
 
@@ -481,6 +539,50 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub MergeAndDeployCallback()
+		  Self.MergeCallback()
+		  Self.BeginDeploy()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MergeCallback()
+		  Var Keys() As Variant = Self.Panels.Keys
+		  For Each Key As Variant In Keys
+		    Var Panel As SDTDConfigEditor = Self.Panels.Value(Key)
+		    If Panel <> Nil Then
+		      Panel.ImportFinished()
+		    End If
+		  Next
+		  
+		  Self.Autosave()
+		  Self.UpdateConfigList()
+		  Self.Panel_ContentsChanged(Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImportWindow_Closing(Sender As DocumentImportWindow)
+		  #Pragma Unused Sender
+		  
+		  Self.CleanupImportWindow()
+		  Self.mImportWindow = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImportWindow_ProjectsImported(Sender As DocumentImportWindow, Projects() As Beacon.Project)
+		  #Pragma Unused Sender
+		  
+		  If Sender.UserData.BooleanValue Then
+		    Call CallLater.Schedule(0, WeakAddressOf CopyFromDocumentsAndDeploy, Projects)
+		  Else
+		    Call CallLater.Schedule(0, WeakAddressOf CopyFromDocuments, Projects)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
 		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
@@ -585,6 +687,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private CurrentPanel As SDTDConfigEditor
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImportWindow As DocumentImportWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

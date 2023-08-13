@@ -261,7 +261,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
+		  Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.XmlFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
 		  Dialog.AllowMultipleSelections = True
 		  
 		  Var File As FolderItem = Dialog.ShowModal
@@ -271,7 +271,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  For Each File In Dialog.SelectedFiles
 		    Self.OpenFile(File, True)
-		  Next File
+		  Next
 		  
 		  Return True
 		End Function
@@ -1347,7 +1347,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If File.ExtensionMatches(Beacon.FileExtensionINI) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionINI) Or File.ExtensionMatches(Beacon.FileExtensionXml) Then
 		    Self.mMainWindow.BringToFront()
 		    Self.mMainWindow.Documents.ImportFile(File)
 		    Return
