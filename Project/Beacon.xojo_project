@@ -610,6 +610,7 @@ DesktopWindow=SDTDSettingsListHeader;Views/7 Days to Die/Config Editors/General 
 Class=CustomConfig;Modules/Game Support/SDTD/Configs/CustomConfig.xojo_code;&h000000006FD51FFF;&h000000004C8037FF;false
 DesktopWindow=SDTDCustomConfigEditor;Views/7 Days to Die/Config Editors/Custom Config/SDTDCustomConfigEditor.xojo_window;&h0000000011AB37FF;&h00000000272AEFFF;false
 Class=ServerConfigXml;Modules/Game Support/SDTD/ServerConfigXml.xojo_code;&h000000005DD3EFFF;&h00000000646827FF;false
+DesktopWindow=DocumentImportSourcePicker;Views/Document Import/DocumentImportSourcePicker.xojo_window;&h000000000DE717FF;&h00000000427C0FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=7

@@ -69,193 +69,6 @@ Begin DocumentImportView ArkImportView
       Value           =   0
       Visible         =   True
       Width           =   720
-      Begin DesktopRadioButton SourceRadio
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Nitrado"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   0
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   52
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   680
-      End
-      Begin DesktopLabel ImportSourceMessage
-         AllowAutoDeactivate=   True
-         Bold            =   True
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Select Import Source"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   20
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   680
-      End
-      Begin DesktopRadioButton SourceRadio
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Server With FTP Access"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   3
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   148
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   680
-      End
-      Begin DesktopRadioButton SourceRadio
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Single Player, Local Files, or Copy + Paste"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   2
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   116
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   680
-      End
-      Begin UITweaks.ResizedPushButton SourceCancelButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   528
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   212
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPushButton SourceActionButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Continue"
-         Default         =   False
-         Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   620
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   8
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   212
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
       Begin ArkNitradoDiscoveryView NitradoDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -439,36 +252,6 @@ Begin DocumentImportView ArkImportView
          Underline       =   False
          Visible         =   False
          Width           =   80
-      End
-      Begin DesktopRadioButton SourceRadio
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Other Beacon project"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   4
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   180
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   680
       End
       Begin DesktopLabel OtherDocsMessageLabel
          AllowAutoDeactivate=   True
@@ -712,35 +495,37 @@ Begin DocumentImportView ArkImportView
          Visible         =   True
          Width           =   720
       End
-      Begin DesktopRadioButton SourceRadio
+      Begin DocumentImportSourcePicker SourcePicker
          AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "GameServerApp.com"
+         AllowedSources  =   31
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   1
+         EnabledSources  =   31
+         GameId          =   "#Ark.Identifier"
+         HasBackgroundColor=   False
+         Height          =   252
+         Index           =   -2147483648
          InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
+         Left            =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   True
+         LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   84
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
+         Top             =   0
+         Transparent     =   True
          Visible         =   True
-         Width           =   680
+         Width           =   720
       End
    End
    Begin Timer DiscoveryWatcher
@@ -767,23 +552,6 @@ End
 	#tag Event
 		Sub Opening()
 		  RaiseEvent Open
-		  
-		  Const FirstRadioIndex = 0
-		  Const LastRadioIndex = 5
-		  
-		  Var Pos As Integer = Self.ImportSourceMessage.Top + Self.ImportSourceMessage.Height + 20
-		  For Idx As Integer = FirstRadioIndex To LastRadioIndex
-		    If Self.SourceRadio(Idx).Visible = False Then
-		      Continue
-		    End If
-		    
-		    Self.SourceRadio(Idx).Top = Pos
-		    Pos = Pos + Self.SourceRadio(Idx).Height + 12
-		  Next
-		  
-		  Self.SourceCancelButton.Top = Pos + 8
-		  Self.SourceActionButton.Top = Self.SourceCancelButton.Top
-		  Self.mSourcesPageHeight = Self.SourceCancelButton.Top + Self.SourceCancelButton.Height + 20
 		  
 		  Self.SwapButtons
 		  Self.Reset
@@ -819,7 +587,8 @@ End
 		    If Self.Views.SelectedPanelIndex <> 0 Then
 		      Self.Views.SelectedPanelIndex = 0
 		    Else
-		      Self.SetPageHeight(Self.SourcesPageHeight)
+		      Self.SetPageHeight(Self.SourcePicker.Height)
+		      Self.SourcePicker.ActionButtonEnabled = True
 		    End If
 		  End If
 		End Sub
@@ -827,16 +596,25 @@ End
 
 	#tag Event
 		Sub SetOtherProjects(Projects() As Beacon.Project)
+		  Var DestinationProjectId As String
+		  If (Self.mDestinationProject Is Nil) = False Then
+		    DestinationProjectId = Self.mDestinationProject.ProjectId
+		  End If
+		  
 		  Var ArkProjects() As Ark.Project
 		  For Idx As Integer = 0 To Projects.LastIndex
-		    If Projects(Idx) IsA Ark.Project Then
+		    If Projects(Idx) IsA Ark.Project And Projects(Idx).ProjectId <> DestinationProjectId Then
 		      ArkProjects.Add(Ark.Project(Projects(Idx)))
 		    End If
-		  Next Idx
+		  Next
 		  
 		  Self.mOtherProjects = ArkProjects
-		  Self.SourceRadio(Self.RadioProject).Enabled = ArkProjects.Count > 0
-		  Self.SourceRadio(Self.RadioProject).Caption = "Other Beacon Project" + If(Self.SourceRadio(Self.RadioProject).Enabled, "", " (No Other Projects Open)")
+		  
+		  If ArkProjects.Count > 0 Then
+		    Self.SourcePicker.EnabledSources = Self.SourcePicker.EnabledSources Or Self.SourcePicker.SourceOtherProject
+		  Else
+		    Self.SourcePicker.EnabledSources = Self.SourcePicker.EnabledSources And Not Self.SourcePicker.SourceOtherProject
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -901,12 +679,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function SourcesPageHeight() As Integer
-		  Return Self.mSourcesPageHeight
-		End Function
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event DocumentsImported(Documents() As Beacon.Project)
@@ -927,10 +699,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mOtherProjects() As Ark.Project
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSourcesPageHeight As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -959,21 +727,6 @@ End
 	#tag Constant, Name = PageStatus, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"3", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = RadioGSA, Type = Double, Dynamic = False, Default = \"1", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = RadioLocal, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = RadioNitrado, Type = Double, Dynamic = False, Default = \"0", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = RadioProject, Type = Double, Dynamic = False, Default = \"4", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = StatusPageHeight, Type = Double, Dynamic = False, Default = \"456", Scope = Private
 	#tag EndConstant
 
@@ -985,7 +738,8 @@ End
 		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageSources
-		    Self.SetPageHeight(Self.SourcesPageHeight)
+		    Self.SetPageHeight(Self.SourcePicker.Height)
+		    Self.SourcePicker.ActionButtonEnabled = True
 		  Case Self.PageNitrado
 		    NitradoDiscoveryView1.Begin
 		  Case Self.PageFTP
@@ -996,47 +750,6 @@ End
 		    Self.SetPageHeight(Self.StatusPageHeight)
 		  Case Self.PageGSA
 		    Self.GSADiscoveryView1.Begin
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SourceRadio
-	#tag Event
-		Sub ValueChanged(index as Integer)
-		  SourceActionButton.Enabled = SourceRadio(Self.RadioNitrado).Value Or SourceRadio(Self.RadioFTP).Value Or SourceRadio(Self.RadioLocal).Value Or (SourceRadio(Self.RadioProject).Value And SourceRadio(Self.RadioProject).Enabled And Self.mOtherProjects.Count > 0) Or SourceRadio(Self.RadioGSA).Value
-		  SourceActionButton.Default = SourceActionButton.Enabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SourceCancelButton
-	#tag Event
-		Sub Pressed()
-		  Self.Dismiss
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SourceActionButton
-	#tag Event
-		Sub Pressed()
-		  Select Case True
-		  Case SourceRadio(Self.RadioNitrado).Value
-		    Views.SelectedPanelIndex = Self.PageNitrado
-		  Case SourceRadio(Self.RadioFTP).Value
-		    Views.SelectedPanelIndex = Self.PageFTP
-		  Case SourceRadio(Self.RadioLocal).Value
-		    Views.SelectedPanelIndex = Self.PageLocal
-		  Case SourceRadio(Self.RadioProject).Value
-		    OtherDocsList.RemoveAllRows
-		    OtherDocsList.ColumnTypeAt(0) = DesktopListbox.CellTypes.CheckBox
-		    For Each Project As Ark.Project In Self.mOtherProjects
-		      OtherDocsList.AddRow("", Project.Title)
-		      OtherDocsList.RowTagAt(OtherDocsList.LastAddedRowIndex) = Project
-		    Next
-		    OtherDocsList.Sort()
-		    OtherDocsActionButton.Enabled = False
-		    Views.SelectedPanelIndex = Self.PageOtherDocuments
-		  Case SourceRadio(Self.RadioGSA).Value
-		    Views.SelectedPanelIndex = Self.PageGSA
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1200,6 +913,43 @@ End
 		Function GetDestinationProject() As Ark.Project
 		  Return Self.mDestinationProject
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events SourcePicker
+	#tag Event
+		Sub Cancelled()
+		  Self.Dismiss()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SourceChosen(Source As Integer)
+		  Select Case Source
+		  Case Me.SourceFTP
+		    Self.Views.SelectedPanelIndex = Self.PageFTP
+		  Case Me.SourceGSA
+		    Self.Views.SelectedPanelIndex = Self.PageGSA
+		  Case Me.SourceLocal
+		    Self.Views.SelectedPanelIndex = Self.PageLocal
+		  Case Me.SourceNitrado
+		    Self.Views.SelectedPanelIndex = Self.PageNitrado
+		  Case Me.SourceOtherProject
+		    Self.OtherDocsList.RemoveAllRows
+		    Self.OtherDocsList.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
+		    For Each Project As Ark.Project In Self.mOtherProjects
+		      Self.OtherDocsList.AddRow("", Project.Title)
+		      Self.OtherDocsList.RowTagAt(Self.OtherDocsList.LastAddedRowIndex) = Project
+		    Next
+		    Self.OtherDocsList.Sort()
+		    Self.OtherDocsActionButton.Enabled = False
+		    
+		    Self.Views.SelectedPanelIndex = Self.PageOtherDocuments
+		  End Select
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher

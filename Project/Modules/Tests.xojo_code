@@ -658,7 +658,6 @@ Protected Module Tests
 		  
 		  Var ServerSettings As SDTD.ServerConfigXml = SDTD.ServerConfigXml.Create(TestXml)
 		  Var Regenerated As String = ServerSettings.BuildString
-		  Break
 		End Sub
 	#tag EndMethod
 
