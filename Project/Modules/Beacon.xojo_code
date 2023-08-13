@@ -1297,6 +1297,23 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function SanitizeText(Source As String, ASCIIOnly As Boolean = True) As String
+		  Var Sanitizer As New RegEx
+		  If ASCIIOnly Then
+		    Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
+		  Else
+		    Sanitizer.SearchPattern = "[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]+"
+		  End If
+		  Sanitizer.ReplacementPattern = ""
+		  If ASCIIOnly Then
+		    Return Sanitizer.Replace(Source.SanitizeIni).ConvertEncoding(Encodings.ASCII)
+		  Else
+		    Return Sanitizer.Replace(Source.SanitizeIni)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function SecondsToString(Human As Boolean, ParamArray Intervals() As Double) As String
 		  Return SecondsToString(Human, Intervals)
 		End Function
@@ -1508,6 +1525,9 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = Pi, Type = Double, Dynamic = False, Default = \"3.141592653589793", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PrettyPrintXsl, Type = String, Dynamic = False, Default = \"<\?xml version\x3D\"1.0\" encoding\x3D\"UTF-8\"\?>\n<xsl:transform version\x3D\"1.0\" xmlns:xsl\x3D\"http://www.w3.org/1999/XSL/Transform\">\n      <xsl:output method\x3D\"xml\" indent\x3D\"yes\" />\n      <xsl:template match\x3D\"/\">\n              <xsl:copy-of select\x3D\"/\" />\n      </xsl:template>\n</xsl:transform>", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = SecondsPerDay, Type = Double, Dynamic = False, Default = \"86400", Scope = Private

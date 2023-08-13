@@ -134,6 +134,12 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function LabelForConfig(Config As SDTD.ConfigGroup) As String
+		  Return Language.LabelForConfig(Config.InternalName)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(ConfigName As String) As String
 		  Select Case ConfigName
 		  Case Ark.Configs.NameDifficulty
@@ -142,7 +148,7 @@ Protected Module Language
 		    Return "Loot Drops"
 		  Case Ark.Configs.NameExperienceCurves
 		    Return "Levels and XP"
-		  Case Ark.Configs.NameCustomContent
+		  Case Ark.Configs.NameCustomContent, SDTD.Configs.NameCustomConfig
 		    Return "Custom Config"
 		  Case Ark.Configs.NameCraftingCosts
 		    Return "Crafting Costs"

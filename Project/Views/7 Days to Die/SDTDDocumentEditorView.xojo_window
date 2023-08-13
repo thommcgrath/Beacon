@@ -64,6 +64,7 @@ Begin DocumentEditorView SDTDDocumentEditorView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       Enabled         =   True
       Height          =   40
       Index           =   -2147483648
@@ -74,6 +75,7 @@ Begin DocumentEditorView SDTDDocumentEditorView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
@@ -134,6 +136,7 @@ Begin DocumentEditorView SDTDDocumentEditorView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -186,6 +189,7 @@ Begin DocumentEditorView SDTDDocumentEditorView
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   False
@@ -201,6 +205,7 @@ Begin DocumentEditorView SDTDDocumentEditorView
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          Enabled         =   True
          Height          =   31
          Index           =   -2147483648
@@ -212,6 +217,7 @@ Begin DocumentEditorView SDTDDocumentEditorView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
@@ -393,10 +399,15 @@ End
 		    Else
 		      Select Case Value
 		      Case SDTD.Configs.NameAccounts
+		        NewPanel = New SDTDAccountsEditor(Self.Project)
+		      Case SDTD.Configs.NameCustomConfig
+		        NewPanel = New SDTDCustomConfigEditor(Self.Project)
 		      Case SDTD.Configs.NameGeneralSettings
 		        NewPanel = New SDTDGeneralSettingsEditor(Self.Project)
 		      Case SDTD.Configs.NameMetadata
+		        NewPanel = New SDTDProjectSettingsEditor(Self.Project)
 		      Case SDTD.Configs.NameServers
+		        NewPanel = New SDTDServersEditor(Self.Project)
 		      End Select
 		      
 		      If (NewPanel Is Nil) = False Then

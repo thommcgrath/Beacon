@@ -1,6 +1,7 @@
 #tag Class
 Protected Class ArkConfigEditor
 Inherits BeaconSubview
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 	#tag Event
 		Sub Opening()
 		  RaiseEvent Opening
@@ -198,23 +199,6 @@ Inherits BeaconSubview
 		    End If
 		  Next
 		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Shared Function SanitizeText(Source As String, ASCIIOnly As Boolean = True) As String
-		  Var Sanitizer As New RegEx
-		  If ASCIIOnly Then
-		    Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
-		  Else
-		    Sanitizer.SearchPattern = "[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]+"
-		  End If
-		  Sanitizer.ReplacementPattern = ""
-		  If ASCIIOnly Then
-		    Return Sanitizer.Replace(Source.SanitizeIni).ConvertEncoding(Encodings.ASCII)
-		  Else
-		    Return Sanitizer.Replace(Source.SanitizeIni)
-		  End If
 		End Function
 	#tag EndMethod
 

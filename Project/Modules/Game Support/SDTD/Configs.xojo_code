@@ -4,6 +4,7 @@ Protected Module Configs
 		Protected Function AllNames(Human As Boolean = False) As String()
 		  Static Names() As String
 		  If Names.LastIndex = -1 Then
+		    Names.Add(NameCustomConfig)
 		    Names.Add(NameGeneralSettings)
 		  End If
 		  If Human = True Then
@@ -92,6 +93,8 @@ Protected Module Configs
 		  Select Case InternalName
 		  Case NameGeneralSettings
 		    Return New SDTD.Configs.GeneralSettings()
+		  Case NameCustomConfig
+		    Return New SDTD.Configs.CustomConfig()
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."
@@ -114,6 +117,8 @@ Protected Module Configs
 		  Select Case InternalName
 		  Case NameGeneralSettings
 		    Return New SDTD.Configs.GeneralSettings(SaveData, EncryptedData)
+		  Case NameCustomConfig
+		    Return New SDTD.Configs.CustomConfig(SaveData, EncryptedData)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."
@@ -127,6 +132,8 @@ Protected Module Configs
 		  Select Case InternalName
 		  Case NameGeneralSettings
 		    Return SDTD.Configs.GeneralSettings.FromImport(ParsedData, Project.ContentPacks)
+		  Case NameCustomConfig
+		    Return SDTD.Configs.CustomConfig.FromImport(ParsedData, Project.ContentPacks)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."
@@ -257,6 +264,9 @@ Protected Module Configs
 
 
 	#tag Constant, Name = NameAccounts, Type = String, Dynamic = False, Default = \"SDTD.Accounts", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameCustomConfig, Type = String, Dynamic = False, Default = \"SDTD.CustomConfig", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = NameGeneralSettings, Type = String, Dynamic = False, Default = \"SDTD.GeneralSettings", Scope = Protected

@@ -47,7 +47,7 @@ Protected Class ConfigOption
 		  Self.mLabel = Label
 		  Self.mMaxAllowed = MaxAllowed
 		  Self.mNativeEditorVersion = NativeEditorVersion
-		  Self.mObjectId = Beacon.UUID.v5(ContentPackId.Lowercase + "." + File + "." + Key)
+		  Self.mObjectId = Self.GenerateId(ContentPackId, File, Key)
 		  Self.mUIGroup = UIGroup
 		  Self.mValueType = ValueType
 		End Sub
@@ -80,6 +80,12 @@ Protected Class ConfigOption
 	#tag Method, Flags = &h0
 		Function File() As String
 		  Return Self.mFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function GenerateId(ContentPackId As String, Filename As String, Key As String) As String
+		  Return Beacon.UUID.v5(ContentPackId.Lowercase + "." + Filename + "." + Key)
 		End Function
 	#tag EndMethod
 

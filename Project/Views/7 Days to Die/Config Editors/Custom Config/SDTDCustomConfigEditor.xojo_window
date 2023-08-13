@@ -1,17 +1,15 @@
 #tag DesktopWindow
-Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
+Begin SDTDConfigEditor SDTDCustomConfigEditor Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
+   BackgroundColor =   &cFFFFFF
    Composited      =   False
-   DoubleBuffer    =   "False"
    Enabled         =   True
-   EraseBackground =   "True"
    HasBackgroundColor=   False
-   Height          =   382
+   Height          =   500
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -26,12 +24,12 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   608
+   Width           =   800
    Begin CodeEditor ConfigArea
       AutoDeactivate  =   True
       Enabled         =   True
       HasBorder       =   False
-      Height          =   341
+      Height          =   459
       HorizontalScrollPosition=   0
       Index           =   -2147483648
       InitialParent   =   ""
@@ -44,14 +42,14 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
       Scope           =   2
       SelectionLength =   0
       ShowInfoBar     =   False
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
       VerticalScrollPosition=   0
       Visible         =   True
-      Width           =   608
+      Width           =   800
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
@@ -65,7 +63,6 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
-      InitialParent   =   ""
       Left            =   0
       LeftPadding     =   -1
       LockBottom      =   False
@@ -78,14 +75,14 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   608
+      Width           =   800
    End
 End
 #tag EndDesktopWindow
@@ -104,167 +101,43 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Function ParsingFinished(Project As Ark.Project) As Boolean
-		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
-		  Var SelfProject As Ark.Project = Self.Project
-		  Var CreatedEditorNames() As String
-		  Var Config As Ark.Configs.CustomContent = Self.Config(False)
-		  Var Organizer As New Ark.ConfigOrganizer(Ark.ConfigFileGame, Ark.HeaderShooterGame, Config.GameIniContent)
-		  Organizer.Add(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, Config.GameUserSettingsIniContent)
-		  
-		  For Each CreatedConfig As Ark.ConfigGroup In Project.ImplementedConfigs(Project.ActiveConfigSet)
-		    Var InternalName As String = CreatedConfig.InternalName
-		    If InternalName = Ark.Configs.NameCustomContent Then
-		      Continue
-		    End If
-		    
-		    If Ark.Configs.ConfigUnlocked(InternalName, Identity) = False Then
-		      // Do not import code for groups that the user has not purchased
-		      Continue
-		    End If
-		    
-		    If CreatedConfig.IsImplicit Then
-		      // This was just there to support other editors, don't import it.
-		      Continue
-		    End If
-		    
-		    If SelfProject.HasConfigGroup(InternalName) Then
-		      Var CurrentConfig As Ark.ConfigGroup = SelfProject.ConfigGroup(InternalName, False)
-		      If (CurrentConfig Is Nil) = False Then
-		        Var Configs(1) As Ark.ConfigGroup
-		        Configs(0) = CurrentConfig
-		        Configs(1) = CreatedConfig
-		        
-		        Var Merged As Ark.ConfigGroup = Ark.Configs.Merge(Configs, True)
-		        SelfProject.AddConfigGroup(Merged)
-		      Else
-		        SelfProject.AddConfigGroup(CreatedConfig)
-		      End If
-		    Else
-		      SelfProject.AddConfigGroup(CreatedConfig)
-		    End If
-		    
-		    Organizer.Remove(CreatedConfig.ManagedKeys)
-		    
-		    CreatedEditorNames.Add(Language.LabelForConfig(InternalName))
-		  Next
-		  
-		  If CreatedEditorNames.Count > 0 Then
-		    Call Self.Config(True)
-		    Config.GameIniContent() = Organizer
-		    Config.GameUserSettingsIniContent() = Organizer
-		  End If
-		  
-		  Self.SetupUI()
-		  
-		  If CreatedEditorNames.Count = 0 Then
-		    Self.ShowAlert("No supported editor content found", "Beacon was unable to find any lines in either Game.ini or GameUserSettings.ini that it has a guided editor for.")
-		  ElseIf CreatedEditorNames.Count = 1 Then
-		    Self.ShowAlert("Finished converting Custom Config Content", "Beacon found and setup the a guided editor for " + CreatedEditorNames(0) + ".")
-		  Else
-		    Self.ShowAlert("Finished converting Custom Config Content", "Beacon found and setup the following guided editors: " + Language.EnglishOxfordList(CreatedEditorNames) + ".")
-		  End If
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub RunTool(Tool As Ark.ProjectTool)
-		  Select Case Tool.UUID
-		  Case "d29dc6f8-e834-4969-9cfe-b38e1c052156"
-		    Self.LookForSupportedContent()
-		  End Select
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Select Case Self.ActiveButtonName
-		  Case "GameUserSettingsIniButton"
-		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
-		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
-		  Case "GameIniButton"
-		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
-		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
+		  Case "ServerConfigButton"
+		    Self.ConfigArea.Text = Self.Config(False).XmlContent(SDTD.ConfigFileServerConfigXml)
+		    Self.mServerConfigXmlState.ApplyTo(Self.ConfigArea)
 		  End Select
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h1
-		Protected Function Config(ForWriting As Boolean) As Ark.Configs.CustomContent
-		  Return Ark.Configs.CustomContent(Super.Config(ForWriting))
+		Protected Function Config(ForWriting As Boolean) As SDTD.Configs.CustomConfig
+		  Return SDTD.Configs.CustomConfig(Super.Config(ForWriting))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Project As Ark.Project)
-		  Self.mGameUserSettingsIniState = New TextAreaState
-		  Self.mGameIniState = New TextAreaState
-		  
+		Sub Constructor(Project As SDTD.Project)
+		  Self.mServerConfigXmlState = New TextAreaState
 		  Super.Constructor(Project)
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function CurrentFile() As String
 		  Select Case Self.ActiveButtonName
-		  Case "GameUserSettingsIniButton"
-		    Return Ark.ConfigFileGameUserSettings
-		  Case "GameIniButton"
-		    Return Ark.ConfigFileGame
+		  Case "ServerConfigButton"
+		    Return "serverconfig.xml"
 		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function CurrentHeader() As String
-		  Var CurrentLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.Position)
-		  If Self.mCachedHeaderLine = CurrentLineNum Then
-		    Return Self.mCachedHeader
-		  End If
-		  
-		  Var Header As String
-		  Select Case Self.ActiveButtonName
-		  Case "GameUserSettingsIniButton"
-		    Header = Ark.HeaderServerSettings
-		  Case "GameIniButton"
-		    Header = Ark.HeaderShooterGame
-		  End Select
-		  
-		  For LineNum As Integer = CurrentLineNum DownTo 0
-		    Var Line As String = Self.ConfigArea.Line(LineNum).Trim
-		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
-		      Header = Line.Middle(1, Line.Length - 2)
-		      Exit For LineNum
-		    End If
-		  Next LineNum
-		  
-		  Self.mCachedHeader = Header
-		  Self.mCachedHeaderLine = CurrentLineNum
-		  
-		  Return Header
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameCustomContent
+		  Return SDTD.Configs.NameCustomConfig
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub LookForSupportedContent(Confirm As Boolean = True)
-		  If Confirm Then
-		    If Not Self.ShowConfirm("Do you want Beacon to search your Custom Config Content for lines that are supported by guided editors?", "Beacon will import your Custom Config Content and automatically setup guided editors for the lines it can support. Config lines will be merged according to Beacon's standard config merging guidelines.", "Continue", "Cancel") Then
-		      Return
-		    End If
-		  End If
-		  
-		  Var Config As Ark.Configs.CustomContent = Self.Config(False)
-		  Self.Parse(Config.GameUserSettingsIniContent, Config.GameIniContent, "Custom Config Content")
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -280,6 +153,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectionIsCommented() As Boolean
+		  #if DebugBuild
+		    #Pragma Warning "These comments are wrong"
+		  #else
+		    #Pragma Error "These comments are wrong"
+		  #endif
+		  
 		  Var FirstLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionStart)
 		  Var FirstLine As String = Self.ConfigArea.Line(FirstLineNum)
 		  Return FirstLine.BeginsWith("//")
@@ -371,7 +250,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ToggleEncryption()
-		  Var Tag As String = Ark.Configs.CustomContent.EncryptedTag
+		  Var Tag As String = SDTD.Configs.CustomConfig.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
 		  Var Source As String = Self.ConfigArea.Text
 		  
@@ -414,19 +293,11 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateAutoComplete()
 		  Var CurrentFile As String = Self.CurrentFile
-		  Var CurrentHeader As String = Self.CurrentHeader
-		  Var CurrentLocation As String = CurrentFile + ":" + CurrentHeader
-		  If CurrentLocation = Self.mLastAutocompleteHeader Then
-		    Return
-		  End If
-		  
-		  Var Configs() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys(CurrentFile, CurrentHeader, "", False)
-		  Self.mAutocompleteWords.ResizeTo(Configs.LastIndex)
-		  For Idx As Integer = Configs.FirstIndex To Configs.LastIndex
-		    Self.mAutocompleteWords(Idx) = Configs(Idx).Key
-		  Next Idx
-		  
-		  Self.mLastAutocompleteHeader = CurrentLocation
+		  Var Options() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions(CurrentFile, "", Self.Project.ContentPacks)
+		  Self.mAutocompleteWords.ResizeTo(Options.LastIndex)
+		  For Idx As Integer = Options.FirstIndex To Options.LastIndex
+		    Self.mAutocompleteWords(Idx) = Options(Idx).Key
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -476,7 +347,7 @@ End
 		  
 		  Var Pos As Integer
 		  Var Source As String = Self.ConfigArea.Text
-		  Var Tag As String = Ark.Configs.CustomContent.EncryptedTag
+		  Var Tag As String = SDTD.Configs.CustomConfig.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
 		  
 		  Do
@@ -504,24 +375,17 @@ End
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
-			  Var GameUserSettingsIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameUserSettingsIniButton")
-			  Var GameIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameIniButton")
-			  If (GameUserSettingsIniButton Is Nil) = False And GameUserSettingsIniButton.Toggled Then
-			    Return GameUserSettingsIniButton.Name
-			  ElseIf (GameIniButton Is Nil) = False And GameIniButton.Toggled Then
-			    Return GameIniButton.Name
+			  Var ServerConfigButton As OmniBarItem = Self.ConfigToolbar.Item("ServerConfigButton")
+			  If (ServerConfigButton Is Nil) = False And ServerConfigButton.Toggled Then
+			    Return ServerConfigButton.Name
 			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var GameUserSettingsIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameUserSettingsIniButton")
-			  Var GameIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameIniButton")
-			  If (GameUserSettingsIniButton Is Nil) = False Then
-			    GameUserSettingsIniButton.Toggled = (GameUserSettingsIniButton.Name = Value)
-			  End If
-			  If (GameIniButton Is Nil) = False Then
-			    GameIniButton.Toggled = (GameIniButton.Name = Value)
+			  Var ServerConfigButton As OmniBarItem = Self.ConfigToolbar.Item("ServerConfigButton")
+			  If (ServerConfigButton Is Nil) = False Then
+			    ServerConfigButton.Toggled = (ServerConfigButton.Name = Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -533,27 +397,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCachedHeader As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mCachedHeaderLine As Integer = -1
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mEncryptedRanges() As Beacon.Range
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniState As TextAreaState
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniState As TextAreaState
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLastAutocompleteHeader As String
+		Private mServerConfigXmlState As TextAreaState
 	#tag EndProperty
 
 
@@ -579,11 +427,8 @@ End
 		  End If
 		  
 		  Select Case Self.ActiveButtonName
-		  Case "GameUserSettingsIniButton"
-		    Self.Config(True).GameUserSettingsIniContent = SanitizedText
-		    Self.Modified = True
-		  Case "GameIniButton"
-		    Self.Config(True).GameIniContent = SanitizedText
+		  Case "ServerConfigButton"
+		    Self.Config(True).XmlContent(SDTD.ConfigFileServerConfigXml) = SanitizedText
 		    Self.Modified = True
 		  End Select
 		End Sub
@@ -607,7 +452,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub SetupNeeded()
-		  Ark.SetupCodeEditor(Me)
+		  SDTD.SetupCodeEditor(Me)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -643,13 +488,13 @@ End
 		    Return
 		  End If
 		  
-		  Var Key As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
-		  If Key Is Nil Or Key.Description.IsEmpty Then
+		  Var Keys() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions(Self.CurrentFile, Line.Left(EqualsPosition))
+		  If Keys Is Nil Or Keys.Count = 0 Then
 		    Me.CallTipCancel
 		    Return
 		  End If
 		  
-		  Me.CallTipShow(Me.LineStart(LineNum), Key.Description)
+		  Me.CallTipShow(Me.LineStart(LineNum), Keys(0).Description)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -663,13 +508,12 @@ End
 		Sub Opening()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateTab("GameUserSettingsIniButton", "GameUserSettings.ini"))
-		  Me.Append(OmniBarItem.CreateTab("GameIniButton", "Game.ini"))
+		  Me.Append(OmniBarItem.CreateTab("ServerConfigButton", "ServerConfig.xml"))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EncryptButton", "Encrypt", IconToolbarLock, "Encrypt the selected text when saving", False))
 		  Me.Append(OmniBarItem.CreateButton("CommentButton", "Comment", IconToolbarComment, "Comment the current line"))
 		  
-		  Me.Item("GameUserSettingsIniButton").Toggled = True
+		  Me.Item("ServerConfigButton").Toggled = True
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -681,7 +525,7 @@ End
 		    Self.ToggleEncryption()
 		  Case "CommentButton"
 		    Self.ToggleComment()
-		  Case "GameUserSettingsIniButton", "GameIniButton"
+		  Case "ServerConfigButton"
 		    If Item.Toggled Then
 		      // Don't do anything
 		      Return
@@ -690,18 +534,12 @@ End
 		    Var SettingUp As Boolean = Self.SettingUp
 		    Self.SettingUp = True
 		    Select Case Item.Name
-		    Case "GameUserSettingsIniButton"
-		      Self.mGameIniState = New TextAreaState(Self.ConfigArea)
-		      Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
-		      Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
-		    Case "GameIniButton"
-		      Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
-		      Self.ConfigArea.Text = Self.Config(False).GameIniContent
-		      Self.mGameIniState.ApplyTo(Self.ConfigArea)
+		    Case "ServerConfigButton"
+		      Self.mServerConfigXmlState = New TextAreaState(Self.ConfigArea)
+		      Self.ConfigArea.Text = Self.Config(False).XmlContent(SDTD.ConfigFileServerConfigXml)
+		      Self.mServerConfigXmlState.ApplyTo(Self.ConfigArea)
 		    End Select
-		    Me.Item("GameIniButton").Toggled = (Item.Name = "GameIniButton")
-		    Me.Item("GameUserSettingsIniButton").Toggled = (Item.Name = "GameUserSettingsIniButton")
-		    Self.mCachedHeaderLine = -1
+		    Me.Item("ServerConfigButton").Toggled = (Item.Name = "ServerConfigButton")
 		    Self.SettingUp = SettingUp
 		  End Select
 		End Sub
@@ -717,27 +555,27 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composited"
-		Visible=true
-		Group="Window Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Index"
-		Visible=true
-		Group="ID"
-		InitialValue="-2147483648"
+		Name="MinimumWidth"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
 		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="IsFrontmost"
+		Name="MinimumHeight"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="Boolean"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -757,83 +595,11 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
+		Name="IsFrontmost"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Tooltip"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowAutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackgroundColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="ColorGroup"
-		EditorType="ColorGroup"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackgroundColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumWidth"
-		Visible=true
-		Group="Behavior"
-		InitialValue="400"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumHeight"
-		Visible=true
-		Group="Behavior"
-		InitialValue="300"
-		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -850,6 +616,14 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -880,7 +654,7 @@ End
 		Name="Left"
 		Visible=true
 		Group="Position"
-		InitialValue=""
+		InitialValue="0"
 		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
@@ -888,7 +662,7 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
-		InitialValue=""
+		InitialValue="0"
 		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
@@ -896,7 +670,7 @@ End
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
-		InitialValue=""
+		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -904,7 +678,7 @@ End
 		Name="LockTop"
 		Visible=true
 		Group="Position"
-		InitialValue=""
+		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -912,7 +686,7 @@ End
 		Name="LockRight"
 		Visible=true
 		Group="Position"
-		InitialValue=""
+		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -920,21 +694,21 @@ End
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
-		InitialValue=""
+		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="TabPanelIndex"
-		Visible=false
+		Name="TabIndex"
+		Visible=true
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="TabIndex"
-		Visible=true
+		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
@@ -949,7 +723,7 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Visible"
+		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
 		InitialValue="True"
@@ -965,6 +739,38 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Visible"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
@@ -973,10 +779,42 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composited"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

@@ -45,6 +45,7 @@ Protected Module Tests
 		    TestIniValidation()
 		    TestArkClassStrings()
 		    TestCachingTimes()
+		    TestXmlParsing()
 		    App.Log("Tests complete")
 		  #endif
 		End Sub
@@ -648,6 +649,16 @@ Protected Module Tests
 		  Catch Err As UnsupportedFormatException
 		    System.DebugLog("Incorrect v5 UUID, computed " + UUID.StringValue)
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestXmlParsing()
+		  Const TestXml = "<?xml version=""1.0""?><ServerSettings><property name=""ServerName"" value=""3bc0f2f0"" /><property name=""Region"" value=""NorthAmericaEast"" /></ServerSettings>"
+		  
+		  Var ServerSettings As SDTD.ServerConfigXml = SDTD.ServerConfigXml.Create(TestXml)
+		  Var Regenerated As String = ServerSettings.BuildString
+		  Break
 		End Sub
 	#tag EndMethod
 

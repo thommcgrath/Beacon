@@ -55,14 +55,6 @@ Protected Class ConfigValue
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mCommand As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mHash As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mKeyDetails As SDTD.ConfigOption
 	#tag EndProperty
 
@@ -178,6 +170,14 @@ Protected Class ConfigValue
 			InitialValue=""
 			Type="Boolean"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Key"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

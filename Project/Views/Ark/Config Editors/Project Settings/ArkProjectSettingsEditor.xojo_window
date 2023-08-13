@@ -587,7 +587,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.Description = Self.SanitizeText(Me.Text.Trim, False)
+		  Self.Project.Description = Beacon.SanitizeText(Me.Text.Trim, False)
 		  Self.Modified = True
 		  Self.SettingUp = False
 		End Sub

@@ -9,13 +9,13 @@ Begin SDTDConfigEditor SDTDServersEditor
    Composited      =   False
    Enabled         =   True
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   500
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
+   LockBottom      =   True
    LockLeft        =   True
-   LockRight       =   False
+   LockRight       =   True
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
@@ -24,7 +24,7 @@ Begin SDTDConfigEditor SDTDServersEditor
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   800
 End
 #tag EndDesktopWindow
 
