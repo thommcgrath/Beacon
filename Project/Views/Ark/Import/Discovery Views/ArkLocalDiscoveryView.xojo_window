@@ -1,30 +1,48 @@
 #tag DesktopWindow
 Begin ArkDiscoveryView ArkLocalDiscoveryView
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
+   AllowAutoDeactivate=   "True"
+   AllowFocus      =   "False"
+   AllowFocusRing  =   "False"
+   AllowTabs       =   "True"
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composited      =   False
+   Composite       =   False
+   Composited      =   "False"
+   DefaultLocation =   2
    DoubleBuffer    =   "False"
-   Enabled         =   True
+   Enabled         =   "True"
    EraseBackground =   "True"
+   FullScreen      =   False
    HasBackgroundColor=   False
+   HasCloseButton  =   True
+   HasFullScreenButton=   False
+   HasMaximizeButton=   True
+   HasMinimizeButton=   True
    Height          =   396
-   Index           =   -2147483648
+   ImplicitInstance=   True
+   Index           =   "-2147483648"
    InitialParent   =   ""
-   Left            =   0
-   LockBottom      =   True
-   LockLeft        =   True
-   LockRight       =   True
-   LockTop         =   True
-   TabIndex        =   0
-   TabPanelIndex   =   0
-   TabStop         =   True
+   Left            =   "0"
+   LockBottom      =   "True"
+   LockLeft        =   "True"
+   LockRight       =   "True"
+   LockTop         =   "True"
+   MacProcID       =   0
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
+   MenuBar         =   0
+   MenuBarVisible  =   False
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Resizeable      =   True
+   TabIndex        =   "0"
+   TabPanelIndex   =   "0"
+   TabStop         =   "True"
+   Title           =   "Untitled"
    Tooltip         =   ""
-   Top             =   0
-   Transparent     =   True
+   Top             =   "0"
+   Transparent     =   "True"
+   Type            =   0
    Visible         =   True
    Width           =   600
    Begin UITweaks.ResizedPushButton ActionButton
@@ -121,7 +139,7 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   93
+      Width           =   95
    End
    Begin Shelf Switcher
       AllowAutoDeactivate=   True
@@ -337,7 +355,7 @@ End
 
 	#tag Event
 		Sub Opening()
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  Self.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.ConfigArea.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.SwapButtons()
@@ -549,7 +567,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
@@ -638,8 +656,8 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
-		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
+		  Me.Add(IconFileIniFilled, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
+		  Me.Add(IconFileIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = Self.GameUserSettingsIniIndex
 		End Sub

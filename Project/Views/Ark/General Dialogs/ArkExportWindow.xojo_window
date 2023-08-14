@@ -80,6 +80,7 @@ Begin BeaconDialog ArkExportWindow
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   111
       VerticalScrollPosition=   0
       Visible         =   True
@@ -1264,8 +1265,8 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
-		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
+		  Me.Add(IconFileIniFilled, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
+		  Me.Add(IconFileIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
 		  Me.Add(IconCommandLine, "Command Line", "cli")
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1

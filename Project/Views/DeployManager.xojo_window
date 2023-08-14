@@ -1310,8 +1310,8 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
-		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
+		  Me.Add(IconFileIniFilled, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
+		  Me.Add(IconFileIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1
 		End Sub

@@ -40,7 +40,13 @@ Protected Module SDTD
 	#tag EndMethod
 
 
+	#tag Constant, Name = ConfigFileServerAdminXml, Type = String, Dynamic = False, Default = \"serveradmin.xml", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = ConfigFileServerConfigXml, Type = String, Dynamic = False, Default = \"serverconfig.xml", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ConfigFileWebPermissionsXml, Type = String, Dynamic = False, Default = \"webpermissions.xml", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = FullName, Type = String, Dynamic = False, Default = \"7 Days to Die", Scope = Protected

@@ -775,7 +775,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function GetDestinationProject() As Ark.Project
+		Function GetDestinationProject() As Beacon.Project
 		  Return Self.mDestinationProject
 		End Function
 	#tag EndEvent
@@ -801,7 +801,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function GetDestinationProject() As Ark.Project
+		Function GetDestinationProject() As Beacon.Project
 		  Return Self.mDestinationProject
 		End Function
 	#tag EndEvent
@@ -827,7 +827,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function GetDestinationProject() As Ark.Project
+		Function GetDestinationProject() As Beacon.Project
 		  Return Self.mDestinationProject
 		End Function
 	#tag EndEvent
@@ -910,7 +910,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function GetDestinationProject() As Ark.Project
+		Function GetDestinationProject() As Beacon.Project
 		  Return Self.mDestinationProject
 		End Function
 	#tag EndEvent

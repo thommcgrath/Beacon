@@ -39,13 +39,14 @@ Begin DocumentImportView SDTDImportView
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   False
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   720
       Begin DocumentImportSourcePicker SourcePicker
@@ -80,6 +81,35 @@ Begin DocumentImportView SDTDImportView
          Visible         =   True
          Width           =   720
       End
+      Begin SDTDLocalDiscoveryView LocalView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF
+         Composited      =   False
+         Enabled         =   True
+         HasBackgroundColor=   False
+         Height          =   392
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   720
+      End
    End
 End
 #tag EndDesktopWindow
@@ -102,13 +132,34 @@ End
 
 	#tag Event
 		Sub PullValuesFromProject(Project As Beacon.Project)
+		  If (Project IsA SDTD.Project) = False Then
+		    Return
+		  End If
 		  
+		  Var SDTDProject As SDTD.Project = SDTD.Project(Project)
+		  Self.mDestinationProject = SDTDProject
+		  Self.LocalView.PullValuesFromProject(SDTDProject)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Reset()
+		  // For I As Integer = 0 To Self.mImporters.LastIndex
+		  // If Self.mImporters(I) <> Nil And Not Self.mImporters(I).Finished Then
+		  // Self.mImporters(I).Cancel
+		  // End If
+		  // Next
+		  // 
+		  // Self.mImporters.ResizeTo(-1)
 		  
+		  If (Self.Views Is Nil) = False Then
+		    If Self.Views.SelectedPanelIndex <> Self.PagePicker Then
+		      Self.Views.SelectedPanelIndex = Self.PagePicker
+		    Else
+		      Self.SetPageHeight(Self.SourcePicker.Height)
+		      Self.SourcePicker.ActionButtonEnabled = True
+		    End If
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -155,8 +206,28 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = PageLocal, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PagePicker, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
+#tag Events Views
+	#tag Event
+		Sub PanelChanged()
+		  Select Case Me.SelectedPanelIndex
+		  Case Self.PagePicker
+		    Self.SetPageHeight(Self.SourcePicker.Height)
+		    Self.SourcePicker.ActionButtonEnabled = True
+		  Case Self.PageLocal
+		    Self.LocalView.Begin
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events SourcePicker
 	#tag Event
 		Sub Cancelled()
@@ -170,7 +241,40 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub SourceChosen(Source As Integer)
+		  Select Case Source
+		  Case Me.SourceFTP
+		  Case Me.SourceGSA
+		  Case Me.SourceLocal
+		    Self.Views.SelectedPanelIndex = Self.PageLocal
+		  Case Me.SourceNitrado
+		  Case Me.SourceOtherProject
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LocalView
+	#tag Event
+		Sub Finished(Data() As Beacon.DiscoveredData)
 		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDestinationProject() As Beacon.Project
+		  Return Self.mDestinationProject
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    Self.Dismiss
+		  Else
+		    Views.SelectedPanelIndex = Self.PagePicker
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  Self.SetPageHeight(NewHeight)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -388,6 +492,14 @@ End
 		Visible=true
 		Group="Window Behavior"
 		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="QuickCancel"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
