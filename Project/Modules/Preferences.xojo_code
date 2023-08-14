@@ -839,6 +839,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.StringValue("New Project Game Id", "")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.StringValue("New Project Game Id") = Value
+			End Set
+		#tag EndSetter
+		Protected NewProjectGameId As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Online Enabled", False)
 			End Get
 		#tag EndGetter

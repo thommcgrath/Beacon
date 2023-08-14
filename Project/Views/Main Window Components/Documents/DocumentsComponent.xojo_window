@@ -502,14 +502,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewProject()
-		  // This version prompts the user to select a game
-		  
-		  Var GameId As String = GameSelectorWindow.Present(Self.TrueWindow)
-		  If GameId.IsEmpty Then
-		    Return
-		  End If
-		  
-		  Self.NewProject(GameId)
+		  Self.NewProject(Preferences.NewProjectGameId)
 		End Sub
 	#tag EndMethod
 
@@ -523,11 +516,19 @@ End
 		  Self.AttachControllerEvents(Controller)
 		  
 		  Controller.Load()
+		  
+		  Self.RequestFrontmost()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub NewProject(GameId As String)
+		  If GameId.IsEmpty Then
+		    GameId = GameSelectorWindow.Present(Self.TrueWindow)
+		  End If
+		  If GameId.IsEmpty Then
+		    Return
+		  End If
 		  If Self.CheckGameDatabase(GameId) = False Then
 		    Return
 		  End If

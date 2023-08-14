@@ -68,10 +68,25 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Event
 		Sub MenuBarSelected()
-		  FileNew.Enabled = True
-		  FileNewPreset.Enabled = True
-		  FileOpen.Enabled = True
-		  FileImport.Enabled = True
+		  If (Self.mMainWindow Is Nil) = False Then
+		    FileNew.Enabled = True
+		    FileNewPreset.Enabled = True
+		    FileOpen.Enabled = True
+		    FileImport.Enabled = True
+		    
+		    Var DefaultGameId As String = Preferences.NewProjectGameId
+		    If DefaultGameId.IsEmpty Then
+		      FileNew.Text = "New Project"
+		    Else
+		      FileNew.Text = "New " + Language.GameName(DefaultGameId) + " Project"
+		    End If
+		    
+		    Var GameMenu As DesktopMenuItem = FileNewProjectForGame
+		    Var Bound As Integer = GameMenu.Count - 1
+		    For Idx As Integer = 0 To Bound
+		      GameMenu.MenuAt(Idx).Enabled = True
+		    Next
+		  End If
 		  
 		  If Preferences.OnlineEnabled Then
 		    HelpSyncCloudFiles.Visible = True
@@ -216,6 +231,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupDatabases)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CleanupConfigBackups)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupNewProjectMenuItems)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_ShowMainWindow)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_RequestUser)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
@@ -280,7 +296,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
 		  If (Self.mMainWindow Is Nil) = False Then
-		    Self.mMainWindow.Documents.NewProject
+		    Self.mMainWindow.Documents(False).NewProject()
 		  End If
 		  Return True
 		End Function
@@ -416,6 +432,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function HelpUpdateEngrams() As Boolean Handles HelpUpdateEngrams.Action
 		  Self.SyncGamedata(False, False)
+		  Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function NewProjectForGameShowGamePicker() As Boolean Handles NewProjectForGameShowGamePicker.Action
+		  If (Self.mMainWindow Is Nil) = False Then
+		    Self.mMainWindow.Documents(False).NewProject("")
+		  End If
 		  Return True
 		End Function
 	#tag EndMenuHandler
@@ -1060,6 +1085,20 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_SetupNewProjectMenuItems()
+		  Var Base As DesktopMenuItem = FileNewProjectForGame
+		  Var Games() As Beacon.Game = Beacon.Games
+		  For Each Game As Beacon.Game In Games
+		    Var Item As New DesktopMenuItem(Game.Name, Game.Identifier)
+		    Item.AutoEnabled = False
+		    AddHandler Item.MenuItemSelected, AddressOf mGameMenu_MenuItemSelected
+		    Base.AddMenu(Item)
+		  Next
+		  Self.NextLaunchQueueTask
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_ShowMainWindow()
 		  Self.mMainWindow = New MainWindow
 		  Self.mMainWindow.Show()
@@ -1191,6 +1230,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Self.SyncGamedata(True, False)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function mGameMenu_MenuItemSelected(Sender As DesktopMenuItem) As Boolean
+		  If (Self.mMainWindow Is Nil) = False Then
+		    Self.mMainWindow.Documents(False).NewProject(Sender.Tag.StringValue)
+		  End If
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

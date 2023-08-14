@@ -1021,7 +1021,6 @@ End
 #tag Events DashboardPane1
 	#tag Event
 		Sub NewDocument()
-		  Self.SwitchView(Self.PageDocuments)
 		  Self.DocumentsComponent1.NewProject()
 		End Sub
 	#tag EndEvent

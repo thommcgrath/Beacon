@@ -18,14 +18,39 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin DesktopMenuItem FileNewProjectForGame
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "New Project For Game"
+         AutoEnabled = False
+         AutoEnable = False
+         SubMenu = True
+         Visible = True
+         Begin DesktopMenuItem NewProjectForGameShowGamePicker
+            SpecialMenu = 0
+            Index = -2147483648
+            Text = "Show Game Picker"
+            ShortcutKey = "N"
+            Shortcut = "Cmd+Shift+N"
+            MenuModifier = True
+            AltMenuModifier = True
+            AutoEnabled = False
+            AutoEnable = False
+            Visible = True
+         End
+         Begin DesktopMenuItem UntitledSeparator8
+            SpecialMenu = 0
+            Index = -2147483648
+            Text = "-"
+            AutoEnabled = True
+            AutoEnable = True
+            Visible = True
+         End
+      End
       Begin DesktopMenuItem FileNewPreset
          SpecialMenu = 0
          Index = -2147483648
-         Text = "New Preset"
-         ShortcutKey = "N"
-         Shortcut = "Cmd+Shift+N"
-         MenuModifier = True
-         AltMenuModifier = True
+         Text = "New Template"
          AutoEnabled = False
          AutoEnable = False
          Visible = True
