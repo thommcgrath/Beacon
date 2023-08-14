@@ -747,6 +747,9 @@ End
 #tag Events ProjectToolbar
 	#tag Event
 		Sub Opening()
+		  Me.Append(OmniBarItem.CreateTitle("GameName", SDTD.FullName))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  
 		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import config files."))
 		  Me.Append(OmniBarItem.CreateSpace())
 		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Save new config file."))

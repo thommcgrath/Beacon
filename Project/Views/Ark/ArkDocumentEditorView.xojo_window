@@ -1233,6 +1233,9 @@ End
 #tag Events OmniBar1
 	#tag Event
 		Sub Opening()
+		  Me.Append(OmniBarItem.CreateTitle("GameName", Ark.FullName))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  
 		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import config files."))
 		  Me.Append(OmniBarItem.CreateSpace())
 		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Save new config file."))
