@@ -8,34 +8,54 @@ Protected Module SDTD
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit)) or  (TargetWeb and (Target32Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Sub SetupCodeEditor(Target As CodeEditor)
-		  Const SCE_PROPS_DEFAULT = 0
-		  Const SCE_PROPS_COMMENT = 1
-		  Const SCE_PROPS_SECTION = 2
-		  Const SCE_PROPS_ASSIGNMENT = 3
-		  Const SCE_PROPS_DEFVAL = 4
-		  Const SCE_PROPS_KEY = 5
+		  Const SCE_H_DEFAULT = 0 // Normal Text
+		  Const SCE_H_TAG = 1 // Tags
+		  Const SCE_H_ERRORTAGUNKNOWN = 2 // Unknown tags
+		  Const SCE_H_ATTRIBUTE = 3 // Attributes
+		  Const SCE_H_ATTRIBUTEUNKNOWN = 4 // Unknown attributes
+		  Const SCE_H_NUMBER = 5 // Numbers
+		  Const SCE_H_DOUBLESTRING = 6 // Strings
+		  Const SCE_H_SINGLESTRING = 7 // Also strings
+		  Const SCE_H_COMMENT = 9 // Comment
+		  Const SCE_H_TAGEND = 11 // Closing tag, such as />
+		  Const SCE_H_XMLSTART = 12 // Declaration opening, such as <?
+		  Const SCE_H_XMLEND = 13 // Declaration closing, such as ?>
+		  Const SCE_H_CDATA = 17
+		  Const SCE_H_SGMLDEFAULT = 21
 		  
 		  Target.InitializeLexer("xml")
 		  
-		  Var SectionColor, AssignmentColor, KeywordColor As Color
-		  
 		  If Color.IsDarkMode Then
-		    SectionColor = &cFF7778
-		    AssignmentColor = &cCBCBCB
-		    KeywordColor = &c19A9FF
+		    Target.Style(SCE_H_ATTRIBUTE).ForeColor = &cB0FFE8
+		    Target.Style(SCE_H_ATTRIBUTEUNKNOWN).ForeColor = &cC7FF88
+		    Target.Style(SCE_H_CDATA).ForeColor = &cC88ABE
+		    Target.Style(SCE_H_COMMENT).ForeColor = &c57A64A
+		    Target.Style(SCE_H_DEFAULT).ForeColor = &cFEFFCA
+		    Target.Style(SCE_H_DOUBLESTRING).ForeColor = &cFF9473
+		    Target.Style(SCE_H_ERRORTAGUNKNOWN).ForeColor = &cC0C0C0
+		    Target.Style(SCE_H_NUMBER).ForeColor = &c0FF47D
+		    Target.Style(SCE_H_SGMLDEFAULT).ForeColor = &c808080
+		    Target.Style(SCE_H_SINGLESTRING).ForeColor = &cFF947D
+		    Target.Style(SCE_H_TAG).ForeColor = &c3CBEF0
+		    Target.Style(SCE_H_TAGEND).ForeColor = &c3CBEF0
+		    Target.Style(SCE_H_XMLEND).ForeColor = &cFFFFFF
+		    Target.Style(SCE_H_XMLSTART).ForeColor = &cFFFFFF
 		  Else
-		    SectionColor = &c7D1012
-		    AssignmentColor = &c515151
-		    KeywordColor = &c0C51C3
+		    Target.Style(SCE_H_ATTRIBUTE).ForeColor = &cFF0000
+		    Target.Style(SCE_H_ATTRIBUTEUNKNOWN).ForeColor = &cFF0000
+		    Target.Style(SCE_H_CDATA).ForeColor = &c800000
+		    Target.Style(SCE_H_COMMENT).ForeColor = &c008000
+		    Target.Style(SCE_H_DEFAULT).ForeColor = &c000000
+		    Target.Style(SCE_H_DOUBLESTRING).ForeColor = &c007BEF
+		    Target.Style(SCE_H_ERRORTAGUNKNOWN).ForeColor = &c800000
+		    Target.Style(SCE_H_NUMBER).ForeColor = &c0060BF
+		    Target.Style(SCE_H_SGMLDEFAULT).ForeColor = &cFF8040
+		    Target.Style(SCE_H_SINGLESTRING).ForeColor = &c007BEF
+		    Target.Style(SCE_H_TAG).ForeColor = &c800000
+		    Target.Style(SCE_H_TAGEND).ForeColor = &c800000
+		    Target.Style(SCE_H_XMLEND).ForeColor = &cFF0000
+		    Target.Style(SCE_H_XMLSTART).ForeColor = &cFF0000
 		  End If
-		  
-		  Target.Style(SCE_PROPS_SECTION).ForeColor = SectionColor
-		  Target.Style(SCE_PROPS_ASSIGNMENT).ForeColor = AssignmentColor
-		  Target.Style(SCE_PROPS_KEY).ForeColor = KeywordColor
-		  Target.Style(SCE_PROPS_SECTION).Bold = True
-		  
-		  // Unknown colors, make sure they stand out so they can be discovered more readily
-		  Target.Style(SCE_PROPS_DEFVAL).ForeColor = &cFF00FF
 		End Sub
 	#tag EndMethod
 

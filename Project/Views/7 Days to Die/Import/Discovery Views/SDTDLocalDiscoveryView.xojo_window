@@ -286,7 +286,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Const DesiredHeight = 400
+		  Const DesiredHeight = 450
 		  
 		  Self.ExplanationLabel.SizeToFit
 		  Self.ActionButton.Top = DesiredHeight - (Self.ActionButton.Height + 20)

@@ -275,6 +275,7 @@ End
 	#tag Event
 		Sub ShouldResize(NewHeight As Integer)
 		  Self.SetPageHeight(NewHeight)
+		  Me.Height = NewHeight
 		End Sub
 	#tag EndEvent
 #tag EndEvents

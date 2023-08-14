@@ -341,7 +341,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.DesiredHeight = 400
+		  Self.DesiredHeight = 450
 		  Self.ConfigArea.Text = ""
 		End Sub
 	#tag EndEvent
