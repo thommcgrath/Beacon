@@ -82,8 +82,15 @@ function MergeUser(User $authenticatedUser, array $anonymousUser): Response {
 	foreach ($multiTables as $table) {
 		$database->Query('UPDATE ' . $table . ' SET user_id = $1 WHERE user_id = $2;', $authenticatedUserId, $userId);
 	}
-	$database->Query('UPDATE public.guest_projects SET user_id = $1 WHERE user_id = $2 AND project_id NOT IN (SELECT project_id FROM public.projects WHERE user_id = $1);', $authenticatedUserId, $userId);
-	$database->Query('DELETE FROM public.guest_projects WHERE user_id = $1;', $userId);
+	$temp = 'temp_' . BeaconCommon::GenerateRandomKey();
+	
+	// Migrating project members is hard
+	$database->Query('CREATE TEMPORARY TABLE ' . $temp . ' (project_id UUID, role public.project_role);');
+	$database->Query('INSERT INTO ' . $temp . ' (project_id, role) SELECT project_id, MIN(role) FROM public.project_members WHERE user_id IN ($1, $2) GROUP BY project_id;', $authenticatedUserId, $userId);
+	$database->Query('DELETE FROM public.project_members WHERE user_id = $1;', $userId);
+	$database->Query('INSERT INTO public.project_members (project_id, user_id, role) SELECT project_id, $1, role FROM ' . $temp . ' ON CONFLICT (project_id, user_id) DO UPDATE SET role = EXCLUDED.role WHERE project_members.role != EXCLUDED.role', $authenticatedUserId);
+	$database->Query('DROP TEMPORARY TABLE ' . $temp . ';');
+	
 	$database->Query('DELETE FROM public.users WHERE user_id = $1;', $userId);
 	$database->Commit();
 	

@@ -2,18 +2,24 @@
 
 use BeaconAPI\v4\{Response, Core, Project, User};
 
-$authScheme = Core::kAuthSchemeNone;
-$requiredScopes = [];
+if (Core::HasAuthenticationHeader() === false) {
+	$authScheme = Core::kAuthSchemeNone;
+	$requiredScopes = [];
+}
 	
 function handleRequest(array $context): Response {
 	$projectId = $context['pathParameters']['projectId'];
 	$authorizedUserId = Core::UserId();
-		
+	
 	if (!BeaconCommon::IsUUID($projectId)) {
 		return Response::NewJsonError('Must use a v4 UUID', $projectId, 400);
 	}
 	
-	$project = Project::Fetch($projectId);
+	if ($authorizedUserId) {
+		$project = Project::FetchForUser($projectId, $authorizedUserId);
+	} else {
+		$project = Project::Fetch($projectId);
+	}
 	if (is_null($project)) {
 		return Response::NewJsonError('Project not found', $projectId, 404);
 	}

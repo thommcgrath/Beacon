@@ -659,10 +659,9 @@ class User implements \JsonSerializable {
 			$database->BeginTransaction();
 			foreach ($user_ids as $user_id) {
 				$database->Query('UPDATE public.access_tokens SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
-				$database->Query('UPDATE public.projects SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
-				$database->Query('UPDATE public.guest_projects SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
+				$database->Query('UPDATE public.project_members SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
 				$database->Query('UPDATE public.service_tokens SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
-				$database->Query('UPDATE ark.mods SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
+				$database->Query('UPDATE public.content_packs SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
 				$database->Query('DELETE FROM public.users WHERE user_id = $1;', $user_id);
 			}
 			$database->Commit();

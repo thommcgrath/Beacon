@@ -222,6 +222,10 @@ class Core {
 		}
 	}
 	
+	public static function HasAuthenticationHeader(): bool {
+		return (empty($_SERVER['HTTP_AUTHORIZATION']) === false || empty($_SERVER['HTTP_X_BEACON_TOKEN']) === false);
+	}
+	
 	protected static function AuthenticateWithBearer(array $requestedScopes): int {
 		$header = $_SERVER['HTTP_AUTHORIZATION'] ?? 'Bearer ' . ($_SERVER['HTTP_X_BEACON_TOKEN'] ?? '');
 		$scheme = strtok($header, ' ');

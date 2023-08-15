@@ -14,7 +14,7 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('Must use a v4 UUID', $projectId, 400);
 	}
 	
-	$project = Project::Fetch($projectId);
+	$project = Project::FetchForUser($projectId, Core::User());
 	if (is_null($project)) {
 		return Response::NewJsonError('Project not found', $projectId, 404);
 	}

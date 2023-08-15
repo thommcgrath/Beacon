@@ -13,7 +13,8 @@ abstract class Project implements \JsonSerializable {
 	protected $game_id = '';
 	protected $game_specific = [];
 	protected $user_id = '';
-	protected $owner_id = '';
+	protected $role = '';
+	protected $permissions = 0;
 	protected $title = '';
 	protected $description = '';
 	protected $console_safe = true;
@@ -32,29 +33,26 @@ abstract class Project implements \JsonSerializable {
 		return 'projects';
 	}
 	
-	public static function AllowedTableName() {
-		return 'allowed_projects';
-	}
-	
-	public static function GuestTableName() {
-		return 'guest_projects';
+	public static function FromClause(): string {
+		return static::SchemaName() . '.' . static::TableName() . ' INNER JOIN public.project_members ON (' . static::TableName() . '.project_id = project_members.project_id)';
 	}
 	
 	public static function SQLColumns() {
 		return [
-			'project_id',
-			'game_id',
-			'user_id',
-			'owner_id',
-			'title',
-			'description',
-			'console_safe',
-			'last_update',
-			'revision',
-			'download_count',
-			'published',
-			'game_specific',
-			'storage_path'
+			'projects.project_id',
+			'projects.game_id',
+			'project_members.user_id',
+			'project_members.role',
+			'project_role_permissions(project_members.role) AS permissions',
+			'projects.title',
+			'projects.description',
+			'projects.console_safe',
+			'projects.last_update',
+			'projects.revision',
+			'projects.download_count',
+			'projects.published',
+			'projects.game_specific',
+			'projects.storage_path'
 		];
 	}
 	
@@ -86,8 +84,12 @@ abstract class Project implements \JsonSerializable {
 		return $this->user_id;
 	}
 	
-	public function OwnerID() {
-		return $this->owner_id;
+	public function Role() {
+		return $this->role;
+	}
+	
+	public function Permissions() {
+		return $this->permissions;
 	}
 	
 	public function Title() {
@@ -120,7 +122,7 @@ abstract class Project implements \JsonSerializable {
 	}
 	
 	public function IsPublic() {
-		return $this->published == PUBLISH_STATUS_APPROVED;
+		return $this->published == self::PUBLISH_STATUS_APPROVED;
 	}
 	
 	public function PublishStatus() {
@@ -130,7 +132,7 @@ abstract class Project implements \JsonSerializable {
 	public function SetPublishStatus(string $desired_status) {
 		$database = \BeaconCommon::Database();
 		
-		$results = $database->Query('SELECT published FROM ' . static::SchemaName() . '.' . static::AllowedTableName() . ' WHERE project_id = $1;', $this->project_id);
+		$results = $database->Query('SELECT published FROM ' . static::FromClause() . ' WHERE projects.project_id = $1;', $this->project_id);
 		$current_status = $results->Field('published');
 		$new_status = $current_status;
 		if ($desired_status == self::PUBLISH_STATUS_REQUESTED || $desired_status == self::PUBLISH_STATUS_APPROVED) {
@@ -200,7 +202,7 @@ abstract class Project implements \JsonSerializable {
 		}
 		if ($new_status != $current_status) {
 			$database->BeginTransaction();
-			$database->Query('UPDATE ' . static::SchemaName() . '.' . static::TableName() . ' SET published = $2 WHERE project_id = $1;', $this->project_id, $new_status);
+			$database->Query('UPDATE ' . static::SchemaName() . '.' . static::TableName() . ' SET published = $2 WHERE projects.project_id = $1;', $this->project_id, $new_status);
 			$database->Commit();
 		}
 		$this->published = $new_status;
@@ -244,13 +246,13 @@ abstract class Project implements \JsonSerializable {
 	
 	public static function GetAll() {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('user_id = owner_id'));
+		$results = $database->Query(static::BuildSQL('role = \'Owner\' AND projects.deleted = FALSE'));
 		return self::GetFromResults($results);
 	}
 	
 	public static function GetByDocumentID(string $project_id) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('project_id = ANY($1) AND user_id = owner_id'), '{' . $project_id . '}');
+		$results = $database->Query(static::BuildSQL('projects.project_id = ANY($1) AND project_members.role = \'Owner\' AND projects.deleted = FALSE'), '{' . $project_id . '}');
 		return self::GetFromResults($results);
 	}
 	
@@ -265,7 +267,7 @@ abstract class Project implements \JsonSerializable {
 		}
 		
 		$database = \BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('project_id = ANY($1) AND user_id = $2'), '{' . $project_id . '}', $user_id);
+		$results = $database->Query(static::BuildSQL('projects.project_id = ANY($1) AND project_members.user_id = $2 AND projects.deleted = FALSE'), '{' . $project_id . '}', $user_id);
 		$projects = self::GetFromResults($results);
 		if (count($projects) === 0) {
 			$projects = self::GetByDocumentID($project_id);
@@ -277,7 +279,7 @@ abstract class Project implements \JsonSerializable {
 		
 	}
 	
-	public static function Search(array $params, string $order_by = 'last_update DESC', int $count = 0, int $offset = 0, bool $count_only = false) {
+	public static function Search(array $params, string $order_by = 'projects.last_update DESC', int $count = 0, int $offset = 0, bool $count_only = false) {
 		$next_placeholder = 1;
 		$values = array();
 		$clauses = array();
@@ -289,34 +291,38 @@ abstract class Project implements \JsonSerializable {
 			case 'id':
 				if (is_array($value)) {
 					$values[] = '{' . implode(',', $value) . '}';
-					$clauses[] = 'project_id = ANY($' . $next_placeholder++ . ')';
+					$clauses[] = 'projects.project_id = ANY($' . $next_placeholder++ . ')';
 				} elseif (\BeaconCommon::IsUUID($value)) {
 					$values[] = $value;
-					$clauses[] = 'project_id = $' . $next_placeholder++;
+					$clauses[] = 'projects.project_id = $' . $next_placeholder++;
 				}
 				break;
 			case 'public':
 			case 'is_public':
-				$clauses[] = 'published = \'Approved\'';
+				$clauses[] = 'projects.published = \'Approved\'';
 				break;
 			case 'published':
 				$values[] = $value;
-				$clauses[] = 'published = $' . $next_placeholder++;
+				$clauses[] = 'projects.published = $' . $next_placeholder++;
 				break;
 			case 'user_id':
 				if (is_array($value)) {
 					$values[] = '{' . implode(',', $value) . '}';
-					$clauses[] = 'user_id = ANY($' . $next_placeholder++ . ')';
+					$clauses[] = 'project_members.user_id = ANY($' . $next_placeholder++ . ')';
 				} elseif (is_null($value)) {
-					$clauses[] = 'user_id IS NULL';
+					$clauses[] = 'project_members.user_id IS NULL';
 				} elseif (\BeaconCommon::IsUUID($value)) {
 					$values[] = $value;
-					$clauses[] = 'user_id = $' . $next_placeholder++;
+					$clauses[] = 'project_members.user_id = $' . $next_placeholder++;
 				}
+				break;
+			case 'role':
+				$values[] = $value;
+				$clauses[] = 'project_members.role = $' . $next_placeholder++;
 				break;
 			case 'console_safe':
 				$values[] = boolval($value);
-				$clauses[] = 'console_safe = $' . $next_placeholder++;
+				$clauses[] = 'projects.console_safe = $' . $next_placeholder++;
 				break;
 			default:
 				static::HookHandleSearchKey($column, $value, $clauses, $values, $next_placeholder);
@@ -325,11 +331,12 @@ abstract class Project implements \JsonSerializable {
 		}
 		
 		// We want to list only "original" projects, not shared projects.
-		$clauses[] = 'user_id = owner_id';
+		$clauses[] = 'project_members.user_id = \'Owner\'';
+		$clauses[] = 'projects.deleted = FALSE';
 		
 		$database = \BeaconCommon::Database();
 		if ($count_only) {
-			$sql = 'SELECT COUNT(project_id) AS project_count FROM ' . static::SchemaName() . '.' . static::AllowedTableName() . ' WHERE ' . implode(' AND ', $clauses) . ';';
+			$sql = 'SELECT COUNT(project_id) AS project_count FROM ' . static::FromClause() . ' WHERE ' . implode(' AND ', $clauses) . ';';
 			$results = $database->Query($sql, $values);
 			return $results->Field('project_count');
 		} else {
@@ -375,7 +382,8 @@ abstract class Project implements \JsonSerializable {
 		$project->download_count = intval($results->Field('download_count'));
 		$project->last_update = new \DateTime($results->Field('last_update'));
 		$project->user_id = $results->Field('user_id');
-		$project->owner_id = $results->Field('owner_id');
+		$project->role = $results->Field('role');
+		$project->permissions = $results->Field('permissions');
 		$project->published = $results->Field('published');
 		$project->console_safe = boolval($results->Field('console_safe'));
 		$project->game_specific = json_decode($results->Field('game_specific'), true);
@@ -383,8 +391,8 @@ abstract class Project implements \JsonSerializable {
 		return $project;
 	}
 	
-	protected static function BuildSQL(string $clause = '', string $order_by = 'last_update DESC', int $count = 0, int $offset = 0) {
-		$sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SchemaName() . '.' . static::AllowedTableName();
+	protected static function BuildSQL(string $clause = '', string $order_by = 'projects.last_update DESC', int $count = 0, int $offset = 0) {
+		$sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::FromClause();
 		if ($clause !== '') {
 			$sql .= ' WHERE ' . $clause;
 		}
@@ -538,7 +546,7 @@ abstract class Project implements \JsonSerializable {
 		$game_id = isset($project['GameID']) ? $project['GameID'] : 'Ark';
 		
 		// check if the project already exists
-		$results = $database->Query('SELECT project_id, storage_path FROM ' . static::SchemaName() . '.' . static::TableName() . ' WHERE project_id = $1;', $project_id);
+		$results = $database->Query('SELECT project_id, storage_path FROM ' . static::SchemaName() . '.' . static::TableName() . ' WHERE projects.project_id = $1;', $project_id);
 		$new_project = $results->RecordCount() == 0;
 		$storage_path = null;
 		
@@ -546,23 +554,23 @@ abstract class Project implements \JsonSerializable {
 		if ($new_project == false) {
 			$storage_path = $results->Field('storage_path');
 			
-			$results = $database->Query('SELECT role, owner_id FROM ' . static::SchemaName() . '.' . static::AllowedTableName() . ' WHERE project_id = $1 AND user_id = $2;', $project_id, $user->UserID());
+			$results = $database->Query('SELECT role, public.project_role_permissions(role) AS permissions, user_id FROM project_members WHERE project_id = $1 AND user_id = $2;', $project_id, $user->UserID());
 			if ($results->RecordCount() == 0) {
 				$reason = 'Access denied for project ' . $project_id . '.';
 				return false;
 			}
+			$permissions = $results->Field('permissions');
+			if ($permissions <= 10) {
+				$reason = 'As a guest you can not write to this project.';
+				return false;
+			}
 			$role = $results->Field('role');
-			$owner_id = $results->Field('owner_id');
+			$user_id = $results->Field('user_id');
 		} else {
 			$storage_path = static::GenerateCloudStoragePath($project_id);
-			
-			if ($user->IsChildAccount()) {
-				$role = 'Team';
-				$owner_id = $user->ParentAccountID();
-			} else {
-				$role = 'Owner';
-				$owner_id = $user->UserID();
-			}
+			$role = 'Owner';
+			$permissions = 90;
+			$user_id = $user->UserID();
 		}
 		
 		$guests_to_add = [];
@@ -572,14 +580,14 @@ abstract class Project implements \JsonSerializable {
 			$allowed_users = array_keys($encryption_keys);
 			
 			$desired_guests = [];
-			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $owner_id);
+			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $user_id);
 			while (!$results->EOF()) {
 				$desired_guests[] = $results->Field('user_id');
 				$results->MoveNext();
 			}
 			
 			$current_guests = [];
-			$results = $database->Query('SELECT user_id FROM ' . static::SchemaName() . '.' . static::GuestTableName() . ' WHERE project_id = $1;', $project_id);
+			$results = $database->Query('SELECT user_id FROM project_members WHERE project_id = $1 AND role != \'Owner\';', $project_id);
 			while (!$results->EOF()) {
 				$current_guests[] = $results->Field('user_id');
 				$results->MoveNext();
@@ -588,8 +596,8 @@ abstract class Project implements \JsonSerializable {
 			$guests_to_add = array_diff($desired_guests, $current_guests);
 			$guests_to_remove = array_diff($current_guests, $desired_guests);
 			
-			if ($role !== 'Owner' && (count($guests_to_add) > 0 || count($guests_to_remove) > 0)) {
-				$reason = 'Only the owner may add or remove users.';
+			if ($permissions < 80 && (count($guests_to_add) > 0 || count($guests_to_remove) > 0)) {
+				$reason = 'Only the owner or admins may add or remove users.';
 				return false;
 			}
 		}
@@ -609,14 +617,14 @@ abstract class Project implements \JsonSerializable {
 			];
 			static::HookRowSaveData($project, $row_values);
 			
-			$placeholder = 3;
-			$values = [$project_id, $owner_id];
+			$placeholder = 2;
+			$values = [$project_id];
 			
 			$database->BeginTransaction();
 			if ($new_project) {
-				$columns = ['project_id', 'user_id', 'last_update', 'storage_path'];
+				$columns = ['project_id', 'last_update', 'storage_path'];
 				$values[] = $storage_path;
-				$placeholders = ['$1', '$2', 'CURRENT_TIMESTAMP', '$3'];
+				$placeholders = ['$1', 'CURRENT_TIMESTAMP', '$2'];
 				$placeholder++;
 				foreach ($row_values as $column => $value) {
 					$columns[] = $database->EscapeIdentifier($column);
@@ -626,6 +634,7 @@ abstract class Project implements \JsonSerializable {
 				}
 				
 				$database->Query('INSERT INTO ' . static::SchemaName() . '.' . static::TableName() . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
+				$database->Query('INSERT INTO public.project_members (project_id, user_id, role) VALUES ($1, $2, $3);', $project_id, $user_id, 'Owner');
 			} else {
 				$assignments = ['revision = revision + 1', 'last_update = CURRENT_TIMESTAMP', 'deleted = FALSE'];
 				foreach ($row_values as $column => $value) {
@@ -634,13 +643,13 @@ abstract class Project implements \JsonSerializable {
 					$placeholder++;
 				}
 				
-				$database->Query('UPDATE ' . static::SchemaName() . '.' . static::TableName() . ' SET ' . implode(', ', $assignments) . ' WHERE project_id = $1 AND user_id = $2;', $values);
+				$database->Query('UPDATE ' . static::SchemaName() . '.' . static::TableName() . ' SET ' . implode(', ', $assignments) . ' WHERE projects.project_id = $1;', $values);
 			}
 			foreach ($guests_to_add as $guest_id) {
-				$database->Query('INSERT INTO ' . static::SchemaName() . '.' . static::GuestTableName() . ' (project_id, user_id) VALUES ($1, $2);', $project_id, $guest_id);
+				$database->Query('INSERT INTO public.project_members (project_id, user_id, role) VALUES ($1, $2, $3);', $project_id, $guest_id, 'Editor');
 			}
 			foreach ($guests_to_remove as $guest_id) {
-				$database->Query('DELETE FROM ' . static::SchemaName() . '.' . static::GuestTableName() . ' WHERE project_id = $1 AND user_id = $2;', $project_id, $guest_id);
+				$database->Query('DELETE FROM public.project_members WHERE project_id = $1 AND user_id = $2;', $project_id, $guest_id);
 			}
 			$database->Commit();
 		} catch (\Exception $err) {

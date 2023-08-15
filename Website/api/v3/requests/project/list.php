@@ -42,7 +42,8 @@ function handle_request(array $context): void {
 			$clauses[] = "project_id = '00000000-0000-0000-0000-000000000000'";
 		}
 	}
-	$sql = 'SELECT ' . implode(', ', \BeaconAPI\Project::SQLColumns()) . ' FROM ' . \BeaconAPI\Project::SchemaName() . '.' . \BeaconAPI\Project::AllowedTableName() . ' WHERE ' . implode(' AND ', $clauses);
+	$clauses[] = 'projects.deleted = FALSE';
+	$sql = 'SELECT ' . implode(', ', \BeaconAPI\Project::SQLColumns()) . ' FROM ' . \BeaconAPI\Project::FromClause() . ' WHERE ' . implode(' AND ', $clauses);
 	
 	$sort_column = 'last_update';
 	$sort_direction = 'DESC';

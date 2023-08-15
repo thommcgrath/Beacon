@@ -73,13 +73,13 @@ Core::RegisterRoutes(
 			'DELETE' => 'projects/delete',
 			'HEAD' => 'projects/exists',
 		],
-		'/projects/{projectId}/guests' => [
-			'GET' => 'projects/guests/list',
+		'/projects/{projectId}/members' => [
+			'GET' => 'projects/members/list',
 		],
-		'/projects/{projectId}/guests/{userId}' => [
-			'GET' => 'projects/guests/get',
-			'PUT' => 'projects/guests/create',
-			'DELETE' => 'projects/guests/delete',
+		'/projects/{projectId}/members/{userId}' => [
+			'GET' => 'projects/members/get',
+			'PUT' => 'projects/members/create',
+			'DELETE' => 'projects/members/delete',
 		],
 		'/projects/{projectId}/metadata' => [
 			'GET' => 'projects/get',

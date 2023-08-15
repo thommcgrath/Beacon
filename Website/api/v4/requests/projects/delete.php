@@ -25,7 +25,7 @@ function DeleteProject(string $projectId, string $userId): Response {
 		return Response::NewJsonError('Must use a v4 UUID', null, 400);
 	}
 	
-	$project = Project::Fetch($projectId);
+	$project = Project::FetchForUser($projectId, $userId);
 	if (is_null($project)) {
 		return Response::NewJsonError('Project not found', null, 404);
 	}
