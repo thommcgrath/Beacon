@@ -521,6 +521,36 @@ End
 
 #tag EndWindowCode
 
+#tag Events ActionButton
+	#tag Event
+		Sub Pressed()
+		  Var Profile As New SDTD.LocalServerProfile
+		  If (Self.mServerAdminXmlFile Is Nil) = False Then
+		    Profile.File(SDTD.ConfigFileServerAdminXml) = New BookmarkedFolderItem(Self.mServerAdminXmlFile)
+		  End If
+		  If (Self.mServerConfigXmlFile Is Nil) = False Then
+		    Profile.File(SDTD.ConfigFileServerConfigXml) = New BookmarkedFolderItem(Self.mServerConfigXmlFile)
+		  End If
+		  If (Self.mWebPermissionsXmlFile Is Nil) = False Then
+		    Profile.File(SDTD.ConfigFileWebPermissionsXml) = New BookmarkedFolderItem(Self.mWebPermissionsXmlFile)
+		  End If
+		  
+		  Var Data As New SDTD.DiscoveredData
+		  Data.Profile = Profile
+		  If Self.mServerAdminXml.IsEmpty Then
+		    Data.File(SDTD.ConfigFileServerAdminXml) = Self.mServerAdminXml
+		  End If
+		  If Self.mServerConfigXml.IsEmpty Then
+		    Data.File(SDTD.ConfigFileServerConfigXml) = Self.mServerConfigXml
+		  End If
+		  If Self.mWebPermissionsXml.IsEmpty Then
+		    Data.File(SDTD.ConfigFileWebPermissionsXml) = Self.mWebPermissionsXml
+		  End If
+		  
+		  Self.ShouldFinish(Data)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Pressed()

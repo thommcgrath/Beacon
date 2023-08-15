@@ -107,6 +107,12 @@ Protected Class ServerProfile
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function DefaultName() As String
+		  Return "An Unnamed Server"
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function DeployCapable() As Boolean
 		  Return False
@@ -418,7 +424,7 @@ Protected Class ServerProfile
 			  ElseIf Self.SecondaryName.IsEmpty = False Then
 			    Return Self.SecondaryName.Trim
 			  Else
-			    Return "An Unnamed ARK Server"
+			    Return Self.DefaultName
 			  End If
 			End Get
 		#tag EndGetter

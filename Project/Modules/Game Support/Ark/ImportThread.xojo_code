@@ -1,6 +1,7 @@
 #tag Class
 Protected Class ImportThread
 Inherits Beacon.Thread
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
@@ -158,7 +159,7 @@ Inherits Beacon.Thread
 		    If (Self.mData Is Nil) = False Then
 		      CommandLineOptions = Self.mData.CommandLineOptions
 		    End If
-		    Self.mProject = Self.BuildProject(ParsedData, CommandLineOptions)
+		    Self.mCreatedProject = Self.BuildProject(ParsedData, CommandLineOptions)
 		  Catch Err As RuntimeException
 		  End Try
 		  Self.Status = "Finished"
@@ -437,14 +438,14 @@ Inherits Beacon.Thread
 		  RaiseEvent UpdateUI
 		  
 		  If Self.mFinished Then
-		    RaiseEvent Finished(Self.mProject)
+		    RaiseEvent Finished(Self.mCreatedProject)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Name() As String
-		  If (Self.mData Is Nil) = False And (Self.mData.Profile Is Nil) = False Then
+		  If (Self.mData Is Nil) = False And (Self.mData.Profile Is Nil) = False And Self.mData.Profile.Name.IsEmpty = False Then
 		    Return Self.mData.Profile.Name
 		  Else
 		    Return "Untitled Importer"
@@ -460,7 +461,7 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Function Project() As Ark.Project
-		  Return Self.mProject
+		  Return Self.mCreatedProject
 		End Function
 	#tag EndMethod
 
@@ -578,6 +579,10 @@ Inherits Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCreatedProject As Ark.Project
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mData As Ark.DiscoveredData
 	#tag EndProperty
 
@@ -587,10 +592,6 @@ Inherits Beacon.Thread
 
 	#tag Property, Flags = &h21
 		Private mFinished As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProject As Ark.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

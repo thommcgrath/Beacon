@@ -1,6 +1,7 @@
 #tag Class
 Protected Class ServerProfile
 Inherits Beacon.ServerProfile
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  Self.mMask = Dict.Lookup("Map", 0)
@@ -69,6 +70,12 @@ Inherits Beacon.ServerProfile
 	#tag Method, Flags = &h0
 		Function Clone() As Ark.ServerProfile
 		  Return Ark.ServerProfile(Super.Clone)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DefaultName() As String
+		  Return "An Unnamed " + FullName + " Server"
 		End Function
 	#tag EndMethod
 
@@ -214,6 +221,14 @@ Inherits Beacon.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ProviderTokenId"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Nickname"
 			Visible=false

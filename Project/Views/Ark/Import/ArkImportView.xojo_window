@@ -66,7 +66,7 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   4
       Visible         =   True
       Width           =   720
       Begin ArkNitradoDiscoveryView NitradoDiscoveryView1
@@ -219,38 +219,6 @@ Begin DocumentImportView ArkImportView
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPushButton StatusActionButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Import"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   528
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   5
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   440
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   False
          Width           =   80
       End
       Begin DesktopLabel OtherDocsMessageLabel
@@ -526,6 +494,38 @@ Begin DocumentImportView ArkImportView
          Transparent     =   True
          Visible         =   True
          Width           =   720
+      End
+      Begin UITweaks.ResizedPushButton StatusActionButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Import"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   528
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   440
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   False
+         Width           =   80
       End
    End
    Begin Timer DiscoveryWatcher
@@ -952,6 +952,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events StatusActionButton
+	#tag Event
+		Sub Pressed()
+		  Self.Finish()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events DiscoveryWatcher
 	#tag Event
 		Sub Action()
@@ -988,13 +995,8 @@ End
 		        Self.Finish()
 		      Else
 		        Self.StatusActionButton.Visible = True
-		        #if TargetMacOS
-		          Var CancelPos As Integer = Self.StatusActionButton.Left
-		          Var ActionPos As Integer = Self.StatusCancelButton.Left
-		          Self.StatusCancelButton.Left = CancelPos
-		          Self.StatusActionButton.Left = ActionPos
-		          Self.StatusActionButton.Default = True
-		        #endif
+		        Self.StatusActionButton.Default = True
+		        UITweaks.SwapButtons(Self.StatusActionButton, Self.StatusCancelButton)
 		      End If
 		    Else
 		      If Preferences.PlaySoundAfterImport Then

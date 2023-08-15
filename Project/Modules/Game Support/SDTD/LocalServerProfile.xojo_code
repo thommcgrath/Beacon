@@ -1,18 +1,75 @@
 #tag Class
-Protected Class ServerProfile
-Inherits Beacon.ServerProfile
+Protected Class LocalServerProfile
+Inherits SDTD.ServerProfile
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag Event
+		Sub ReadFromDictionary(Dict As Dictionary)
+		  Var SaveInfo As Dictionary = Dict.Value("Paths")
+		  Self.mFiles = New Dictionary
+		  For Each Entry As DictionaryEntry In SaveInfo
+		    Var Path As String = Entry.Key
+		    Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Entry.Value.StringValue, False)
+		    Self.mFiles.Value(Path) = File
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  If Not Profile IsA SDTD.LocalServerProfile Then
+		    Return
+		  End If
+		  
+		  Self.mFiles = New Dictionary
+		  Var LocalProfile As SDTD.LocalServerProfile = SDTD.LocalServerProfile(Profile)
+		  For Each Entry As DictionaryEntry In LocalProfile.mFiles
+		    Self.File(Entry.Key.StringValue) = BookmarkedFolderItem(Entry.Value.ObjectValue)
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub WriteToDictionary(Dict As Dictionary)
+		  Var SaveInfo As New Dictionary
+		  For Each Entry As DictionaryEntry In Self.mFiles
+		    SaveInfo.Value(Entry.Key) = BookmarkedFolderItem(Entry.Value).SaveInfo(False)
+		  Next
+		  
+		  Dict.Value("Paths") = SaveInfo
+		  Dict.Value("Provider") = "Local"
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
-		Function Clone() As SDTD.ServerProfile
-		  Return SDTD.ServerProfile(Super.Clone)
+		Sub Constructor()
+		  // Do not call Super.Constructor()
+		  
+		  Self.mFiles = New Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function File(Path As String) As BookmarkedFolderItem
+		  Return Self.mFiles.Lookup(Path, Nil)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function DefaultName() As String
-		  Return "An Unnamed " + FullName + " Server"
-		End Function
+	#tag Method, Flags = &h0
+		Sub File(Path As String, Assigns File As BookmarkedFolderItem)
+		  If Self.File(Path) = File Then
+		    Return
+		  End If
+		  
+		  Self.mFiles.Value(Path) = File
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mFiles As Dictionary
+	#tag EndProperty
 
 
 	#tag ViewBehavior
@@ -133,6 +190,14 @@ Inherits Beacon.ServerProfile
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mFiles"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

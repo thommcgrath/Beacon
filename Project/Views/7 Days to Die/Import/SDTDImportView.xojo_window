@@ -36,7 +36,7 @@ Begin DocumentImportView SDTDImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   7
       Panels          =   ""
       Scope           =   2
       SelectedPanelIndex=   0
@@ -46,7 +46,7 @@ Begin DocumentImportView SDTDImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   6
       Visible         =   True
       Width           =   720
       Begin DocumentImportSourcePicker SourcePicker
@@ -110,6 +110,170 @@ Begin DocumentImportView SDTDImportView
          Visible         =   True
          Width           =   720
       End
+      Begin UITweaks.ResizedPushButton StatusCancelButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   620
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   440
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton StatusActionButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Import"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   528
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   440
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   False
+         Width           =   80
+      End
+      Begin BeaconListbox StatusList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   1
+         ColumnWidths    =   ""
+         DefaultRowHeight=   40
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLineStyle   =   0
+         HasBorder       =   True
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   360
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PageSize        =   100
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   0
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   60
+         TotalPages      =   -1
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   680
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin DesktopLabel StatusMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   True
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Text            =   "Import Status"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   680
+      End
+   End
+   Begin Timer DiscoveryWatcher
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   100
+      RunMode         =   0
+      Scope           =   2
+      TabPanelIndex   =   0
    End
 End
 #tag EndDesktopWindow
@@ -188,6 +352,67 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub Finish()
+		  Var Projects() As Beacon.Project
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
+		    If (Self.mImporters(I).Project Is Nil) = False Then
+		      Projects.Add(Self.mImporters(I).Project)
+		    End If
+		  Next
+		  Self.Finish(Projects)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportFrom(Data() As Beacon.DiscoveredData)
+		  Self.mImporters.ResizeTo(Data.LastIndex)
+		  Self.StatusList.RowCount = Data.Count
+		  
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
+		    If (Data(I) IsA SDTD.DiscoveredData) = False Then
+		      Continue
+		    End If
+		    
+		    Var Importer As New SDTD.ImportThread(SDTD.DiscoveredData(Data(I)), Self.mDestinationProject)
+		    Importer.Start
+		    Self.mImporters(I) = Importer
+		    
+		    Self.StatusList.CellTextAt(I, 0) = Data(I).Profile.Name + EndOfLine + "Starting parser…"
+		    Self.StatusList.RowTagAt(I) = Importer
+		  Next
+		  
+		  Self.SetThreadPriorities()
+		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
+		  Self.Views.SelectedPanelIndex = Self.PageStatus
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetThreadPriorities()
+		  // Dynamically adjusts thread priority depending on the number that are actively running
+		  
+		  Var ActiveThreads() As SDTD.ImportThread
+		  For Each Importer As SDTD.ImportThread In Self.mImporters
+		    If Importer Is Nil Then
+		      Continue
+		    End If
+		    
+		    If Importer.ThreadState <> Thread.ThreadStates.NotRunning Then
+		      ActiveThreads.Add(Importer)
+		    End If
+		  Next
+		  
+		  Var Priority As Integer = If(ActiveThreads.Count > 3, Thread.LowestPriority, Thread.NormalPriority)
+		  For Each Importer As SDTD.ImportThread In ActiveThreads
+		    If Importer.Priority <> Priority Then
+		      Importer.Priority = Priority
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+
 	#tag Hook, Flags = &h0
 		Event Opening()
 	#tag EndHook
@@ -195,6 +420,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDestinationProject As SDTD.Project
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImporters() As SDTD.ImportThread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -210,6 +439,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PagePicker, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageStatus, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
 
@@ -255,7 +487,7 @@ End
 #tag Events LocalView
 	#tag Event
 		Sub Finished(Data() As Beacon.DiscoveredData)
-		  
+		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -276,6 +508,73 @@ End
 		Sub ShouldResize(NewHeight As Integer)
 		  Self.SetPageHeight(NewHeight)
 		  Me.Height = NewHeight
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events StatusCancelButton
+	#tag Event
+		Sub Pressed()
+		  If Self.QuickCancel Then
+		    Self.Close
+		  Else
+		    Self.Reset()
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events StatusActionButton
+	#tag Event
+		Sub Pressed()
+		  Self.Finish()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DiscoveryWatcher
+	#tag Event
+		Sub Action()
+		  Self.SetThreadPriorities()
+		  
+		  Var AllFinished As Boolean = True
+		  Var ErrorCount, SuccessCount As Integer
+		  For I As Integer = 0 To Self.StatusList.LastRowIndex
+		    Var Importer As SDTD.ImportThread = Self.StatusList.RowTagAt(I)
+		    AllFinished = AllFinished And Importer.Finished
+		    Self.StatusList.CellTextAt(I, 0) = Importer.Name + EndOfLine + Importer.Status
+		    
+		    If Importer.Finished Then
+		      If Importer.Project Is Nil Then
+		        ErrorCount = ErrorCount + 1
+		      Else
+		        SuccessCount = SuccessCount + 1
+		      End If
+		    End If
+		  Next
+		  
+		  If AllFinished Then
+		    Me.RunMode = Timer.RunModes.Off
+		    If ErrorCount = 0 Then
+		      If Preferences.PlaySoundAfterImport Then
+		        SoundDeploySuccess.Play
+		      End If
+		      Self.Finish()
+		    ElseIf SuccessCount > 0 Then
+		      If Preferences.PlaySoundAfterImport Then
+		        SoundDeployFailed.Play
+		      End If
+		      If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then
+		        Self.Finish()
+		      Else
+		        Self.StatusActionButton.Visible = True
+		        Self.StatusActionButton.Default = True
+		        UITweaks.SwapButtons(Self.StatusActionButton, Self.StatusCancelButton)
+		      End If
+		    Else
+		      If Preferences.PlaySoundAfterImport Then
+		        SoundDeployFailed.Play
+		      End If
+		      Self.ShowAlert("No files imported.", "Beacon was not able to import anything from the selected files.")
+		    End If
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
