@@ -381,7 +381,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				file_put_contents($archivePath, substr($content, 8));
 				$archive = new PharData($archivePath);
 				$manifest = json_decode($archive['Manifest.json']->getContent(), true);
-				$version = $manifest['Version'];
+				$version = $manifest['version'];
 				$content = $archive['v ' . $version . '.json']->getContent();
 				$archive = null;
 				unlink($archivePath);
@@ -409,12 +409,12 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public static function Save(User $user, array $manifest): ?static {
-		$projectId = $manifest['ProjectId'] ?? '';
+		$projectId = $manifest['projectId'] ?? '';
 		if (BeaconUUID::Validate($projectId) === false) {
 			throw new Exception('ProjectId should be a UUID.', 400);
 		}
 		
-		$newMemberList = $manifest['Members'];
+		$newMemberList = $manifest['members'];
 		
 		$database = BeaconCommon::Database();
 		$project = static::FetchForUser($projectId, $user->UserId());
@@ -433,16 +433,16 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				
 				if (array_key_exists($userId, $newMemberList)) {
 					$member = $newMemberList[$userId];
-					if (BeaconCommon::HasAllKeys($member, 'Role', 'Encrypted Password', 'Fingerprint') === false) {
-						throw new Exception('Member ' . $userId . ' must have keys Role, Encrypted Password, and Fingerprint.', 400);
+					if (BeaconCommon::HasAllKeys($member, 'role', 'encryptedPassword', 'fingerprint') === false) {
+						throw new Exception('Member ' . $userId . ' must have keys role, encryptedPassword, and fingerprint.', 400);
 					}
 					
-					if ($role !== $member['Role'] || $fingerprint !== $member['Fingerprint']) {
+					if ($role !== $member['role'] || $fingerprint !== $member['fingerprint']) {
 						$members[] = [
 							'userId' => $userId,
-							'role' => $member['Role'],
-							'encryptedPassword' => $member['Encrypted Password'],
-							'fingerprint' => $member['Fingerprint'],
+							'role' => $member['role'],
+							'encryptedPassword' => $member['encryptedPassword'],
+							'fingerprint' => $member['fingerprint'],
 						];
 					}
 				}
@@ -456,18 +456,18 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			
 			// Only accept the owner
 			$member = $newMemberList[$user->UserId()];
-			if (BeaconCommon::HasAllKeys($member, 'Encrypted Password', 'Fingerprint') === false) {
-				throw new Exception('Member ' . $userId . ' must have keys Encrypted Password, and Fingerprint.', 400);
+			if (BeaconCommon::HasAllKeys($member, 'encryptedPassword', 'fingerprint') === false) {
+				throw new Exception('Member ' . $userId . ' must have keys encryptedPassword, and fingerprint.', 400);
 			}
 			$members[] = [
 				'userId' => $user->UserId(),
 				'role' => 'Owner',
-				'encryptedPassword' => $member['Encrypted Password'],
-				'fingerprint' => $member['Fingerprint'],
+				'encryptedPassword' => $member['encryptedPassword'],
+				'fingerprint' => $member['fingerprint'],
 			];
 		}
 		
-		$projectName = $manifest['Name'] ?? '';
+		$projectName = $manifest['name'] ?? '';
 		$errorDetails['name'] = $projectName;
 		if (empty($projectName)) {
 			throw new Exception('Project name should not be empty.', 400);
@@ -496,12 +496,12 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		}
 		
 		$now = new DateTime();
-		$description = $manifest['Description'] ?? '';
-		$gameId = $manifest['GameId'] ?? '';
+		$description = $manifest['description'] ?? '';
+		$gameId = $manifest['gameId'] ?? '';
 		$columns = [
 			'title' => $projectName,
 			'description' => $description,
-			'console_safe' => $manifest['IsConsole'] ?? false,
+			'console_safe' => $manifest['isConsole'] ?? false,
 			'game_specific' => [],
 			'deleted' => false,
 			'last_update' => $now->format('Y-m-d H:i:s.uO')
@@ -516,11 +516,11 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		
 		switch ($gameId) {
 		case 'Ark':
-			$columns['game_specific']['map'] = $manifest['Map'] ?? 1;
-			$columns['game_specific']['difficulty'] = $manifest['Difficulty'] ?? 4.0;
-			$columns['game_specific']['include_editors'] = $manifest['Editors'] ?? [];
+			$columns['game_specific']['map'] = $manifest['map'] ?? 1;
+			$columns['game_specific']['difficulty'] = $manifest['difficulty'] ?? 4.0;
+			$columns['game_specific']['include_editors'] = $manifest['editors'] ?? [];
 			
-			$mods = $manifest['ModSelections'] ?? [];
+			$mods = $manifest['modSelections'] ?? [];
 			$enabledModIds = [];
 			foreach ($mods as $modId => $enabled) {
 				if ($enabled === false) {

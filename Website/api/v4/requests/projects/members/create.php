@@ -15,11 +15,11 @@ function handleRequest(array $context): Response {
 	$fingerprint = $body['fingerprint'] ?? null;
 	$authorizedUserId = Core::UserId();
 	
+	if ($userId === $authorizedUserId) {
+		return Response::NewJsonError('Cannot change own permissions.', null, 403);
+	}
 	if ($role === ProjectMember::kRoleOwner) {
 		return Response::NewJsonError('A project cannot have two owners.', null, 400);
-	}
-	if ($userId === $authorizedUserId) {
-		return Response::NewJsonError('Cannot change own permissions.', null, 400);
 	}
 	
 	$project = Project::FetchForUser($projectId, $authorizedUserId);
@@ -28,12 +28,19 @@ function handleRequest(array $context): Response {
 	}
 	if ($project->Permissions() < 80) {
 		return Response::NewJsonError('Only the project owner and admins may add users to a project.', null, 403);
+	} else if ($role === ProjectMember::kRoleAdmin && $project->Permissions() < 90) {
+		return Response::NewJsonError('Admin users can only be added by the project owner.', null, 403);
 	}
 	
 	$user = User::Fetch($userId);
 	if (is_null($user)) {
 		return Response::NewJsonError('User not found.', $userId, 404);
 	}
+	
+	$member = ProjectMember::Fetch($projectId, $user->UserId());
+	if (is_null($member) === false && $member->Permissions() >= 80 && $project->Permissions() < 90) {
+		return Response::NewJsonError('Admin user permissions can only be updated by the project owner.', null, 403);
+	}	
 	
 	$member = ProjectMember::Create($projectId, $user->UserId(), $role, $encryptedPassword, $fingerprint);
 	if (is_null($member)) {

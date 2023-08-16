@@ -15,9 +15,6 @@ function handleRequest(array $context): Response {
 	if (is_null($user)) {
 		return Response::NewJsonError('User not found.', $userId, 404);
 	}
-	if ($project->Permissions() < 80) {
-		return Response::NewJsonError('Only the project owner and admins may view project guests.', null, 403);
-	}
 	
 	$member = ProjectMember::Fetch($projectId, $user->UserId());
 	if (is_null($member)) {

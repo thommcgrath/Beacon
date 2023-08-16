@@ -8,12 +8,13 @@ function handleRequest(array $context): Response {
 	}
 	
 	$stream = fopen('php://input', 'rb');
-	$bom = bin2hex(fread($stream, 8));
+	$bom = fread($stream, 8);
 	
-	if (Project::IsBinaryProjectFormat($bom)) {
+	if (Project::IsBinaryProjectFormat($bom) === false) {
 		fclose($stream);
-		return Response::NewJsonError('Byte order mark is not correct.', 'Send application/x-beacon-project', 415);
+		return Response::NewJsonError('Byte order mark is not correct. Expected 3029a1c4fab67728, got ' . bin2hex($bom) . '.', $bom, 415);
 	}
+
 	
 	$tempdir = sys_get_temp_dir() . '/' . BeaconUUID::v4();
 	mkdir($tempdir, 0700);

@@ -80,7 +80,7 @@ function HandleDocumentDataRequest(Project $project, $versionId = null): Respons
 		
 		return new Response(200, $content, $headers);
 	} catch (Exception $err) {
-		return Response::NewJsonError($err->getMessage(), null, 500);
+		return Response::NewJsonError('Unhandled exception: ' . $err->getMessage(), null, 500);
 	}
 }
 

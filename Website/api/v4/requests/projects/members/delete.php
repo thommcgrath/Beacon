@@ -24,11 +24,13 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('A member can only be removed from a project by the member, an admin, or the owner of the project.', null, 403);
 	}
 	
-	$guest = ProjectMember::Fetch($projectId, $user->UserId());
-	if (is_null($guest)) {
+	$member = ProjectMember::Fetch($projectId, $user->UserId());
+	if (is_null($member)) {
 		return Response::NewJsonError('User is not a member of this project.', null, 404);
+	} else if ($member->Permissions() >= 80 && $project->Permissions() < 90) {
+		return Response::NewJsonError('Admins may only be removed by the project owner.', null, 403);
 	}
-	$guest->Delete();
+	$member->Delete();
 	
 	return Response::NewJson('Member has been removed from the project.', 200);
 }

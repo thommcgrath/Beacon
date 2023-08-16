@@ -14,6 +14,7 @@ class ProjectMember implements JsonSerializable {
 	protected string $username;
 	protected string $publicKey;
 	protected string $role;
+	protected int $permissions;
 	protected ?string $encryptedPassword;
 	protected ?string $fingerprint;
 	
@@ -23,6 +24,7 @@ class ProjectMember implements JsonSerializable {
 		$this->username = $row->Field('username');
 		$this->publicKey = $row->Field('public_key');
 		$this->role = $row->Field('role');
+		$this->permissions = $row->Field('permissions');
 		$this->encryptedPassword = $row->Field('encrypted_password');
 		$this->fingerprint = $row->Field('fingerprint');
 	}
@@ -42,7 +44,7 @@ class ProjectMember implements JsonSerializable {
 	
 	public static function Fetch(string $projectId, string $userId): ?static {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT project_members.project_id, project_members.role, project_members.encrypted_password, project_members.fingerprint, users.user_id, users.public_key, users.username FROM public.project_members INNER JOIN public.users ON (project_members.user_id = users.user_id) WHERE project_members.project_id = $1 AND project_members.user_id = $2;', $projectId, $userId);
+		$rows = $database->Query('SELECT project_members.project_id, project_members.role, public.project_role_permissions(project_members.role) AS permissions, project_members.encrypted_password, project_members.fingerprint, users.user_id, users.public_key, users.username FROM public.project_members INNER JOIN public.users ON (project_members.user_id = users.user_id) WHERE project_members.project_id = $1 AND project_members.user_id = $2;', $projectId, $userId);
 		if ($rows->RecordCount() === 0) {
 			return null;
 		}
@@ -51,7 +53,7 @@ class ProjectMember implements JsonSerializable {
 	
 	public static function List(string $projectId): array {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT project_members.project_id, project_members.role, project_members.encrypted_password, project_members.fingerprint, users.user_id, users.public_key, users.username FROM public.project_members INNER JOIN public.users ON (project_members.user_id = users.user_id) WHERE project_members.project_id = $1 ORDER BY users.username;', $projectId);
+		$rows = $database->Query('SELECT project_members.project_id, project_members.role, public.project_role_permissions(project_members.role) AS permissions, project_members.encrypted_password, project_members.fingerprint, users.user_id, users.public_key, users.username FROM public.project_members INNER JOIN public.users ON (project_members.user_id = users.user_id) WHERE project_members.project_id = $1 ORDER BY users.username;', $projectId);
 		$guests = [];
 		while (!$rows->EOF()) {
 			$guests[] = new static($rows);
@@ -93,6 +95,10 @@ class ProjectMember implements JsonSerializable {
 		return $this->role;
 	}
 	
+	public function Permissions(): int {
+		return $this->permissions;
+	}
+	
 	public function EncryptedPassword(): ?string {
 		return $this->encryptedPassword;
 	}
@@ -108,6 +114,7 @@ class ProjectMember implements JsonSerializable {
 			'username' => $this->username,
 			'publicKey' => $this->publicKey,
 			'role' => $this->role,
+			'permissions' => $this->permissions,
 			'encryptedPassword' => $this->encryptedPassword,
 			'fingerprint' => $this->fingerprint,
 		];

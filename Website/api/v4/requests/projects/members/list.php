@@ -10,9 +10,6 @@ function handleRequest(array $context): Response {
 	if (is_null($project)) {
 		return Response::NewJsonError('Project not found.', null, 404);
 	}
-	if ($project->Permissions() < 80) {
-		return Response::NewJsonError('Only the project owner and admins may view project members.', null, 403);
-	}
 	
 	$members = ProjectMember::List($projectId);
 	return Response::NewJson($members, 200);
