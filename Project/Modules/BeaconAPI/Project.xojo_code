@@ -23,8 +23,8 @@ Protected Class Project
 		  Self.mProjectId = Source.Value("projectId")
 		  Self.mGameId = Source.Value("gameId")
 		  Self.mUserId = Source.Value("userId")
-		  Self.mOwnerId = Source.Value("ownerId")
-		  If Self.mOwnerId = ActiveUserId Then
+		  Self.mRole = Source.Value("role")
+		  If Self.mUserId = ActiveUserId And Self.mRole = Beacon.ProjectMember.RoleOwner Then
 		    Self.mType = Self.TypeOwned
 		  ElseIf Self.mUserId = ActiveUserId Then
 		    Self.mType = Self.TypeGuest
@@ -100,12 +100,6 @@ Protected Class Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OwnerId() As String
-		  Return Self.mOwnerId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ProjectId() As String
 		  Return Self.mProjectId
 		End Function
@@ -120,6 +114,12 @@ Protected Class Project
 	#tag Method, Flags = &h0
 		Function Revision() As UInteger
 		  Return Self.mRevision
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Role() As String
+		  Return Self.mRole
 		End Function
 	#tag EndMethod
 
@@ -189,10 +189,6 @@ Protected Class Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOwnerId As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mProjectId As String
 	#tag EndProperty
 
@@ -202,6 +198,10 @@ Protected Class Project
 
 	#tag Property, Flags = &h21
 		Private mRevision As UInteger
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRole As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

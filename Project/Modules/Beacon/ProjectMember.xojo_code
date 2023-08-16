@@ -1,47 +1,49 @@
 #tag Class
-Protected Class ProjectGuest
+Protected Class ProjectMember
 	#tag Method, Flags = &h0
-		Sub Constructor(Identity As Beacon.Identity)
-		  Self.Constructor(Identity.UserId, Identity.Username(False), Identity.PublicKey)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Source As Dictionary)
-		  Self.mEncryptedPassword = Source.Value("Password")
-		  Self.mFingerprint = Source.Value("Fingerprint")
-		  Self.mPublicKey = Source.Value("Public Key")
-		  Self.mUserId = Source.Value("User Id")
-		  Self.mUsername = Source.Value("Username")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(UserId As String, Username As String, PublicKey As String, EncryptedPassword As String = "")
-		  Self.mUserId = UserId
-		  Self.mUsername = Username
-		  Self.mEncryptedPassword = EncryptedPassword
+		Sub Constructor(Identity As Beacon.Identity, Role As String)
+		  // For adding via identity file
 		  
-		  If PublicKey.IsEmpty = False Then
-		    If PublicKey.IndexOf("-----BEGIN PUBLIC KEY-----") > -1 Then
-		      PublicKey = BeaconEncryption.PEMDecodePublicKey(PublicKey)
-		    End If
-		    
-		    If Crypto.RSAVerifyKey(PublicKey) Then
-		      Self.mPublicKey = EncodeBase64MBS(DecodeHex(PublicKey))
-		    End If
-		  End If
+		  Self.mUserId = Identity.UserId.Lowercase
+		  Self.mUsername = Identity.Username(False)
+		  Self.mPublicKey = Identity.PublicKey
+		  Self.mRole = Role
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(UserId As String, Source As Dictionary)
+		  // From the api or modern project files (v7 and newer)
+		  
+		  Self.mUserId = UserId.Lowercase
+		  Self.mUsername = Source.Value("username")
+		  Self.mPublicKey = BeaconEncryption.PEMDecodePublicKey(Source.Value("publicKey").StringValue)
+		  Self.mRole = Source.Value("role")
+		  Self.mEncryptedPassword = Source.Value("encryptedPassword")
+		  Self.mFingerprint = Source.Value("fingerprint")
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(UserId As String, Role As String, EncryptedPassword As String)
+		  // From legacy project files (v6 and lower)
+		  
+		  Self.mUserId = UserId.Lowercase
+		  Self.mEncryptedPassword = EncryptedPassword
+		  Self.mRole = Role
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DictionaryValue() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("User Id") = Self.mUserId
-		  Dict.Value("Username") = Self.mUsername
-		  Dict.Value("Public Key") = Self.mPublicKey
-		  Dict.Value("Fingerprint") = Self.mFingerprint
-		  Dict.Value("Password") = Self.mEncryptedPassword
+		  Dict.Value("username") = Self.mUsername
+		  Dict.Value("publicKey") = BeaconEncryption.PEMEncodePublicKey(Self.mPublicKey)
+		  Dict.Value("role") = Self.mRole
+		  Dict.Value("encryptedPassword") = Self.mEncryptedPassword
+		  Dict.Value("fingerprint") = Self.mFingerprint
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -59,7 +61,7 @@ Protected Class ProjectGuest
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Beacon.ProjectGuest) As Integer
+		Function Operator_Compare(Other As Beacon.ProjectMember) As Integer
 		  If Other Is Nil Then
 		    Return 1
 		  End If
@@ -80,8 +82,18 @@ Protected Class ProjectGuest
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Role() As String
+		  Return Self.mRole
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SetPassword(Password As String)
-		  Var RawPublicKey As String = DecodeBase64MBS(Self.mPublicKey)
+		  If Self.mPublicKey.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Var RawPublicKey As String = DecodeHex(Self.mPublicKey)
 		  
 		  Var FingerprintBytes As MemoryBlock = DecodeBase64MBS("com2R8j7FkwXzwOUoMs6qNUXXATzZrfuqG7xjo9Lp3c=")
 		  FingerprintBytes.Append(DecodeHex(Self.mUserId.ReplaceAll("-", "")))
@@ -89,11 +101,13 @@ Protected Class ProjectGuest
 		  FingerprintBytes.Append(Password)
 		  FingerprintBytes.Append(RawPublicKey)
 		  
-		  Self.mFingerprint = EncodeBase64MBS(Crypto.SHA3_256(FingerprintBytes))
+		  Var FingerprintHash As String = EncodeBase64MBS(Crypto.SHA3_256(FingerprintBytes))
+		  If Self.mFingerprint = FingerprintHash Then
+		    Return
+		  End If
 		  
-		  Var PublicKey As String = EncodeHex(RawPublicKey)
-		  Var Raw As MemoryBlock = Crypto.RSAEncrypt(Password, PublicKey)
-		  Self.mEncryptedPassword = EncodeBase64MBS(Raw)
+		  Self.mFingerprint = FingerprintHash
+		  Self.mEncryptedPassword = EncodeBase64MBS(Crypto.RSAEncrypt(Password, Self.mPublicKey))
 		End Sub
 	#tag EndMethod
 
@@ -123,12 +137,29 @@ Protected Class ProjectGuest
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRole As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUserId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mUsername As String
 	#tag EndProperty
+
+
+	#tag Constant, Name = RoleAdmin, Type = String, Dynamic = False, Default = \"Admin", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = RoleEditor, Type = String, Dynamic = False, Default = \"Editor", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = RoleGuest, Type = String, Dynamic = False, Default = \"Guest", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = RoleOwner, Type = String, Dynamic = False, Default = \"Owner", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

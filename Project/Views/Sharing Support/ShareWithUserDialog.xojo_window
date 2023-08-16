@@ -8,15 +8,15 @@ Begin BeaconDialog ShareWithUserDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   158
+   Height          =   190
    ImplicitInstance=   False
    MacProcID       =   0
-   MaxHeight       =   158
+   MaxHeight       =   190
    MaximizeButton  =   False
    MaxWidth        =   450
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   158
+   MinHeight       =   190
    MinimizeButton  =   False
    MinWidth        =   450
    Placement       =   0
@@ -84,7 +84,7 @@ Begin BeaconDialog ShareWithUserDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   118
+      Top             =   150
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -116,7 +116,7 @@ Begin BeaconDialog ShareWithUserDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   118
+      Top             =   150
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -163,7 +163,7 @@ Begin BeaconDialog ShareWithUserDialog
       Visible         =   True
       Width           =   337
    End
-   Begin UITweaks.ResizedLabel ExplanationLabel
+   Begin UITweaks.ResizedLabel ValueLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -224,57 +224,103 @@ Begin BeaconDialog ShareWithUserDialog
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   118
       Transparent     =   False
       Underline       =   True
       URL             =   ""
       Visible         =   True
       Width           =   337
    End
+   Begin UITweaks.ResizedPopupMenu RoleMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialValue    =   "Guest\nEditor\nAdmin"
+      Italic          =   False
+      Left            =   93
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   1
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   86
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   135
+   End
+   Begin UITweaks.ResizedLabel RoleLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Role:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   86
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   61
+   End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Opening()
-		  Self.ValueField.Text = Self.mDefaultValue
-		End Sub
-	#tag EndEvent
-
-
-	#tag Method, Flags = &h21
-		Private Sub Constructor(DefaultValue As String)
-		  Self.mDefaultValue = DefaultValue
-		  Super.Constructor
-		  
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow, DefaultValue As String = "") As String
+		Shared Function Present(Parent As DesktopWindow, ByRef UserIdentifier As String, ByRef Role As String) As Boolean
 		  If (Parent Is Nil) = False Then
 		    Parent = Parent.TrueWindow
 		  End If
 		  
-		  Var Win As New ShareWithUserDialog(DefaultValue)
+		  Var Win As New ShareWithUserDialog
+		  Win.ValueField.Text = UserIdentifier
+		  Win.RoleMenu.SelectByCaption(Role)
 		  Win.ShowModal(Parent)
-		  Var Cancelled As Boolean = Win.mCancelled
-		  Var Value As String
-		  If Not Cancelled Then
-		    Value = Win.ValueField.Text
+		  If Win.mCancelled Then
+		    Win.Close
+		    Return False
 		  End If
+		  
+		  UserIdentifier = Win.ValueField.Text.Trim
+		  Role = Win.RoleMenu.SelectedRowValue
 		  Win.Close
-		  Return Value
+		  Return True
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDefaultValue As String
 	#tag EndProperty
 
 

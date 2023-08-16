@@ -51,41 +51,41 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function AddGuest(Identity As Beacon.Identity) As Boolean
-		  If Identity Is Nil Then
-		    Return False
-		  End If
-		  
-		  Return Self.AddGuest(New Beacon.ProjectGuest(Identity))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AddGuest(Guest As Beacon.ProjectGuest) As Boolean
-		  If Guest Is Nil Then
-		    Return False
-		  End If
-		  
-		  // Need to set the password to generate the fingerprint
-		  Guest.SetPassword(Self.mProjectPassword)
-		  
-		  Var ExistingGuest As Beacon.ProjectGuest = Self.mEncryptedPasswords.Lookup(Guest.UserId.Lowercase, Nil)
-		  If (ExistingGuest Is Nil) = False And Guest.Fingerprint = ExistingGuest.Fingerprint Then
-		    // No change
-		    Return False
-		  End If
-		  
-		  Self.mEncryptedPasswords.Value(Guest.UserId.Lowercase) = Guest
-		  Self.Modified = True
-		  Return True
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub AdditionalFilesLoaded()
 		  RaiseEvent AdditionalFilesLoaded()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AddMember(Identity As Beacon.Identity, Role As String) As Boolean
+		  If Identity Is Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.AddMember(New Beacon.ProjectMember(Identity, Role))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AddMember(Member As Beacon.ProjectMember) As Boolean
+		  If Member Is Nil Then
+		    Return False
+		  End If
+		  
+		  // Need to set the password to generate the fingerprint
+		  Member.SetPassword(Self.mProjectPassword)
+		  
+		  Var ExistingMember As Beacon.ProjectMember = Self.mMembers.Lookup(Member.UserId.Lowercase, Nil)
+		  If (ExistingMember Is Nil) = False And Member.Fingerprint = ExistingMember.Fingerprint And Member.Role = ExistingMember.Role Then
+		    // No change
+		    Return False
+		  End If
+		  
+		  Self.mMembers.Value(Member.UserId) = Member
+		  Self.Modified = True
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -280,9 +280,10 @@ Implements ObservationKit.Observable
 		Protected Sub Constructor()
 		  // This class should only be created as a subclass
 		  
-		  Self.mEncryptedPasswords = New Dictionary
+		  Self.mMembers = New Dictionary
 		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
 		  Self.mProjectId = Beacon.UUID.v4
+		  Self.mRole = Beacon.ProjectMember.RoleOwner
 		  
 		  Self.mConfigSetData = New Dictionary
 		  Var BaseSet As Beacon.ConfigSet = Beacon.ConfigSet.BaseConfigSet
@@ -466,9 +467,11 @@ Implements ObservationKit.Observable
 		  Select Case GameId
 		  Case Ark.Identifier
 		    Project = New Ark.Project
+		  Case SDTD.Identifier
+		    Project = New SDTD.Project
 		  Else
 		    Var Err As New Beacon.ProjectLoadException
-		    Err.Message = "Unknown game " + GameID + "."
+		    Err.Message = "Unknown game " + GameId + "."
 		    Raise Err
 		  End Select
 		  
@@ -500,20 +503,26 @@ Implements ObservationKit.Observable
 		    Project.mUseCompression = SaveData.Value(UseCompressionKey)
 		  End If
 		  
-		  Var Passwords As Dictionary = SaveData.FirstValue("encryptionKeys", "EncryptionKeys", Nil)
+		  Var Passwords As Dictionary = SaveData.FirstValue("members", "EncryptionKeys", Nil)
 		  If Version >= 4 And (Passwords Is Nil) = False Then
 		    Var PossibleIdentities(0) As Beacon.Identity
 		    PossibleIdentities(0) = Identity
 		    
 		    Var Temp As New Dictionary
 		    For Each Entry As DictionaryEntry In Passwords
-		      If Entry.Value.Type = Variant.TypeString Then
-		        Temp.Value(Entry.Key) = New Beacon.ProjectGuest(Entry.Key.StringValue, "", "", Entry.Value.StringValue)
-		      Else
-		        Temp.Value(Entry.Key) = New Beacon.ProjectGuest(Dictionary(Entry.Value))
+		      Var UserId As String = Entry.Key
+		      
+		      If Entry.Value.Type = Variant.TypeObject THen
+		        Try
+		          Temp.Value(Entry.Key) = New Beacon.ProjectMember(UserId, Dictionary(Entry.Value))
+		        Catch MemberDecodeError As RuntimeException
+		          Continue
+		        End Try
+		      ElseIf Entry.Value.Type = Variant.TypeString Then
+		        Var Role As String = If(UserId = Identity.UserId, Beacon.ProjectMember.RoleOwner, Beacon.ProjectMember.RoleEditor)
+		        Temp.Value(Entry.Key) = New Beacon.ProjectMember(UserId, Role, Entry.Value.StringValue)
 		      End If
 		      
-		      Var UserId As String = Entry.Key
 		      If UserId = Identity.UserId Then
 		        Continue
 		      End If
@@ -531,16 +540,22 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
+		      // At this point we are certain the user *should* have explicit permission to this project.
+		      // Default to safe lockdown values
+		      Project.mProjectPassword = ""
+		      Project.mRole = Beacon.ProjectMember.RoleGuest
+		      
 		      Try
-		        Var Guest As Beacon.ProjectGuest = Passwords.Value(UserId)
-		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64MBS(Guest.EncryptedPassword), PossibleIdentity.PrivateKey)
-		        Project.mProjectPassword = DocumentPassword
-		        Project.mEncryptedPasswords = Passwords
-		        
-		        If Passwords.HasKey(UserId) = False Then
-		          // Add a password for the current user
-		          Call Project.AddGuest(New Beacon.ProjectGuest(PossibleIdentity))
+		        Var Member As Beacon.ProjectMember = Passwords.Value(UserId)
+		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64MBS(Member.EncryptedPassword), PossibleIdentity.PrivateKey)
+		        If Member.Fingerprint.IsEmpty Then
+		          Member = New Beacon.ProjectMember(PossibleIdentity, Member.Role)
+		          Member.SetPassword(DocumentPassword)
+		          Passwords.Value(UserId) = Member
 		        End If
+		        Project.mProjectPassword = DocumentPassword
+		        Project.mMembers = Passwords
+		        Project.mRole = Member.Role
 		        
 		        Exit
 		      Catch Err As RuntimeException
@@ -747,6 +762,10 @@ Implements ObservationKit.Observable
 		  
 		  Project.Modified = Version < Beacon.Project.SaveDataVersion
 		  
+		  If Project.PasswordDecrypted = False Then
+		    App.Log("Project " + Project.ProjectId + " did not decrypt password.")
+		  End If
+		  
 		  Return Project
 		End Function
 	#tag EndMethod
@@ -838,12 +857,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetGuests() As Beacon.ProjectGuest()
-		  Var Guests() As Beacon.ProjectGuest
-		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
-		    Guests.Add(Entry.Value)
+		Function GetMembers() As Beacon.ProjectMember()
+		  Var Members() As Beacon.ProjectMember
+		  For Each Entry As DictionaryEntry In Self.mMembers
+		    Members.Add(Entry.Value)
 		  Next
-		  Return Guests
+		  Return Members
 		End Function
 	#tag EndMethod
 
@@ -870,18 +889,18 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasGuest(Identity As Beacon.Identity) As Boolean
+		Function HasMember(Identity As Beacon.Identity) As Boolean
 		  If Identity Is Nil Then
 		    Return False
 		  End If
 		  
-		  Return Self.HasGuest(Identity.UserId)
+		  Return Self.HasMember(Identity.UserId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasGuest(UserId As String) As Boolean
-		  Return Self.mEncryptedPasswords.HasKey(UserId.Lowercase)
+		Function HasMember(UserId As String) As Boolean
+		  Return Self.mMembers.HasKey(UserId.Lowercase)
 		End Function
 	#tag EndMethod
 
@@ -1014,6 +1033,12 @@ Implements ObservationKit.Observable
 		  Var MySort As String = Self.mTitle + ":" + Self.mDescription + ":" + Self.mProjectId
 		  Var OtherSort As String = Other.mTitle + ":" + Other.mDescription + ":" + Other.mProjectId
 		  Return MySort.Compare(OtherSort, ComparisonOptions.CaseInsensitive)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PasswordDecrypted() As Boolean
+		  Return Self.mProjectPassword.IsEmpty = False
 		End Function
 	#tag EndMethod
 
@@ -1156,6 +1181,17 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RegeneratePassword()
+		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
+		  
+		  For Each Entry As DictionaryEntry In Self.mMembers
+		    Var Member As Beacon.ProjectMember = Entry.Value
+		    Member.SetPassword(Self.mProjectPassword)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveConfigSet(Set As Beacon.ConfigSet)
 		  If Set Is Nil Or Set.IsBase Then
 		    Return
@@ -1181,30 +1217,30 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RemoveGuest(Identity As Beacon.Identity) As Boolean
+		Function RemoveMember(Identity As Beacon.Identity) As Boolean
 		  If Identity Is Nil Then
 		    Return False
 		  End If
 		  
-		  Return Self.RemoveGuest(Identity.UserId)
+		  Return Self.RemoveMember(Identity.UserId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RemoveGuest(Guest As Beacon.ProjectGuest) As Boolean
-		  If Guest Is Nil Then
+		Function RemoveMember(Member As Beacon.ProjectMember) As Boolean
+		  If Member Is Nil Then
 		    Return False
 		  End If
 		  
-		  Return Self.RemoveGuest(Guest.UserId)
+		  Return Self.RemoveMember(Member.UserId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RemoveGuest(UserId As String) As Boolean
+		Function RemoveMember(UserId As String) As Boolean
 		  UserId = UserId.Lowercase
-		  If Self.mEncryptedPasswords.HasKey(UserId) Then
-		    Self.mEncryptedPasswords.Remove(UserId)
+		  If Self.mMembers.HasKey(UserId) Then
+		    Self.mMembers.Remove(UserId)
 		    Self.Modified = True
 		    Return True
 		  End If
@@ -1280,16 +1316,40 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(Identity As Beacon.Identity, AdditionalProperties As Dictionary = Nil) As MemoryBlock
-		  Call Self.AddGuest(Identity) // Adds self, does nothing if nothing is changing
+		Function Role() As String
+		  Return Self.mRole
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Identity As Beacon.Identity) As MemoryBlock
+		  Return Self.SaveData(Identity, Self.mUseCompression, Nil)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Identity As Beacon.Identity, Compress As Boolean) As MemoryBlock
+		  Return Self.SaveData(Identity, Compress, Nil)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Identity As Beacon.Identity, Compress As Boolean, AdditionalProperties As Dictionary) As MemoryBlock
+		  If Self.mProjectPassword.IsEmpty Then
+		    App.Log("Project " + Self.mProjectId + " save was aborted because the password is empty.")
+		    Return Nil
+		  End If
 		  
-		  Var EncryptedPasswords As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
-		    EncryptedPasswords.Value(Entry.Key) = Beacon.ProjectGuest(Entry.Value).DictionaryValue()
+		  Var Members As New Dictionary
+		  If Self.mMembers.KeyCount = 0 Then
+		    Call Self.AddMember(Identity, Beacon.ProjectMember.RoleOwner)
+		  End If
+		  For Each Entry As DictionaryEntry In Self.mMembers
+		    Members.Value(Entry.Key) = Beacon.ProjectMember(Entry.Value).DictionaryValue()
 		  Next
 		  
 		  Var Manifest, ProjectData As Dictionary = New Dictionary // Intentionally assigning both to the same dictionary
-		  If Self.mUseCompression Then
+		  If Compress Then
 		    ProjectData = New Dictionary
 		  End If
 		  
@@ -1299,8 +1359,8 @@ Implements ObservationKit.Observable
 		  Manifest.Value("userId") = Identity.UserId
 		  Manifest.Value("name") = Self.mTitle
 		  Manifest.Value("description") = Self.mDescription
-		  Manifest.Value("gameId") = Self.GameID()
-		  Manifest.Value("encryptionKeys") = EncryptedPasswords
+		  Manifest.Value("gameId") = Self.GameId()
+		  Manifest.Value("members") = Members
 		  Manifest.Value("savedWidth") = App.BuildNumber
 		  Manifest.Value("timestamp") = DateTime.Now.SecondsFrom1970
 		  Manifest.Value("modSelections") = Self.mContentPacks
@@ -1372,7 +1432,7 @@ Implements ObservationKit.Observable
 		  
 		  ProjectData.Value("keepLocalBackup") = Self.mKeepLocalBackup
 		  
-		  If Self.mUseCompression Then
+		  If Compress Then
 		    Var Archive As Beacon.Archive = Beacon.Archive.Create()
 		    Var AdditionalFiles() As String
 		    For Each Entry As DictionaryEntry In Self.mAdditionalFiles
@@ -1381,7 +1441,7 @@ Implements ObservationKit.Observable
 		      AdditionalFiles.Add(Filename)
 		      Archive.AddFile(Filename, Contents)
 		    Next
-		    Manifest.Value("additionalFiles") = AdditionalFiles
+		    Manifest.Value("AdditionalFiles") = AdditionalFiles
 		    Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, True))
 		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", Beacon.GenerateJSON(ProjectData, False))
 		    Var ArchiveData As MemoryBlock = Archive.Finalize
@@ -1398,6 +1458,12 @@ Implements ObservationKit.Observable
 		    
 		    Return Beacon.GenerateJSON(ProjectData, True)
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Identity As Beacon.Identity, AdditionalProperties As Dictionary) As MemoryBlock
+		  Return Self.SaveData(Identity, Self.mUseCompression, AdditionalProperties)
 		End Function
 	#tag EndMethod
 
@@ -1634,10 +1700,6 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEncryptedPasswords As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mKeepLocalBackup As Boolean
 	#tag EndProperty
 
@@ -1651,6 +1713,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mLegacyTrustKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMembers As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1671,6 +1737,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mProviderTokenKeys As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRole As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

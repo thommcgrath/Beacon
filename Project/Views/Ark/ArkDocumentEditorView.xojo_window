@@ -1267,6 +1267,7 @@ End
 		  Case "ShareButton"
 		    If Self.URL.Type.OneOf(Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared) Then
 		      SharingDialog.Present(Self, Self.Project)
+		      Self.Modified = Self.Project.Modified
 		    ElseIf Self.URL.Type = Beacon.ProjectURL.TypeLocal Then
 		      Self.ShowAlert("Project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
 		    Else
