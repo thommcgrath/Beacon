@@ -719,11 +719,11 @@ End
 		    Case "Approved"
 		      Self.CommunityStatusField.Text = "Shared"
 		      Self.CommunityShareButton.Caption = "Unshare"
-		      Self.CommunityShareButton.Enabled = True
+		      Self.CommunityShareButton.Enabled = Self.mHasAdminPermission
 		    Case "Private", "Approved But Private"
 		      Self.CommunityStatusField.Text = "Private"
 		      Self.CommunityShareButton.Caption = "Share"
-		      Self.CommunityShareButton.Enabled = True
+		      Self.CommunityShareButton.Enabled = Self.mHasAdminPermission
 		    Case "Denied"
 		      Self.CommunityStatusField.Text = "Private (Sharing Request Denied)"
 		      Self.CommunityShareButton.Caption = "Share"
@@ -786,6 +786,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Project As Beacon.Project)
 		  Self.mProject = Project
+		  Self.mHasAdminPermission = (Self.mProject.Role = Beacon.ProjectMember.RoleOwner Or Self.mProject.Role = Beacon.ProjectMember.RoleAdmin)
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -808,10 +809,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LoadGuests()
-		  If Self.mProject.Role <> Beacon.ProjectMember.RoleOwner And Self.mProject.Role <> Beacon.ProjectMember.RoleAdmin Then
-		    Return
-		  End If
-		  
 		  Var Request As New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members", "GET", AddressOf APICallback_LoadMembers)
 		  BeaconAPI.Send(Request)
 		  Self.IncrementRequestCount()
@@ -861,12 +858,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUserList()
-		  If Self.mProject.Role <> Beacon.ProjectMember.RoleOwner And Self.mProject.Role <> Beacon.ProjectMember.RoleAdmin Then
-		    Self.UserList.RemoveAllRows
-		    Self.AddUserButton.Enabled = False
-		    Return
-		  End If
-		  
 		  Var Members() As Beacon.ProjectMember = Self.mProject.GetMembers
 		  For Idx As Integer = Members.LastIndex DownTo 0
 		    If Members(Idx).Role = Beacon.ProjectMember.RoleOwner Then
@@ -893,10 +884,14 @@ End
 		  Next
 		  Self.UserList.Sort
 		  Self.UserList.SelectionChangeBlocked = False
-		  Self.AddUserButton.Enabled = True
+		  Self.AddUserButton.Enabled = Self.mHasAdminPermission
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mHasAdminPermission As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mOwnerId As String
@@ -952,7 +947,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.mHasAdminPermission
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -962,7 +957,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1
+		  Return Me.SelectedRowCount = 1 And Self.mHasAdminPermission
 		End Function
 	#tag EndEvent
 	#tag Event

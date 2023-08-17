@@ -78,6 +78,11 @@ Implements ObservationKit.Observable
 		    Self.mRole = Member.Role
 		  End If
 		  
+		  // If the project doesn't have a password, none of this makes sense
+		  If Self.mProjectPassword.IsEmpty Then
+		    Return False
+		  End If
+		  
 		  // Need to set the password to generate the fingerprint
 		  Member.SetPassword(Self.mProjectPassword)
 		  
