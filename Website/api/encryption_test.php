@@ -54,4 +54,17 @@ $decrypted = openssl_decrypt(base64_decode('JBvDgbeC6vECJGiRnh27GQ=='), $cipher,
 
 echo "Decrypted: {$decrypted}\n";
 
+$desiredFingerprint = 'E15wcVaVb95v0pP5Z9zSGI98PIf3nD2zqn97Tp+EZ7k=';
+$user = BeaconAPI\v4\User::Fetch('7fe29603-c3da-4930-9fdd-ae9952f98be8');
+$password = base64_decode('d7ipmM4zRNZ59Ds2JyRDiOln9jANCAbDAVxR7J7LHiw=');
+$computedFingerprint = BeaconAPI\v4\ProjectMember::GenerateFingerprint($user->UserId(), $user->Username(false), $user->PublicKey(), $password);
+	
+if ($desiredFingerprint === $computedFingerprint) {
+	echo "Fingerprint algorithm is correct.\n";
+} else {
+	echo "Fingerprint algorithm is wrong.\n";
+	echo "Expected {$desiredFingerprint}\n";
+	echo "Computed {$computedFingerprint}\n";
+}
+
 ?>

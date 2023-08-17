@@ -77,6 +77,10 @@ trait MutableDatabaseObject {
 		}
 	}
 	
+	protected function PropertiesForValidation(): array {
+		return $this->jsonSerialize();
+	}
+	
 	public function Edit(array $properties, bool $restoreDefaults = false): void {
 		$whitelist = static::EditableProperties(DatabaseObjectProperty::kEditableLater);
 		foreach ($whitelist as $definition) {
@@ -93,7 +97,7 @@ trait MutableDatabaseObject {
 			return;
 		}
 		
-		static::Validate($this->jsonSerialize());
+		static::Validate($this->PropertiesForValidation());
 		
 		$schema = static::DatabaseSchema();
 		$placeholder = 1;

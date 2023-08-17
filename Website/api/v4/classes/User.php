@@ -4,7 +4,12 @@ namespace BeaconAPI\v4;
 use BeaconCloudStorage, BeaconCommon, BeaconEmail, BeaconEncryption, BeaconRecordSet, BeaconShop, Exception, JsonSerializable;
 
 class User extends DatabaseObject implements JsonSerializable {
-	use MutableDatabaseObject;
+	use MutableDatabaseObject {
+		Edit as protected MutableDatabaseObjectEdit;
+		HasPendingChanges as protected MutableDatabaseObjectHasPendingChanges;
+		SaveChildObjects as protected MutableDatabaseObjectSaveChildObjects;
+		CleanupChildObjects as protected MutableDatabaseObjectCleanupChildObjects;
+	}
 	
 	protected $backupCodes = null;
 	protected $backupCodesAdded = [];
@@ -60,7 +65,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('cloudKey', ['columnName' => 'usercloud_key', 'editable' => DatabaseObjectProperty::kEditableAlways]),
 			new DatabaseObjectProperty('banned'),
 			new DatabaseObjectProperty('enabled'),
-			new DatabaseObjectProperty('requiredPasswordChange', ['columnName' => 'require_password_change'])
+			new DatabaseObjectProperty('requirePasswordChange', ['columnName' => 'require_password_change'])
 		]);
 	}
 	
@@ -161,7 +166,23 @@ class User extends DatabaseObject implements JsonSerializable {
 			$properties['emailId'] = $rows->Field('email_id');
 		}
 		
-		parent::Edit($properties, $restoreDefaults);
+		static::MutableDatabaseObjectEdit($properties, $restoreDefaults);
+	}
+	
+	protected function PropertiesForValidation(): array {
+		return [
+			'banned' => $this->banned,
+			'cloudKey' => $this->cloudKey,
+			'emailId' => $this->emailId,
+			'enabled' => $this->enabled,
+			'privateKey' => $this->privateKey,
+			'privateKeyIterations' => $this->privateKeyIterations,
+			'privateKeySalt' => $this->privateKeySalt,
+			'publicKey' => $this->publicKey,
+			'requirePasswordChange' => $this->requirePasswordChange,
+			'userId' => $this->userId,
+			'username' => $this->username,
+		];
 	}
 	
 	/* !Basic Properties */
@@ -543,11 +564,11 @@ class User extends DatabaseObject implements JsonSerializable {
 	}*/
 	
 	protected function HasPendingChanges(): bool {
-		return parent::HasPendingChanges() || count($this->backupCodesAdded) > 0 || count($this->backupCodesRemoved) > 0;
+		return static::MutableDatabaseObjectHasPendingChanges() || count($this->backupCodesAdded) > 0 || count($this->backupCodesRemoved) > 0;
 	}
 	
 	protected function SaveChildObjects(): void {
-		parent::SaveChildObjects();
+		static::MutableDatabaseObjectSaveChildObjects();
 		
 		foreach ($this->backupCodesRemoved as $code) {
 			$database->Query('DELETE FROM public.user_backup_codes WHERE user_id = $1 AND code = $2;', $this->userId, $code);
@@ -559,7 +580,7 @@ class User extends DatabaseObject implements JsonSerializable {
 	}
 	
 	protected function CleanupChildObjects(): void {
-		parent::CleanupChildObjects();
+		static::MutableDatabaseObjectCleanupChildObjects();
 		
 		$this->backupCodesAdded = [];
 		$this->backupCodesRemoved = [];

@@ -119,6 +119,28 @@ class ProjectMember implements JsonSerializable {
 			'fingerprint' => $this->fingerprint,
 		];
 	}
+	
+	public static function GenerateFingerprint(string $userId, string $username, string $publicKey, string $password): string {
+		$userId = hex2bin(str_replace('-', '', $userId));
+		if (str_starts_with($publicKey, '-----BEGIN PUBLIC KEY-----')) {
+			$lines = explode("\n", trim($publicKey));
+			array_pop($lines);
+			array_shift($lines);
+			$publicKey = base64_decode(implode('', $lines));
+		} else {
+			$publicKey = hex2bin($publicKey);
+		}
+		
+		$pieces = [
+			base64_decode('com2R8j7FkwXzwOUoMs6qNUXXATzZrfuqG7xjo9Lp3c='),
+			$userId,
+			$username,
+			$password,
+			$publicKey
+		];
+		
+		return base64_encode(hash('sha3-256', implode('', $pieces), true));
+	}
 }
 
 ?>

@@ -37,6 +37,8 @@ abstract class UserGenerator {
 	public static function ChangePassword(User $user, string|null $oldPassword, string $newPassword, string|Session|null $retainSession = null, bool $regenerateKey = false): void {
 		$userProperties = [];
 		$regenerateKey = $regenerateKey || is_null($oldPassword);
+		$oldPrivateKey = null;
+		$publicKeyPem = $user->PublicKey();
 		
 		// If the old password is provided, it *must* match. SymmetricDecrypt will throw an exception if it does not.
 		if (is_string($oldPassword)) {
@@ -45,6 +47,7 @@ abstract class UserGenerator {
 			$privateKeySecret = BeaconEncryption::HashFromPassword($oldPassword, $privateKeySalt, $privateKeyIterations);
 			try {
 				$privateKeyPem = BeaconEncryption::SymmetricDecrypt($privateKeySecret, hex2bin($user->PrivateKey()));
+				$oldPrivateKey = $privateKeyPem;
 			} catch (Exception $err) {
 				// Make a nicer exception
 				throw new Exception('Old password is not correct.');
@@ -93,6 +96,27 @@ abstract class UserGenerator {
 				
 				// untrust all devices
 				$user->UntrustAllDevices();
+			}
+			if ($oldPrivateKey !== $privateKeyPem) {
+				// re-encrypt project passwords
+				$rows = $database->Query('SELECT project_id, encrypted_password FROM public.project_members WHERE user_id = $1 AND encrypted_password IS NOT NULL;', $user->UserId());
+				while (!$rows->EOF()) {
+					$encryptedPassword = base64_decode($rows->Field('encrypted_password'));
+					$projectId = $rows->Field('project_id');
+					
+					try {
+						$decryptedPassword = BeaconEncryption::RSADecrypt($oldPrivateKey, $encryptedPassword);
+						$encryptedPassword = BeaconEncryption::RSAEncrypt($publicKeyPem, $decryptedPassword);
+						$fingerprint = ProjectMember::GenerateFingerprint($user->UserId(), $user->Username(false), $publicKeyPem, $decryptedPassword);
+						$rows = $database->Query('UPDATE public.project_members SET encrypted_password = $3, fingerprint = $4 WHERE user_id = $1 AND project_id = $2;', $user->UserId(), $projectId, base64_encode($encryptedPassword), $fingerprint);
+					} catch (Exception $passwordErr) {
+						$rows = $database->Query('UPDATE public.project_members SET encrypted_password = NULL, fingerprint = NULL WHERE user_id = $1 AND project_id = $2;', $user->UserId(), $projectId);
+					}
+					$rows->MoveNext();
+				}
+			} else {
+				// clear encrypted project passwords
+				$database->Query('UPDATE public.project_members SET encrypted_password = NULL, fingerprint = NULL WHERE user_id = $1;', $user->UserId());
 			}
 			
 			$database->Commit();
