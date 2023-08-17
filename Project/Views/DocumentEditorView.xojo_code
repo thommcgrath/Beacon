@@ -73,6 +73,19 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  RaiseEvent Shown(UserData)
+		  
+		  If Self.mFirstShow Then
+		    If Self.Project.PasswordDecrypted = False Then
+		      Call CallLater.Schedule(1000, AddressOf ShowDecryptionError)
+		    End If
+		    Self.mFirstShow = False
+		  End If
+		End Sub
+	#tag EndEvent
+
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
@@ -157,6 +170,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Controller As Beacon.ProjectController)
+		  Self.mFirstShow = True
+		  
 		  If Self.mEditorRefs Is Nil Then
 		    Self.mEditorRefs = New Dictionary
 		  End If
@@ -265,7 +280,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Function GameId() As String
 		  If (Self.mController Is Nil) = False And (Self.mController.Project Is Nil) = False Then
 		    Return Self.mController.Project.GameID
 		  End If
@@ -427,6 +442,32 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub ShowDecryptionError()
+		  Var Project As Beacon.Project = Self.Project
+		  If Project.PasswordDecrypted Then
+		    Return
+		  End If
+		  
+		  Self.RequestFrontmost() // Just in case
+		  
+		  Var Message As String = "Private data in this project could not be decrypted"
+		  Var Explanation As String = "This can happen if you have done a password reset since the last time this project was saved."
+		  If Self.Project.MemberCount > 1 Then
+		    Explanation = Explanation + " Your project has other members that may have the project password. Ask another member to resave the project. If this isn't possible, the project will need a new encryption key, which will destroy its private data like server info."
+		  Else
+		    Explanation = Explanation + " Your project will need a new encryption key, which will destroy its private data like server info."
+		  End If
+		  Explanation = Explanation + " You will not be able to save changes to your project without an encryption key."
+		  
+		  If Self.ShowConfirm(Message, Explanation, "New Key", "Cancel") Then
+		    Project.Password = Crypto.GenerateRandomBytes(32)
+		  End If
+		  
+		  Self.Modified = Project.Modified
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub SwitchToEditor(EditorName As String)
 		  RaiseEvent SwitchToEditor(EditorName)
@@ -489,6 +530,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event SwitchToEditor(EditorName As String)
 	#tag EndHook
 
@@ -515,6 +560,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private Shared mEditorRefs As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFirstShow As Boolean
 	#tag EndProperty
 
 

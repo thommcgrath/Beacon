@@ -564,7 +564,6 @@ Implements ObservationKit.Observable
 		          Passwords.Value(UserId) = Member
 		        End If
 		        Project.mProjectPassword = DocumentPassword
-		        Project.mMembers = Passwords
 		        Project.mRole = Member.Role
 		        
 		        Exit
@@ -574,6 +573,7 @@ Implements ObservationKit.Observable
 		      End Try
 		    Next
 		  End If
+		  Project.mMembers = Passwords
 		  
 		  Var SecureDict As Dictionary
 		  #Pragma BreakOnExceptions False
@@ -962,6 +962,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MemberCount() As Integer
+		  Return Self.mMembers.KeyCount
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.ReadOnly Then
 		    Return False
@@ -1064,12 +1070,16 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Self.mProjectPassword = Value
-		  Self.Modified = True
 		  
 		  For Each Entry As DictionaryEntry In Self.mMembers
 		    Var Member As Beacon.ProjectMember = Entry.Value
 		    Member.SetPassword(Self.mProjectPassword)
+		    If Member.UserId = Self.mLoadedUserId Then
+		      Self.mRole = Member.Role // In case it was loaded as guest with no password
+		    End If
 		  Next
+		  
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
