@@ -27,6 +27,26 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromUserApi(UserData As Dictionary) As Beacon.Identity
+		  Try
+		    Var UserId As String = UserData.Value("userId").StringValue
+		    Var PublicKey As String = BeaconEncryption.PEMDecodePublicKey(UserData.Value("publicKey").StringValue)
+		    If Not Crypto.RSAVerifyKey(PublicKey) Then
+		      App.Log("Could not load users api response because the public key is not valid")
+		      Return Nil
+		    End If
+		    Var Identity As New Beacon.Identity(UserId, PublicKey, "")
+		    Identity.mUsername = UserData.Value("username").StringValue
+		    Identity.mIsValid = False
+		    Return Identity
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Decoding users API response")
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsAnonymous() As Boolean
 		  Return Self.mIsAnonymous
 		End Function

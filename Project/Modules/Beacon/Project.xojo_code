@@ -1037,6 +1037,28 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Password() As String
+		  Return Self.mProjectPassword
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Password(Assigns Value As String)
+		  If Self.mProjectPassword.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
+		    Return
+		  End If
+		  
+		  Self.mProjectPassword = Value
+		  Self.Modified = True
+		  
+		  For Each Entry As DictionaryEntry In Self.mMembers
+		    Var Member As Beacon.ProjectMember = Entry.Value
+		    Member.SetPassword(Self.mProjectPassword)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function PasswordDecrypted() As Boolean
 		  Return Self.mProjectPassword.IsEmpty = False
 		End Function
@@ -1177,17 +1199,6 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h1
 		Protected Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SavedDataVersion As Integer, SavedWithVersion As Integer)
 		  RaiseEvent ReadSaveData(PlainData, EncryptedData, SavedDataVersion, SavedWithVersion)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RegeneratePassword()
-		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
-		  
-		  For Each Entry As DictionaryEntry In Self.mMembers
-		    Var Member As Beacon.ProjectMember = Entry.Value
-		    Member.SetPassword(Self.mProjectPassword)
-		  Next
 		End Sub
 	#tag EndMethod
 

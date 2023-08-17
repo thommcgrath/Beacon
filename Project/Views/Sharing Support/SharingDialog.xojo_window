@@ -615,15 +615,9 @@ End
 		  Self.DecrementRequestCount()
 		  
 		  If Not Response.Success Then
-		    Var RequestDetails As Dictionary = Request.Tag
-		    Var UserIdentifier As String = RequestDetails.Value("UserIdentifier")
-		    Var Role As String = RequestDetails.Value("Role")
 		    Select Case Response.HTTPStatus
 		    Case 403
 		      Self.ShowAlert("Could not add user", If(Response.Message.IsEmpty = False, Response.Message, "You do not have permission to add or remove users."))
-		    Case 404
-		      Self.ShowAlert("Could not find user '" + UserIdentifier + "'", "Please enter the UUID, email address, or full username with suffix (such as User#ABCD1234) to continue.")
-		      Self.ShowAddUser(UserIdentifier, Role)
 		    Else
 		      Self.ShowAlert("There was an error adding the user", If(Response.Message.IsEmpty = False, Response.Message, "The server returned a " + Response.HTTPStatus.ToString(Locale.Raw, "0") + " status."))
 		    End Select
@@ -631,18 +625,11 @@ End
 		  End If
 		  
 		  Try
-		    Var MemberInfo As Variant = Response.JSON
-		    If MemberInfo.Type <> Variant.TypeObject Or (MemberInfo.ObjectValue IsA Dictionary) = False Then
-		      Break
-		      Return
-		    End If
+		    Var MemberInfo As Dictionary = Response.JSON
+		    Var UserId As String = MemberInfo.Value("userId")
+		    Var Member As New Beacon.ProjectMember(UserId, MemberInfo)
 		    
-		    Var UserId As String = Dictionary(MemberInfo.ObjectValue).Value("userId")
-		    Var Member As New Beacon.ProjectMember(UserId, Dictionary(MemberInfo.ObjectValue))
-		    
-		    If Self.mProject.AddMember(Member) Then
-		      Self.mUsersChanged = True
-		    End If
+		    Call Self.mProject.AddMember(Member)
 		    
 		    Self.UpdateUserList()
 		  Catch Err As RuntimeException
@@ -656,8 +643,8 @@ End
 		  
 		  Var Member As Beacon.ProjectMember = Request.Tag
 		  
-		  If Response.Success And Self.mProject.RemoveMember(Member) Then
-		    Self.mUsersChanged = True
+		  If Response.Success Then
+		    Call Self.mProject.RemoveMember(Member)
 		  End If
 		  
 		  Self.UpdateUserList()
@@ -665,6 +652,41 @@ End
 		  If Not Response.Success Then
 		    Self.ShowAlert("The user was not removed from the project", If(Response.Message.IsEmpty = False, Response.Message, "Users can remove themselves by deleting the project from their cloud list, or the user can be removed by the owner or admin."))
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_FindUser(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  Self.DecrementRequestCount()
+		  
+		  Var RequestDetails As Dictionary = Request.Tag
+		  Var UserIdentifier As String = RequestDetails.Value("UserIdentifier")
+		  Var Role As String = RequestDetails.Value("Role")
+		  
+		  If Not Response.Success Then
+		    If Response.HTTPStatus = 404 Then
+		      Self.ShowAlert("Could not find user '" + UserIdentifier + "'", "Please enter the UUID, email address, or full username with suffix (such as User#ABCD1234) to continue.")
+		      Self.ShowAddUser(UserIdentifier, Role)
+		    Else
+		      Self.ShowAlert("Could not find user '" + UserIdentifier + "'", If(Response.Message.IsEmpty = False, Response.Message, "The server returned a " + Response.HTTPStatus.ToString(Locale.Raw, "0") + " status."))
+		    End If
+		    
+		    Return
+		  End If
+		  
+		  Try
+		    Var UserInfo As Dictionary = Response.JSON
+		    Var Identity As Beacon.Identity = Beacon.Identity.FromUserApi(UserInfo)
+		    Var Member As New Beacon.ProjectMember(Identity, Role)
+		    Call Member.SetPassword(Self.mProject.Password)
+		    
+		    Var MemberInfo As Dictionary = Member.DictionaryValue
+		    BeaconAPI.Send(New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members/" + EncodeURLComponent(Member.UserId), "PUT", Beacon.GenerateJson(MemberInfo, False), "application/json", AddressOf APICallback_AddUser))
+		    Self.IncrementRequestCount()
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Parsing user lookup response")
+		    Self.ShowAlert("There was an error adding the user", If(Response.Message.IsEmpty = False, Response.Message, "Beacon encountered an exception while processing the user lookup."))
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -747,18 +769,12 @@ End
 		      End If
 		      
 		      // Add the user to make sure the public key is up to date
-		      If Self.mProject.AddMember(Member) Then
-		        Self.mUsersChanged = True
-		      End If
+		      Call Self.mProject.AddMember(Member)
 		    Next
 		    
-		    // Clean out unnecessary keys, but don't remove the owner
+		    // Clean out unnecessary keys
 		    For Each Entry As DictionaryEntry In Map
-		      If Self.mProject.RemoveMember(Entry.Key.StringValue) = False Then
-		        Continue
-		      End If
-		      
-		      Self.mUsersChanged = True
+		      Call Self.mProject.RemoveMember(Entry.Key.StringValue)
 		    Next
 		  Catch Err As RuntimeException
 		  End Try
@@ -810,12 +826,6 @@ End
 		  
 		  Var Win As New SharingDialog(Project)
 		  Win.ShowModal(Parent)
-		  
-		  If Win.mUsersChanged Then
-		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your project.", "Adding or removing a user updates the encryption keys inside your project, so it is necessary to save the project before newly authorized users are able to access it.")
-		  End If
-		  
-		  Win.Close
 		End Sub
 	#tag EndMethod
 
@@ -834,13 +844,18 @@ End
 		    Return
 		  End If
 		  
-		  Var MemberData As New Dictionary
-		  MemberData.Value("role") = Role
-		  
-		  Var Request As New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members/" + EncodeURLComponent(UserIdentifier), "PUT", Beacon.GenerateJson(MemberData, False), "application/json", AddressOf APICallback_AddUser)
+		  Var Request As New BeaconAPI.Request("/users/" + EncodeURLComponent(UserIdentifier), "GET", AddressOf APICallback_FindUser)
 		  Request.Tag = New Dictionary("UserIdentifier": UserIdentifier, "Role": Role)
 		  BeaconAPI.Send(Request)
 		  Self.IncrementRequestCount()
+		  
+		  // Var MemberData As New Dictionary
+		  // MemberData.Value("role") = Role
+		  // 
+		  // Var Request As New BeaconAPI.Request("/projects/" + EncodeURLComponent(Self.mProject.ProjectId) + "/members/" + EncodeURLComponent(UserIdentifier), "PUT", Beacon.GenerateJson(MemberData, False), "application/json", AddressOf APICallback_AddUser)
+		  // Request.Tag = New Dictionary("UserIdentifier": UserIdentifier, "Role": Role)
+		  // BeaconAPI.Send(Request)
+		  // Self.IncrementRequestCount()
 		End Sub
 	#tag EndMethod
 
@@ -893,10 +908,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mRequestCount As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUsersChanged As Boolean
 	#tag EndProperty
 
 
@@ -978,7 +989,12 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Pressed()
-		  Self.Hide
+		  If Self.ActivitySpinner.Visible Then
+		    Self.ShowAlert("Wait until the current action is finished", "This window is still doing work. Give it a chance to finish.")
+		    Return
+		  End If
+		  
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1012,7 +1028,7 @@ End
 		        App.MainWindow.Documents.EditorForProject(Self.mProject).SwitchToEditor(Ark.Configs.NameMetadataPsuedo)
 		      Catch Err As RuntimeException
 		      End Try
-		      Self.Hide()
+		      Self.Close()
 		      Return
 		    End If
 		    
