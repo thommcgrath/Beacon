@@ -24,6 +24,16 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
+		Sub ContentsChanged()
+		  If Self.Project.ReadOnly Then
+		    Return
+		  End If
+		  
+		  RaiseEvent ContentsChanged
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  FileSaveAs.Enabled = True
 		  
@@ -45,6 +55,11 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Event
 		Sub ShouldSave(CloseWhenFinished As Boolean)
+		  If Self.Project.ReadOnly Then
+		    Self.ShowAlert("This is a read-only project", "Your access to this project does not allow saving.")
+		    Return
+		  End If
+		  
 		  Self.mCloseAfterSave = CloseWhenFinished
 		  
 		  RaiseEvent ShouldSave(CloseWhenFinished)
@@ -85,7 +100,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h1
 		Protected Sub Autosave()
-		  If Not Self.Project.Modified Then
+		  If Self.Project.Modified = False Or Self.Project.ReadOnly Then
 		    Return
 		  End If
 		  
@@ -374,6 +389,11 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub SaveAs()
+		  If Self.Project.ReadOnly Then
+		    Self.ShowAlert("This is a read-only project", "Your access to this project does not allow saving.")
+		    Return
+		  End If
+		  
 		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
 		  Case DocumentSaveToCloudWindow.StateSaved
 		    Self.ViewTitle = Self.mController.Name
@@ -442,6 +462,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Hook, Flags = &h0
 		Event Closing()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ContentsChanged()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

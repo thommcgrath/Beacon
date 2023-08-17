@@ -73,6 +73,11 @@ Implements ObservationKit.Observable
 		    Return False
 		  End If
 		  
+		  // If this is the active user, make sure the stored role is correct
+		  If Member.UserId = Self.mLoadedUserId Then
+		    Self.mRole = Member.Role
+		  End If
+		  
 		  // Need to set the password to generate the fingerprint
 		  Member.SetPassword(Self.mProjectPassword)
 		  
@@ -760,6 +765,7 @@ Implements ObservationKit.Observable
 		    Next
 		  End If
 		  
+		  Project.mLoadedUserId = Identity.UserId
 		  Project.Modified = Version < Beacon.Project.SaveDataVersion
 		  
 		  If Project.PasswordDecrypted = False Then
@@ -952,6 +958,10 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
+		  If Self.ReadOnly Then
+		    Return False
+		  End If
+		  
 		  If Self.mModified Then
 		    Return True
 		  End If
@@ -1193,6 +1203,12 @@ Implements ObservationKit.Observable
 		  End Try
 		  
 		  Return DecryptedDict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReadOnly() As Boolean
+		  Return Self.mRole = "Guest"
 		End Function
 	#tag EndMethod
 
@@ -1724,6 +1740,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mLegacyTrustKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoadedUserId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

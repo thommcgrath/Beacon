@@ -105,6 +105,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   82
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   1
       Underline       =   False
@@ -818,7 +819,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -861,7 +862,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  If Me.SelectedRowCount = 0 Then
+		  If Me.CanCopy = False Then
 		    Return
 		  End If
 		  

@@ -107,6 +107,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   82
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -730,7 +731,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
+		  Return Me.SelectedRowCount > 0 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event

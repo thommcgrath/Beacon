@@ -456,6 +456,11 @@ End
 		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
 		    DeployManager(Self.mDeployWindow.Value).BringToFront()
 		  Else
+		    If Self.Project.ReadOnly Then
+		      Self.ShowAlert("This is a read-only project", "Your access to this project does not allow deploy.")
+		      Return
+		    End If
+		    
 		    Self.Autosave()
 		    
 		    If Not Self.ReadyToDeploy Then
@@ -488,6 +493,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginExport()
+		  If Self.Project.ReadOnly Then
+		    Self.ShowAlert("This is a read-only project", "Your access to this project does not allow export.")
+		    Return
+		  End If
+		  
 		  Self.Autosave()
 		  
 		  If Not Self.ContinueWithoutExcludedConfigs() Then
@@ -1379,6 +1389,7 @@ End
 		  Const CopyTag = "a0b7a0ee-518a-4ee8-a33c-5c8e46ba570f"
 		  Const PasteTag = "31f1decc-7706-4baf-af11-f4d4fdde799d"
 		  
+		  Var ReadOnly As Boolean = Self.Project.ReadOnly
 		  Var Item As SourceListItem
 		  Var ConfigName As String
 		  Var Config As Ark.ConfigGroup
@@ -1390,7 +1401,7 @@ End
 		  
 		  Var Base As New DesktopMenuItem
 		  Var CopyItem As New DesktopMenuItem("Copy", CopyTag)
-		  CopyItem.Enabled = (ItemIndex > -1) And (Config Is Nil) = False And Config.IsImplicit = False
+		  CopyItem.Enabled = ReadOnly = False And (ItemIndex > -1) And (Config Is Nil) = False And Config.IsImplicit = False
 		  Base.AddMenu(CopyItem)
 		  Var Board As New Clipboard
 		  Var PasteItem As New DesktopMenuItem("Paste", PasteTag)
@@ -1426,7 +1437,7 @@ End
 		  Case RestoreTag
 		    Self.RestoreEditor(ConfigName)
 		  Case CopyTag
-		    If (Config Is Nil) = False Then
+		    If (Config Is Nil) = False And ReadOnly = False Then
 		      Var SaveData As New Dictionary
 		      SaveData.Value("GroupName") = ConfigName
 		      SaveData.Value("SaveData") = Config.SaveData()

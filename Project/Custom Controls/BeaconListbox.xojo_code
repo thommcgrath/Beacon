@@ -1,7 +1,7 @@
 #tag Class
 Protected Class BeaconListbox
 Inherits DesktopListBox
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
 		  If Self.mCellActionCascading Then
@@ -527,12 +527,20 @@ Inherits DesktopListBox
 
 	#tag Method, Flags = &h0
 		Sub DoClear()
+		  If Not Self.CanDelete Then
+		    Return
+		  End If
+		  
 		  RaiseEvent PerformClear(True)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub DoCopy()
+		  If Not Self.CanCopy Then
+		    Return
+		  End If
+		  
 		  Var Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		End Sub
@@ -540,6 +548,10 @@ Inherits DesktopListBox
 
 	#tag Method, Flags = &h0
 		Sub DoCut()
+		  If Not (Self.CanCopy And Self.CanDelete) Then
+		    Return
+		  End If
+		  
 		  Var Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		  RaiseEvent PerformClear(False)
@@ -548,6 +560,10 @@ Inherits DesktopListBox
 
 	#tag Method, Flags = &h0
 		Sub DoEdit()
+		  If Not Self.CanEdit Then
+		    Return
+		  End If
+		  
 		  If IsEventImplemented("PerformEdit") Then
 		    RaiseEvent PerformEdit
 		    Return
@@ -563,6 +579,10 @@ Inherits DesktopListBox
 
 	#tag Method, Flags = &h0
 		Sub DoPaste()
+		  If Not Self.CanPaste Then
+		    Return
+		  End If
+		  
 		  Var Board As New Clipboard
 		  RaiseEvent PerformPaste(Board)
 		End Sub

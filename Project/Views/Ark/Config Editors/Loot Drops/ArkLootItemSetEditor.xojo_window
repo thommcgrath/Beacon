@@ -80,6 +80,7 @@ Begin BeaconContainer ArkLootItemSetEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   64
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -555,7 +556,7 @@ End
 #tag Events EntryList
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowIndex > -1
+		  Return Me.SelectedRowIndex > -1 And Self.Project.ReadOnly = False
 		End Function
 	#tag EndEvent
 	#tag Event

@@ -294,28 +294,35 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy(Settings As Beacon.DeploySettings)
-		  // If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
-		  // DeployManager(Self.mDeployWindow.Value).BringToFront()
-		  // Else
-		  // Self.Autosave()
-		  // 
-		  // If Not Self.ReadyToDeploy Then
-		  // Self.ShowAlert("This project is not ready for deploy.", "You must import at least one server into this project to use the deploy feature. Use the Import button in the top left.") 
-		  // Return
-		  // End If
-		  // 
-		  // If Not Self.ContinueWithoutExcludedConfigs() Then
-		  // Return
-		  // End If
-		  // 
-		  // If Self.mValidator Is Nil And (Self.mValidationResultsDialog Is Nil Or Self.mValidationResultsDialog.Value Is Nil) Then
-		  // Var Validator As New Beacon.ProjectValidator
-		  // AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
-		  // AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Deploy
-		  // Validator.StartValidation(Self.Project, Settings)
-		  // Self.mValidator = Validator
-		  // End If
-		  // End If
+		  #if false
+		    If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
+		      DeployManager(Self.mDeployWindow.Value).BringToFront()
+		    Else
+		      If Self.Project.ReadOnly Then
+		        Self.ShowAlert("This is a read-only project", "Your access to this project does not allow deploy.")
+		        Return
+		      End If
+		      
+		      Self.Autosave()
+		      
+		      If Not Self.ReadyToDeploy Then
+		        Self.ShowAlert("This project is not ready for deploy.", "You must import at least one server into this project to use the deploy feature. Use the Import button in the top left.") 
+		        Return
+		      End If
+		      
+		      If Not Self.ContinueWithoutExcludedConfigs() Then
+		        Return
+		      End If
+		      
+		      If Self.mValidator Is Nil And (Self.mValidationResultsDialog Is Nil Or Self.mValidationResultsDialog.Value Is Nil) Then
+		        Var Validator As New Beacon.ProjectValidator
+		        AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
+		        AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Deploy
+		        Validator.StartValidation(Self.Project, Settings)
+		        Self.mValidator = Validator
+		      End If
+		    End If
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -329,19 +336,26 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginExport()
-		  // Self.Autosave()
-		  // 
-		  // If Not Self.ContinueWithoutExcludedConfigs() Then
-		  // Return
-		  // End If
-		  // 
-		  // If Self.mValidator Is Nil And (Self.mValidationResultsDialog Is Nil Or Self.mValidationResultsDialog.Value Is Nil) Then
-		  // Var Validator As New Beacon.ProjectValidator
-		  // AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
-		  // AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Export
-		  // Validator.StartValidation(Self.Project)
-		  // Self.mValidator = Validator
-		  // End If
+		  #if false
+		    If Self.Project.ReadOnly Then
+		      Self.ShowAlert("This is a read-only project", "Your access to this project does not allow deploy.")
+		      Return
+		    End If
+		    
+		    Self.Autosave()
+		    
+		    If Not Self.ContinueWithoutExcludedConfigs() Then
+		      Return
+		    End If
+		    
+		    If Self.mValidator Is Nil And (Self.mValidationResultsDialog Is Nil Or Self.mValidationResultsDialog.Value Is Nil) Then
+		      Var Validator As New Beacon.ProjectValidator
+		      AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
+		      AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Export
+		      Validator.StartValidation(Self.Project)
+		      Self.mValidator = Validator
+		    End If
+		  #endif
 		End Sub
 	#tag EndMethod
 
