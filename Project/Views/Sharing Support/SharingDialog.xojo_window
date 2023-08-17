@@ -44,7 +44,7 @@ Begin BeaconDialog SharingDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -75,7 +75,7 @@ Begin BeaconDialog SharingDialog
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
@@ -105,7 +105,7 @@ Begin BeaconDialog SharingDialog
          Multiline       =   True
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   3
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Users listed here will be able to make changes to this project and deploy changes to servers. Only the project owner may add or remove users."
@@ -161,7 +161,7 @@ Begin BeaconDialog SharingDialog
          RequiresSelection=   False
          RowSelectionType=   0
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
@@ -230,7 +230,7 @@ Begin BeaconDialog SharingDialog
          LockTop         =   False
          MacButtonStyle  =   0
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
@@ -296,7 +296,7 @@ Begin BeaconDialog SharingDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -325,7 +325,7 @@ Begin BeaconDialog SharingDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -419,7 +419,7 @@ Begin BeaconDialog SharingDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -585,7 +585,7 @@ Begin BeaconDialog SharingDialog
       LockTop         =   False
       PanelIndex      =   0
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   5
       TabPanelIndex   =   0
       Tooltip         =   ""
       Top             =   594

@@ -1320,7 +1320,7 @@ End
 		Sub Pressed()
 		  Var Sets() As Beacon.ConfigSet = Self.mProject.ConfigSets
 		  Var States() As Beacon.ConfigSetState = Self.mProject.ConfigSetPriorities
-		  If ArkConfigSetSelectorDialog.Present(Self, Sets, States) Then
+		  If ConfigSetSelectorDialog.Present(Self, Sets, States) Then
 		    Self.mProject.ConfigSetPriorities = States
 		  End If
 		  

@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin BeaconDialog ArkConfigSetSelectorDialog
+Begin BeaconDialog ConfigSetSelectorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -10,20 +10,20 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   330
+   Height          =   378
    ImplicitInstance=   False
    MacProcID       =   0
-   MaximumHeight   =   330
-   MaximumWidth    =   400
+   MaximumHeight   =   378
+   MaximumWidth    =   492
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   330
-   MinimumWidth    =   400
+   MinimumHeight   =   378
+   MinimumWidth    =   492
    Resizeable      =   False
    Title           =   "Prioritize Config Sets"
    Type            =   8
    Visible         =   True
-   Width           =   400
+   Width           =   492
    Begin DesktopLabel InstructionsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -44,18 +44,18 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       Multiline       =   True
       Scope           =   2
       Selectable      =   True
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Checked sets will be enabled. Drag sets to change priority. Highest priority is the top of the list."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   248
+      Top             =   296
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   360
+      Width           =   452
    End
    Begin BeaconListbox List
       AllowAutoDeactivate=   True
@@ -84,7 +84,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   184
+      Height          =   232
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -105,6 +105,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   52
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -145,7 +146,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   360
+      Width           =   452
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
@@ -161,7 +162,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   300
+      Left            =   392
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -169,11 +170,11 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   290
+      Top             =   338
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -193,7 +194,7 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   208
+      Left            =   300
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -201,11 +202,73 @@ Begin BeaconDialog ArkConfigSetSelectorDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   338
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton UpButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Up"
+      Default         =   False
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   392
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   52
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton DownButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Down"
+      Default         =   False
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   392
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   290
+      Top             =   84
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -230,7 +293,7 @@ End
 		  End If
 		  
 		  Var Cancelled As Boolean
-		  Var Win As New ArkConfigSetSelectorDialog(Sets, States)
+		  Var Win As New ConfigSetSelectorDialog(Sets, States)
 		  Win.ShowModal(Parent)
 		  Cancelled = Win.mCancelled
 		  Win.Close
@@ -312,6 +375,14 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged()
+		  Var Idx As Integer = Me.SelectedRowIndex
+		  Var BaseIdx As Integer = Me.LastRowIndex
+		  Self.UpButton.Enabled = Idx > 0 And Idx <> BaseIdx
+		  Self.DownButton.Enabled = Idx < BaseIdx - 1 And Idx <> BaseIdx
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
@@ -334,6 +405,44 @@ End
 		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UpButton
+	#tag Event
+		Sub Pressed()
+		  Var RowIdx As Integer = Self.List.SelectedRowIndex
+		  Var DestinationIdx As Integer = Max(RowIdx - 1, 0)
+		  If RowIdx = DestinationIdx Then
+		    Return
+		  End If
+		  
+		  Var Set As Beacon.ConfigSet = Self.List.RowTagAt(RowIdx)
+		  Self.List.RemoveRowAt(RowIdx)
+		  
+		  Self.List.AddRowAt(DestinationIdx, "")
+		  Self.List.CellTextAt(DestinationIdx, 1) = Set.Name
+		  Self.List.RowTagAt(DestinationIdx) = Set
+		  Self.List.SelectedRowIndex = DestinationIdx
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DownButton
+	#tag Event
+		Sub Pressed()
+		  Var RowIdx As Integer = Self.List.SelectedRowIndex
+		  Var DestinationIdx As Integer = Min(RowIdx + 1, Self.List.LastRowIndex - 1)
+		  If RowIdx = DestinationIdx Then
+		    Return
+		  End If
+		  
+		  Var Set As Beacon.ConfigSet = Self.List.RowTagAt(RowIdx)
+		  Self.List.RemoveRowAt(RowIdx)
+		  
+		  Self.List.AddRowAt(DestinationIdx, "")
+		  Self.List.CellTextAt(DestinationIdx, 1) = Set.Name
+		  Self.List.RowTagAt(DestinationIdx) = Set
+		  Self.List.SelectedRowIndex = DestinationIdx
 		End Sub
 	#tag EndEvent
 #tag EndEvents

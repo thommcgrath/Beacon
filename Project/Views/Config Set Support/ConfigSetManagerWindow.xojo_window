@@ -136,6 +136,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       TabStop         =   True
       Tooltip         =   ""
       Top             =   104
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -356,6 +357,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       TabStop         =   True
       Tooltip         =   ""
       Top             =   104
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   1
       Underline       =   False

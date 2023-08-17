@@ -1136,7 +1136,7 @@ End
 		  
 		  Var Sets() As Beacon.ConfigSet = Self.Project.ConfigSets
 		  Var States() As Beacon.ConfigSetState = MainProfile.ConfigSetStates(Self.Project)
-		  If ArkConfigSetSelectorDialog.Present(Self, Sets, States) Then
+		  If ConfigSetSelectorDialog.Present(Self, Sets, States) Then
 		    Profile.ConfigSetStates = States
 		  End If
 		  
