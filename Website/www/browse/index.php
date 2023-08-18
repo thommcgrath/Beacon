@@ -6,7 +6,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('generator.css'));
 use BeaconAPI\v4\Ark\{Map, Project};
 
 $searchKeys = [
-	'published' => 'Approved',
+	'communityStatus' => 'Approved',
 	'pageSize' => 25,
 	'page' => 1,
 	'sort' => 'downloadCount',
@@ -123,10 +123,11 @@ if (count($projects) > 0) {
 	echo '<table id="browse_results" class="generic">';
 	echo '<thead><tr><th>Name</th><th class="low-priority">Downloads</th><th class="low-priority">Updated</th><th class="low-priority">Revision</th></thead><tbody>';
 	foreach ($projects as $project) {
+		$updateTime = new DateTime('@' . $project->LastUpdate());
 		echo '<tr>';
-		echo '<td><a href="' . urlencode($project->ProjectId()) . '?map_filter=' . $selectedMaps . '" class="document_name">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . htmlentities($project->Description()) . '</span><div class="row-details"><span class="detail">Updated: ' . $project->LastUpdated()->format('M jS, Y g:i A') . ' UTC</span></div></td>';
+		echo '<td><a href="' . urlencode($project->ProjectId()) . '?map_filter=' . $selectedMaps . '" class="document_name">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . str_replace(["\r\n", "\n", "\r"], ' ', htmlentities($project->Description())) . '</span><div class="row-details"><span class="detail">Updated: ' . $updateTime->format('M jS, Y g:i A') . ' UTC</span></div></td>';
 		echo '<td class="text-right low-priority">' . number_format($project->DownloadCount()) . '</td>';
-		echo '<td class="nowrap text-center low-priority"><time datetime="' . $project->LastUpdated()->format('c') . '">' . $project->LastUpdated()->format('M jS, Y g:i A') . ' UTC</time></td>';
+		echo '<td class="nowrap text-center low-priority"><time datetime="' . $updateTime->format('c') . '">' . $updateTime->format('M jS, Y g:i A') . ' UTC</time></td>';
 		echo '<td class="text-right low-priority">' . number_format($project->Revision()) . '</td>';
 		echo '</tr>';
 	}
