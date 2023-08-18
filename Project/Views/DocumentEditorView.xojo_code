@@ -20,6 +20,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  If (Self.Project Is Nil) = False Then
 		    Self.Project.RemoveObserver(Self, "Title")
 		  End If
+		  
+		  Self.UnsubscribeFromProjectChannel()
 		End Sub
 	#tag EndEvent
 
@@ -48,6 +50,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  If (Self.Project Is Nil) = False Then
 		    Self.Project.AddObserver(Self, "Title")
 		  End If
+		  
+		  Self.SubscribeToProjectChannel()
 		  
 		  RaiseEvent Opening
 		End Sub
@@ -376,6 +380,9 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged
 		    RaiseEvent IdentityChanged()
+		    
+		    Self.mSubscribedToProjectChannel = False
+		    Self.SubscribeToProjectChannel()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -400,6 +407,50 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		Function Project() As Beacon.Project
 		  Return Self.mController.Project
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ProjectChannel() As String
+		  Var Project As Beacon.Project = Self.Project
+		  If (Project Is Nil) = False Then
+		    Return "project-" + Project.ProjectId.ReplaceAll("-", "").Lowercase
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Pusher_ProjectSaved(ChannelName As String, EventName As String, Payload As String)
+		  #Pragma Unused ChannelName
+		  #Pragma Unused EventName
+		  
+		  Var Json As Dictionary = Beacon.ParseJson(Payload)
+		  Var User As Dictionary = Json.Value("user")
+		  Var OtherUserId As String = User.Value("userId")
+		  Var OtherUsername As String = User.Value("username")
+		  
+		  Var Message, Explanation As String
+		  Var ProjectName As String = Self.Project.Title
+		  If (App.IdentityManager Is Nil) = False And OtherUserId = App.IdentityManager.CurrentUserId Then
+		    // User has the project open on two devices
+		    Message = "The project '" + ProjectName + "' was just saved on another device"
+		    If Self.Project.Modified = False Then
+		      Explanation = "You should close this project and work on it from one device at a time."
+		    Else
+		      Explanation = "If you save now, your changes will overwrite the changes you just made on the other device. You should only work on a project from one device at a time."
+		    End If
+		  Else
+		    // Two users have edited this project
+		    Message = "The project '" + ProjectName + "' was just saved by " + OtherUsername
+		    If Self.Project.Modified = False Then
+		      Explanation = "You should close and reload this project to get the latest version."
+		    Else
+		      Explanation = "If you save now, your changes will overwrite the changes just made by " + OtherUsername + ". You should discard your changes and reload this project to safely continue working on this project."
+		    End If
+		  End If
+		  
+		  Self.RequestFrontmost
+		  Self.ShowAlert(Message, Explanation)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -468,9 +519,39 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SubscribeToProjectChannel()
+		  If Self.mSubscribedToProjectChannel Then
+		    Return
+		  End If
+		  
+		  Select Case Self.mController.URL.Type
+		  Case Beacon.ProjectURL.TypeCloud, Beacon.ProjectURL.TypeShared
+		    Var ProjectChannel As String = Self.ProjectChannel
+		    If ProjectChannel.IsEmpty = False Then
+		      App.Pusher.Subscribe(ProjectChannel)
+		      App.Pusher.Listen(ProjectChannel, "project-saved", WeakAddressOf Pusher_ProjectSaved)
+		      Self.mSubscribedToProjectChannel = True
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub SwitchToEditor(EditorName As String)
 		  RaiseEvent SwitchToEditor(EditorName)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UnsubscribeFromProjectChannel()
+		  If Not Self.mSubscribedToProjectChannel Then
+		    Return
+		  End If
+		  
+		  App.Pusher.Unsubscribe(Self.ProjectChannel)
+		  App.Pusher.Ignore(ProjectChannel, "project-saved", WeakAddressOf Pusher_ProjectSaved)
+		  Self.mSubscribedToProjectChannel = False
 		End Sub
 	#tag EndMethod
 
@@ -564,6 +645,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mFirstShow As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSubscribedToProjectChannel As Boolean
 	#tag EndProperty
 
 

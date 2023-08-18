@@ -623,6 +623,7 @@ DesktopWindow=SDTDLocalDiscoveryView;Views/7 Days to Die/Import/Discovery Views/
 Class=DiscoveredData;Modules/Game Support/SDTD/DiscoveredData.xojo_code;&h000000005652DFFF;&h00000000646827FF;false
 Class=LocalServerProfile;Modules/Game Support/SDTD/LocalServerProfile.xojo_code;&h00000000194A6FFF;&h00000000646827FF;false
 Class=ImportThread;Modules/Game Support/SDTD/ImportThread.xojo_code;&h000000005588FFFF;&h00000000646827FF;false
+Class=PusherSocket;Modules/Beacon/PusherSocket.xojo_code;&h00000000702107FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=0

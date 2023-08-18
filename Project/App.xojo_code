@@ -27,7 +27,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    // Whatever
 		  End Try
 		  
+		  If (Self.mPusher Is Nil) = False Then
+		    Self.mPusher.Stop
+		    Self.mPusher = Nil
+		  End If
+		  
 		  Ark.DataSource.Pool.CloseAll
+		  SDTD.DataSource.Pool.CloseAll
 		  Beacon.CommonData.Pool.CloseAll
 		  
 		  UpdatesKit.Cleanup
@@ -209,7 +215,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  SystemColors.Init
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped)
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped, IdentityManager.Notification_IdentityChanged)
 		  
 		  Self.mIdentityManager = New IdentityManager()
 		  
@@ -241,6 +247,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If BeaconUI.WebContentSupported Then
 		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_WelcomeWindow)
 		  End If
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_StartPusher)
 		  Self.NextLaunchQueueTask
 		  
 		  #if Not TargetMacOS
@@ -1128,6 +1135,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_StartPusher()
+		  Self.mPusher = New Beacon.PusherSocket
+		  If (Self.mIdentityManager Is Nil) = False And Self.mIdentityManager.CurrentUserId.IsEmpty = False Then
+		    Self.mPusher.Start(Self.mIdentityManager.CurrentUserId)
+		  End If
+		  Self.NextLaunchQueueTask
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_SubmitExceptions()
 		  ExceptionWindow.SubmitPendingReports()
 		  Self.NextLaunchQueueTask()
@@ -1342,6 +1359,22 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Next Source
 		      Self.mHasTestedDatabases = True
 		    End If
+		  Case IdentityManager.Notification_IdentityChanged
+		    If (Self.mPusher Is Nil) = False Then
+		      Self.mPusher.Stop
+		      Self.mPusher = Nil
+		    End If
+		    
+		    Self.mPusher = New Beacon.PusherSocket
+		    If (Self.mIdentityManager Is Nil) = False Then
+		      Var UserId As String = Self.mIdentityManager.CurrentUserId
+		      If UserId.IsEmpty = False Then
+		        Self.mPusher.Start(Self.mIdentityManager.CurrentUserId)
+		        Var UserChannelName As String = Beacon.PusherSocket.UserChannelName(UserId)
+		        Self.mPusher.Listen(UserChannelName, "user-updated", AddressOf Pusher_UserUpdated)
+		        Self.mPusher.Listen(UserChannelName, "cloud-updated", AddressOf Pusher_CloudUpdated)
+		      End If
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1435,6 +1468,33 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub PresentException(Err As Variant)
 		  ExceptionWindow.Present(Err)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Pusher() As Beacon.PusherSocket
+		  Return Self.mPusher
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Pusher_CloudUpdated(ChannelName As String, EventName As String, Payload As String)
+		  #Pragma Unused ChannelName
+		  #Pragma Unused EventName
+		  #Pragma Unused Payload
+		  
+		  // Even though the server is telling us changes were made, wait just in case
+		  UserCloud.Sync(False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Pusher_UserUpdated(ChannelName As String, EventName As String, Payload As String)
+		  #Pragma Unused ChannelName
+		  #Pragma Unused EventName
+		  #Pragma Unused Payload
+		  
+		  BeaconAPI.UserController.RefreshUserDetails()
 		End Sub
 	#tag EndMethod
 
@@ -1679,6 +1739,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mPortableMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPusher As Beacon.PusherSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

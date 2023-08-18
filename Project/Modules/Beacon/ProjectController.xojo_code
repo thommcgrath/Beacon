@@ -423,7 +423,11 @@ Protected Class ProjectController
 		    SaveData = Self.mProject.SaveData(Self.mIdentity, True)
 		    
 		    If (SaveData Is Nil) = False And SaveData.Size > 0 Then
-		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request("/projects", "POST", SaveData, "application/x-beacon-project"))
+		      Var Request As New BeaconAPI.Request("/projects", "POST", SaveData, "application/x-beacon-project")
+		      If App.Pusher.SocketId.IsEmpty = False Then
+		        Request.RequestHeader("X-Beacon-Pusher-Id") = App.Pusher.SocketId
+		      End If
+		      Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		      Saved = Response.HTTPStatus = 200 Or Response.HTTPStatus = 201
 		      Message = Self.ErrorMessageFromResponse(Response)
 		    End If
