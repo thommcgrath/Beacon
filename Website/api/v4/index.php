@@ -91,6 +91,9 @@ Core::RegisterRoutes(
 		'/projects/{projectId}/versions/{versionId}' => [
 			'GET' => 'projects/get',
 		],
+		'/pusher' => [
+			'GET' => 'pusher',
+		],
 		'/sentinel/services/{serviceId}/logs' => [
 			'GET' => 'sentinel/service/logs',
 		],

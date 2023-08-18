@@ -32,6 +32,8 @@ $user->SetUsername($_POST['username']);
 if ($user->Commit()) {
 	http_response_code(200);
 	echo json_encode(array('username' => $user->Username(), 'old_username' => $old_username, 'message' => ''), JSON_PRETTY_PRINT);
+	
+	BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
 } else {
 	http_response_code(ERR_USERNAME_TAKEN);
 	echo json_encode(array('username' => $user->Username(), 'old_username' => $old_username, 'message' => 'Username is already taken'), JSON_PRETTY_PRINT);

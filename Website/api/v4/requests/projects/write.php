@@ -34,11 +34,19 @@ function handleRequest(array $context): Response {
 	$project = null;
 	$database = BeaconCommon::Database();
 	try {
+		$user = Core::User();
 		$database->BeginTransaction();
-		$project = Project::Save(Core::User(), $manifest);
+		$project = Project::Save($user, $manifest);
 		$path = $project->CloudStoragePath();
 		BeaconCloudStorage::PutFile($path, file_get_contents('php://input'));
 		$database->Commit();
+		
+		$headers = getallheaders();
+		$pusherSocketId = '';
+		if (empty($headers['X-Beacon-Pusher-Id']) === false) {
+			$pusherSocketId = $headers['X-Beacon-Pusher-Id'];
+		}
+		BeaconPusher::SharedInstance()->TriggerEvent($project->PusherChannelName(), 'project-saved', ['user' => $user], $pusherSocketId);
 	} catch (Exception $err) {
 		$database->Rollback();
 		return Response::NewJsonError($err->getMessage(), null, $err->getCode());

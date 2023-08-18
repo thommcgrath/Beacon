@@ -120,6 +120,8 @@ abstract class UserGenerator {
 			}
 			
 			$database->Commit();
+			
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
 		} catch (Exception $err) {
 			$database->Rollback();
 			throw $err;

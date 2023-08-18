@@ -119,6 +119,12 @@ abstract class BeaconShop {
 		
 		$database->Query('UPDATE purchases SET issued = TRUE WHERE purchase_id = $1;', $purchaseId);
 		$database->Commit();
+		
+		// Notify the user
+		$user = BeaconAPI\v4\User::Fetch($emailId);
+		if (is_null($user)) {
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+		}
 	}
 	
 	public static function RevokePurchases(string $purchaseId, bool $isDisputed = false): bool {
@@ -159,6 +165,12 @@ abstract class BeaconShop {
 			$database->Query('DELETE FROM stw_purchases WHERE original_purchase_id = $1 AND generated_purchase_id IS NULL;', $purchaseId);
 		}
 		$database->Commit();
+		
+		// Notify the user
+		$user = BeaconAPI\v4\User::Fetch($emailId);
+		if (is_null($user)) {
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+		}
 		
 		return true;
 	}

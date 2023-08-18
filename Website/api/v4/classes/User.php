@@ -191,6 +191,10 @@ class User extends DatabaseObject implements JsonSerializable {
 		return $this->userId;
 	}
 	
+	public function PusherChannelName(): string {
+		return 'user-' . strtolower(str_replace('-', '', $this->userId));
+	}
+	
 	public function EmailId(): string {
 		return $this->emailId;
 	}
