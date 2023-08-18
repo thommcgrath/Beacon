@@ -41,14 +41,28 @@ function handleRequest(array $context): ?Response {
 		if (BeaconCloudStorage::PutFile($remote_path, Core::Body())) {
 			$details = BeaconCloudStorage::DetailsForFile($remote_path);
 			$details['path'] = substr($details['path'], $prefix_len);
-			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', '');
+			
+			$headers = getallheaders();
+			$pusherSocketId = '';
+			if (empty($headers['X-Beacon-Pusher-Id']) === false) {
+				$pusherSocketId = $headers['X-Beacon-Pusher-Id'];
+			}
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', '', $pusherSocketId);
+			
 			return Response::NewJson($details, 200);
 		} else {
 			return Response::NewJsonError('Something went wrong', null, 500);
 		}
 	case 'DELETE /files/{...filePath}':
 		BeaconCloudStorage::DeleteFile($remote_path);
-		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', '');
+		
+		$headers = getallheaders();
+		$pusherSocketId = '';
+		if (empty($headers['X-Beacon-Pusher-Id']) === false) {
+			$pusherSocketId = $headers['X-Beacon-Pusher-Id'];
+		}
+		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', '', $pusherSocketId);
+		
 		return Response::NewNoContent();
 	}
 	

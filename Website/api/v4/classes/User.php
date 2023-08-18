@@ -6,6 +6,7 @@ use BeaconCloudStorage, BeaconCommon, BeaconEmail, BeaconEncryption, BeaconRecor
 class User extends DatabaseObject implements JsonSerializable {
 	use MutableDatabaseObject {
 		Edit as protected MutableDatabaseObjectEdit;
+		Validate as protected MutableDatabaseObjectValidate;
 		HasPendingChanges as protected MutableDatabaseObjectHasPendingChanges;
 		SaveChildObjects as protected MutableDatabaseObjectSaveChildObjects;
 		CleanupChildObjects as protected MutableDatabaseObjectCleanupChildObjects;
@@ -183,6 +184,14 @@ class User extends DatabaseObject implements JsonSerializable {
 			'userId' => $this->userId,
 			'username' => $this->username,
 		];
+	}
+	
+	protected static function Validate(array $properties): void {
+		static::MutableDatabaseObjectValidate($properties);
+		
+		if (static::ValidateUsername($properties['username']) === false) {
+			throw new Exception('Invalid username.');
+		}
 	}
 	
 	/* !Basic Properties */
