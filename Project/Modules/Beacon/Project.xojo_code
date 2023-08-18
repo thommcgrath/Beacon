@@ -1282,6 +1282,9 @@ Implements ObservationKit.Observable
 		Function RemoveMember(UserId As String) As Boolean
 		  UserId = UserId.Lowercase
 		  If Self.mMembers.HasKey(UserId) Then
+		    If Self.mLoadedUserId = UserId Then
+		      Self.mRole = Beacon.ProjectMember.RoleGuest
+		    End If
 		    Self.mMembers.Remove(UserId)
 		    Self.Modified = True
 		    Return True
