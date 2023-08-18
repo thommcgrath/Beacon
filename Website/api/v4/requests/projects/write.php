@@ -41,11 +41,7 @@ function handleRequest(array $context): Response {
 		BeaconCloudStorage::PutFile($path, file_get_contents('php://input'));
 		$database->Commit();
 		
-		$headers = getallheaders();
-		$pusherSocketId = '';
-		if (empty($headers['X-Beacon-Pusher-Id']) === false) {
-			$pusherSocketId = $headers['X-Beacon-Pusher-Id'];
-		}
+		$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
 		BeaconPusher::SharedInstance()->TriggerEvent($project->PusherChannelName(), 'project-saved', ['user' => $user], $pusherSocketId);
 	} catch (Exception $err) {
 		$database->Rollback();

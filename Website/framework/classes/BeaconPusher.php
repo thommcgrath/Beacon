@@ -64,6 +64,10 @@ class BeaconPusher {
 		
 		return $status === 200;
 	}
+	
+	public static function SocketIdFromHeaders(): string {
+		return $_SERVER['HTTP_X_BEACON_PUSHER_ID'] ?? '';
+	}
 }
 
 ?>

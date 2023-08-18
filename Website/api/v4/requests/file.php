@@ -42,11 +42,7 @@ function handleRequest(array $context): ?Response {
 			$details = BeaconCloudStorage::DetailsForFile($remote_path);
 			$details['path'] = substr($details['path'], $prefix_len);
 			
-			$headers = getallheaders();
-			$pusherSocketId = '';
-			if (empty($headers['X-Beacon-Pusher-Id']) === false) {
-				$pusherSocketId = $headers['X-Beacon-Pusher-Id'];
-			}
+			$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
 			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', '', $pusherSocketId);
 			
 			return Response::NewJson($details, 200);
@@ -56,11 +52,7 @@ function handleRequest(array $context): ?Response {
 	case 'DELETE /files/{...filePath}':
 		BeaconCloudStorage::DeleteFile($remote_path);
 		
-		$headers = getallheaders();
-		$pusherSocketId = '';
-		if (empty($headers['X-Beacon-Pusher-Id']) === false) {
-			$pusherSocketId = $headers['X-Beacon-Pusher-Id'];
-		}
+		$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
 		BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'cloud-updated', '', $pusherSocketId);
 		
 		return Response::NewNoContent();

@@ -32,6 +32,9 @@ function handleRequest(array $context): Response {
 	}
 	$member->Delete();
 	
+	$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
+	BeaconPusher::SharedInstance()->TriggerEvent($project->PusherChannelName(), 'members-updated', '', $pusherSocketId);
+	
 	return Response::NewJson('Member has been removed from the project.', 200);
 }
 

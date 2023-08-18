@@ -47,6 +47,9 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('User was not added to project.', null, 500);
 	}
 	
+	$pusherSocketId = BeaconPusher::SocketIdFromHeaders();
+	BeaconPusher::SharedInstance()->TriggerEvent($project->PusherChannelName(), 'members-updated', '', $pusherSocketId);
+	
 	return Response::NewJson($member, 200);
 }
 
