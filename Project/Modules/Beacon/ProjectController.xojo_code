@@ -411,6 +411,14 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Thread_UpdateProjectMembers(Sender As Thread)
+		  #Pragma Unused Sender
+		  
+		  Self.UpdateProjectMembers(Self.Project)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Thread_Upload(Sender As Thread)
 		  #Pragma Unused Sender
 		  
@@ -545,6 +553,14 @@ Protected Class ProjectController
 	#tag Method, Flags = &h21
 		Private Sub TriggerWriteSuccess()
 		  RaiseEvent WriteSuccess
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateProjectMembers()
+		  Var UpdaterThread As New Thread
+		  AddHandler UpdaterThread.Run, WeakAddressOf Thread_UpdateProjectMembers
+		  UpdaterThread.Start
 		End Sub
 	#tag EndMethod
 

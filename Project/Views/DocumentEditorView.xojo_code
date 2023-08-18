@@ -419,6 +419,16 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Pusher_MembersUpdated(ChannelName As String, EventName As String, Payload As String)
+		  #Pragma Unused ChannelName
+		  #Pragma Unused EventName
+		  #Pragma Unused Payload
+		  
+		  Self.mController.UpdateProjectMembers()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Pusher_ProjectSaved(ChannelName As String, EventName As String, Payload As String)
 		  #Pragma Unused ChannelName
 		  #Pragma Unused EventName
@@ -531,6 +541,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    If ProjectChannel.IsEmpty = False Then
 		      App.Pusher.Subscribe(ProjectChannel)
 		      App.Pusher.Listen(ProjectChannel, "project-saved", WeakAddressOf Pusher_ProjectSaved)
+		      App.Pusher.Listen(ProjectChannel, "members-updated", WeakAddressOf Pusher_MembersUpdated)
 		      Self.mSubscribedToProjectChannel = True
 		    End If
 		  End Select
@@ -551,6 +562,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  
 		  App.Pusher.Unsubscribe(Self.ProjectChannel)
 		  App.Pusher.Ignore(ProjectChannel, "project-saved", WeakAddressOf Pusher_ProjectSaved)
+		  App.Pusher.Ignore(ProjectChannel, "members-updated", WeakAddressOf Pusher_MembersUpdated)
 		  Self.mSubscribedToProjectChannel = False
 		End Sub
 	#tag EndMethod

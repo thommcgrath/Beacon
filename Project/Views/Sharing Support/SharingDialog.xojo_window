@@ -176,7 +176,7 @@ Begin BeaconDialog SharingDialog
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin DesktopButton UserListRefreshButton
+      Begin UITweaks.ResizedPushButton UserListRefreshButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
