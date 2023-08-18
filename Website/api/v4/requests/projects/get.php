@@ -15,13 +15,15 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('Must use a v4 UUID', $projectId, 400);
 	}
 	
+	$project = null;
 	if ($authorizedUserId) {
 		$project = Project::FetchForUser($projectId, $authorizedUserId);
-	} else {
-		$project = Project::Fetch($projectId);
 	}
 	if (is_null($project)) {
-		return Response::NewJsonError('Project not found', $projectId, 404);
+		$project = Project::Fetch($projectId);
+		if (is_null($project) || $project->IsPublic() === false) {
+			return Response::NewJsonError('Project not found', $projectId, 404);
+		}
 	}
 	
 	switch ($context['routeKey']) {
