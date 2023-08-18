@@ -3,10 +3,17 @@
 use BeaconAPI\v4\{Core, Response};
 
 function handleRequest(array $context): Response {
-	return Response::NewJson([
-		'cluster' => BeaconCommon::GetGlobal('Pusher Cluster'),
-		'key' => BeaconCommon::GetGlobal('Pusher Key'),
-	], 200);
+	$user = Core::User();
+	$enabled = $user->IsAnonymous() === false;
+	$response = [
+		'enabled' => $enabled,
+	];
+	if ($enabled) {
+		$response['cluster'] = BeaconCommon::GetGlobal('Pusher Cluster');
+		$response['key'] = BeaconCommon::GetGlobal('Pusher Key');
+	}
+	
+	return Response::NewJson($response, 200);
 }
 
 ?>
