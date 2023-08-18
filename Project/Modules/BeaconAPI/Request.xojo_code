@@ -157,6 +157,10 @@ Protected Class Request
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h0
+		AutoRenew As Boolean = True
+	#tag EndProperty
+
 	#tag Property, Flags = &h1
 		Protected mCallback As ReplyCallback
 	#tag EndProperty

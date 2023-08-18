@@ -15,7 +15,7 @@ Protected Class Socket
 		    Else
 		      Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
 		      If (Token Is Nil) = False Then
-		        If Token.AccessTokenExpired Then
+		        If Token.AccessTokenExpired And Request.AutoRenew Then
 		          // insert a new refresh request
 		          Var Params As New Dictionary
 		          Params.Value("grant_type") = "refresh_token"

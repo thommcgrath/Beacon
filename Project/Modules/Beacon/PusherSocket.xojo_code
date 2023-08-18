@@ -43,15 +43,27 @@ Protected Class PusherSocket
 
 	#tag Method, Flags = &h21
 		Private Sub mRunThread_Run(Sender As Global.Thread)
+		  If Preferences.OnlineEnabled = False Then
+		    Return
+		  End If
+		  
 		  Var ClusterId, AppKey As String
 		  Try
-		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(New BeaconAPI.Request("/pusher", "GET"))
+		    Var Request As New BeaconAPI.Request("/pusher", "GET")
+		    Request.AutoRenew = False
+		    
+		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		    If Not Response.Success Then
 		      App.Log("Could not fetch pusher credentials")
 		      Return
 		    End If
 		    
 		    Var Dict As Dictionary = Response.Json
+		    Var Enabled As Boolean = Dict.Lookup("enabled", False)
+		    If Not Enabled Then
+		      App.Log("Realtime communication is disabled")
+		      Return
+		    End If
 		    ClusterId = Dict.Value("cluster")
 		    AppKey = Dict.Value("key")
 		  Catch Err As RuntimeException
@@ -94,6 +106,10 @@ Protected Class PusherSocket
 		  
 		  Curl.OptionTimeOut = 2
 		  
+		  Var LastExchangeTime As Double
+		  Var SentPing As Boolean
+		  Var ActivityTimeout As Integer = 120
+		  Var PongWaitTime As Integer = 30
 		  While Self.mStopped = False
 		    If Self.mPendingMessages.Count > 0 Then
 		      Var Dict As Dictionary = Self.mPendingMessages(0)
@@ -105,9 +121,42 @@ Protected Class PusherSocket
 		      End
 		    End If
 		    
+		    Var Now As Double = DateTime.Now.SecondsFrom1970
+		    If LastExchangeTime = 0 Then
+		      LastExchangeTime = Now
+		    End If
+		    
 		    Var Message As CURLSWebSocketFrameMBS = Curl.WebSocketReceive
 		    If Message Is Nil Then
+		      If SentPing = False And Now - LastExchangeTime > ActivityTimeout Then
+		        Call Curl.WebSocketSend("", 0, CURLSWebSocketFrameMBS.kFlagPing)
+		        #if DebugBuild
+		          System.DebugLog("Sent ping")
+		        #endif
+		        SentPing = True
+		      ElseIf SentPing = True And Now - LastExchangeTime > ActivityTimeout + PongWaitTime Then
+		        // Connection has failed
+		        App.Log("Pusher connection failed to respond to ping messages.")
+		        Exit While
+		      End If
+		      
 		      Sender.Sleep(500)
+		      Continue
+		    End If
+		    
+		    LastExchangeTime = Now
+		    SentPing = False
+		    
+		    If Message.FlagPing Then
+		      Call Curl.WebSocketSend("", 0, CURLSWebSocketFrameMBS.kFlagPong)
+		      #if DebugBuild
+		        System.DebugLog("Sent pong")
+		      #endif
+		      Continue
+		    ElseIf Message.FlagPong Then
+		      #if DebugBuild
+		        System.DebugLog("Received pong")
+		      #endif
 		      Continue
 		    End If
 		    
@@ -118,6 +167,7 @@ Protected Class PusherSocket
 		      Case "pusher:connection_established"
 		        Var ConnectionInfo As Dictionary = Beacon.ParseJson(Json.Value("data").StringValue)
 		        Self.mSocketId = ConnectionInfo.Value("socket_id")
+		        ActivityTimeout = ConnectionInfo.Lookup("activity_timeout", ActivityTimeout)
 		        #if DebugBuild
 		          System.DebugLog("Connected, socket is " + Self.mSocketId)
 		        #endif

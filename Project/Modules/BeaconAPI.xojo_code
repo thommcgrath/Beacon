@@ -95,7 +95,7 @@ Protected Module BeaconAPI
 		    Else
 		      Var Token As BeaconAPI.OAuthToken = Preferences.BeaconAuth
 		      If (Token Is Nil) = False Then
-		        If Token.AccessTokenExpired Then
+		        If Token.AccessTokenExpired And Request.AutoRenew Then
 		          Var Params As New Dictionary
 		          Params.Value("grant_type") = "refresh_token"
 		          Params.Value("client_id") = BeaconAPI.ClientId
@@ -105,7 +105,14 @@ Protected Module BeaconAPI
 		          Var RefreshSocket As New SimpleHTTP.SynchronousHTTPSocket
 		          RefreshSocket.SetRequestContent(SimpleHTTP.BuildFormData(Params), "application/x-www-form-urlencoded")
 		          
-		          RefreshSocket.Send("POST", BeaconAPI.URL("/login"))
+		          Var LoginUrl As String = BeaconAPI.URL("/login")
+		          #if DebugBuild
+		            System.DebugLog("POST " + LoginUrl)
+		          #endif
+		          RefreshSocket.Send("POST", LoginUrl)
+		          #if DebugBuild
+		            System.DebugLog("POST " + LoginUrl + ": " + RefreshSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		          #endif
 		          Var RefreshResponse As String = RefreshSocket.LastContent
 		          If RefreshSocket.LastHTTPStatus = 201 Then
 		            Token = BeaconAPI.OAuthToken.Load(RefreshResponse)
@@ -124,6 +131,9 @@ Protected Module BeaconAPI
 		  Var ResponseHeaders As New Dictionary
 		  Try
 		    Socket.Send(Request.Method, URL)
+		    #if DebugBuild
+		      System.DebugLog(Request.Method + " " + URL + ": " + Socket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		    #endif
 		    ResponseBody = Socket.LastContent
 		    For Each Header As Pair In Socket.ResponseHeaders
 		      ResponseHeaders.Value(Header.Left) = Header.Right
