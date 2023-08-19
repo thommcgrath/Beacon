@@ -35,5 +35,8 @@ To better support dark mode users, avoid adding additional colors to pages. If a
 
 ## Beacon Application
 
+TBD
+
 ## Beacon Website
 
+TBD
