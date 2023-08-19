@@ -3,19 +3,26 @@ Protected Class Project
 Inherits Beacon.Project
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As SDTD.ConfigGroup)
-		  Self.AddConfigGroup(Group, Self.ActiveConfigSet)
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
+		  If Group IsA SDTD.ConfigGroup Then
+		    Super.AddConfigGroup(Group, Self.ActiveConfigSet)
+		  Else
+		    Var Err As UnsupportedOperationException
+		    Err.Message = "Wrong config group subclass for project"
+		    Raise Err
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As SDTD.ConfigGroup, Set As Beacon.ConfigSet)
-		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
-		  If SetDict Is Nil Then
-		    SetDict = New Dictionary
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup, Set As Beacon.ConfigSet)
+		  If Group IsA SDTD.ConfigGroup Then
+		    Super.AddConfigGroup(Group, Set)
+		  Else
+		    Var Err As UnsupportedOperationException
+		    Err.Message = "Wrong config group subclass for project"
+		    Raise Err
 		  End If
-		  SetDict.Value(Group.InternalName) = Group
-		  Self.ConfigSetData(Set) = SetDict
 		End Sub
 	#tag EndMethod
 
@@ -67,8 +74,7 @@ Inherits Beacon.Project
 		  Var Instances As New Dictionary
 		  For Idx As Integer = 0 To Sets.LastIndex
 		    Var Set As Beacon.ConfigSet = Sets(Idx)
-		    Var Groups() As SDTD.ConfigGroup = Self.ImplementedConfigs(Set)
-		    For Each Group As SDTD.ConfigGroup In Groups
+		    For Each Group As SDTD.ConfigGroup In Self.ImplementedConfigs(Set)
 		      Var Siblings() As SDTD.ConfigGroup
 		      If Instances.HasKey(Group.InternalName) Then
 		        Siblings = Instances.Value(Group.InternalName)
@@ -157,36 +163,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImplementedConfigs() As SDTD.ConfigGroup()
-		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
-		  Var Groups() As SDTD.ConfigGroup
-		  For Each Set As Beacon.ConfigSet In Sets
-		    Var SetGroups() As SDTD.ConfigGroup = Self.ImplementedConfigs(Set)
-		    For Each Group As SDTD.ConfigGroup In SetGroups
-		      Groups.Add(Group)
-		    Next
-		  Next
-		  Return Groups
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ImplementedConfigs(Set As Beacon.ConfigSet) As SDTD.ConfigGroup()
-		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
-		  Var Groups() As SDTD.ConfigGroup
-		  If (SetDict Is Nil) = False Then
-		    For Each Entry As DictionaryEntry In SetDict
-		      Var Group As SDTD.ConfigGroup = Entry.Value
-		      If Group.IsImplicit = False Or Set.IsBase Then
-		        Groups.Add(Group)
-		      End If
-		    Next
-		  End If
-		  Return Groups
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub RemoveConfigGroup(Group As SDTD.ConfigGroup)
 		  If Group Is Nil Then
 		    Return
@@ -224,9 +200,8 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function UsesOmniFeaturesWithoutOmni(Identity As Beacon.Identity) As SDTD.ConfigGroup()
-		  Var Configs() As SDTD.ConfigGroup = Self.ImplementedConfigs()
 		  Var ExcludedConfigs() As SDTD.ConfigGroup
-		  For Each Config As SDTD.ConfigGroup In Configs
+		  For Each Config As SDTD.ConfigGroup In Self.ImplementedConfigs()
 		    If SDTD.Configs.ConfigUnlocked(Config, Identity) = False Then
 		      ExcludedConfigs.Add(Config)
 		    End If
@@ -236,5 +211,47 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

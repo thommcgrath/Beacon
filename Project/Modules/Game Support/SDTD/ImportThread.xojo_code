@@ -4,13 +4,79 @@ Inherits Beacon.Thread
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Run()
-		  Self.Status = "Doing nothing…"
-		  Self.Sleep(5000)
-		  Self.Status = "Done"
+		  Var Files As New Dictionary
+		  Var Filenames() As String = Self.mData.Filenames
+		  #Pragma BreakOnExceptions Off
+		  For Each Filename As String In Filenames
+		    Self.Status = "Parsing " + Filename + "…"
+		    Try
+		      Var Doc As New XmlDocument(Self.mData.File(Filename))
+		      Files.Value(Filename) = Doc
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  #Pragma BreakOnExceptions Default
+		  
+		  Self.Status = "Building Beacon project…"
+		  Try
+		    Self.mCreatedProject = Self.BuildProject(Files)
+		  Catch Err As RuntimeException
+		  End Try
+		  Self.Status = "Finished"
 		  Self.mFinished = True
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function BuildProject(Files As Dictionary) As SDTD.Project
+		  Var Profile As SDTD.ServerProfile
+		  If (Self.mData Is Nil) = False And (Self.mData.Profile Is Nil) = False Then
+		    Profile = Self.mData.Profile
+		  End If
+		  
+		  Var Project As New SDTD.Project
+		  
+		  If (Self.mDestinationProject Is Nil) = False Then
+		    Var DestinationPacks As Beacon.StringList = Self.mDestinationProject.ContentPacks
+		    For Each ContentPackId As String In DestinationPacks
+		      Project.ContentPackEnabled(ContentPackId) = True
+		    Next
+		  End If
+		  
+		  Var ConfigNames() As String = SDTD.Configs.AllNames()
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  Var Configs() As SDTD.ConfigGroup
+		  For Each ConfigName As String In ConfigNames
+		    If ConfigName = SDTD.Configs.NameCustomConfig Then
+		      // Custom content is special
+		      Continue For ConfigName
+		    End If
+		    
+		    If SDTD.Configs.ConfigUnlocked(ConfigName, Identity) = False Then
+		      // Do not import code for groups that the user has not purchased
+		      Continue For ConfigName
+		    End If
+		    
+		    Self.Status = "Building Beacon project… (" + Language.LabelForConfig(ConfigName) + ")"
+		    Var Group As SDTD.ConfigGroup
+		    Try
+		      Group = SDTD.Configs.CreateInstance(ConfigName, Files, Project)
+		    Catch Err As RuntimeException
+		    End Try
+		    If (Group Is Nil) = False Then
+		      Project.AddConfigGroup(Group)
+		      Configs.Add(Group)
+		    End If
+		  Next
+		  
+		  // Now split the content into values and remove the ones controlled by the imported groups
+		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(SDTD.Configs.NameCustomConfig) + ")"
+		  #Pragma Warning "Does not parse custom config"
+		  
+		  Return Project
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Cancel()

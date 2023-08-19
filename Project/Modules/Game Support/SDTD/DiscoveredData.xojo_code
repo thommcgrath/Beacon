@@ -31,9 +31,31 @@ Inherits Beacon.DiscoveredData
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Filenames() As String()
+		  Var Arr() As String
+		  For Each Entry As DictionaryEntry In Self.mFiles
+		    Arr.Add(Entry.Key)
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasFile(Path As String) As Boolean
 		  Return Self.mFiles.HasKey(Path)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Profile() As SDTD.ServerProfile
+		  Return SDTD.ServerProfile(Super.Profile)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Profile(Assigns Value As SDTD.ServerProfile)
+		  Super.Profile = Value
+		End Sub
 	#tag EndMethod
 
 

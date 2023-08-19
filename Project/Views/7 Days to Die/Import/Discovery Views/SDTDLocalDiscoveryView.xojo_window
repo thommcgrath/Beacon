@@ -537,13 +537,13 @@ End
 		  
 		  Var Data As New SDTD.DiscoveredData
 		  Data.Profile = Profile
-		  If Self.mServerAdminXml.IsEmpty Then
+		  If Self.mServerAdminXml.IsEmpty = False Then
 		    Data.File(SDTD.ConfigFileServerAdminXml) = Self.mServerAdminXml
 		  End If
-		  If Self.mServerConfigXml.IsEmpty Then
+		  If Self.mServerConfigXml.IsEmpty = False Then
 		    Data.File(SDTD.ConfigFileServerConfigXml) = Self.mServerConfigXml
 		  End If
-		  If Self.mWebPermissionsXml.IsEmpty Then
+		  If Self.mWebPermissionsXml.IsEmpty = False Then
 		    Data.File(SDTD.ConfigFileWebPermissionsXml) = Self.mWebPermissionsXml
 		  End If
 		  

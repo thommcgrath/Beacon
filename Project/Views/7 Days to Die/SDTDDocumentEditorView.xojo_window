@@ -265,6 +265,29 @@ End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  If (Self.Project Is Nil) = False Then
+		    Var ProjectId As String = Self.Project.ProjectId
+		    Var LastConfigName As String = Preferences.ProjectState(ProjectId, "Editor", "")
+		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(ProjectId, "Config Set", "").StringValue)
+		    If LastConfigName.IsEmpty Or LastConfigSet Is Nil Then
+		      If Self.URL.Type.OneOf(Beacon.ProjectURL.TypeWeb, Beacon.ProjectURL.TypeCommunity) Then
+		        LastConfigName = SDTD.Configs.NameMetadata
+		      Else
+		        LastConfigName = SDTD.Configs.NameGeneralSettings
+		      End If
+		      LastConfigSet = Beacon.ConfigSet.BaseConfigSet
+		    End If
+		    Self.ActiveConfigSet = LastConfigSet
+		    Self.CurrentConfigName = LastConfigName
+		  End If
+		  
+		  RaiseEvent Opening
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub ActiveConfigSet(Assigns Value As Beacon.ConfigSet)
 		  Var ConfigName As String = Self.CurrentConfigName
@@ -697,6 +720,11 @@ End
 		  Self.UpdateConfigList()
 		End Sub
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Opening()
+	#tag EndHook
 
 
 	#tag Property, Flags = &h21

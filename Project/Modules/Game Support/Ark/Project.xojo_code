@@ -244,8 +244,7 @@ Inherits Beacon.Project
 		  
 		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets()
 		  For Each Set As Beacon.ConfigSet In Sets
-		    Var Configs() As Ark.ConfigGroup = Self.ImplementedConfigs(Set)
-		    For Each Config As Ark.ConfigGroup In Configs
+		    For Each Config As Ark.ConfigGroup In Self.ImplementedConfigs(Set)
 		      Config.Validate(Set.ConfigSetId, Issues, Self)
 		    Next
 		  Next
@@ -254,19 +253,26 @@ Inherits Beacon.Project
 
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As Ark.ConfigGroup)
-		  Self.AddConfigGroup(Group, Self.ActiveConfigSet)
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
+		  If Group IsA Ark.ConfigGroup Then
+		    Super.AddConfigGroup(Group, Self.ActiveConfigSet)
+		  Else
+		    Var Err As UnsupportedOperationException
+		    Err.Message = "Wrong config group subclass for project"
+		    Raise Err
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As Ark.ConfigGroup, Set As Beacon.ConfigSet)
-		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
-		  If SetDict Is Nil Then
-		    SetDict = New Dictionary
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup, Set As Beacon.ConfigSet)
+		  If Group IsA Ark.ConfigGroup Then
+		    Super.AddConfigGroup(Group, Set)
+		  Else
+		    Var Err As UnsupportedOperationException
+		    Err.Message = "Wrong config group subclass for project"
+		    Raise Err
 		  End If
-		  SetDict.Value(Group.InternalName) = Group
-		  Self.ConfigSetData(Set) = SetDict
 		End Sub
 	#tag EndMethod
 
@@ -333,8 +339,7 @@ Inherits Beacon.Project
 		  Var Instances As New Dictionary
 		  For Idx As Integer = 0 To Sets.LastIndex
 		    Var Set As Beacon.ConfigSet = Sets(Idx)
-		    Var Groups() As Ark.ConfigGroup = Self.ImplementedConfigs(Set)
-		    For Each Group As Ark.ConfigGroup In Groups
+		    For Each Group As Ark.ConfigGroup In Self.ImplementedConfigs(Set)
 		      Var Siblings() As Ark.ConfigGroup
 		      If Instances.HasKey(Group.InternalName) Then
 		        Siblings = Instances.Value(Group.InternalName)
@@ -741,36 +746,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImplementedConfigs() As Ark.ConfigGroup()
-		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
-		  Var Groups() As Ark.ConfigGroup
-		  For Each Set As Beacon.ConfigSet In Sets
-		    Var SetGroups() As Ark.ConfigGroup = Self.ImplementedConfigs(Set)
-		    For Each Group As Ark.ConfigGroup In SetGroups
-		      Groups.Add(Group)
-		    Next
-		  Next
-		  Return Groups
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ImplementedConfigs(Set As Beacon.ConfigSet) As Ark.ConfigGroup()
-		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
-		  Var Groups() As Ark.ConfigGroup
-		  If (SetDict Is Nil) = False Then
-		    For Each Entry As DictionaryEntry In SetDict
-		      Var Group As Ark.ConfigGroup = Entry.Value
-		      If Group.IsImplicit = False Or Set.IsBase Then
-		        Groups.Add(Group)
-		      End If
-		    Next
-		  End If
-		  Return Groups
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function MapMask() As UInt64
 		  Return Self.mMapMask
 		End Function
@@ -905,9 +880,8 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function UsesOmniFeaturesWithoutOmni(Identity As Beacon.Identity) As Ark.ConfigGroup()
-		  Var Configs() As Ark.ConfigGroup = Self.ImplementedConfigs()
 		  Var ExcludedConfigs() As Ark.ConfigGroup
-		  For Each Config As Ark.ConfigGroup In Configs
+		  For Each Config As Ark.ConfigGroup In Self.ImplementedConfigs()
 		    If Ark.Configs.ConfigUnlocked(Config, Identity) = False Then
 		      ExcludedConfigs.Add(Config)
 		    End If

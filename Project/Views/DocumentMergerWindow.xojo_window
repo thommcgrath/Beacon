@@ -108,6 +108,7 @@ Begin BeaconDialog DocumentMergerWindow
       TabStop         =   True
       Tooltip         =   ""
       Top             =   60
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -226,14 +227,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function BestModeForItem(MergeItem As Beacon.DocumentMergeItem) As Integer
-		  If (MergeItem IsA Ark.DocumentMergeConfigGroupItem) = False Then
+		  If (MergeItem IsA Beacon.DocumentMergeConfigGroupItem) = False Then
 		    Return Beacon.DocumentMergeItem.ModeReplace
 		  End If
 		  
-		  Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
-		  Var Siblings() As Ark.DocumentMergeConfigGroupItem = Self.SiblingItems(ConfigItem)
+		  Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
+		  Var Siblings() As Beacon.DocumentMergeConfigGroupItem = Self.SiblingItems(ConfigItem)
 		  Var SiblingIsInReplaceMode, SiblingIsInHighPriorityMode As Boolean
-		  For Each SiblingItem As Ark.DocumentMergeConfigGroupItem In Siblings
+		  For Each SiblingItem As Beacon.DocumentMergeConfigGroupItem In Siblings
 		    If SiblingItem.Mode = Beacon.DocumentMergeItem.ModeReplace Then
 		      SiblingIsInReplaceMode = True
 		    ElseIf SiblingItem.Mode = Beacon.DocumentMergeItem.ModeMergeImportPriority Then
@@ -309,12 +310,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ModesForItem(MergeItem As Beacon.DocumentMergeItem, ByRef CanBeImported As Boolean) As String()
-		  If (MergeItem IsA Ark.DocumentMergeConfigGroupItem) = False Then
+		  If (MergeItem IsA Beacon.DocumentMergeConfigGroupItem) = False Then
 		    CanBeImported = True
 		    Return Array(Self.StrDoNotImport, Self.StrAdd)
 		  End If
 		  
-		  Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
+		  Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
 		  Var Options(0) As String
 		  Options(0) = Self.StrDoNotImport
 		  
@@ -344,8 +345,8 @@ End
 		  Else
 		    If ConfigItem.SupportsMerging Then
 		      Var AllowReplace As Boolean = True
-		      Var Siblings() As Ark.DocumentMergeConfigGroupItem = Self.SiblingItems(ConfigItem)
-		      For Each SiblingItem As Ark.DocumentMergeConfigGroupItem In Siblings
+		      Var Siblings() As Beacon.DocumentMergeConfigGroupItem = Self.SiblingItems(ConfigItem)
+		      For Each SiblingItem As Beacon.DocumentMergeConfigGroupItem In Siblings
 		        If SiblingItem.Mode = Beacon.DocumentMergeItem.ModeReplace Then
 		          AllowReplace = False
 		          Exit For SiblingItem
@@ -396,37 +397,37 @@ End
 		  Var DesiredArkMask As UInt64
 		  Var UniqueContentPacks As New Dictionary
 		  For Each SourceProject As Beacon.Project In SourceProjects
-		    If SourceProject IsA Ark.Project Then
-		      Var ArkProject As Ark.Project = Ark.Project(SourceProject)
-		      
-		      // Config Groups
-		      Var Sets() As Beacon.ConfigSet = SourceProject.ConfigSets
-		      For Each Set As Beacon.ConfigSet In Sets
-		        Var Configs() As Ark.ConfigGroup = ArkProject.ImplementedConfigs(Set)
-		        For Each Config As Ark.ConfigGroup In Configs
-		          Var MergeItem As New Ark.DocumentMergeConfigGroupItem(Config, ArkProject, Set)
-		          If ShowConfigSetNames Then
-		            MergeItem.Label = Set.Name + ": " + MergeItem.Label
-		          End If
-		          If UseServerNames Then
-		            MergeItem.Label = MergeItem.Label + EndOfLine + "From " + ArkProject.Title
-		          End If
-		          MergeItem.DestinationConfigSet = ActiveConfigSet
-		          MergeItems.Add(MergeItem)
-		        Next
+		    // Config Groups
+		    Var Sets() As Beacon.ConfigSet = SourceProject.ConfigSets
+		    For Each Set As Beacon.ConfigSet In Sets
+		      For Each Config As Beacon.ConfigGroup In SourceProject.ImplementedConfigs(Set)
+		        Var MergeItem As New Beacon.DocumentMergeConfigGroupItem(Config, SourceProject, Set)
+		        If ShowConfigSetNames Then
+		          MergeItem.Label = Set.Name + ": " + MergeItem.Label
+		        End If
+		        If UseServerNames Then
+		          MergeItem.Label = MergeItem.Label + EndOfLine + "From " + SourceProject.Title
+		        End If
+		        MergeItem.DestinationConfigSet = ActiveConfigSet
+		        MergeItems.Add(MergeItem)
 		      Next
+		    Next
+		    
+		    Select Case SourceProject
+		    Case IsA Ark.Project
+		      Var ArkProject As Ark.Project = Ark.Project(SourceProject)
 		      
 		      // Maps to be handled after the loop
 		      DesiredArkMask = DesiredArkMask Or ArkProject.MapMask
-		      
-		      // Content Packs
-		      Var EnabledContentPacks() As String = ArkProject.ContentPacks
-		      For Each PackUUID As String In EnabledContentPacks
-		        If UniqueContentPacks.HasKey(PackUUID) = False Then
-		          UniqueContentPacks.Value(PackUUID) = True
-		        End If
-		      Next
-		    End If
+		    End Select
+		    
+		    // Content Packs
+		    Var EnabledContentPacks() As String = SourceProject.ContentPacks
+		    For Each ContentPackId As String In EnabledContentPacks
+		      If UniqueContentPacks.HasKey(ContentPackId) = False Then
+		        UniqueContentPacks.Value(ContentPackId) = True
+		      End If
+		    Next
 		    
 		    // Profiles
 		    Var ProfileBound As Integer = SourceProject.ServerProfileCount - 1
@@ -483,7 +484,7 @@ End
 		      Var PackId As String = Entry.Key
 		      Var Pack As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(PackId)
 		      If (Pack Is Nil) = False And ArkProject.ContentPackEnabled(PackId) = False Then
-		        MergeItems.Add(New Ark.DocumentMergeContentPackItem(Pack))
+		        MergeItems.Add(New Beacon.DocumentMergeContentPackItem(Pack))
 		      End If
 		    Next
 		  End If
@@ -509,19 +510,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SiblingItems(TargetConfigItem As Ark.DocumentMergeConfigGroupItem) As Ark.DocumentMergeConfigGroupItem()
-		  Var Results() As Ark.DocumentMergeConfigGroupItem
+		Private Function SiblingItems(TargetConfigItem As Beacon.DocumentMergeConfigGroupItem) As Beacon.DocumentMergeConfigGroupItem()
+		  Var Results() As Beacon.DocumentMergeConfigGroupItem
 		  If TargetConfigItem Is Nil Then
 		    Return Results
 		  End If
 		  Var TargetKey As String = TargetConfigItem.OrganizationKey
 		  For RowIdx As Integer = 0 To Self.List.LastRowIndex
 		    Var MergeItem As Beacon.DocumentMergeItem = Self.List.RowTagAt(RowIdx)
-		    If (MergeItem IsA Ark.DocumentMergeConfigGroupItem) = False Then
+		    If (MergeItem IsA Beacon.DocumentMergeConfigGroupItem) = False Then
 		      Continue
 		    End If
 		    
-		    Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
+		    Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
 		    If ConfigItem.OrganizationKey <> TargetKey Or ConfigItem.SourceKey = TargetConfigItem.SourceKey Then
 		      Continue
 		    End If
@@ -549,18 +550,17 @@ End
 		  If Self.mDestination IsA Ark.Project Then
 		    Var ConfigSets() As Beacon.ConfigSet = Self.mDestination.ConfigSets
 		    For Each ConfigSet As Beacon.ConfigSet In ConfigSets
-		      Var Groups() As Ark.ConfigGroup = Ark.Project(Self.mDestination).ImplementedConfigs(ConfigSet)
-		      For Each Group As Ark.ConfigGroup In Groups
+		      For Each Group As Ark.ConfigGroup In Ark.Project(Self.mDestination).ImplementedConfigs(ConfigSet)
 		        ConfigMap.Value(ConfigSet.ConfigSetId + ":" + Group.InternalName) = Array(Self.mDestination.ProjectId + ":" + ConfigSet.ConfigSetId)
 		      Next
 		    Next
 		    For RowIndex As Integer = 0 To Self.List.LastRowIndex
 		      Var MergeItem As Beacon.DocumentMergeItem = Self.List.RowTagAt(RowIndex)
-		      If (SetDefaultState = False And MergeItem.IsImported = False) Or (MergeItem IsA Ark.DocumentMergeConfigGroupItem) = False Then
+		      If (SetDefaultState = False And MergeItem.IsImported = False) Or (MergeItem IsA Beacon.DocumentMergeConfigGroupItem) = False Then
 		        Continue
 		      End If
 		      
-		      Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
+		      Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
 		      Var Key As String = ConfigItem.OrganizationKey
 		      Var Map() As String
 		      If ConfigMap.HasKey(Key) Then
@@ -575,8 +575,8 @@ End
 		  If SetDefaultState Then
 		    For RowIndex As Integer = 0 To Self.List.LastRowIndex
 		      Var MergeItem As Beacon.DocumentMergeItem = Self.List.RowTagAt(RowIndex)
-		      If MergeItem IsA Ark.DocumentMergeConfigGroupItem Then
-		        Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
+		      If MergeItem IsA Beacon.DocumentMergeConfigGroupItem Then
+		        Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
 		        Var Key As String = ConfigItem.OrganizationKey
 		        Var Map() As String
 		        If ConfigMap.HasKey(Key) Then
@@ -601,8 +601,8 @@ End
 		    Var MergeItem As Beacon.DocumentMergeItem = Self.List.RowTagAt(RowIndex)
 		    
 		    Var ShowAsReplace As Boolean
-		    If MergeItem IsA Ark.DocumentMergeConfigGroupItem Then
-		      Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
+		    If MergeItem IsA Beacon.DocumentMergeConfigGroupItem Then
+		      Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
 		      Var Key As String = ConfigItem.OrganizationKey
 		      If Ark.Configs.SupportsConfigSets(ConfigItem.Group.InternalName) Then
 		        Self.List.CellTextAt(RowIndex, Self.ColumnConfigSet) = ConfigItem.DestinationConfigSet.Name
@@ -769,14 +769,14 @@ End
 		      End Select
 		    Next
 		  Case Self.ColumnConfigSet
-		    If (MergeItem IsA Ark.DocumentMergeConfigGroupItem) = False Then
+		    If (MergeItem IsA Beacon.DocumentMergeConfigGroupItem) = False Then
 		      Return True
 		    End If
 		    
 		    Var ConfigSets() As Beacon.ConfigSet = Self.mDestination.ConfigSets
 		    For Each ConfigSet As Beacon.ConfigSet In ConfigSets
 		      Var Item As New DesktopMenuItem(ConfigSet.Name, ConfigSet)
-		      Item.HasCheckMark = (Ark.DocumentMergeConfigGroupItem(MergeItem).DestinationConfigSet = ConfigSet)
+		      Item.HasCheckMark = (Beacon.DocumentMergeConfigGroupItem(MergeItem).DestinationConfigSet = ConfigSet)
 		      Base.AddMenu(Item)
 		    Next
 		  End Select
@@ -804,7 +804,7 @@ End
 		  Case Self.ColumnMergeMode
 		    MergeItem.Mode = Choice.Tag.IntegerValue
 		  Case Self.ColumnConfigSet
-		    Ark.DocumentMergeConfigGroupItem(MergeItem).DestinationConfigSet = Beacon.ConfigSet(Choice.Tag.ObjectValue)
+		    Beacon.DocumentMergeConfigGroupItem(MergeItem).DestinationConfigSet = Beacon.ConfigSet(Choice.Tag.ObjectValue)
 		    Var NewMode As Integer = Self.BestModeForItem(MergeItem)
 		    If MergeItem.Mode <> NewMode Then
 		      MergeItem.Mode = NewMode
@@ -869,21 +869,32 @@ End
 		      End If
 		      
 		      Select Case MergeItem
-		      Case IsA Ark.DocumentMergeConfigGroupItem
-		        If Self.mDestination IsA Ark.Project Then
-		          Var ArkDestination As Ark.Project = Ark.Project(Self.mDestination)
-		          Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
+		      Case IsA Beacon.DocumentMergeConfigGroupItem
+		        If (Self.mDestination Is Nil) = False Then
+		          Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
 		          Self.mDestination.ActiveConfigSet = ConfigItem.DestinationConfigSet
-		          Var ExistingConfig As Ark.ConfigGroup = ArkDestination.ConfigGroup(ConfigItem.Group.InternalName, False)
+		          Var ExistingConfig As Beacon.ConfigGroup = Self.mDestination.ConfigGroup(ConfigItem.Group.InternalName, False)
 		          Select Case ConfigItem.Mode
 		          Case Beacon.DocumentMergeItem.ModeReplace
-		            ArkDestination.AddConfigGroup(ConfigItem.Group)
+		            Self.mDestination.AddConfigGroup(ConfigItem.Group)
 		          Case Beacon.DocumentMergeItem.ModeMergeImportPriority
-		            Var Merged As Ark.ConfigGroup = Ark.Configs.Merge(False, ExistingConfig, ConfigItem.Group)
-		            ArkDestination.AddConfigGroup(Merged)
+		            Select Case ConfigItem.Group
+		            Case IsA Ark.ConfigGroup
+		              Var Merged As Ark.ConfigGroup = Ark.Configs.Merge(False, Ark.ConfigGroup(ExistingConfig), Ark.ConfigGroup(ConfigItem.Group))
+		              Self.mDestination.AddConfigGroup(Merged)
+		            Case IsA SDTD.ConfigGroup
+		              Var Merged As SDTD.ConfigGroup = SDTD.Configs.Merge(False, SDTD.ConfigGroup(ExistingConfig), SDTD.ConfigGroup(ConfigItem.Group))
+		              Self.mDestination.AddConfigGroup(Merged)
+		            End Select
 		          Case Beacon.DocumentMergeItem.ModeMergeProjectPriority
-		            Var Merged As Ark.ConfigGroup = Ark.Configs.Merge(True, ExistingConfig, ConfigItem.Group)
-		            ArkDestination.AddConfigGroup(Merged)
+		            Select Case ConfigItem.Group
+		            Case IsA Ark.ConfigGroup
+		              Var Merged As Ark.ConfigGroup = Ark.Configs.Merge(True, Ark.ConfigGroup(ExistingConfig), Ark.ConfigGroup(ConfigItem.Group))
+		              Self.mDestination.AddConfigGroup(Merged)
+		            Case IsA SDTD.ConfigGroup
+		              Var Merged As SDTD.ConfigGroup = SDTD.Configs.Merge(True, SDTD.ConfigGroup(ExistingConfig), SDTD.ConfigGroup(ConfigItem.Group))
+		              Self.mDestination.AddConfigGroup(Merged)
+		            End Select
 		          End Select
 		        End If
 		      Case IsA Ark.DocumentMergeMapItem
@@ -896,10 +907,10 @@ End
 		            ArkDestination.MapMask = ArkDestination.MapMask And Not MapItem.Map.Mask
 		          End If
 		        End If
-		      Case IsA Ark.DocumentMergeContentPackItem
+		      Case IsA Beacon.DocumentMergeContentPackItem
 		        If Self.mDestination IsA Ark.Project Then
 		          Var ArkDestination As Ark.Project = Ark.Project(Self.mDestination)
-		          Var PackItem As Ark.DocumentMergeContentPackItem = Ark.DocumentMergeContentPackItem(MergeItem)
+		          Var PackItem As Beacon.DocumentMergeContentPackItem = Beacon.DocumentMergeContentPackItem(MergeItem)
 		          ArkDestination.ContentPackEnabled(PackItem.Pack.ContentPackId) = True
 		        End If
 		      Case IsA Beacon.DocumentMergeProfileItem

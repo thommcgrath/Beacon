@@ -128,13 +128,7 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LabelForConfig(Config As Ark.ConfigGroup) As String
-		  Return Language.LabelForConfig(Config.InternalName)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function LabelForConfig(Config As SDTD.ConfigGroup) As String
+		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As String
 		  Return Language.LabelForConfig(Config.InternalName)
 		End Function
 	#tag EndMethod

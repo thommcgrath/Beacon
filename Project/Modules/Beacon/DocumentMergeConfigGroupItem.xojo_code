@@ -1,8 +1,9 @@
 #tag Class
 Protected Class DocumentMergeConfigGroupItem
 Inherits Beacon.DocumentMergeItem
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
-		Sub Constructor(Group As Ark.ConfigGroup, SourceProject As Ark.Project, SourceConfigSet As Beacon.ConfigSet)
+		Sub Constructor(Group As Beacon.ConfigGroup, SourceProject As Beacon.Project, SourceConfigSet As Beacon.ConfigSet)
 		  Self.Group = Group
 		  Self.Label = Language.LabelForConfig(Group)
 		  Self.SourceProject = SourceProject
@@ -40,7 +41,7 @@ Inherits Beacon.DocumentMergeItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Group As Ark.ConfigGroup
+		Group As Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -48,7 +49,7 @@ Inherits Beacon.DocumentMergeItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		SourceProject As Ark.Project
+		SourceProject As Beacon.Project
 	#tag EndProperty
 
 

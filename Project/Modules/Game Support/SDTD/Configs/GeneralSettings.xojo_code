@@ -1,7 +1,7 @@
 #tag Class
 Protected Class GeneralSettings
 Inherits SDTD.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As SDTD.ConfigGroup)
 		  Var Source As SDTD.Configs.GeneralSettings = SDTD.Configs.GeneralSettings(Other)
@@ -76,6 +76,21 @@ Inherits SDTD.ConfigGroup
 		    ContentPackLookup.Value(Pack.ContentPackId) = Pack
 		  Next Pack
 		  
+		  Var Doc As XmlDocument = ParsedData.Lookup(SDTD.ConfigFileServerConfigXml, Nil)
+		  If Doc Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Values As New Dictionary
+		  Var PropertyNodes As XmlNodeList = Doc.DocumentElement.XQL("//property")
+		  Var Bound As Integer = PropertyNodes.Length - 1
+		  For Idx As Integer = 0 To Bound
+		    Var PropertyNode As XmlNode = PropertyNodes.Item(Idx)
+		    Var Key As String = PropertyNode.GetAttribute("name")
+		    Var Value As String = PropertyNode.GetAttribute("value")
+		    Values.Value(Key) = Value
+		  Next
+		  
 		  Var Config As New SDTD.Configs.GeneralSettings
 		  Var AllKeys() As SDTD.ConfigOption = DataSource.GetConfigOptions("", "")
 		  For Each Key As SDTD.ConfigOption In AllKeys
@@ -86,11 +101,11 @@ Inherits SDTD.ConfigGroup
 		    Var Value As Variant
 		    Select Case Key.ValueType
 		    Case SDTD.ConfigOption.ValueTypes.TypeNumeric
-		      Value = ParsedData.DoubleValue(Key.ObjectId, Key.DefaultValue.DoubleValue, True)
+		      Value = Values.DoubleValue(Key.Key, Key.DefaultValue.DoubleValue, True)
 		    Case SDTD.ConfigOption.ValueTypes.TypeBoolean
-		      Value = ParsedData.BooleanValue(Key.ObjectId, Key.DefaultValue.BooleanValue, True)
+		      Value = Values.BooleanValue(Key.Key, Key.DefaultValue.BooleanValue, True)
 		    Case SDTD.ConfigOption.ValueTypes.TypeText
-		      Value = ParsedData.StringValue(Key.ObjectId, Key.DefaultValue.StringValue, True)
+		      Value = Values.StringValue(Key.Key, Key.DefaultValue.StringValue, True)
 		    Else
 		      Continue
 		    End Select

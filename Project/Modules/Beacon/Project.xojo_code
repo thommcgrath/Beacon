@@ -23,6 +23,23 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
+		  Self.AddConfigGroup(Group, Self.ActiveConfigSet)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup, Set As Beacon.ConfigSet)
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		  If SetDict Is Nil Then
+		    SetDict = New Dictionary
+		  End If
+		  SetDict.Value(Group.InternalName) = Group
+		  Self.ConfigSetData(Set) = SetDict
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AddConfigSet(Set As Beacon.ConfigSet)
 		  If Set Is Nil Then
 		    Return
@@ -163,6 +180,24 @@ Implements ObservationKit.Observable
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigGroup(InternalName As String, Set As Beacon.ConfigSet, Create As Boolean = False) As Beacon.ConfigGroup
+		  #Pragma Unused InternalName
+		  #Pragma Unused Set
+		  #Pragma Unused Create
+		  
+		  Var Err As New UnsupportedOperationException
+		  Err.Message = "Subclass needs to override ConfigGroup(InternalName As String, Set As Beacon.ConfigSet, Create As Boolean = False) As Beacon.ConfigGroup"
+		  Raise Err
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigGroup(InternalName As String, Create As Boolean = False) As Beacon.ConfigGroup
+		  Return Self.ConfigGroup(InternalName, Self.ActiveConfigSet, Create)
 		End Function
 	#tag EndMethod
 
@@ -912,6 +947,35 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function HasMember(UserId As String) As Boolean
 		  Return Self.mMembers.HasKey(UserId.Lowercase)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImplementedConfigs() As Iterable
+		  Var Sets() As Beacon.ConfigSet = Self.ConfigSets
+		  Var Groups() As Variant
+		  For Each Set As Beacon.ConfigSet In Sets
+		    For Each Group As Beacon.ConfigGroup In Self.ImplementedConfigs(Set)
+		      Groups.Add(Group)
+		    Next
+		  Next
+		  Return New Beacon.GenericIterator(Groups)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImplementedConfigs(Set As Beacon.ConfigSet) As Iterable
+		  Var SetDict As Dictionary = Self.ConfigSetData(Set)
+		  Var Groups() As Variant
+		  If (SetDict Is Nil) = False Then
+		    For Each Entry As DictionaryEntry In SetDict
+		      Var Group As Beacon.ConfigGroup = Entry.Value
+		      If Group.IsImplicit = False Or Set.IsBase Then
+		        Groups.Add(Group)
+		      End If
+		    Next
+		  End If
+		  Return New Beacon.GenericIterator(Groups)
 		End Function
 	#tag EndMethod
 

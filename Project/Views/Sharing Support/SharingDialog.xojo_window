@@ -44,7 +44,7 @@ Begin BeaconDialog SharingDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -296,7 +296,7 @@ Begin BeaconDialog SharingDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -491,7 +491,7 @@ Begin BeaconDialog SharingDialog
       LockTop         =   False
       PanelIndex      =   0
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       Tooltip         =   ""
       Top             =   527
