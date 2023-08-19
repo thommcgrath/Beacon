@@ -548,7 +548,7 @@ Implements ObservationKit.Observable
 		    Project.mUseCompression = SaveData.Value(UseCompressionKey)
 		  End If
 		  
-		  Var Passwords As Dictionary = SaveData.FirstValue("members", "EncryptionKeys", Nil)
+		  Var Passwords As Dictionary = SaveData.FirstValue("members", "EncryptionKeys", New Dictionary)
 		  If Version >= 4 And (Passwords Is Nil) = False Then
 		    Var PossibleIdentities(0) As Beacon.Identity
 		    PossibleIdentities(0) = Identity

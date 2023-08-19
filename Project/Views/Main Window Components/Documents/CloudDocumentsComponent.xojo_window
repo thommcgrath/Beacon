@@ -28,6 +28,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    Visible         =   True
    Width           =   804
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -303,7 +304,6 @@ End
 		  Self.mRefreshing = False
 		  
 		  If Not Response.Success Then
-		    Break
 		    Self.List.CompleteRowLoadRequest(Request.Tag)
 		    Return
 		  End If
