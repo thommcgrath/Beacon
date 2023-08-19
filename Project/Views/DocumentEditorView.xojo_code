@@ -370,6 +370,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Try
 		      If Update.Lookup("Finished", False).BooleanValue = True Then
 		        Self.Modified = Self.Project.Modified
+		        Self.UpdateViewIcon()
 		        Self.mMembersUpdateThread = Nil
 		      End If
 		    Catch Err As RuntimeException
@@ -597,9 +598,13 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub UpdateViewIcon()
-		  Self.ViewIcon = Self.mController.URL.ViewIcon
+	#tag Method, Flags = &h0
+		Sub UpdateViewIcon()
+		  If (Self.mController.Project Is Nil) = False And Self.mController.Project.ReadOnly Then
+		    Self.ViewIcon = IconPreviewDocument
+		  Else
+		    Self.ViewIcon = Self.mController.URL.ViewIcon
+		  End If
 		End Sub
 	#tag EndMethod
 

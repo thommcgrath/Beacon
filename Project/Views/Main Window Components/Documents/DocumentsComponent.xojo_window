@@ -291,7 +291,7 @@ End
 		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Path)
 		  View.LinkedOmniBarItem.CanBeClosed = True
 		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Modified
-		  View.ViewIcon = Sender.URL.ViewIcon
+		  View.UpdateViewIcon()
 		  
 		  // Self.Views.AddPanel
 		  // Var PanelIndex As Integer = Self.Views.LastAddedPanelIndex
