@@ -17,7 +17,7 @@ All help pages must be named `index.markdown` and reside in a folder with a clea
 
 ### Screenshots
 
-Screenshots do not need to be a certain platform or color theme, but **must** include both a 1x and 2x version so that users on high pixel density displays can see sharp pictures. It is not acceptable to take a screenshot at 2x and scale it down. Screenshots should be PNG format, and preferably downsampled using a service like [TinyPNG](https://tinypng.com/).
+Screenshots do not need to be a certain platform or color theme, but **must** include both a 1x and 2x version so that users on high pixel density displays can see sharp pictures. It is not acceptable to take a screenshot at 2x and scale it down. Screenshots should be PNG format.
 
 Including screenshots should be done with the following code snippet:
 
@@ -35,5 +35,8 @@ To better support dark mode users, avoid adding additional colors to pages. If a
 
 ## Beacon Application
 
+TBD
+
 ## Beacon Website
 
+TBD
