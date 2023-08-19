@@ -402,9 +402,9 @@ Protected Class ProjectController
 		    End Try
 		  End If
 		  
-		  Self.UpdateProjectMembers(Project)
-		  
 		  Self.mProject = Project
+		  Self.UpdateProjectMembers()
+		  
 		  Self.mLoaded = True
 		  Call CallLater.Schedule(0, AddressOf TriggerLoadSuccess)
 		End Sub
@@ -414,7 +414,7 @@ Protected Class ProjectController
 		Private Sub Thread_UpdateProjectMembers(Sender As Thread)
 		  #Pragma Unused Sender
 		  
-		  Self.UpdateProjectMembers(Self.Project)
+		  Self.UpdateProjectMembers()
 		End Sub
 	#tag EndMethod
 
@@ -426,7 +426,7 @@ Protected Class ProjectController
 		  Var Saved As Boolean
 		  Var Message As String
 		  Try
-		    Self.UpdateProjectMembers(Self.mProject)
+		    Self.UpdateProjectMembers()
 		    
 		    SaveData = Self.mProject.SaveData(Self.mIdentity, True)
 		    
@@ -558,15 +558,19 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h0
 		Sub UpdateProjectMembers()
-		  Var UpdaterThread As New Thread
-		  AddHandler UpdaterThread.Run, WeakAddressOf Thread_UpdateProjectMembers
-		  UpdaterThread.Start
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateProjectMembers(Project As Beacon.Project)
+		  If Thread.Current Is Nil Then
+		    Var UpdaterThread As New Thread
+		    AddHandler UpdaterThread.Run, WeakAddressOf Thread_UpdateProjectMembers
+		    UpdaterThread.Start
+		    Return
+		  End If
+		  
 		  // This routine will download the member list and update the project if necessary
+		  
+		  If Self.mMemberUpdateLock Is Nil Then
+		    Self.mMemberUpdateLock = New CriticalSection
+		  End If
+		  Self.mMemberUpdateLock.Enter
 		  
 		  Try
 		    // If we don't know the password, don't do anything
@@ -600,6 +604,8 @@ Protected Class ProjectController
 		    End If
 		  Catch MemberListError As RuntimeException
 		  End Try
+		  
+		  Self.mMemberUpdateLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -742,6 +748,10 @@ Protected Class ProjectController
 
 	#tag Property, Flags = &h21
 		Private mLoadStartedCallbackKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMemberUpdateLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

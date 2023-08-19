@@ -352,6 +352,32 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub mMembersUpdateThread_Run(Sender As Thread)
+		  Try
+		    Self.mController.UpdateProjectMembers
+		  Catch Err As RuntimeException
+		  End Try
+		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mMembersUpdateThread_UserInterfaceUpdate(Sender As Thread, Updates() As Dictionary)
+		  #Pragma Unused Sender
+		  
+		  For Each Update As Dictionary In Updates
+		    Try
+		      If Update.Lookup("Finished", False).BooleanValue = True Then
+		        Self.Modified = Self.Project.Modified
+		        Self.mMembersUpdateThread = Nil
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub NewConfigSet()
 		  Var NewSetName As String = ConfigSetNamingWindow.Present(Self)
@@ -424,7 +450,11 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  #Pragma Unused EventName
 		  #Pragma Unused Payload
 		  
-		  Self.mController.UpdateProjectMembers()
+		  Var UpdateThread As New Thread
+		  AddHandler UpdateThread.Run, AddressOf mMembersUpdateThread_Run
+		  AddHandler UpdateThread.UserInterfaceUpdate, AddressOf mMembersUpdateThread_UserInterfaceUpdate
+		  Self.mMembersUpdateThread = UpdateThread
+		  UpdateThread.Start
 		End Sub
 	#tag EndMethod
 
@@ -657,6 +687,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mFirstShow As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMembersUpdateThread As Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
