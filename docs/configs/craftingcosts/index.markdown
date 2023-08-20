@@ -24,7 +24,7 @@ In the **Ingredients**{:.ui-keyword} list on the right, press the **Add Ingredie
 
 ### Step 3: Change the Ingredient Quantities
 
-{% include image.html file="finishedrecipe.png" file2x="finishedrecipe@2x.png" caption="After adjusting the quantities, the recipe changes will be completed." %}
+{% include image.html file="changequantities.png" file2x="changequantities@2x.png" caption="The quantity column can be edited." %}
 
 On the right side of each ingredient is a **Quantity**{:.ui-keyword} column and a **Prevent Substitutions**{:.ui-keyword} column. Click the quantity for _Narcoberry_, then after the row is selected, click the quantity again. This will allow you to edit the value. Increase it to 2. At this point the recipe is now a cheaper version of the default recipe.
 
