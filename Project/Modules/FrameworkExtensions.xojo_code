@@ -320,7 +320,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function FirstValue(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Variant
-		  // Last element if Keys is the default
+		  // Last element of Keys is the default
 		  For Idx As Integer = 0 To Keys.LastIndex - 1
 		    If Dict.HasKey(Keys(Idx)) Then
 		      Return Dict.Value(Keys(Idx))

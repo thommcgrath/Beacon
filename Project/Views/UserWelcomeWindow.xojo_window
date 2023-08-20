@@ -46,7 +46,7 @@ Begin DesktopWindow UserWelcomeWindow
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   424
       Begin DesktopLabel PrivacyMessageLabel
@@ -390,7 +390,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin URLConnection OAuthStartSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -399,7 +398,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin URLConnection OAuthRedeemSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -408,7 +406,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin Thread RefreshAndCloseThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -416,7 +413,7 @@ Begin DesktopWindow UserWelcomeWindow
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
 #tag EndDesktopWindow

@@ -238,45 +238,35 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Unpack(Dict As Dictionary)
-		  If Dict.HasKey("incubation_time") And IsNull(Dict.Value("incubation_time")) = False Then
-		    Self.mIncubationTime = Dict.Value("incubation_time").UInt64Value
-		  Else
-		    Self.mIncubationTime = 0
-		  End If
-		  
-		  If Dict.HasKey("mature_time") ANd IsNull(Dict.Value("mature_time")) = False Then
-		    Self.mMatureTime = Dict.Value("mature_time").UInt64Value
-		  Else
-		    Self.mMatureTime = 0
-		  End If
+		  Self.mIncubationTime = Dict.FirstValue("incubationTime", "incubation_time", 0)
+		  Self.mMatureTime = Dict.FirstValue("matureTime", "mature_time", 0)
+		  Self.mStatsMask = Dict.FirstValue("usedStats", "used_stats", 0)
 		  
 		  If Dict.HasKey("stats") And IsNull(Dict.Value("stats")) = False Then
-		    Var Dicts() As Dictionary
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Dict.Value("stats"))
-		    Select Case Info.FullName
-		    Case "Dictionary()"
-		      Dicts = Dict.Value("stats")
-		    Case "Object()"
-		      Var Temp() As Object = Dict.Value("stats")
-		      For Each Obj As Object In Temp
-		        If (Obj Is Nil) = False And Obj IsA Dictionary Then
-		          Dicts.Add(Dictionary(Obj))
-		        End If
-		      Next
-		    End Select
+		    Var Stats() As Dictionary = Dict.Value("stats").DictionaryArrayValue
 		    
 		    Self.mStats = New Dictionary
-		    For Each StatInfo As Dictionary In Dicts
-		      If Not StatInfo.HasAllKeys("stat_index", "base_value", "per_level_wild_multiplier", "per_level_tamed_multiplier", "add_multiplier", "affinity_multiplier") Then
+		    For Each StatInfo As Dictionary In Stats
+		      Var StatIndex As Integer
+		      Var Base, PerLevelWild, PerLevelTamed, Add, Affinity As Double
+		      
+		      If StatInfo.HasAllKeys("statIndex", "baseValue", "perLevelWildMultiplier", "perLevelTamedMultiplier", "addMultiplier", "affinityMultiplier") Then
+		        StatIndex = StatInfo.Value("statIndex")
+		        Base = StatInfo.Value("baseValue")
+		        PerLevelWild = StatInfo.Value("perLevelWildMultiplier")
+		        PerLevelTamed = StatInfo.Value("perLevelTamedMultiplier")
+		        Add = StatInfo.Value("addMultiplier")
+		        Affinity = StatInfo.Value("affinityMultiplier")
+		      ElseIf StatInfo.HasAllKeys("stat_index", "base_value", "per_level_wild_multiplier", "per_level_tamed_multiplier", "add_multiplier", "affinity_multiplier") Then
+		        StatIndex = StatInfo.Value("stat_index")
+		        Base = StatInfo.Value("base_value")
+		        PerLevelWild = StatInfo.Value("per_level_wild_multiplier")
+		        PerLevelTamed = StatInfo.Value("per_level_tamed_multiplier")
+		        Add = StatInfo.Value("add_multiplier")
+		        Affinity = StatInfo.Value("affinity_multiplier")
+		      Else
 		        Continue
 		      End If
-		      
-		      Var StatIndex As Integer = StatInfo.Value("stat_index")
-		      Var Base As Double = StatInfo.Value("base_value")
-		      Var PerLevelWild As Double = StatInfo.Value("per_level_wild_multiplier")
-		      Var PerLevelTamed As Double = StatInfo.Value("per_level_tamed_multiplier")
-		      Var Add As Double = StatInfo.Value("add_multiplier")
-		      Var Affinity As Double = StatInfo.Value("affinity_multiplier")
 		      
 		      If StatIndex = Self.MissingStatValue Or Base = Self.MissingStatValue Or PerLevelWild = Self.MissingStatValue Or PerLevelTamed = Self.MissingStatValue Or Add = Self.MissingStatValue Or Affinity = Self.MissingStatValue Then
 		        Continue
@@ -294,13 +284,10 @@ Implements Ark.MutableBlueprint
 		    Self.mStats = New Dictionary
 		  End If
 		  
-		  If Dict.HasKey("used_stats") And IsNull(Dict.Value("used_stats")) = False Then
-		    Self.mStatsMask = Dict.Value("used_stats").UInt32Value
-		  Else
-		    Self.mStatsMask = 0
-		  End If
-		  
-		  If Dict.HasAllKeys("mating_interval_min", "mating_interval_max") And IsNull(Dict.Value("mating_interval_min")) = False And IsNull(Dict.Value("mating_interval_max")) = False Then
+		  If Dict.HasAllKeys("minMatingInterval", "maxMatingInterval") And IsNull(Dict.Value("minMatingInterval")) = False And IsNull(Dict.Value("maxMatingInterval")) = False Then
+		    Self.mMinMatingInterval = Dict.Value("minMatingInterval").UInt64Value
+		    Self.mMaxMatingInterval = Dict.Value("maxMatingInterval").UInt64Value
+		  ElseIf Dict.HasAllKeys("mating_interval_min", "mating_interval_max") And IsNull(Dict.Value("mating_interval_min")) = False And IsNull(Dict.Value("mating_interval_max")) = False Then
 		    Self.mMinMatingInterval = Dict.Value("mating_interval_min").UInt64Value
 		    Self.mMaxMatingInterval = Dict.Value("mating_interval_max").UInt64Value
 		  Else
