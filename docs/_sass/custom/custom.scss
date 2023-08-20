@@ -1,17 +1,63 @@
-$keyword-color: #2E4CB8;
+@mixin colorize-callout($callout-color, $callout-text-color) {
+	$callout-border-color: mix($callout-color, $callout-text-color, 75%);
+	color: $callout-text-color;
+	border-color: $callout-border-color $callout-border-color $callout-border-color $callout-text-color;
+	background-color: $callout-color;
+
+	a {
+		$callout-link-color: lighten($callout-text-color, 5%);
+		color: $callout-link-color !important;
+		text-decoration-color: rgba($callout-link-color, 30%) !important;
+
+		&:hover {
+			text-decoration-color: $callout-link-color !important;
+		}
+	}
+}
 
 blockquote {
-	background-color: mix($body-background-color, $body-text-color, 97%);
-	color: $body-text-color;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	margin-left: 5%;
 	margin-right: 5%;
-	padding-left: 15px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-right: 15px;
-	border-left: 3px solid mix($body-background-color, $body-text-color, 50%);
+	padding: 1rem;
+	border-width: 1px 1px 1px 4px;
+	border-style: solid;
+	border-radius: 4px;
+	text-shadow: 0px 1px 0px $callout-text-shadow-color;
+	@include colorize-callout($callout-grey-background-color, $callout-grey-text-color);
+
+	&.titled {
+		& > *:first-child {
+			margin-bottom: 0px;
+			font-weight: bold;
+			text-transform: uppercase;
+		}
+
+		& > *:nth-child(2) {
+			margin-top: 0px;
+		}
+	}
+
+	&.blue, &.primary {
+		@include colorize-callout($callout-blue-background-color, $callout-blue-text-color);
+	}
+
+	&.green, &.success, &.tip {
+		@include colorize-callout($callout-green-background-color, $callout-green-text-color);
+	}
+
+	&.red, &.warning {
+		@include colorize-callout($callout-red-background-color, $callout-red-text-color);
+	}
+
+	&.yellow, &.caution {
+		@include colorize-callout($callout-yellow-background-color, $callout-yellow-text-color);
+	}
+
+	&.cyan, &.info {
+		@include colorize-callout($callout-cyan-background-color, $callout-cyan-text-color);
+	}
 	
 	a {
 		word-wrap: break-word;
@@ -48,4 +94,5 @@ p.screenshot {
 
 .ui-keyword {
 	font-weight: 500;
+	color: $keyword-color;
 }

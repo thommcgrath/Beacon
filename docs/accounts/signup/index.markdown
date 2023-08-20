@@ -5,6 +5,7 @@ nav_order: 0
 ---
 # Create or Recover Your Account
 
+{:.caution}
 > If you already use Beacon, it is best to perform these steps inside Beacon because your existing private key will be the one backed up. Creating the account on the Beacon website will generate a new private key, which won't be able to decrypt your server link data in the [Servers config editor](/configs/deployments/), as well as any encrypted custom config content.
 
 ## Step 1: Get Started
@@ -21,6 +22,9 @@ In the **Explore**{:.ui-keyword} menu, choose **Beacon Account**{:.ui-keyword} t
 
 Press **Create or Recover Account**{:.ui-keyword} and enter your email address to be sent a verification code.
 
+{:.tip .titled}
+> Tip
+> 
 > Although it's rare, sometimes these verification emails get delivered to spam boxes. Be sure to check there if your message is missing.
 
 Follow the instructions in the verification email to continue.

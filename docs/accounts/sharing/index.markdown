@@ -22,6 +22,9 @@ Each added user can have one of three permissions assigned:
 - **Editor**: Editor users can make changes, save the project, export, and deploy. They cannot add, remove, or change project users.
 - **Admins**: Admin users have all the permissions of Editor users, as well as the ability to add, remove, and change project users. Admin users may not add or remove other Admin users.
 
+{:.titled}
+> The Owner Role
+> 
 > A project cannot have more than one owner. The owner is the only user able to add or remove admins.
 
 There are three ways to add a user to a project:
@@ -42,6 +45,9 @@ Inside the **User Info**{:.ui-keyword} panel is the **User ID**{:.ui-keyword} fi
 
 {% include image.html file="identity-window.png" file2x="identity-window@2x.png" caption="Finding a user's identifier." %}
 
+{:.warning .titled}
+> Warning
+> 
 > The value in the **Private Key**{:.ui-keyword} area should **never** be shared with anybody. Ever. Not even Beacon tech support. Seriously.
 
 Once you have the identifier of the desired user, press **Add User** and enter the identifier. This is best done with copy and paste.
@@ -66,6 +72,9 @@ Press the **Add User**{:.ui-keyword} button and enter the value to continue.
 
 Once a user has been added to the project, they will appear in the user list. Changes made here, including permission changes, are immediate. For example, upgrading a user from Guest to Editor permissions will not require the user to reload the project.
 
+{:.caution .titled}
+> One at a time, please
+> 
 > Be careful to avoid multiple users editing the project at once. If User A saves the project while User B is still working on it, when User B saves the project, User A's changes would be reset. Beacon is unable to merge changes made by users. Because of this, Beacon will warn you if another user makes changes while you have a project open.
 
 ## Sharing to the Community

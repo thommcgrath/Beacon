@@ -22,6 +22,9 @@ Ark has a lot of breeding settings allowing admins to control things like baby m
 
 {% include image.html file="multipliers.png" file2x="multipliers@2x.png" caption="The Breeding Multipliers editor has lots of settings to control dino breeding." %}
 
+{:.info .titled}
+> Heads Up
+> 
 > Because this editor has descriptions beneath each of the multipliers, this guide will cover only the major multipliers.
 
 ## Mature and Incubation Speed Multipliers
@@ -40,6 +43,9 @@ Finding a good **Imprint Period Multiplier**{:.ui-keyword} could be done by find
 
 The **Imprint Amount Multiplier**{:.ui-keyword} adjusts the amount of imprinting each imprint provides. If one imprint would normally be worth 10%, a 2.0 multiplier would give 20% instead.
 
+{:.tip .titled}
+> Tip
+> 
 > A low **Imprint Period Multiplier**{:.ui-keyword} with a high **Imprint Amount Multiplier**{:.ui-keyword} will allow easy instant imprinting.
 
 ### Auto Imprint
