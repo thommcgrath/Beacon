@@ -22,7 +22,7 @@ Ark has a lot of breeding settings allowing admins to control things like baby m
 
 {% include image.html file="multipliers.png" file2x="multipliers@2x.png" caption="The Breeding Multipliers editor has lots of settings to control dino breeding." %}
 
-{:.info .titled}
+{:.blue .titled}
 > Heads Up
 > 
 > Because this editor has descriptions beneath each of the multipliers, this guide will cover only the major multipliers.

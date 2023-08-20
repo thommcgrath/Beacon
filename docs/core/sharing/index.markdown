@@ -1,7 +1,7 @@
 ---
 title: Sharing Beacon Projects With Other Users
-parent: User Accounts
-nav_order: 3
+parent: Core Features
+nav_order: 1
 ---
 # {{page.title}}
 
