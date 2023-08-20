@@ -1,0 +1,25 @@
+<script src="/assets/js/photoswipe-lightbox.umd.min.js"></script>
+<script src="/assets/js/photoswipe.umd.min.js"></script>
+<link href="/assets/css/photoswipe.css" rel="stylesheet" type="text/css">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	var screenshots = document.querySelectorAll('p.screenshot a img');
+	for (idx = 0; idx < screenshots.length; idx++) {
+		var screenshot = screenshots[idx];
+		screenshot.addEventListener('load', function() {
+			var link = this.parentElement;
+			link.setAttribute('data-pswp-width', this.naturalWidth);
+			link.setAttribute('data-pswp-height', this.naturalHeight);
+		});
+	}
+
+	if (screenshots.length > 0) {
+		var lightbox = new PhotoSwipeLightbox({
+			gallery: '#main-content',
+			children: 'p.screenshot a',
+			pswpModule: PhotoSwipe,
+		});
+		lightbox.init();
+	}
+});
+</script>
