@@ -16,68 +16,92 @@ Ark server admins are given great control over the game's spawn system. Admins c
 
 Just like editing loot drops in Beacon, spawn points must be added to a file before anything will change on the server. Spawn points not added to Beacon will be left as default.
 
-Press the _New Point_ button to begin adding a spawn point.
+Press the **New Point**{:.ui-keyword} button to begin adding a spawn point.
 
 {% include image.html file="addspawndialog.png" file2x="addspawndialog@2x.png" caption="The &quot;Add Spawn Point&quot; dialog." %}
 
-The _Filter_ field at the top allows searching the spawn points. To the right of the _Filter_ field is a switch that allows searching for _Spawn Points_ or for _Creatures_. When set to _Creatures_, type the name of a creature and Beacon will show all the spawn points that include the creature.
+The **Filter**{:.ui-keyword} field at the top allows searching the spawn points. To the right of the **Filter**{:.ui-keyword} field is a switch that allows searching by spawn point or by creature. When set to **Creatures**{:.ui-keyword}, type the name of a creature and Beacon will show all the spawn points that include the creature.
 
+{:.tip .titled}
+> Tip
+> 
 > Users can select multiple spawn points to be added at the same time. Hold shift while selecting points to select a range. Windows users can use Control while clicking to select non-sequential spawn points, and Control-A will select all. Mac users should substitute the Command/Apple key for Control.
 
-The next step is to select a _Mode_ value. _Replace Default Spawns_ will replace all creatures in the spawn point with the ones specified in Beacon. _Add to Default Spawns_ does exactly what it sounds like, allowing users to add new creatures without affecting the current creatures. And _Remove from Default Spawns_ allows removing one or more creatures without affecting the other creatures.
+The next step is to select a **Mode**{:.ui-keyword} value. **Replace Default Spawns**{:.ui-keyword} will replace all creatures in the spawn point with the ones specified in Beacon. When this option is selected, the **Load Simplified Default Spawns**{:.ui-keyword} checkbox will add the spawn point with default spawn data loaded in. The **Add to Default Spawns**{:.ui-keyword} mode allows adding new creatures without affecting the current creatures. And **Remove from Default Spawns**{:.ui-keyword} allows removing one or more creatures without affecting the other creatures.
 
 ## Adding Shinehorns to Beaches
 
-In this tutorial, the goal is to add Shinehorns to the beaches on The Island. Press the _New Point_ button, select _Beaches_ in the list, and set the _Mode_ to _Add to Default Spawns_.
+In this tutorial, the goal is to add Shinehorns to the beaches on The Island. Press the **New Point**{:.ui-keyword} button, select **Beaches**{:.ui-keyword} in the list, and set the **Mode**{:.ui-keyword} to **Add to Default Spawns**{:.ui-keyword}.
 
 {% include image.html file="addtobeaches.png" file2x="addtobeaches@2x.png" caption="Adding creatures to the &quot;Beaches&quot; spawn point." %}
 
-Press _OK_ when ready. Next, add a new spawn set by pressing the _New Set_ button in the _Spawn Sets_ column. This will create and select a new spawn set. Use the _Name_ field to call the spawn set Shinehorns. The _Weight_ field in the upper right works exactly the same as every other weight value in Ark. Ark's default weight values are always less than or equal to 1.0, so Beacon defaults the weight to 0.5. The _Beaches_ spawn point often uses much lower values, so to prevent being overrun by Shinehorns, set the _Weight_ field to 0.06.
+Press **OK**{:.ui-keyword} when ready. Next, add a new spawn set by pressing the **New Set**{:.ui-keyword} button in the **Spawn Sets**{:.ui-keyword} column. This will create and select a new spawn set. Use the **Name**{:.ui-keyword} field to call the spawn set Shinehorns. The **Weight**{:.ui-keyword} field in the upper right works exactly the same as every other weight value in Ark. Ark's default weight values are always less than or equal to 1.0, so Beacon defaults the weight to 0.5. The **Beaches**{:.ui-keyword} spawn point often uses much lower values, so to prevent being overrun by Shinehorns, set the **Weight**{:.ui-keyword} field to 0.06.
 
-> **Tip**: Create a new Beacon project, switch to _Creature Spawns, and add the same spawn point in _Replace Default Spawns_ mode with _Load Simplified Default Spawns_ selected. Then look through the weights of each default spawn set to help decide on an appropriate weight value.
+{:.tip .titled}
+> Tip
+> 
+> Create a new Beacon project, switch to **Creature Spawns**{:.ui-keyword}, and add the same spawn point in **Replace Default Spawns**{:.ui-keyword} mode with **Load Simplified Default Spawns**{:.ui-keyword} selected. Then look through the weights of each default spawn set to help decide on an appropriate weight value.
 
-Next, press the _Add_ button in the _Creatures_ box. In the _Creature Entry_ dialog, press the _Choose…_ button next to _Creature_ and select _Shinehorn_. Leave all the other fields empty, they are not needed in this step.
+Next, press the **Add**{:.ui-keyword} button in the **Creatures**{:.ui-keyword} box. In the **Creature Entry**{:.ui-keyword} dialog, press the **Choose…**{:.ui-keyword} button next to **Creature**{:.ui-keyword} and select Shinehorn. Leave all the other fields empty, they are not needed in this step.
 
-At this point, the absolute minimum to make Shinehorns appear on the beaches has been done. However, they will always spawn directly on top of each other. The solution is utilize the _Spread Radius_ value. Nearly all of Ark's default spawn sets use a value of 650, so enter that into _Spread Radius_. This will help, but there is more that can be done to make the spawn point feel even more natural.
-
-It sounds weird, but the solution is **more** Shinehorns. Press the _Add_ button again, select _Shinehorn_, but this time enter 680 into the _Offset Y_ field. That's the middle one. Repeat these steps for values 340, -680, and -340. There should be a total of 5 _Shinehorn_ entries in the _Creatures_ list. To get the spawning to feel even more like Ark's spawning, set the _Weight_ values of each entry according to the screenshot below.
+Ark spawns creatures in packs. Every row in the **Creatures**{:.ui-keyword} list represents one member of the pack. This is how the game always spawns Carnos with a Yuty.
 
 {% include image.html file="shinehorn.png" file2x="shinehorn@2x.png" caption="A completed Shinehorn Spawn Set." %}
 
-To save time, consider using the _Auto Creature_ tool in the _Spawn Sets_ column. This will create a new spawn set with common values. However, pay attention to the spawn set weight, as the chosen weights are estimated based on all maps and spawn points and may not be the best fit for the target spawn point.
+To save time, consider using the **Auto Creature**{:.ui-keyword} tool in the **Spawn Sets**{:.ui-keyword} column. This will create a new spawn set with common values, as well as choosing a pack size. Beacon will choose spawn set weights to best fit with the existing spawn sets.
 
-Lastly, it is important to limit the number of Shinehorns that will spawn in the area. Press the _New Limit_ button in the _Limits_ section to define a new limit. From the _Creature_ menu, select _Shinehorn_ and set the _Max Percentage_ to 5. This will limit the number of Shinehorns in each of the spawn point instances to 5% of the instance's total population. But... what does that actually mean? That's hard to know exactly. Most spawn point instances use a max population of 40. So 5% of 40 would be 2. This does NOT mean only 2 Shinehorns on the entire map. It means a **maximum** of 2 on each instance of a spawn point. The _Beaches_ spawn point has many instances along the map's coastline. So a 5% limit could still produce dozens of Shinehorns on the map.
+Lastly, it is important to limit the number of Shinehorns that will spawn in the area. Press the **New Limit**{:.ui-keyword} button in the **Limits**{:.ui-keyword} section to define a new limit. From the **Creature**{:.ui-keyword} menu, select Shinehorn and set the **Max Percentage**{:.ui-keyword} to 5. This will limit the number of Shinehorns in each of the spawn point nodes to 5% of the spawn point node's total population. 
 
 ### Understanding Limits
 
-The limits work by counting the number of the limited creature that is already at the spawn point, and preventing a new spawn if that number is already over the limit. So, for example, setting the limit to 0.0001 does not mean the creature will not spawn. When there are 0 at the point the creature can still spawn because 0 ÷ 40 = 0 is below 0.0001. As soon as 1 spawns, the limit is reached because 1 ÷ 40 = 0.025 is greater than the limit of 0.0001.
+The limits work by counting the number of the limited creature that is already at the spawn point node, and preventing a new spawn if that number is already over the limit. So, for example, setting the limit to 0.0001% does not mean the creature will not spawn. When there are 0 at the point the creature can still spawn because `0 ÷ 40 = 0` is below 0.0001. As soon as 1 spawns, the limit is reached because `1 ÷ 40 = 0.025` is greater than the limit of 0.0001.
 
-This means users could create a spawn set with a very high weight and very low limit that effectively guarantees one and only one of a certain creature.
-
-> Some users report Ark not obeying their limits when using the _Add to Default Spawns_ mode. It may be necessary to replace the default spawns instead if population cannot be controlled with a combination of spawn set weight and population limit.
+{:.info .titled}
+> Spawn Point Nodes and Population Limits
+> 
+> A spawn point isn't any one point. Similar to the same loot drop being able to appear at multiple locations on the map, spawn points are also placed on the map one or more times. Every time a spawn point is placed on the map, we call that a spawn node. For example, The Island has 76 nodes for Beaches. Population limits apply to each node, not to the total population. This means certain designs may not possible depending on the spawn point. An example might be trying to add a single Giga to the beaches. Even with a super low limit of 0.000001%, this allows at most 1 to spawn **at each of the map's 76 nodes**. So rather than 1 giga on the beaches, you would wind up with 76 gigas on the beaches.
+> 
+> For this reason it is **strongly** recommended to keep "like" creatures together. Major creatures often have their own dedicated spawn points because they come with smaller populations and have fewer nodes per map. Adding Magmasaurs to the Gigas spawn point works much better than adding Magmasaurs to the Jungles spawn point.
 
 ## The Other Settings
 
-Each _Spawn Set_ has many more options that can be used to influence spawning.
+### Creature Settings
 
-- _Offset (X, Y, Z)_: Allows moving the spawn set away from the spawn point instance in a three dimensional space.
-- _Distance from * Multiplier_: These three settings allow users to increase or decrease the distance the creature must be from players, structures, or tames before it can spawn. Values greater than 1.0 will require more space, values less than 1.0 will require less space.
-- _Spread Radius_: Introduces a random amount of distance away from the spawn point instance's center + set offset to make spawns feel more natural.
-- _(Water Only) Min Height_: For water spawns, this is the depth the spawn set needs to spawn. This is to prevent sharks from spawning in puddles, for example. 140 is a common value, larger creatures should use 520.
-- Colors: The creatures in the spawn set can spawn with different colors than normal. Not all color sets are noticeable on all creatures, and some creatures such as the X variants will not show colors at all. See [this Reddit discussion](https://www.reddit.com/r/playark/comments/mavua0/adding_different_colored_dinos_to_spawns/) for additional details.
-- _Add Level Offset Before Multiplier_: This option will change how the level calculations are performed. When selected, the _Level Offset_ will be added to the creature's level first, then the _Level Multiplier_ applied. When not selected, the _Level Multiplier_ is applied first, then the _Level Offset_ is added. These values are described in the next paragraph.
+- **Offset (X, Y, Z)**{:.ui-keyword}: Allows moving the creature away from the spawn set offset in three dimensional space, measured in centimeters. Y is the North/South axis, X is the East/West axis, and Z is the height/depth axis. 0, 0 is the South West corner of the map.
+- **Override Range**{:.ui-keyword}: Can choose a specific range of levels for the creature to spawn. This could be used to make certain pack members higher level than others. **If you change difficulty, the range will change too.**
+- **Level Offset**{:.ui-keyword}: Instead of choosing a specific range for the creature, additional levels can be added or removed.
+- **Level Multiplier**{:.ui-keyword}: In addition to a fixed number of levels to add or remove, levels can be multiplied.
 
-The _Level Range_, _Level Offset_, and _Level Multipliers_ allow changing the level that creatures will spawn. Ark uses this for cave spawns, for example. Use _Level Range_ to specify a specific range for the creature. The levels will automatically scale if the server difficulty is changed. _Level Offset_ is a fixed number of levels to add or remove. _Level Multiplier_ will multiply the creature's level. A value of 2 would turn a 120 creature into a 240 creature, for example.
+### Spawn Set Settings
+
+- **Offset (X, Y, Z)**{:.ui-keyword}: Allows moving the spawn set away from the spawn point node in a three dimensional space, measured in centimeters.
+- **Distance from x Multiplier**{:.ui-keyword}: These three settings allow users to increase or decrease the distance the creature must be from players, structures, or tames before the creature can spawn. Values greater than 1.0 will require more space, values less than 1.0 will require less space.
+- **Spread Radius**{:.ui-keyword}: Introduces a random amount of distance away from the spawn point node's center + set offset to make spawns feel more natural. Value is in centimeters.
+- **(Water Only) Min Height**{:.ui-keyword}: For water spawns, this is the depth the spawn set needs to spawn. This is to prevent sharks from spawning in puddles, for example. 140 is a common value, larger creatures should use 520.
+- **Colors**{:.ui-keyword}: The creatures in the spawn set can spawn with different colors than normal. Not all color sets are noticeable on all creatures, and some creatures such as the X variants will not show colors at all. See [this Reddit discussion](https://www.reddit.com/r/playark/comments/mavua0/adding_different_colored_dinos_to_spawns/) for additional details.
+- **Add Level Offset Before Multiplier**{:.ui-keyword}: This option will change how the level calculations are performed. When selected, the **Level Offset**{:.ui-keyword} will be added to the creature's level first, then the **Level Multiplier**{:.ui-keyword} applied. When not selected, the **Level Multiplier**{:.ui-keyword} is applied first, then the **Level Offset**{:.ui-keyword} is added. These values are described in the next paragraph.
+
+The **Level Range**{:.ui-keyword}, **Level Offset**{:.ui-keyword}, and **Level Multipliers**{:.ui-keyword} allow changing the level that creatures will spawn. Ark uses this for cave spawns, for example. Use **Level Range**{:.ui-keyword} to specify a range for the creature. The levels will automatically scale if the server difficulty is changed. **Level Offset**{:.ui-keyword} is a fixed number of levels to add or remove. **Level Multiplier**{:.ui-keyword} will multiply the creature's level. A value of 2 would turn a 120 creature into a 240 creature, for example.
 
 ## Creature Replacements
 
-A _Spawn Set_ can exchange creatures for other creatures. Ark typically uses this to add alpha creatures wherever a standard creature could spawn. When adding a replacement, the replaced creature should also be included. For example, adding Alpha Raptor would be done by adding a new replacement and choosing _Raptor_ as the _Target Creature_. Next add _Alpha Raptor_ as a replacement creature, and set the weight to 1. Then add another replacement, this time select _Raptor_ and set the weight to 9. This will give a 10% chance for any raptor in the set to be an alpha raptor.
+A spawn set can exchange creatures for other creatures. This could be used to give some variety to a pack. For example, this feature could be used to add a small chance to replace a Carno in a Yuty pack with a Rex. The creature to be replaced **must** exist in the **Creatures**{:.ui-keyword} list.
+
+{:.tip .titled}
+> Tip
+> 
+> Most spawn sets have no use for this feature. The maps control creature variant substitutions, so adding alphas, aberrants, or other variants will not work.
+
+1. Start by pressing the **Add**{:.ui-keyword} button in the **Creature Replacement**{:.ui-keyword} list.
+2. Choose Carno for the **Target Creature**{:.ui-keyword}.
+3. Press **Add Creature…**{:.ui-keyword} and select both Carno and Rex. Press **Select**{:.ui-keyword} to add both to the list.
+4. Set replacement weights so that Rex only has a 5% chance to spawn in place of Carno. This can be achieve with weight 95 for Carno and 5 for Rex.
 
 {% include image.html file="replacements.png" file2x="replacements@2x.png" caption="Adding Alpha Raptor where Raptors could spawn." %}
 
 ## Removing Creatures
 
-When removing creatures from a spawn point, most options are not useful at all. Use a _Spawn Set_ and list the creatures that should be removed in the _Creatures_ box.
+When removing creatures from a spawn point, most options are not useful at all. Use a **Spawn Set**{:.ui-keyword} and list the creatures that should be removed in the **Creatures**{:.ui-keyword} list.
 
 ## Choosing a Spawn Point
 
@@ -99,9 +123,9 @@ The Ark wiki has spawn maps available to help visualize each point.
 
 By using creatures that you know spawn in an area, the spawn maps can help figure out which spawn point to choose. For example, if you were trying to add wolves to the lighthouse area of Ragnarok, you could check the Ragnarok spawn map for ovis. This will show you `SE_Oasis`, `Snow`, `Grassland`, and `Ragnarok_Scotland`. Using the checkboxes above the map, spawn points can be turned off until we can figure out which is the one for the lighthouse area. In this case, we're looking for `Ragnarok_Scotland`.
 
-**Pay attention to the rectangles on the spawn map.** Each of these rectangles represents a single spawn point instance. Each instance has its own population limits. This means if you were to add a major creature such as Magmasaur to a spawn point with a lot of rectangles, such as the `SE_Dunes` point, even with a limit to allow only 1 there could be up to 113 Magmasaurs in the desert. **For this reason, you are advised to keep similar creatures together.**
+**Pay attention to the rectangles on the spawn map.** Each of these rectangles represents a single spawn point node. Each node has its own population limits. See [Understanding Limits](#understanding-limits) for more details.
 
-Armed with this `Ragnarok_Scotland` spawn point, the next step is to find that in Beacon. The wiki, Ark, and Beacon each use their own naming system since spawn points don't officially have names. The wiki's names are based on the spawn point's class string, which Beacon will search. Sometimes it is necessary to drop the first part of the wiki's name, such as `SE` in the case of the Scorched Earth spawn points. In this instance, searching for `Ragnarok_Scotland` shows the "Lighthouse" point in Beacon. That's the one we're looking for.
+Armed with this `Ragnarok_Scotland` spawn point, the next step is to find that in Beacon. The wiki, Ark, and Beacon each use their own naming system since spawn points don't officially have names. The wiki's names are based on the spawn point's class string, which Beacon will search. Sometimes it is necessary to drop the first part of the wiki's name, such as `SE` in the case of the Scorched Earth spawn points. In this case, searching for `Ragnarok_Scotland` shows the "Lighthouse" point in Beacon. That's the one we're looking for.
 
 {% include image.html file="scotland.png" file2x="scotland@2x.png" caption="The Ragnarok_Scotland point from the wiki is the Lighthouse point in Beacon." %}
 
