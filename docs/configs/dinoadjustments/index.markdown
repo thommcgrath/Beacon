@@ -22,7 +22,7 @@ Ark server admins are able to fine-tune certain creature/dino stats, such as inc
 
 Press the **New Adjustment**{:.ui-keyword} button in the upper left to begin defining a new creature adjustment. Your default editor will look like this:
 
-{% include image.html file="nocreature" file2x="nocreature@2x.png" caption="The creature adjustment editor before selecting a creature." %}
+{% include image.html file="nocreature.png" file2x="nocreature@2x.png" caption="The creature adjustment editor before selecting a creature." %}
 
 First press the **Choose**{:.ui-keyword} button next to **Creature**{:.ui-keyword} to select the creature to change. Use the search field to quickly find the creature you're looking for. It may be necessary to adjust the tags using the tag picker above the list. {% include tags.markdown %}
 
