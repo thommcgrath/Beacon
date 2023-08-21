@@ -27,6 +27,10 @@ Including screenshots should be done with the following code snippet:
 
 ### Styling
 
+#### Writing
+
+See the articles [Don’t use the word ‘it’](https://jameshfisher.com/2016/11/25/dont-use-it/) and [Don’t use the word ‘simply’](https://jameshfisher.com/2017/02/22/dont-use-simply/) for some guidance to improve technical writing. This help site should try to follow these guidelines.
+
 #### User Interface Elements
 Referencing specific on-screen elements should be done using the `{% raw %}{:.ui-keyword}{% endraw %}` suffix on bold (`**`) tags. For example, instructing the user to press the button to create a new loot drop should look something like "Press the {% raw %}\*\*New Drop\*\*{:.ui-keyword}{% endraw %} button."
 
