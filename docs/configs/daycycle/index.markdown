@@ -12,9 +12,9 @@ Ark allows server admins to control the speed of the days and nights individuall
 
 {% include image.html file="daycycle.png" file2x="daycycle@2x.png" caption="Beacon's Day and Night Cycle Editor." %}
 
-Users may edit any of the fields. For example, increasing the _Night Time Multiplier_ from 1 to 2 will update the _Night Time Result_ from 18.62 to 9.31 minutes. Adjusting the _Night Time Result_ back down to 16.62 will set the _Night Time Multiplier_ to 1. Higher multiplier values will make time progress faster.
+Users may edit any of the fields. For example, increasing the **Night Time Multiplier**{:.ui-keyword} from 1 to 2 will update the **Night Time Result**{:.ui-keyword} from 18.62 to 9.31 minutes. Adjusting the **Night Time Result**{:.ui-keyword} back down to 16.62 will set the **Night Time Multiplier**{:.ui-keyword} to 1. Higher multiplier values will make time progress faster.
 
-The Full Cycle value displays the total time it will take to complete one 24-hour cycle in the game.
+The **Full Cycle**{:.ui-keyword} value displays the total time it will take to complete one 24-hour cycle in the game.
 
 Server admins interested in making their in-game days last one real time day might use 960 minutes for day and 480 minutes for night, equalling 1,440 total minutes.
 

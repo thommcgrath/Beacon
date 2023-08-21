@@ -41,7 +41,7 @@ To better support dark mode users, avoid adding additional colors to pages. If a
 Callouts are the colored blocks such as the tips, warning, or glossary blocks. They come with and without titles.
 
 To create a callout with a title, use:
-```plain
+```
 {:.tip .titled}
 > Title
 > 
@@ -49,7 +49,7 @@ To create a callout with a title, use:
 ```
 
 To create a callout without a title, use:
-```plain
+```
 {:.tip}
 > This is the callout body
 ```
