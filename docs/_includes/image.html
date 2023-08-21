@@ -1,1 +1,4 @@
-<p class="screenshot"><a href="{{include.file}}"{% if {{include.file2x}} %} data-pswp-srcset="{{include.file}} 1x, {{include.file2x}} 2x"{% endif %}><img src="{{include.file}}" {% if {{include.file2x}} %}srcset="{{include.file}} 1x, {{include.file2x}} 2x" {% endif %}alt="{{include.caption}}" title="{{include.caption}}"></a></p>
+<div class="screenshot">
+	<a href="{{include.file}}"{% if {{include.file2x}} %} data-pswp-srcset="{{include.file}} 1x, {{include.file2x}} 2x"{% endif %}><img src="{{include.file}}" {% if {{include.file2x}} %}srcset="{{include.file}} 1x, {{include.file2x}} 2x" {% endif %}alt="{{include.caption}}"></a>
+	<div class="screenshot-caption">{{include.caption}}</div>
+</div>

@@ -40,7 +40,7 @@ The menu next to **Target Recipes**{:.ui-keyword} allows you to choose between c
 
 The menu next to **Target Ingredients**{:.ui-keyword} behaves exactly the same as the menu next to **Target Recipes**{:.ui-keyword}.
 
-{:.info .titled}
+{:.glossary .titled}
 > Glossary
 > 
 > Recipes are engrams that can be crafted, and ingredients are the engrams required to craft a recipe.

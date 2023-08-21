@@ -16,7 +16,7 @@ At the top of the **Accounts**{:.ui-keyword} editor is the **Add Service**{:.ui-
 
 {% include image.html file="no-connections.png" file2x="no-connections@2x.png" caption="Adding your first external account." %}
 
-{:.green .titled}
+{:.tip .titled}
 > Tip
 > 
 > While this feature does not require a Beacon account, having one is strongly recommended.

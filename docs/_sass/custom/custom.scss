@@ -16,8 +16,8 @@
 }
 
 blockquote {
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin-top: 2rem !important;
+	margin-bottom: 2rem !important;
 	margin-left: 5%;
 	margin-right: 5%;
 	padding: 1rem;
@@ -51,11 +51,11 @@ blockquote {
 		@include colorize-callout($callout-red-background-color, $callout-red-text-color);
 	}
 
-	&.yellow, &.caution {
+	&.yellow, &.caution, &.omni {
 		@include colorize-callout($callout-yellow-background-color, $callout-yellow-text-color);
 	}
 
-	&.cyan, &.info {
+	&.cyan, &.info, &.glossary {
 		@include colorize-callout($callout-cyan-background-color, $callout-cyan-text-color);
 	}
 	
@@ -88,8 +88,25 @@ div.affected_ini_keys {
 	font-weight: 300;
 }
 
-p.screenshot {
+div.screenshot {
 	text-align: center;
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	
+	a {
+		display: block;
+	}
+	
+	img {
+		display: block;
+	}
+
+	div.screenshot-caption {
+		font-size: 0.75rem;
+		text-align: center;
+		padding-top: 0.25rem;
+		opacity: 0.75;
+	}
 }
 
 .ui-keyword {
