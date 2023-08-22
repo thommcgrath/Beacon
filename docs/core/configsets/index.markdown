@@ -8,7 +8,7 @@ Anyone who manages a cluster, or even a server with occasional special events, c
 
 The feature is designed to act as an override for other values in a project. To put things into perspective, it may be helpful to realize that every Beacon project already has a Config Set in place. Above the editor selection bar, there is a pulldown menu which by default will read **Config Set: Base**{:.ui-keyword}.
 
-{% raw %}{% include image.html file="config set selector.png" file2x="config set selector@2x.png" caption="This pulldown menu indicates the currently active Config Set." %}{% endraw %}
+{% include image.html file="configsetselector.png" file2x="configsetselector@2x.png" caption="This pulldown menu indicates the currently active Config Set." %}
 
 Let's say that you are managing three servers right now. The first server is The Island, the second is Ragnarok and the third is Fjordur. It is likely that on these maps, you are using similar settings between them, so you may already have considered using one project for all three of them. However, you may be thinking that while you have some general similarities in configuration, perhaps The Island was seemingly a bit too easy. You may be hesitant to make any changes in fear of making the other maps too difficult, so instead you decide to split your maps between different projects.
 
