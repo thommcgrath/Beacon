@@ -8,6 +8,8 @@ Anyone who manages a cluster, or even a server with occasional special events, c
 
 The feature is designed to act as an override for other values in a project. To put things into perspective, it may be helpful to realize that every Beacon project already has a Config Set in place. Above the editor selection bar, there is a pulldown menu which by default will read **Config Set: Base**{:.ui-keyword}.
 
+{% raw %}{% include image.html file="config set selector.png" file2x="config set selector@2x.png" caption="This pulldown menu indicates the currently active Config Set." %}{% endraw %}
+
 Let's say that you are managing three servers right now. The first server is The Island, the second is Ragnarok and the third is Fjordur. It is likely that on these maps, you are using similar settings between them, so you may already have considered using one project for all three of them. However, you may be thinking that while you have some general similarities in configuration, perhaps The Island was seemingly a bit too easy. You may be hesitant to make any changes in fear of making the other maps too difficult, so instead you decide to split your maps between different projects.
 
 This is where the Config Set comes into play. With this feature, you are able to adjust values in a separate "container" that will override whichever values you think are needed and limit these changes to only on the server you want modified.
@@ -36,7 +38,7 @@ Looking back on the Server editor's Config Set field, you'll notice the value ha
 
 Since the new config set is not applied to the other servers, they will only receive what is in the "Base" config set.
 
-##Multiple Config Sets & Ordering
+## Multiple Config Sets & Ordering
 
 It is also possible to apply multiple config sets to the same server. 
 
