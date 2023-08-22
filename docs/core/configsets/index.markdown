@@ -10,9 +10,9 @@ The feature is designed to act as an override for other values in a project. To 
 
 Let's say that you are managing three servers right now. The first server is The Island, the second is Ragnarok and the third is Fjordur. It is likely that on these maps, you are using similar settings between them, so you may already have considered using one project for all three of them. However, you may be thinking that while you have some general similarities in configuration, perhaps The Island was seemingly a bit too easy. You may be hesitant to make any changes in fear of making the other maps too difficult, so instead you decide to split your maps between different projects.
 
-This is where the Config Set comes into play. With this feature, you are able to adjust values in a separate "container" that will override whichever values you think are needed and only on the map you want to change them on.
+This is where the Config Set comes into play. With this feature, you are able to adjust values in a separate "container" that will override whichever values you think are needed and limit these changes to only on the server you want modified.
 
-To return to the example, one possible solution could be that you wanted to increase the resistance of wild carnivores so they are more difficult to kill.
+To return to the hypothetical scenario above, one possible solution could be to increase the resistance of wild carnivores so they are more difficult to kill.
 
 Assuming the project already has all of the servers associated with it, the first step is to create a new Config Set. There are a couple of different ways to do this, but the simplest is to click the **Config Set: Base**{:.ui-keyword} pulldown menu mentioned above.
 
@@ -28,15 +28,23 @@ With this out of the way, the next step is to tell Beacon that we want to associ
 
 Press the pulldown menu from before, now labeled, **Config Set: The Island Difficulty Boost**{:.ui-keyword} and re-select the Base config set.
 
-Once finished, enter the [Servers](/configs/deployments/) and select your server for "The Island". You'll notice one of the fields will read **Config Sets: Base**{:.ui-keyword} next to a button that reads **Choose...**{:.ui-keyword}
+Once finished, enter the [Servers](/configs/deployments/) editor and select your server for "The Island". You'll notice one of the fields will read **Config Sets: Base**{:.ui-keyword} next to a button that reads **Choose...**{:.ui-keyword}
 
-A new window that appears shows all of the other Config Sets associated with the project. Enable the checkbox next to your new Config Set and press OK. You are now officially finished!
+A new window that appears will list all of the other Config Sets associated with the project. Enable the checkbox next to your new Config Set and press OK. You are now officially finished!
 
-Looking back on the server's tab Config Set field, you'll notice it now says "Base" followed by "The Island Difficulty Boost". When deploying the project, The Island map will have everything in the Base config set, except for what is in "The Island Difficulty Boost".
+Looking back on the Server editor's Config Set field, you'll notice the value has been updated to "Base" followed by "The Island Difficulty Boost". When deploying the project, The Island map will have everything in the Base config set, except for what is in "The Island Difficulty Boost".
 
 Since the new config set is not applied to the other servers, they will only receive what is in the "Base" config set.
 
-It is possible to also apply multiple config sets to the same server. From the Servers tab, the order that the sets are listed are the order of lowest to highest priority. You can re-arrange the order from the **Choose...**{:.ui-keyword} button as well by dragging the config sets as desired.
+##Multiple Config Sets & Ordering
+
+It is also possible to apply multiple config sets to the same server. 
+
+From the [Servers](/configs/deployments/) editor, the order that the config sets are listed indicates the order of lowest to highest priority. 
+
+You can re-arrange the order from the **Choose...**{:.ui-keyword} button as well by dragging the config sets as desired. From this window, the values at the top are higher priority. 
+
+Since the Base config set is intended to be the "base line" of the project, it is not possible to move the Base config set from the bottom position.
 
 
 
