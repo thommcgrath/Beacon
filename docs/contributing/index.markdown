@@ -1,6 +1,6 @@
 ---
 title: Contributing
-has_children: false
+has_children: true
 nav_order: 10
 ---
 # {{page.title}}
@@ -8,6 +8,8 @@ nav_order: 10
 Beacon is an open source project, so contributions are welcome. All contributions should be made using a pull request.
 
 ## Documentation
+
+If you are new to GitHub, you may benefit from looking at this [Newbie Guide](/contributing/newbieguide).
 
 Beacon's documentation is hosted from [GitHub Pages](https://pages.github.com/). To test locally, you will need Jekyll. [GitHub](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) has some steps for installing and running a local server to preview the documentation site in your own forked copy of Beacon's repository.
 
