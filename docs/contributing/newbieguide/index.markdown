@@ -86,7 +86,7 @@ Check the output for a line labeled **Server address:** to find the hyperlink to
  
 ### Tips & Tricks
  
- Something that threw me off was with the provided examples on the Contribution guide. You'll notice that they are surrounded by {%raw%}{%endraw%}. These should be omitted from content you are adding, they are used to prevent the sample code from being formatted, hiding the example code from view.
+ Something that threw me off was with the provided examples on the Contribution guide. You'll notice that they are surrounded by { %raw% }{ %endraw% }. These should be omitted from content you are adding, they are used to prevent the sample code from being formatted, hiding the example code from view.
  
  A good way of getting situated is to open other pre-existing topics. This can help give a feel for how the formatting works.
  
