@@ -107,7 +107,7 @@ Click the **Current Branch**{:.ui-keyword} pulldown menu and select **Master**{:
 
 Click the same current branch pulldown menu a second time and choose **Choose a branch to merge into Master**{:.ui-keyword}.
 
-Navigate to the main GitHub Desktop screen and press the **Push Upstream** button.
+Navigate to the main GitHub Desktop screen and press the **Push Origin** button.
 
 Navigate to Beacon's Github page and locate **Pull Request**{:.ui-keyword} button.
 
@@ -116,5 +116,7 @@ From there, press the **New Pull Request**{:.ui-keyword} button, and click on th
 With the expanded menu, ensure the **Base Repository**{:.ui-keyword} is Beacon's and choose the Base Branch to be **Staging**{:.ui-keyword}.
 
 For the **Head Repository**{:.ui-keyword}, change to the **Master**{:.ui-keyword} branch of your own repository.
+
+Once everything is set, press the **Create Pull Request** button{:.ui-keyword}.
 
 More details can be found [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests).
