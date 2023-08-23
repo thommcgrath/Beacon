@@ -86,12 +86,35 @@ Check the output for a line labeled **Server address:** to find the hyperlink to
  
 ### Tips & Tricks
  
- Something that threw me off was with the provided examples on the Contribution guide. You'll notice that they are surrounded by { %raw% }{ %endraw% }. These should be omitted from content you are adding, they are used to prevent the sample code from being formatted, hiding the example code from view.
+ The content from the help section is currently being pulled into the **Staging**{:.ui-keyword} branch on the Beacon GitHub. You are able to change the active branch on the GitHub Desktop client, which will re-build the folder and file structure to match.
  
- A good way of getting situated is to open other pre-existing topics. This can help give a feel for how the formatting works.
+ While reading the Contribution guide, be aware of the formatting examples shown. Some of the content is surrounded by { %raw% }{ %endraw% }, but this should be omitted from your own content. Their function is to force content in between them to render as text instead of executed code.
  
- If making a new topic, create an appropriately named folder. Copying an existing index.markdown file can act as a nice template to get started.
+ Infact, a good way of getting accustomed to formatting techinique is to open the index.markdown file in other pre-existing topics. Seeing how other pages are set up can act as an example towards formatting new content.
+ 
+ While creating a new topic, it may be helpful to copy one of these pre-made index.markdown files to use as a formatting template.
  
  **Do not** include spaces in file names or folder paths. They will not work correctly.
  
+ Use the local GitHub Page Jekyll created to preview how the content will actually come out when live. Something that I have found helpful is to leave the index.markdown file open when commiting the changes. If you are not happy with the result, you can right click the most recent commit on GitHub Desktop's History tab to easily **revert changes from commit**{:.ui-keyword}. Just make sure to re-save the markdown file or other changes made may be lost.
+ 
+ ### Submission of Content
+When satisfied with the series of changes made, you will need to merge your fork of the **Staging**{:.ui-keyword} branch into your **Master**{:.ui-keyword} branch. 
 
+This can be done by with the following steps:
+
+Click the **Current Branch**{:.ui-keyword} pulldown menu and select **Master**{:.ui-keyword}.
+
+Click the same current branch pulldown menu a second time and choose **Choose a branch to merge into Master**{:.ui-keyword}.
+
+Navigate to the main GitHub Desktop screen and press the **Push Upstream** button.
+
+Navigate to Beacon's Github page and locate **Pull Request**{:.ui-keyword} button.
+
+From there, press the **New Pull Request**{:.ui-keyword} button, and click on the **compare across forks** link, which will modify the menu a bit.
+
+With the expanded menu, ensure the **Base Repository**{:.ui-keyword} is Beacon's and choose the Base Branch to be **Staging**{:.ui-keyword}.
+
+For the **Head Repository**{:.ui-keyword}, change to the **Master**{:.ui-keyword} branch of your own repository.
+
+More details can be found [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests).
