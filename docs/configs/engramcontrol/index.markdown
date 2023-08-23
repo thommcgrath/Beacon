@@ -8,6 +8,8 @@ configkeys:
   - OverrideEngramEntries
   - OverrideNamedEngramEntries
   - OverridePlayerLevelEngramPoints
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

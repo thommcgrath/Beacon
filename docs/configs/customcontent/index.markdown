@@ -1,6 +1,8 @@
 ---
 title: Custom Config
 parent: Config Editors
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

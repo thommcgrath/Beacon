@@ -4,6 +4,8 @@ parent: Config Editors
 configkeys:
   - ConfigOverrideItemMaxQuantity
   - ItemStackSizeMultiplier
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

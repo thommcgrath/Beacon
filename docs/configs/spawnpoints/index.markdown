@@ -5,6 +5,8 @@ configkeys:
   - ConfigAddNPCSpawnEntriesContainer
   - ConfigOverrideNPCSpawnEntriesContainer
   - ConfigSubtractNPCSpawnEntriesContainer
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

@@ -3,6 +3,8 @@ title: Loot Drops
 parent: Config Editors
 configkeys:
   - ConfigOverrideSupplyCrateItems
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

@@ -10,6 +10,8 @@ configkeys:
   - PerLevelStatsMultiplier_DinoWild
   - PerLevelStatsMultiplier_Player
   - PlayerBaseStatMultipliers
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

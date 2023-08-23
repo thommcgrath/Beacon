@@ -7,6 +7,8 @@ configkeys:
   - ServerAdminPassword
   - MessageOfTheDay.Message
   - MessageOfTheDay.Duration
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

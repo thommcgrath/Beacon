@@ -21,6 +21,8 @@ configkeys:
   - PvEStructureDecayPeriodMultiplier
   - PvPDinoDecay
   - PvPStructureDecay
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

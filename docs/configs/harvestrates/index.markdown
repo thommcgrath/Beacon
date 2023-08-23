@@ -9,6 +9,8 @@ configkeys:
   - HarvestResourceItemAmountClassMultipliers
   - PlayerHarvestingDamageMultiplier
   - UseOptimizedHarvestingHealth
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

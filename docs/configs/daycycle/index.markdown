@@ -5,6 +5,8 @@ configkeys:
   - DayCycleSpeedScale
   - DayTimeSpeedScale
   - NightTimeSpeedScale
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

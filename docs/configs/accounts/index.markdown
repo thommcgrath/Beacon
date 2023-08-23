@@ -1,6 +1,8 @@
 ---
 title: Accounts
 parent: Config Editors
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

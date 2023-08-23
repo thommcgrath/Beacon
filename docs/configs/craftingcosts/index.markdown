@@ -3,6 +3,8 @@ title: Crafting Costs
 parent: Config Editors
 configkeys:
   - ConfigOverrideItemCraftingCosts
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

@@ -15,6 +15,8 @@ configkeys:
   - LayEggIntervalMultiplier
   - MatingIntervalMultiplier
   - MatingSpeedMultiplier
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

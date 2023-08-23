@@ -1,6 +1,8 @@
 ---
 title: Project Settings
 parent: Config Editors
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

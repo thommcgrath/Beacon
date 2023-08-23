@@ -5,6 +5,8 @@ configkeys:
   - LevelExperienceRampOverrides
   - OverrideMaxExperiencePointsDino
   - OverrideMaxExperiencePointsPlayer
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 

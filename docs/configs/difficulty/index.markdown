@@ -4,6 +4,8 @@ parent: Config Editors
 configkeys:
   - DifficultyOffset
   - OverrideOfficialDifficulty
+supportedgames:
+  - "Ark: Survival Evolved"
 ---
 {% include editortitle.markdown %}
 
