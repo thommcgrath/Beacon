@@ -56,6 +56,9 @@ BeaconAPI::RegisterRoutes(
 		'/challenge/{user_id}' => [
 			'GET' => 'challenge'
 		],
+		'/dbtest' => [
+			'GET' => 'dbtest',
+		],
 		'/deltas' => [
 			'GET' => 'deltas'
 		],
