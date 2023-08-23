@@ -6,12 +6,11 @@ configkeys:
   - ItemStackSizeMultiplier
 supportedgames:
   - "Ark: Survival Evolved"
+requiresomni: true
 ---
 {% include editortitle.markdown %}
 
 Some Ark server admins find it necessary to change the maximum stack size of items on their servers.
-
-{% include omninotice.markdown %}
 
 ## Global Stack Size Multiplier
 

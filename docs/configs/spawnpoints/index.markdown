@@ -7,12 +7,11 @@ configkeys:
   - ConfigSubtractNPCSpawnEntriesContainer
 supportedgames:
   - "Ark: Survival Evolved"
+requiresomni: true
 ---
 {% include editortitle.markdown %}
 
 Ark server admins are given great control over the game's spawn system. Admins can add creatures/dinos to certain parts of the map, remove creatures, increase levels, and even change colors. This powerful editor requires great care though, as it's easy to create an overspawning problem.
-
-{% include omninotice.markdown %}
 
 ## Add a Spawn Point
 

@@ -12,8 +12,6 @@ supportedgames:
 
 Ark allows server admins to change the amount of experience players and tamed dinos need for each level, as well as the number of levels they are able to earn.
 
-{% include omninotice.markdown %}
-
 ## The Basics
 
 Leveling is always sequential. Since players start at level 1, pressing the _New Level_ button will bring up an editor to edit the next level, which would be 2.

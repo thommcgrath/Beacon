@@ -2,7 +2,7 @@
 
 $body-background-color: #222831;
 $body-text-color: mix($body-background-color, #ffffff, 10%);
-$keyword-color: #A6B1E8;
+$keyword-color: #a6b1e8;
 
 $sidebar-color: $body-background-color;
 $border-color: mix($body-background-color, $body-text-color, 80%);
@@ -20,18 +20,6 @@ $search-background-color: $grey-dk-250;
 $table-background-color: $grey-dk-250;
 $feedback-color: darken($sidebar-color, 3%);
 
-$callout-grey-text-color: #dee2e6;
-$callout-grey-background-color: #1a1d20;
-$callout-blue-text-color: #cbe1fb;
-$callout-blue-background-color: #084298;
-$callout-green-text-color: #75b798;
-$callout-green-background-color: #051b11;
-$callout-red-text-color: #ea868f;
-$callout-red-background-color: #2c0b0e;
-$callout-yellow-text-color: #ffda6a;
-$callout-yellow-background-color: #332701;
-$callout-cyan-text-color: #6edff6;
-$callout-cyan-background-color: #032830;
 $callout-text-shadow-color: none;
 
 .site-logo {

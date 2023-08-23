@@ -48,7 +48,10 @@ Therefore **Only Decay Unsnapped Core Structures**{:.ui-keyword} means that alth
 
 With **Auto Destroy Structures**{:.ui-keyword} turned on, structures will be destroyed after a certain amount time since a tribe member has been nearby. By default, the destroy time will match the **unmultiplied** decay time, so that structures will be destroyed as soon as they decay, when using official settings. **Auto Destroy Structures Multiplier**{:.ui-keyword} can be used to adjust the destroy time.
 
-> **Warning**: Setting **Auto Destroy Structures Multiplier**{:.ui-keyword} lower than **Structure Decay Multiplier**{:.ui-keyword} will cause structures to be destroyed before they finish decaying.
+{:.warning .titled}
+> Warning
+> 
+> Setting **Auto Destroy Structures Multiplier**{:.ui-keyword} lower than **Structure Decay Multiplier**{:.ui-keyword} will cause structures to be destroyed before they finish decaying.
 
 **Only Auto Destroy Core Structures**{:.ui-keyword} can be turned on to destroy only core structures. This means structures placed directly on the ground will not be automatically destroyed. Technically a structure placed on a foundation would not be destroyed, but would still collapse when the foundation is destroyed.
 

@@ -11,12 +11,11 @@ configkeys:
   - UseOptimizedHarvestingHealth
 supportedgames:
   - "Ark: Survival Evolved"
+requiresomni: true
 ---
 {% include editortitle.markdown %}
 
 Ever feel like players don't get enough wood from a tree? Ark server admins can control the amount of resources obtained from resource nodes, such as trees, rocks, and crystals. Admins can choose to boost all resources, or just the resources for individual items.
-
-{% include omninotice.markdown %}
 
 {% include image.html file="harvestrates.png" file2x="harvestrates@2x.png" caption="The default empty Harvest Rates editor." %}
 

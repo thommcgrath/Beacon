@@ -1,17 +1,84 @@
-@mixin colorize-callout($callout-color, $callout-text-color) {
-	$callout-border-color: mix($callout-color, $callout-text-color, 75%);
-	color: $callout-text-color;
-	border-color: $callout-border-color $callout-border-color $callout-border-color $callout-text-color;
-	background-color: $callout-color;
+@function pow($number, $exponent) {
+	$value: 1;
+	@if $exponent > 0 {
+		@for $i from 1 through $exponent {
+		$value: $value * $number;
+		}
+	}
+	@return $value;
+}
+
+@function luminance($color) {
+	$red: red($color) / 255;
+	$green: green($color) / 255;
+	$blue: blue($color) / 255;
+	@return pow(0.299 * $red, 2) + pow(0.587 * $green, 2) + pow(0.114 * $blue, 2);
+}
+
+@function contrast-against($backcolor, $forecolor) {
+	$backlum: luminance($backcolor);
+	$forelum: luminance($forecolor);
+	@if $backlum > $forelum {
+		@return ($backlum + 0.05) / ($forelum + 0.05);
+	} @else {
+		@return ($forelum + 0.05) / ($backlum + 0.05);
+	}
+}
+
+@function contrasting-color($backcolor, $forecolor) {
+	@for $percent from 0 through 20 {
+		$darker: adjust-color($forecolor, $lightness: -($percent * 5%));
+		$lighter: adjust-color($forecolor, $lightness: $percent * 5%);
+		@if contrast-against($backcolor, $darker) >= 4.5 {
+			@return $darker;
+		} @else if contrast-against($backcolor, $lighter) >= 4.5 {
+			@return $lighter;
+		}
+	}
+	
+	@if contrast-against($backcolor, #ffffff) > contrast-against($backcolor, #000000) {
+		@return #ffffff;
+	} @else {
+		@return #000000;
+	}
+}
+
+$callout-background-color: mix($body-background-color, $body-text-color, 95%);
+$callout-background-lightness: lightness($callout-background-color);
+$callout-text-color: mix($body-background-color, $body-text-color, 5%);
+$callout-text-lightness: lightness($callout-text-color);
+$callout-border-color: mix($body-background-color, $body-text-color, 85%);
+$callout-border-lightness: lightness($callout-border-color);
+$caption-text-color: contrasting-color($body-background-color, mix($body-background-color, $body-text-color, 40%));
+
+@mixin colorize-callout($tint-color) {
+	$tint-hue: hue($tint-color);
+	$tint-saturation: saturation($tint-color);
+	$tinted-background-color: hsl($tint-hue, $tint-saturation, $callout-background-lightness);
+	$tinted-text-color: contrasting-color($tinted-background-color, hsl($tint-hue, $tint-saturation, $callout-text-lightness));
+	$tinted-border-color: hsl($tint-hue, $tint-saturation, $callout-border-lightness);
+
+	color: $tinted-text-color;
+	border-color: $tinted-border-color $tinted-border-color $tinted-border-color $tinted-text-color;
+	background-color: $tinted-background-color;
 
 	a {
-		$callout-link-color: lighten($callout-text-color, 5%);
+		$callout-link-color: contrasting-color($tinted-background-color, $link-color);
 		color: $callout-link-color !important;
 		text-decoration-color: rgba($callout-link-color, 30%) !important;
 
 		&:hover {
 			text-decoration-color: $callout-link-color !important;
 		}
+	}
+
+	.ui-keyword {
+		color: contrasting-color($tinted-background-color, $keyword-color);
+	}
+
+	code {
+		border-color: $tinted-border-color;
+		background-color: hsl($tint-hue, $tint-saturation, lightness(mix($body-background-color, $body-text-color, 99%)));
 	}
 }
 
@@ -25,7 +92,7 @@ blockquote {
 	border-style: solid;
 	border-radius: 4px;
 	text-shadow: 0px 1px 0px $callout-text-shadow-color;
-	@include colorize-callout($callout-grey-background-color, $callout-grey-text-color);
+	@include colorize-callout($body-background-color);
 
 	&.titled {
 		& > *:first-child {
@@ -40,23 +107,27 @@ blockquote {
 	}
 
 	&.blue, &.primary {
-		@include colorize-callout($callout-blue-background-color, $callout-blue-text-color);
+		@include colorize-callout($tint-blue);
 	}
 
 	&.green, &.success, &.tip {
-		@include colorize-callout($callout-green-background-color, $callout-green-text-color);
+		@include colorize-callout($tint-green);
 	}
 
 	&.red, &.warning {
-		@include colorize-callout($callout-red-background-color, $callout-red-text-color);
+		@include colorize-callout($tint-red);
 	}
 
 	&.yellow, &.caution, &.omni {
-		@include colorize-callout($callout-yellow-background-color, $callout-yellow-text-color);
+		@include colorize-callout($tint-yellow);
 	}
 
 	&.cyan, &.info, &.glossary {
-		@include colorize-callout($callout-cyan-background-color, $callout-cyan-text-color);
+		@include colorize-callout($tint-cyan);
+	}
+
+	&.purple {
+		@include colorize-callout($tint-purple);
 	}
 	
 	a {
@@ -105,7 +176,7 @@ div.screenshot {
 		font-size: 0.75rem;
 		text-align: center;
 		padding-top: 0.25rem;
-		opacity: 0.75;
+		color: $caption-text-color;
 	}
 }
 
@@ -120,7 +191,12 @@ h1.editor-title {
 
 .supported-games {
 	font-size: 0.8rem;
-	opacity: 0.75;
+	color: $caption-text-color;
 	margin-top: 0;
 	margin-bottom: 0.25em;
+}
+
+.omni-notice {
+	color: contrasting-color($body-background-color, $beacon-purple);
+	font-weight: bold;
 }

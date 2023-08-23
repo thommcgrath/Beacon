@@ -5,12 +5,11 @@ configkeys:
   - ConfigOverrideItemCraftingCosts
 supportedgames:
   - "Ark: Survival Evolved"
+requiresomni: true
 ---
 {% include editortitle.markdown %}
 
 In this tutorial we're going to change the crafting cost for narcotics.
-
-{% include omninotice.markdown %}
 
 ### Step 1: Choose an Engram
 

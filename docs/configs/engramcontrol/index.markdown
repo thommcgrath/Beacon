@@ -10,12 +10,11 @@ configkeys:
   - OverridePlayerLevelEngramPoints
 supportedgames:
   - "Ark: Survival Evolved"
+requiresomni: true
 ---
 {% include editortitle.markdown %}
 
 Ark server admins can customize how and when engrams are unlocked, as well as the number of points granted at each level. This guide will help admins understand their options, such as unlocking everything at player creation, or granting tek a specific level instead of by completing boss fights.
-
-{% include omninotice.markdown %}
 
 ## Understanding the Editor
 

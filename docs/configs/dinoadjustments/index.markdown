@@ -9,12 +9,13 @@ configkeys:
   - PreventTransferForClassNames
   - TamedDinoClassDamageMultipliers
   - TamedDinoClassResistanceMultipliers
+supportedgames:
+  - "Ark: Survival Evolved"
+requiresomni: true
 ---
 {% include editortitle.markdown %}
 
 Ark server admins are able to fine-tune certain creature/dino stats, such as increasing resistant to damage or making them untameable. This guide will also cover removing certain creatures from the map, as well as a limited ability to replace one creature with another.
-
-{% include omninotice.markdown %}
 
 {% include image.html file="defaulteditor.png" file2x="defaulteditor@2x.png" caption="The default empty creature adjustments editor." %}
 
