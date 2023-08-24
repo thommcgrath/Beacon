@@ -365,7 +365,7 @@ End
 
 	#tag Event
 		Sub Closing()
-		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable)
+		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged)
 		  #if TargetMacOS
 		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
 		  #endif
@@ -454,7 +454,7 @@ End
 		  #endif
 		  
 		  UpdatesKit.Init()
-		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable)
+		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
@@ -681,6 +681,11 @@ End
 		  Select Case Notification.Name
 		  Case UpdatesKit.Notification_UpdateAvailable
 		    Self.SetupUpdateUI()
+		  Case Preferences.Notification_ProfileIconChanged
+		    Var ProfileButton As OmniBarItem = Self.NavBar.Item("NavUser")
+		    If (ProfileButton Is Nil) = False Then
+		      ProfileButton.Icon = Self.ProfileIcon()
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -700,6 +705,19 @@ End
 		    End If
 		  End Select
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ProfileIcon() As Picture
+		  Select Case Preferences.ProfileIcon
+		  Case Preferences.ProfileIconChoices.Cat
+		    Return IconToolbarCat
+		  Case Preferences.ProfileIconChoices.WithoutPonytail
+		    Return IconToolbarUser
+		  Case Preferences.ProfileIconChoices.WithPonytail
+		    Return IconToolbarUserPonytail
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -985,7 +1003,7 @@ End
 		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Support")
 		  Self.HelpComponent1.LinkedOmniBarItem = Help
 		  
-		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", IconToolbarUser, "Access user settings")
+		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", Self.ProfileIcon, "Access user settings")
 		  
 		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace, User)
 		End Sub

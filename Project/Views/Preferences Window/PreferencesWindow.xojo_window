@@ -10,7 +10,7 @@ Begin BeaconWindow PreferencesWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   478
+   Height          =   356
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -273,7 +273,7 @@ Begin BeaconWindow PreferencesWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   196
+      Top             =   228
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -302,7 +302,7 @@ Begin BeaconWindow PreferencesWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   264
+         Top             =   296
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -335,7 +335,7 @@ Begin BeaconWindow PreferencesWindow
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   264
+         Top             =   296
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -364,7 +364,7 @@ Begin BeaconWindow PreferencesWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   232
+         Top             =   264
          Transparent     =   False
          Underline       =   False
          Value           =   True
@@ -381,7 +381,7 @@ Begin BeaconWindow PreferencesWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   76
+      Height          =   108
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -459,6 +459,69 @@ Begin BeaconWindow PreferencesWindow
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   144
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   70
+      End
+      Begin UITweaks.ResizedPopupMenu ProfileIconMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AppearanceGroup"
+         InitialValue    =   "Does not have a ponytail\nHas a ponytail\nIs a cat"
+         Italic          =   False
+         Left            =   122
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   176
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   198
+      End
+      Begin UITweaks.ResizedLabel ProfileIconLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AppearanceGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Profile Icon:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   176
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -570,7 +633,7 @@ End
 
 	#tag Event
 		Sub Opening()
-		  BeaconUI.SizeToFit(Self.ChannelLabel, Self.DarkModeLabel, Self.NewProjectGameLabel)
+		  BeaconUI.SizeToFit(Self.ChannelLabel, Self.DarkModeLabel, Self.NewProjectGameLabel, Self.ProfileIconLabel)
 		  
 		  Var LeftMenusLeft As Integer = Self.ChannelLabel.Right + 12
 		  Var LeftMenusWidth As Integer = Self.ChannelMenu.Right - LeftMenusLeft
@@ -580,6 +643,8 @@ End
 		  Self.DarkModeMenu.Width = LeftMenusWidth
 		  Self.NewProjectGameMenu.Left = LeftMenusLeft
 		  Self.NewProjectGameMenu.Width = LeftMenusWidth
+		  Self.ProfileIconMenu.Left = LeftMenusLeft
+		  Self.ProfileIconMenu.Width = LeftMenusWidth
 		  
 		  Var Delta As Integer
 		  Var Groups() As DesktopGroupBox = Array(Self.AppearanceGroup, Self.ConnectionsGroup, Self.NewProjectGroup, Self.SoundsGroup, Self.UpdatesGroup)
@@ -593,9 +658,13 @@ End
 		  #endif
 		  
 		  If BeaconUI.DarkModeSupported = False Then
-		    Self.AppearanceGroup.Visible = False
+		    Self.DarkModeLabel.Visible = False
+		    Self.DarkModeMenu.Visible = False
 		    
-		    Delta = Self.AppearanceGroup.Height + 12
+		    Delta = Self.ProfileIconMenu.Top - Self.DarkModeMenu.Top
+		    Self.ProfileIconLabel.Top = Self.ProfileIconLabel.Top - Delta
+		    Self.ProfileIconMenu.Top = Self.ProfileIconMenu.Top - Delta
+		    Self.AppearanceGroup.Height = Self.AppearanceGroup.Height - Delta
 		    Self.UpdatesGroup.Top = Self.UpdatesGroup.Top - Delta
 		  End If
 		  
@@ -818,7 +887,33 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events DarkModeLabel
+#tag Events ProfileIconMenu
+	#tag Event
+		Sub Opening()
+		  Me.RemoveAllRows
+		  Me.AddRow("Does not have a ponytail", Preferences.ProfileIconChoices.WithoutPonytail)
+		  Me.AddRow("Has a ponytail", Preferences.ProfileIconChoices.WithPonytail)
+		  Me.AddRow("Is a cat", Preferences.ProfileIconChoices.Cat)
+		  
+		  Try
+		    Me.SelectRowWithTag(Preferences.ProfileIcon)
+		  Catch Err As RuntimeException
+		    Me.SelectedRowIndex = 0
+		  End Try
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Var Icon As Preferences.ProfileIconChoices = Me.RowTagAt(Me.SelectedRowIndex)
+		  Preferences.ProfileIcon = Icon
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events NewProjectGameMenu
 	#tag Event

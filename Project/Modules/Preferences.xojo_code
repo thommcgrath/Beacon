@@ -953,6 +953,29 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  
+			  Var Default As Integer = CType(ProfileIconChoices.WithoutPonytail, Integer)
+			  Var IntValue As Integer = mManager.IntegerValue("Profile Icon", Default)
+			  Return CType(IntValue, ProfileIconChoices)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = ProfileIcon Then
+			    Return
+			  End If
+			  
+			  mManager.IntegerValue("Profile Icon") = CType(Value, Integer)
+			  NotificationKit.Post(Notification_ProfileIconChanged, Value)
+			End Set
+		#tag EndSetter
+		Protected ProfileIcon As Preferences.ProfileIconChoices
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.DictionaryValue("Saved Passwords", New Dictionary)
 			End Get
 		#tag EndGetter
@@ -1121,6 +1144,9 @@ Protected Module Preferences
 	#tag Constant, Name = Notification_OnlineTokenChanged, Type = Text, Dynamic = False, Default = \"Online Token Changed", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = Notification_ProfileIconChanged, Type = String, Dynamic = False, Default = \"Profile Icon Changed", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = Notification_RecentsChanged, Type = Text, Dynamic = False, Default = \"Recent Documents Changed", Scope = Protected
 	#tag EndConstant
 
@@ -1129,6 +1155,12 @@ Protected Module Preferences
 		FollowSystem
 		  ForceLight
 		ForceDark
+	#tag EndEnum
+
+	#tag Enum, Name = ProfileIconChoices, Type = Integer, Flags = &h1
+		WithoutPonytail
+		  WithPonytail
+		Cat
 	#tag EndEnum
 
 
