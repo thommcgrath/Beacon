@@ -44,6 +44,10 @@ When using the **Back up Game.ini and GameUserSettings.ini before making changes
 
 {% include image.html file="contextmenu.png" file2x="contextmenu@2x.png" caption="Right-clicking a server allows revealing the backups for the server." %}
 
+### Refresh
+
+The **Refresh**{:.ui-keyword} button at the top of the server list will look at every server on every linked account and update things like server addresses and authorizations. These things normally happen during Deploy anyway, but this can be a useful tool to get the most recent details from your host.
+
 ## The **General**{:.ui-keyword} Tab
 
 This is where most of the magic happens.
@@ -51,6 +55,7 @@ This is where most of the magic happens.
 ### Basic Settings
 
 - **Server Name**{:.ui-keyword}: This is the name of the server you want to appear in the in-game server browser.
+- **Nickname**{:.ui-keyword}: If a server has been given a nickname, it will appear in the servers list to the left and in the Deploy window.
 - **Color**{:.ui-keyword}: This is the color picker, explained in the [paragraph above](#server-colors).
 
 ### Generator Settings
@@ -58,7 +63,10 @@ This is where most of the magic happens.
 - **Config Sets**{:.ui-keyword}: When using the [Config Sets](/core/configsets/) feature, this is where you can choose which config sets are used by the server. Change the setting using the **Choose…**{:.ui-keyword} button to the right.
 - **Build Config For**{:.ui-keyword}: A project can be set to support multiple maps, but traditionally a server runs only one map. This menu tells Beacon which map to build the file for. The "All Maps" option can be used in the rare case of a single pair of ini files being used for multiple servers.
   
-  **Note**: Nitrado servers will not have this menu because Beacon can determine the server's map automatically.
+  {:.note .titled}
+  > Note
+  > 
+  > Nitrado servers will not have this menu because Beacon can determine the server's map automatically.
 
 ### Message of the Day
 
@@ -74,8 +82,10 @@ In the top right corner is an eye button, which allows switch between WYSIWYG[^2
 
 You can switch modes as much as you like.
 
-**There are some things you should not do with your Message of the Day!** Thanks to an [Ark bug](https://usebeacon.app/blog/motd_bug), you need to avoid slashes in your message. These are most commonly used in Discord invite urls. For example, `discord.gg/hTKzmak` or `https://discord.gg/hTKzmak` will both cause your message to be cut short. Ark will see the slash in the link as a color closing tag, get confused, and stop the message short. Most admins will choose to do something like `Discord hTKzmak` instead.
-{:.important}
+{:.warning .titled}
+> Warning
+> 
+> **There are some things you should not do with your Message of the Day!** Thanks to an [Ark bug](https://usebeacon.app/blog/motd_bug), you need to avoid slashes in your message. These are most commonly used in Discord invite urls. For example, `discord.gg/hTKzmak` or `https://discord.gg/hTKzmak` will both cause your message to be cut short. Ark will see the slash in the link as a color closing tag, get confused, and stop the message short. Most admins will choose to do something like `Discord hTKzmak` instead.
 
 [^2]: What You See Is What You Get.
 

@@ -7,6 +7,7 @@ configkeys:
   - OverrideMaxExperiencePointsPlayer
 supportedgames:
   - "Ark: Survival Evolved"
+requiresomni: true
 ---
 {% include editortitle.markdown %}
 
