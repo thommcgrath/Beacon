@@ -258,7 +258,7 @@ Protected Class ModDiscoveryEngine
 		  Var SteamCMD As FolderItem 
 		  Try
 		    SteamCMD = Ark.DedicatedServer.SteamCMD(ServerFolder)
-		    If SteamCMD.Exists = False Then
+		    If SteamCMD Is Nil Or SteamCMD.Exists = False Then
 		      App.Log("SteamCMD is not installed.")
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "SteamCMD is not installed."))
 		      Return
@@ -424,8 +424,8 @@ Protected Class ModDiscoveryEngine
 		  End If
 		  
 		  #if Not DebugBuild
-		    If ServerFolder.DeepDelete(False) = False Then
-		      App.Log("Server folder " + ServerFolder.NativePath + " was not deleted")
+		    If HostDir.DeepDelete(False) = False Then
+		      App.Log("Host folder " + HostDir.NativePath + " was not deleted")
 		    End If
 		  #endif
 		  
