@@ -648,7 +648,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function HelpURL(Path As String = "/") As String
-		  Const NewHelpSystem = False
+		  Const NewHelpSystem = True
 		  
 		  #if NewHelpSystem And Not DebugBuild
 		    #Pragma Error "Are you sure about this?"

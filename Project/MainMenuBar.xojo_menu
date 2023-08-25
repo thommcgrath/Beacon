@@ -315,7 +315,7 @@ Begin Menu MainMenuBar
       Begin DesktopMenuItem ViewEngrams
          SpecialMenu = 0
          Index = -2147483648
-         Text = "Blueprints"
+         Text = "Mods"
          ShortcutKey = "2"
          Shortcut = "Cmd+2"
          MenuModifier = True
