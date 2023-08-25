@@ -17,6 +17,15 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddLines(Extends Shape As FigureShape, ParamArray Points() As Pair)
+		  For Idx As Integer = 0 To Points.LastIndex
+		    Var NextIdx As Integer = If(Idx = Points.LastIndex, 0, Idx + 1)
+		    Shape.AddLine(Points(Idx).Left, Points(Idx).Right, Points(NextIdx).Left, Points(NextIdx).Right)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AddSuffix(Extends Title As String, Suffix As String) As String
 		  Var Words() As String = Title.Split(" ")
 		  If Words.LastIndex >= 0 And Words(Words.LastIndex) = Suffix Then
@@ -221,6 +230,12 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DrawRectangle(Extends G As Graphics, Source As Rect)
+		  G.DrawRectangle(Source.Left, Source.Top, Source.Width, Source.Height)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function EncodeBase64URL(Source As String) As String
 		  Var Encoded As String = EncodeBase64(Source, 0)
 		  Encoded = Encoded.ReplaceAll("+", "-")
@@ -291,6 +306,12 @@ Protected Module FrameworkExtensions
 		    Return Fields(Index)
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub FillRectangle(Extends G As Graphics, Source As Rect)
+		  G.FillRectangle(Source.Left, Source.Top, Source.Width, Source.Height)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -10,14 +10,14 @@ Begin BeaconWindow PreferencesWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   356
+   Height          =   388
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   478
+   MinimumHeight   =   388
    MinimumWidth    =   652
    Resizeable      =   False
    Title           =   "#WindowTitle"
@@ -273,7 +273,7 @@ Begin BeaconWindow PreferencesWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   228
+      Top             =   260
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -302,7 +302,7 @@ Begin BeaconWindow PreferencesWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   296
+         Top             =   328
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -335,7 +335,7 @@ Begin BeaconWindow PreferencesWindow
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   296
+         Top             =   328
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -364,7 +364,7 @@ Begin BeaconWindow PreferencesWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   264
+         Top             =   296
          Transparent     =   False
          Underline       =   False
          Value           =   True
@@ -381,7 +381,7 @@ Begin BeaconWindow PreferencesWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   108
+      Height          =   140
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -527,6 +527,36 @@ Begin BeaconWindow PreferencesWindow
          Visible         =   True
          Width           =   70
       End
+      Begin DesktopCheckBox SwitchesShowCaptionsCheck
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Switches Show Symbols"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AppearanceGroup"
+         Italic          =   False
+         Left            =   122
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   208
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   198
+      End
    End
    Begin DesktopGroupBox NewProjectGroup
       AllowAutoDeactivate=   True
@@ -664,6 +694,7 @@ End
 		    Delta = Self.ProfileIconMenu.Top - Self.DarkModeMenu.Top
 		    Self.ProfileIconLabel.Top = Self.ProfileIconLabel.Top - Delta
 		    Self.ProfileIconMenu.Top = Self.ProfileIconMenu.Top - Delta
+		    Self.SwitchesShowCaptionsCheck.Top = Self.SwitchesShowCaptionsCheck.Top - Delta
 		    Self.AppearanceGroup.Height = Self.AppearanceGroup.Height - Delta
 		    Self.UpdatesGroup.Top = Self.UpdatesGroup.Top - Delta
 		  End If
@@ -912,6 +943,22 @@ End
 		  
 		  Var Icon As Preferences.ProfileIconChoices = Me.RowTagAt(Me.SelectedRowIndex)
 		  Preferences.ProfileIcon = Icon
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SwitchesShowCaptionsCheck
+	#tag Event
+		Sub Opening()
+		  Me.Value = Preferences.SwitchesShowCaptions
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ValueChanged()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Preferences.SwitchesShowCaptions = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

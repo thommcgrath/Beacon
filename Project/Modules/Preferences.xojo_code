@@ -1126,6 +1126,26 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.BooleanValue("Switches Show Captions")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = SwitchesShowCaptions Then
+			    Return
+			  End If
+			  
+			  mManager.BooleanValue("Switches Show Captions") = Value
+			  NotificationKit.Post(Notification_SwitchCaptionVisibilityChanged, Value)
+			End Set
+		#tag EndSetter
+		Protected SwitchesShowCaptions As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.IntegerValue("Updates Channel", 0)
 			End Get
 		#tag EndGetter
@@ -1140,16 +1160,19 @@ Protected Module Preferences
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = Notification_OnlineStateChanged, Type = Text, Dynamic = False, Default = \"Online State Changed", Scope = Protected
+	#tag Constant, Name = Notification_OnlineStateChanged, Type = String, Dynamic = False, Default = \"Online State Changed", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_OnlineTokenChanged, Type = Text, Dynamic = False, Default = \"Online Token Changed", Scope = Protected
+	#tag Constant, Name = Notification_OnlineTokenChanged, Type = String, Dynamic = False, Default = \"Online Token Changed", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_ProfileIconChanged, Type = String, Dynamic = False, Default = \"Profile Icon Changed", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_RecentsChanged, Type = Text, Dynamic = False, Default = \"Recent Documents Changed", Scope = Protected
+	#tag Constant, Name = Notification_RecentsChanged, Type = String, Dynamic = False, Default = \"Recent Documents Changed", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_SwitchCaptionVisibilityChanged, Type = String, Dynamic = False, Default = \"Switch Caption Visibility Changed", Scope = Protected
 	#tag EndConstant
 
 
