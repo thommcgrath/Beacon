@@ -168,7 +168,7 @@ Inherits ControlCanvas
 		        Self.Refresh
 		      End Select
 		    ElseIf Choice.Tag.Type = Variant.TypeObject And Choice.Tag.ObjectValue IsA Beacon.ConfigSet Then
-		      Self.Project.ActiveConfigSet = Beacon.ConfigSet(Choice.Tag)
+		      RaiseEvent Changed(Beacon.ConfigSet(Choice.Tag))
 		      Self.Refresh
 		    End If
 		  End If
@@ -181,6 +181,10 @@ Inherits ControlCanvas
 		End Function
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event Changed(Set As Beacon.ConfigSet)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event GetProject() As Beacon.Project

@@ -1491,6 +1491,11 @@ End
 		  Self.NewConfigSet()
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Changed(Set As Beacon.ConfigSet)
+		  Self.ActiveConfigSet = Set
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
