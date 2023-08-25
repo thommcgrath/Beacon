@@ -148,11 +148,13 @@ Protected Module Preferences
 		  Var Bounds As Rect = mManager.RectValue(Info.Name + " Position")
 		  If Bounds <> Nil Then
 		    // Find the best screen
-		    Var IdealScreen As Screen = Screen(0)
-		    If ScreenCount > 1 Then
+		    Var IdealScreen As DesktopDisplay = DesktopDisplay.DisplayAt(0)
+		    Var Bound As Integer = DesktopDisplay.DisplayCount - 1
+		    If Bound > 0 Then
 		      Var MaxArea As Integer
-		      For I As Integer = 0 To ScreenCount - 1
-		        Var ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		      For I As Integer = 0 To Bound
+		        Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(I)
+		        Var ScreenBounds As New Rect(Display.AvailableLeft, Display.AvailableTop, Display.AvailableWidth, Display.AvailableHeight)
 		        Var Intersection As Rect = ScreenBounds.Intersection(Bounds)
 		        If Intersection = Nil Then
 		          Continue
@@ -163,7 +165,7 @@ Protected Module Preferences
 		        End If
 		        If Area > MaxArea Then
 		          MaxArea = Area
-		          IdealScreen = Screen(I)
+		          IdealScreen = Display
 		        End If
 		      Next
 		    End If

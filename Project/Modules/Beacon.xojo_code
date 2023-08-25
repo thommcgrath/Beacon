@@ -91,28 +91,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ClassStringFromPath(Path As String) As String
-		  If Path.Length <= 6 Or Path.Left(6) <> "/Game/" Then
-		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
-		  End If
-		  
-		  Var Components() As String = Path.Split("/")
-		  Var Tail As String = Components(Components.LastIndex)
-		  Components = Tail.Split(".")
-		  
-		  Var FirstPart As String = Components(Components.FirstIndex)
-		  Var SecondPart As String = Components(Components.LastIndex)
-		  
-		  If SecondPart.EndsWith("_C") And FirstPart.EndsWith("_C") = False Then
-		    // Appears to be a BlueprintGeneratedClass Path
-		    SecondPart = SecondPart.Left(SecondPart.Length - 2)
-		  End If
-		  
-		  Return SecondPart + "_C"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Sub CleanupConfigBackups()
 		  Var BackupsRoot As FolderItem = App.BackupsFolder
 		  If BackupsRoot = Nil Or BackupsRoot.Exists = False Then
@@ -276,31 +254,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ComputeDifficultySettings(BaseDifficulty As Double, DesiredDinoLevel As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
-		  OverrideOfficialDifficulty = Max(Ceiling(DesiredDinoLevel / 30), BaseDifficulty)
-		  DifficultyOffset = Max((DesiredDinoLevel - 15) / ((OverrideOfficialDifficulty * 30) - 15), 0.001)
-		  DifficultyValue = (DifficultyOffset * (OverrideOfficialDifficulty - 0.5)) + 0.5
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ComputeDifficultySettings(MaxDinoLevel As Integer, DinoLevelSteps As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
-		  MaxDinoLevel = Max(MaxDinoLevel, 15)
-		  DinoLevelSteps = Max(DinoLevelSteps, 1)
-		  DifficultyValue = MaxDinoLevel / 30 
-		  OverrideOfficialDifficulty = DinoLevelSteps
-		  DifficultyOffset = Max(((MaxDinoLevel / 30) - 0.5) / (DinoLevelSteps - 0.5), 0.01)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ComputeMaxDinoLevel(Offset As Double, Steps As Integer) As Integer
-		  Var DifficultyValue As Double = (Offset * (Steps - 0.5)) + 0.5
-		  Return DifficultyValue * 30
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function Decompress(Data As String) As String
 		  If Not IsCompressed(Data) Then
 		    Return Data
@@ -405,19 +358,6 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function DictionaryValue(Extends Dict As Dictionary, Key As Variant, Default As Dictionary, AllowArray As Boolean = False) As Dictionary
 		  Return GetValueAsType(Dict, Key, "Dictionary", Default, AllowArray)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function DifficultyOffset(Value As Double, Scale As Double) As Double
-		  Return Min((Value - 0.5) / (Scale - 0.5), 1.0)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function DifficultyValue(Offset As Double, Scale As Double) As Double
-		  Offset = Max(Offset, 0.0001)
-		  Return (Offset * (Scale - 0.5)) + 0.5
 		End Function
 	#tag EndMethod
 
@@ -718,85 +658,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function LabelFromClassString(ClassString As String) As String
-		  If ClassString.EndsWith("_C") Then
-		    ClassString = ClassString.Left(ClassString.Length - 2)
-		  End If
-		  
-		  If ClassString.IsEmpty Then
-		    Return ""
-		  End If
-		  
-		  Var Prefixes() As String = Array("DinoDropInventoryComponent", "DinoSpawnEntries")
-		  Var Blacklist() As String = Array("Character", "BP", "DinoSpawnEntries", "SupplyCrate", "SupplyCreate", "DinoDropInventoryComponent")
-		  
-		  Try
-		    ClassString = ClassString.Replace("T_Ext", "Ext")
-		    
-		    Var MapName As String
-		    
-		    Var Parts() As String = ClassString.Split("_")
-		    If Parts(0).BeginsWith("PrimalItem") Then
-		      Parts.RemoveAt(0)
-		    End If
-		    
-		    For I As Integer = Parts.LastIndex DownTo 0
-		      Select Case Parts(I)
-		      Case "AB"
-		        MapName = "Aberration"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "Val"
-		        MapName = "Valguero"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "SE"
-		        MapName = "Scorched"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "Ext", "EX"
-		        MapName = "Extinction"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "JacksonL", "Ragnarok"
-		        MapName = "Ragnarok"
-		        Parts.RemoveAt(I)
-		        Continue
-		      Case "TheCenter"
-		        MapName = "The Center"
-		        Parts.RemoveAt(I)
-		        Continue
-		      End Select
-		      
-		      For Each Prefix As String In Prefixes
-		        If Parts(I).BeginsWith(Prefix) Then
-		          Parts(I) = Parts(I).Middle(Prefix.Length)
-		        End If
-		      Next
-		      
-		      For Each Member As String In Blacklist
-		        If Parts(I) = Member Then
-		          Parts.RemoveAt(I)
-		          Continue For I
-		        End If
-		      Next
-		    Next
-		    
-		    If MapName <> "" Then
-		      Parts.AddAt(0, MapName)
-		    End If
-		    
-		    If Parts.Count > 0 Then
-		      Return Beacon.MakeHumanReadable(Parts.Join(" "))
-		    End If
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Return Beacon.MakeHumanReadable(ClassString)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function LastIndex(Extends Target As Beacon.Countable) As Integer
 		  Return Target.Count - 1
@@ -966,78 +827,6 @@ Protected Module Beacon
 		  #else
 		    #Pragma Error "Not implemented"
 		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ParseCommandLine(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
-		  // This shouldn't take long, but still, probably best to only use this on a thread
-		  
-		  Var InQuotes As Boolean
-		  Var Characters() As String = CommandLine.Split("")
-		  Var Buffer, Params() As String
-		  For Each Char As String In Characters
-		    If Char = """" Then
-		      If InQuotes Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		        InQuotes = False
-		      Else
-		        InQuotes = True
-		      End If
-		    ElseIf Char = " " Then
-		      If InQuotes = False And Buffer.Length > 0 Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		      End If
-		    ElseIf Char = "-" And Buffer.Length = 0 Then
-		      Continue
-		    Else
-		      Buffer = Buffer + Char
-		    End If
-		  Next
-		  If Buffer.Length > 0 Then
-		    Params.Add(Buffer)
-		    Buffer = ""
-		  End If
-		  
-		  Var StartupParams() As String = Params.Shift.Split("?")
-		  Var Map As String = StartupParams.Shift
-		  Call StartupParams.Shift // The listen statement
-		  If PreserveSyntax Then
-		    For Idx As Integer = 0 To Params.LastIndex
-		      Params(Idx) = "-" + Params(Idx)
-		    Next
-		    For Idx As Integer = 0 To StartupParams.LastIndex
-		      StartupParams(Idx) = "?" + StartupParams(Idx)
-		    Next
-		  End If
-		  StartupParams.Merge(Params)
-		  
-		  Var CommandLineOptions As New Dictionary
-		  For Each Parameter As String In StartupParams
-		    Var KeyPos As Integer = Parameter.IndexOf("=")
-		    Var Key As String
-		    Var Value As Variant
-		    If KeyPos = -1 Then
-		      Key = Parameter
-		      Value = True
-		    Else
-		      Key = Parameter.Left(KeyPos)
-		      Value = Parameter.Middle(KeyPos + 1)
-		    End If
-		    If PreserveSyntax Then
-		      Value = Parameter
-		    End If
-		    CommandLineOptions.Value(Key) = Value
-		  Next
-		  
-		  If PreserveSyntax Then
-		    CommandLineOptions.Value("?Map") = Map
-		  Else
-		    CommandLineOptions.Value("Map") = Map
-		  End If
-		  Return CommandLineOptions
 		End Function
 	#tag EndMethod
 

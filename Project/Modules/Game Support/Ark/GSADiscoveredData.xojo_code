@@ -71,7 +71,7 @@ Inherits Ark.DiscoveredData
 		    Next
 		    
 		    Var Launch As String = "TheIsland?listen" + Chain + " " + Tail
-		    Super.CommandLineOptions = Beacon.ParseCommandLine(Launch)
+		    Super.CommandLineOptions = Ark.ParseCommandLine(Launch)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName)
 		  End Try

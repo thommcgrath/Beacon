@@ -57,9 +57,9 @@ Protected Module Tests
 		  Const ScorpionPath = "/Game/Mods/LostIsland/Assets/Spawners/Scorpion/DinoSpawnEntriesCave2-LowSpiderScorp_C.DinoSpawnEntriesCave2-LowSpiderScorp_C"
 		  Const ReaperPath = "/Game/Genesis2/Dinos/BiomeVariants/Xenomorph_Character_Female_BP_Gen2.Xenomorph_Character_BP_Female_Gen2"
 		  
-		  Var NormalClass As String = Beacon.ClassStringFromPath(NormalPath)
-		  Var ScorpionClass As String = Beacon.ClassStringFromPath(ScorpionPath)
-		  Var ReaperClass As String = Beacon.ClassStringFromPath(ReaperPath)
+		  Var NormalClass As String = Ark.ClassStringFromPath(NormalPath)
+		  Var ScorpionClass As String = Ark.ClassStringFromPath(ScorpionPath)
+		  Var ReaperClass As String = Ark.ClassStringFromPath(ReaperPath)
 		  
 		  Call Assert(NormalClass = "AB_DinoSpawnEntriesRockDrake_C", "Class from path is wrong. Expected AB_DinoSpawnEntriesRockDrake_C, got " + NormalClass + ".")
 		  Call Assert(ScorpionClass = "DinoSpawnEntriesCave2-LowSpiderScorp_C_C", "Class from path is wrong. Expected DinoSpawnEntriesCave2-LowSpiderScorp_C_C, got " + ScorpionClass + ".")

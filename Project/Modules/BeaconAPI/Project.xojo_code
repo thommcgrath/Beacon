@@ -66,12 +66,6 @@ Protected Class Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Type" )  Function IsGuest() As Boolean
-		  Return Self.mType = Self.TypeGuest
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IsPublished() As Boolean
 		  Self.mPublishState = Self.PublishStateApproved
 		End Function

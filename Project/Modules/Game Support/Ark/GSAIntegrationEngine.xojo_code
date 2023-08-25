@@ -43,7 +43,7 @@ Inherits Ark.IntegrationEngine
 		  End Try
 		  
 		  Var Launch As String = "TheIsland?listen" + Chain + " " + Tail
-		  Var CommandLine As Dictionary = Beacon.ParseCommandLine(Launch, True)
+		  Var CommandLine As Dictionary = Ark.ParseCommandLine(Launch, True)
 		  If CommandLine.HasKey("?Map") Then
 		    CommandLine.Remove("?Map")
 		  ElseIf CommandLine.HasKey("Map") Then

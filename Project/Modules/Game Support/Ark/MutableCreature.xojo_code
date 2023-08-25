@@ -64,7 +64,7 @@ Implements Ark.MutableBlueprint
 		  
 		  Self.mCreatureId = CreatureId
 		  Self.mPath = Path
-		  Self.mClassString = Beacon.ClassStringFromPath(Path)
+		  Self.mClassString = Ark.ClassStringFromPath(Path)
 		  Self.mAvailability = Ark.Maps.UniversalMask
 		End Sub
 	#tag EndMethod
@@ -210,7 +210,7 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
 		  Self.mPath = Value
-		  Self.mClassString = Beacon.ClassStringFromPath(Value)
+		  Self.mClassString = Ark.ClassStringFromPath(Value)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

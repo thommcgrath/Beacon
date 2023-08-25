@@ -52,7 +52,7 @@ Implements Ark.MutableBlueprint
 		  Self.mSpawnPointId = SpawnPointId
 		  Self.mAvailability = Ark.Maps.UniversalMask
 		  Self.Path = Path
-		  Self.Label = Beacon.LabelFromClassString(Self.ClassString)
+		  Self.Label = Ark.LabelFromClassString(Self.ClassString)
 		  Self.Modified = False
 		End Sub
 	#tag EndMethod
@@ -174,7 +174,7 @@ Implements Ark.MutableBlueprint
 		  // Part of the Ark.MutableBlueprint interface.
 		  
 		  Self.mPath = Value
-		  Self.mClassString = Beacon.ClassStringFromPath(Value)
+		  Self.mClassString = Ark.ClassStringFromPath(Value)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

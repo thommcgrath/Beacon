@@ -508,7 +508,7 @@ Inherits ControlCanvas
 		    Base.AddMenu(RequireItem)
 		    Base.AddMenu(ExcludeItem)
 		    Base.AddMenu(NeutralItem)
-		    Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    Base.AddMenu(HideItem)
 		    
 		    OffsetX = Self.mCells(CellIndex).Left

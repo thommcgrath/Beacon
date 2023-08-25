@@ -199,6 +199,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   139
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -381,6 +382,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   139
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -1654,7 +1656,7 @@ End
 		  Self.ColorSetsMenu.AddRow("Unchanged", "")
 		  Self.ColorSetsMenu.SelectedRowIndex = 0
 		  #if TargetMacOS
-		    Self.ColorSetsMenu.AddRow(MenuItem.TextSeparator, "-")
+		    Self.ColorSetsMenu.AddRow(DesktopMenuItem.TextSeparator, "-")
 		  #endif
 		  Var FoundColorSet As Boolean
 		  If Set.ColorSetClass.IsEmpty Then

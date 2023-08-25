@@ -1264,7 +1264,7 @@ End
 		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods."))
 		  Me.Append(OmniBarItem.CreateButton("ToolsButton", "Tools", IconToolbarTools, "Use convenience tools for this project."))
 		  
-		  Self.ShowBlueprintsButton = Self.Project.HasAvailableBlueprints
+		  Self.ShowBlueprintsButton = Self.Project.HasEmbeddedContentPacks
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1310,7 +1310,7 @@ End
 		    For Each Tool As Ark.ProjectTool In Tools
 		      If Tool.FirstGroup <> LastEditor Then
 		        If Base.Count > 0 Then
-		          Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		          Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		        End If
 		        
 		        Var Header As New DesktopMenuItem(Language.LabelForConfig(Tool.FirstGroup))
@@ -1335,7 +1335,7 @@ End
 		    Self.UpdateConfigList()
 		  Case "BlueprintsButton"
 		    ArkSaveBlueprintsDialog.Present(Self, Self.Project)
-		    Self.ShowBlueprintsButton = Self.Project.HasAvailableBlueprints
+		    Self.ShowBlueprintsButton = Self.Project.HasEmbeddedContentPacks
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1409,7 +1409,7 @@ End
 		  Base.AddMenu(PasteItem)
 		  
 		  If ItemIndex > -1 Then
-		    Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
 		    For Each Tool As Ark.ProjectTool In Tools
 		      If Tool.IsRelevantForGroup(ConfigName) Then
@@ -1417,7 +1417,7 @@ End
 		      End If
 		    Next
 		    If Base.Count > 0 Then
-		      Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		      Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    End If
 		    Base.AddMenu(New DesktopMenuItem("Restore """ + Item.Caption + """ to Default", RestoreTag))
 		  End If

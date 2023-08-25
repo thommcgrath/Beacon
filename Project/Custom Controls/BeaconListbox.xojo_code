@@ -40,7 +40,7 @@ Inherits DesktopListBox
 		  EditItem.Enabled = CanEdit
 		  Base.AddMenu(EditItem)
 		  
-		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		  
 		  Var CutItem As New DesktopMenuItem("Cut", "cut")
 		  CutItem.Shortcut = "X"
@@ -66,7 +66,7 @@ Inherits DesktopListBox
 		  Var Bound As Integer = Base.Count - 1
 		  For I As Integer = 0 To Bound
 		    If Base.MenuAt(I) = DeleteItem And I < Bound Then
-		      Base.AddMenuAt(I + 1, New DesktopMenuItem(MenuItem.TextSeparator))
+		      Base.AddMenuAt(I + 1, New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    End If
 		  Next
 		  

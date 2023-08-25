@@ -517,15 +517,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function BuildVersion() As String
 		  Var VersionString As String = Self.MajorVersion.ToString(Locale.Raw, "0") + "." + Self.MinorVersion.ToString(Locale.Raw, "0")
-		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> Application.Final Then
+		  If Self.BugVersion > 0 Or (Self.StageCode = DesktopApplication.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> DesktopApplication.Final Then
 		    VersionString = VersionString + "." + Self.BugVersion.ToString(Locale.Raw, "0")
 		  End If
 		  Select Case Self.StageCode
-		  Case Application.Development
+		  Case DesktopApplication.Development
 		    Return VersionString + "pa" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
-		  Case Application.Alpha
+		  Case DesktopApplication.Alpha
 		    Return VersionString + "a" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
-		  Case Application.Beta
+		  Case DesktopApplication.Beta
 		    Return VersionString + "b" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		  Else
 		    If Self.NonReleaseVersion <= 0 Then
@@ -957,19 +957,20 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_CheckScreenSize()
 		  // Find the largest screen
-		  Var LargestScreen As Integer = -1
-		  Var Bound As Integer = ScreenCount - 1
+		  Var LargestDisplay As DesktopDisplay
+		  Var Bound As Integer = DesktopDisplay.DisplayCount - 1
 		  For Idx As Integer = 0 To Bound
-		    If LargestScreen = -1 Then
-		      LargestScreen = Idx
+		    Var Display As DesktopDisplay = DesktopDisplay.DisplayAt(Idx)
+		    If LargestDisplay Is Nil Then
+		      LargestDisplay = Display
 		    Else
-		      If (Screen(Idx).Width * Screen(Idx).Height) > (Screen(LargestScreen).Width * Screen(LargestScreen).Height) Then
-		        LargestScreen = Idx
+		      If (Display.Width * Display.Height) > (LargestDisplay.Width * LargestDisplay.Height) Then
+		        LargestDisplay = Display
 		      End If
 		    End If
 		  Next
 		  
-		  Var ScreenSize As New Size(Screen(LargestScreen).Width, Screen(LargestScreen).Height)
+		  Var ScreenSize As New Size(LargestDisplay.Width, LargestDisplay.Height)
 		  Var LastScreen As Size = Preferences.LastUsedScreenSize
 		  If LastScreen Is Nil Or ScreenSize.Width <> LastScreen.Width Or ScreenSize.Height <> LastScreen.Height Then
 		    // Warn

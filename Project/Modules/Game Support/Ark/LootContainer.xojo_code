@@ -153,7 +153,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    End If
 		    Path = Ark.UnknownBlueprintPath("LootContainers", ClassString)
 		  ElseIf ClassString.IsEmpty Then
-		    ClassString = Beacon.ClassStringFromPath(Path)
+		    ClassString = Ark.ClassStringFromPath(Path)
 		  End If
 		  If BlueprintId.IsEmpty Then
 		    BlueprintId = Beacon.UUID.v5(LootContainer.mContentPackId.Lowercase + ":" + Path.Lowercase)
@@ -162,7 +162,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  LootContainer.mClassString = ClassString
 		  LootContainer.mPath = Path
 		  LootContainer.mLootDropId = BlueprintId
-		  LootContainer.mLabel = Beacon.LabelFromClassString(ClassString)
+		  LootContainer.mLabel = Ark.LabelFromClassString(ClassString)
 		  Return LootContainer
 		End Function
 	#tag EndMethod
@@ -393,7 +393,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function Label() As String
 		  If Self.mLabel.IsEmpty Then
-		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
+		    Self.mLabel = Ark.LabelFromClassString(Self.ClassString)
 		  End If
 		  
 		  Return Self.mLabel

@@ -400,11 +400,11 @@ End
 		  ShowServerIds.HasCheckMark = Preferences.ServersListShowIds
 		  Base.AddMenu(ViewFullNames)
 		  Base.AddMenu(ViewAbbreviatedNames)
-		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		  Base.AddMenu(SortByName)
 		  Base.AddMenu(SortByAddress)
 		  Base.AddMenu(SortByColor)
-		  Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		  Base.AddMenu(ShowServerIds)
 		  
 		  Var Position As Point = Self.ConfigToolbar.GlobalPosition

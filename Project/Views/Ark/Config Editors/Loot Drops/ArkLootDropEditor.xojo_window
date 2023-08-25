@@ -472,7 +472,7 @@ End
 		    
 		    Names.SortWith(Items)
 		    
-		    Parent.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		    Parent.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
 		    Var Header As New DesktopMenuItem(Group)
 		    Header.Enabled = False

@@ -552,7 +552,7 @@ End
 		  Next
 		  
 		  If HasExperimentalContainers Then
-		    Menu.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		    Menu.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		    
 		    Var ExpItem As New DesktopMenuItem("Show Experimental Containers", "toggle_experimental")
 		    ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources

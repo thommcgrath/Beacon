@@ -893,12 +893,14 @@ Begin BeaconDialog ArkRegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -906,6 +908,7 @@ Begin BeaconDialog ArkRegisterModDialog
    End
    Begin Thread RegisterModThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1230,10 +1233,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mSteamLookupSocket As URLConnection
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Attributes( Deprecated = "mSteamId" ) Private mWorkshopID As NullableDouble
 	#tag EndProperty
 
 

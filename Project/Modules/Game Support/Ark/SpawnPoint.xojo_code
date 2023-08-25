@@ -118,7 +118,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		    End If
 		    Path = Ark.UnknownBlueprintPath("SpawnPoints", ClassString)
 		  ElseIf ClassString.IsEmpty Then
-		    ClassString = Beacon.ClassStringFromPath(Path)
+		    ClassString = Ark.ClassStringFromPath(Path)
 		  End If
 		  If BlueprintId.IsEmpty Then
 		    BlueprintId = Beacon.UUID.v5(SpawnPoint.mContentPackId.Lowercase + ":" + Path.Lowercase)
@@ -127,7 +127,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		  SpawnPoint.mClassString = ClassString
 		  SpawnPoint.mPath = Path
 		  SpawnPoint.mSpawnPointId = BlueprintId
-		  SpawnPoint.mLabel = Beacon.LabelFromClassString(ClassString)
+		  SpawnPoint.mLabel = Ark.LabelFromClassString(ClassString)
 		  Return SpawnPoint
 		End Function
 	#tag EndMethod

@@ -848,7 +848,7 @@ End
 		    For Each Tool As SDTD.ProjectTool In Tools
 		      If Tool.FirstGroup <> LastEditor Then
 		        If Base.Count > 0 Then
-		          Base.AddMenu(New DesktopMenuItem(MenuItem.TextSeparator))
+		          Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
 		        End If
 		        
 		        Var Header As New DesktopMenuItem(Language.LabelForConfig(Tool.FirstGroup))

@@ -678,7 +678,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		          Menu.HasCheckMark = Item.Toggled
 		          Base.AddMenu(Menu)
 		        Case OmniBarItem.Types.Separator
-		          Var Menu As New DesktopMenuItem(MenuItem.TextSeparator)
+		          Var Menu As New DesktopMenuItem(DesktopMenuItem.TextSeparator)
 		          Base.AddMenu(Menu)
 		        Case OmniBarItem.Types.Title
 		          Var Menu As New DesktopMenuItem(Item.Caption)

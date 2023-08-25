@@ -125,7 +125,7 @@ Implements Ark.Blueprint
 		    End If
 		    Path = Ark.UnknownBlueprintPath("Engrams", ClassString)
 		  ElseIf ClassString.IsEmpty Then
-		    ClassString = Beacon.ClassStringFromPath(Path)
+		    ClassString = Ark.ClassStringFromPath(Path)
 		  End If
 		  If BlueprintId.IsEmpty Then
 		    BlueprintId = Beacon.UUID.v5(Engram.mContentPackId.Lowercase + ":" + Path.Lowercase)
@@ -213,7 +213,7 @@ Implements Ark.Blueprint
 		  // Part of the Beacon.NamedItem interface.
 		  
 		  If Self.mLabel.IsEmpty Then
-		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
+		    Self.mLabel = Ark.LabelFromClassString(Self.ClassString)
 		  End If
 		  
 		  Return Self.mLabel

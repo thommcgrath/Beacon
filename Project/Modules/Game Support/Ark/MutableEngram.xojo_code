@@ -41,7 +41,7 @@ Implements Ark.MutableBlueprint
 		  
 		  Self.mEngramId = EngramId
 		  Self.mPath = Path
-		  Self.mClassString = Beacon.ClassStringFromPath(Path)
+		  Self.mClassString = Ark.ClassStringFromPath(Path)
 		  Self.mAvailability = Ark.Maps.UniversalMask
 		End Sub
 	#tag EndMethod
@@ -138,7 +138,7 @@ Implements Ark.MutableBlueprint
 		  // Part of the Ark.MutableBlueprint interface.
 		  
 		  Self.mPath = Value
-		  Self.mClassString = Beacon.ClassStringFromPath(Value)
+		  Self.mClassString = Ark.ClassStringFromPath(Value)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

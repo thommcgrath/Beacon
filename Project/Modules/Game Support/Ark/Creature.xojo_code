@@ -120,7 +120,7 @@ Implements Ark.Blueprint
 		    End If
 		    Path = Ark.UnknownBlueprintPath("Creatures", ClassString)
 		  ElseIf ClassString.IsEmpty Then
-		    ClassString = Beacon.ClassStringFromPath(Path)
+		    ClassString = Ark.ClassStringFromPath(Path)
 		  End If
 		  If BlueprintId.IsEmpty Then
 		    BlueprintId = Beacon.UUID.v5(Creature.mContentPackId.Lowercase + ":" + Path.Lowercase)
@@ -129,7 +129,7 @@ Implements Ark.Blueprint
 		  Creature.mClassString = ClassString
 		  Creature.mPath = Path
 		  Creature.mCreatureId = BlueprintId
-		  Creature.mLabel = Beacon.LabelFromClassString(ClassString)
+		  Creature.mLabel = Ark.LabelFromClassString(ClassString)
 		  Return Creature
 		End Function
 	#tag EndMethod
@@ -163,7 +163,7 @@ Implements Ark.Blueprint
 	#tag Method, Flags = &h0
 		Function Label() As String
 		  If Self.mLabel.IsEmpty Then
-		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
+		    Self.mLabel = Ark.LabelFromClassString(Self.ClassString)
 		  End If
 		  
 		  Return Self.mLabel

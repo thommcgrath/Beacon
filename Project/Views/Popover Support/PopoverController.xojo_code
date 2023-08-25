@@ -16,7 +16,7 @@ Protected Class PopoverController
 		    Var ContainerBound As Integer = Container.ControlCount - 1
 		    Var Initial As Boolean = True
 		    For Idx As Integer = 0 To ContainerBound
-		      If (Container.ControlAt(Idx) IsA RectControl) = False Then
+		      If (Container.ControlAt(Idx) IsA DesktopUIControl) = False Then
 		        Continue
 		      End If
 		      
