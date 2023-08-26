@@ -675,6 +675,8 @@ End
 		  Self.NewProjectGameMenu.Width = LeftMenusWidth
 		  Self.ProfileIconMenu.Left = LeftMenusLeft
 		  Self.ProfileIconMenu.Width = LeftMenusWidth
+		  Self.SwitchesShowCaptionsCheck.Left = LeftMenusLeft
+		  Self.SwitchesShowCaptionsCheck.Width = LeftMenusWidth
 		  
 		  Var Delta As Integer
 		  Var Groups() As DesktopGroupBox = Array(Self.AppearanceGroup, Self.ConnectionsGroup, Self.NewProjectGroup, Self.SoundsGroup, Self.UpdatesGroup)
