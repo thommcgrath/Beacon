@@ -1502,11 +1502,9 @@ Implements ObservationKit.Observable
 		    Var SetEncryptedData As New Dictionary
 		    RaiseEvent SaveConfigSet(SetDict, SetPlainData, SetEncryptedData)
 		    
-		    If SetPlainData.KeyCount > 0 Then
-		      Sets.Value(Set.ConfigSetId) = SetPlainData
-		      If SetEncryptedData.KeyCount > 0 Then
-		        EncryptedSets.Value(Set.ConfigSetId) = SetEncryptedData
-		      End If
+		    Sets.Value(Set.ConfigSetId) = SetPlainData
+		    If SetEncryptedData.KeyCount > 0 Then
+		      EncryptedSets.Value(Set.ConfigSetId) = SetEncryptedData
 		    End If
 		  Next
 		  ProjectData.Value("configSets") = Definitions
