@@ -265,10 +265,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CheckGameDatabase(GameID As String) As Boolean
-		  Var DataSource As Beacon.DataSource = App.DataSourceForGame(GameID)
+		Private Function CheckGameDatabase(GameId As String) As Boolean
+		  Var DataSource As Beacon.DataSource = App.DataSourceForGame(GameId)
 		  If DataSource Is Nil Or DataSource.HasContent = False Then
-		    Var GameName As String = Language.GameName(GameID)
+		    Var GameName As String = Language.GameName(GameId)
 		    BeaconUI.ShowAlert("Game database is not ready", "Sit tight a few moments while Beacon prepares its database for " + GameName + ".")
 		    
 		    App.SyncGamedata(False, False)
@@ -421,7 +421,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FrontmostDocumentEditor(GameID As String) As DocumentEditorView
+		Function FrontmostDocumentEditor(GameId As String) As DocumentEditorView
 		  For Offset As Integer = 0 To Self.LastPageIndex
 		    Var Page As BeaconSubview = Self.FrontmostPage(Offset)
 		    If (Page IsA DocumentEditorView) = False Then
@@ -429,7 +429,7 @@ End
 		    End If
 		    
 		    Var Editor As DocumentEditorView = DocumentEditorView(Page)
-		    If Editor.GameID = GameID Then
+		    If Editor.GameId = GameId Then
 		      Return Editor
 		    End If
 		  Next Offset
@@ -546,7 +546,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub OpenController(Controller As Beacon.ProjectController, AddToRecents As Boolean, Actions() As Beacon.ScriptAction)
-		  If Self.CheckGameDatabase(Controller.GameID) = False Then
+		  If Self.CheckGameDatabase(Controller.GameId) = False Then
 		    Return
 		  End If
 		  

@@ -223,7 +223,7 @@ End
 		      Self.List.AddRow("")
 		      Var Idx As Integer = Self.List.LastAddedRowIndex
 		      Self.List.CellTextAt(Idx, Self.ColumnName) = URL.Name
-		      Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(URL.GameID)
+		      Self.List.CellTextAt(Idx, Self.ColumnGame) = Language.GameName(URL.GameId)
 		      Self.List.CellTextAt(Idx, Self.ColumnPath) = URL.HumanPath
 		      Self.List.CellTooltipAt(Idx, Self.ColumnPath) = Self.List.CellTextAt(Idx, Self.ColumnPath)
 		      Self.List.RowTagAt(Idx) = URL

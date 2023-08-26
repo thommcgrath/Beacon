@@ -59,7 +59,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Function GameId() As String
 		  
 		End Function
 	#tag EndMethod
@@ -74,7 +74,7 @@ Implements Beacon.NamedItem
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("ID") = Self.mUUID
-		  Dict.Value("Game") = Self.GameID
+		  Dict.Value("Game") = Self.GameId
 		  Dict.Value("Label") = Self.mLabel
 		  RaiseEvent Save(Dict)
 		  Return Dict

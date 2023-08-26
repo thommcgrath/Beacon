@@ -32,7 +32,7 @@ Inherits Beacon.Template
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
+		Function GameId() As String
 		  Return Ark.Identifier
 		End Function
 	#tag EndMethod

@@ -209,7 +209,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Shared Function Create(Controller As Beacon.ProjectController) As DocumentEditorView
-		  Select Case Controller.GameID
+		  Select Case Controller.GameId
 		  Case Ark.Identifier
 		    Return New ArkDocumentEditorView(Controller)
 		  Case SDTD.Identifier
@@ -286,7 +286,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag Method, Flags = &h0
 		Function GameId() As String
 		  If (Self.mController Is Nil) = False And (Self.mController.Project Is Nil) = False Then
-		    Return Self.mController.Project.GameID
+		    Return Self.mController.Project.GameId
 		  End If
 		End Function
 	#tag EndMethod

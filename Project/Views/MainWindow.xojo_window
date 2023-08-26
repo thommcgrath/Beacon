@@ -592,12 +592,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FrontmostDocumentView(GameID As String) As DocumentEditorView
+		Function FrontmostDocumentView(GameId As String) As DocumentEditorView
 		  If Self.DocumentsComponent1 Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Return Self.DocumentsComponent1.FrontmostDocumentEditor(GameID)
+		  Return Self.DocumentsComponent1.FrontmostDocumentEditor(GameId)
 		End Function
 	#tag EndMethod
 

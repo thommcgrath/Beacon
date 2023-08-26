@@ -285,14 +285,14 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewTemplate()
-		  Var GameID As String = GameSelectorWindow.Present(Self)
-		  Self.NewTemplate(GameID)
+		  Var GameId As String = GameSelectorWindow.Present(Self, Ark.Identifier)
+		  Self.NewTemplate(GameId)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewTemplate(GameID As String)
-		  Select Case GameID
+		Sub NewTemplate(GameId As String)
+		  Select Case GameId
 		  Case Ark.Identifier
 		    Self.OpenTemplate(New Ark.LootTemplate)
 		  End Select

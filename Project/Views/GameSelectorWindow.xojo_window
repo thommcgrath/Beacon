@@ -158,17 +158,24 @@ End
 		  Var NextTop As Integer = Self.MessageLabel.Bottom + 20
 		  
 		  Var Games() As Beacon.Game = Beacon.Games
-		  For Idx As Integer = 0 To Games.LastIndex
+		  Var Idx As Integer = 0
+		  For Each Game As Beacon.Game In Games
+		    If Self.mAllowedGameIds.HasKey(Game.Identifier) = False Then
+		      Continue
+		    End If
+		    
 		    Var Radio As DesktopRadioButton = Self.GameButtons(Idx)
 		    If Radio Is Nil Then
 		      Radio = New GameButtons
 		    End If
-		    Radio.Caption = Games(Idx).Name
+		    Radio.Caption = Game.Name
 		    Radio.Top = NextTop
 		    Radio.Height = 20
 		    Radio.Width = Self.Width - 40
 		    Radio.Left = 20
 		    NextTop = Radio.Bottom + 12
+		    
+		    Idx = Idx + 1
 		  Next
 		  
 		  Self.ActionButton.Top = NextTop + 8
@@ -180,13 +187,51 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub Constructor(AllowedGameIds() As String)
+		  Self.mAllowedGameIds = New Dictionary
+		  For Each GameId As String In AllowedGameIds
+		    Self.mAllowedGameIds.Value(GameId) = True
+		  Next
+		  
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DesktopWindow) As String
+		Shared Function Present(Parent As DesktopWindow, AllowedGames() As Beacon.Game) As String
+		  Var AllowedGameIds() As String
+		  AllowedGameIds.ResizeTo(AllowedGames.LastIndex)
+		  For Idx As Integer = 0 To AllowedGameIds.LastIndex
+		    AllowedGameIds(Idx) = AllowedGames(Idx).Identifier
+		  Next
+		  Return Present(Parent, AllowedGameIds)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, ParamArray AllowedGameIds() As String) As String
+		  If AllowedGameIds.Count = 0 Then
+		    Return Present(Parent, Beacon.Games)
+		  Else
+		    Return Present(Parent, AllowedGameIds)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As DesktopWindow, AllowedGameIds() As String) As String
 		  If (Parent Is Nil) = False Then
 		    Parent = Parent.TrueWindow
 		  End If
 		  
-		  Var Win As New GameSelectorWindow
+		  If AllowedGameIds.Count = 0 Then
+		    Return ""
+		  ElseIf AllowedGameIds.Count = 1 Then
+		    Return AllowedGameIds(0)
+		  End If
+		  
+		  Var Win As New GameSelectorWindow(AllowedGameIds)
 		  Win.ShowModal(Parent)
 		  
 		  Var GameId As String
@@ -207,6 +252,10 @@ End
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mAllowedGameIds As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean

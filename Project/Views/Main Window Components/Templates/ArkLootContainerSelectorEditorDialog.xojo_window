@@ -169,6 +169,7 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   60
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -500,7 +501,7 @@ End
 		    Return Nil
 		  End If
 		  
-		  If (TemplateSelector Is Nil) = False And TemplateSelector.GameID <> Ark.Identifier Then
+		  If (TemplateSelector Is Nil) = False And TemplateSelector.GameId <> Ark.Identifier Then
 		    // Can't edit this one
 		    Return Nil
 		  End If

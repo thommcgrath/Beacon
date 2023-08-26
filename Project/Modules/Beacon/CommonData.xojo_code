@@ -106,9 +106,9 @@ Inherits Beacon.DataSource
 		      End If
 		      
 		      Var ObjectID As String = Dict.Value("object_id").StringValue
-		      Var GameID As String = Dict.Value("game").StringValue
+		      Var GameId As String = Dict.Value("game").StringValue
 		      Var TableName As String = Dict.Value("group").StringValue
-		      If GameID = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
+		      If GameId = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
 		        Select Case TableName
 		        Case "presets"
 		          Self.SQLExecute("DELETE FROM official_templates WHERE object_id = :object_id;", ObjectID)
@@ -158,12 +158,12 @@ Inherits Beacon.DataSource
 		        End If
 		        
 		        Var SelectorUUID As String = Dict.Value("id").StringValue
-		        Var GameID As String = Dict.Value("game").StringValue
+		        Var GameId As String = Dict.Value("game").StringValue
 		        Var Label As String = Dict.Value("label").StringValue
 		        Var Language As Beacon.TemplateSelector.Languages = Beacon.TemplateSelector.StringToLanguage(Dict.Value("language").StringValue)
 		        Var Code As String = Dict.Value("code").StringValue
 		        
-		        Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameID, Language, Code)
+		        Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
 		        Self.SaveTemplateSelector(TemplateSelector, True)
 		        StatusData.Value("Imported Template Selector") = True
 		      Catch Err As RuntimeException
@@ -432,7 +432,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplates(Flags As Integer, Filter As String = "", GameID As String = "") As Beacon.Template()
+		Function GetTemplates(Flags As Integer, Filter As String = "", GameId As String = "") As Beacon.Template()
 		  Var Templates() As Beacon.Template
 		  Var Rows As RowSet
 		  Var Clauses() As String
@@ -451,9 +451,9 @@ Inherits Beacon.DataSource
 		  End If
 		  Clauses.Add("user_id IN (" + String.FromArray(UserIDs, ", ") + ")")
 		  
-		  If GameID.IsEmpty = False Then
+		  If GameId.IsEmpty = False Then
 		    Clauses.Add("game_id = :game_id")
-		    Values.Add(GameID)
+		    Values.Add(GameId)
 		  End If
 		  
 		  If Filter.IsEmpty = False Then
@@ -484,8 +484,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplates(Filter As String = "", GameID As String = "") As Beacon.Template()
-		  Return Self.GetTemplates(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter, GameID)
+		Function GetTemplates(Filter As String = "", GameId As String = "") As Beacon.Template()
+		  Return Self.GetTemplates(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter, GameId)
 		End Function
 	#tag EndMethod
 
@@ -506,11 +506,11 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Var CacheKey As String = Rows.Column("user_id").StringValue + ":" + SelectorUUID
-		  Var GameID As String = Rows.Column("game_id").StringValue
+		  Var GameId As String = Rows.Column("game_id").StringValue
 		  Var Label As String = Rows.Column("label").StringValue
 		  Var Language As Beacon.TemplateSelector.Languages = Beacon.TemplateSelector.StringToLanguage(Rows.Column("language").StringValue)
 		  Var Code As String = Rows.Column("code").StringValue
-		  Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameID, Language, Code)
+		  Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
 		  
 		  Self.mSelectorCache.Value(CacheKey) = TemplateSelector
 		  Return TemplateSelector
@@ -518,7 +518,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplateSelectors(Flags As Integer, Filter As String = "", GameID As String = "") As Beacon.TemplateSelector()
+		Function GetTemplateSelectors(Flags As Integer, Filter As String = "", GameId As String = "") As Beacon.TemplateSelector()
 		  Var Selectors() As Beacon.TemplateSelector
 		  Var Rows As RowSet
 		  Var Clauses() As String
@@ -537,9 +537,9 @@ Inherits Beacon.DataSource
 		  End If
 		  Clauses.Add("user_id IN (" + String.FromArray(UserIDs, ", ") + ")")
 		  
-		  If GameID.IsEmpty = False Then
+		  If GameId.IsEmpty = False Then
 		    Clauses.Add("game_id = :game_id")
-		    Values.Add(GameID)
+		    Values.Add(GameId)
 		  End If
 		  
 		  If Filter.IsEmpty = False Then
@@ -568,8 +568,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplateSelectors(Filter As String = "", GameID As String = "") As Beacon.TemplateSelector()
-		  Return Self.GetTemplateSelectors(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter, GameID)
+		Function GetTemplateSelectors(Filter As String = "", GameId As String = "") As Beacon.TemplateSelector()
+		  Return Self.GetTemplateSelectors(Self.FlagIncludeOfficialItems Or Self.FlagIncludeUserItems, Filter, GameId)
 		End Function
 	#tag EndMethod
 
@@ -655,11 +655,11 @@ Inherits Beacon.DataSource
 		  Var CacheKey As String
 		  If Official Then
 		    CacheKey = v4UUID.CreateNull + ":" + Template.UUID
-		    Self.SQLExecute("INSERT OR REPLACE INTO official_templates (object_id, game_id, label, contents) VALUES (:object_id, :game_id, :label, :contents);", Template.UUID, Template.GameID, Template.Label, Contents)
+		    Self.SQLExecute("INSERT OR REPLACE INTO official_templates (object_id, game_id, label, contents) VALUES (:object_id, :game_id, :label, :contents);", Template.UUID, Template.GameId, Template.Label, Contents)
 		  Else
 		    Var UserID As String = App.IdentityManager.CurrentUserID
 		    CacheKey = UserID + ":" + Template.UUID
-		    Self.SQLExecute("INSERT OR REPLACE INTO custom_templates (object_id, game_id, label, contents, user_id) VALUES (:object_id, :game_id, :label, :contents, :user_id);", Template.UUID, Template.GameID, Template.Label, Contents, UserID)
+		    Self.SQLExecute("INSERT OR REPLACE INTO custom_templates (object_id, game_id, label, contents, user_id) VALUES (:object_id, :game_id, :label, :contents, :user_id);", Template.UUID, Template.GameId, Template.Label, Contents, UserID)
 		  End If
 		  Self.CommitTransaction()
 		  
@@ -688,11 +688,11 @@ Inherits Beacon.DataSource
 		    Var CacheKey As String
 		    If Official Then
 		      CacheKey = v4UUID.CreateNull + ":" + TemplateSelector.UUID
-		      Self.SQLExecute("INSERT OR REPLACE INTO official_template_selectors (object_id, game_id, label, language, code) VALUES (:object_id, :game_id, :label, :language, :code);", TemplateSelector.UUID, TemplateSelector.GameID, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code)
+		      Self.SQLExecute("INSERT OR REPLACE INTO official_template_selectors (object_id, game_id, label, language, code) VALUES (:object_id, :game_id, :label, :language, :code);", TemplateSelector.UUID, TemplateSelector.GameId, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code)
 		    Else
 		      Var UserID As String = App.IdentityManager.CurrentUserID
 		      CacheKey = UserID + ":" + TemplateSelector.UUID
-		      Self.SQLExecute("INSERT OR REPLACE INTO custom_template_selectors (object_id, game_id, label, language, code, user_id) VALUES (:object_id, :game_id, :label, :language, :code, :user_id);", TemplateSelector.UUID, TemplateSelector.GameID, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code, UserID)
+		      Self.SQLExecute("INSERT OR REPLACE INTO custom_template_selectors (object_id, game_id, label, language, code, user_id) VALUES (:object_id, :game_id, :label, :language, :code, :user_id);", TemplateSelector.UUID, TemplateSelector.GameId, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code, UserID)
 		    End If
 		    Self.mSelectorCache.Value(CacheKey) = TemplateSelector
 		  Next TemplateSelector

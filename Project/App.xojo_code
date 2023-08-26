@@ -558,9 +558,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DataSourceForGame(GameID As String) As Beacon.DataSource
+		Function DataSourceForGame(GameId As String) As Beacon.DataSource
 		  For Idx As Integer = 0 To Self.mDataSources.LastIndex
-		    If Self.mDataSources(Idx).Identifier = GameID Then
+		    If Self.mDataSources(Idx).Identifier = GameId Then
 		      Return Self.mDataSources(Idx)
 		    End If
 		  Next Idx

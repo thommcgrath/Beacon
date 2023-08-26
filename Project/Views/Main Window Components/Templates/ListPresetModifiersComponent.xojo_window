@@ -109,6 +109,7 @@ Begin TemplatesComponentView ListPresetModifiersComponent
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -153,7 +154,7 @@ End
 		    Var Source As Beacon.TemplateSelector = Self.List.RowTagAt(Idx)
 		    Var Label As String = Beacon.FindUniqueLabel(Source.Label, Siblings)
 		    Siblings.Add(Label)
-		    Clones.Add(New Beacon.TemplateSelector(New v4UUID, Label, Source.GameID, Source.Language, Source.Code))
+		    Clones.Add(New Beacon.TemplateSelector(New v4UUID, Label, Source.GameId, Source.Language, Source.Code))
 		  Next
 		  
 		  Self.SaveSelectors(Clones)

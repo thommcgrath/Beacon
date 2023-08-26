@@ -103,8 +103,8 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(GameID As String, WithIdentity As Beacon.Identity)
-		  Self.Constructor(Beacon.ProjectURL.TypeTransient + "://" + v4UUID.Create + "?game=" + EncodeURLComponent(GameID.Lowercase), WithIdentity)
+		Sub Constructor(GameId As String, WithIdentity As Beacon.Identity)
+		  Self.Constructor(Beacon.ProjectURL.TypeTransient + "://" + v4UUID.Create + "?game=" + EncodeURLComponent(GameId.Lowercase), WithIdentity)
 		End Sub
 	#tag EndMethod
 
@@ -172,8 +172,8 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameID() As String
-		  Return Self.mProjectURL.GameID
+		Function GameId() As String
+		  Return Self.mProjectURL.GameId
 		End Function
 	#tag EndMethod
 
@@ -367,7 +367,7 @@ Protected Class ProjectController
 		      Return
 		    End If
 		  Case Beacon.ProjectURL.TypeTransient
-		    Var Temp As Beacon.Project = Beacon.Project.CreateForGameID(Self.mProjectURL.GameID)
+		    Var Temp As Beacon.Project = Beacon.Project.CreateForGameId(Self.mProjectURL.GameId)
 		    FileContent = Beacon.GenerateJSON(Temp.SaveData(Self.mIdentity), False)
 		  Else
 		    Return

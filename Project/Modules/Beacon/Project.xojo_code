@@ -889,7 +889,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function GameId() As String
 		  Var Err As New UnsupportedOperationException
-		  Err.Message = "Project.GameID not overridden"
+		  Err.Message = "Project.GameId not overridden"
 		  Raise Err
 		End Function
 	#tag EndMethod
