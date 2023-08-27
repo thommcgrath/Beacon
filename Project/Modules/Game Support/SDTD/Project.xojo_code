@@ -1,7 +1,27 @@
 #tag Class
 Protected Class Project
 Inherits Beacon.Project
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag Event
+		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused PlainData
+		  #Pragma Unused EncryptedData
+		  
+		  ManifestData.Value("gameVersion") = Self.mGameVersion
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer)
+		  #Pragma Unused EncryptedData
+		  #Pragma Unused SaveDataVersion
+		  #Pragma Unused SavedWithVersion
+		  
+		  Self.mGameVersion = PlainData.Value("gameVersion")
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
 		  If Group IsA SDTD.ConfigGroup Then
@@ -132,6 +152,11 @@ Inherits Beacon.Project
 		  Super.Constructor
 		  
 		  Self.ContentPackEnabled(SDTD.UserContentPackId) = True // Force it
+		  
+		  Var DataSource As SDTD.DataSource = SDTD.DataSource.Pool.Get(False)
+		  If (DataSource Is Nil) = False Then
+		    Self.mGameVersion = DataSource.NewestGameVersion()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -207,6 +232,21 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GameVersion() As Integer
+		  Return Self.mGameVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GameVersion(Assigns Value As Integer)
+		  If Self.mGameVersion <> Value Then
+		    Self.mGameVersion = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasConfigGroup(InternalName As String) As Boolean
 		  Return Self.HasConfigGroup(InternalName, Self.ActiveConfigSet)
 		End Function
@@ -268,6 +308,11 @@ Inherits Beacon.Project
 		  Return ExcludedConfigs
 		End Function
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h1
+		Protected mGameVersion As Integer
+	#tag EndProperty
 
 
 	#tag ViewBehavior

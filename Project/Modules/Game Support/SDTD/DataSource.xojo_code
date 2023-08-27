@@ -5,7 +5,7 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE config_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', file TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, native_editor_version INTEGER, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
+		  Self.SQLExecute("CREATE TABLE config_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', file TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, native_editor_version INTEGER, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT, min_game_version INTEGER, max_game_version INTEGER);")
 		End Sub
 	#tag EndEvent
 
@@ -14,6 +14,8 @@ Inherits Beacon.DataSource
 		  Var Indexes() As Beacon.DataIndex
 		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "is_local", "marketplace_id"))
 		  Indexes.Add(New Beacon.DataIndex("config_options", True, "file", "key"))
+		  Indexes.Add(New Beacon.DataIndex("config_options", False, "min_game_version"))
+		  Indexes.Add(New Beacon.DataIndex("config_options", False, "max_game_version"))
 		  Return Indexes
 		End Function
 	#tag EndEvent
@@ -99,7 +101,7 @@ Inherits Beacon.DataSource
 		      Catch Err As RuntimeException
 		      End Try
 		      
-		      Var Values(14) As Variant
+		      Var Values(16) As Variant
 		      Values(0) = ConfigOptionId
 		      Values(1) = Dict.Value("label")
 		      Values(2) = ContentPackId
@@ -126,12 +128,18 @@ Inherits Beacon.DataSource
 		      If Dict.HasKey("nativeEditorVersion") Then
 		        Values(14) = Dict.Value("nativeEditorVersion")
 		      End If
+		      If Dict.HasKey("minGameVersion") Then
+		        Values(15) = Dict.Value("minGameVersion")
+		      End If
+		      If Dict.HasKey("maxGameVersion") Then
+		        Values(16) = Dict.Value("maxGameVersion")
+		      End If
 		      
 		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM config_options WHERE object_id = ?1;", ConfigOptionId)
 		      If Results.RowCount = 1 Then
-		        Self.SQLExecute("UPDATE config_options SET label = ?2, content_pack_id = ?3, file = ?4, key = ?5, value_type = ?6, max_allowed = ?7, description = ?8, default_value = ?9, alternate_label = ?10, tags = ?11, ui_group = ?12, custom_sort = ?13, constraints = ?14, native_editor_version = ?15 WHERE object_id = ?1;", Values)
+		        Self.SQLExecute("UPDATE config_options SET label = ?2, content_pack_id = ?3, file = ?4, key = ?5, value_type = ?6, max_allowed = ?7, description = ?8, default_value = ?9, alternate_label = ?10, tags = ?11, ui_group = ?12, custom_sort = ?13, constraints = ?14, native_editor_version = ?15, min_game_version = ?16, max_game_version = ?17 WHERE object_id = ?1;", Values)
 		      Else
-		        Self.SQLExecute("INSERT INTO config_options (object_id, label, content_pack_id, file, key, value_type, max_allowed, description, default_value, alternate_label, tags, ui_group, custom_sort, constraints, native_editor_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15);", Values)
+		        Self.SQLExecute("INSERT INTO config_options (object_id, label, content_pack_id, file, key, value_type, max_allowed, description, default_value, alternate_label, tags, ui_group, custom_sort, constraints, native_editor_version, min_game_version, max_game_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17);", Values)
 		      End If
 		    Next
 		  End If
@@ -140,6 +148,19 @@ Inherits Beacon.DataSource
 		End Function
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function AllVersions() As Integer()
+		  #if DebugBuild
+		    #Pragma Warning "Look up actual game versions"
+		  #else
+		    #Pragma Error "Look up actual game versions"
+		  #endif
+		  
+		  Var Versions() As Integer = Array(2101016, 2100324, 2007001, 2006009)
+		  Return Versions
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Cache(Option As SDTD.ConfigOption)
@@ -178,12 +199,24 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetConfigOptions(File As String, Key As String) As SDTD.ConfigOption()
-		  Return Self.GetConfigOptions(File, Key, New Beacon.StringList)
+		  Return Self.GetConfigOptions(File, Key, Nil, New Beacon.StringList)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetConfigOptions(File As String, Key As String, ContentPackIds As Beacon.StringList) As SDTD.ConfigOption()
+		  Return Self.GetConfigOptions(File, Key, Nil, ContentPackIds)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetConfigOptions(File As String, Key As String, GameVersion As NullableDouble) As SDTD.ConfigOption()
+		  Return Self.GetConfigOptions(File, Key, GameVersion, New Beacon.StringList)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetConfigOptions(File As String, Key As String, GameVersion As NullableDouble, ContentPackIds As Beacon.StringList) As SDTD.ConfigOption()
 		  If (ContentPackIds Is Nil) = False Then
 		    ContentPackIds = New Beacon.StringList(ContentPackIds) // Make sure we don't edit the original
 		    For Idx As Integer = ContentPackIds.LastRowIndex DownTo 0
@@ -198,17 +231,24 @@ Inherits Beacon.DataSource
 		  Var Idx As Integer = 1
 		  
 		  If File.IsEmpty = False Then
-		    Clauses.Add("file = $" + Idx.ToString(Locale.Raw, "0"))
+		    Clauses.Add("file = ?" + Idx.ToString(Locale.Raw, "0"))
 		    Values.Add(File)
 		    Idx = Idx + 1
 		  End If
 		  If Key.IsEmpty = False Then
-		    Clauses.Add("key = $" + Idx.ToString(Locale.Raw, "0"))
+		    Clauses.Add("key = ?" + Idx.ToString(Locale.Raw, "0"))
 		    Values.Add(Key)
 		    Idx = Idx + 1
 		  End If
 		  If (ContentPackIds Is Nil) = False And ContentPackIds.Count > 0 Then
 		    Clauses.Add("content_pack_id IN ('" + String.FromArray(ContentPackIds, "','") + "')")
+		  End If
+		  
+		  If (GameVersion Is Nil) = False Then
+		    Clauses.Add("(min_game_version IS NULL OR min_game_version <= ?" + Idx.ToString(Locale.Raw, "0") + ")")
+		    Clauses.Add("(max_game_version IS NULL OR max_game_Version >= ?" + Idx.ToString(Locale.Raw, "0") + ")")
+		    Values.Add(GameVersion.IntegerValue)
+		    Idx = Idx + 1
 		  End If
 		  
 		  Var Sql As String = "SELECT * FROM config_options"
@@ -239,6 +279,18 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NewestGameVersion() As Integer
+		  #if DebugBuild
+		    #Pragma Warning "Look up actual newest game version"
+		  #else
+		    #Pragma Error "Look up actual newest game version"
+		  #endif
+		  
+		  Return 2101016
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Pool() As SDTD.DataSourcePool
 		  If mPool Is Nil Then
 		    mPool = New SDTD.DataSourcePool
@@ -261,6 +313,8 @@ Inherits Beacon.DataSource
 		  Var CustomSort As NullableString = NullableString.FromVariant(Row.Column("custom_sort").Value)
 		  Var Constraints As Dictionary
 		  Var ContentPackId As String = Row.Column("content_pack_id").StringValue
+		  Var MinGameVersion As NullableDouble = NullableDouble.FromVariant(Row.Column("min_game_version").Value)
+		  Var MaxGameVersion As NullableDouble = NullableDouble.FromVariant(Row.Column("max_game_version").Value)
 		  
 		  Select Case Row.Column("value_type").StringValue
 		  Case "Numeric"
@@ -281,7 +335,7 @@ Inherits Beacon.DataSource
 		    End Try
 		  End If
 		  
-		  Return New SDTD.ConfigOption(Label, File, Key, ValueType, MaxAllowed, Description, DefaultValue, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId)
+		  Return New SDTD.ConfigOption(Label, File, Key, ValueType, MaxAllowed, Description, DefaultValue, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId, MinGameVersion, MaxGameVersion)
 		End Function
 	#tag EndMethod
 

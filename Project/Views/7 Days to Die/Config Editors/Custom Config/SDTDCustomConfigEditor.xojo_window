@@ -293,7 +293,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateAutoComplete()
 		  Var CurrentFile As String = Self.CurrentFile
-		  Var Options() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions(CurrentFile, "", Self.Project.ContentPacks)
+		  Var Options() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions(CurrentFile, "", Self.Project.GameVersion, Self.Project.ContentPacks)
 		  Self.mAutocompleteWords.ResizeTo(Options.LastIndex)
 		  For Idx As Integer = Options.FirstIndex To Options.LastIndex
 		    Self.mAutocompleteWords(Idx) = Options(Idx).Key
@@ -488,7 +488,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Keys() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions(Self.CurrentFile, Line.Left(EqualsPosition))
+		  Var Keys() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions(Self.CurrentFile, Line.Left(EqualsPosition), Self.Project.GameVersion)
 		  If Keys Is Nil Or Keys.Count = 0 Then
 		    Me.CallTipCancel
 		    Return

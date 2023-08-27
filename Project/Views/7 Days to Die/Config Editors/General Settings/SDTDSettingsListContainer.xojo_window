@@ -193,7 +193,7 @@ End
 		  
 		  Self.mFilter = Value
 		  
-		  Var AllKeys() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions("", "")
+		  Var AllKeys() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions("", "", Self.Project.GameVersion)
 		  If Self.mDependencies Is Nil Then
 		    Self.mDependencies = New Dictionary
 		    For Each Key As SDTD.ConfigOption In AllKeys

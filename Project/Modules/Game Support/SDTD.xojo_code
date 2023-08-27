@@ -1,6 +1,41 @@
 #tag Module
 Protected Module SDTD
 	#tag Method, Flags = &h1
+		Protected Function BuildVersionNumber(Major As Integer, Minor As Integer, Bug As Integer, Build As Integer) As Integer
+		  Return Build + (Bug * 1000) + (Minor * 100000) + (Major * 10000000)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function HumanVersion(VersionNumber As Integer) As String
+		  Var Major As Integer = Floor(VersionNumber / 10000000)
+		  VersionNumber = VersionNumber - (Major * 10000000)
+		  Var Minor As Integer = Floor(VersionNumber / 100000)
+		  VersionNumber = VersionNumber - (Minor * 100000)
+		  Var Bug As Integer = Floor(VersionNumber / 1000)
+		  Var Build As Integer = VersionNumber - (Bug * 1000)
+		  
+		  Var Parts(), Main() As String
+		  If Major = 0 Then
+		    Parts.Add("Alpha")
+		  Else
+		    Main.Add(Major.ToString(Locale.Raw, "0"))
+		  End If
+		  Main.Add(Minor.ToString(Locale.Raw, "0"))
+		  If Bug > 0 Then
+		    Main.Add(Bug.ToString(Locale.Raw, "0"))
+		  End If
+		  Parts.Add(String.FromArray(Main, "."))
+		  
+		  If Build > 0 Then
+		    Parts.Add("b" + Build.ToString(Locale.Raw, "0"))
+		  End If
+		  
+		  Return String.FromArray(Parts, " ")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function OmniPurchased(Identity As Beacon.Identity) As Boolean
 		  Return (Identity Is Nil) = False And Identity.IsOmniFlagged(SDTD.OmniFlag)
 		End Function

@@ -25,18 +25,20 @@ Protected Class ConfigOption
 		  Self.mObjectId = Source.mObjectId
 		  Self.mUIGroup = Source.mUIGroup
 		  Self.mValueType = Source.mValueType
+		  Self.mMinGameVersion = Source.mMinGameVersion
+		  Self.mMaxGameVersion = Source.mMaxGameVersion
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(File As String, Key As String)
 		  // Convenience method for quickly creating an unknown setting
-		  Self.Constructor(Key, File, Key, ValueTypes.TypeText, 1, "", "", Nil, Nil, Nil, Nil, SDTD.UserContentPackId)
+		  Self.Constructor(Key, File, Key, ValueTypes.TypeText, 1, "", "", Nil, Nil, Nil, Nil, SDTD.UserContentPackId, Nil, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Label As String, File As String, Key As String, ValueType As SDTD.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String)
+		Sub Constructor(Label As String, File As String, Key As String, ValueType As SDTD.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, MinGameVersion As NullableDouble, MaxGameVersion As NullableDouble)
 		  Self.mConstraints = If(Constraints Is Nil, Nil, Constraints.Clone)
 		  Self.mContentPackId = ContentPackId
 		  Self.mCustomSort = CustomSort
@@ -50,6 +52,8 @@ Protected Class ConfigOption
 		  Self.mObjectId = Self.GenerateId(ContentPackId, File, Key)
 		  Self.mUIGroup = UIGroup
 		  Self.mValueType = ValueType
+		  Self.mMinGameVersion = MinGameVersion
+		  Self.mMaxGameVersion = MaxGameVersion
 		End Sub
 	#tag EndMethod
 
@@ -114,6 +118,18 @@ Protected Class ConfigOption
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MaxGameVersion() As NullableDouble
+		  Return Self.mMaxGameVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinGameVersion() As NullableDouble
+		  Return Self.mMinGameVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function NativeEditorVersion() As NullableDouble
 		  Return Self.mNativeEditorVersion
 		End Function
@@ -138,6 +154,20 @@ Protected Class ConfigOption
 		  Var MyValue As String = Self.mLabel + "-" + Self.mObjectId
 		  Var OtherValue As String = Other.mLabel + "-" + Other.mObjectId
 		  Return MyValue.Compare(OtherValue, ComparisonOptions.CaseInsensitive, Locale.Raw)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsGameVersion(Version As Integer) As Boolean
+		  If (Self.mMinGameVersion Is Nil) = False And Self.mMinGameVersion.IntegerValue > Version Then
+		    Return False
+		  End If
+		  
+		  If (Self.mMaxGameVersion Is Nil) = False And Self.mMaxGameVersion.IntegerValue < Version Then
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -216,6 +246,14 @@ Protected Class ConfigOption
 
 	#tag Property, Flags = &h21
 		Private mMaxAllowed As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMaxGameVersion As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMinGameVersion As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
