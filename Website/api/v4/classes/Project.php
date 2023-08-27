@@ -26,6 +26,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 	protected int $downloadCount;
 	protected string $communityStatus;
 	protected string $storagePath;
+	protected bool $deleted;
 	protected array $content = [];
 	
 	protected function __construct(BeaconRecordSet $row) {
@@ -45,6 +46,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$this->downloadCount = intval($row->Field('download_count'));
 		$this->communityStatus = $row->Field('published');
 		$this->storagePath = $row->Field('storage_path');
+		$this->deleted = $row->Field('deleted');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -65,6 +67,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('downloadCount', ['columnName' => 'download_count']),
 			new DatabaseObjectProperty('communityStatus', ['columnName' => 'published']),
 			new DatabaseObjectProperty('storagePath', ['columnName' => 'storage_path']),
+			new DatabaseObjectProperty('deleted'),
 		], [
 			'INNER JOIN public.project_members ON (project_members.project_id = projects.project_id)'
 		]);
@@ -158,6 +161,12 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'name');
 		$parameters->AddFromFilter($schema, $filters, 'role');
 		
+		$deleted = $filters['deleted'] ?? $filters['isDeleted'] ?? false;
+		if (is_null($deleted) === false) {
+			$parameters->clauses[] = $schema->Comparison('deleted', '=', $parameters->placeholder++);
+			$parameters->values[] = filter_var($deleted, FILTER_VALIDATE_BOOLEAN);
+		}
+		
 		if (isset($filters['search']) && empty($filters['search']) === false) {
 			$search = new BeaconSearch();
 			$results = $search->Search($filters['search'], null, 100, 'Document');
@@ -186,7 +195,8 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 			'downloadCount' => $this->downloadCount,
 			'lastUpdate' => $this->lastUpdate,
 			'consoleSafe' => $this->consoleSafe,
-			'communityStatus' => $this->communityStatus
+			'communityStatus' => $this->communityStatus,
+			'isDeleted' => $this->deleted,
 		];
 	}
 		
@@ -412,6 +422,10 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		return $this->storagePath;
 	}
 	
+	public function IsDeleted(): bool {
+		return $this->deleted;
+	}
+	
 	public static function Save(User $user, array $manifest): ?static {
 		$projectId = $manifest['projectId'] ?? '';
 		if (BeaconUUID::Validate($projectId) === false) {
@@ -503,6 +517,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 		$description = $manifest['description'] ?? '';
 		$gameId = $manifest['gameId'] ?? '';
 		$columns = [
+			'game_id' => $gameId,
 			'title' => $projectName,
 			'description' => $description,
 			'console_safe' => $manifest['isConsole'] ?? false,

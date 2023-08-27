@@ -5,7 +5,6 @@ use BeaconAPI\v4\{Response, Core, Project, User};
 function handleRequest(array $context): Response {
 	$public_only = true;
 	$filters = $_GET;
-	$filters['deleted'] = false;
 	if ($context['routeKey'] === 'GET /users/{userId}/projects') {
 		$filters['userId'] = $context['pathParameters']['userId'];
 		if ($context['pathParameters']['userId'] === Core::UserId()) {
