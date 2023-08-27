@@ -23,6 +23,8 @@ class ConfigOption extends GenericObject {
 	protected ?array $constraints;
 	protected ?string $customSort;
 	protected ?int $nativeEditorVersion;
+	protected ?int $minGameVersion;
+	protected ?int $maxGameVersion;
 	
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
@@ -37,6 +39,8 @@ class ConfigOption extends GenericObject {
 		$this->constraints = is_null($row->Field('constraints')) ? null : json_decode($row->Field('constraints'), true);
 		$this->customSort = $row->Field('custom_sort');
 		$this->nativeEditorVersion = $row->Field('native_editor_version');
+		$this->minGameVersion = $row->Field('min_game_version');
+		$this->maxGameVersion = $row->Field('max_game_version');
 	}
 	
 	protected static function CustomVariablePrefix(): string {
@@ -57,6 +61,8 @@ class ConfigOption extends GenericObject {
 			new DatabaseObjectProperty('constraints'),
 			new DatabaseObjectProperty('customSort', ['columnName' => 'custom_sort']),
 			new DatabaseObjectProperty('nativeEditorVersion', ['columnName' => 'native_editor_version']),
+			new DatabaseObjectProperty('minGameVersion', ['columnName' => 'min_game_version', 'accessor' => 'CASE WHEN LOWER_INC(supported_versions) THEN LOWER(supported_versions) ELSE LOWER(supported_versions) + 1 END']),
+			new DatabaseObjectProperty('maxGameVersion', ['columnName' => 'max_game_version', 'accessor' => 'CASE WHEN UPPER_INC(supported_versions) THEN UPPER(supported_versions) ELSE UPPER(supported_versions) - 1 END']),
 		]);
 		return $schema;
 	}
@@ -67,6 +73,11 @@ class ConfigOption extends GenericObject {
 		$schema = static::DatabaseSchema();
 		$parameters->AddFromFilter($schema, $filters, 'file');
 		$parameters->AddFromFilter($schema, $filters, 'key');
+		
+		if (isset($filters['gameVersion'])) {
+			$parameters->clauses[] = 'config_options.supported_versions @> $' . $parameters->placeholder++ . '::INTEGER';
+			$parameters->values[] = $filters['gameVersion'];
+		}
 	}
 	
 	public function jsonSerialize(): mixed {
@@ -82,6 +93,8 @@ class ConfigOption extends GenericObject {
 		$json['customSort'] = $this->customSort;
 		$json['constraints'] = $this->constraints;
 		$json['nativeEditorVersion'] = $this->nativeEditorVersion;
+		$json['minGameVersion'] = $this->minGameVersion;
+		$json['maxGameVersion'] = $this->maxGameVersion;
 		return $json;
 	}
 	
@@ -123,6 +136,14 @@ class ConfigOption extends GenericObject {
 	
 	public function NativeEditorVersion(): ?int {
 		return $this->nativeEditorVersion;
+	}
+	
+	public function MinGameVersion(): ?int {
+		return $this->minGameVersion;
+	}
+	
+	public function MaxGameVersion(): ?int {
+		return $this->maxGameVersion;
 	}
 }
 
