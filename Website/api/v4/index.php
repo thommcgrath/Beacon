@@ -34,6 +34,9 @@ Core::RegisterRoutes(
 		'/contentPacks/{contentPackId}/confirm' => [
 			'GET' => 'ark/confirmContentPack',
 		],
+		'/dbtest' => [
+			'GET' => 'dbtest',
+		],
 		'/deltas' => [
 			'GET' => 'deltas',
 		],

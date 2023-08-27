@@ -1,6 +1,11 @@
 <?php
 
-function handle_request(array $context): void {
+use BeaconAPI\v4\{Core, Response};
+
+$requiredScopes = [];
+$authScheme = Core::kAuthSchemeNone;
+
+function handleRequest(array $context): Response {
 	$readConnected = false;
 	$writeConnected = false;
 	
@@ -20,7 +25,7 @@ function handle_request(array $context): void {
 	} catch (Exception $err) {
 	}
 	
-	BeaconAPI::ReplySuccess([
+	return Response::NewJson([
 		'readConnected' => $readConnected,
 		'writeConnected' => $writeConnected,
 	], ($readConnected && $writeConnected) ? 200 : 500);
