@@ -181,6 +181,27 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				$parameters->clauses[] = $schema->Comparison('projectId', '=', "'00000000-0000-0000-0000-000000000000'");
 			}
 		}
+		
+		$namespaces = ['Ark' => 'Ark', 'SDTD' => '7DaysToDie'];
+		$namespaceClauses = [];
+		foreach ($namespaces as $namespace => $identifier) {
+			$namespacedParameters = new DatabaseSearchParameters();
+			$namespacedParameters->placeholder = $parameters->placeholder;
+			$namespacedProject = "\\BeaconAPI\\v4\\{$namespace}\\Project";
+			$namespacedProject::ExtendSearchParameters($namespacedParameters, $filters, true);
+			if (count($namespacedParameters->clauses) > 0) {
+				$namespaceClauses[] = "(game_id = '{$identifier}' AND " . implode(' AND ', $namespacedParameters->clauses) . ')';
+				$parameters->values = array_merge($parameters->values, $namespacedParameters->values);
+				$parameters->placeholder = $namespacedParameters->placeholder;
+			}
+		}
+		if (count($namespaceClauses) > 0) {
+			$parameters->clauses[] = '(' . implode(' OR ', $namespaceClauses) . ')';
+		}
+	}
+	
+	protected static function ExtendSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
+		//
 	}
 	
 	public function jsonSerialize(): mixed {

@@ -12,8 +12,7 @@ class Project extends \BeaconAPI\v4\Project {
 		return $json;
 	}
 	
-	protected static function BuildSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
-		parent::BuildSearchParameters($parameters, $filters, $isNested);
+	protected static function ExtendSearchParameters(DatabaseSearchParameters $parameters, array $filters, bool $isNested): void {
 		$schema = static::DatabaseSchema();
 			
 		if (isset($filters['allMaps'])) {
