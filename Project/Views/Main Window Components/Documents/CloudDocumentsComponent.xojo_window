@@ -28,7 +28,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    Visible         =   True
    Width           =   804
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -734,7 +733,11 @@ End
 		  Params.Value("pageSize") = Me.PageSize
 		  Params.Value("gameId") = Self.FilterBar.GameId
 		  If Self.FilterBar.Mask > CType(0, UInt64) Then
-		    Params.Value("mask") = Self.FilterBar.Mask
+		    If Self.FilterBar.RequireAllMaps Then
+		      Params.Value("allMaps") = Self.FilterBar.Mask
+		    Else
+		      Params.Value("anyMaps") = Self.FilterBar.Mask
+		    End If
 		  End If
 		  
 		  Var Filter As String = Self.FilterBar.SearchText
@@ -744,10 +747,6 @@ End
 		  
 		  If Self.FilterBar.ConsoleSafe Then
 		    Params.Value("consoleSafe") = True
-		  End If
-		  
-		  If Self.FilterBar.RequireAllMaps Then
-		    Params.Value("maskRequireAll") = True
 		  End If
 		  
 		  Select Case Me.SortingColumn
