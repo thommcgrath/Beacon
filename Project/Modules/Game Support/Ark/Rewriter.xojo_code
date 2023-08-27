@@ -1,6 +1,7 @@
 #tag Class
 Protected Class Rewriter
 Inherits Global.Thread
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
@@ -568,8 +569,8 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Run()
-		  Super.Start
+		Private Sub Start()
+		  Super.Start()
 		End Sub
 	#tag EndMethod
 

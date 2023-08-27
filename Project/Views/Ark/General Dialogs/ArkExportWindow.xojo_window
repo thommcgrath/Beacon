@@ -64,7 +64,6 @@ Begin BeaconDialog ArkExportWindow
       Enabled         =   True
       HasBorder       =   False
       Height          =   428
-      HelpTag         =   ""
       HorizontalScrollPosition=   0
       Index           =   -2147483648
       InitialParent   =   ""
@@ -165,7 +164,7 @@ Begin BeaconDialog ArkExportWindow
       TabIndex        =   16
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   562
+      Top             =   564
       Transparent     =   False
       Visible         =   False
       Width           =   16
@@ -201,7 +200,7 @@ Begin BeaconDialog ArkExportWindow
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   562
+      Top             =   564
       Transparent     =   False
       Underline       =   False
       Visible         =   False
@@ -625,7 +624,6 @@ Begin BeaconDialog ArkExportWindow
    End
    Begin Ark.Rewriter SharedRewriter
       DebugIdentifier =   ""
-      Enabled         =   True
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""
@@ -897,6 +895,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As DesktopWindow, Project As Ark.Project, ForceTrollMode As Boolean = False)
+		  If (Parent Is Nil) = False Then
+		    Parent = Parent.TrueWindow
+		  End If
+		  
 		  Var Win As New ArkExportWindow
 		  Win.mProject = Project
 		  Win.mForceTrollMode = ForceTrollMode

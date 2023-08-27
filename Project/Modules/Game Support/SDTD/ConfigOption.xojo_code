@@ -234,6 +234,15 @@ Protected Class ConfigOption
 		Private mValueType As SDTD.ConfigOption.ValueTypes
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mFile + "." + Self.mKey
+			End Get
+		#tag EndGetter
+		Signature As String
+	#tag EndComputedProperty
+
 
 	#tag Enum, Name = ValueTypes, Type = Integer, Flags = &h0
 		TypeNumeric

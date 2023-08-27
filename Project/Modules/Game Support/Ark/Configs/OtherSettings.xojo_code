@@ -88,21 +88,21 @@ Inherits Ark.ConfigGroup
 		        If SupportedOnPlatform = False Then
 		          Continue
 		        End If
-		      ElseIf Profile.Platform <> Ark.ServerProfile.PlatformUnknown Then
+		      ElseIf Profile.Platform <> Beacon.ServerProfile.PlatformUnknown Then
 		        Var RequiredPlatform As Variant = Key.Constraint("platform")
 		        Var SupportedOnPlatform As Boolean = True
 		        If IsNull(RequiredPlatform) = False Then
 		          Select Case RequiredPlatform.StringValue
 		          Case "pc", "steam", "epic"
-		            SupportedOnPlatform = (Profile.Platform = Ark.ServerProfile.PlatformPC)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformPC)
 		          Case "xbox"
-		            SupportedOnPlatform = (Profile.Platform = Ark.ServerProfile.PlatformXbox)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformXbox)
 		          Case "ps"
-		            SupportedOnPlatform = (Profile.Platform = Ark.ServerProfile.PlatformPlayStation)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
 		          Case "switch"
-		            SupportedOnPlatform = (Profile.Platform = Ark.ServerProfile.PlatformSwitch)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformSwitch)
 		          Case "console"
-		            SupportedOnPlatform = (Profile.Platform = Ark.ServerProfile.PlatformXbox Or Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformXbox Or Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
 		          End Select
 		          If SupportedOnPlatform = False Then
 		            Continue
@@ -137,7 +137,9 @@ Inherits Ark.ConfigGroup
 		  For Each Entry As DictionaryEntry In Self.mSettings
 		    Var KeyUUID As String = Entry.Key
 		    Var Key As Ark.ConfigKey = DataSource.GetConfigKey(KeyUUID)
-		    Keys.Add(Key)
+		    If (Key Is Nil) = False Then
+		      Keys.Add(Key)
+		    End If
 		  Next
 		  Return Keys
 		End Function

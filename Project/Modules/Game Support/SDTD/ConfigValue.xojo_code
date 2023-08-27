@@ -48,11 +48,32 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  If Self.mHash.IsEmpty Then
+			    Var Raw As String = Self.mKeyDetails.File + ":" + Self.SortKey
+			    #if DebugBuild
+			      Self.mHash = Raw
+			    #else
+			      Self.mHash = EncodeBase64MBS(Crypto.SHA256(Raw))
+			    #endif
+			  End If
+			  Return Self.mHash
+			End Get
+		#tag EndGetter
+		Hash As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mKeyDetails.Key
 			End Get
 		#tag EndGetter
 		Key As String
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mHash As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mKeyDetails As SDTD.ConfigOption

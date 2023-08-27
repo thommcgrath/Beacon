@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Project
 Inherits Beacon.Project
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
 		  If Group IsA SDTD.ConfigGroup Then
@@ -133,6 +133,65 @@ Inherits Beacon.Project
 		  
 		  Self.ContentPackEnabled(SDTD.UserContentPackId) = True // Force it
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateConfigOrganizer(Identity As Beacon.Identity, Profile As SDTD.ServerProfile) As SDTD.ConfigOrganizer
+		  Try
+		    If Identity.IsBanned Then
+		      Return Self.CreateTrollConfigOrganizer(Profile)
+		    End If
+		    
+		    Var Organizer As New SDTD.ConfigOrganizer
+		    Var Groups() As SDTD.ConfigGroup = Self.CombinedConfigs(Profile.ConfigSetStates)
+		    
+		    // Add custom content first so it can be overridden or removed later
+		    For Idx As Integer = 0 To Groups.LastIndex
+		      If Groups(Idx) Is Nil Then
+		        Continue
+		      End If
+		      
+		      If Groups(Idx).InternalName = SDTD.Configs.NameCustomConfig Then
+		        Organizer.AddManagedKeys(Groups(Idx).ManagedKeys)
+		        Organizer.Add(Groups(Idx).GenerateConfigValues(Self, Identity, Profile))
+		        Groups.RemoveAt(Idx)
+		        Exit
+		      End If
+		    Next
+		    
+		    For Each Group As SDTD.ConfigGroup In Groups
+		      If Group Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var ManagedKeys() As SDTD.ConfigOption = Group.ManagedKeys
+		      Organizer.AddManagedKeys(ManagedKeys)
+		      Organizer.Remove(ManagedKeys) // Removes overlapping values found in custom config
+		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
+		    Next
+		    
+		    Organizer.Add(New SDTD.ConfigValue(SDTD.ConfigFileServerConfigXml, "ServerName", Profile.Name))
+		    
+		    Return Organizer
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Generating a config organizer")
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateTrollConfigOrganizer(Profile As SDTD.ServerProfile) As SDTD.ConfigOrganizer
+		  Var Values As New SDTD.ConfigOrganizer
+		  
+		  If (Profile Is Nil) = False Then
+		    Values.Add(New SDTD.ConfigValue(SDTD.ConfigFileServerConfigXml, "ServerName", Profile.Name))
+		  End If
+		  
+		  #Pragma Warning "Not fully implemented"
+		  
+		  Return Values
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -13,7 +13,116 @@ Inherits SDTD.ConfigGroup
 
 	#tag Event
 		Function GenerateConfigValues(Project As SDTD.Project, Profile As SDTD.ServerProfile) As SDTD.ConfigValue()
-		  
+		  Var ConsoleSafe As Boolean = Project.ConsoleSafe
+		  Var Configs() As SDTD.ConfigValue
+		  Var DataSource As SDTD.DataSource = SDTD.DataSource.Pool.Get(False)
+		  For Each Entry As DictionaryEntry In Self.mSettings
+		    Try
+		      Var KeyId As String = Entry.Key
+		      Var Key As SDTD.ConfigOption = DataSource.GetConfigOption(KeyId)
+		      Var Value As Variant = Entry.Value
+		      Var StringValue As String
+		      
+		      If Key Is Nil Or Project.ContentPackEnabled(Key.ContentPackId) = False Then
+		        Continue
+		      End If
+		      
+		      Var Requirements As Variant = Key.Constraint("other")
+		      If IsNull(Requirements) = False Then
+		        Var Dict As Dictionary = Requirements
+		        Var OtherKeyId As String = Dict.Value("key")
+		        Var RequiredValue As Boolean = Dict.Value("value")
+		        Var CurrentValue As Variant
+		        If Self.mSettings.HasKey(OtherKeyId) Then
+		          CurrentValue = Self.mSettings.Value(OtherKeyId)
+		        Else
+		          Var OtherKey As SDTD.ConfigOption = DataSource.GetConfigOption(OtherKeyId)
+		          If (OtherKey Is Nil) = False Then
+		            CurrentValue = OtherKey.DefaultValue
+		          End If
+		        End If
+		        If CurrentValue <> RequiredValue Then
+		          Continue
+		        End If
+		      End If
+		      
+		      If Key.ValueType = SDTD.ConfigOption.ValueTypes.TypeText Then
+		        Var AllowedChars As Variant = Key.Constraint("allowed_chars")
+		        Var DisallowedChars As Variant = Key.Constraint("disallowed_chars")
+		        If IsNull(AllowedChars) = False Then
+		          Var Filter As New Regex
+		          Filter.SearchPattern = "[^" + AllowedChars.StringValue + "]+"
+		          Filter.ReplacementPattern = ""
+		          Filter.Options.ReplaceAllMatches = True
+		          Value = Filter.Replace(Value.StringValue)
+		        ElseIf IsNull(DisallowedChars) = False Then
+		          Var Filter As New Regex
+		          Filter.SearchPattern = "[" + DisallowedChars.StringValue + "]+"
+		          Filter.ReplacementPattern = ""
+		          Filter.Options.ReplaceAllMatches = True
+		          Value = Filter.Replace(Value.StringValue)
+		        End If
+		        
+		        Var TrimChars As Variant = Key.Constraint("trim_chars")
+		        If IsNull(TrimChars) = False Then
+		          Var Chars() As Variant = TrimChars
+		          For Each Char As String In Chars
+		            Value = Value.StringValue.Trim(Char)
+		          Next Char
+		        End If
+		      End If
+		      
+		      If ConsoleSafe Then
+		        Var RequiredPlatform As Variant = Key.Constraint("platform")
+		        Var SupportedOnPlatform As Boolean = True
+		        If IsNull(RequiredPlatform) = False Then
+		          Select Case RequiredPlatform.StringValue
+		          Case "pc", "steam", "epic"
+		            SupportedOnPlatform = False
+		          End Select
+		        End If
+		        If SupportedOnPlatform = False Then
+		          Continue
+		        End If
+		      ElseIf Profile.Platform <> Beacon.ServerProfile.PlatformUnknown Then
+		        Var RequiredPlatform As Variant = Key.Constraint("platform")
+		        Var SupportedOnPlatform As Boolean = True
+		        If IsNull(RequiredPlatform) = False Then
+		          Select Case RequiredPlatform.StringValue
+		          Case "pc", "steam", "epic"
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformPC)
+		          Case "xbox"
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformXbox)
+		          Case "ps"
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
+		          Case "switch"
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformSwitch)
+		          Case "console"
+		            SupportedOnPlatform = (Profile.Platform = Beacon.ServerProfile.PlatformXbox Or Profile.Platform = Beacon.ServerProfile.PlatformPlayStation)
+		          End Select
+		          If SupportedOnPlatform = False Then
+		            Continue
+		          End If
+		        End If
+		      End If
+		      
+		      Select Case Key.ValueType
+		      Case SDTD.ConfigOption.ValueTypes.TypeBoolean
+		        StringValue = If(Value.BooleanValue, "True", "False")
+		      Case SDTD.ConfigOption.ValueTypes.TypeNumeric
+		        StringValue = Value.DoubleValue.PrettyText
+		      Case SDTD.ConfigOption.ValueTypes.TypeText
+		        StringValue = Value.StringValue
+		      Else
+		        Continue
+		      End Select
+		      
+		      Configs.Add(New SDTD.ConfigValue(Key, Key.Key + "=" + StringValue))
+		    Catch Err As RuntimeException
+		      App.ReportException(Err)
+		    End Try
+		  Next
+		  Return Configs
 		End Function
 	#tag EndEvent
 

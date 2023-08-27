@@ -359,26 +359,24 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginExport()
-		  #if false
-		    If Self.Project.ReadOnly Then
-		      Self.ShowAlert("This is a read-only project", "Your access to this project does not allow deploy.")
-		      Return
-		    End If
-		    
-		    Self.Autosave()
-		    
-		    If Not Self.ContinueWithoutExcludedConfigs() Then
-		      Return
-		    End If
-		    
-		    If Self.mValidator Is Nil And (Self.mValidationResultsDialog Is Nil Or Self.mValidationResultsDialog.Value Is Nil) Then
-		      Var Validator As New Beacon.ProjectValidator
-		      AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
-		      AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Export
-		      Validator.StartValidation(Self.Project)
-		      Self.mValidator = Validator
-		    End If
-		  #endif
+		  If Self.Project.ReadOnly Then
+		    Self.ShowAlert("This is a read-only project", "Your access to this project does not allow deploy.")
+		    Return
+		  End If
+		  
+		  Self.Autosave()
+		  
+		  If Not Self.ContinueWithoutExcludedConfigs() Then
+		    Return
+		  End If
+		  
+		  If Self.mValidator Is Nil And (Self.mValidationResultsDialog Is Nil Or Self.mValidationResultsDialog.Value Is Nil) Then
+		    Var Validator As New Beacon.ProjectValidator
+		    AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
+		    AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Export
+		    Validator.StartValidation(Self.Project)
+		    Self.mValidator = Validator
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -430,6 +428,33 @@ End
 		  
 		  Super.Constructor(Controller)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ContinueWithoutExcludedConfigs() As Boolean
+		  Var ExcludedConfigs() As SDTD.ConfigGroup = Self.Project.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
+		  If ExcludedConfigs.LastIndex = -1 Then
+		    Return True
+		  End If
+		  
+		  Var HumanNames() As String
+		  For Each Config As SDTD.ConfigGroup In ExcludedConfigs
+		    HumanNames.Add("""" + Language.LabelForConfig(Config) + """")
+		  Next
+		  HumanNames.Sort
+		  
+		  Var Message, Explanation As String
+		  If HumanNames.LastIndex = 0 Then
+		    Message = "You are using an editor that will not be included in your config files."
+		    Explanation = "The " + HumanNames(0) + " editor requires Beacon Omni, which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue?"
+		  Else
+		    Var GroupList As String = HumanNames.EnglishOxfordList()
+		    Message = "You are using editors that will not be included in your config files."
+		    Explanation = "The " + GroupList + " editors require Beacon Omni, which you have not purchased. Beacon will not generate their content for your config files. Do you still want to continue?"
+		  End If
+		  
+		  Return Self.ShowConfirm(Message, Explanation, "Continue", "Cancel")
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -641,6 +666,70 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mValidationResultsDialog_GoToIssue(Sender As ResolveIssuesDialog, Issue As Beacon.Issue)
+		  Sender.Close
+		  
+		  Var Parts() As String = Issue.Location.Split(".")
+		  If Parts.Count < 3 Then
+		    Break
+		    App.Log("Unknown issue path " + Issue.Location)
+		    Return
+		  End If
+		  
+		  Var ConfigSet As String = Parts(0)
+		  Var ConfigName As String = Parts(1)
+		  Self.ActiveConfigSet = Self.Project.FindConfigSet(ConfigSet)
+		  Self.CurrentConfigName = ConfigName
+		  Self.CurrentPanel.GoToIssue(Issue)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mValidator_Validating(Sender As Beacon.ProjectValidator)
+		  #Pragma Unused Sender
+		  
+		  Var Progress As New ProgressWindow
+		  Progress.Message = "Checking project for errors…"
+		  Progress.Detail = "Just a moment…"
+		  Progress.Show
+		  Self.mValidatorProgress = Progress
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function mValidator_ValidationComplete_Common(Sender As Beacon.ProjectValidator, Results As Beacon.ProjectValidationResults, UserData As Variant) As Boolean
+		  #Pragma Unused Sender
+		  #Pragma Unused UserData
+		  
+		  Self.mValidator = Nil
+		  If (Self.mValidatorProgress Is Nil) = False Then
+		    Self.mValidatorProgress.Close
+		    Self.mValidatorProgress = Nil
+		  End If
+		  
+		  If Results.Count > 0 Then
+		    Var Dialog As New ResolveIssuesDialog(Results)
+		    AddHandler Dialog.GoToIssue, WeakAddressOf mValidationResultsDialog_GoToIssue
+		    Dialog.Show(Self)
+		    Self.mValidationResultsDialog = New WeakRef(Dialog)
+		    Return False
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mValidator_ValidationComplete_Export(Sender As Beacon.ProjectValidator, Results As Beacon.ProjectValidationResults, UserData As Variant)
+		  If Self.mValidator_ValidationComplete_Common(Sender, Results, UserData) = False Then
+		    Return
+		  End If
+		  
+		  SDTDExportWindow.Present(Self, Self.Project, Keyboard.AsyncOptionKey And Keyboard.AsyncShiftKey)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Panel_ContentsChanged(Sender As SDTDConfigEditor)
 		  #Pragma Unused Sender
 		  
@@ -745,6 +834,18 @@ End
 
 	#tag Property, Flags = &h21
 		Private mUpdateUITag As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidationResultsDialog As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidator As Beacon.ProjectValidator
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidatorProgress As ProgressWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
