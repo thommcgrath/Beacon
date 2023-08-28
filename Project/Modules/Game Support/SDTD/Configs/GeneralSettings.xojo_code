@@ -1,7 +1,7 @@
 #tag Class
 Protected Class GeneralSettings
 Inherits SDTD.ConfigGroup
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub CopyFrom(Other As SDTD.ConfigGroup)
 		  Var Source As SDTD.Configs.GeneralSettings = SDTD.Configs.GeneralSettings(Other)
@@ -117,7 +117,7 @@ Inherits SDTD.ConfigGroup
 		        Continue
 		      End Select
 		      
-		      Configs.Add(New SDTD.ConfigValue(Key, Key.Key + "=" + StringValue))
+		      Configs.Add(New SDTD.ConfigValue(Key, StringValue))
 		    Catch Err As RuntimeException
 		      App.ReportException(Err)
 		    End Try

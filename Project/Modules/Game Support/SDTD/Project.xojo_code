@@ -167,7 +167,7 @@ Inherits Beacon.Project
 		      Return Self.CreateTrollConfigOrganizer(Profile)
 		    End If
 		    
-		    Var Organizer As New SDTD.ConfigOrganizer
+		    Var Organizer As SDTD.ConfigOrganizer = Self.CreateDefaultConfigOrganizer
 		    Var Groups() As SDTD.ConfigGroup = Self.CombinedConfigs(Profile.ConfigSetStates)
 		    
 		    // Add custom content first so it can be overridden or removed later
@@ -195,7 +195,7 @@ Inherits Beacon.Project
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
 		    Next
 		    
-		    Organizer.Add(New SDTD.ConfigValue(SDTD.ConfigFileServerConfigXml, "ServerName", Profile.Name))
+		    Organizer.Add(New SDTD.ConfigValue(SDTD.ConfigFileServerConfigXml, "ServerName", Profile.Name), SDTD.ConfigOrganizer.FlagAddToManaged)
 		    
 		    Return Organizer
 		  Catch Err As RuntimeException
@@ -205,9 +205,20 @@ Inherits Beacon.Project
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function CreateDefaultConfigOrganizer() As SDTD.ConfigOrganizer
+		  Var Options() As SDTD.ConfigOption = SDTD.DataSource.Pool.Get(False).GetConfigOptions(SDTD.ConfigFileServerConfigXml, "", Self.GameVersion, Self.ContentPacks)
+		  Var Values() As SDTD.ConfigValue
+		  For Each Option As SDTD.ConfigOption In Options
+		    Values.Add(New SDTD.ConfigValue(Option, Option.DefaultValue))
+		  Next
+		  Return New SDTD.ConfigOrganizer(Values)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function CreateTrollConfigOrganizer(Profile As SDTD.ServerProfile) As SDTD.ConfigOrganizer
-		  Var Values As New SDTD.ConfigOrganizer
+		  Var Values As SDTD.ConfigOrganizer = Self.CreateDefaultConfigOrganizer
 		  
 		  If (Profile Is Nil) = False Then
 		    Values.Add(New SDTD.ConfigValue(SDTD.ConfigFileServerConfigXml, "ServerName", Profile.Name))

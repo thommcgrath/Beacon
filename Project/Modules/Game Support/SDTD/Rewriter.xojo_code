@@ -157,7 +157,33 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h0
 		Shared Function Rewrite(Source As SDTD.Rewriter.Sources, Filename As String, InputContent As String, Organizer As SDTD.ConfigOrganizer, ProjectId As String, Nuke As Boolean, ByRef Err As RuntimeException) As String
-		  Return InputContent
+		  Select Case Filename
+		  Case SDTD.ConfigFileServerConfigXml
+		    Var InitialOrganizer As New SDTD.ConfigOrganizer
+		    If Nuke = False Then
+		      Call InitialOrganizer.Add(Filename, InputContent)
+		      InitialOrganizer.Remove(Organizer.ManagedKeys)
+		    End If
+		    
+		    Var FinalOrganizer As New SDTD.ConfigOrganizer
+		    FinalOrganizer.Add(Organizer.FilteredValues(Filename))
+		    FinalOrganizer.Add(InitialOrganizer.FilteredValues(Filename))
+		    
+		    Var Values() As SDTD.ConfigValue = FinalOrganizer.FilteredValues(Filename)
+		    Var Doc As New XmlDocument
+		    Var Root As XmlNode = Doc.CreateElement("ServerSettings")
+		    For Each Value As SDTD.ConfigValue In Values
+		      Var PropertyNode As XmlNode = Doc.CreateElement("property")
+		      PropertyNode.SetAttribute("name", Value.Key)
+		      PropertyNode.SetAttribute("value", Value.Value)
+		      Root.AppendChild(PropertyNode)
+		    Next
+		    Doc.AppendChild(Root)
+		    
+		    Return Doc.Transform(Beacon.PrettyPrintXsl)
+		  Else
+		    Return InputContent
+		  End Select
 		End Function
 	#tag EndMethod
 

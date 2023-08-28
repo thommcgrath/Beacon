@@ -426,7 +426,6 @@ End
 		  Self.ConsoleModeSwitch.Left = ControlLeft
 		  Self.CompressedSwitch.Left = ControlLeft
 		  Self.VersionMenu.Left = ControlLeft
-		  Self.VersionCustomButton.Left = Self.VersionMenu.Right + 12
 		End Sub
 	#tag EndEvent
 

@@ -2,7 +2,16 @@
 Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
 		Sub Add(Values() As SDTD.ConfigValue, UniqueOnly As Boolean = False)
+		  Self.Add(Values, If(UniqueOnly, Self.FlagSkipExistingKeys, 0))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Add(Values() As SDTD.ConfigValue, Flags As Integer)
 		  // This code is a little verbose, but it's easier to follow the logic this way.
+		  
+		  Var UniqueOnly As Boolean = (Flags And Self.FlagSkipExistingKeys) = Self.FlagSkipExistingKeys
+		  Var AddToManaged As Boolean = (Flags And Self.FlagAddToManaged) = Self.FlagAddToManaged
 		  
 		  Self.mIndex.BeginTransaction
 		  
@@ -25,6 +34,9 @@ Protected Class ConfigOrganizer
 		      Siblings.Add(Value)
 		      Self.mValues.Value(Value.Hash) = Siblings
 		      Self.mIndex.ExecuteSQL("INSERT INTO keymap (hash, file, key, sortkey) VALUES (?1, ?2, ?3, ?4);", Value.Hash, Value.File, Value.Key, Value.SortKey)
+		      If AddToManaged Then
+		        Self.mManagedKeys.Value(Value.Details.Signature) = Value.Details
+		      End If
 		      Continue
 		    End If
 		    
@@ -32,6 +44,9 @@ Protected Class ConfigOrganizer
 		      // There should only be one of this key, so replace the older one
 		      Siblings.Add(Value)
 		      Self.mValues.Value(Value.Hash) = Siblings
+		      If AddToManaged Then
+		        Self.mManagedKeys.Value(Value.Details.Signature) = Value.Details
+		      End If
 		      Continue
 		    End If
 		    
@@ -39,6 +54,9 @@ Protected Class ConfigOrganizer
 		    Siblings = Self.mValues.Value(Value.Hash)
 		    Siblings.Add(Value)
 		    Self.mValues.Value(Value.Hash) = Siblings
+		    If AddToManaged Then
+		      Self.mManagedKeys.Value(Value.Details.Signature) = Value.Details
+		    End If
 		  Next
 		  Self.mIndex.CommitTransaction
 		End Sub
@@ -48,18 +66,56 @@ Protected Class ConfigOrganizer
 		Sub Add(Value As SDTD.ConfigValue, UniqueOnly As Boolean = False)
 		  Var Values(0) As SDTD.ConfigValue
 		  Values(0) = Value
-		  Self.Add(Values, UniqueOnly)
+		  Self.Add(Values, If(UniqueOnly, Self.FlagSkipExistingKeys, 0))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Add(File As String, Content As String)
-		  #if DebugBuild
-		    #Pragma Warning "Need to add organizer content by file"
-		  #else
-		    #Pragma Error "Need to add organizer content by file"
-		  #endif
+		Sub Add(Value As SDTD.ConfigValue, Flags As Integer)
+		  Var Values(0) As SDTD.ConfigValue
+		  Values(0) = Value
+		  Self.Add(Values, Flags)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Add(File As String, Content As String, Flags As Integer = 0) As Boolean
+		  If Content.IsEmpty Then
+		    Return False
+		  End If
+		  
+		  Select Case File
+		  Case SDTD.ConfigFileServerConfigXml
+		    Try
+		      Var Doc As New XmlDocument(Content)
+		      Var Root As XmlNode = Doc.DocumentElement
+		      If Root.Name <> "ServerSettings" Then
+		        Return False
+		      End If
+		      
+		      Var Values() As SDTD.ConfigValue
+		      Var Bound As Integer = Root.ChildCount - 1
+		      For Idx As Integer = 0 To Bound
+		        Var Child As XmlNode = Root.Child(Idx)
+		        If Child.Name <> "property" Then
+		          Continue
+		        End If
+		        
+		        Var PropertyName As String = Child.GetAttribute("name")
+		        Var PropertyValue As String = Child.GetAttribute("value")
+		        Values.Add(New SDTD.ConfigValue(SDTD.ConfigFileServerConfigXml, PropertyName, PropertyValue))
+		      Next
+		      
+		      Self.Add(Values, Flags)
+		      Return True
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Processing xml file")
+		      Return False
+		    End Try
+		  Else
+		    Break
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -71,6 +127,12 @@ Protected Class ConfigOrganizer
 		    
 		    Self.mManagedKeys.Value(Keys(Idx).Signature) = Keys(Idx)
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddManagedKeys(ParamArray Keys() As SDTD.ConfigOption)
+		  Self.AddManagedKeys(Keys)
 		End Sub
 	#tag EndMethod
 
@@ -134,7 +196,7 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
 		Sub Constructor(File As String, Content As String)
 		  Self.Constructor()
-		  Self.Add(File, Content)
+		  Call Self.Add(File, Content)
 		End Sub
 	#tag EndMethod
 
@@ -363,6 +425,13 @@ Protected Class ConfigOrganizer
 	#tag Property, Flags = &h21
 		Private mValues As Dictionary
 	#tag EndProperty
+
+
+	#tag Constant, Name = FlagAddToManaged, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagSkipExistingKeys, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

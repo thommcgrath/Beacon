@@ -621,8 +621,16 @@ End
 		    Return
 		  End Select
 		  
+		  Var RootMatches As Boolean
 		  Var ClipboardContents As String = Board.Text
-		  If ClipboardContents.IndexOf("<" + RequiredRoot + ">") = -1 Then
+		  If ClipboardContents.IsEmpty = False Then
+		    Try
+		      Var Doc As New XmlDocument(ClipboardContents)
+		      RootMatches = Doc.DocumentElement.Name = RequiredRoot
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  If RootMatches = False Then
 		    Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyInstructionsMessage, Filename), Language.ReplacePlaceholders(SmartCopyInstructionsExplanation, Filename))
 		    Return
 		  End If
