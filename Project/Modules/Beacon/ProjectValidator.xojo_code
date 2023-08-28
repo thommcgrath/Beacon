@@ -23,6 +23,40 @@ Protected Class ProjectValidator
 	#tag Method, Flags = &h21
 		Private Sub mThread_Run(Sender As Thread)
 		  Var Issues As Beacon.ProjectValidationResults = Self.mProject.Validate
+		  
+		  If Issues.Count = 0 Then
+		    // No issues, so report license usage to the api.
+		    Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		    If (Identity Is Nil) = False Then
+		      Var Flags As Integer = Beacon.FlagsForGameId(Self.mProject.GameId)
+		      Var Licenses() As Beacon.OmniLicense = Identity.Licenses(Flags)
+		      Var Reported As Boolean = True
+		      Var NeedsRefresh As Boolean
+		      For Each License As Beacon.OmniLicense In Licenses
+		        If License.HasBeenUsed Then
+		          Continue
+		        End If
+		        
+		        Try
+		          Var Request As New BeaconAPI.Request("/licenses/" + EncodeURLComponent(License.LicenseId), "PUT", "{}", "application/json")
+		          Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
+		          Reported = Reported And Response.Success
+		          NeedsRefresh = NeedsRefresh Or Response.Success
+		        Catch Err As RuntimeException
+		          Reported = False
+		        End Try
+		      Next
+		      If NeedsRefresh Then
+		        BeaconAPI.UserController.RefreshUserDetails()
+		      End If
+		      If Not Reported Then
+		        Issues.Add(New Beacon.Issue("", "First time license check has failed."))
+		      End If
+		    Else
+		      Issues.Add(New Beacon.Issue("", "There is no valid identity file."))
+		    End If
+		  End If
+		  
 		  Self.mShowUITimer.RunMode = Timer.RunModes.Off
 		  Sender.AddUserInterfaceUpdate("Issues" : Issues)
 		End Sub

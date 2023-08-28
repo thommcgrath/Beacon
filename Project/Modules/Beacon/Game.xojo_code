@@ -1,10 +1,17 @@
 #tag Class
 Protected Class Game
 	#tag Method, Flags = &h0
-		Sub Constructor(Identifier As String, Name As String)
+		Sub Constructor(Identifier As String, Name As String, Flags As Integer)
 		  Self.mIdentifier = Identifier
 		  Self.mName = Name
+		  Self.mFlags = Flags
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Flags() As Integer
+		  Return Self.mFlags
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -19,6 +26,10 @@ Protected Class Game
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mFlags As Integer
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIdentifier As String

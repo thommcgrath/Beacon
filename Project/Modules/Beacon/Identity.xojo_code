@@ -82,6 +82,29 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Licenses() As Beacon.OmniLicense()
+		  Var Arr() As Beacon.OmniLicense
+		  Arr.ResizeTo(Self.mLicenses.LastIndex)
+		  For Idx As Integer = 0 To Self.mLicenses.LastIndex
+		    Arr(Idx) = Self.mLicenses(Idx)
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Licenses(Flags As Integer) As Beacon.OmniLicense()
+		  Var Arr() As Beacon.OmniLicense
+		  For Each License As Beacon.OmniLicense In Self.mLicenses
+		    If (License.Flags And Flags) > 0 Then
+		      Arr.Add(License)
+		    End If
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Load(Row As RowSet) As Beacon.Identity
 		  Var Identity As New Beacon.Identity(Row.Column("user_id").StringValue, Row.Column("public_key").StringValue, Row.Column("private_key").StringValue)
 		  

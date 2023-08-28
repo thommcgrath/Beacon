@@ -422,12 +422,23 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function FlagsForGameId(GameId As String) As Integer
+		  Var Games() As Beacon.Game = Beacon.Games
+		  For Each Game As Beacon.Game In Games
+		    If Game.Identifier = GameId Then
+		      Return Game.Flags
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Games() As Beacon.Game()
 		  Static GameList() As Beacon.Game
 		  If GameList.Count = 0 Then
-		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName))
-		    GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName))
+		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName, Ark.OmniFlag))
+		    GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag))
 		  End If
 		  Return GameList
 		End Function
