@@ -88,48 +88,46 @@ Protected Class Identity
 		  Try
 		    Var CloudKey As String = DecodeBase64(Row.Column("cloud_key").StringValue)
 		    Var Banned As Boolean = Row.Column("banned").BooleanValue
-		    Var Signature As String = DecodeBase64(Row.Column("signature").StringValue)
-		    Var SignatureVersion As Integer = Row.Column("signature_version").IntegerValue
+		    Var Signature As String = DecodeBase64URLMBS(Row.Column("signature").StringValue)
+		    Var SignatureFields() As Variant = Beacon.ParseJson(Row.Column("signature_fields").StringValue)
 		    Var Username As String = Row.Column("username").StringValue
 		    Var IsAnonymous As Boolean = Row.Column("anonymous").BooleanValue
 		    Var ExpirationString As String = Row.Column("expiration").StringValue
 		    Var Expiration As DateTime
 		    
 		    Var Licenses() As Beacon.OmniLicense
-		    Var Arr() As Variant
+		    Var LicensesJson() As Variant
 		    If Row.Column("licenses").Value.IsNull = False Then
-		      Arr = Beacon.ParseJSON(Row.Column("licenses").StringValue)
+		      LicensesJson = Beacon.ParseJSON(Row.Column("licenses").StringValue)
 		    End If
 		    Var OmniFlags As Integer
-		    Var LicenseSigningData() As String
-		    For Each Member As Variant In Arr
+		    For Each Member As Variant In LicensesJson
 		      If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
 		        Continue
 		      End If
 		      
 		      Var License As New Beacon.OmniLicense(Dictionary(Member))
 		      OmniFlags = OmniFlags Or License.Flags
-		      LicenseSigningData.Add(License.ValidationString)
 		      Licenses.Add(License)
 		    Next
 		    
-		    Var SignatureParts(3) As String
-		    SignatureParts(0) = Beacon.HardwareID
-		    SignatureParts(1) = Identity.mUserId
-		    Select Case SignatureVersion
-		    Case 2
-		      SignatureParts(2) = OmniFlags.ToString(Locale.Raw, "0")
-		    Case 3
-		      SignatureParts(2) = String.FromArray(LicenseSigningData, ";")
-		    End Select
-		    SignatureParts(3) = If(Banned, "Banned", "Clean")
+		    Var SignatureParts() As Variant
+		    For Each Field As String In SignatureFields
+		      Select Case Field
+		      Case "deviceId"
+		        SignatureParts.Add(Beacon.HardwareId)
+		      Case "userId"
+		        SignatureParts.Add(Identity.UserId)
+		      Case "licenses"
+		        SignatureParts.Add(LicensesJson)
+		      Case "banned"
+		        SignatureParts.Add(Banned)
+		      Case "expiration"
+		        SignatureParts.Add(ExpirationString)
+		      End Select
+		    Next
 		    
-		    If ExpirationString.IsEmpty = False Then
-		      Expiration = NewDateFromSQLDateTime(ExpirationString)
-		      SignatureParts.Add(ExpirationString)
-		    End If
-		    
-		    Var StringToSign As String = String.FromArray(SignatureParts, " ")
+		    Var StringToSign As String = Beacon.GenerateJson(SignatureParts, False)
 		    Var SignatureValid As Boolean = Crypto.RSAVerifySignature(StringToSign, Signature, BeaconAPI.PublicKey)
 		    
 		    Identity.mIsBanned = Banned

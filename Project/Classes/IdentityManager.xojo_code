@@ -39,7 +39,7 @@ Protected Class IdentityManager
 		  End If
 		  
 		  Database.CreateDatabase
-		  Database.ExecuteSQL("CREATE TABLE identities (user_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, public_key TEXT COLLATE NOCASE NOT NULL, private_key TEXT COLLATE NOCASE NOT NULL, cloud_key TEXT NOT NULL DEFAULT '', licenses TEXT NOT NULL DEFAULT '[]', username TEXT COLLATE NOCASE NOT NULL DEFAULT '', anonymous BOOLEAN NOT NULL DEFAULT TRUE, banned BOOLEAN NOT NULL DEFAULT FALSE, signature TEXT NOT NULL DEFAULT '', signature_version INTEGER NOT NULL DEFAULT 1, expiration TEXT NOT NULL DEFAULT '', active BOOLEAN NOT NULL DEFAULT FALSE, merged BOOLEAN NOT NULL DEFAULT FALSE);")
+		  Database.ExecuteSQL("CREATE TABLE identities (user_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, public_key TEXT COLLATE NOCASE NOT NULL, private_key TEXT COLLATE NOCASE NOT NULL, cloud_key TEXT NOT NULL DEFAULT '', licenses TEXT NOT NULL DEFAULT '[]', username TEXT COLLATE NOCASE NOT NULL DEFAULT '', anonymous BOOLEAN NOT NULL DEFAULT TRUE, banned BOOLEAN NOT NULL DEFAULT FALSE, signature TEXT NOT NULL DEFAULT '', signature_fields TEXT NOT NULL DEFAULT '[]', expiration TEXT NOT NULL DEFAULT '', active BOOLEAN NOT NULL DEFAULT FALSE, merged BOOLEAN NOT NULL DEFAULT FALSE);")
 		  Self.mDatabase = Database
 		  
 		  Var MergedFolder As FolderItem = AppSupport.Child("Merged Identities")
@@ -147,7 +147,7 @@ Protected Class IdentityManager
 
 	#tag Method, Flags = &h0
 		Function FetchAnonymous(Create As Boolean) As Beacon.Identity
-		  Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT * FROM identities WHERE anonymous = TRUE AND merged = FALSE AND banned = FALSE ORDER BY LENGTH(public_key) DESC, signature_version DESC, LENGTH(signature) DESC;")
+		  Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT * FROM identities WHERE anonymous = TRUE AND merged = FALSE AND banned = FALSE ORDER BY LENGTH(public_key) DESC;")
 		  If Rows.RowCount = 0 Then
 		    If Create Then
 		      Return Self.Create()
@@ -169,21 +169,10 @@ Protected Class IdentityManager
 		    Var PublicKey As String = BeaconEncryption.PEMDecodePublicKey(Dict.Value("publicKey").StringValue)
 		    Var Banned As Boolean = Dict.Value("banned").BooleanValue
 		    Var Expiration As String = Dict.Lookup("expiration", "").StringValue
-		    Var Signatures As Dictionary = Dict.Value("signatures")
-		    Var Signature As String = Signatures.Value("3").StringValue
-		    Var SignatureVersion As Integer = 3
-		    Var LicenseArray() As Variant = Dict.Value("licenses")
-		    Var LicenseSaveData() As Variant
-		    For Each Member As Variant In LicenseArray
-		      If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
-		        Continue
-		      End If
-		      
-		      Var LicenseData As Dictionary = Member
-		      Var License As New Beacon.OmniLicense(LicenseData.Value("productId").StringValue, LicenseData.Value("flags").IntegerValue, LicenseData.Lookup("expiration", "").StringValue)
-		      LicenseSaveData.Add(License.SaveData)
-		    Next
-		    Var Licenses As String = Beacon.GenerateJSON(LicenseSaveData, False)
+		    Var SignatureDetails As Dictionary = Dict.Value("signature")
+		    Var Signature As String = SignatureDetails.Value("signed")
+		    Var SignatureFields As String = Beacon.GenerateJson(SignatureDetails.Value("fields"), False)
+		    Var Licenses As String = Beacon.GenerateJSON(Dict.Value("licenses"), False)
 		    
 		    Var PrivateKey, CloudKey As String
 		    If Dict.HasKey("privateKey") Then
@@ -219,9 +208,9 @@ Protected Class IdentityManager
 		    Self.mDatabase.BeginTransaction
 		    Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT user_id FROM identities WHERE user_id = ?1;", UserId)
 		    If Rows.RowCount = 0 Then
-		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_version, expiration) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureVersion, Expiration)
+		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_fields, expiration) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration)
 		    Else
-		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_version = ?10, expiration = ?11 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureVersion, Expiration)
+		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_fields = ?10, expiration = ?11 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureFields, Expiration)
 		    End If
 		    Self.mDatabase.CommitTransaction
 		    
@@ -320,17 +309,6 @@ Protected Class IdentityManager
 		    End If
 		    Var IsAnonymous As Boolean = Username.IsEmpty
 		    
-		    Var Signature As String
-		    Var SignatureVersion As Integer = 0
-		    If Dict.HasKey("Signature") Then
-		      Signature = EncodeBase64(DecodeHex(Dict.Value("Signature")))
-		      If Dict.HasKey("Signature Version") Then
-		        SignatureVersion = Dict.Value("Signature Version")
-		      Else
-		        SignatureVersion = 2
-		      End If
-		    End If
-		    
 		    Var Expiration As String
 		    If Dict.HasKey("Expiration") Then
 		      Expiration = Dict.Value("Expiration")
@@ -341,33 +319,12 @@ Protected Class IdentityManager
 		      Banned = Dict.Value("Banned")
 		    End If
 		    
-		    Var Licenses As String = "[]"
-		    If Dict.HasKey("Licenses") Then
-		      Var LicenseArray() As Variant = Dict.Value("Licenses")
-		      Var LicenseSaveData() As Variant
-		      For Each Member As Variant In LicenseArray
-		        If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
-		          Continue
-		        End If
-		        
-		        Var LicenseData As Dictionary = Member
-		        Var License As New Beacon.OmniLicense(LicenseData.Value("Product ID").StringValue, LicenseData.Value("Flags").IntegerValue, LicenseData.Lookup("Expiration", "").StringValue)
-		        LicenseSaveData.Add(License.SaveData)
-		      Next
-		      Licenses = Beacon.GenerateJSON(LicenseSaveData, False)
-		    ElseIf Dict.Value("Omni Version") Then
-		      Var License As New Beacon.OmniLicense("972f9fc5-ad64-4f9c-940d-47062e705cc5", Dict.Value("Omni Version").IntegerValue, "")
-		      Var LicenseSaveData() As Variant
-		      LicenseSaveData.Add(License.SaveData)
-		      Licenses = Beacon.GenerateJSON(LicenseSaveData, False)
-		    End If
-		    
 		    Self.mDatabase.BeginTransaction
 		    Var Rows As RowSet = Self.mDatabase.SelectSQL("SELECT user_id FROM identities WHERE user_id = ?1;", UserId)
 		    If Rows.RowCount = 0 Then
-		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_version, expiration) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureVersion, Expiration)
+		      Self.mDatabase.ExecuteSQL("INSERT INTO identities (user_id, public_key, private_key, cloud_key, licenses, username, anonymous, banned, signature, signature_fields, expiration) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);", UserId, PublicKey, PrivateKey, CloudKey, "[]", Username, IsAnonymous, Banned, "", "[]", Expiration)
 		    Else
-		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_version = ?10, expiration = ?11 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, Licenses, Username, IsAnonymous, Banned, Signature, SignatureVersion, Expiration)
+		      Self.mDatabase.ExecuteSQL("UPDATE identities SET public_key = ?2, private_key = ?3, cloud_key = ?4, licenses = ?5, username = ?6, anonymous = ?7, banned = ?8, signature = ?9, signature_fields = ?10, expiration = ?11 WHERE user_id = ?1;", UserId, PublicKey, PrivateKey, CloudKey, "[]", Username, IsAnonymous, Banned, "", "[]", Expiration)
 		    End If
 		    Self.mDatabase.CommitTransaction
 		    
