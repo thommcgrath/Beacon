@@ -9,6 +9,9 @@ configkeys:
   - MessageOfTheDay.Duration
 supportedgames:
   - "Ark: Survival Evolved"
+  - "7 Days to Die"
+redirect_from:
+  - /configs/sdtd.servers/
 ---
 {% include editortitle.markdown %}
 

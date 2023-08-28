@@ -3,6 +3,9 @@ title: Accounts
 parent: Config Editors
 supportedgames:
   - "Ark: Survival Evolved"
+  - "7 Days to Die"
+redirect_from:
+  - /configs/sdtd.accounts/
 ---
 {% include editortitle.markdown %}
 
