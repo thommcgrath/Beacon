@@ -7,7 +7,7 @@
 {% if page.supportedgames.size == 1 %}
 This editor is compatible with {{page.supportedgames.first}} projects{% if page.requiresomni != true %}.{% endif %}
 {% elsif page.supportedgames.size == 2 %}
-This is compatible with {{page.supportedgames.first}} and {{page.supportedgames.last}} projects{% if page.requiresomni != true %}.{% endif %}
+This editor is compatible with {{page.supportedgames.first}} and {{page.supportedgames.last}} projects{% if page.requiresomni != true %}.{% endif %}
 {% else %}
 {% assign skiplast = page.supportedgames.size | minus: 1 %}This editor is compatible with {% for key in page.supportedgames limit: skiplast %}{{key}}, {% endfor %} and {{page.supportedgames.last}} projects{% if page.requiresomni != true %}.{% endif %}
 {% endif %}
