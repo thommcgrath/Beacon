@@ -28,7 +28,7 @@ class User extends DatabaseObject implements JsonSerializable {
 	protected $privateKeySalt = null;
 	protected $publicKey = '';
 	protected $requirePasswordChange = false;
-	protected $signatures = [];
+	protected ?array $signature = null;
 	protected $userId = '';
 	protected $username = null;
 	
@@ -49,7 +49,7 @@ class User extends DatabaseObject implements JsonSerializable {
 		$this->privateKeySalt = $row->Field('private_key_salt');
 		$this->publicKey = $row->Field('public_key');
 		$this->requirePasswordChange = filter_var($row->Field('require_password_change'), FILTER_VALIDATE_BOOL);
-		$this->signatures = [];
+		$this->signature = null;
 		$this->userId = $row->Field('user_id');
 		$this->username = $row->Field('username') ?? 'Anonymous';
 	}
@@ -611,7 +611,7 @@ class User extends DatabaseObject implements JsonSerializable {
 			'isAnonymous' => $this->IsAnonymous(),
 			'publicKey' => $this->publicKey,
 			'banned' => $this->banned,
-			'signatures' => $this->signatures,
+			'signature' => $this->signature,
 			'licenses' => $this->licenses
 		];
 		if (empty($this->expiration) === false) {
@@ -630,26 +630,26 @@ class User extends DatabaseObject implements JsonSerializable {
 	}
 	
 	public function PrepareSignatures(string $deviceId): void {
-		if (count($this->signatures) !== 0) {
+		if (is_null($this->signature) === false) {
 			return;
 		}
 		
 		$this->LoadLicenses();
 		
 		$userId = strtolower($this->UserID());
-		
-		// signature v3
-		$licenseHashMembers = [];
-		foreach ($this->licenses as $license) {
-			$licenseHashMembers[] = $license->HashBits(3);	
-		}
-		$fields = [$deviceId, $userId, implode(';', $licenseHashMembers), ($this->banned ? 'Banned' : 'Clean')];
+		$fieldNames = ['deviceId', 'userId', 'licenses', 'banned'];
+		$fieldValues = [$deviceId, $userId, $this->licenses, $this->banned];
 		if (empty($this->expiration) === false) {
-			$fields[] = $this->expiration;
+			$fieldNames[] = 'expiration';
+			$fieldValues[] = $this->expiration;
 		}
-		$signature = '';
-		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
-			$this->signatures['3'] = base64_encode($signature);
+		$stringToSign = json_encode($fieldValues);
+		
+		if (openssl_sign($stringToSign, $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+			$this->signature = [
+				'fields' => $fieldNames,
+				'signed' => BeaconCommon::Base64UrlEncode($signature),
+			];
 		}
 	}
 	

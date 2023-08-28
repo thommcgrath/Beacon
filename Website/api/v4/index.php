@@ -59,6 +59,10 @@ Core::RegisterRoutes(
 			'PUT' => 'file',
 			'DELETE' => 'file',
 		],
+		'/licenses/{licenseId}' => [
+			'GET' => 'licenses/get',
+			'PUT' => 'licenses/edit',
+		],
 		'/login' => [
 			'GET' => 'login',
 			'POST' => 'login',
@@ -127,6 +131,9 @@ Core::RegisterRoutes(
 		'/users/{userId}' => [
 			'GET' => 'users/get',
 			'PATCH' => 'users/edit',
+		],
+		'/users/{userId}/licenses' => [
+			'GET' => 'licenses/list',
 		],
 		'/users/{userId}/merge' => [
 			'POST' => 'users/merge',

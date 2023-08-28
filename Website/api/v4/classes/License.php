@@ -4,13 +4,14 @@ namespace BeaconAPI\v4;
 use BeaconCommon, BeaconRecordSet, Exception, DateTime, JsonSerializable;
 
 class License extends DatabaseObject implements JsonSerializable {
-	protected $licenseId;
-	protected $userId;
-	protected $purchaseId;
-	protected $productId;
-	protected $productName;
-	protected $productFlags;
-	protected $expiration;
+	protected string $licenseId;
+	protected string $userId;
+	protected string $purchaseId;
+	protected string $productId;
+	protected string $productName;
+	protected int $productFlags;
+	protected ?string $expiration;
+	protected ?string $firstUsed;
 	
 	public function __construct(BeaconRecordSet $row) {
 		$this->licenseId = $row->Field('license_id');
@@ -20,6 +21,7 @@ class License extends DatabaseObject implements JsonSerializable {
 		$this->productName = $row->Field('product_name');
 		$this->productFlags = filter_var($row->Field('product_flags'), FILTER_VALIDATE_INT);
 		$this->expiration = $row->Field('expiration');
+		$this->firstUsed = $row->Field('first_used');
 	}
 	
 	public static function BuildDatabaseSchema(): DatabaseSchema {
@@ -30,7 +32,8 @@ class License extends DatabaseObject implements JsonSerializable {
 			new DatabaseObjectProperty('productId', ['columnName' => 'product_id']),
 			new DatabaseObjectProperty('productName', ['columnName' => 'product_name', 'accessor' => 'products.product_name']),
 			new DatabaseObjectProperty('productFlags', ['columnName' => 'product_flags', 'accessor' => 'products.flags']),
-			new DatabaseObjectProperty('expiration', ['accessor' => "DATE_TRUNC('second', %%TABLE%%.%%COLUMN%%)"])
+			new DatabaseObjectProperty('expiration', ['accessor' => "DATE_TRUNC('second', %%TABLE%%.%%COLUMN%%)"]),
+			new DatabaseObjectProperty('firstUsed', ['columnName' => 'first_used', 'accessor' => "DATE_TRUNC('second', purchases.first_used)"]),
 		], [
 			"INNER JOIN public.products ON (licenses.product_id = products.product_id)",
 			"INNER JOIN public.purchases ON (licenses.purchase_id = purchases.purchase_id)",
@@ -73,28 +76,18 @@ class License extends DatabaseObject implements JsonSerializable {
 		return $this->expiration;
 	}
 	
-	public function HashBits(int $version): string {
-		// $version unused for now
-		
-		$bits = [
-			strtolower($this->productId),
-			$this->productFlags
-		];
-		if (is_null($this->expiration) === false) {
-			$expiration = new DateTime($this->expiration);
-			$bits[] = $expiration->format('Y-m-d H:i:sO');
-		}
-		return implode(':', $bits);
+	public function FirstUsed(): ?string {
+		return $this->firstUsed;
 	}
 	
 	public function jsonSerialize(): mixed {
 		$json = [
+			'licenseId' => $this->licenseId,
 			'productId' => $this->productId,
-			'flags' => $this->productFlags
+			'flags' => $this->productFlags,
+			'firstUsed' => $this->firstUsed,
+			'expires' => $this->expiration,
 		];
-		if (is_null($this->expiration) === false) {
-			$json['expires'] = $this->expiration;
-		}
 		return $json;
 	}
 }

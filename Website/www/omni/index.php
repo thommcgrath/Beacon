@@ -253,7 +253,10 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 					<div class="bold">Total</div><div id="storefront-cart-total" class="formatted-price"></div>
 				</div>
 			</div>
-			<div class="double-group">
+			<div class="storefront-refund-notice">
+				<label class="checkbox"><input type="checkbox" id="storefront-refund-checkbox"><span></span>By checking this box, you agree to Beacon's <a href="/policies/refund">refund policy</a>. Refunds are offered if requested within 14 days of purchase, or until personalized content has been generated with the export and/or deploy features, whichever comes first.</label>
+			</div>
+			<div class="storefront-button-row double-group">
 				<div>
 					<div class="select"><span></span>
 						<select id="storefront-cart-currency-menu">
@@ -288,7 +291,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 				?>
 			</div>
 			<div class="storefront-cart-notice">
-				<a href="/help/refund_policy">Beacon Refund Policy</a>
+				<a href="/policies/refund">Beacon Refund Policy</a>
 			</div>
 		</div>
 	</div>

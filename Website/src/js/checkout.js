@@ -909,6 +909,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 		currencyMenu: document.getElementById('storefront-cart-currency-menu'),
 		addMoreButton: document.getElementById('storefront-cart-more-button'),
 		checkoutButton: document.getElementById('storefront-cart-checkout-button'),
+		refundCheckbox: document.getElementById('storefront-refund-checkbox'),
 		footer: document.getElementById('storefront-cart-footer'),
 		body: document.getElementById('storefront-cart'),
 		totalField: document.getElementById('storefront-cart-total'),
@@ -935,6 +936,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 			this.checkoutButton.addEventListener('click', (ev) => {
 				ev.preventDefault();
 				
+				const refundPolicyAgreed = this.refundCheckbox.checked;
 				const checkoutFunction = (cartChanged) => {
 					this.update();
 					if (cartChanged) {
@@ -948,7 +950,7 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 					
 					this.checkoutButton.disabled = true;
 					
-					BeaconWebRequest.post('/omni/begin', cart).then((response) => {
+					BeaconWebRequest.post('/omni/begin', {...cart.toJSON(), refundPolicyAgreed}).then((response) => {
 						try {
 							const parsed = JSON.parse(response.body);
 							const url = parsed.url;
@@ -974,6 +976,8 @@ document.addEventListener('beaconRunCheckout', ({checkoutProperties}) => {
 				
 				if (!cart.email) {
 					emailDialog.present(false, checkoutFunction);
+				} else if (!refundPolicyAgreed) {
+					BeaconDialog.show('Hang on', 'Please agree to the refund policy.');
 				} else {
 					checkoutFunction(false);
 				}
