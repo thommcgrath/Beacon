@@ -69,6 +69,7 @@ class Session extends DatabaseObject implements JsonSerializable {
 		$parameters->AddFromFilter($schema, $filters, 'userId');
 		$parameters->AddFromFilter($schema, $filters, 'accessToken');
 		$parameters->AddFromFilter($schema, $filters, 'refreshToken');
+		$parameters->AddFromFilter($schema, $filters, 'applicationId');
 		$parameters->orderBy = $schema->Accessor('accessTokenExpiration') . ' DESC';
 		if ($isNested === false) {
 			$parameters->clauses[] = $schema->Comparison('refreshTokenExpiration', '>', 'EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)');
@@ -240,6 +241,7 @@ class Session extends DatabaseObject implements JsonSerializable {
 			$hash = static::PrepareHash($token);
 			break;
 		case 86:
+		case 128:
 			// token hash
 			$hash = $token;
 			break;

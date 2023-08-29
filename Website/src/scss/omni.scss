@@ -1,40 +1,3 @@
-#omni_instructions_internet, #omni_instructions_no_internet {
-	margin-top: 40px;
-	margin-bottom: 40px;
-}
-
-#drop_area, #drop_hover_instructions {
-	display: none;
-}
-
-#upload_container.live-supported {
-	#upload_activation_form {
-		display: none;
-	}
-	
-	#drop_area {
-		display: block;
-		text-align: center;
-		border-width: 1px;
-		border-style: solid;
-		padding: 30px 15px;
-		margin-left: auto;
-		margin-right: auto;
-		max-width: 500px;
-		box-sizing: border-box;
-		
-		&.highlight {
-			#drop_hover_instructions {
-				display: inline;
-			}
-			
-			#drop_initial_instructions {
-				display: none;
-			}
-		}
-	}
-}
-
 #img_signin_auth {
 	background-image: url(/omni/welcome/auth.png);
 	width: 150px;
@@ -69,10 +32,10 @@
 }
 
 .signin_step+.signin_step {
-	margin-top: 20px;
+	margin-top: 1rem;
 	border-top-width: 1px;
 	border-top-style: solid;
-	padding-top: 20px;
+	padding-top: 1rem;
 }
 
 .signin_text {
@@ -85,53 +48,61 @@
 	background-size: 100%;
 	float: left;
 	background-color: rgba(255, 255, 255, 0.05);
-}
-
-#img_signin_menu {
-	background-image: url(/omni/welcome/menu_15.png);
-	width: 150px;
-	height: 118px;
-}
-
-#img_signin_link {
-	background-image: url(/omni/welcome/signin_15.png);
-	width: 150px;
-	height: 59px;
+	
+	img {
+		display: block;
+	}
 }
 
 #img_signin_enable {
-	background-image: url(/omni/welcome/enable_cloud_15.png);
-	width: 150px;
-	height: 59px;
 	clear: left;
 	margin-top: 6px;
-}
-
-#img_signin_options {
-	background-image: url(/omni/welcome/options_15.png);
-	width: 150px;
-	height: 59px;
 }
 
 #img_signin_fields {
-	background-image: url(/omni/welcome/fields_15.png);
-	width: 150px;
-	height: 59px;
 	clear: left;
 	margin-top: 6px;
 }
 
-@media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
-	#img_signin_menu {
-		background-image: url(/omni/welcome/menu_15@2x.png);
+.signin_flex {
+	display: flex;
+	
+	&+& {
+		margin-top: 1rem;
 	}
 	
-	#img_signin_options {
-		background-image: url(/omni/welcome/options_15@2x.png);
+	.signin_flex-images {
+		img {
+			display: block;
+			border-width: 0.5px;
+			border-style: solid;
+		}
 	}
 	
-	#img_signin_fields {
-		background-image: url(/omni/welcome/fields_15@2x.png);
+	.signin_flex-text {
+		padding-left: 1rem;
+		
+		*:first-child {
+			margin-top: 0;
+		}
+		
+		*:last-child {
+			margin-bottom: 0;
+		}
+		
+		h4 {
+			margin-top: 1.5rem;
+			margin-bottom: 0.15rem;
+			
+			&+p {
+				margin-top: 0.15rem;
+			}
+		}
+		
+		p {
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+		}
 	}
 }
 

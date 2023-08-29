@@ -87,7 +87,7 @@ foreach ($sessions as $session) {
 	if ($current_session->SessionHash() === $session->SessionHash()) {
 		$revoke_html = '<span class="self text-lighter">This is your active session</span>';
 	} else {
-		$revoke_html = '<a href="#" sessionHash="' . htmlentities($session->AccessToken()) . '" class="revokeLink">Revoke</a>';
+		$revoke_html = '<a href="#" sessionHash="' . htmlentities($session->AccessTokenHash()) . '" class="revokeLink">Revoke</a>';
 	}
 	
 	$actions = [$flag_html, $revoke_html, 'Address: ' . $address_html];

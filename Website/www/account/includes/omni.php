@@ -17,36 +17,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
 ?><p>Thanks for purchasing Beacon Omni! Your support means a lot.</p>
 <div id="section-activation" class="visual-group">
 	<h3>Activating Beacon Omni</h3>
-	<h3><a href="#with-internet" id="omni_show_instructions_internet">Option 1: Sign into your account in Beacon</a></h3>
-	<div id="omni_instructions_internet" class="hidden"><?php include(BeaconCommon::WebRoot() . '/omni/welcome/instructions.php'); ?></div>
-	<h3><a href="#without-internet" id="omni_show_instructions_no_internet">Option 2: Use an activation file for a computer without internet</a></h3>
-	<div id="omni_instructions_no_internet" class="hidden">
-		<div class="signin_step separator-color">
-			<div id="img_signin_auth" class="img_signin separator-color">&nbsp;</div>
-			<div class="signin_text">
-				<h4>Create an Offline Authorization Request</h4>
-				<p>Using the Help menu, choose &quot;Create Offline Authorization Request&quot; and save the file when prompted. You will need to transfer the to this computer. A USB memory stick is usually the easiest way to do it.</p>
-			</div>
-			<div class="push">&nbsp;</div>
-		</div>
-		<div class="signin_step separator-color" id="upload_container">
-			<form id="upload_activation_form" method="post" action="/account/actions/activate" enctype="multipart/form-data">
-				<input type="file" name="file" accept=".beaconauth" id="file_chooser"><input type="submit" value="Upload">
-			</form>
-			<div id="drop_area" class="separator-color"><span id="drop_initial_instructions">Drop your activation file here or <a href="" id="choose_file_button">choose the file</a>.</span><span id="drop_hover_instructions">Do it!</span></div>
-		</div>
-		<div class="signin_step separator-color">
-			<div id="img_signin_import" class="img_signin separator-color">&nbsp;</div>
-			<div id="img_signin_password" class="img_signin separator-color">&nbsp;</div>
-			<div class="signin_text">
-				<h4>Import your identity file</h4>
-				<p>After uploading your activation file, you will have downloaded an identity file. Transfer the identity file back to the computer which created the authorization request.</p>
-				<p>In Beacon, use the File menu, choose &quot;Import&quot; and select the identity file. When prompted, enter your account password.</p>
-				<p>That's it, Beacon Omni will be ready for use.</p>
-			</div>
-			<div class="push">&nbsp;</div>
-		</div>
-	</div>
+	<div id="omni_instructions_internet"><?php include(BeaconCommon::WebRoot() . '/omni/welcome/instructions.php'); ?></div>
 </div><?php
 
 ShowLicenses();
