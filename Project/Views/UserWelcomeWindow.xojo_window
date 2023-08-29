@@ -610,7 +610,8 @@ End
 		  Preferences.OnlineEnabled = False
 		  Preferences.BeaconAuth = Nil
 		  
-		  Call App.IdentityManager.FetchAnonymous(true)
+		  Call App.IdentityManager.FetchAnonymous(True)
+		  Self.Close
 		End Sub
 	#tag EndMethod
 
