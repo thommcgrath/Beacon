@@ -5,6 +5,9 @@ use BeaconAPI\v4\Core;
 use BeaconCommon, BeaconEmail, BeaconEncryption, Exception;
 
 class EmailVerificationCode implements \JsonSerializable {
+	const kTemplateNewAccount = 'new-account';
+	const kTemplateConfirmChange = 'confirm-change';
+	
 	protected $email = null;
 	protected $emailId = null;
 	protected $code = null;
@@ -41,7 +44,7 @@ class EmailVerificationCode implements \JsonSerializable {
 		return $code;
 	}
 	
-	public static function Create(string $email, array $params = []): ?EmailVerificationCode {
+	public static function Create(string $email, array $params = [], string $template = self::kTemplateNewAccount): ?EmailVerificationCode {
 		$database = BeaconCommon::Database();
 		$key = $params['key'] ?? null;
 		if (is_null($key) === false) {
@@ -68,15 +71,34 @@ class EmailVerificationCode implements \JsonSerializable {
 		$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = $1 OR expiration < CURRENT_TIMESTAMP;', $emailId);
 		$database->Query('INSERT INTO public.email_verification_codes (email_id, code_hash, code_encrypted) VALUES ($1, $2, $3);', $emailId, $codeHashed, $codeEncrypted);
 		
-		$subject = 'Enter code ' . $code . ' in Beacon to verify your email address';
-		$code_spaced = implode(' ', str_split($code));
-		$relativeUrl = '/account/login?email=' . urlencode($email);
-		if (count($params) > 0) {
-			$relativeUrl .= '&' . http_build_query($params);	
+		switch ($template) {
+		case static::kTemplateNewAccount:
+			$subject = 'Enter code ' . $code . ' in Beacon to verify your email address';
+			$code_spaced = implode(' ', str_split($code));
+			$relativeUrl = '/account/login?email=' . urlencode($email);
+			if (count($params) > 0) {
+				$relativeUrl .= '&' . http_build_query($params);	
+			}
+			$url = BeaconCommon::AbsoluteURL($relativeUrl);
+			$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, reply to this email." . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to ' . BeaconCommon::RemoteAddr() : '');
+			$html = '<center>You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.<br /><br /><span style="font-weight:bold;font-size: x-large">' . $code_spaced . '</span><br /><br />Alternatively, you may use the following link to continue the process automatically:<br /><br /><a href="' . $url . '">' . $url . '</a><br /><br />If you need help, reply to this email.' . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to <span style="font-weight:bold">' . htmlentities(BeaconCommon::RemoteAddr()) . '</span>' : '') . '</center>';
+			break;
+		case static::kTemplateConfirmChange:
+			$params['email'] = $email;
+			ksort($params);
+			$params['hash'] = BeaconCommon::Base64UrlEncode(hash('sha3-256', http_build_query($params), true));
+			$params['email'] = BeaconCommon::Base64UrlEncode($email);
+			
+			$subject = 'Please confirm your Beacon email address change';
+			$relativeUrl = '/account/actions/email?' . http_build_query($params);
+			$url = BeaconCommon::AbsoluteUrl($relativeUrl);
+			$plain = "Please follow the link below to finish changing your Beacon account email address.\n\n$url" . (empty(BeaconCommon::RemoteAddr() === false) ? "\n\nThis process was started from a device with an ip address similar to " . BeaconCommon::RemoteAddr() : '');
+			$html = '<center>Please follow the link below to finish changing your Beacon account email address.<br /><br /><a href="' . $url . '">' . $url . '</a>' . (empty(BeaconCommon::RemoteAddr() === false) ? '<br /><br />This process was started from a device with an ip address similar to <span style="font-weight:bold">' . htmlentities(BeaconCommon::RemoteAddr()) . '</span>' : '') . '</center>';
+			break;
+		default:
+			$database->Rollback();
+			return null;
 		}
-		$url = BeaconCommon::AbsoluteURL($relativeUrl);
-		$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, simply reply to this email." . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to ' . BeaconCommon::RemoteAddr() : '');
-		$html = '<center>You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.<br /><br /><span style="font-weight:bold;font-size: x-large">' . $code_spaced . '</span><br /><br />Alternatively, you may use the following link to continue the process automatically:<br /><br /><a href="' . $url . '">' . $url . '</a><br /><br />If you need help, simply reply to this email.' . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to <span style="font-weight:bold">' . htmlentities(BeaconCommon::RemoteAddr()) . '</span>' : '') . '</center>';
 		if (BeaconEmail::SendMail($email, $subject, $plain, $html) === false) {
 			$database->Rollback();
 			return null;

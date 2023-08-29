@@ -120,6 +120,7 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 			}).catch((error) => {
 				switch (error.status) {
 				case 401:
+				case 403:
 					BeaconDialog.show('Username not changed', 'There was an authentication error.');
 					break;
 				default:
@@ -156,6 +157,83 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 					return false;
 				});
 			}
+		}
+	}
+	
+	const changeEmailField = document.getElementById('email_field');
+	const changeEmailButton = document.getElementById('email_action_button');
+	const changeEmailNeeds2fa = document.getElementById('email_need_2fa');
+	const changeEmail2faVerifyButton = document.getElementById('email_2fa_action_button');
+	const changeEmail2faCancelButton = document.getElementById('email_2fa_cancel_button');
+	const changeEmail2faCodeField = document.getElementById('email_2fa_code_field');
+	if (changeEmailField && changeEmailButton && changeEmailNeeds2fa) {
+		changeEmailField.addEventListener('input', (ev) => {
+			changeEmailButton.disabled = ev.target.value.trim() === '';
+		});
+		
+		const submitEmailChange = () => {
+			const params = new URLSearchParams();
+			params.append('email', changeEmailField.value.trim());
+			params.append('verify', changeEmail2faCodeField ? changeEmail2faCodeField.value.trim() : '');
+			
+			BeaconWebRequest.post('/account/actions/email', params).then(() => {
+				BeaconDialog.show('Email Change Started', 'The new address has been emailed a link. Please click the link to complete the change.').then(() => {
+					window.location.reload(true);
+				});
+			}).catch((error) => {
+				try {
+					const body = JSON.parse(error.body);
+					if (!body.message) {
+						throw new Error();
+					}
+					const errorReason = body.message;
+					BeaconDialog.show('Email Change Error', errorReason);
+				} catch {
+					switch (error.status) {
+					case 401:
+					case 403:
+						BeaconDialog.show('Email Change Error', 'There was an authentication error.');
+						break;
+					default:
+						BeaconDialog.show('Email Change Error', `Sorry, there was a ${error.status} error.`);
+						break;
+					}
+				}
+			});
+		};
+		
+		changeEmailButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			if (changeEmailNeeds2fa.value === 'true') {
+				changeEmail2faCodeField.value = '';
+				BeaconDialog.showModal('change_email_2fa_form');
+				changeEmail2faCodeField.focus();
+			} else {
+				submitEmailChange();
+			}
+		});
+		
+		if (changeEmail2faVerifyButton) {
+			changeEmail2faVerifyButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				BeaconDialog.hideModal().then(() => {
+					submitEmailChange();
+				});
+			});
+		}
+		
+		if (changeEmail2faCancelButton) {
+			changeEmail2faCancelButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				BeaconDialog.hideModal();
+			});
+		}
+		
+		if (changeEmail2faCodeField) {
+			changeEmail2faCodeField.addEventListener('input', (ev) => {
+				changeEmail2faVerifyButton.disabled = ev.target.value.trim() === '';
+			});
 		}
 	}
 	
@@ -629,5 +707,15 @@ document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
 				submitFunction();
 			}
 		});
+	}
+	
+	const urlParams = new URLSearchParams(window.location.search);
+	if (urlParams.get('message') && urlParams.get('explanation')) {
+		BeaconDialog.show(urlParams.get('message'), urlParams.get('explanation'));
+		
+		const urlConstructor = window.URL || window.webkitURL || window.mozURL || window.msURL || window.oURL;
+		const url = new urlConstructor(window.location);
+		url.search = '';
+		window.history.replaceState(null, document.title, url.toString());
 	}
 });
