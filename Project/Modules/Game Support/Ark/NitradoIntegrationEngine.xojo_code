@@ -368,11 +368,11 @@ Inherits Ark.IntegrationEngine
 		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		      
 		      Select Case GameShortcode
-		      Case "arkse", "arksotf"
+		      Case "arkse", "arksotf", "arkseosg"
 		        Profile.Platform = Beacon.ServerProfile.PlatformPC
-		      Case "arkxb"
+		      Case "arkxb", "arkxbosg"
 		        Profile.Platform = Beacon.ServerProfile.PlatformXbox
-		      Case "arkps"
+		      Case "arkps", "arkpsosg"
 		        Profile.Platform = Beacon.ServerProfile.PlatformPlayStation
 		      Case "arkswitch", "arkswitchjp"
 		        Profile.Platform = Beacon.ServerProfile.PlatformSwitch
