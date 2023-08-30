@@ -288,6 +288,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -345,6 +346,7 @@ Begin BeaconContainer ArkSpawnPointEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   412
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -890,7 +892,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kSetsClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Type"": ""SpawnPointSet""") > -1)
+		  Return Board.HasClipboardData(Self.kSetsClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -905,44 +907,43 @@ End
 		    Items.Add(Organizer.Template.SaveData)
 		  Next
 		  
-		  Var JSON As String = Beacon.GenerateJSON(Items, True)
-		  Board.Text = JSON
-		  Board.RawData(Self.kSetsClipboardType) = JSON
+		  If Items.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kSetsClipboardType, Items)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Me.CanPaste Then
+		  Var Contents As Variant = Board.GetClipboardData(Self.kSetsClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Dicts() As Variant = Contents
+		      Var SelectSets() As Ark.SpawnPointSet
+		      For Each Dict As Dictionary In Dicts
+		        Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(Dict)
+		        If Set Is Nil Then
+		          Continue
+		        End If
+		        
+		        For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
+		          Point.AddSet(Set)
+		        Next
+		        
+		        SelectSets.Add(Set)
+		      Next
+		      
+		      If SelectSets.Count > 0 Then
+		        RaiseEvent Changed
+		        Self.UpdateSetsList(SelectSets)
+		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
-		  
-		  Var Items() As Variant
-		  Try
-		    If Board.RawDataAvailable(Self.kSetsClipboardType) Then
-		      Items = Beacon.ParseJSON(Board.RawData(Self.kSetsClipboardType))
-		    Else
-		      Items = Beacon.ParseJSON(Board.Text)
-		    End If
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var SelectSets() As Ark.SpawnPointSet
-		  For Each Item As Dictionary In Items
-		    Var Set As Ark.SpawnPointSet = Ark.SpawnPointSet.FromSaveData(Item)
-		    If Set = Nil Then
-		      Continue
-		    End If
-		    
-		    For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		      Point.AddSet(Set)
-		    Next
-		    
-		    SelectSets.Add(Set)
-		  Next
-		  
-		  RaiseEvent Changed
-		  Self.UpdateSetsList(SelectSets)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1010,7 +1011,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kLimitsClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Type"": ""SpawnPointLimit""") > -1)
+		  Return Board.HasClipboardData(Self.kLimitsClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1051,56 +1052,41 @@ End
 		    Return
 		  End If
 		  
-		  Limits.Value("Type") = "SpawnPointLimit"
-		  
-		  Var JSON As String = Beacon.GenerateJSON(Limits, True).Trim
-		  Board.Text = JSON
-		  Board.RawData(Self.kLimitsClipboardType) = JSON
+		  Board.AddClipboardData(Self.kLimitsClipboardType, Limits)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var Dict As Dictionary
-		  Try
-		    If Board.RawDataAvailable(Self.kLimitsClipboardType) Then
-		      Dict = Beacon.ParseJSON(Board.RawData(Self.kLimitsClipboardType))
-		    Else
-		      Dict = Beacon.ParseJSON(Board.Text)
-		    End If
-		  Catch Err As RuntimeException
-		    System.Beep
-		    Return
-		  End Try
-		  
-		  Var SelectCreatures() As Ark.Creature
-		  For Each Entry As DictionaryEntry In Dict
-		    If Entry.Key = "SpawnPointLimit" Then
-		      Continue
-		    End If
-		    
-		    Var UUID As String = Entry.Key
-		    Var Creature As Ark.Creature
+		  Var Contents As Variant = Board.GetClipboardData(Self.kLimitsClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(UUID)
-		    Catch Err As UnsupportedFormatException
-		      Var Creatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreaturesByPath(UUID, Self.Project.ContentPacks)
-		      If Creatures.Count > 0 Then
-		        Creature = Creatures(0)
+		      Var Limits As Dictionary = Contents
+		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		      Var SelectCreatures() As Ark.Creature
+		      For Each Entry As DictionaryEntry In Limits
+		        Var CreatureId As String = Entry.Key
+		        Var Creature As Ark.Creature = DataSource.GetCreatureByUUID(CreatureId)
+		        If Creature Is Nil Then
+		          Continue
+		        End If
+		        
+		        SelectCreatures.Add(Creature)
+		        
+		        Var Limit As Double = Entry.Value
+		        For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
+		          Point.Limit(Creature) = Limit
+		        Next
+		      Next
+		      
+		      If SelectCreatures.Count > 0 Then
+		        RaiseEvent Changed
+		        Self.UpdateLimitsList(SelectCreatures)
 		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    End Try
-		    If Creature Is Nil Then
-		      Continue
-		    End If
-		    SelectCreatures.Add(Creature)
-		    
-		    Var Limit As Double = Entry.Value
-		    For Each Point As Ark.MutableSpawnPoint In Self.mSpawnPoints
-		      Point.Limit(Creature) = Limit
-		    Next
-		  Next
-		  
-		  RaiseEvent Changed
-		  Self.UpdateLimitsList(SelectCreatures)
+		    Return
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

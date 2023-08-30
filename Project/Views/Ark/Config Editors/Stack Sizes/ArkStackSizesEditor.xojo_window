@@ -525,7 +525,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemMaxQuantity") > -1)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -568,42 +568,43 @@ End
 		    Items.Value(Engram.ObjectID) = Size
 		  Next
 		  
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)
+		  If Items.KeyCount = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kClipboardType, Items)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Var Items As Dictionary
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Items = Beacon.ParseJSON(JSON)
-		    Catch Err As RuntimeException
-		      Items = New Dictionary
-		    End Try
-		    
-		    If Items.KeyCount = 0 Then
-		      Return
-		    End If
-		    
-		    Var Config As Ark.Configs.StackSizes = Self.Config(True)
-		    Var SelectEngrams() As String
-		    For Each Entry As DictionaryEntry In Items
-		      Var UUID As String = Entry.Key
-		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(UUID)
+		      Var StackSizes As Dictionary = Contents
+		      Var Config As Ark.Configs.StackSizes = Self.Config(True)
+		      Var SelectEngrams() As String
+		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		      Var Modified As Boolean
+		      For Each Entry As DictionaryEntry In StackSizes
+		        Var EngramId As String = Entry.Key
+		        Var Size As UInt64 = Entry.Value
+		        
+		        Var Engram As Ark.Engram = DataSource.GetEngramByUUID(EngramId)
+		        If (Engram Is Nil) = False Then
+		          SelectEngrams.Add(EngramId)
+		          Config.Override(Engram) = Size
+		          Modified = True
+		        End If
+		      Next
 		      
-		      Var Size As UInt64 = Entry.Value
-		      SelectEngrams.Add(UUID)
-		      Config.Override(Engram) = Size
-		    Next
-		    Self.Modified = True
-		    Self.UpdateList(SelectEngrams)
-		    Return
-		  End If
-		  
-		  If Board.TextAvailable Then
-		    Var ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse("", ImportText, "Clipboard")
+		      If Modified Then
+		        Self.Modified = True
+		        Self.UpdateList(SelectEngrams)
+		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
 		End Sub

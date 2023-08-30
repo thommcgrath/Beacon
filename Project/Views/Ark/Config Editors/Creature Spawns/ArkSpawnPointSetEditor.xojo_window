@@ -1768,7 +1768,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kEntryClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Type"": ""SpawnPointSetEntry""") > -1)
+		  Return Board.HasClipboardData(Self.kEntryClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1813,42 +1813,45 @@ End
 		    End If
 		  Next
 		  
-		  Var JSON As String = Beacon.GenerateJSON(Items, True)
-		  Board.Text = JSON.Trim
-		  Board.RawData(Self.kEntryClipboardType) = JSON
+		  If Items.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kEntryClipboardType, Items)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Me.CanPaste Or Self.SpawnSet = Nil Then
+		  If Self.SpawnSet Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Items() As Variant
-		  Try
-		    If Board.RawDataAvailable(Self.kEntryClipboardType) Then
-		      Items = Beacon.ParseJSON(Board.RawData(Self.kEntryClipboardType))
-		    Else
-		      Items = Beacon.ParseJSON(Board.Text)
-		    End If
-		  Catch Err As RuntimeException
+		  Var Contents As Variant = Board.GetClipboardData(Self.kEntryClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Dicts() As Variant = Contents
+		      Var Set As Ark.MutableSpawnPointSet = Self.SpawnSet
+		      Var SelectEntries() As Ark.SpawnPointSetEntry
+		      For Each Dict As Dictionary In Dicts
+		        Var Entry As Ark.SpawnPointSetEntry = Ark.SpawnPointSetEntry.FromSaveData(Dict)
+		        If Entry Is Nil Then
+		          Continue
+		        End If
+		        
+		        Set.Append(Entry)
+		        SelectEntries.Add(Entry)
+		      Next
+		      
+		      If SelectEntries.Count > 0 Then
+		        Self.UpdateEntriesList(Set, SelectEntries)
+		        RaiseEvent Changed
+		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
-		  End Try
-		  
-		  Var Set As Ark.MutableSpawnPointSet = Self.SpawnSet
-		  Var SelectEntries() As Ark.SpawnPointSetEntry
-		  For Each Item As Dictionary In Items
-		    Var Entry As Ark.SpawnPointSetEntry = Ark.SpawnPointSetEntry.FromSaveData(Item)
-		    If Entry = Nil Then
-		      Continue
-		    End If
-		    
-		    Set.Append(Entry)
-		    SelectEntries.Add(Entry)
-		  Next
-		  
-		  Self.UpdateEntriesList(Set, SelectEntries)
-		  RaiseEvent Changed
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1950,7 +1953,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kReplacementClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Replacements"": {") > -1 And Board.Text.IndexOf("""Creature"": """) > -1)
+		  Return Board.HasClipboardData(Self.kReplacementClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -2023,71 +2026,67 @@ End
 		    For Each ToCreature As Ark.Creature In Replacements
 		      Var Weight As NullableDouble = Set.CreatureReplacementWeight(FromCreature, ToCreature)
 		      If (Weight Is Nil) = False Then
-		        Map.Value(ToCreature.ObjectID) = Weight.DoubleValue
+		        Map.Value(ToCreature.BlueprintId) = Weight.DoubleValue
 		      End If
 		    Next
 		    
 		    Var Dict As New Dictionary
-		    Dict.Value("Creature") = FromCreature.ObjectID
-		    Dict.Value("Replacements") = Map
+		    Dict.Value("creatureId") = FromCreature.BlueprintId
+		    Dict.Value("replacements") = Map
 		    Items.Add(Dict)
 		  Next
 		  
-		  Var JSON As String = Beacon.GenerateJSON(Items, True)
-		  Board.Text = JSON.Trim
-		  Board.RawData(Self.kReplacementClipboardType) = JSON
+		  If Items.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kReplacementClipboardType, Items)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Me.CanPaste Or Self.SpawnSet = Nil Then
+		  If Self.SpawnSet Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Items() As Variant
-		  Try
-		    If Board.RawDataAvailable(Self.kReplacementClipboardType) Then
-		      Items = Beacon.ParseJSON(Board.RawData(Self.kReplacementClipboardType))
-		    Else
-		      Items = Beacon.ParseJSON(Board.Text)
-		    End If
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var Set As Ark.MutableSpawnPointSet = Self.SpawnSet
-		  Var SelectCreatures() As Ark.Creature
-		  For Each Item As Dictionary In Items
+		  Var Contents As Variant = Board.GetClipboardData(Self.kReplacementClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      If Item.HasKey("Creature") = False Or Item.HasKey("Replacements") = False Then
-		        Continue
-		      End If
-		      
-		      Var FromUUID As String = Item.Value("Creature")
-		      Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromUUID)
-		      If FromCreature Is Nil Then
-		        Continue
-		      End If
-		      
-		      Var Map As Dictionary = Item.Value("Replacements")
-		      For Each Entry As DictionaryEntry In Map
-		        Var ToUUID As String = Entry.Key
-		        Var ToCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ToUUID)
-		        If ToCreature Is Nil Then
+		      Var Dicts() As Variant = Contents
+		      Var Set As Ark.MutableSpawnPointSet = Self.SpawnSet
+		      Var SelectCreatures() As Ark.Creature
+		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		      For Each Dict As Dictionary In Dicts
+		        Var FromCreatureId As String = Dict.Value("creatureId")
+		        Var FromCreature As Ark.Creature = DataSource.GetCreatureByUUID(FromCreatureId)
+		        If FromCreature Is Nil Then
 		          Continue
 		        End If
-		        Var Weight As Double = Entry.Value
-		        Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
-		      Next Entry
+		        
+		        Var Map As Dictionary = Dict.Value("replacements")
+		        For Each Entry As DictionaryEntry In Map
+		          Var ToCreatureId As String = Entry.Key
+		          Var ToCreature As Ark.Creature = DataSource.GetCreatureByUUID(ToCreatureId)
+		          If ToCreature Is Nil Then
+		            Continue
+		          End If
+		          Var Weight As Double = Entry.Value
+		          Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		        Next Entry
+		        
+		        SelectCreatures.Add(FromCreature)
+		      Next
 		      
-		      SelectCreatures.Add(FromCreature)
+		      If SelectCreatures.Count > 0 Then
+		        Self.UpdateReplacementsList(Set, SelectCreatures)
+		        RaiseEvent Changed
+		      End If
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Pasting spawn set replacement")
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    End Try
-		  Next Item
-		  
-		  Self.UpdateReplacementsList(Set, SelectCreatures)
-		  RaiseEvent Changed
+		    Return
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event

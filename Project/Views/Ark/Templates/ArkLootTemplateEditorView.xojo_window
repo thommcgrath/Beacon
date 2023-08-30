@@ -1251,7 +1251,7 @@ End
 	#tag Constant, Name = ColumnWeight, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ModifierClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.presetmodifier", Scope = Private
+	#tag Constant, Name = kModifierClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.presetmodifier", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageContents, Type = Double, Dynamic = False, Default = \"1", Scope = Private
@@ -1615,7 +1615,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.ModifierClipboardType)
+		  Return Board.HasClipboardData(Self.kModifierClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1644,56 +1644,59 @@ End
 		      Continue
 		    End If
 		    
-		    Var ModifierID As String = Me.RowTagAt(I)
+		    Var ModifierId As String = Me.RowTagAt(I)
 		    Var Dict As New Dictionary
-		    Dict.Value("Quantity") = Self.mTemplate.QuantityMultiplier(ModifierID)
-		    Dict.Value("MinQuality") = Self.mTemplate.MinQualityOffset(ModifierID)
-		    Dict.Value("MaxQuality") = Self.mTemplate.MaxQualityOffset(ModifierID)
-		    Dict.Value("Blueprint") = Self.mTemplate.BlueprintChanceMultiplier(ModifierID)
-		    Dict.Value("Weight") = Self.mTemplate.WeightMultiplier(ModifierID)
+		    Dict.Value("quantity") = Self.mTemplate.QuantityMultiplier(ModifierId)
+		    Dict.Value("minQuality") = Self.mTemplate.MinQualityOffset(ModifierId)
+		    Dict.Value("maxQuality") = Self.mTemplate.MaxQualityOffset(ModifierId)
+		    Dict.Value("blueprintChance") = Self.mTemplate.BlueprintChanceMultiplier(ModifierId)
+		    Dict.Value("weight") = Self.mTemplate.WeightMultiplier(ModifierId)
 		    Modifiers.Value(ModifierID) = Dict
 		  Next
 		  
-		  Board.RawData(Self.ModifierClipboardType) = Beacon.GenerateJSON(Modifiers, False)
+		  If Modifiers.KeyCount = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kModifierClipboardType, Modifiers)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.ModifierClipboardType) Then
+		  Var Contents As Variant = Board.GetClipboardData(Self.kModifierClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Modifiers As Dictionary = Contents
+		      For Each Entry As DictionaryEntry In Modifiers
+		        Var ModifierId As String = Entry.Key
+		        Var Dict As Dictionary = Entry.Value
+		        
+		        If Dict.HasKey("quantity") Then
+		          Self.mTemplate.QuantityMultiplier(ModifierId) = Dict.Value("quantity")
+		        End If
+		        If Dict.HasKey("minQuality") And Dict.HasKey("maxQuality") Then
+		          Self.mTemplate.MinQualityOffset(ModifierId) = Dict.Value("minQuality")
+		          Self.mTemplate.MaxQualityOffset(ModifierId) = Dict.Value("maxQuality")
+		        ElseIf Dict.HasKey("quality") Then
+		          Self.mTemplate.MinQualityOffset(ModifierId) = Dict.Value("quality")
+		          Self.mTemplate.MaxQualityOffset(ModifierId) = Dict.Value("quality")
+		        End If
+		        If Dict.HasKey("blueprintChance") Then
+		          Self.mTemplate.BlueprintChanceMultiplier(ModifierId) = Dict.Value("blueprintChance")
+		        End If
+		        If Dict.HasKey("weight") Then
+		          Self.mTemplate.WeightMultiplier(ModifierID) = Dict.Value("weight")
+		        End If
+		      Next
+		      
+		      Self.UpdateUI()
+		      Self.Modified = True
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
-		  
-		  Try
-		    Var Data As String = Board.RawData(Self.ModifierClipboardType).DefineEncoding(Encodings.UTF8)
-		    Var Modifiers As Dictionary = Beacon.ParseJSON(Data)
-		    
-		    For Each Entry As DictionaryEntry In Modifiers
-		      Var ModifierID As String = Entry.Key
-		      Var Dict As Dictionary = Entry.Value
-		      
-		      If Dict.HasKey("Quantity") Then
-		        Self.mTemplate.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")
-		      End If
-		      If Dict.HasKey("MinQuality") And Dict.HasKey("MaxQuality") Then
-		        Self.mTemplate.MinQualityOffset(ModifierID) = Dict.Value("MinQuality")
-		        Self.mTemplate.MaxQualityOffset(ModifierID) = Dict.Value("MaxQuality")
-		      ElseIf Dict.HasKey("Quality") Then
-		        Self.mTemplate.MinQualityOffset(ModifierID) = Dict.Value("Quality")
-		        Self.mTemplate.MaxQualityOffset(ModifierID) = Dict.Value("Quality")
-		      End If
-		      If Dict.HasKey("Blueprint") Then
-		        Self.mTemplate.BlueprintChanceMultiplier(ModifierID) = Dict.Value("Blueprint")
-		      End If
-		      If Dict.HasKey("Weight") Then
-		        Self.mTemplate.WeightMultiplier(ModifierID) = Dict.Value("Weight")
-		      End If
-		    Next
-		    
-		    Self.UpdateUI()
-		    Self.Modified = True
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
 		End Sub
 	#tag EndEvent
 	#tag Event

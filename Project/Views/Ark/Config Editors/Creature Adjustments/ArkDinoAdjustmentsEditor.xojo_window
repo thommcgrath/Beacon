@@ -428,7 +428,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And (Board.Text.IndexOf("DinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("DinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("NPCReplacements") > -1 Or Board.Text.IndexOf("PreventTransferForClassName") > -1))
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -477,42 +477,39 @@ End
 		    Dicts.Add(Behavior.ToDictionary)
 		  Next
 		  
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
+		  If Dicts.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Var Items() As Variant
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Items = Beacon.ParseJSON(JSON)
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    If Items.LastIndex = -1 Then
-		      Return
-		    End If
-		    
-		    Var Config As Ark.Configs.DinoAdjustments = Self.Config(True)
-		    Var Selections() As String
-		    For Each Entry As Dictionary In Items
-		      Var Behavior As Ark.CreatureBehavior = Ark.CreatureBehavior.FromDictionary(Entry)
-		      If Behavior = Nil Then
-		        Continue
-		      End If
+		      Var Dicts() As Variant = Contents
+		      Var Config As Ark.Configs.DinoAdjustments = Self.Config(True)
+		      Var Selections() As String
+		      For Each Dict As Dictionary In Dicts
+		        Var Behavior As Ark.CreatureBehavior = Ark.CreatureBehavior.FromDictionary(Dict)
+		        If Behavior Is Nil Then
+		          Continue
+		        End If
+		        
+		        Selections.Add(Behavior.TargetCreature.BlueprintId)
+		        Config.Add(Behavior)
+		      Next
 		      
-		      Selections.Add(Behavior.TargetCreature.ObjectID)
-		      Config.Add(Behavior)
-		    Next
-		    Self.Modified = True
-		    Self.UpdateList(Selections)
-		    Return
-		  End If
-		  
-		  If Board.TextAvailable Then
-		    Var ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse("", ImportText, "Clipboard")
+		      If Selections.Count > 0 Then
+		        Self.Modified = True
+		        Self.UpdateList(Selections)
+		      End If
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
 		End Sub

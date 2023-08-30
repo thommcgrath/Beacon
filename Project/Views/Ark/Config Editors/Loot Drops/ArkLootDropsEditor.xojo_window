@@ -829,7 +829,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideSupplyCrateItems") > -1)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -867,67 +867,40 @@ End
 		  End If
 		  
 		  Var Dicts() As Dictionary
-		  Var Configs() As Ark.ConfigValue
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.RowSelectedAt(I) Then
 		      Var Container As Ark.LootContainer = Me.RowTagAt(I)
 		      Dicts.Add(Container.SaveData)
-		      Ark.Configs.LootDrops.BuildOverrides(Container, Configs, Self.Project.Difficulty.DifficultyValue)
 		    End If
 		  Next
 		  
-		  Var Lines() As String
-		  For Each Config As Ark.ConfigValue In Configs
-		    Lines.Add(Config.Command)
-		  Next
-		  
-		  Var RawData As String
-		  If Dicts.LastIndex = 0 Then
-		    RawData = Beacon.GenerateJSON(Dicts(0), False)
-		  Else
-		    RawData = Beacon.GenerateJSON(Dicts, False)
+		  If Dicts.Count = 0 Then
+		    System.Beep
+		    Return
 		  End If
 		  
-		  Board.RawData(Self.kClipboardType) = RawData
-		  Board.Text = Lines.Join(Encodings.UTF8.Chr(10))
+		  Board.AddClipboardData(Self.kClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Var Parsed As Variant
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Parsed = Beacon.ParseJSON(Contents)
-		    Catch Err As RuntimeException
-		      System.Beep
-		      Return
-		    End Try
-		    
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
-		    Var Dicts() As Dictionary
-		    If Info.FullName = "Dictionary" Then
-		      Dicts.Add(Parsed)
-		    ElseIf Info.FullName = "Object()" Then
-		      Var Values() As Variant = Parsed
-		      For Each Dict As Dictionary In Values
-		        Dicts.Add(Dict)
-		      Next
-		    Else
-		      System.Beep
-		      Return
-		    End If
-		    
-		    Var Containers() As Ark.LootContainer
-		    For Each Dict As Dictionary In Dicts
-		      Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dict)
-		      If (Container Is Nil) = False Then
+		      Var Dicts() As Variant = Contents
+		      Var Containers() As Ark.LootContainer
+		      For Each Dict As Dictionary In Dicts
+		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dict)
+		        If Container Is Nil Then
+		          Continue
+		        End If
 		        Containers.Add(Container)
-		      End If
-		    Next
-		    Self.AddLootContainers(Containers)
-		  ElseIf Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideSupplyCrateItems") > -1 Then
-		    Self.Parse("", Board.Text, "Clipboard")
+		      Next
+		      Self.AddLootContainers(Containers)
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
+		    Return
 		  End If
 		End Sub
 	#tag EndEvent

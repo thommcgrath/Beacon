@@ -704,59 +704,37 @@ End
 		    SaveData.Add(SpawnPoint.SaveData)
 		  Next
 		  
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(SaveData, False)
-		  
-		  If Not Ark.Configs.ConfigUnlocked(Ark.Configs.NameSpawnPoints, App.IdentityManager.CurrentIdentity) Then
+		  If SaveData.Count = 0 Then
+		    System.Beep
 		    Return
 		  End If
 		  
-		  Var Lines() As String
-		  For I As Integer = 0 To Bound
-		    If Not Me.RowSelectedAt(I) Then
-		      Continue
-		    End If
-		    
-		    Var SpawnPoint As Ark.SpawnPoint = Me.RowTagAt(I)
-		    Var Value As Ark.ConfigValue = Ark.Configs.SpawnPoints.ConfigValueForSpawnPoint(SpawnPoint)
-		    If Value <> Nil Then
-		      Lines.Add(Value.Command)
-		    End If
-		  Next
-		  
-		  Board.Text = Lines.Join(EndOfLine)
+		  Board.AddClipboardData(Self.kClipboardType, SaveData)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return True
-		  End If
-		  
-		  If Not Board.TextAvailable Then
-		    Return False
-		  End If
-		  
-		  Var CopiedText As String = Board.Text.Left(38)
-		  Return CopiedText.IndexOf("ConfigOverrideNPCSpawnEntriesContainer") > -1 Or CopiedText.IndexOf("ConfigAddNPCSpawnEntriesContainer") > -1 Or CopiedText.IndexOf("ConfigSubtractNPCSpawnEntriesContainer") > -1
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Var Parsed() As Variant = Beacon.ParseJSON(Board.RawData(Self.kClipboardType))
+		      Var Dicts() As Variant = Contents
 		      Var SpawnPoints() As Ark.SpawnPoint
-		      For Each Dict As Dictionary In Parsed
+		      For Each Dict As Dictionary In Dicts
 		        Var SpawnPoint As Ark.SpawnPoint = Ark.SpawnPoint.FromSaveData(Dict)
-		        If SpawnPoint <> Nil Then
+		        If (SpawnPoint Is Nil) = False Then
 		          SpawnPoints.Add(SpawnPoint)
 		        End If
 		      Next
 		      Self.HandlePastedSpawnPoints(SpawnPoints)
 		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    End Try
-		  ElseIf Board.TextAvailable Then
-		    Self.Parse("", Board.Text, "Clipboard")
+		    Return
 		  End If
 		End Sub
 	#tag EndEvent

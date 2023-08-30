@@ -301,7 +301,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""ModifierID""") > -1)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -329,9 +329,12 @@ End
 		    End If
 		  Next
 		  
-		  Var JSON As String = Beacon.GenerateJSON(Dictionaries, True)
-		  Board.Text = JSON
-		  Board.RawData(Self.kClipboardType) = JSON
+		  If Dictionaries.Count = 0 Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Board.AddClipboardData(Self.kClipboardType, Dictionaries)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -341,40 +344,23 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var JSON As String
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    JSON = Board.RawData(Self.kClipboardType)
-		  ElseIf Board.TextAvailable And Board.Text.IndexOf("""ModifierID""") > -1 Then
-		    JSON = Board.Text.Trim
-		  Else
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Dicts() As Variant = Contents
+		      Var Added() As Beacon.TemplateSelector
+		      For Each Dict As Dictionary In Dicts
+		        Var Modifier As Beacon.TemplateSelector = Beacon.TemplateSelector.FromSaveData(Dict)
+		        If (Modifier Is Nil) = False Then
+		          Added.Add(Modifier)
+		        End If
+		      Next
+		      Self.SaveSelectors(Added)
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		    Return
 		  End If
-		  
-		  Var Members() As Variant
-		  Try
-		    Members = Beacon.ParseJSON(JSON)
-		  Catch Err As RuntimeException
-		    System.Beep
-		    Self.ShowAlert("Could not paste preset selectors", Err.Message)
-		    Return
-		  End Try
-		  
-		  Var Added() As Beacon.TemplateSelector
-		  For Each Member As Variant In Members
-		    If (Member IsA Dictionary) = False Then
-		      Continue
-		    End If
-		    
-		    Try
-		      Var Modifier As Beacon.TemplateSelector = Beacon.TemplateSelector.FromSaveData(Dictionary(Member))
-		      If (Modifier Is Nil) = False Then
-		        Added.Add(Modifier)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
-		  
-		  Self.SaveSelectors(Added)
 		End Sub
 	#tag EndEvent
 	#tag Event

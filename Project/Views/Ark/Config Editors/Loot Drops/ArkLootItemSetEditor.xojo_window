@@ -561,7 +561,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType)
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -580,54 +580,33 @@ End
 		    End If
 		  Next
 		  
-		  If Entries.LastIndex = -1 Then
+		  If Entries.Count = 0 Then
+		    System.Beep
 		    Return
 		  End If
 		  
-		  Var Contents As String
-		  If Entries.LastIndex = 0 Then
-		    Contents = Beacon.GenerateJSON(Entries(0), False)
-		  Else
-		    Contents = Beacon.GenerateJSON(Entries, False)
-		  End If
-		  
-		  Board.RawData(Self.kClipboardType) = Contents
+		  Board.AddClipboardData(Self.kClipboardType, Entries)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return
-		  End If
-		  
-		  Var Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Var Parsed As Variant
-		  Try
-		    Parsed = Beacon.ParseJSON(Contents)
-		  Catch Err As RuntimeException
-		    System.Beep
-		    Return
-		  End Try
-		  
 		  Var Modified As Boolean
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
-		  If Info.FullName = "Dictionary" Then
-		    // Single item
-		    Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Parsed, True)
-		    If (Entry Is Nil) = False Then
-		      Self.LootItemSet.Add(Entry)
-		      Modified = True
-		    End If
-		  ElseIf Info.FullName = "Object()" Then
-		    // Multiple items
-		    Var Dicts() As Variant = Parsed
-		    For Each Dict As Dictionary In Dicts
-		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict, True)
-		      If Entry <> Nil Then
-		        Self.LootItemSet.Add(Entry)
-		        Modified = True
-		      End If
-		    Next
+		  
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
+		    Try
+		      Var Dicts() As Variant = Contents
+		      Var NewItemSets() As Ark.LootItemSet
+		      For Each Dict As Dictionary In Dicts
+		        Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict, True)
+		        If (Entry Is Nil) = False Then
+		          Self.LootItemSet.Add(Entry)
+		          Modified = True
+		        End If
+		      Next
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
 		  End If
 		  
 		  If Modified Then

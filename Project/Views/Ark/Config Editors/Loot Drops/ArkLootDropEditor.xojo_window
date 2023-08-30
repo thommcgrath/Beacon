@@ -946,7 +946,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.Left(1) = "(")
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -995,72 +995,33 @@ End
 		    Return
 		  End If
 		  
-		  Var Contents As String
-		  If Dicts.LastIndex = 0 Then
-		    Contents = Beacon.GenerateJSON(Dicts(0), False)
-		  Else
-		    Contents = Beacon.GenerateJSON(Dicts, False)
-		  End If
-		  
-		  Board.RawData(Self.kClipboardType) = Contents
+		  Board.AddClipboardData(Self.kClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Self.mContainers.LastIndex = -1 Then
+		  If Self.mContainers.Count = 0 Then
 		    Return
 		  End If
 		  
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Var Parsed As Variant
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Parsed = Beacon.ParseJSON(Contents)
-		    Catch Err As RuntimeException
-		      System.Beep
-		      Return
-		    End Try
-		    
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
-		    Var Dicts() As Dictionary
-		    If Info.FullName = "Dictionary" Then
-		      Dicts.Add(Parsed)
-		    ElseIf Info.FullName = "Object()" Then
-		      Var Values() As Variant = Parsed
-		      For Each Dict As Dictionary In Values
-		        Dicts.Add(Dict)
+		      Var Dicts() As Variant = Contents
+		      Var NewItemSets() As Ark.LootItemSet
+		      For Each Dict As Dictionary In Dicts
+		        Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dict, True)
+		        If Set Is Nil Then
+		          Continue
+		        End If
+		        NewItemSets.Add(Set)
 		      Next
-		    Else
-		      System.Beep
-		      Return
-		    End If
-		    
-		    Var NewItemSets() As Ark.LootItemSet
-		    For Each Dict As Dictionary In Dicts
-		      Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dict, True)
-		      If Set = Nil Then
-		        Continue
-		      End If
-		      
-		      NewItemSets.Add(Set)
-		    Next
-		    Self.AddSets(NewItemSets)
-		  ElseIf Board.TextAvailable And Board.Text.Left(1) = "(" Then
-		    Var Contents As String = Board.Text
-		    If Contents.Left(2) = "((" Then
-		      // This may be multiple item sets from the dev kit, so wrap it up like a full loot drop
-		      // No additional wrapping necessary, but we need to make sure the next clause is not hit
-		    ElseIf Contents.Left(1) = "(" Then
-		      // This may be a single item set from the dev kit, so wrap it up like a full loot drop
-		      Contents = "(" + Contents + ")"
-		    End If
-		    
-		    Var Lines() As String
-		    For Each Container As Ark.LootContainer In Self.mContainers
-		      Lines.Add("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Container.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
-		    Next
-		    Self.Import(Lines.Join(EndOfLine), "Clipboard")
-		  End
+		      Self.AddSets(NewItemSets)
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
+		    End Try
+		    Return
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1125,11 +1086,6 @@ End
 		    CopyJSONItem.Name = "copyjson"
 		    CopyJSONItem.Enabled = True
 		    Base.AddMenu(CopyJSONItem)
-		    
-		    Var CopyConfigItem As New DesktopMenuItem("Copy Config Part", Targets)
-		    CopyConfigItem.Name = "copyconfig"
-		    CopyConfigItem.Enabled = True
-		    Base.AddMenu(CopyConfigItem)
 		  End If
 		  
 		  Return True
@@ -1223,39 +1179,7 @@ End
 		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their template.")
 		    End If
 		  Case "copyjson"
-		    If Targets.LastIndex = 0 Then
-		      Var Dict As Dictionary = Targets(0).Template.SaveData()
-		      Var Board As New Clipboard
-		      Board.Text = Beacon.GenerateJSON(Dict, True)
-		    Else
-		      Var Arr() As Dictionary
-		      For Each Organizer As Ark.LootItemSetOrganizer In Targets
-		        Arr.Add(Organizer.Template.SaveData())
-		      Next
-		      Var Board As New Clipboard
-		      Board.Text = Beacon.GenerateJSON(Arr, True)
-		    End If
-		  Case "copyconfig"
-		    Var Multipliers As Beacon.Range
-		    Var UseBlueprints As Boolean = False
-		    Var Difficulty As Ark.Configs.Difficulty = Self.Project.Difficulty
-		    If Self.mContainers.LastIndex = 0 Then
-		      Multipliers = Self.mContainers(0).Multipliers
-		    Else
-		      Multipliers = New Beacon.Range(1, 1)
-		    End If
-		    
-		    Var Parts() As String
-		    For Each Organizer As Ark.LootItemSetOrganizer In Targets
-		      Parts.Add(Organizer.Template.StringValue(Multipliers, UseBlueprints, Difficulty.DifficultyValue))
-		    Next
-		    
-		    Var Board As New Clipboard
-		    If Parts.LastIndex = 0 Then
-		      Board.Text = Parts(0)
-		    Else
-		      Board.Text = "ItemSets=(" + Parts.Join(",") + ")"
-		    End If
+		    Me.DoCopy()
 		  End Select
 		  
 		  Return True

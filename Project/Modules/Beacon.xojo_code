@@ -1,5 +1,16 @@
 #tag Module
 Protected Module Beacon
+	#tag Method, Flags = &h0
+		Sub AddClipboardData(Extends Board As Clipboard, Type As String, Data As Variant)
+		  Var Wrapper As New Dictionary
+		  Wrapper.Value("type") = Type
+		  Wrapper.Value("data") = Data
+		  
+		  Board.Text = Beacon.GenerateJson(Wrapper, True)
+		  Board.RawData(Type) = Beacon.GenerateJson(Data, False)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function AreElementsEqual(Items() As Variant) As Boolean
 		  If Items = Nil Or Items.LastIndex <= 0 Then
@@ -465,6 +476,39 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GetClipboardData(Extends Board As Clipboard, Type As String) As Variant
+		  If Board.RawDataAvailable(Type) Then
+		    Try
+		      Return Beacon.ParseJson(Board.RawData(Type))
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  End If
+		  
+		  If Board.TextAvailable = False Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Var Parsed As Variant = Beacon.ParseJson(Board.Text)
+		    If Parsed.Type <> Variant.TypeObject Or (Parsed.ObjectValue IsA Dictionary) = False Then
+		      Return Nil
+		    End If
+		    
+		    Var Dict As Dictionary = Dictionary(Parsed.ObjectValue)
+		    If Dict.Lookup("type", "").StringValue <> Type Or Dict.HasKey("data") = False Then
+		      Return Nil
+		    End If
+		    
+		    Return Dict.Value("data")
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.LastIndex DownTo 0
@@ -588,6 +632,21 @@ Protected Module Beacon
 		  #else
 		    #Pragma Error "HardwareID not implemented for this platform"
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasClipboardData(Extends Board As Clipboard, Type As String) As Boolean
+		  If Board.RawDataAvailable(Type) Then
+		    Return True
+		  End If
+		  
+		  If Board.TextAvailable = False Then
+		    Return False
+		  End If
+		  
+		  Var Contents As String = Board.Text
+		  Return Contents.Contains("""type"": """ + Type + """")
 		End Function
 	#tag EndMethod
 

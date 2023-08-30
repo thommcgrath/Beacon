@@ -267,6 +267,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -736,15 +737,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return True
-		  End If
-		  
-		  If Not Board.TextAvailable Then
-		    Return False
-		  End If
-		  
-		  Return Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1
+		  Return Board.HasClipboardData(Self.kClipboardType)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -761,59 +754,36 @@ End
 		    Dicts.Add(Cost.Export)
 		  Next
 		  
-		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
-		  
-		  If Not Ark.Configs.ConfigUnlocked(Ark.Configs.NameCraftingCosts, App.IdentityManager.CurrentIdentity) Then
+		  If Dicts.Count = 0 Then
+		    System.Beep
 		    Return
 		  End If
 		  
-		  Var Lines() As String
-		  For Each Cost As Ark.CraftingCost In SelectedCosts
-		    If Cost.Engram Is Nil Or Cost.Engram.ValidForProject(Self.Project) = False Then
-		      Continue
-		    End If
-		    
-		    Var Config As Ark.ConfigValue = Ark.Configs.CraftingCosts.ConfigValueForCraftingCost(Cost)
-		    If (Config Is Nil) = False Then
-		      Lines.Add(Config.Command)
-		    End If
-		  Next
-		  
-		  If Lines.Count = 0 Then
-		    Return
-		  End If
-		  
-		  Board.Text = Lines.Join(EndOfLine)
+		  Board.AddClipboardData(Self.kClipboardType, Dicts)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
-		    Var ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse("", ImportText, "Clipboard")
-		    Return
-		  End If
-		  
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Var Dicts() As Variant
+		  Var Contents As Variant = Board.GetClipboardData(Self.kClipboardType)
+		  If Contents.IsNull = False Then
 		    Try
-		      Var Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		      Dicts = Beacon.ParseJSON(Contents)
-		      
+		      Var Dicts() As Variant = Contents
 		      Var Costs() As Ark.CraftingCost
 		      Var Config As Ark.Configs.CraftingCosts = Self.Config(True)
 		      For Each Dict As Dictionary In Dicts
 		        Var Cost As Ark.CraftingCost = Ark.CraftingCost.ImportFromBeacon(Dict)
-		        If Cost <> Nil Then
+		        If (Cost Is Nil) = False Then
 		          Config.Add(Cost)
 		          Costs.Add(Cost)
 		        End If
 		      Next
 		      
-		      Self.UpdateList(Costs)
-		      Self.Modified = True
+		      If Costs.Count > 0 Then
+		        Self.UpdateList(Costs)
+		        Self.Modified = True
+		      End If
 		    Catch Err As RuntimeException
-		      System.Beep
+		      Self.ShowAlert("There was an error with the pasted content.", "The content is not formatted correctly.")
 		    End Try
 		    Return
 		  End If

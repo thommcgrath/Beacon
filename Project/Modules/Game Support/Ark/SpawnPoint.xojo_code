@@ -152,7 +152,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		    SpawnPoint.mSets.ResizeTo(-1)
 		    
 		    If Dict.HasKey("limits") Then
-		      Var Limits() As Variant
+		      Var Limits() As Variant = Dict.Value("limits")
 		      For Each Limit As Dictionary In Limits
 		        Var CreatureId As String = Limit.Value("creatureId")
 		        Var MaxPercentage As Double = Limit.Value("maxPercentage")
@@ -410,7 +410,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		  
 		  Var Keys As New Dictionary
 		  Keys.Value("spawnPointId") = Self.mSpawnPointId
-		  Keys.Value("mod") = Self.Mode
+		  Keys.Value("mode") = Self.Mode
 		  If Children.LastIndex > -1 Then
 		    Keys.Value("sets") = Children
 		  End If
