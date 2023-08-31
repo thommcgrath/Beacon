@@ -56,7 +56,7 @@ Protected Class Request
 		Shared Function CreateSessionRequest(Callback As BeaconAPI.Request.ReplyCallback) As BeaconAPI.Request
 		  Var Path As String = BeaconAPI.URL("session")
 		  Var Method As String = "POST"
-		  Var Body As String = Beacon.GenerateJSON(New Dictionary("device_id" : Beacon.HardwareID), False)
+		  Var Body As String = Beacon.GenerateJSON(New Dictionary("device_id" : Beacon.HardwareId), False)
 		  Var Request As New BeaconAPI.Request(Path, Method, Body, "application/json", Callback)
 		  Return Request
 		End Function

@@ -313,6 +313,11 @@ End
 		    Self.Nav.Remove(NavItem)
 		  End If
 		  
+		  If Reason = "Unauthorized" Then
+		    UserWelcomeWindow.Present(False)
+		    Return
+		  End If
+		  
 		  Var RecentIdx As Integer = -1
 		  Var Recents() As Beacon.ProjectURL = Preferences.RecentDocuments
 		  For I As Integer = 0 To Recents.LastIndex

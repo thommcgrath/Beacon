@@ -375,7 +375,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Var Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
 		  
-		  Var HardwareID As String = Beacon.HardwareID
+		  Var HardwareID As String = Beacon.HardwareId
 		  Var Signed As MemoryBlock = Identity.Sign(HardwareID)
 		  
 		  Var Dict As New Dictionary

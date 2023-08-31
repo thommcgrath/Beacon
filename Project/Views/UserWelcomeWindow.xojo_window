@@ -46,7 +46,7 @@ Begin DesktopWindow UserWelcomeWindow
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   424
       Begin DesktopLabel PrivacyMessageLabel
@@ -643,6 +643,7 @@ End
 		  Params.Value("redirect_uri") = Self.RedirectUri
 		  Params.Value("code_verifier") = Self.mOAuthChallenge
 		  
+		  Self.OAuthRedeemSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Self.OAuthRedeemSocket.SetRequestContent(Beacon.GenerateJSON(Params, False), "application/json")
 		  Self.OAuthRedeemSocket.Send("POST", BeaconAPI.URL("/login"))
 		End Sub
@@ -707,6 +708,7 @@ End
 		  Params.Value("state") = Self.mOAuthState
 		  Params.Value("client_id") = BeaconAPI.ClientId
 		  Params.Value("no_redirect") = "true"
+		  Params.Value("device_id") = Beacon.HardwareId
 		  
 		  Var Scopes() As String = Array("common", "users:read")
 		  If WithIdentity Is Nil Then
@@ -734,6 +736,7 @@ End
 		  Params.Value("scope") = String.FromArray(Scopes, " ")
 		  
 		  Var Query As String = SimpleHTTP.BuildFormData(Params)
+		  Self.OAuthStartSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Self.OAuthStartSocket.Send("GET", BeaconAPI.URL("/login?" + Query))
 		End Sub
 	#tag EndMethod
@@ -878,6 +881,11 @@ End
 		  Return Nil
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.UserAgent = App.UserAgent
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events SidebarCanvas
 	#tag Event
@@ -908,7 +916,7 @@ End
 		  Self.DisableOnlineButton.Enabled = True
 		  Self.WelcomePageSpinner.Visible = False
 		  
-		  If HTTPStatus = 200 Or HTTPStatus = 302 Then
+		  If HTTPStatus = 200 Or HTTPStatus = 302 Or HTTPStatus = 301 Then
 		    // Show html viewer
 		    Var LoginUrl As String
 		    If HTTPStatus = 200 Then
@@ -918,7 +926,7 @@ End
 		      Else
 		        LoginUrl = URL
 		      End If
-		    ElseIf HTTPStatus = 302 Then
+		    ElseIf HTTPStatus = 302 Or HTTPStatus = 301 Then
 		      LoginUrl = Me.ResponseHeader("Location")
 		    End If
 		    

@@ -304,6 +304,11 @@ End
 		  
 		  If Not Response.Success Then
 		    Self.List.CompleteRowLoadRequest(Request.Tag)
+		    
+		    If Response.HTTPStatus = 401 Or Response.HTTPStatus = 403 Then
+		      UserWelcomeWindow.Present(False)
+		    End If
+		    
 		    Return
 		  End If
 		  

@@ -11,18 +11,24 @@ Protected Class UserController
 		    Return
 		  End Try
 		  
-		  Var Identity As Beacon.Identity = App.IdentityManager.Import(Parsed)
-		  If (Identity Is Nil) = False And Identity.IsValid Then
-		    App.IdentityManager.CurrentIdentity = Identity
-		  Else
-		    Break
-		  End If
+		  Select Case Response.HTTPStatus
+		  Case 200
+		    Var Identity As Beacon.Identity = App.IdentityManager.Import(Parsed)
+		    If (Identity Is Nil) = False And Identity.IsValid Then
+		      App.IdentityManager.CurrentIdentity = Identity
+		    Else
+		      Break
+		    End If
+		  Case 401, 403
+		    // Needs login
+		    UserWelcomeWindow.Present(False)
+		  End Select
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RefreshUserDetails()
-		  Var Request As New BeaconAPI.Request("/user?deviceId=" + Beacon.HardwareID, "GET", AddressOf Callback_RefreshUserDetails)
+		  Var Request As New BeaconAPI.Request("/user?deviceId=" + Beacon.HardwareId, "GET", AddressOf Callback_RefreshUserDetails)
 		  If Thread.Current Is Nil Then
 		    BeaconAPI.Send(Request)
 		  Else

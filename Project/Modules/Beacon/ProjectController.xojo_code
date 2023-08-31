@@ -129,6 +129,12 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Shared Function ErrorMessageFromResponse(Response As BeaconAPI.Response) As String
+		  If Response.HTTPStatus = 401 Then
+		    Return "Unauthorized"
+		  ElseIf Response.HTTPStatus = 403 Then
+		    Return "You do not have permission to access this project."
+		  End If
+		  
 		  Var Message As String = "The error reason is unknown"
 		  If (Response.Content Is Nil) = False Then
 		    Try
@@ -151,6 +157,12 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h21
 		Private Shared Function ErrorMessageFromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As String
+		  If Socket.HTTPStatusCode = 401 Then
+		    Return "Unauthorized"
+		  ElseIf Socket.HTTPStatusCode = 403 Then
+		    Return "You do not have permission to access this project."
+		  End If
+		  
 		  Var Message As String = "The error reason is unknown"
 		  If (Socket.LastContent Is Nil) = False Then
 		    Try

@@ -599,7 +599,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function HardwareID() As String
+		Protected Function HardwareId() As String
 		  #if TargetMacOS
 		    Return SystemInformationMBS.MacUUID.Lowercase
 		  #elseif TargetWindows Or TargetLinux

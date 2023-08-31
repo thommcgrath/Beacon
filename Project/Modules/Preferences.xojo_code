@@ -84,7 +84,7 @@ Protected Module Preferences
 		    
 		    If mManager.StringValue("Device Private Key").IsEmpty = False Then
 		      Try
-		        Var PrivateKey As String = EncodeHex(BeaconEncryption.SlowDecrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, mManager.StringValue("Device Private Key")))
+		        Var PrivateKey As String = EncodeHex(BeaconEncryption.SlowDecrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, mManager.StringValue("Device Private Key")))
 		        Var PublicKey As String = EncodeHex(DecodeBase64(mManager.StringValue("Device Public Key", "")))
 		        If Crypto.RSAVerifyKey(PublicKey) And Crypto.RSAVerifyKey(PrivateKey) Then
 		          mDevicePublicKey = PublicKey
@@ -100,7 +100,7 @@ Protected Module Preferences
 		      mDevicePublicKey = PublicKey
 		      mDevicePrivateKey = PrivateKey
 		      mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(PublicKey), 0)
-		      mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, DecodeHex(PrivateKey))
+		      mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, DecodeHex(PrivateKey))
 		    End If
 		  End If
 		End Sub
@@ -467,7 +467,7 @@ Protected Module Preferences
 			    
 			    Try
 			      Var TokenSource As String = mManager.StringValue("Beacon Auth")
-			      TokenSource = BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, TokenSource)
+			      TokenSource = BeaconEncryption.SlowDecrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, TokenSource)
 			      mAuthToken = BeaconAPI.OAuthToken.Load(TokenSource)
 			    Catch Err As RuntimeException
 			    End Try
@@ -481,7 +481,7 @@ Protected Module Preferences
 			  Init
 			  If (Value Is Nil) = False Then
 			    Var TokenSource As String = Value.StringValue
-			    mManager.StringValue("Beacon Auth") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareID, TokenSource)
+			    mManager.StringValue("Beacon Auth") = BeaconEncryption.SlowEncrypt("cae5a061-1700-4ec4-8eee-d2f7c17a34e5" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, TokenSource)
 			  Else
 			    mManager.StringValue("Beacon Auth") = ""
 			  End If
