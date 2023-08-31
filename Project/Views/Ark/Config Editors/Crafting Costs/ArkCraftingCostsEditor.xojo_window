@@ -470,7 +470,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CreateFibercraftServer()
-		  Var Fiber As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("244bc843-2540-486e-af4a-8824500c0e56")
+		  Var Fiber As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram("244bc843-2540-486e-af4a-8824500c0e56")
 		  If ArkAdjustIngredientDialog.Present(Self, Self.Project, Nil, "{""required"":[],""excluded"":[""no_fibercraft""]}", Nil, "", Fiber, 0.00001, ArkAdjustIngredientDialog.RoundUp, False) Then
 		    Self.Modified = True
 		    Self.SetupUI()
@@ -836,13 +836,13 @@ End
 		    Filter.Value(Engram.ObjectID) = True
 		  Next
 		  
-		  Var ObjectIDs() As String = Ark.DataSource.Pool.Get(False).GetEngramUUIDsThatHaveCraftingCosts(Self.Project.ContentPacks, Self.Project.MapMask)
+		  Var ObjectIDs() As String = Ark.DataSource.Pool.Get(False).GetRecipeEngramIds(Self.Project.ContentPacks, Self.Project.MapMask)
 		  For Each ObjectID As String In ObjectIDs
 		    If Filter.HasKey(ObjectID) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(ObjectID)
+		    Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram(ObjectID)
 		    If (Engram Is Nil) = False Then
 		      Engrams.Add(Engram)
 		    End If

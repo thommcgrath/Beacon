@@ -912,7 +912,7 @@ End
 		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		      For Each Entry As DictionaryEntry In Rates
 		        Var EngramId As String = Entry.Key
-		        Var Engram As Ark.Engram = DataSource.GetEngramByUUID(EngramId)
+		        Var Engram As Ark.Engram = DataSource.GetEngram(EngramId)
 		        If Engram Is Nil Then
 		          Continue
 		        End If

@@ -1043,7 +1043,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintById(BlueprintId As String, UseCache As Boolean = True) As Ark.Blueprint
+		Function GetBlueprint(BlueprintId As String, UseCache As Boolean = True) As Ark.Blueprint
 		  If UseCache And Self.mBlueprintCache.HasKey(BlueprintId) Then
 		    Return Self.mBlueprintCache.Value(BlueprintId)
 		  End If
@@ -1055,13 +1055,13 @@ Inherits Beacon.DataSource
 		  
 		  Select Case Rows.Column("category").StringValue
 		  Case Ark.CategoryCreatures
-		    Return Self.GetCreatureByUUID(BlueprintId, UseCache)
+		    Return Self.GetCreature(BlueprintId, UseCache)
 		  Case Ark.CategoryEngrams
-		    Return Self.GetEngramByUUID(BlueprintId, UseCache)
+		    Return Self.GetEngram(BlueprintId, UseCache)
 		  Case Ark.CategoryLootContainers
-		    Return Self.GetLootContainerByUUID(BlueprintId, UseCache)
+		    Return Self.GetLootContainer(BlueprintId, UseCache)
 		  Case Ark.CategorySpawnPoints
-		    Return Self.GetSpawnPointByUUID(BlueprintId, UseCache)
+		    Return Self.GetSpawnPoint(BlueprintId, UseCache)
 		  End Select
 		End Function
 	#tag EndMethod
@@ -1372,13 +1372,13 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByUUID(CreatureID As String, UseCache As Boolean = True) As Ark.Creature
-		  If UseCache And Self.mBlueprintCache.HasKey(CreatureID) Then
-		    Return Self.mBlueprintCache.Value(CreatureID)
+		Function GetCreature(CreatureId As String, UseCache As Boolean = True) As Ark.Creature
+		  If UseCache And Self.mBlueprintCache.HasKey(CreatureId) Then
+		    Return Self.mBlueprintCache.Value(CreatureId)
 		  End If
 		  
 		  Try
-		    Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE object_id = ?1;", CreatureID)
+		    Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE object_id = ?1;", CreatureId)
 		    If Results.RowCount <> 1 Then
 		      Return Nil
 		    End If
@@ -1490,6 +1490,27 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetEngram(EngramId As String, UseCache As Boolean = True) As Ark.Engram
+		  If UseCache And Self.mBlueprintCache.HasKey(EngramId) Then
+		    Return Self.mBlueprintCache.Value(EngramId)
+		  End If
+		  
+		  Try
+		    Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramId)
+		    If Results.RowCount <> 1 Then
+		      Return Nil
+		    End If
+		    
+		    Var Engrams() As Ark.Engram = Self.RowSetToEngram(Results, UseCache)
+		    Self.Cache(Engrams)
+		    Return Engrams(0)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetEngramByItemID(ItemID As Integer) As Ark.Engram
 		  Try
 		    Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE item_id = ?1;", ItemID)
@@ -1501,27 +1522,6 @@ Inherits Beacon.DataSource
 		    If Engrams.Count = 1 Then
 		      Return Engrams(0)
 		    End If
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramByUUID(EngramId As String, UseCache As Boolean = True) As Ark.Engram
-		  If UseCache And Self.mBlueprintCache.HasKey(EngramId) Then
-		    Return Self.mBlueprintCache.Value(EngramId)
-		  End If
-		  
-		  Try
-		    Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID)
-		    If Results.RowCount <> 1 Then
-		      Return Nil
-		    End If
-		    
-		    Var Engrams() As Ark.Engram = Self.RowSetToEngram(Results, UseCache)
-		    Self.Cache(Engrams)
-		    Return Engrams(0)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
@@ -1621,29 +1621,6 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramUUIDsThatHaveCraftingCosts(ContentPacks As Beacon.StringList, Mask As UInt64) As String()
-		  // I hate the name of this method
-		  
-		  Var SQL As String = "SELECT object_id FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
-		    Var List() As String
-		    For Each ContentPackId As String In ContentPacks
-		      List.Add("'" + ContentPackId + "'")
-		    Next
-		    SQL = SQL + " AND content_pack_id IN (" + List.Join(",") + ")"
-		  End If
-		  
-		  Var Rows As RowSet = Self.SQLSelect(SQL)
-		  Var Results() As String
-		  While Not Rows.AfterLastRow
-		    Results.Add(Rows.Column("object_id").StringValue)
-		    Rows.MoveToNextRow
-		  Wend
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetGameEventByArkCode(ArkCode As String) As Ark.GameEvent
 		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE ark_code = ?1;", ArkCode)
 		  Var GameEvents() As Ark.GameEvent = Self.RowSetToGameEvents(Rows)
@@ -1682,7 +1659,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainerByUUID(LootDropId As String, UseCache As Boolean = True) As Ark.LootContainer
+		Function GetLootContainer(LootDropId As String, UseCache As Boolean = True) As Ark.LootContainer
 		  If UseCache And Self.mBlueprintCache.HasKey(LootDropId) Then
 		    Return Self.mBlueprintCache.Value(LootDropId)
 		  End If
@@ -1958,13 +1935,36 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByUUID(SpawnPointId As String, UseCache As Boolean = True) As Ark.SpawnPoint
+		Function GetRecipeEngramIds(ContentPacks As Beacon.StringList, Mask As UInt64) As String()
+		  // I hate the name of this method
+		  
+		  Var SQL As String = "SELECT object_id FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
+		    Var List() As String
+		    For Each ContentPackId As String In ContentPacks
+		      List.Add("'" + ContentPackId + "'")
+		    Next
+		    SQL = SQL + " AND content_pack_id IN (" + List.Join(",") + ")"
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL)
+		  Var Results() As String
+		  While Not Rows.AfterLastRow
+		    Results.Add(Rows.Column("object_id").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPoint(SpawnPointId As String, UseCache As Boolean = True) As Ark.SpawnPoint
 		  If UseCache And Self.mBlueprintCache.HasKey(SpawnPointId) Then
 		    Return Self.mBlueprintCache.Value(SpawnPointId)
 		  End If
 		  
 		  Try
-		    Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID)
+		    Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointId)
 		    If Results.RowCount <> 1 Then
 		      Return Nil
 		    End If

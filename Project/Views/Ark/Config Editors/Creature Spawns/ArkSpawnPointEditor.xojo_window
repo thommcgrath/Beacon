@@ -659,7 +659,7 @@ End
 		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
 		      Var UUID As String = CombinedLimits.Key(RowIndex)
 		      Var Limit As Double = CombinedLimits.Value(UUID)
-		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(UUID)
+		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(UUID)
 		      If (Creature Is Nil) Then
 		        Self.LimitsList.CellTextAt(RowIndex, 0) = "Unknown Creature"
 		      Else
@@ -963,7 +963,7 @@ End
 		  Var SelectedCreatures() As Ark.Creature
 		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		    If Self.LimitsList.RowSelectedAt(I) Then
-		      SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Self.LimitsList.RowTagAt(I).StringValue))
+		      SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreature(Self.LimitsList.RowTagAt(I).StringValue))
 		    End If
 		  Next
 		  Self.PresentLimitsDialog(SelectedCreatures)
@@ -982,7 +982,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Me.RowTagAt(I).StringValue)
+		    Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(Me.RowTagAt(I).StringValue)
 		    If Creature Is Nil Then
 		      Continue
 		    End If
@@ -1023,7 +1023,7 @@ End
 		    End If
 		    
 		    Var UUID As String = Me.RowTagAt(I)
-		    Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(UUID)
+		    Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(UUID)
 		    If Creature Is Nil Then
 		      Continue
 		    End If
@@ -1065,7 +1065,7 @@ End
 		      Var SelectCreatures() As Ark.Creature
 		      For Each Entry As DictionaryEntry In Limits
 		        Var CreatureId As String = Entry.Key
-		        Var Creature As Ark.Creature = DataSource.GetCreatureByUUID(CreatureId)
+		        Var Creature As Ark.Creature = DataSource.GetCreature(CreatureId)
 		        If Creature Is Nil Then
 		          Continue
 		        End If
@@ -1102,7 +1102,7 @@ End
 		    Var SelectedCreatures() As Ark.Creature
 		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		      If Self.LimitsList.RowSelectedAt(I) Then
-		        SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Self.LimitsList.RowTagAt(I).StringValue))
+		        SelectedCreatures.Add(Ark.DataSource.Pool.Get(False).GetCreature(Self.LimitsList.RowTagAt(I).StringValue))
 		      End If
 		    Next
 		    Self.PresentLimitsDialog(SelectedCreatures)

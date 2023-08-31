@@ -140,7 +140,7 @@ Inherits Beacon.Project
 		      Continue
 		    End If
 		    
-		    Var StoredBlueprint As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprintById(ProjectBlueprint.BlueprintId, False)
+		    Var StoredBlueprint As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprint(ProjectBlueprint.BlueprintId, False)
 		    If StoredBlueprint Is Nil Or ProjectBlueprint.LastUpdate > StoredBlueprint.LastUpdate Then
 		      FreshBlueprints.Add(ProjectBlueprint)
 		    End If
@@ -632,7 +632,7 @@ Inherits Beacon.Project
 		  
 		  Var Packs As Beacon.StringList = Self.ContentPacks
 		  Var Containers() As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainers("", Packs, "", True)
-		  Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
+		  Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
 		  Var Mask As UInt64 = Self.MapMask
 		  For Each Container As Ark.LootContainer In Containers
 		    If Container.ValidForMask(Mask) = False Then

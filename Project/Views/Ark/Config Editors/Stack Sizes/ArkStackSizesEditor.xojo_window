@@ -590,7 +590,7 @@ End
 		        Var EngramId As String = Entry.Key
 		        Var Size As UInt64 = Entry.Value
 		        
-		        Var Engram As Ark.Engram = DataSource.GetEngramByUUID(EngramId)
+		        Var Engram As Ark.Engram = DataSource.GetEngram(EngramId)
 		        If (Engram Is Nil) = False Then
 		          SelectEngrams.Add(EngramId)
 		          Config.Override(Engram) = Size

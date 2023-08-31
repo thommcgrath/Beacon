@@ -58,7 +58,7 @@ Inherits Thread
 		    End If
 		    
 		    If SpawnPoint.Mode <> Ark.SpawnPoint.ModeOverride Then
-		      Var Default As Ark.SpawnPoint = Database.GetSpawnPointByUUID(SpawnPoint.ObjectID)
+		      Var Default As Ark.SpawnPoint = Database.GetSpawnPoint(SpawnPoint.ObjectID)
 		      If Default Is Nil Then
 		        Continue
 		      End If

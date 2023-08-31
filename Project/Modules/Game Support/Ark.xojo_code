@@ -882,7 +882,7 @@ Protected Module Ark
 		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature
 		  If ObjectID.IsEmpty = False Then
 		    Try
-		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(ObjectID)
+		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(ObjectID)
 		      If (Creature Is Nil) = False Then
 		        Return Creature
 		      End If
@@ -943,7 +943,7 @@ Protected Module Ark
 		Protected Function ResolveEngram(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram
 		  If ObjectID.IsEmpty = False Then
 		    Try
-		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngramByUUID(ObjectID)
+		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram(ObjectID)
 		      If (Engram Is Nil) = False Then
 		        Return Engram
 		      End If
@@ -1004,7 +1004,7 @@ Protected Module Ark
 		Protected Function ResolveLootContainer(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
 		  If ObjectID.IsEmpty = False Then
 		    Try
-		      Var LootContainer As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainerByUUID(ObjectID)
+		      Var LootContainer As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainer(ObjectID)
 		      If (LootContainer Is Nil) = False Then
 		        Return LootContainer
 		      End If
@@ -1065,7 +1065,7 @@ Protected Module Ark
 		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
 		  If ObjectID.IsEmpty = False Then
 		    Try
-		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointByUUID(ObjectID)
+		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPoint(ObjectID)
 		      If (SpawnPoint Is Nil) = False Then
 		        Return SpawnPoint
 		      End If

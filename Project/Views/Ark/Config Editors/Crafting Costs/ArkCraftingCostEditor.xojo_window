@@ -361,7 +361,7 @@ End
 		      Var Dicts() As Variant = Contents
 		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		      For Each Dict As Dictionary In Dicts
-		        Var Engram As Ark.Engram = DataSource.GetEngramByUUID(Dict.Value("blueprintId"))
+		        Var Engram As Ark.Engram = DataSource.GetEngram(Dict.Value("blueprintId"))
 		        If Engram Is Nil Then
 		          Continue
 		        End If

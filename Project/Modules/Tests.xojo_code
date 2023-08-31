@@ -82,10 +82,10 @@ Protected Module Tests
 		Private Sub TestBlueprintSerialization()
 		  // Use object ids here just in case
 		  
-		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetEngramByUUID("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
-		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetCreatureByUUID("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
-		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetSpawnPointByUUID("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
-		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetLootContainerByUUID("40f02506-f341-46c5-85c0-31e0d37509b6")) // SupplyCrate_IceCaveTier2_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetEngram("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetCreature("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetSpawnPoint("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
+		  TestBlueprintSerialization(Ark.DataSource.Pool.Get(False).GetLootContainer("40f02506-f341-46c5-85c0-31e0d37509b6")) // SupplyCrate_IceCaveTier2_C
 		End Sub
 	#tag EndMethod
 
@@ -128,11 +128,11 @@ Protected Module Tests
 		Private Sub TestCachingTimes()
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  Var StartTime As Double = System.Microseconds
-		  Var Container As Ark.LootContainer = DataSource.GetLootContainerByUUID("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
+		  Var Container As Ark.LootContainer = DataSource.GetLootContainer("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
 		  Var InitialDuration As Double = System.Microseconds - StartTime
 		  
 		  StartTime = System.Microseconds
-		  Container = DataSource.GetLootContainerByUUID("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
+		  Container = DataSource.GetLootContainer("b537ea4d-e0a8-4c92-9763-24d3df5e1562")
 		  Var CachedDuration As Double = System.Microseconds - StartTime
 		  
 		  System.DebugLog("Single initial duration: " + InitialDuration.ToString(Locale.Current, "#,##0") + " microseconds")

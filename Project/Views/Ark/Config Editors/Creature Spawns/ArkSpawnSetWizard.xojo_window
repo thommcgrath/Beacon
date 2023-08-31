@@ -599,7 +599,7 @@ End
 		    End If
 		    
 		    If Point.Mode = Ark.SpawnPoint.ModeAppend Then
-		      Var Official As Ark.SpawnPoint = DataSource.GetSpawnPointByUUID(Point.ObjectID)
+		      Var Official As Ark.SpawnPoint = DataSource.GetSpawnPoint(Point.ObjectID)
 		      If (Official Is Nil) = False Then
 		        Var OfficialMutable As Ark.MutableSpawnPoint = Official.MutableVersion
 		        DataSource.LoadDefaults(OfficialMutable)

@@ -391,6 +391,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    End
    Begin Thread ProcessorThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1281,13 +1282,13 @@ End
 		  
 		  Var ContentPacks As Beacon.StringList = Self.mProject.ContentPacks
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
-		  Var ObjectIds() As String = DataSource.GetEngramUUIDsThatHaveCraftingCosts(ContentPacks, Ark.Maps.UniversalMask)
+		  Var ObjectIds() As String = DataSource.GetRecipeEngramIds(ContentPacks, Ark.Maps.UniversalMask)
 		  For Each ObjectId As String In ObjectIds
 		    If Filter.HasKey(ObjectId) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = DataSource.GetEngramByUUID(ObjectId)
+		    Var Engram As Ark.Engram = DataSource.GetEngram(ObjectId)
 		    If (Engram Is Nil) = False Then
 		      Engrams.Add(Engram)
 		    End If

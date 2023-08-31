@@ -1973,7 +1973,7 @@ End
 		    
 		    Var Creature As Ark.Creature
 		    Try
-		      Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(Me.RowTagAt(I))
+		      Creature = Ark.DataSource.Pool.Get(False).GetCreature(Me.RowTagAt(I))
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Creature UUID: " + Me.RowTagAt(I).StringValue)
 		    End Try
@@ -2016,7 +2016,7 @@ End
 		    End If
 		    
 		    Var FromUUID As String = Me.RowTagAt(I)
-		    Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(FromUUID)
+		    Var FromCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(FromUUID)
 		    If FromCreature Is Nil Then
 		      Continue
 		    End If
@@ -2059,7 +2059,7 @@ End
 		      Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		      For Each Dict As Dictionary In Dicts
 		        Var FromCreatureId As String = Dict.Value("creatureId")
-		        Var FromCreature As Ark.Creature = DataSource.GetCreatureByUUID(FromCreatureId)
+		        Var FromCreature As Ark.Creature = DataSource.GetCreature(FromCreatureId)
 		        If FromCreature Is Nil Then
 		          Continue
 		        End If
@@ -2067,7 +2067,7 @@ End
 		        Var Map As Dictionary = Dict.Value("replacements")
 		        For Each Entry As DictionaryEntry In Map
 		          Var ToCreatureId As String = Entry.Key
-		          Var ToCreature As Ark.Creature = DataSource.GetCreatureByUUID(ToCreatureId)
+		          Var ToCreature As Ark.Creature = DataSource.GetCreature(ToCreatureId)
 		          If ToCreature Is Nil Then
 		            Continue
 		          End If
@@ -2097,7 +2097,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  Var TargetUUID As String = Self.ReplaceList.RowTagAt(Self.ReplaceList.SelectedRowIndex)
-		  Var TargetCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatureByUUID(TargetUUID)
+		  Var TargetCreature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(TargetUUID)
 		  If TargetCreature Is Nil Then
 		    Return
 		  End If
