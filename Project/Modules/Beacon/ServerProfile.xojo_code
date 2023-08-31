@@ -66,7 +66,7 @@ Protected Class ServerProfile
 		  Self.mProviderTokenId = Dict.Lookup("Provider Token Id", "")
 		  
 		  If Dict.HasKey("External Account") Then
-		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
+		    Self.mExternalAccountId = Dict.Value("External Account").StringValue
 		  End If
 		  
 		  If Dict.HasKey("Config Set Priorities") Then
@@ -218,7 +218,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function ProfileID() As String
 		  If Self.mProfileID = "" Then
-		    Self.mProfileID = New v4UUID
+		    Self.mProfileID = Beacon.UUID.v4
 		  End If
 		  Return Self.mProfileID
 		End Function
@@ -241,8 +241,8 @@ Protected Class ServerProfile
 		  Dict.Value("Admin Notes") = Self.mAdminNotes
 		  Dict.Value("Color") = CType(Self.mProfileColor, Integer)
 		  Dict.Value("Provider Token Id") = Self.mProviderTokenId
-		  If Self.mExternalAccountUUID <> Nil Then
-		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
+		  If Self.mExternalAccountId.IsEmpty = False Then
+		    Dict.Value("External Account") = Self.mExternalAccountId
 		  End If
 		  If Self.mConfigSetStates.Count > 0 Then
 		    Dict.Value("Config Set Priorities") = Beacon.ConfigSetState.EncodeArray(Self.mConfigSetStates)
@@ -345,18 +345,18 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mExternalAccountUUID
+			  Return Self.mExternalAccountId
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mExternalAccountUUID <> Value Then
-			    Self.mExternalAccountUUID = Value
+			  If Self.mExternalAccountId <> Value Then
+			    Self.mExternalAccountId = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		ExternalAccountUUID As v4UUID
+		ExternalAccountId As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -381,7 +381,7 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExternalAccountUUID As v4UUID
+		Private mExternalAccountId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

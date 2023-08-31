@@ -7,7 +7,7 @@ Protected Module PasswordStorage
 		    Try
 		      Var Item As New KeyChainItem
 		      Item.ServiceName = "Beacon"
-		      If v4UUID.IsValid(EmailOrUserId) Then
+		      If Beacon.UUID.Validate(EmailOrUserId) Then
 		        Item.AccountName = EmailOrUserId
 		      Else
 		        Item.Label = EmailOrUserId
@@ -21,7 +21,7 @@ Protected Module PasswordStorage
 		    Var SavedPasswords As Dictionary = Preferences.SavedPasswords
 		    
 		    Var UserId As String
-		    If v4UUID.IsValid(EmailOrUserId) Then
+		    If Beacon.UUID.Validate(EmailOrUserId) Then
 		      UserId = EmailOrUserId
 		    Else
 		      For Each Entry As DictionaryEntry In SavedPasswords
@@ -50,7 +50,7 @@ Protected Module PasswordStorage
 		  #if TargetMacOS
 		    #Pragma BreakOnExceptions False
 		    Try
-		      Var IsAccountId As Boolean = v4UUID.IsValid(EmailOrUserId)
+		      Var IsAccountId As Boolean = Beacon.UUID.Validate(EmailOrUserId)
 		      
 		      Var Item As New KeyChainItem
 		      Item.ServiceName = "Beacon"

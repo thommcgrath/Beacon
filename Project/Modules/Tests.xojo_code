@@ -15,7 +15,7 @@ Protected Module Tests
 	#tag Method, Flags = &h21
 		Private Sub CreateEncryptionTest(Name As String, KeySizeBytes As Integer)
 		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(KeySizeBytes)
-		  Var Message As String = v4UUID.Create.StringValue
+		  Var Message As String = Beacon.UUID.v4
 		  Var EncryptedLegacy As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 1)
 		  Var EncryptedModern As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 2)
 		  
@@ -220,7 +220,7 @@ Protected Module Tests
 		  
 		  // Make sure slow encryption works
 		  Try
-		    Var SlowKey As String = v4UUID.Create.StringValue
+		    Var SlowKey As String = Beacon.UUID.v4
 		    Var SlowData As MemoryBlock = Crypto.GenerateRandomBytes(32)
 		    Var SlowEncrypted As String = BeaconEncryption.SlowEncrypt(SlowKey, SlowData)
 		    Var SlowDecrypted As MemoryBlock = BeaconEncryption.SlowDecrypt(SlowKey, SlowEncrypted)

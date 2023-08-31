@@ -37,7 +37,7 @@ Protected Class Request
 		    ContentType = "application/x-www-form-urlencoded"
 		  End If
 		  
-		  Self.mRequestID = New v4UUID
+		  Self.mRequestID = Beacon.UUID.v4
 		  Self.mURL = Path
 		  Self.mMethod = Method.Uppercase
 		  Self.mCallback = Callback
@@ -249,6 +249,14 @@ Protected Class Request
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RequiresAuthentication"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoRenew"
 			Visible=false
 			Group="Behavior"
 			InitialValue="True"

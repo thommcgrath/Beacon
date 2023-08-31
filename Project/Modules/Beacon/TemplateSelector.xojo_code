@@ -10,7 +10,7 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Constructor(SelectorUUID As String, Label As String, GameId As String, Language As Beacon.TemplateSelector.Languages, Code As String)
 		  If SelectorUUID.IsEmpty Then
-		    SelectorUUID = New v4UUID
+		    SelectorUUID = Beacon.UUID.v4
 		  End If
 		  
 		  Self.mCode = Code

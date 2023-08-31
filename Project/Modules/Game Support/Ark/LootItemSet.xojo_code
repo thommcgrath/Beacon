@@ -9,7 +9,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Self.mSetWeight = 500
 		  Self.mItemsRandomWithoutReplacement = True
 		  Self.mLabel = "Untitled Item Set"
-		  Self.mUUID = New v4UUID
+		  Self.mUUID = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 

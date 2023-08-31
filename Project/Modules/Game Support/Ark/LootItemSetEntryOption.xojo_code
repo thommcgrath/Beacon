@@ -4,7 +4,7 @@ Implements Beacon.Validateable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Sub Constructor(Reference As Ark.BlueprintReference, Weight As Double, UUID As String = "")
 		  If UUID.IsEmpty Then
-		    UUID = New v4UUID
+		    UUID = Beacon.UUID.v4
 		  End If
 		  
 		  Self.mUUID = UUID

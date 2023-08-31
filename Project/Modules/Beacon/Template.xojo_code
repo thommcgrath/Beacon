@@ -3,7 +3,7 @@ Protected Class Template
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mUUID = New v4UUID
+		  Self.mUUID = Beacon.UUID.v4
 		End Sub
 	#tag EndMethod
 

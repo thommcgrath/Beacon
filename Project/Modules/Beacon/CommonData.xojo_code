@@ -410,7 +410,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetTemplateByUUID(TemplateUUID As String) As Beacon.Template
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  Var NullUUID As String = v4UUID.CreateNull
+		  Var NullUUID As String = Beacon.UUID.Null
 		  
 		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateUUID) Then
 		    Return Self.mTemplateCache.Value(UserID + ":" + TemplateUUID)
@@ -440,7 +440,7 @@ Inherits Beacon.DataSource
 		  
 		  Var UserIDs() As String
 		  If (Flags And Self.FlagIncludeOfficialItems) = Self.FlagIncludeOfficialItems Then
-		    UserIDs.Add("'" + v4UUID.CreateNull + "'")
+		    UserIDs.Add("'" + Beacon.UUID.Null + "'")
 		  End If
 		  If (Flags And Self.FlagIncludeUserItems) = Self.FlagIncludeUserItems Then
 		    UserIDs.Add(":user_id")
@@ -492,7 +492,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetTemplateSelectorByUUID(SelectorUUID As String) As Beacon.TemplateSelector
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  Var NullUUID As String = v4UUID.CreateNull
+		  Var NullUUID As String = Beacon.UUID.Null
 		  
 		  If Self.mSelectorCache.HasKey(UserID + ":" + SelectorUUID) Then
 		    Return Self.mSelectorCache.Value(UserID + ":" + SelectorUUID)
@@ -526,7 +526,7 @@ Inherits Beacon.DataSource
 		  
 		  Var UserIDs() As String
 		  If (Flags And Self.FlagIncludeOfficialItems) = Self.FlagIncludeOfficialItems Then
-		    UserIDs.Add("'" + v4UUID.CreateNull + "'")
+		    UserIDs.Add("'" + Beacon.UUID.Null + "'")
 		  End If
 		  If (Flags And Self.FlagIncludeUserItems) = Self.FlagIncludeUserItems Then
 		    UserIDs.Add(":user_id")
@@ -654,7 +654,7 @@ Inherits Beacon.DataSource
 		  Self.BeginTransaction()
 		  Var CacheKey As String
 		  If Official Then
-		    CacheKey = v4UUID.CreateNull + ":" + Template.UUID
+		    CacheKey = Beacon.UUID.Null + ":" + Template.UUID
 		    Self.SQLExecute("INSERT OR REPLACE INTO official_templates (object_id, game_id, label, contents) VALUES (:object_id, :game_id, :label, :contents);", Template.UUID, Template.GameId, Template.Label, Contents)
 		  Else
 		    Var UserID As String = App.IdentityManager.CurrentUserID
@@ -687,7 +687,7 @@ Inherits Beacon.DataSource
 		    
 		    Var CacheKey As String
 		    If Official Then
-		      CacheKey = v4UUID.CreateNull + ":" + TemplateSelector.UUID
+		      CacheKey = Beacon.UUID.Null + ":" + TemplateSelector.UUID
 		      Self.SQLExecute("INSERT OR REPLACE INTO official_template_selectors (object_id, game_id, label, language, code) VALUES (:object_id, :game_id, :label, :language, :code);", TemplateSelector.UUID, TemplateSelector.GameId, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code)
 		    Else
 		      Var UserID As String = App.IdentityManager.CurrentUserID

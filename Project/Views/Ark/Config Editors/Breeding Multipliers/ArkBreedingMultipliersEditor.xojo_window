@@ -667,6 +667,7 @@ Begin ArkConfigEditor ArkBreedingMultipliersEditor
       TabStop         =   False
       Tooltip         =   ""
       Top             =   519
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -1760,22 +1761,22 @@ End
 		    If (ActiveEvent Is Nil) = False Then
 		      Var MatingIntervalMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingIntervalMultiplier")
 		      If (MatingIntervalMultiplierKey Is Nil) = False Then
-		        MatingIntervalMultiplier = MatingIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(MatingIntervalMultiplierKey.UUID)
+		        MatingIntervalMultiplier = MatingIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(MatingIntervalMultiplierKey.ObjectId)
 		      End If
 		      
 		      Var EggHatchSpeedMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EggHatchSpeedMultiplier")
 		      If (EggHatchSpeedMultiplierKey Is Nil) = False Then
-		        EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(EggHatchSpeedMultiplierKey.UUID)
+		        EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(EggHatchSpeedMultiplierKey.ObjectId)
 		      End If
 		      
 		      Var BabyMatureSpeedMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyMatureSpeedMultiplier")
 		      If (BabyMatureSpeedMultiplierKey Is Nil) = False Then
-		        BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(BabyMatureSpeedMultiplierKey.UUID)
+		        BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(BabyMatureSpeedMultiplierKey.ObjectId)
 		      End If
 		      
 		      Var BabyCuddleIntervalMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleIntervalMultiplier")
 		      If (BabyCuddleIntervalMultiplierKey Is Nil) = False Then
-		        BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(BabyCuddleIntervalMultiplierKey.UUID)
+		        BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(BabyCuddleIntervalMultiplierKey.ObjectId)
 		      End If
 		    End If
 		  End If

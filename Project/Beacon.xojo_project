@@ -292,7 +292,6 @@ Class=GenericIterator;Modules/Beacon/GenericIterator.xojo_code;&h00000000717CC7F
 Folder=Sharing Support;Views/Sharing Support;&h0000000027E12FFF;&h0000000008A387FF;false
 DesktopWindow=SharingDialog;Views/Sharing Support/SharingDialog.xojo_window;&h000000006B022FFF;&h0000000027E12FFF;false
 DesktopWindow=ShareWithUserDialog;Views/Sharing Support/ShareWithUserDialog.xojo_window;&h0000000076AF17FF;&h0000000027E12FFF;false
-Class=v4UUID;Modules/FrameworkExtensions/v4UUID.xojo_code;&h000000002DC03FFF;&h0000000053D607FF;false
 Folder=Stat Multipliers;Views/Ark/Config Editors/Stat Multipliers;&h0000000013098FFF;&h00000000434D97FF;false
 DesktopWindow=ArkDayCycleEditor;Views/Ark/Config Editors/Day and Night Cycle/ArkDayCycleEditor.xojo_window;&h000000003944A7FF;&h000000003AEB0FFF;false
 DesktopWindow=ArkStatMultipliersEditor;Views/Ark/Config Editors/Stat Multipliers/ArkStatMultipliersEditor.xojo_window;&h000000007D06FFFF;&h0000000013098FFF;false

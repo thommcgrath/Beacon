@@ -273,34 +273,33 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Value(Key As Ark.ConfigKey) As Variant
-		  Var UUID As String = Key.UUID
-		  If Self.mSettings.HasKey(UUID) = False Then
+		  If Self.mSettings.HasKey(Key.ObjectId) = False Then
 		    Return Nil
 		  End If
 		  
-		  Return Self.mSettings.Value(UUID)
+		  Return Self.mSettings.Value(Key.ObjectId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Value(Key As Ark.ConfigKey, Assigns NewValue As Variant)
-		  Var UUID As String = Key.UUID
+		  Var ObjectId As String = Key.ObjectId
 		  If NewValue.IsNull Then
-		    If Self.mSettings.HasKey(UUID) Then
-		      Self.mSettings.Remove(UUID)
+		    If Self.mSettings.HasKey(ObjectId) Then
+		      Self.mSettings.Remove(ObjectId)
 		      Self.Modified = True
 		      Return
 		    End If
 		  End If
 		  
-		  If Self.mSettings.HasKey(UUID) Then
-		    Var OldValue As Variant = Self.mSettings.Value(UUID)
+		  If Self.mSettings.HasKey(ObjectId) Then
+		    Var OldValue As Variant = Self.mSettings.Value(ObjectId)
 		    If Key.ValuesEqual(OldValue, NewValue) = True Then
 		      Return
 		    End If
 		  End If
 		  
-		  Self.mSettings.Value(UUID) = NewValue
+		  Self.mSettings.Value(ObjectId) = NewValue
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

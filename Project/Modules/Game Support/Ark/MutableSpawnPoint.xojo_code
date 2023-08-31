@@ -350,7 +350,7 @@ Implements Ark.MutableBlueprint
 		      
 		      Var Set As New Ark.MutableSpawnPointSet
 		      Set.Label = SpawnDict.Lookup("label", "Untitled Spawn Set").StringValue
-		      Set.SetId = SpawnDict.Lookup("group_id", v4UUID.Create.StringValue).StringValue
+		      Set.SetId = SpawnDict.Lookup("group_id", Beacon.UUID.v4).StringValue
 		      Set.Weight = SpawnDict.Lookup("weight", 0.1).DoubleValue
 		      For Each Path As String In Creatures
 		        Var Creature As Ark.Creature = Ark.ResolveCreature("", Path, "", Nil)

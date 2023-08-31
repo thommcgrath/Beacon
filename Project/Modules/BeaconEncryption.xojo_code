@@ -203,7 +203,7 @@ Protected Module BeaconEncryption
 		    // Encrypt something to first get a baseline
 		    Var Count As Integer = 50000
 		    Var Salt As MemoryBlock = Crypto.GenerateRandomBytes(32)
-		    Var TestData As MemoryBlock = v4UUID.Create.StringValue
+		    Var TestData As MemoryBlock = Beacon.UUID.v4
 		    
 		    Var Start As Double = System.Microseconds
 		    Call Crypto.PBKDF2(Salt, TestData, Count, 32, Algorithm)

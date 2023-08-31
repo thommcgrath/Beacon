@@ -344,8 +344,7 @@ End
 		    Self.SettingChangeDelegate.Invoke(Key, Value)
 		  End If
 		  
-		  Var UUID As String = Key.UUID
-		  If Self.mDependencies Is Nil Or Self.mDependencies.HasKey(UUID) = False Then
+		  If Self.mDependencies Is Nil Or Self.mDependencies.HasKey(Key.ObjectId) = False Then
 		    Return
 		  End If
 		  
@@ -353,7 +352,7 @@ End
 		    Value = Key.DefaultValue
 		  End If
 		  
-		  Var Dependents() As Dictionary = Self.mDependencies.Value(UUID)
+		  Var Dependents() As Dictionary = Self.mDependencies.Value(Key.ObjectId)
 		  For Each Dict As Dictionary In Dependents
 		    Var TargetKey As Ark.ConfigKey = Dict.Value("Target")
 		    Var RequiredValue As Variant = Dict.Value("RequiredValue")

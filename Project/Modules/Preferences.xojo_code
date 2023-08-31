@@ -48,12 +48,12 @@ Protected Module Preferences
 		    Var Map As New Dictionary
 		    For Each Entry As DictionaryEntry In Dict
 		      Try
-		        Var ProjectUUID As String = Entry.Key.StringValue
+		        Var ProjectId As String = Entry.Key.StringValue
 		        Var State As Dictionary = Entry.Value
 		        Var Timestamp as Double = State.Value("Timestamp").DoubleValue
 		        
 		        Timestamps.Add(Timestamp)
-		        Map.Value(Timestamp) = ProjectUUID
+		        Map.Value(Timestamp) = ProjectId
 		      Catch Err As RuntimeException
 		      End Try
 		    Next Entry
@@ -76,15 +76,10 @@ Protected Module Preferences
 		    If Changed Then
 		      Var Replacement As New Dictionary
 		      For Each Timestamp As Double In Timestamps
-		        Var ProjectUUID As String = Map.Value(Timestamp)
-		        Replacement.Value(ProjectUUID) = Dict.Value(ProjectUUID)
+		        Var ProjectId As String = Map.Value(Timestamp)
+		        Replacement.Value(ProjectId) = Dict.Value(ProjectId)
 		      Next Timestamp
 		      mManager.DictionaryValue("Project State") = Replacement
-		    End If
-		    
-		    Var NewestUsedBuild As Integer = NewestUsedBuild
-		    If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
-		      HardwareIdVersion = 4
 		    End If
 		    
 		    If mManager.StringValue("Device Private Key").IsEmpty = False Then
@@ -652,22 +647,6 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected EntryEditorSize As Size
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.IntegerValue("Hardware Id Version", 5)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.IntegerValue("Hardware Id Version") = Value
-			End Set
-		#tag EndSetter
-		Protected HardwareIdVersion As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

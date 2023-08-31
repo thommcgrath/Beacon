@@ -12,7 +12,7 @@ Protected Class ConfigKey
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.ConfigKey)
-		  Self.mUUID = Source.mUUID
+		  Self.mObjectId = Source.mObjectId
 		  Self.mLabel = Source.mLabel
 		  Self.mFile = Source.mFile
 		  Self.mHeader = Source.mHeader
@@ -40,10 +40,10 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
+		Sub Constructor(ObjectId As String, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
 		  Self.Constructor(File, Header, Key)
 		  
-		  Self.mUUID = ObjectID
+		  Self.mObjectId = ObjectId
 		  Self.mLabel = Label
 		  Self.mValueType = ValueType
 		  Self.mMaxAllowed = MaxAllowed
@@ -167,13 +167,19 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ObjectId() As String
+		  Return Self.mObjectId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Ark.ConfigKey) As Integer
-		  If IsNull(Other) Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  If IsNull(Self.mUUID) = False And IsNull(Other.mUUID) = False Then
-		    Return Self.mUUID.Operator_Compare(Other.mUUID)
+		  If Self.mObjectId = Other.mObjectId Then
+		    Return 0
 		  End If
 		  
 		  Var StringOne As String = Self.Signature
@@ -197,19 +203,13 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UUID() As v4UUID
-		  Return Self.mUUID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function UWPVersion() As Ark.ConfigKey
 		  If Self.mUWPChanges Is Nil Or Self.mUWPChanges.KeyCount = 0 Then
 		    Return Self
 		  End If
 		  
 		  Var Copy As New Ark.ConfigKey(Self)
-		  Copy.mUUID = Nil
+		  Copy.mObjectId = Beacon.UUID.v4
 		  
 		  Var Changed As Boolean
 		  For Each Entry As DictionaryEntry In Self.mUWPChanges
@@ -334,11 +334,11 @@ Protected Class ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUIGroup As NullableString
+		Private mObjectId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUUID As v4UUID
+		Private mUIGroup As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

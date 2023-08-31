@@ -278,6 +278,7 @@ Begin BeaconWindow SupportTicketWindow
          TabStop         =   True
          Tooltip         =   ""
          Top             =   56
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -1112,7 +1113,7 @@ End
 		  Var ArchiveBytes As MemoryBlock = Archive.Finalize
 		  Archive = Nil
 		  
-		  Var Boundary As String = new v4UUID
+		  Var Boundary As String = Beacon.UUID.v4
 		  Var ContentType As String = "multipart/form-data; charset=utf-8; boundary=" + Boundary
 		  
 		  Var Platform As String

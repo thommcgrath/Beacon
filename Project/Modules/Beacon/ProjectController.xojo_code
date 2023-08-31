@@ -104,7 +104,7 @@ Protected Class ProjectController
 
 	#tag Method, Flags = &h0
 		Sub Constructor(GameId As String, WithIdentity As Beacon.Identity)
-		  Self.Constructor(Beacon.ProjectURL.TypeTransient + "://" + v4UUID.Create + "?game=" + EncodeURLComponent(GameId.Lowercase), WithIdentity)
+		  Self.Constructor(Beacon.ProjectURL.TypeTransient + "://" + Beacon.UUID.v4 + "?game=" + EncodeURLComponent(GameId.Lowercase), WithIdentity)
 		End Sub
 	#tag EndMethod
 

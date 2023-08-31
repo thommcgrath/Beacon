@@ -75,6 +75,7 @@ Begin TemplatesComponentView ListTemplatesComponent Implements NotificationKit.R
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -214,7 +215,7 @@ End
 		  Var SaveData As String
 		  Try
 		    Var SaveDict As Dictionary = Source.SaveData
-		    SaveDict.Value("ID") = v4UUID.Create.StringValue
+		    SaveDict.Value("ID") = Beacon.UUID.v4
 		    SaveDict.Value("Label") = Beacon.FindUniqueLabel(SaveDict.Value("Label").StringValue, SiblingNames)
 		    SiblingNames.Add(SaveDict.Value("Label").StringValue)
 		    SaveData = Beacon.GenerateJSON(SaveDict, False)

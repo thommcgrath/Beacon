@@ -476,7 +476,7 @@ End
 		Private Function CreateTemplateSelector() As Beacon.TemplateSelector
 		  Var SelectorUUID As String
 		  If Self.mSourceSelector Is Nil Then
-		    SelectorUUID = New v4UUID
+		    SelectorUUID = Beacon.UUID.v4
 		  Else
 		    SelectorUUID = Self.mSourceSelector.UUID
 		  End If

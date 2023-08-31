@@ -201,7 +201,7 @@ Inherits Ark.IntegrationEngine
 		    Return
 		  End If
 		  
-		  Var Boundary As String = new v4UUID
+		  Var Boundary As String = Beacon.UUID.v4
 		  Var ContentType As String = "multipart/form-data; charset=utf-8; boundary=" + Boundary
 		  Var Parts() As String
 		  Parts.Add("Content-Disposition: form-data; name=""content""" + EndOfLine.Windows + EndOfLine.Windows + Transfer.Content)
