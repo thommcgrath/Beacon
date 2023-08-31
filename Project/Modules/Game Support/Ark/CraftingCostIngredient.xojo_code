@@ -45,44 +45,31 @@ Protected Class CraftingCostIngredient
 		    Return Nil
 		  End If
 		  
-		  If Dict.HasAllKeys("engram", "quantity", "exact") Then
-		    Try
-		      Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("engram"))
-		      If Reference Is Nil Then
+		  Try
+		    Var BlueprintId As String = Dict.FirstValue("engramId", "object_id", "EngramID", "")
+		    Var BlueprintPath As String = Dict.FirstValue("path", "Path", "")
+		    Var BlueprintClass As String = Dict.FirstValue("class", "Class", "")
+		    Var Blueprint As Dictionary = Dict.FirstValue("blueprint", "Blueprint", "engram", "Engram", Nil)
+		    Var Quantity As Double = Dict.FirstValue("quantity", "Quantity", 0.0)
+		    Var Exact As Boolean = Dict.FirstValue("exact", "Exact", False)
+		    
+		    Var Reference As Ark.BlueprintReference
+		    If (Blueprint Is Nil) = False Then
+		      Reference = Ark.BlueprintReference.FromSaveData(Blueprint)
+		    End If
+		    If Reference Is Nil Then
+		      If BlueprintId.IsEmpty = False Or BlueprintPath.IsEmpty = False Or BlueprintClass.IsEmpty = False Then
+		        Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindEngram, BlueprintId, BlueprintPath, BlueprintClass, "", "")
+		      Else
 		        Return Nil
 		      End If
-		      Var Quantity As Double = Dict.Value("quantity")
-		      Var Exact As Boolean = Dict.Value("exact")
-		      
-		      Return New Ark.CraftingCostIngredient(Reference, Quantity, Exact)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  ElseIf Dict.HasAllKeys("Blueprint", "Quantity", "Exact") Then
-		    Try
-		      Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
-		      If Reference Is Nil Then
-		        Return Nil
-		      End If
-		      Var Quantity As Double = Dict.Value("Quantity")
-		      Var Exact As Boolean = Dict.Value("Exact")
-		      
-		      Return New Ark.CraftingCostIngredient(Reference, Quantity, Exact)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  ElseIf (Dict.HasKey("object_id") Or Dict.HasKey("path")) And Dict.HasKey("quantity") And Dict.HasKey("exact") Then
-		    Try
-		      Var Ref As Ark.BlueprintReference = Ark.BlueprintReference.CreateFromDict(Ark.BlueprintReference.KindEngram, Dict, "object_id", "path", "", "")
-		      Var Quantity As Double = Dict.Value("quantity")
-		      Var Exact As Boolean = Dict.Value("exact")
-		      Return New Ark.CraftingCostIngredient(Ref, Quantity, Exact)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  Else
+		    End If
+		    
+		    Return New Ark.CraftingCostIngredient(Reference, Quantity, Exact)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Loading crafting cost ingredient")
 		    Return Nil
-		  End If
+		  End Try
 		  
 		  
 		End Function
@@ -161,7 +148,7 @@ Protected Class CraftingCostIngredient
 	#tag Method, Flags = &h0
 		Function Pack() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("engram") = Self.mEngramRef.SaveData
+		  Dict.Value("engramId") = Self.mEngramRef.BlueprintId
 		  Dict.Value("quantity") = Self.mQuantity
 		  Dict.Value("exact") = Self.mRequireExact
 		  Return Dict
@@ -188,12 +175,10 @@ Protected Class CraftingCostIngredient
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
-		  // Yes, this looks just like Pack()
-		  
 		  Var Dict As New Dictionary
-		  Dict.Value("Blueprint") = Self.mEngramRef.SaveData
-		  Dict.Value("Quantity") = Self.mQuantity
-		  Dict.Value("Exact") = Self.mRequireExact
+		  Dict.Value("engram") = Self.mEngramRef.SaveData
+		  Dict.Value("quantity") = Self.mQuantity
+		  Dict.Value("exact") = Self.mRequireExact
 		  Return Dict
 		End Function
 	#tag EndMethod
