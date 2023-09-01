@@ -859,11 +859,11 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Creature
-		  Var ObjectID, Path, ClassString As String
+		Protected Function ResolveCreature(Dict As Dictionary, CreatureIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Creature
+		  Var CreatureId, Path, ClassString As String
 		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		  If CreatureIdKey.IsEmpty = False And Dict.HasKey(CreatureIdKey) Then
+		    CreatureId = Dict.Value(CreatureIdKey)
 		  End If
 		  
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
@@ -874,15 +874,15 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveCreature(ObjectID, Path, ClassString, ContentPacks)
+		  Return Ark.ResolveCreature(CreatureId, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature
-		  If ObjectID.IsEmpty = False Then
+		Protected Function ResolveCreature(CreatureId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature
+		  If CreatureId.IsEmpty = False Then
 		    Try
-		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(ObjectID)
+		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(CreatureId)
 		      If (Creature Is Nil) = False Then
 		        Return Creature
 		      End If
@@ -912,19 +912,19 @@ Protected Module Ark
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
-		    Return ResolveCreature(ObjectID, Path, ClassString, Nil)
+		    Return ResolveCreature(CreatureId, Path, ClassString, Nil)
 		  End If
 		  
-		  Return Ark.Creature.CreateCustom(ObjectID, Path, ClassString)
+		  Return Ark.Creature.CreateCustom(CreatureId, Path, ClassString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Engram
-		  Var ObjectID, Path, ClassString As String
+		Protected Function ResolveEngram(Dict As Dictionary, EngramIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Engram
+		  Var EngramId, Path, ClassString As String
 		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		  If EngramIdKey.IsEmpty = False And Dict.HasKey(EngramIdKey) Then
+		    EngramId = Dict.Value(EngramIdKey)
 		  End If
 		  
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
@@ -935,15 +935,15 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveEngram(ObjectID, Path, ClassString, ContentPacks)
+		  Return Ark.ResolveEngram(EngramId, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram
-		  If ObjectID.IsEmpty = False Then
+		Protected Function ResolveEngram(EngramId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram
+		  If EngramId.IsEmpty = False Then
 		    Try
-		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram(ObjectID)
+		      Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram(EngramId)
 		      If (Engram Is Nil) = False Then
 		        Return Engram
 		      End If
@@ -973,19 +973,19 @@ Protected Module Ark
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
-		    Return ResolveEngram(ObjectID, Path, ClassString, Nil)
+		    Return ResolveEngram(EngramId, Path, ClassString, Nil)
 		  End If
 		  
-		  Return Ark.Engram.CreateCustom(ObjectID, Path, ClassString)
+		  Return Ark.Engram.CreateCustom(EngramId, Path, ClassString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveLootContainer(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
-		  Var ObjectID, Path, ClassString As String
+		Protected Function ResolveLootContainer(Dict As Dictionary, LootDropIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
+		  Var LootDropId, Path, ClassString As String
 		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		  If LootDropIdKey.IsEmpty = False And Dict.HasKey(LootDropIdKey) Then
+		    LootDropId = Dict.Value(LootDropIdKey)
 		  End If
 		  
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
@@ -996,15 +996,15 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveLootContainer(ObjectID, Path, ClassString, ContentPacks)
+		  Return Ark.ResolveLootContainer(LootDropId, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveLootContainer(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
-		  If ObjectID.IsEmpty = False Then
+		Protected Function ResolveLootContainer(LootDropId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
+		  If LootDropId.IsEmpty = False Then
 		    Try
-		      Var LootContainer As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainer(ObjectID)
+		      Var LootContainer As Ark.LootContainer = Ark.DataSource.Pool.Get(False).GetLootContainer(LootDropId)
 		      If (LootContainer Is Nil) = False Then
 		        Return LootContainer
 		      End If
@@ -1034,19 +1034,19 @@ Protected Module Ark
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
-		    Return ResolveLootContainer(ObjectID, Path, ClassString, Nil)
+		    Return ResolveLootContainer(LootDropId, Path, ClassString, Nil)
 		  End If
 		  
-		  Return Ark.LootContainer.CreateCustom(ObjectID, Path, ClassString)
+		  Return Ark.LootContainer.CreateCustom(LootDropId, Path, ClassString)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
-		  Var ObjectID, Path, ClassString As String
+		Protected Function ResolveSpawnPoint(Dict As Dictionary, SpawnPointIdKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
+		  Var SpawnPointId, Path, ClassString As String
 		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
+		  If SpawnPointIdKey.IsEmpty = False And Dict.HasKey(SpawnPointIdKey) Then
+		    SpawnPointId = Dict.Value(SpawnPointIdKey)
 		  End If
 		  
 		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
@@ -1057,15 +1057,15 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveSpawnPoint(ObjectID, Path, ClassString, ContentPacks)
+		  Return Ark.ResolveSpawnPoint(SpawnPointId, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
-		  If ObjectID.IsEmpty = False Then
+		Protected Function ResolveSpawnPoint(SpawnPointId As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
+		  If SpawnPointId.IsEmpty = False Then
 		    Try
-		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPoint(ObjectID)
+		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPoint(SpawnPointId)
 		      If (SpawnPoint Is Nil) = False Then
 		        Return SpawnPoint
 		      End If
@@ -1095,10 +1095,10 @@ Protected Module Ark
 		  
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    // Could not find it using the enabled mods, so let's look through everything
-		    Return ResolveSpawnPoint(ObjectID, Path, ClassString, Nil)
+		    Return ResolveSpawnPoint(SpawnPointId, Path, ClassString, Nil)
 		  End If
 		  
-		  Return Ark.SpawnPoint.CreateCustom(ObjectID, Path, ClassString)
+		  Return Ark.SpawnPoint.CreateCustom(SpawnPointId, Path, ClassString)
 		End Function
 	#tag EndMethod
 

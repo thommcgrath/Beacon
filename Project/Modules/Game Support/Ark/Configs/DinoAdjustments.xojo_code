@@ -107,7 +107,7 @@ Inherits Ark.ConfigGroup
 		      Return
 		    End If
 		    
-		    Self.mBehaviors.Value(Behavior.ObjectID) = Behavior
+		    Self.mBehaviors.Value(Behavior.CreatureId) = Behavior
 		  Next
 		End Sub
 	#tag EndEvent
@@ -135,18 +135,18 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Behavior(Creature As Ark.Creature) As Ark.CreatureBehavior
-		  If Not Self.mBehaviors.HasKey(Creature.ObjectID) Then
+		  If Not Self.mBehaviors.HasKey(Creature.CreatureId) Then
 		    Return Nil
 		  End If
 		  
-		  Var Behavior As Ark.CreatureBehavior = Ark.CreatureBehavior(Self.mBehaviors.Value(Creature.ObjectID))
+		  Var Behavior As Ark.CreatureBehavior = Ark.CreatureBehavior(Self.mBehaviors.Value(Creature.CreatureId))
 		  Return New Ark.CreatureBehavior(Behavior)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Behavior(Creature As Ark.Creature, Assigns Behavior As Ark.CreatureBehavior)
-		  Self.mBehaviors.Value(Creature.ObjectID) = New Ark.CreatureBehavior(Behavior)
+		  Self.mBehaviors.Value(Creature.CreatureId) = New Ark.CreatureBehavior(Behavior)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -367,8 +367,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub RemoveBehavior(Creature As Ark.Creature)
-		  If Self.mBehaviors.HasKey(Creature.ObjectID) Then
-		    Self.mBehaviors.Remove(Creature.ObjectID)
+		  If Self.mBehaviors.HasKey(Creature.CreatureId) Then
+		    Self.mBehaviors.Remove(Creature.CreatureId)
 		    Self.Modified = True
 		  End If
 		End Sub

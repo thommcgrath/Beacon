@@ -53,12 +53,12 @@ Inherits Thread
 		      Continue
 		    End If
 		    
-		    If Handled.HasKey(SpawnPoint.ObjectID) Then
+		    If Handled.HasKey(SpawnPoint.SpawnPointId) Then
 		      Continue
 		    End If
 		    
 		    If SpawnPoint.Mode <> Ark.SpawnPoint.ModeOverride Then
-		      Var Default As Ark.SpawnPoint = Database.GetSpawnPoint(SpawnPoint.ObjectID)
+		      Var Default As Ark.SpawnPoint = Database.GetSpawnPoint(SpawnPoint.SpawnPointId)
 		      If Default Is Nil Then
 		        Continue
 		      End If
@@ -69,9 +69,9 @@ Inherits Thread
 		      Var AppendConfig, RemoveConfig As Ark.SpawnPoint
 		      If SpawnPoint.Mode = Ark.SpawnPoint.ModeAppend Then
 		        AppendConfig = SpawnPoint
-		        RemoveConfig = Ark.Configs.SpawnPoints(SpawnConfig).GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeRemove)
+		        RemoveConfig = Ark.Configs.SpawnPoints(SpawnConfig).GetSpawnPoint(SpawnPoint.SpawnPointId, Ark.SpawnPoint.ModeRemove)
 		      ElseIf SpawnPoint.Mode = Ark.SpawnPoint.ModeRemove Then
-		        AppendConfig = Ark.Configs.SpawnPoints(SpawnConfig).GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeAppend)
+		        AppendConfig = Ark.Configs.SpawnPoints(SpawnConfig).GetSpawnPoint(SpawnPoint.SpawnPointId, Ark.SpawnPoint.ModeAppend)
 		        RemoveConfig = SpawnPoint
 		      Else
 		        App.Log("Spawn point mode " + SpawnPoint.Mode.ToString(Locale.Raw, "0") + " for " + SpawnPoint.ClassString + " does not make sense.")
@@ -136,7 +136,7 @@ Inherits Thread
 		    
 		    // Start simulating
 		    
-		    Handled.Value(SpawnPoint.ObjectID) = True
+		    Handled.Value(SpawnPoint.SpawnPointId) = True
 		  Next SpawnPoint
 		End Sub
 	#tag EndEvent

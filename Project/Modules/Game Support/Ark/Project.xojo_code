@@ -481,9 +481,9 @@ Inherits Beacon.Project
 		          SpawnConfig.IsImplicit = False
 		        End If
 		        
-		        Var Override As Ark.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeAppend)
+		        Var Override As Ark.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.SpawnPointId, Ark.SpawnPoint.ModeAppend)
 		        If Override = Nil Then
-		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeOverride)
+		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.SpawnPointId, Ark.SpawnPoint.ModeOverride)
 		        End If
 		        If Override = Nil Then
 		          Override = New Ark.MutableSpawnPoint(SpawnPoint)

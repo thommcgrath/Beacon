@@ -350,25 +350,25 @@ End
 		  Var SelectableCreatures() As Ark.Creature
 		  Var Map As New Dictionary
 		  If (Self.mSelectedCreature Is Nil) = False Then
-		    Map.Value(Self.mSelectedCreature.ObjectID) = Self.mSelectedCreature
+		    Map.Value(Self.mSelectedCreature.CreatureId) = Self.mSelectedCreature
 		  End If 
 		  For Each Creature As Ark.Creature In DefinedCreatures
 		    If Creature Is Nil Then
 		      Continue
 		    End If
 		    
-		    Map.Value(Creature.ObjectID) = Creature
+		    Map.Value(Creature.CreatureId) = Creature
 		  Next
 		  
 		  Var CreatureLabels() As String
 		  For Each Creature As Ark.Creature In CreaturesInSpawnPoint
-		    If Creature Is Nil Or Map.HasKey(Creature.ObjectID) Then
+		    If Creature Is Nil Or Map.HasKey(Creature.CreatureId) Then
 		      Continue
 		    End If
 		    
 		    SelectableCreatures.Add(Creature)
 		    CreatureLabels.Add(Creature.Label)
-		    Map.Value(Creature.ObjectID) = Creature
+		    Map.Value(Creature.CreatureId) = Creature
 		  Next
 		  CreatureLabels.SortWith(SelectableCreatures)
 		  
@@ -383,7 +383,7 @@ End
 		  
 		  Var AllCreatures() As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreatures("", Mods, "")
 		  For Each Creature As Ark.Creature In AllCreatures
-		    If IsNull(Creature) Or Map.HasKey(Creature.ObjectID) Then
+		    If IsNull(Creature) Or Map.HasKey(Creature.CreatureId) Then
 		      Continue
 		    End If
 		    

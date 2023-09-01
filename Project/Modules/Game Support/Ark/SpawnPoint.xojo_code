@@ -168,7 +168,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		          End If
 		          
 		          Var MaxPercentage As Double = Manager.Value(Reference, LimitAttribute)
-		          SpawnPoint.mLimits.Value(Reference.ObjectId) = MaxPercentage
+		          SpawnPoint.mLimits.Value(Reference.BlueprintId) = MaxPercentage
 		        Next
 		      Else
 		        Var Limits As Dictionary = Dict.Value("Limits")
@@ -366,7 +366,7 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
+		Attributes( Deprecated = "SpawnPointId" )  Function ObjectID() As String
 		  // Part of the Ark.Blueprint interface.
 		  
 		  Return Self.mSpawnPointId

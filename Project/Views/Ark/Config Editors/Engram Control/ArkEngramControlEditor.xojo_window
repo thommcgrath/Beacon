@@ -456,7 +456,7 @@ End
 		  Var OldEngramRows As New Dictionary
 		  For Idx As Integer = 0 To Self.EngramList.LastRowIndex
 		    Var Engram As Ark.Engram = Self.EngramList.RowTagAt(Idx)
-		    OldEngramRows.Value(Engram.ObjectID) = Self.EngramList.CellTextAt(Idx, 1)
+		    OldEngramRows.Value(Engram.EngramId) = Self.EngramList.CellTextAt(Idx, 1)
 		  Next Idx
 		  Return OldEngramRows
 		End Function
@@ -467,7 +467,7 @@ End
 		  Var SelectEngrams() As Ark.Engram
 		  For Idx As Integer = 0 To Self.EngramList.LastRowIndex
 		    Var Engram As Ark.Engram = Self.EngramList.RowTagAt(Idx)
-		    If OldEngramRows.HasKey(Engram.ObjectID) = False Or OldEngramRows.Value(Engram.ObjectID).StringValue <> Self.EngramList.CellTextAt(Idx, 1) Then
+		    If OldEngramRows.HasKey(Engram.EngramId) = False Or OldEngramRows.Value(Engram.EngramId).StringValue <> Self.EngramList.CellTextAt(Idx, 1) Then
 		      SelectEngrams.Add(Engram)
 		    End If
 		  Next Idx
@@ -517,12 +517,12 @@ End
 		    Var Bound As Integer = Self.EngramList.LastRowIndex
 		    For Idx As Integer = 0 To Bound
 		      If Self.EngramList.RowSelectedAt(Idx) Then
-		        Selected.Add(Ark.Engram(Self.EngramList.RowTagAt(Idx)).ObjectID)
+		        Selected.Add(Ark.Engram(Self.EngramList.RowTagAt(Idx)).EngramId)
 		      End If
 		    Next
 		  Else
 		    For Each Engram As Ark.Engram In SelectEngrams
-		      Selected.Add(Engram.ObjectID)
+		      Selected.Add(Engram.EngramId)
 		    Next
 		  End If
 		  
@@ -593,7 +593,7 @@ End
 		    End If
 		    
 		    Self.EngramList.CellTextAt(Idx, 1) = Behaviors.Join("; ")
-		    Self.EngramList.RowSelectedAt(Idx) = Selected.IndexOf(Engram.ObjectID) > -1
+		    Self.EngramList.RowSelectedAt(Idx) = Selected.IndexOf(Engram.EngramId) > -1
 		  Next
 		  
 		  Self.EngramList.Sort()

@@ -9,11 +9,11 @@ Inherits Ark.ConfigGroup
 		    Var SpawnPoint As Ark.SpawnPoint = Entry.Value
 		    If SpawnPoint.Mode = Ark.SpawnPoint.ModeOverride Then
 		      // Remove add and subtract
-		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeAppend))
-		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeRemove))
+		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.SpawnPointId, Ark.SpawnPoint.ModeAppend))
+		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.SpawnPointId, Ark.SpawnPoint.ModeRemove))
 		    Else
 		      // Remove replace
-		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeOverride))
+		      Self.Remove(Ark.SpawnPoint.UniqueKey(SpawnPoint.SpawnPointId, Ark.SpawnPoint.ModeOverride))
 		    End If
 		    
 		    Self.Add(New Ark.SpawnPoint(SpawnPoint))
@@ -329,8 +329,8 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPoint(ObjectID As String, Mode As Integer) As Ark.SpawnPoint
-		  Var Key As String = ObjectID
+		Function GetSpawnPoint(SpawnPointId As String, Mode As Integer) As Ark.SpawnPoint
+		  Var Key As String = SpawnPointId
 		  Select Case Mode
 		  Case Ark.SpawnPoint.ModeOverride
 		    Key = Key + ":Override"

@@ -49,6 +49,12 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreatureId() As String
+		  Return Self.mTargetCreature.BlueprintId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DamageMultiplier() As Double
 		  Return Self.mDamageMultiplier
 		End Function
@@ -118,8 +124,8 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
-		  Return Self.mTargetCreature.ObjectID
+		Attributes( Deprecated = "CreatureId" )  Function ObjectID() As String
+		  Return Self.mTargetCreature.BlueprintId
 		End Function
 	#tag EndMethod
 

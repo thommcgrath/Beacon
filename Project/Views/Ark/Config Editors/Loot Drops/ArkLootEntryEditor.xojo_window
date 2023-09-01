@@ -700,7 +700,7 @@ End
 		Private Sub SetupUI(Prefilter As String = "")
 		  If Self.mOriginalEntry <> Nil Then
 		    For Each Option As Ark.LootItemSetEntryOption In Self.mOriginalEntry
-		      Self.mSelectedEngrams.Value(Option.Engram.ObjectID) = Option
+		      Self.mSelectedEngrams.Value(Option.Engram.EngramId) = Option
 		    Next
 		    Self.SingleItemCheckbox.Value = Self.mOriginalEntry.SingleItemQuantity
 		  End If
@@ -732,15 +732,15 @@ End
 		  Self.mEngramRowIndexes = New Dictionary
 		  For Each Engram As Ark.Engram In Engrams
 		    Var Weight As String = ""
-		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
-		      Var WeightValue As Double = Ark.LootItemSetEntryOption(Self.mSelectedEngrams.Value(Engram.ObjectID)).RawWeight * 100
+		    If Self.mSelectedEngrams.HasKey(Engram.EngramId) Then
+		      Var WeightValue As Double = Ark.LootItemSetEntryOption(Self.mSelectedEngrams.Value(Engram.EngramId)).RawWeight * 100
 		      Weight = WeightValue.PrettyText
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ContentPackName, Weight)
 		    EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Engram
-		    Self.mEngramRowIndexes.Value(Engram.ObjectID) = EngramList.LastAddedRowIndex
-		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.ObjectID)
+		    Self.mEngramRowIndexes.Value(Engram.EngramId) = EngramList.LastAddedRowIndex
+		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.EngramId)
 		  Next
 		  
 		  Self.ListUnknownEngrams()
@@ -887,7 +887,7 @@ End
 		  Case Self.ColumnIncluded
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    If Checked Then
-		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = False Then
+		      If Self.mSelectedEngrams.HasKey(Engram.EngramId) = False Then
 		        Var WeightString As String = Me.CellTextAt(Row, Self.ColumnWeight)
 		        If WeightString = "" Then
 		          WeightString = "50"
@@ -896,21 +896,21 @@ End
 		        
 		        Var Weight As Double = Abs(CDbl(WeightString)) / 100
 		        Var Option As New Ark.LootItemSetEntryOption(Engram, Weight)
-		        Self.mSelectedEngrams.Value(Engram.ObjectID) = Option
+		        Self.mSelectedEngrams.Value(Engram.EngramId) = Option
 		      Else
 		        Return
 		      End If
 		    Else
-		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = True Then
-		        Self.mSelectedEngrams.Remove(Engram.ObjectID)
+		      If Self.mSelectedEngrams.HasKey(Engram.EngramId) = True Then
+		        Self.mSelectedEngrams.Remove(Engram.EngramId)
 		      Else
 		        Return
 		      End If
 		    End If
 		  Case Self.ColumnWeight
-		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
+		    If Self.mSelectedEngrams.HasKey(Engram.EngramId) Then
 		      Var Weight As Double = Abs(CDbl(Me.CellTextAt(Row, Column))) / 100
-		      Self.mSelectedEngrams.Value(Engram.ObjectID) = New Ark.LootItemSetEntryOption(Engram, Weight)
+		      Self.mSelectedEngrams.Value(Engram.EngramId) = New Ark.LootItemSetEntryOption(Engram, Weight)
 		    End If
 		  Else
 		    Return

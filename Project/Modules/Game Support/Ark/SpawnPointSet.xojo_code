@@ -217,7 +217,7 @@ Implements Beacon.Countable,Ark.Weighted
 		          ElseIf CreatureData.Type = Variant.TypeObject Then
 		            Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dictionary(CreatureData))
 		            If (CreatureRef Is Nil) = False Then
-		              FromCreatureId = CreatureRef.ObjectID
+		              FromCreatureId = CreatureRef.BlueprintId
 		            End If
 		          End If
 		          
@@ -232,7 +232,7 @@ Implements Beacon.Countable,Ark.Weighted
 		              Else
 		                Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dictionary(CreatureData))
 		                If (CreatureRef Is Nil) = False Then
-		                  Set.CreatureReplacementWeight(FromCreatureId, CreatureRef.ObjectID) = ReplacementWeight
+		                  Set.CreatureReplacementWeight(FromCreatureId, CreatureRef.BlueprintId) = ReplacementWeight
 		                End If
 		              End If
 		            Next
@@ -259,7 +259,7 @@ Implements Beacon.Countable,Ark.Weighted
 		            Var ReplacementBlueprints() As Ark.BlueprintReference = Options.References
 		            For Each ReplacementBlueprint As Ark.BlueprintReference In ReplacementBlueprints
 		              Var ReplacementWeight As Double = Options.Value(ReplacementBlueprint, "Weight")
-		              Set.CreatureReplacementWeight(Blueprint.ObjectID, ReplacementBlueprint.ObjectID) = ReplacementWeight
+		              Set.CreatureReplacementWeight(Blueprint.BlueprintId, ReplacementBlueprint.BlueprintId) = ReplacementWeight
 		            Next
 		          Next
 		        Else

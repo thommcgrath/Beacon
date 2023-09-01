@@ -813,7 +813,7 @@ End
 		  
 		  Var MapLabels As New Dictionary
 		  For Each Container As Ark.LootContainer In AllowedLootContainers
-		    Var RowText As String = Labels.Lookup(Container.ObjectID, Container.Label)
+		    Var RowText As String = Labels.Lookup(Container.LootDropId, Container.Label)
 		    If Container.Notes.IsEmpty = False Then
 		      RowText = RowText + EndOfLine + Container.Notes
 		    Else

@@ -548,7 +548,7 @@ End
 		  Containers.Sort
 		  
 		  For Each Container As Ark.LootContainer In Containers
-		    Menu.AddMenu(New DesktopMenuItem(Labels.Lookup(Container.ObjectID, Container.Label), Container))
+		    Menu.AddMenu(New DesktopMenuItem(Labels.Lookup(Container.LootDropId, Container.Label), Container))
 		  Next
 		  
 		  If HasExperimentalContainers Then
@@ -730,7 +730,7 @@ End
 		  For I As Integer = 0 To VisibleContainers.LastIndex
 		    Self.List.RowTagAt(I) = VisibleContainers(I)
 		    Self.List.CellTextAt(I, 0) = "" // Causes a redraw of the cell
-		    Self.List.CellTextAt(I, 1) = Labels.Lookup(VisibleContainers(I).ObjectID, VisibleContainers(I).Label)
+		    Self.List.CellTextAt(I, 1) = Labels.Lookup(VisibleContainers(I).LootDropId, VisibleContainers(I).Label)
 		    If SelectedClasses.IndexOf(VisibleContainers(I).ClassString) > -1 Then
 		      Self.List.RowSelectedAt(I) = True
 		      Selection.Add(VisibleContainers(I))

@@ -169,6 +169,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       TabStop         =   True
       Tooltip         =   ""
       Top             =   86
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -515,7 +516,7 @@ End
 		      For Each Creature As Ark.Creature In Creatures
 		        Var CreatureSpawnPoints() As Ark.SpawnPoint = Ark.DataSource.Pool.Get(False).GetSpawnPointsForCreature(Creature, Self.mMods, "")
 		        For Each SpawnPoint As Ark.SpawnPoint In CreatureSpawnPoints
-		          UniqueSpawnPoints.Value(SpawnPoint.ObjectID) = SpawnPoint
+		          UniqueSpawnPoints.Value(SpawnPoint.SpawnPointId) = SpawnPoint
 		        Next
 		      Next
 		      
@@ -533,11 +534,11 @@ End
 		      Continue
 		    End If
 		    
-		    If Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Remove")) Then
+		    If Self.mDefinedSpawns.HasKey(SpawnPoint.SpawnPointId + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.SpawnPointId + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.SpawnPointId + ":Remove")) Then
 		      Continue
 		    End If
 		    
-		    Self.List.AddRow(Labels.Lookup(SpawnPoint.ObjectID, SpawnPoint.Label).StringValue)
+		    Self.List.AddRow(Labels.Lookup(SpawnPoint.SpawnPointId, SpawnPoint.Label).StringValue)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = SpawnPoint
 		  Next
 		  Self.List.SortingColumn = 0
@@ -671,14 +672,14 @@ End
 		    
 		    Var DefinedModes As Integer
 		    Var Point As Ark.SpawnPoint = Me.RowTagAt(I)
-		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Override") Then
+		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Override") Then
 		      // Include Append and Remove here so they cannot be selected if Override is already defined
 		      DefinedModes = DefinedModes Or Ark.SpawnPoint.ModeOverride Or Ark.SpawnPoint.ModeAppend Or Ark.SpawnPoint.ModeRemove
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Append") Then
+		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Append") Then
 		      DefinedModes = DefinedModes Or Ark.SpawnPoint.ModeOverride Or Ark.SpawnPoint.ModeAppend
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Remove") Then
+		    If Self.mDefinedSpawns.HasKey(Point.SpawnPointId + ":Remove") Then
 		      DefinedModes = DefinedModes Or Ark.SpawnPoint.ModeOverride Or Ark.SpawnPoint.ModeRemove
 		    End If
 		    

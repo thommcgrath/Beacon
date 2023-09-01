@@ -344,7 +344,7 @@ End
 		    Self.SettingChangeDelegate.Invoke(Key, Value)
 		  End If
 		  
-		  Var KeyId As String = Key.ObjectId
+		  Var KeyId As String = Key.ConfigOptionId
 		  If Self.mDependencies Is Nil Or Self.mDependencies.HasKey(KeyId) = False Then
 		    Return
 		  End If

@@ -490,7 +490,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		        Continue
 		      End If
 		      
-		      Var Key As String = Option.Engram.ObjectID
+		      Var Key As String = Option.Engram.EngramId
 		      If Key = "" Then
 		        Continue
 		      End If

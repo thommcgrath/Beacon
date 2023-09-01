@@ -490,31 +490,31 @@ Protected Module Tests
 		  // Now we need to test Beacon's ability to resolve saved data into various objects
 		  Const DrakeSaddleID = "d45d0691-a430-4443-98e3-bcc501067317"
 		  Var ObjectData As New Dictionary
-		  ObjectData.Value("ObjectID") = DrakeSaddleID
+		  ObjectData.Value("EngramId") = DrakeSaddleID
 		  ObjectData.Value("Path") = "/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle"
 		  ObjectData.Value("Class") = "PrimalItemArmor_RockDrakeSaddle_C"
 		  
-		  Var Engram As Ark.Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Var Engram As Ark.Engram = Ark.ResolveEngram(ObjectData, "EngramId", "Path", "Class", Nil)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
-		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Engram = Ark.ResolveEngram(ObjectData, "EngramId", "", "", Nil)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
 		  Engram = Ark.ResolveEngram(ObjectData, "", "", "Class", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
 		  Engram = Ark.ResolveEngram(ObjectData, "", "Path", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
 		  // Now use faulty data and see how it resolves
 		  Const BadEngramID = "fd8b3b03-781b-4211-bc42-38a8639df878"
-		  ObjectData.Value("ObjectID") = BadEngramID
+		  ObjectData.Value("EngramId") = BadEngramID
 		  
-		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
+		  Engram = Ark.ResolveEngram(ObjectData, "EngramId", "Path", "Class", Nil)
+		  Call Assert(Engram <> Nil And Engram.EngramId = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.EngramId)
 		  
-		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID)
+		  Engram = Ark.ResolveEngram(ObjectData, "EngramId", "", "", Nil)
+		  Call Assert(Engram <> Nil And Engram.EngramId = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.EngramId)
 		End Sub
 	#tag EndMethod
 

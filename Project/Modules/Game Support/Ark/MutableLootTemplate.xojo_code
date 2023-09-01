@@ -27,8 +27,8 @@ Inherits Ark.LootTemplate
 		    End If
 		    
 		    For Each Option As Ark.LootItemSetEntryOption In Self.mEntries(Idx)
-		      If References.HasKey(Option.Reference.ObjectID) = False Then
-		        References.Value(Option.Reference.ObjectID) = Option.Reference
+		      If References.HasKey(Option.Reference.BlueprintId) = False Then
+		        References.Value(Option.Reference.BlueprintId) = Option.Reference
 		      End If
 		    Next Option
 		    

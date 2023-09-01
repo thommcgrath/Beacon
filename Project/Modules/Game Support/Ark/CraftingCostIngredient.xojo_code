@@ -138,8 +138,8 @@ Protected Class CraftingCostIngredient
 		    Return 1
 		  End If
 		  
-		  Var MyKey As String = Self.mEngramRef.ObjectID + ":" + Self.mQuantity.PrettyText + ":" + If(Self.mRequireExact, "True", "False")
-		  Var OtherKey As String = Other.mEngramRef.ObjectID + ":" + Other.mQuantity.PrettyText + ":" + If(Other.mRequireExact, "True", "False")
+		  Var MyKey As String = Self.mEngramRef.BlueprintId + ":" + Self.mQuantity.PrettyText + ":" + If(Self.mRequireExact, "True", "False")
+		  Var OtherKey As String = Other.mEngramRef.BlueprintId + ":" + Other.mQuantity.PrettyText + ":" + If(Other.mRequireExact, "True", "False")
 		  
 		  Return MyKey.Compare(OtherKey, ComparisonOptions.CaseInsensitive)
 		End Function

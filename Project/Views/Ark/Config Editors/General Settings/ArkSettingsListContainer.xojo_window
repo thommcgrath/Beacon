@@ -344,7 +344,7 @@ End
 		    Self.SettingChangeDelegate.Invoke(Key, Value)
 		  End If
 		  
-		  If Self.mDependencies Is Nil Or Self.mDependencies.HasKey(Key.ObjectId) = False Then
+		  If Self.mDependencies Is Nil Or Self.mDependencies.HasKey(Key.ConfigKeyId) = False Then
 		    Return
 		  End If
 		  
@@ -352,7 +352,7 @@ End
 		    Value = Key.DefaultValue
 		  End If
 		  
-		  Var Dependents() As Dictionary = Self.mDependencies.Value(Key.ObjectId)
+		  Var Dependents() As Dictionary = Self.mDependencies.Value(Key.ConfigKeyId)
 		  For Each Dict As Dictionary In Dependents
 		    Var TargetKey As Ark.ConfigKey = Dict.Value("Target")
 		    Var RequiredValue As Variant = Dict.Value("RequiredValue")

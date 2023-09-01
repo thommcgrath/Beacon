@@ -205,7 +205,7 @@ End
 		  Var Selections() As String
 		  For Each Behavior As Ark.CreatureBehavior In Behaviors
 		    Config.Add(Behavior)
-		    Selections.Add(Behavior.TargetCreature.ObjectID)
+		    Selections.Add(Behavior.TargetCreature.CreatureId)
 		  Next
 		  Self.Modified = True
 		  Self.UpdateList(Selections)
@@ -310,7 +310,7 @@ End
 		  For Each Creature As Ark.Creature In Creatures
 		    Var Behavior As Ark.CreatureBehavior = SelectedBehavior.Clone(Creature)
 		    Config.Add(Behavior)
-		    Selections.Add(Behavior.TargetCreature.ObjectID)
+		    Selections.Add(Behavior.TargetCreature.CreatureId)
 		  Next
 		  Self.UpdateList(Selections)
 		  Self.Modified = True
@@ -322,7 +322,7 @@ End
 		  Var Selections() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.RowSelectedAt(I) Then
-		      Selections.Add(Ark.Creature(Self.List.RowTagAt(I)).ObjectID)
+		      Selections.Add(Ark.Creature(Self.List.RowTagAt(I)).CreatureId)
 		    End If
 		  Next
 		  Self.UpdateList(Selections)
@@ -333,7 +333,7 @@ End
 		Private Sub UpdateList(SelectCreatures() As Ark.Creature)
 		  Var Selections() As String
 		  For Each Creature As Ark.Creature In SelectCreatures
-		    Selections.Add(Creature.ObjectID)
+		    Selections.Add(Creature.CreatureId)
 		  Next
 		  Self.UpdateList(Selections)
 		End Sub
@@ -376,7 +376,7 @@ End
 		      Self.List.AddRow(Label, Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####"))
 		    End If
 		    
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.CreatureId) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetCreature
 		  Next
 		  

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
@@ -169,7 +169,7 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  
-		  Self.mCache.Value(Option.ObjectId) = Option
+		  Self.mCache.Value(Option.ConfigOptionId) = Option
 		End Sub
 	#tag EndMethod
 
@@ -181,12 +181,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigOption(ObjectId As String) As SDTD.ConfigOption
-		  If Self.mCache.HasKey(ObjectId) Then
-		    Return Self.mCache.Value(ObjectId)
+		Function GetConfigOption(ConfigOptionId As String) As SDTD.ConfigOption
+		  If Self.mCache.HasKey(ConfigOptionId) Then
+		    Return Self.mCache.Value(ConfigOptionId)
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM config_options WHERE object_id = $1;", ObjectId)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM config_options WHERE object_id = $1;", ConfigOptionId)
 		  If Rows.RowCount <> 1 Then
 		    Return Nil
 		  End If

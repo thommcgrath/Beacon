@@ -3,7 +3,7 @@ Protected Class ServerConfigXml
 Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Add(Value As SDTD.ConfigValue)
-		  Self.mValues.Value(Value.Details.ObjectId) = Value
+		  Self.mValues.Value(Value.Details.ConfigOptionId) = Value
 		End Sub
 	#tag EndMethod
 
@@ -49,7 +49,7 @@ Implements Iterable
 		  Self.mValues = New Dictionary
 		  
 		  For Each Value As SDTD.ConfigValue In Values
-		    Self.mValues.Value(Value.Details.ObjectId) = Value
+		    Self.mValues.Value(Value.Details.ConfigOptionId) = Value
 		  Next
 		End Sub
 	#tag EndMethod
@@ -137,7 +137,7 @@ Implements Iterable
 		    Return Nil
 		  End If
 		  
-		  Return Self.mValues.Lookup(Option.ObjectId, Nil)
+		  Return Self.mValues.Lookup(Option.ConfigOptionId, Nil)
 		End Function
 	#tag EndMethod
 
@@ -155,8 +155,8 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Key As SDTD.ConfigOption)
-		  If Self.mValues.HasKey(Key.ObjectId) Then
-		    Self.mValues.Remove(Key.ObjectId)
+		  If Self.mValues.HasKey(Key.ConfigOptionId) Then
+		    Self.mValues.Remove(Key.ConfigOptionId)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -177,7 +177,7 @@ Implements Iterable
 		    Return ""
 		  End If
 		  
-		  Var Value As SDTD.ConfigValue = Self.mValues.Lookup(Key.ObjectId, Nil)
+		  Var Value As SDTD.ConfigValue = Self.mValues.Lookup(Key.ConfigOptionId, Nil)
 		  If Value Is Nil Then
 		    Return ""
 		  End If
@@ -187,7 +187,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Value(Key As SDTD.ConfigOption, Assigns Value As String)
-		  Self.mValues.Value(Key.ObjectId) = New SDTD.ConfigValue(Key, Value)
+		  Self.mValues.Value(Key.ConfigOptionId) = New SDTD.ConfigValue(Key, Value)
 		End Sub
 	#tag EndMethod
 

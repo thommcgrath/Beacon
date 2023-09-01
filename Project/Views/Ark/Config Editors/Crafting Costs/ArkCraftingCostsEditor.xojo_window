@@ -591,9 +591,9 @@ End
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
-		  Var ObjectIDs() As String
+		  Var RecipeIds() As String
 		  For Each Item As Ark.CraftingCost In SelectItems
-		    ObjectIDs.Add(Item.ObjectID)
+		    RecipeIds.Add(Item.RecipeId)
 		  Next
 		  
 		  Var Filter As String = Self.FilterField.Text.Trim
@@ -609,7 +609,7 @@ End
 		    Var Cost As Ark.CraftingCost = Config.Cost(Engrams(Idx))
 		    Self.List.AddRow(Cost.Engram.Label)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = RecipeIds.IndexOf(Cost.RecipeId) > -1
 		  Next Idx
 		  
 		  Self.List.Sort
@@ -833,16 +833,16 @@ End
 		  Var Engrams() As Ark.Engram = OriginalConfig.Engrams
 		  Var Filter As New Dictionary
 		  For Each Engram As Ark.Engram In Engrams
-		    Filter.Value(Engram.ObjectID) = True
+		    Filter.Value(Engram.EngramId) = True
 		  Next
 		  
-		  Var ObjectIDs() As String = Ark.DataSource.Pool.Get(False).GetRecipeEngramIds(Self.Project.ContentPacks, Self.Project.MapMask)
-		  For Each ObjectID As String In ObjectIDs
-		    If Filter.HasKey(ObjectID) Then
+		  Var EngramIds() As String = Ark.DataSource.Pool.Get(False).GetRecipeEngramIds(Self.Project.ContentPacks, Self.Project.MapMask)
+		  For Each EngramId As String In EngramIds
+		    If Filter.HasKey(EngramId) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram(ObjectID)
+		    Var Engram As Ark.Engram = Ark.DataSource.Pool.Get(False).GetEngram(EngramId)
 		    If (Engram Is Nil) = False Then
 		      Engrams.Add(Engram)
 		    End If

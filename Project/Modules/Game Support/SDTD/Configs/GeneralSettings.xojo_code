@@ -1,7 +1,7 @@
 #tag Class
 Protected Class GeneralSettings
 Inherits SDTD.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As SDTD.ConfigGroup)
 		  Var Source As SDTD.Configs.GeneralSettings = SDTD.Configs.GeneralSettings(Other)
@@ -261,7 +261,7 @@ Inherits SDTD.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Value(Key As SDTD.ConfigOption) As Variant
-		  Var KeyId As String = Key.ObjectId
+		  Var KeyId As String = Key.ConfigOptionId
 		  If Self.mSettings.HasKey(KeyId) = False Then
 		    Return Nil
 		  End If
@@ -272,7 +272,7 @@ Inherits SDTD.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub Value(Key As SDTD.ConfigOption, Assigns NewValue As Variant)
-		  Var KeyId As String = Key.ObjectId
+		  Var KeyId As String = Key.ConfigOptionId
 		  If NewValue.IsNull Then
 		    If Self.mSettings.HasKey(KeyId) Then
 		      Self.mSettings.Remove(KeyId)

@@ -641,13 +641,13 @@ End
 		  Var SkippedEngrams As New Dictionary
 		  Var Engrams() As Ark.Engram = Config.Engrams
 		  For Each Engram As Ark.Engram In Engrams
-		    SkippedEngrams.Value(Engram.ObjectID) = True
+		    SkippedEngrams.Value(Engram.EngramId) = True
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
 		  Engrams = Ark.DataSource.Pool.Get(False).GetEngrams("", Self.Project.ContentPacks, "{""required"":[""harvestable""],""excluded"":[]}")
 		  For Each Engram As Ark.Engram In Engrams
-		    If SkippedEngrams.HasKey(Engram.ObjectID) Then
+		    If SkippedEngrams.HasKey(Engram.EngramId) Then
 		      Continue
 		    End If
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
@@ -721,7 +721,7 @@ End
 		      Continue
 		    End If
 		    
-		    Selections.Add(Ark.Engram(Self.List.RowTagAt(I)).ObjectID)
+		    Selections.Add(Ark.Engram(Self.List.RowTagAt(I)).EngramId)
 		  Next
 		  Self.UpdateList(Selections)
 		End Sub
@@ -731,7 +731,7 @@ End
 		Private Sub UpdateList(SelectEngrams() As Ark.Engram)
 		  Var Selections() As String
 		  For Each Engram As Ark.Engram In SelectEngrams
-		    Selections.Add(Engram.ObjectID)
+		    Selections.Add(Engram.EngramId)
 		  Next
 		  Self.UpdateList(Selections) 
 		End Sub
@@ -757,7 +757,7 @@ End
 		    Var EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
 		    Self.List.AddRow(Engram.Label, Rate.PrettyText, EffectiveRate.PrettyText)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Engram.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selections.IndexOf(Engram.EngramId) > -1
 		  Next Engram
 		  
 		  Self.List.Sort
@@ -886,7 +886,7 @@ End
 		    
 		    Var Engram As Ark.Engram = Me.RowTagAt(I)
 		    Var Rate As Double = Config.Override(Engram)
-		    Items.Value(Engram.ObjectID) = Rate
+		    Items.Value(Engram.EngramId) = Rate
 		  Next
 		  
 		  If Items.KeyCount = 0 Then

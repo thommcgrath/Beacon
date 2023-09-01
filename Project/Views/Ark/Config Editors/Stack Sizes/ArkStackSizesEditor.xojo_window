@@ -401,7 +401,7 @@ End
 		      Continue
 		    End If
 		    
-		    Engrams.Add(Ark.Engram(Self.List.RowTagAt(I)).ObjectID)
+		    Engrams.Add(Ark.Engram(Self.List.RowTagAt(I)).EngramId)
 		  Next
 		  Self.UpdateList(Engrams)
 		End Sub
@@ -411,7 +411,7 @@ End
 		Private Sub UpdateList(SelectEngrams() As Ark.Engram)
 		  Var Engrams() As String
 		  For Each Engram As Ark.Engram In SelectEngrams
-		    Engrams.Add(Engram.ObjectID)
+		    Engrams.Add(Engram.EngramId)
 		  Next
 		  Self.UpdateList(Engrams) 
 		End Sub
@@ -436,7 +436,7 @@ End
 		    Var Size As UInt64 = Config.Override(Engram)
 		    Self.List.AddRow(Engram.Label, Size.ToString(Locale.Current, Self.NumberFormat))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = SelectEngrams.IndexOf(Engram.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = SelectEngrams.IndexOf(Engram.EngramId) > -1
 		  Next Engram
 		  
 		  Self.List.SortingColumn = 0
@@ -565,7 +565,7 @@ End
 		    
 		    Var Engram As Ark.Engram = Me.RowTagAt(I)
 		    Var Size As UInt64 = Config.Override(Engram)
-		    Items.Value(Engram.ObjectID) = Size
+		    Items.Value(Engram.EngramId) = Size
 		  Next
 		  
 		  If Items.KeyCount = 0 Then

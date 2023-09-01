@@ -1,6 +1,12 @@
 #tag Class
 Protected Class ConfigKey
 	#tag Method, Flags = &h0
+		Function ConfigKeyId() As String
+		  Return Self.mConfigKeyId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Constraint(Key As String) As Variant
 		  If Self.mConstraints Is Nil Or Self.mConstraints.HasKey(Key) = False Then
 		    Return Nil
@@ -12,7 +18,7 @@ Protected Class ConfigKey
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.ConfigKey)
-		  Self.mObjectId = Source.mObjectId
+		  Self.mConfigKeyId = Source.mConfigKeyId
 		  Self.mLabel = Source.mLabel
 		  Self.mFile = Source.mFile
 		  Self.mHeader = Source.mHeader
@@ -40,10 +46,10 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectId As String, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
+		Sub Constructor(ConfigKeyId As String, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
 		  Self.Constructor(File, Header, Key)
 		  
-		  Self.mObjectId = ObjectId
+		  Self.mConfigKeyId = ConfigKeyId
 		  Self.mLabel = Label
 		  Self.mValueType = ValueType
 		  Self.mMaxAllowed = MaxAllowed
@@ -167,8 +173,8 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectId() As String
-		  Return Self.mObjectId
+		Attributes( Deprecated = "ConfigKeyId" )  Function ObjectId() As String
+		  Return Self.mConfigKeyId
 		End Function
 	#tag EndMethod
 
@@ -178,7 +184,7 @@ Protected Class ConfigKey
 		    Return 1
 		  End If
 		  
-		  If Self.mObjectId = Other.mObjectId Then
+		  If Self.mConfigKeyId = Other.mConfigKeyId Then
 		    Return 0
 		  End If
 		  
@@ -209,7 +215,7 @@ Protected Class ConfigKey
 		  End If
 		  
 		  Var Copy As New Ark.ConfigKey(Self)
-		  Copy.mObjectId = Beacon.UUID.v4
+		  Copy.mConfigKeyId = Beacon.UUID.v4
 		  
 		  Var Changed As Boolean
 		  For Each Entry As DictionaryEntry In Self.mUWPChanges
@@ -274,6 +280,10 @@ Protected Class ConfigKey
 
 
 	#tag Property, Flags = &h21
+		Private mConfigKeyId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mConstraints As Dictionary
 	#tag EndProperty
 
@@ -331,10 +341,6 @@ Protected Class ConfigKey
 
 	#tag Property, Flags = &h21
 		Private mNitradoPaths() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mObjectId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

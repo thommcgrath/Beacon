@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
@@ -158,20 +158,20 @@ Inherits Beacon.DataSource
 		  Var DeleteIcons() As String
 		  Var BlueprintsToDelete() As String
 		  For Each Deletion As Dictionary In Deletions
-		    Var ObjectID As String = Deletion.Value("object_id").StringValue
+		    Var ObjectId As String = Deletion.Value("object_id").StringValue
 		    Select Case Deletion.Value("group")
 		    Case Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers, "loot_sources"
-		      BlueprintsToDelete.Add(ObjectID)
+		      BlueprintsToDelete.Add(ObjectId)
 		    Case "loot_icons"
 		      DeleteIcons.Add(ObjectID)
 		    Case "mods"
-		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectID)
+		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectId)
 		    Case "maps"
-		      Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectID)
+		      Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectId)
 		    Case "colors"
-		      Self.SQLExecute("DELETE FROM colors WHERE color_uuid = ?1;", ObjectID)
+		      Self.SQLExecute("DELETE FROM colors WHERE color_uuid = ?1;", ObjectId)
 		    Case "events"
-		      Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectID)
+		      Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectId)
 		    End Select
 		  Next Deletion
 		  For Each IconID As String In DeleteIcons
@@ -383,8 +383,8 @@ Inherits Beacon.DataSource
 		      End If
 		      If Results.RowCount = 1 Then
 		        // Update
-		        Var OriginalObjectId As String = Results.Column("object_id").StringValue
-		        Values.Add(OriginalObjectID)
+		        Var OriginalConfigKeyId As String = Results.Column("object_id").StringValue
+		        Values.Add(OriginalConfigKeyId)
 		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19, gsa_placeholder = ?20, uwp_changes = ?21 WHERE object_id = ?22;", Values)
 		      Else
 		        // Insert
@@ -640,7 +640,7 @@ Inherits Beacon.DataSource
 		          Continue
 		        End If
 		        
-		        Var ObjectID As String = Dict.Value("object_id").StringValue
+		        Var BlueprintId As String = Dict.Value("object_id").StringValue
 		        Var ClassString As String = Dict.Value("class_string")
 		        Var Label As String = Dict.Value("label")         
 		        Var Availability As UInt64 = Dict.Value("availability")
@@ -649,9 +649,9 @@ Inherits Beacon.DataSource
 		        If TagObjectIdx > -1 Then
 		          Tags.RemoveAt(TagObjectIdx)
 		        End If
-		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, content_pack_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID, ClassString, Label, Path, Availability, String.FromArray(Tags, ","), Ark.UserContentPackId)     
+		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, content_pack_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  BlueprintId, ClassString, Label, Path, Availability, String.FromArray(Tags, ","), Ark.UserContentPackId)     
 		        For Each Tag As String In Tags
-		          Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
+		          Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", BlueprintId, Tag)
 		        Next Tag
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName)
@@ -1913,7 +1913,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetPopulationFigures(Point As Ark.SpawnPoint) As Ark.PopulationFigures()
 		  Var Figures() As Ark.PopulationFigures
-		  Var Rows As RowSet = Self.SQLSelect("SELECT map_id, instances, target_population FROM spawn_point_populations WHERE spawn_point_id = ?1;", Point.ObjectID)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT map_id, instances, target_population FROM spawn_point_populations WHERE spawn_point_id = ?1;", Point.SpawnPointId)
 		  While Rows.AfterLastRow = False
 		    Figures.Add(New Ark.PopulationFigures(Rows.Column("map_id").StringValue, Rows.Column("instances").IntegerValue, Rows.Column("target_population").IntegerValue))
 		    Rows.MoveToNextRow
@@ -1925,7 +1925,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetPopulationFigures(Point As Ark.SpawnPoint, Map As Ark.Map) As Ark.PopulationFigures()
 		  Var Figures() As Ark.PopulationFigures
-		  Var Rows As RowSet = Self.SQLSelect("SELECT map_id, instances, target_population FROM spawn_point_populations WHERE spawn_point_id = ?1 AND map_id = ?2;", Point.ObjectID, Map.Identifier)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT map_id, instances, target_population FROM spawn_point_populations WHERE spawn_point_id = ?1 AND map_id = ?2;", Point.SpawnPointId, Map.Identifier)
 		  While Rows.AfterLastRow = False
 		    Figures.Add(New Ark.PopulationFigures(Rows.Column("map_id").StringValue, Rows.Column("instances").IntegerValue, Rows.Column("target_population").IntegerValue))
 		    Rows.MoveToNextRow
@@ -1997,14 +1997,14 @@ Inherits Beacon.DataSource
 		      If Idx > -1 Then
 		        Var Filtered As UInt64 = Points(Idx).Availability And Availability
 		        Var Maps() As Ark.Map = Self.GetMaps(Filtered)
-		        Dict.Value(Points(Idx).ObjectID) = Points(Idx).Label.Disambiguate(Maps.Label)
+		        Dict.Value(Points(Idx).SpawnPointId) = Points(Idx).Label.Disambiguate(Maps.Label)
 		        
 		        Filtered = Points(I).Availability And Availability
 		        Maps = Self.GetMaps(Filtered)
 		        Label = Label.Disambiguate(Maps.Label)
 		      End If
 		      
-		      Dict.Value(Points(I).ObjectID) = Label
+		      Dict.Value(Points(I).SpawnPointId) = Label
 		    Next
 		    
 		    Self.mSpawnLabelCacheDict = Dict
@@ -2066,7 +2066,7 @@ Inherits Beacon.DataSource
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  Clauses.Add("spawn_points.sets LIKE :placeholder:")
-		  Values.Add("%" + Creature.ObjectID + "%")
+		  Values.Add("%" + Creature.CreatureId + "%")
 		  
 		  Var Blueprints() As Ark.Blueprint = Self.GetBlueprints(Ark.CategorySpawnPoints, "", ContentPacks, Tags, Clauses, Values)
 		  Var SpawnPoints() As Ark.SpawnPoint
@@ -2252,7 +2252,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT min_item_sets, max_item_sets, prevent_duplicates, contents FROM loot_containers WHERE object_id = ?1;", Container.ObjectID)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT min_item_sets, max_item_sets, prevent_duplicates, contents FROM loot_containers WHERE object_id = ?1;", Container.LootDropId)
 		  If Rows.RowCount = 0 Then
 		    Return
 		  End If
@@ -2270,7 +2270,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.ObjectID)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.SpawnPointId)
 		  If Rows.RowCount = 0 Then
 		    Return
 		  End If
@@ -2284,7 +2284,7 @@ Inherits Beacon.DataSource
 		Function LoadIngredientsForEngram(Engram As Ark.Engram) As Ark.CraftingCostIngredient()
 		  Var Ingredients() As Ark.CraftingCostIngredient
 		  If (Engram Is Nil) = False Then
-		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID)
+		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.EngramId)
 		    If Results.RowCount = 1 Then
 		      Ingredients = Ark.CraftingCostIngredient.FromVariant(Results.Column("recipe").Value, Nil)
 		    End If
@@ -2345,10 +2345,10 @@ Inherits Beacon.DataSource
 		  Var Keys() As Ark.ConfigKey
 		  Try
 		    While Results.AfterLastRow = False
-		      Var ObjectID As String = Results.Column("object_id").StringValue
-		      If Self.mConfigKeyCache.HasKey(ObjectID) Then
+		      Var ConfigKeyId As String = Results.Column("object_id").StringValue
+		      If Self.mConfigKeyCache.HasKey(ConfigKeyId) Then
 		        Results.MoveToNextRow
-		        Keys.Add(Self.mConfigKeyCache.Value(ObjectID))
+		        Keys.Add(Self.mConfigKeyCache.Value(ConfigKeyId))
 		        Continue
 		      End If
 		      
@@ -2423,8 +2423,8 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		      
-		      Var Key As New Ark.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId, GSAPlaceholder, UWPChanges)
-		      Self.mConfigKeyCache.Value(ObjectID) = Key
+		      Var Key As New Ark.ConfigKey(ConfigKeyId, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId, GSAPlaceholder, UWPChanges)
+		      Self.mConfigKeyCache.Value(ConfigKeyId) = Key
 		      Keys.Add(Key)
 		      Results.MoveToNextRow
 		    Wend
@@ -2720,7 +2720,7 @@ Inherits Beacon.DataSource
 		    For Each Blueprint As Ark.Blueprint In BlueprintsToSave
 		      Var TransactionStarted As Boolean
 		      Try
-		        Var UpdateObjectID, CurrentTagString As String
+		        Var UpdateBlueprintId, CurrentTagString As String
 		        Var Results As RowSet
 		        If LocalModsOnly Then
 		          Results = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
@@ -2736,7 +2736,7 @@ Inherits Beacon.DataSource
 		            End If
 		            Continue
 		          End If
-		          UpdateObjectID = Results.Column("object_id").StringValue
+		          UpdateBlueprintId = Results.Column("object_id").StringValue
 		          CurrentTagString = Results.Column("tags").StringValue
 		        ElseIf Results.RowCount > 1 Then
 		          // What the hell?
@@ -2837,7 +2837,7 @@ Inherits Beacon.DataSource
 		        
 		        Self.BeginTransaction()
 		        TransactionStarted = True
-		        If UpdateObjectID.IsEmpty = False Then
+		        If UpdateBlueprintId.IsEmpty = False Then
 		          Var Assignments() As String
 		          Var Values() As Variant
 		          Var NextPlaceholder As Integer = 1
@@ -2857,7 +2857,7 @@ Inherits Beacon.DataSource
 		          If Columns.Value("tags").StringValue <> CurrentTagString Then
 		            Var DesiredTags() As String = Blueprint.Tags
 		            Var CurrentTags() As String
-		            Var TagRows As RowSet = Self.SQLSelect("SELECT tag FROM tags_" + Category + " WHERE object_id = ?1;", UpdateObjectID)
+		            Var TagRows As RowSet = Self.SQLSelect("SELECT tag FROM tags_" + Category + " WHERE object_id = ?1;", UpdateBlueprintId)
 		            While TagRows.AfterLastRow = False
 		              CurrentTags.Add(TagRows.Column("tag").StringValue)
 		              TagRows.MoveToNextRow
@@ -2865,10 +2865,10 @@ Inherits Beacon.DataSource
 		            Var TagsToAdd() As String = CurrentTags.NewMembers(DesiredTags)
 		            Var TagsToRemove() As String = DesiredTags.NewMembers(CurrentTags)
 		            For Each Tag As String In TagsToAdd
-		              Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", UpdateObjectID, Tag)
+		              Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", UpdateBlueprintId, Tag)
 		            Next Tag
 		            For Each Tag As String In TagsToRemove
-		              Self.SQLExecute("DELETE FROM tags_" + Category + " WHERE object_id = ?1 AND tag = ?2;", UpdateObjectID, Tag)
+		              Self.SQLExecute("DELETE FROM tags_" + Category + " WHERE object_id = ?1 AND tag = ?2;", UpdateBlueprintId, Tag)
 		            Next Tag
 		          End If
 		        Else

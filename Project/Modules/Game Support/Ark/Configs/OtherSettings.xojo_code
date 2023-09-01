@@ -273,33 +273,33 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Value(Key As Ark.ConfigKey) As Variant
-		  If Self.mSettings.HasKey(Key.ObjectId) = False Then
+		  If Self.mSettings.HasKey(Key.ConfigKeyId) = False Then
 		    Return Nil
 		  End If
 		  
-		  Return Self.mSettings.Value(Key.ObjectId)
+		  Return Self.mSettings.Value(Key.ConfigKeyId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Value(Key As Ark.ConfigKey, Assigns NewValue As Variant)
-		  Var ObjectId As String = Key.ObjectId
+		  Var ConfigKeyId As String = Key.ConfigKeyId
 		  If NewValue.IsNull Then
-		    If Self.mSettings.HasKey(ObjectId) Then
-		      Self.mSettings.Remove(ObjectId)
+		    If Self.mSettings.HasKey(ConfigKeyId) Then
+		      Self.mSettings.Remove(ConfigKeyId)
 		      Self.Modified = True
 		      Return
 		    End If
 		  End If
 		  
-		  If Self.mSettings.HasKey(ObjectId) Then
-		    Var OldValue As Variant = Self.mSettings.Value(ObjectId)
+		  If Self.mSettings.HasKey(ConfigKeyId) Then
+		    Var OldValue As Variant = Self.mSettings.Value(ConfigKeyId)
 		    If Key.ValuesEqual(OldValue, NewValue) = True Then
 		      Return
 		    End If
 		  End If
 		  
-		  Self.mSettings.Value(ObjectId) = NewValue
+		  Self.mSettings.Value(ConfigKeyId) = NewValue
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

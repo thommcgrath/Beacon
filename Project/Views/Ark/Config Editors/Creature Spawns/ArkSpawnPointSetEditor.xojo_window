@@ -1563,7 +1563,7 @@ End
 		    Next
 		  Else
 		    For Each Creature As Ark.Creature In SelectCreatures
-		      SelectedReplacements.Add(Creature.ObjectID)
+		      SelectedReplacements.Add(Creature.CreatureId)
 		    Next
 		  End If
 		  
@@ -1595,8 +1595,8 @@ End
 		    ReplacementCreatureNames.Sort
 		    
 		    Self.ReplaceList.CellTextAt(RowIndex, 0) = ReplacedCreature.Label + EndOfLine + Language.EnglishOxfordList(ReplacementCreatureNames)
-		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.ObjectID
-		    Self.ReplaceList.RowSelectedAt(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.ObjectID) > -1
+		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.CreatureId
+		    Self.ReplaceList.RowSelectedAt(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.CreatureId) > -1
 		  Next
 		  Self.ReplaceList.SortingColumn = 0
 		  Self.ReplaceList.Sort

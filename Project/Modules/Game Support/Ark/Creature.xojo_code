@@ -223,7 +223,7 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
+		Attributes( Deprecated = "CreatureId" )  Function ObjectID() As String
 		  Return Self.mCreatureId
 		End Function
 	#tag EndMethod

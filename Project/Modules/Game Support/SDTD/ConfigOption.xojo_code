@@ -1,6 +1,12 @@
 #tag Class
 Protected Class ConfigOption
 	#tag Method, Flags = &h0
+		Function ConfigOptionId() As String
+		  Return Self.mConfigOptionId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Constraint(Key As String) As Variant
 		  If Self.mConstraints Is Nil Or Self.mConstraints.HasKey(Key) = False Then
 		    Return Nil
@@ -12,6 +18,7 @@ Protected Class ConfigOption
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As SDTD.ConfigOption)
+		  Self.mConfigOptionId = Source.mConfigOptionId
 		  Self.mConstraints = If(Source.mConstraints Is Nil, Nil, Source.mConstraints.Clone)
 		  Self.mContentPackId = Source.mContentPackId
 		  Self.mCustomSort = Source.mCustomSort
@@ -22,7 +29,6 @@ Protected Class ConfigOption
 		  Self.mLabel = Source.mLabel
 		  Self.mMaxAllowed = Source.mMaxAllowed
 		  Self.mNativeEditorVersion = Source.mNativeEditorVersion
-		  Self.mObjectId = Source.mObjectId
 		  Self.mUIGroup = Source.mUIGroup
 		  Self.mValueType = Source.mValueType
 		  Self.mMinGameVersion = Source.mMinGameVersion
@@ -39,6 +45,7 @@ Protected Class ConfigOption
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Label As String, File As String, Key As String, ValueType As SDTD.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, MinGameVersion As NullableDouble, MaxGameVersion As NullableDouble)
+		  Self.mConfigOptionId = Self.GenerateId(ContentPackId, File, Key)
 		  Self.mConstraints = If(Constraints Is Nil, Nil, Constraints.Clone)
 		  Self.mContentPackId = ContentPackId
 		  Self.mCustomSort = CustomSort
@@ -49,7 +56,6 @@ Protected Class ConfigOption
 		  Self.mLabel = Label
 		  Self.mMaxAllowed = MaxAllowed
 		  Self.mNativeEditorVersion = NativeEditorVersion
-		  Self.mObjectId = Self.GenerateId(ContentPackId, File, Key)
 		  Self.mUIGroup = UIGroup
 		  Self.mValueType = ValueType
 		  Self.mMinGameVersion = MinGameVersion
@@ -136,23 +142,17 @@ Protected Class ConfigOption
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectId() As String
-		  Return Self.mObjectId
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As SDTD.ConfigOption) As Integer
 		  If IsNull(Other) Then
 		    Return 1
 		  End If
 		  
-		  If Self.mObjectId.Compare(Other.mObjectId, ComparisonOptions.CaseInsensitive, Locale.Raw) = 0 Then
+		  If Self.mConfigOptionId.Compare(Other.mConfigOptionId, ComparisonOptions.CaseInsensitive, Locale.Raw) = 0 Then
 		    Return 0
 		  End If
 		  
-		  Var MyValue As String = Self.mLabel + "-" + Self.mObjectId
-		  Var OtherValue As String = Other.mLabel + "-" + Other.mObjectId
+		  Var MyValue As String = Self.mLabel + "-" + Self.mConfigOptionId
+		  Var OtherValue As String = Other.mLabel + "-" + Other.mConfigOptionId
 		  Return MyValue.Compare(OtherValue, ComparisonOptions.CaseInsensitive, Locale.Raw)
 		End Function
 	#tag EndMethod
@@ -213,6 +213,10 @@ Protected Class ConfigOption
 
 
 	#tag Property, Flags = &h21
+		Private mConfigOptionId As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mConstraints As Dictionary
 	#tag EndProperty
 
@@ -258,10 +262,6 @@ Protected Class ConfigOption
 
 	#tag Property, Flags = &h21
 		Private mNativeEditorVersion As NullableDouble
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mObjectId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -328,6 +328,14 @@ Protected Class ConfigOption
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Signature"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

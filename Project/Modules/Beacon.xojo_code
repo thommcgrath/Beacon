@@ -764,10 +764,10 @@ Protected Module Beacon
 		Protected Function Merge(Array1() As Ark.Engram, Array2() As Ark.Engram) As Ark.Engram()
 		  Var Unique As New Dictionary
 		  For Each Engram As Ark.Engram In Array1
-		    Unique.Value(Engram.ObjectID) = Engram
+		    Unique.Value(Engram.EngramId) = Engram
 		  Next
 		  For Each Engram As Ark.Engram In Array2
-		    Unique.Value(Engram.ObjectID) = Engram
+		    Unique.Value(Engram.EngramId) = Engram
 		  Next
 		  Var Merged() As Ark.Engram
 		  For Each Entry As DictionaryEntry In Unique

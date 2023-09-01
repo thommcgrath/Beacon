@@ -301,7 +301,7 @@ Implements Ark.MutableBlueprint
 		          ElseIf Limit.HasKey("creature") Then
 		            Var CreatureRef As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Limit.Value("creature"))
 		            Var MaxPercent As Double = Limit.Value("max_percent").DoubleValue
-		            Self.mLimits.Value(CreatureRef.ObjectID) = MaxPercent
+		            Self.mLimits.Value(CreatureRef.BlueprintId) = MaxPercent
 		          End If
 		        Next Limit
 		      End If

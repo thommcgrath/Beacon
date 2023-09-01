@@ -104,7 +104,7 @@ Implements Beacon.Validateable,Ark.Weighted
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.mHash.IsEmpty Then
-		    Self.mHash = Beacon.Hash(Self.mEngramRef.ObjectID.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000"))
+		    Self.mHash = Beacon.Hash(Self.mEngramRef.BlueprintId.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000"))
 		  End If
 		  
 		  Return Self.mHash
@@ -152,7 +152,7 @@ Implements Beacon.Validateable,Ark.Weighted
 		Function SaveData() As Dictionary
 		  Var Keys As New Dictionary
 		  Keys.Value("lootItemSetEntryOptionId") = Self.mUUID
-		  Keys.Value("engramId") = Self.mEngramRef.ObjectID
+		  Keys.Value("engramId") = Self.mEngramRef.BlueprintId
 		  Keys.Value("weight") = Self.mWeight
 		  Return Keys
 		End Function

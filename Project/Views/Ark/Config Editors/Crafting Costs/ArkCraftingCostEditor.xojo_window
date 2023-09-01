@@ -190,7 +190,7 @@ End
 		  For Idx As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.RowSelectedAt(Idx) Then
 		      Var Ingredient As Ark.CraftingCostIngredient = Self.List.RowTagAt(Idx)
-		      Selected.Add(Ingredient.Reference.ObjectID)
+		      Selected.Add(Ingredient.Reference.BlueprintId)
 		    End If
 		  Next
 		  
@@ -199,7 +199,7 @@ End
 		    Var Ingredient As Ark.CraftingCostIngredient = Self.mTarget.Ingredient(Idx)
 		    Self.List.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.PrettyText(True))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Ingredient.RequireExact
-		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.ObjectID) > -1
+		    Self.List.RowSelectedAt(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.BlueprintId) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Ingredient
 		  Next
 		  Self.List.Sort
@@ -338,7 +338,7 @@ End
 		    
 		    Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Idx)
 		    Var Dict As New Dictionary
-		    Dict.Value("blueprintId") = Ingredient.Reference.ObjectID
+		    Dict.Value("blueprintId") = Ingredient.Reference.BlueprintId
 		    Dict.Value("quantity") = Ingredient.Quantity
 		    Dict.Value("exact") = Ingredient.RequireExact
 		    Dicts.Add(Dict)

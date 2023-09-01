@@ -518,7 +518,7 @@ End
 		      For Each Entry As Ark.SpawnPointSetEntry In Entries
 		        Var Creature As Ark.Creature = Entry.Creature
 		        If (Creature Is Nil) = False THen
-		          CreatureFilter.Value(Creature.ObjectID) = Creature
+		          CreatureFilter.Value(Creature.CreatureId) = Creature
 		        End If
 		      Next
 		    Next
@@ -625,17 +625,17 @@ End
 		      For Each Entry As DictionaryEntry In PointLimits
 		        Var Creature As Ark.Creature = Entry.Key
 		        Var Limit As Double = Entry.Value
-		        CombinedLimits.Value(Creature.ObjectID) = Limit
+		        CombinedLimits.Value(Creature.CreatureId) = Limit
 		      Next
 		    Else
 		      For Each Entry As DictionaryEntry In PointLimits
 		        Var Creature As Ark.Creature = Entry.Key
 		        Var Limit As Double = Entry.Value
 		        
-		        If CombinedLimits.HasKey(Creature.ObjectID) = False Then
-		          CombinedLimits.Value(Creature.ObjectID) = Limit
-		        ElseIf CombinedLimits.Value(Creature.ObjectID).DoubleValue <> Limit Then
-		          CombinedLimits.Value(Creature.ObjectID) = MixedLimitValue
+		        If CombinedLimits.HasKey(Creature.CreatureId) = False Then
+		          CombinedLimits.Value(Creature.CreatureId) = Limit
+		        ElseIf CombinedLimits.Value(Creature.CreatureId).DoubleValue <> Limit Then
+		          CombinedLimits.Value(Creature.CreatureId) = MixedLimitValue
 		        End If
 		      Next
 		    End If
@@ -645,7 +645,7 @@ End
 		    Var SelectedCreatures() As String
 		    If SelectCreatures <> Nil Then
 		      For Each Creature As Ark.Creature In SelectCreatures
-		        SelectedCreatures.Add(Creature.ObjectID)
+		        SelectedCreatures.Add(Creature.CreatureId)
 		      Next
 		    Else
 		      For I As Integer = 0 To Self.LimitsList.RowCount - 1
@@ -657,9 +657,9 @@ End
 		    
 		    Self.LimitsList.RowCount = CombinedLimits.KeyCount
 		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
-		      Var UUID As String = CombinedLimits.Key(RowIndex)
-		      Var Limit As Double = CombinedLimits.Value(UUID)
-		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(UUID)
+		      Var CreatureId As String = CombinedLimits.Key(RowIndex)
+		      Var Limit As Double = CombinedLimits.Value(CreatureId)
+		      Var Creature As Ark.Creature = Ark.DataSource.Pool.Get(False).GetCreature(CreatureId)
 		      If (Creature Is Nil) Then
 		        Self.LimitsList.CellTextAt(RowIndex, 0) = "Unknown Creature"
 		      Else
@@ -667,8 +667,8 @@ End
 		      End If
 		      
 		      Self.LimitsList.CellTextAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
-		      Self.LimitsList.RowTagAt(RowIndex) = UUID
-		      Self.LimitsList.RowSelectedAt(RowIndex) = SelectedCreatures.IndexOf(UUID) > -1
+		      Self.LimitsList.RowTagAt(RowIndex) = CreatureId
+		      Self.LimitsList.RowSelectedAt(RowIndex) = SelectedCreatures.IndexOf(CreatureId) > -1
 		    Next
 		  Else
 		    Self.LimitsList.RowCount = 0
@@ -1043,7 +1043,7 @@ End
 		    Next
 		    
 		    If CommonLimit <> Nil Then
-		      Limits.Value(Creature.ObjectID) = CommonLimit.IntegerValue
+		      Limits.Value(Creature.CreatureId) = CommonLimit.IntegerValue
 		    End If
 		  Next
 		  

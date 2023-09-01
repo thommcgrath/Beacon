@@ -587,7 +587,7 @@ End
 		      #endif
 		    End Select
 		    
-		    Var RowLabel As String = Prefix + " " + Labels.Lookup(SpawnPoints(I).ObjectID, SpawnPoints(I).Label).StringValue
+		    Var RowLabel As String = Prefix + " " + Labels.Lookup(SpawnPoints(I).SpawnPointId, SpawnPoints(I).Label).StringValue
 		    Self.List.CellTextAt(I, 0) = RowLabel
 		    Self.List.RowTagAt(I) = SpawnPoints(I)
 		    Self.List.RowSelectedAt(I) = Selected.HasKey(SpawnPoints(I).UniqueKey)

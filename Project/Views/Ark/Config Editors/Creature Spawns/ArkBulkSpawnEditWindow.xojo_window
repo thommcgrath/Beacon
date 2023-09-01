@@ -193,6 +193,7 @@ Begin BeaconDialog ArkBulkSpawnEditWindow
          TabStop         =   True
          Tooltip         =   ""
          Top             =   160
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -651,7 +652,7 @@ End
 		    
 		    For EntryIdx As Integer = 0 To MutableSet.LastIndex
 		      Var Entry As Ark.MutableSpawnPointSetEntry = MutableSet.Entry(EntryIdx).MutableVersion
-		      If Self.mCreatureIds.IndexOf(Entry.Creature.ObjectID) = -1 Then
+		      If Self.mCreatureIds.IndexOf(Entry.Creature.CreatureId) = -1 Then
 		        Continue
 		      End If
 		      
@@ -816,13 +817,13 @@ End
 		  If AllCreaturesRadio.Value Then
 		    Creatures = Ark.DataSource.Pool.Get(False).GetCreatures("", Self.mMods)
 		    For Each Creature As Ark.Creature In Creatures
-		      CreatureIds.Add(Creature.ObjectID)
+		      CreatureIds.Add(Creature.CreatureId)
 		    Next
 		  Else
 		    For RowIdx As Integer = 0 To Self.CreatureList.LastRowIndex
 		      Var Creature As Ark.Creature = Self.CreatureList.RowTagAt(RowIdx)
 		      Creatures.Add(Creature)
-		      CreatureIds.Add(Creature.ObjectID)
+		      CreatureIds.Add(Creature.CreatureId)
 		    Next RowIdx
 		  End If
 		  
@@ -909,7 +910,7 @@ End
 		        Continue
 		      End If
 		      
-		      Var Original As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Ark.SpawnPoint.ModeOverride)
+		      Var Original As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.SpawnPointId, Ark.SpawnPoint.ModeOverride)
 		      If (Original Is Nil) = False Then
 		        Continue
 		      End If
@@ -918,7 +919,7 @@ End
 		      Mutable.Mode = Ark.SpawnPoint.ModeOverride
 		      Ark.DataSource.Pool.Get(False).LoadDefaults(Mutable)
 		      
-		      Var Remove As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Ark.SpawnPoint.ModeRemove)
+		      Var Remove As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.SpawnPointId, Ark.SpawnPoint.ModeRemove)
 		      If (Remove Is Nil) = False Then
 		        For Each Set As Ark.SpawnPointSet In Remove
 		          For Each Entry As Ark.SpawnPointSetEntry In Set
@@ -928,7 +929,7 @@ End
 		        Self.mConfig.Remove(Remove)
 		      End If
 		      
-		      Var Append As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Ark.SpawnPoint.ModeAppend)
+		      Var Append As Ark.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.SpawnPointId, Ark.SpawnPoint.ModeAppend)
 		      If (Append Is Nil) = False Then
 		        For Each Set As Ark.SpawnPointSet In Append
 		          Mutable.AddSet(Set.Clone)

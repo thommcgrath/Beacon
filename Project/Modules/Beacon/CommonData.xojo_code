@@ -105,15 +105,15 @@ Inherits Beacon.DataSource
 		        End If
 		      End If
 		      
-		      Var ObjectID As String = Dict.Value("object_id").StringValue
+		      Var ObjectId As String = Dict.Value("object_id").StringValue
 		      Var GameId As String = Dict.Value("game").StringValue
 		      Var TableName As String = Dict.Value("group").StringValue
 		      If GameId = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
 		        Select Case TableName
 		        Case "presets"
-		          Self.SQLExecute("DELETE FROM official_templates WHERE object_id = :object_id;", ObjectID)
+		          Self.SQLExecute("DELETE FROM official_templates WHERE object_id = :object_id;", ObjectId)
 		        Case "preset_modifiers"
-		          Self.SQLExecute("DELETE FROM official_template_selectors WHERE object_id = :object_id;", ObjectID)
+		          Self.SQLExecute("DELETE FROM official_template_selectors WHERE object_id = :object_id;", ObjectId)
 		        End Select
 		      End If
 		    Catch Err As RuntimeException
