@@ -908,7 +908,7 @@ End
 		    If Description.IsEmpty Then
 		      Self.ShowAlert("Your project has no description and will be rejected if shared.", "This might be the best project ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
 		      Try
-		        App.MainWindow.Documents.EditorForProject(Self.mProject).SwitchToEditor(Ark.Configs.NameMetadataPsuedo)
+		        App.MainWindow.Documents.EditorForProject(Self.mProject).SwitchToEditor(Ark.Configs.NameProjectSettings)
 		      Catch Err As RuntimeException
 		      End Try
 		      Self.Close()

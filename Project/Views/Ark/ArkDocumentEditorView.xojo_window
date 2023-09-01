@@ -328,7 +328,7 @@ End
 		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(ProjectId, "Config Set", "").StringValue)
 		    If LastConfigName.IsEmpty Or LastConfigSet Is Nil Then
 		      If Self.URL.Type.OneOf(Beacon.ProjectURL.TypeWeb, Beacon.ProjectURL.TypeCommunity) Then
-		        LastConfigName = Ark.Configs.NameMetadataPsuedo
+		        LastConfigName = Ark.Configs.NameProjectSettings
 		      Else
 		        LastConfigName = Ark.Configs.NameLootDrops
 		      End If
@@ -632,7 +632,7 @@ End
 		    Return
 		  End If
 		  
-		  If (Value = Ark.Configs.NameAccountsPsuedo Or Value = Ark.Configs.NameServersPseudo Or Value = Ark.Configs.NameMetadataPsuedo) And Self.ActiveConfigSet.IsBase = False Then
+		  If (Value = Ark.Configs.NameAccounts Or Value = Ark.Configs.NameServers Or Value = Ark.Configs.NameProjectSettings) And Self.ActiveConfigSet.IsBase = False Then
 		    Self.ActiveConfigSet = Beacon.ConfigSet.BaseConfigSet
 		  End If
 		  
@@ -665,19 +665,19 @@ End
 		      NewPanel = Self.Panels.Value(CacheKey)
 		    Else
 		      Select Case Value
-		      Case Ark.Configs.NameServersPseudo
+		      Case Ark.Configs.NameServers
 		        NewPanel = New ArkServersEditor(Self.Project)
-		      Case Ark.Configs.NameAccountsPsuedo
+		      Case Ark.Configs.NameAccounts
 		        NewPanel = New ArkAccountsEditor(Self.Project)
-		      Case Ark.Configs.NameMetadataPsuedo
+		      Case Ark.Configs.NameProjectSettings
 		        NewPanel = New ArkProjectSettingsEditor(Self.Project)
 		      Case Ark.Configs.NameLootDrops
 		        NewPanel = New ArkLootDropsEditor(Self.Project)
 		      Case Ark.Configs.NameDifficulty
 		        NewPanel = New ArkDifficultyEditor(Self.Project)
-		      Case Ark.Configs.NameExperienceCurves
+		      Case Ark.Configs.NameLevelsAndXP
 		        NewPanel = New ArkExperienceEditor(Self.Project)
-		      Case Ark.Configs.NameCustomContent
+		      Case Ark.Configs.NameCustomConfig
 		        NewPanel = New ArkCustomConfigEditor(Self.Project)
 		      Case Ark.Configs.NameCraftingCosts
 		        NewPanel = New ArkCraftingCostsEditor(Self.Project)
@@ -687,21 +687,21 @@ End
 		        NewPanel = New ArkBreedingMultipliersEditor(Self.Project)
 		      Case Ark.Configs.NameHarvestRates
 		        NewPanel = New ArkHarvestRatesEditor(Self.Project)
-		      Case Ark.Configs.NameDinoAdjustments
+		      Case Ark.Configs.NameCreatureAdjustments
 		        NewPanel = New ArkDinoAdjustmentsEditor(Self.Project)
 		      Case Ark.Configs.NameStatMultipliers
 		        NewPanel = New ArkStatMultipliersEditor(Self.Project)
 		      Case Ark.Configs.NameDayCycle
 		        NewPanel = New ArkDayCycleEditor(Self.Project)
-		      Case Ark.Configs.NameSpawnPoints
+		      Case Ark.Configs.NameCreatureSpawns
 		        NewPanel = New ArkCreatureSpawnsEditor(Self.Project)
 		      Case Ark.Configs.NameStatLimits
 		        NewPanel = New ArkStatLimitsEditor(Self.Project)
 		      Case Ark.Configs.NameEngramControl
 		        NewPanel = New ArkEngramControlEditor(Self.Project)
-		      Case Ark.Configs.NameSpoilTimers
+		      Case Ark.Configs.NameDecayAndSpoil
 		        NewPanel = New ArkSpoilTimersEditor(Self.Project)
-		      Case Ark.Configs.NameOtherSettings
+		      Case Ark.Configs.NameGeneralSettings
 		        NewPanel = New ArkGeneralSettingsEditor(Self.Project)
 		      End Select
 		      If NewPanel <> Nil Then
@@ -1098,10 +1098,10 @@ End
 		  Var ActiveConfigSet As Beacon.ConfigSet = Self.ActiveConfigSet
 		  Var IsBase As Boolean = ActiveConfigSet.IsBase
 		  If IsBase Then
-		    Var PsuedoTags() As String = Array(Ark.Configs.NameMetadataPsuedo, Ark.Configs.NameAccountsPsuedo)
+		    Var PsuedoTags() As String = Array(Ark.Configs.NameProjectSettings, Ark.Configs.NameAccounts)
 		    // Show everything
 		    #if DeployEnabled
-		      PsuedoTags.Add(Ark.Configs.NameServersPseudo)
+		      PsuedoTags.Add(Ark.Configs.NameServers)
 		    #endif
 		    For Each Tag As String In PsuedoTags
 		      Labels.Add(Language.LabelForConfig(Tag))

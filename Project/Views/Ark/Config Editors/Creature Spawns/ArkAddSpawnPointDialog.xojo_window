@@ -474,8 +474,8 @@ End
 		  Self.mDefinedSpawns = New Dictionary
 		  Self.mUIMode = UIMode
 		  
-		  If Project.HasConfigGroup(Ark.Configs.NameSpawnPoints) Then
-		    Var Config As Ark.Configs.SpawnPoints = Ark.Configs.SpawnPoints(Project.ConfigGroup(Ark.Configs.NameSpawnPoints, False))
+		  If Project.HasConfigGroup(Ark.Configs.NameCreatureSpawns) Then
+		    Var Config As Ark.Configs.SpawnPoints = Ark.Configs.SpawnPoints(Project.ConfigGroup(Ark.Configs.NameCreatureSpawns, False))
 		    If Config <> Nil Then
 		      Var SpawnPoints() As Ark.SpawnPoint = Config.Points
 		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints

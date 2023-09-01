@@ -469,6 +469,7 @@ Begin ArkConfigEditor ArkProjectSettingsEditor
    End
    Begin Thread GFIComputeThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -539,7 +540,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameMetadataPsuedo
+		  Return Ark.Configs.NameProjectSettings
 		End Function
 	#tag EndMethod
 

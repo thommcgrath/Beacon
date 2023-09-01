@@ -322,7 +322,7 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameDinoAdjustments
+		  Return Ark.Configs.NameCreatureAdjustments
 		End Function
 	#tag EndMethod
 

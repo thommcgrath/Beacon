@@ -228,6 +228,7 @@ Begin BeaconDialog ArkEngramControlWizard
    End
    Begin Thread WorkThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3
@@ -513,8 +514,8 @@ End
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexGrantExactPoints
 		    Var PlayerLevelCap As Integer = Ark.DataSource.Pool.Get(False).OfficialPlayerLevelData.MaxLevel
-		    If Self.mProject.HasConfigGroup(Ark.Configs.NameExperienceCurves) Then
-		      Var ExperienceConfig As Ark.Configs.ExperienceCurves = Ark.Configs.ExperienceCurves(Self.mProject.ConfigGroup(Ark.Configs.NameExperienceCurves, False))
+		    If Self.mProject.HasConfigGroup(Ark.Configs.NameLevelsAndXP) Then
+		      Var ExperienceConfig As Ark.Configs.ExperienceCurves = Ark.Configs.ExperienceCurves(Self.mProject.ConfigGroup(Ark.Configs.NameLevelsAndXP, False))
 		      If ExperienceConfig <> Nil Then
 		        PlayerLevelCap = Max(PlayerLevelCap, ExperienceConfig.PlayerLevelCap)
 		      End If

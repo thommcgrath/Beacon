@@ -429,7 +429,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameServersPseudo
+		  Return Ark.Configs.NameServers
 		End Function
 	#tag EndMethod
 

@@ -389,11 +389,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Project As Ark.Project) As Boolean
-		  If Project Is Nil Or Project.HasConfigGroup(Ark.Configs.NameSpawnPoints) = False Then
+		  If Project Is Nil Or Project.HasConfigGroup(Ark.Configs.NameCreatureSpawns) = False Then
 		    Return True
 		  End If
 		  
-		  Var ParsedConfig As Ark.Configs.SpawnPoints = Ark.Configs.SpawnPoints(Project.ConfigGroup(Ark.Configs.NameSpawnPoints))
+		  Var ParsedConfig As Ark.Configs.SpawnPoints = Ark.Configs.SpawnPoints(Project.ConfigGroup(Ark.Configs.NameCreatureSpawns))
 		  If ParsedConfig = Nil Or ParsedConfig.Count = 0 Then
 		    Self.ShowAlert("No spawn points to import", "The parsed ini content did not contain any spawn point data.")
 		    Return True
@@ -496,7 +496,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameSpawnPoints
+		  Return Ark.Configs.NameCreatureSpawns
 		End Function
 	#tag EndMethod
 

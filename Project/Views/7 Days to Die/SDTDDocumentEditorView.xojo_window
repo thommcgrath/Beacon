@@ -273,7 +273,7 @@ End
 		    Var LastConfigSet As Beacon.ConfigSet = Self.Project.FindConfigSet(Preferences.ProjectState(ProjectId, "Config Set", "").StringValue)
 		    If LastConfigName.IsEmpty Or LastConfigSet Is Nil Then
 		      If Self.URL.Type.OneOf(Beacon.ProjectURL.TypeWeb, Beacon.ProjectURL.TypeCommunity) Then
-		        LastConfigName = SDTD.Configs.NameMetadata
+		        LastConfigName = SDTD.Configs.NameProjectSettings
 		      Else
 		        LastConfigName = SDTD.Configs.NameGeneralSettings
 		      End If
@@ -485,7 +485,7 @@ End
 		    Return
 		  End If
 		  
-		  If (Value = SDTD.Configs.NameAccounts Or Value = SDTD.Configs.NameServers Or Value = SDTD.Configs.NameMetadata) And Self.ActiveConfigSet.IsBase = False Then
+		  If (Value = SDTD.Configs.NameAccounts Or Value = SDTD.Configs.NameServers Or Value = SDTD.Configs.NameProjectSettings) And Self.ActiveConfigSet.IsBase = False Then
 		    Self.ActiveConfigSet = Beacon.ConfigSet.BaseConfigSet
 		  End If
 		  
@@ -524,7 +524,7 @@ End
 		        NewPanel = New SDTDCustomConfigEditor(Self.Project)
 		      Case SDTD.Configs.NameGeneralSettings
 		        NewPanel = New SDTDGeneralSettingsEditor(Self.Project)
-		      Case SDTD.Configs.NameMetadata
+		      Case SDTD.Configs.NameProjectSettings
 		        NewPanel = New SDTDProjectSettingsEditor(Self.Project)
 		      Case SDTD.Configs.NameServers
 		        NewPanel = New SDTDServersEditor(Self.Project)
@@ -766,7 +766,7 @@ End
 		  Var ActiveConfigSet As Beacon.ConfigSet = Self.ActiveConfigSet
 		  Var IsBase As Boolean = ActiveConfigSet.IsBase
 		  If IsBase Then
-		    Var PsuedoTags() As String = Array(SDTD.Configs.NameAccounts, SDTD.Configs.NameMetadata, SDTD.Configs.NameServers)
+		    Var PsuedoTags() As String = Array(SDTD.Configs.NameAccounts, SDTD.Configs.NameProjectSettings, SDTD.Configs.NameServers)
 		    For Each Tag As String In PsuedoTags
 		      Labels.Add(Language.LabelForConfig(Tag))
 		      Tags.Add(Tag)

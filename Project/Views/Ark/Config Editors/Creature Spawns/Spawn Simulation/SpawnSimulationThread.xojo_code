@@ -12,7 +12,7 @@ Inherits Thread
 		  Var DinoCountMultiplier As Double = 1.0
 		  Var DinoCountMultiplierKey As Ark.ConfigOption = Database.GetConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DinoCountMultiplier")
 		  If (DinoCountMultiplierKey Is Nil) = False Then
-		    Var GeneralSettings As Ark.ConfigGroup = Self.mProject.CombinedConfig(Ark.Configs.NameOtherSettings, Self.mProfile.ConfigSetStates)
+		    Var GeneralSettings As Ark.ConfigGroup = Self.mProject.CombinedConfig(Ark.Configs.NameGeneralSettings, Self.mProfile.ConfigSetStates)
 		    If (GeneralSettings Is Nil) = False Then
 		      Try
 		        DinoCountMultiplier = Ark.Configs.OtherSettings(GeneralSettings).Value(DinoCountMultiplierKey).DoubleValue
@@ -20,7 +20,7 @@ Inherits Thread
 		        App.Log(Err, CurrentMethodName, "Reading DinoCountMultiplier from General Settings.")
 		      End Try
 		    Else
-		      Var CustomConfig As Ark.ConfigGroup = Self.mProject.CombinedConfig(Ark.Configs.NameCustomContent, Self.mProfile.ConfigSetStates)
+		      Var CustomConfig As Ark.ConfigGroup = Self.mProject.CombinedConfig(Ark.Configs.NameCustomConfig, Self.mProfile.ConfigSetStates)
 		      If (CustomConfig Is Nil) = False Then
 		        Var Configs() As Ark.ConfigValue = CustomConfig.GenerateConfigValues(Self.mProject, App.IdentityManager.CurrentIdentity, Self.mProfile)
 		        For Each ConfigValue As Ark.ConfigValue In Configs
@@ -41,7 +41,7 @@ Inherits Thread
 		    End If
 		  End If
 		  
-		  Var SpawnConfig As Ark.ConfigGroup = Self.mProject.CombinedConfig(Ark.Configs.NameSpawnPoints, Self.mProfile.ConfigSetStates)
+		  Var SpawnConfig As Ark.ConfigGroup = Self.mProject.CombinedConfig(Ark.Configs.NameCreatureSpawns, Self.mProfile.ConfigSetStates)
 		  Var SpawnPoints() As Ark.SpawnPoint = Database.GetSpawnPoints("", Self.mProject.ContentPacks, "")
 		  Var Handled As New Dictionary
 		  For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints

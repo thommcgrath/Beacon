@@ -75,6 +75,7 @@ Begin ArkConfigEditor ArkAccountsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
+      TotalPages      =   -1
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -223,7 +224,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameAccountsPsuedo
+		  Return Ark.Configs.NameAccounts
 		End Function
 	#tag EndMethod
 

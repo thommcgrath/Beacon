@@ -1808,7 +1808,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameSpoilTimers
+		  Return Ark.Configs.NameDecayAndSpoil
 		End Function
 	#tag EndMethod
 

@@ -114,7 +114,7 @@ End
 		  
 		  For Each CreatedConfig As Ark.ConfigGroup In Project.ImplementedConfigs(Project.ActiveConfigSet)
 		    Var InternalName As String = CreatedConfig.InternalName
-		    If InternalName = Ark.Configs.NameCustomContent Then
+		    If InternalName = Ark.Configs.NameCustomConfig Then
 		      Continue
 		    End If
 		    
@@ -250,7 +250,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameCustomContent
+		  Return Ark.Configs.NameCustomConfig
 		End Function
 	#tag EndMethod
 

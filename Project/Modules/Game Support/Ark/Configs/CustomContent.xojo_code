@@ -299,7 +299,7 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameCustomContent
+		  Return Ark.Configs.NameCustomConfig
 		End Function
 	#tag EndMethod
 

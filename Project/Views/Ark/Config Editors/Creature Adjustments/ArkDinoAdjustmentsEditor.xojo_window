@@ -191,11 +191,11 @@ End
 #tag WindowCode
 	#tag Event
 		Function ParsingFinished(Project As Ark.Project) As Boolean
-		  If Project Is Nil Or Project.HasConfigGroup(Ark.Configs.NameDinoAdjustments) = False Then
+		  If Project Is Nil Or Project.HasConfigGroup(Ark.Configs.NameCreatureAdjustments) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Project.ConfigGroup(Ark.Configs.NameDinoAdjustments))
+		  Var OtherConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Project.ConfigGroup(Ark.Configs.NameCreatureAdjustments))
 		  If OtherConfig = Nil Then
 		    Return True
 		  End If
@@ -261,7 +261,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameDinoAdjustments
+		  Return Ark.Configs.NameCreatureAdjustments
 		End Function
 	#tag EndMethod
 

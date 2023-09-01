@@ -442,7 +442,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  Var Title, Body, HelpURL As String
-		  Call Ark.DataSource.Pool.Get(False).GetConfigHelp(Ark.Configs.NameSpawnPoints, Title, Body, HelpURL)
+		  Call Ark.DataSource.Pool.Get(False).GetConfigHelp(Ark.Configs.NameCreatureSpawns, Title, Body, HelpURL)
 		  System.GotoURL(HelpURL)
 		End Sub
 	#tag EndEvent

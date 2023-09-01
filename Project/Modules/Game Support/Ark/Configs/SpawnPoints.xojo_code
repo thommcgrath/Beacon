@@ -593,7 +593,7 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameSpawnPoints
+		  Return Ark.Configs.NameCreatureSpawns
 		End Function
 	#tag EndMethod
 

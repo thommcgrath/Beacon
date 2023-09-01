@@ -169,7 +169,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return Ark.Configs.NameExperienceCurves
+		  Return Ark.Configs.NameLevelsAndXP
 		End Function
 	#tag EndMethod
 

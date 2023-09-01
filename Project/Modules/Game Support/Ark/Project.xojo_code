@@ -78,7 +78,35 @@ Inherits Beacon.Project
 		      Select Case InternalName
 		      Case "LootScale"
 		        ConvertLootScale = GroupData
-		      Case "Metadata"
+		      Case "Metadata", "metadata", Ark.Configs.NameProjectSettings
+		      Case "accounts"
+		        InternalName = Ark.Configs.NameAccounts
+		      Case "BreedingMultipliers"
+		        InternalName = Ark.Configs.NameBreedingMultipliers
+		      Case "CraftingCosts"
+		        InternalName = Ark.Configs.NameCraftingCosts
+		      Case "DinoAdjustments"
+		        InternalName = Ark.Configs.NameCreatureAdjustments
+		      Case "SpawnPoints"
+		        InternalName = Ark.Configs.NameCreatureSpawns
+		      Case "CustomContent"
+		        InternalName = Ark.Configs.NameCustomConfig
+		      Case "DayCycle"
+		        InternalName = Ark.Configs.NameDayCycle
+		      Case "SpoilTimers"
+		        InternalName = Ark.Configs.NameDecayAndSpoil
+		      Case "Difficulty"
+		        InternalName = Ark.Configs.NameDifficulty
+		      Case "EngramControl"
+		        InternalName = Ark.Configs.NameEngramControl
+		      Case "LootDrops"
+		        InternalName = Ark.Configs.NameLootDrops
+		      Case "deployments"
+		        InternalName = Ark.Configs.NameServers
+		      Case "StackSizes"
+		        InternalName = Ark.Configs.NameStackSizes
+		      Case "StatMultipliers"
+		        InternalName = Ark.Configs.NameStatMultipliers
 		      Else
 		        Var EncryptedGroupData As Dictionary
 		        If EncryptedData.HasKey(InternalName) Then
@@ -100,18 +128,18 @@ Inherits Beacon.Project
 		  If (ConvertLootScale Is Nil) = False Then
 		    Try
 		      Var OtherSettings As Ark.Configs.OtherSettings
-		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) Then
-		        OtherSettings = SetDict.Value(Ark.Configs.NameOtherSettings)
+		      If SetDict.HasKey(Ark.Configs.NameGeneralSettings) Then
+		        OtherSettings = SetDict.Value(Ark.Configs.NameGeneralSettings)
 		      Else
 		        // Don't add it until we know everything worked
-		        OtherSettings = Ark.Configs.OtherSettings(Ark.Configs.CreateInstance(Ark.Configs.NameOtherSettings))
+		        OtherSettings = Ark.Configs.OtherSettings(Ark.Configs.CreateInstance(Ark.Configs.NameGeneralSettings))
 		      End If
 		      
 		      Var Multiplier As Double = ConvertLootScale.Value("Multiplier")
 		      OtherSettings.Value(Ark.DataSource.Pool.Get(False).GetConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
 		      
-		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) = False Then
-		        SetDict.Value(Ark.Configs.NameOtherSettings) = OtherSettings
+		      If SetDict.HasKey(Ark.Configs.NameGeneralSettings) = False Then
+		        SetDict.Value(Ark.Configs.NameGeneralSettings) = OtherSettings
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
@@ -419,11 +447,11 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function ConvertDinoReplacementsToSpawnOverrides() As Integer
-		  If Self.HasConfigGroup(Ark.Configs.NameDinoAdjustments) = False Then
+		  If Self.HasConfigGroup(Ark.Configs.NameCreatureAdjustments) = False Then
 		    Return 0
 		  End If
 		  
-		  Var DinoConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Self.ConfigGroup(Ark.Configs.NameDinoAdjustments))
+		  Var DinoConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Self.ConfigGroup(Ark.Configs.NameCreatureAdjustments))
 		  If DinoConfig = Nil Then
 		    Return 0
 		  End If
@@ -477,7 +505,7 @@ Inherits Beacon.Project
 		      
 		      If NewSets.Count > 0 Then
 		        If SpawnConfig Is Nil Then
-		          SpawnConfig = Ark.Configs.SpawnPoints(Self.ConfigGroup(Ark.Configs.NameSpawnPoints, True))
+		          SpawnConfig = Ark.Configs.SpawnPoints(Self.ConfigGroup(Ark.Configs.NameCreatureSpawns, True))
 		          SpawnConfig.IsImplicit = False
 		        End If
 		        
@@ -534,7 +562,7 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      If Groups(Idx).InternalName = Ark.Configs.NameCustomContent Then
+		      If Groups(Idx).InternalName = Ark.Configs.NameCustomConfig Then
 		        Organizer.AddManagedKeys(Groups(Idx).ManagedKeys)
 		        Organizer.Add(Groups(Idx).GenerateConfigValues(Self, Identity, Profile))
 		        Groups.RemoveAt(Idx)

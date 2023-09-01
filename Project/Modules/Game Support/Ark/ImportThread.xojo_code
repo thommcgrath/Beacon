@@ -302,7 +302,7 @@ Inherits Beacon.Thread
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  Var Configs() As Ark.ConfigGroup
 		  For Each ConfigName As String In ConfigNames
-		    If ConfigName = Ark.Configs.NameDifficulty Or ConfigName = Ark.Configs.NameCustomContent Then
+		    If ConfigName = Ark.Configs.NameDifficulty Or ConfigName = Ark.Configs.NameCustomConfig Then
 		      // Difficulty and custom content are special
 		      Continue For ConfigName
 		    End If
@@ -325,7 +325,7 @@ Inherits Beacon.Thread
 		  Next
 		  
 		  // Now split the content into values and remove the ones controlled by the imported groups
-		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(Ark.Configs.NameCustomContent) + ")"
+		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(Ark.Configs.NameCustomConfig) + ")"
 		  Var CustomConfigOrganizer As New Ark.ConfigOrganizer(Ark.ConfigFileGame, Ark.HeaderShooterGame, Self.mData.GameIniContent)
 		  CustomConfigOrganizer.Add(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, Self.mData.GameUserSettingsIniContent)
 		  For Each Config As Ark.ConfigGroup In Configs

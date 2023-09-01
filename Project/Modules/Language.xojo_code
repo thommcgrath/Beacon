@@ -140,9 +140,9 @@ Protected Module Language
 		    Return "Difficulty"
 		  Case Ark.Configs.NameLootDrops
 		    Return "Loot Drops"
-		  Case Ark.Configs.NameExperienceCurves
+		  Case Ark.Configs.NameLevelsAndXP
 		    Return "Levels and XP"
-		  Case Ark.Configs.NameCustomContent, SDTD.Configs.NameCustomConfig
+		  Case Ark.Configs.NameCustomConfig, SDTD.Configs.NameCustomConfig
 		    Return "Custom Config"
 		  Case Ark.Configs.NameCraftingCosts
 		    Return "Crafting Costs"
@@ -152,27 +152,27 @@ Protected Module Language
 		    Return "Breeding Multipliers"
 		  Case Ark.Configs.NameHarvestRates
 		    Return "Harvest Rates"
-		  Case Ark.Configs.NameDinoAdjustments
+		  Case Ark.Configs.NameCreatureAdjustments
 		    Return "Creature Adjustments"
 		  Case Ark.Configs.NameStatMultipliers
 		    Return "Stat Multipliers"
 		  Case Ark.Configs.NameDayCycle
 		    Return "Day and Night Cycle"
-		  Case Ark.Configs.NameSpawnPoints
+		  Case Ark.Configs.NameCreatureSpawns
 		    Return "Creature Spawns"
 		  Case Ark.Configs.NameStatLimits
 		    Return "Item Stat Limits"
 		  Case Ark.Configs.NameEngramControl
 		    Return "Engram Control"
-		  Case Ark.Configs.NameSpoilTimers
+		  Case Ark.Configs.NameDecayAndSpoil
 		    Return "Decay and Spoil"
-		  Case Ark.Configs.NameOtherSettings, SDTD.Configs.NameGeneralSettings
+		  Case Ark.Configs.NameGeneralSettings, SDTD.Configs.NameGeneralSettings
 		    Return "General Settings"
-		  Case Ark.Configs.NameServersPseudo, SDTD.Configs.NameServers
+		  Case Ark.Configs.NameServers, SDTD.Configs.NameServers
 		    Return "Servers"
-		  Case Ark.Configs.NameAccountsPsuedo, SDTD.Configs.NameAccounts
+		  Case Ark.Configs.NameAccounts, SDTD.Configs.NameAccounts
 		    Return "Accounts"
-		  Case Ark.Configs.NameMetadataPsuedo, SDTD.Configs.NameMetadata
+		  Case Ark.Configs.NameProjectSettings, SDTD.Configs.NameProjectSettings
 		    Return "Project Settings"
 		  End Select
 		End Function
