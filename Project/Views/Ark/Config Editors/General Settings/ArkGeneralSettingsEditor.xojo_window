@@ -188,7 +188,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SettingChanged(Key As Ark.ConfigKey, NewValue As Variant)
+		Private Sub SettingChanged(Key As Ark.ConfigOption, NewValue As Variant)
 		  Var Config As Ark.Configs.OtherSettings = Self.Config(True)
 		  Config.Value(Key) = NewValue
 		  Self.Modified = Config.Modified
@@ -196,7 +196,7 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub SettingChangeDelegate(Key As Ark . ConfigKey, Value As Variant)
+		Delegate Sub SettingChangeDelegate(Key As Ark.ConfigOption, Value As Variant)
 	#tag EndDelegateDeclaration
 
 

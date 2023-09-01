@@ -73,11 +73,11 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "LevelExperienceRampOverrides"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideMaxExperiencePointsPlayer"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideMaxExperiencePointsDino"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "LevelExperienceRampOverrides"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideMaxExperiencePointsPlayer"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideMaxExperiencePointsDino"))
 		  Return Keys
 		End Function
 	#tag EndEvent

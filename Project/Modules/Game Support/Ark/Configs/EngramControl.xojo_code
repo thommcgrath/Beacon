@@ -137,14 +137,14 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideEngramEntries"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideNamedEngramEntries"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "bOnlyAllowSpecifiedEngrams"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverridePlayerLevelEngramPoints"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "bAutoUnlockAllEngrams"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EngramEntryAutoUnlocks"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideEngramEntries"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverrideNamedEngramEntries"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "bOnlyAllowSpecifiedEngrams"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "OverridePlayerLevelEngramPoints"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "bAutoUnlockAllEngrams"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EngramEntryAutoUnlocks"))
 		  Return Keys
 		End Function
 	#tag EndEvent

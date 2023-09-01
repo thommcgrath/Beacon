@@ -104,7 +104,7 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddManagedKeys(Keys() As Ark.ConfigKey)
+		Sub AddManagedKeys(Keys() As Ark.ConfigOption)
 		  For Idx As Integer = Keys.FirstIndex To Keys.LastIndex
 		    If Keys(Idx) Is Nil Then
 		      Continue
@@ -219,22 +219,22 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DistinctKeys() As Ark.ConfigKey()
+		Function DistinctKeys() As Ark.ConfigOption()
 		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap ORDER BY sortkey;")
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function DistinctKeys(Rows As RowSet) As Ark.ConfigKey()
-		  Var Results() As Ark.ConfigKey
+		Private Function DistinctKeys(Rows As RowSet) As Ark.ConfigOption()
+		  Var Results() As Ark.ConfigOption
 		  While Rows.AfterLastRow = False
 		    Var File As String = Rows.Column("file").StringValue
 		    Var Header As String = Rows.Column("header").StringValue
 		    Var SimpleKey As String = Rows.Column("simplekey").StringValue
-		    Var Key As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(File, Header, SimpleKey)
+		    Var Key As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOption(File, Header, SimpleKey)
 		    If Key Is Nil Then
-		      Key = New Ark.ConfigKey(File, Header, SimpleKey)
+		      Key = New Ark.ConfigOption(File, Header, SimpleKey)
 		    End If
 		    Results.Add(Key)
 		    Rows.MoveToNextRow
@@ -244,14 +244,14 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DistinctKeys(ForFile As String) As Ark.ConfigKey()
+		Function DistinctKeys(ForFile As String) As Ark.ConfigOption()
 		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap WHERE file = ?1;", ForFile)
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DistinctKeys(ForFile As String, ForHeader As String) As Ark.ConfigKey()
+		Function DistinctKeys(ForFile As String, ForHeader As String) As Ark.ConfigOption()
 		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap WHERE file = ?1 AND header = ?2;", ForFile, ForHeader)
 		  Return Self.DistinctKeys(Rows)
 		End Function
@@ -265,7 +265,7 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FilteredValues(Key As Ark.ConfigKey) As Ark.ConfigValue()
+		Function FilteredValues(Key As Ark.ConfigOption) As Ark.ConfigValue()
 		  Return Self.FilteredValues(Key.File, Key.Header, Key.SimplifiedKey)
 		End Function
 	#tag EndMethod
@@ -353,8 +353,8 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ManagedKeys() As Ark.ConfigKey()
-		  Var Results() As Ark.ConfigKey
+		Function ManagedKeys() As Ark.ConfigOption()
+		  Var Results() As Ark.ConfigOption
 		  For Each Entry As DictionaryEntry In Self.mManagedKeys
 		    Results.Add(Entry.Value)
 		  Next Entry
@@ -363,9 +363,9 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Keys() As Ark.ConfigKey)
+		Sub Remove(Keys() As Ark.ConfigOption)
 		  Self.mIndex.BeginTransaction
-		  For Each Key As Ark.ConfigKey In Keys
+		  For Each Key As Ark.ConfigOption In Keys
 		    If Key Is Nil Then
 		      Continue
 		    End If
@@ -382,8 +382,8 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Key As Ark.ConfigKey)
-		  Var Keys(0) As Ark.ConfigKey
+		Sub Remove(Key As Ark.ConfigOption)
+		  Var Keys(0) As Ark.ConfigOption
 		  Keys(0) = Key
 		  Self.Remove(Keys)
 		End Sub
@@ -445,7 +445,7 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Swap(TargetKey As Ark.ConfigKey, ReplacementKey As Ark.ConfigKey)
+		Sub Swap(TargetKey As Ark.ConfigOption, ReplacementKey As Ark.ConfigOption)
 		  If TargetKey Is Nil Or ReplacementKey Is Nil Then
 		    Return
 		  End If

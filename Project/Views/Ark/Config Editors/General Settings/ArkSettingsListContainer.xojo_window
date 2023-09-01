@@ -129,15 +129,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CreateElement(Key As Ark.ConfigKey, Left As Integer, Top As Integer, Width As Integer, Height As Integer) As ArkSettingsListElement
+		Private Function CreateElement(Key As Ark.ConfigOption, Left As Integer, Top As Integer, Width As Integer, Height As Integer) As ArkSettingsListElement
 		  Var Element As ArkSettingsListElement
 		  
 		  Select Case Key.ValueType
-		  Case Ark.ConfigKey.ValueTypes.TypeBoolean
+		  Case Ark.ConfigOption.ValueTypes.TypeBoolean
 		    Element = New ArkSettingsListBooleanElement(Key)
-		  Case Ark.ConfigKey.ValueTypes.TypeNumeric
+		  Case Ark.ConfigOption.ValueTypes.TypeNumeric
 		    Element = New ArkSettingsListNumberElement(Key)
-		  Case Ark.ConfigKey.ValueTypes.TypeText
+		  Case Ark.ConfigOption.ValueTypes.TypeText
 		    Element = New ArkSettingsListStringElement(Key)
 		  Else
 		    Return Nil
@@ -164,7 +164,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ElementForKey(Key As Ark.ConfigKey) As ArkSettingsListElement
+		Private Function ElementForKey(Key As Ark.ConfigOption) As ArkSettingsListElement
 		  For Each Element As ArkSettingsListElement In Self.mElements
 		    If Element Is Nil Then
 		      Continue
@@ -193,10 +193,10 @@ End
 		  
 		  Self.mFilter = Value
 		  
-		  Var AllKeys() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys("", "", "", True)
+		  Var AllKeys() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", True)
 		  If Self.mDependencies Is Nil Then
 		    Self.mDependencies = New Dictionary
-		    For Each Key As Ark.ConfigKey In AllKeys
+		    For Each Key As Ark.ConfigOption In AllKeys
 		      Var Other As Variant = Key.Constraint("other")
 		      If IsNull(Other) Or (Other IsA Dictionary) = False Then
 		        Continue
@@ -225,7 +225,7 @@ End
 		  Var KeyNameWidth As Integer
 		  Var ConsoleSafe As Boolean = Self.Project.ConsoleSafe
 		  
-		  For Each Key As Ark.ConfigKey In AllKeys
+		  For Each Key As Ark.ConfigOption In AllKeys
 		    If Ark.Configs.OtherSettings.KeySupported(Key, ContentPacks) = False Then
 		      Continue
 		    End If
@@ -250,7 +250,7 @@ End
 		      GroupName = Key.UIGroup.StringValue
 		    End If
 		    
-		    Var Members() As Ark.ConfigKey
+		    Var Members() As Ark.ConfigOption
 		    If Groups.HasKey(GroupName) Then
 		      Members = Groups.Value(GroupName)
 		    Else
@@ -313,7 +313,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var Key As Ark.ConfigKey = Element.Key
+		    Var Key As Ark.ConfigOption = Element.Key
 		    Var Value As Variant = Config.Value(Key)
 		    If IsNull(Value) Then
 		      Element.Value(True) = Key.DefaultValue
@@ -327,7 +327,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function IsCorrectElementClass(Element As ArkSettingsListElement, Key As Ark.ConfigKey) As Boolean
+		Private Function IsCorrectElementClass(Element As ArkSettingsListElement, Key As Ark.ConfigOption) As Boolean
 		  Return (Element Is Nil) = False And (Key Is Nil) = False And Element.Key = Key
 		End Function
 	#tag EndMethod
@@ -339,12 +339,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SettingChanged(Key As Ark.ConfigKey, Value As Variant)
+		Private Sub SettingChanged(Key As Ark.ConfigOption, Value As Variant)
 		  If Beacon.SafeToInvoke(Self.SettingChangeDelegate) Then
 		    Self.SettingChangeDelegate.Invoke(Key, Value)
 		  End If
 		  
-		  If Self.mDependencies Is Nil Or Self.mDependencies.HasKey(Key.ConfigKeyId) = False Then
+		  If Self.mDependencies Is Nil Or Self.mDependencies.HasKey(Key.ConfigOptionId) = False Then
 		    Return
 		  End If
 		  
@@ -352,9 +352,9 @@ End
 		    Value = Key.DefaultValue
 		  End If
 		  
-		  Var Dependents() As Dictionary = Self.mDependencies.Value(Key.ConfigKeyId)
+		  Var Dependents() As Dictionary = Self.mDependencies.Value(Key.ConfigOptionId)
 		  For Each Dict As Dictionary In Dependents
-		    Var TargetKey As Ark.ConfigKey = Dict.Value("Target")
+		    Var TargetKey As Ark.ConfigOption = Dict.Value("Target")
 		    Var RequiredValue As Variant = Dict.Value("RequiredValue")
 		    Var ShouldBeEnabled As Boolean = (Value = RequiredValue)
 		    Var Element As ArkSettingsListElement = Self.ElementForKey(TargetKey)
@@ -404,7 +404,7 @@ End
 		  Var ElementWidth As Integer = Self.Width - Self.Scroller.Width
 		  For GroupIdx As Integer = 0 To Self.mVisibleGroups.LastIndex
 		    Var GroupName As String = Self.mVisibleGroups(GroupIdx)
-		    Var Members() As Ark.ConfigKey = Self.mVisibleKeys.Value(GroupName)
+		    Var Members() As Ark.ConfigOption = Self.mVisibleKeys.Value(GroupName)
 		    
 		    Var Header As ArkSettingsListHeader = Self.mGroupHeaders(GroupIdx)
 		    Var HeaderTop As Integer = NextTop
@@ -434,7 +434,7 @@ End
 		      Header.Visible = False
 		    End If
 		    
-		    For Each Member As Ark.ConfigKey In Members
+		    For Each Member As Ark.ConfigOption In Members
 		      Var Element As ArkSettingsListElement = Self.mElements(ElementIdx)
 		      Var ElementTop As Integer = NextTop
 		      NextTop = NextTop + Self.ElementHeight
@@ -481,13 +481,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ShouldBeEnabled(Key As Ark.ConfigKey) As Boolean
+		Private Function ShouldBeEnabled(Key As Ark.ConfigOption) As Boolean
 		  Var Requirements As Variant = Key.Constraint("other")
 		  If IsNull(Requirements) Or (Requirements IsA Dictionary) = False Then
 		    Return True
 		  End If
 		  
-		  Var RequiredKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Dictionary(Requirements).Value("key").StringValue)
+		  Var RequiredKey As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOption(Dictionary(Requirements).Value("key").StringValue)
 		  If RequiredKey Is Nil Then
 		    Return True
 		  End If
@@ -513,7 +513,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ValueChanged(Key As Ark.ConfigKey, NewValue As Variant)
+		Event ValueChanged(Key As Ark.ConfigOption, NewValue As Variant)
 	#tag EndHook
 
 

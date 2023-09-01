@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Rewriter
 Inherits Global.Thread
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
@@ -218,10 +218,10 @@ Inherits Global.Thread
 		      Organizer = Organizer.Clone
 		      
 		      Var GameIniValues() As Ark.ConfigValue = Organizer.FilteredValues(Ark.ConfigFileGame, Ark.HeaderShooterGame)
-		      Var ClonedKeys() As Ark.ConfigKey
+		      Var ClonedKeys() As Ark.ConfigOption
 		      Var ClonedValues() As Ark.ConfigValue
 		      For Each Value As Ark.ConfigValue In GameIniValues
-		        Var SiblingKey As New Ark.ConfigKey(Value.Details.File, Ark.HeaderShooterGameUWP, Value.Details.Key)
+		        Var SiblingKey As New Ark.ConfigOption(Value.Details.File, Ark.HeaderShooterGameUWP, Value.Details.Key)
 		        ClonedKeys.Add(SiblingKey)
 		        ClonedValues.Add(New Ark.ConfigValue(SiblingKey, Value.Command, Value.SortKey))
 		      Next Value

@@ -45,15 +45,15 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "UseOptimizedHarvestingHealth"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "HarvestResourceItemAmountClassMultipliers"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PlayerHarvestingDamageMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoHarvestingDamageMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "HarvestAmountMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "HarvestHealthMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "ClampResourceHarvestDamage"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "UseOptimizedHarvestingHealth"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "HarvestResourceItemAmountClassMultipliers"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PlayerHarvestingDamageMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoHarvestingDamageMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "HarvestAmountMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "HarvestHealthMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "ClampResourceHarvestDamage"))
 		  Return Keys
 		End Function
 	#tag EndEvent

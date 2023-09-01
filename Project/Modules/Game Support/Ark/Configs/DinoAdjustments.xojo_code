@@ -68,17 +68,17 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "NPCReplacements"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoClassDamageMultipliers"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoClassResistanceMultipliers"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "TamedDinoClassDamageMultipliers"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "TamedDinoClassResistanceMultipliers"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventDinoTameClassNames"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventTransferForClassNames"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "NPCReplacements"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoClassDamageMultipliers"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoClassResistanceMultipliers"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "TamedDinoClassDamageMultipliers"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "TamedDinoClassResistanceMultipliers"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventDinoTameClassNames"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PreventTransferForClassNames"))
 		  #if EnableSpawnWeights
-		    Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoSpawnWeightMultipliers"))
+		    Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoSpawnWeightMultipliers"))
 		  #endif
 		  Return Keys
 		End Function

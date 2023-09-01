@@ -304,7 +304,7 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  If ChangeDict.HasKey("configOptions") Then
-		    Self.mConfigKeyCache = New Dictionary
+		    Self.mConfigOptionCache = New Dictionary
 		    
 		    Var Options() As Variant = ChangeDict.Value("configOptions")
 		    For Each Dict As Dictionary In Options
@@ -383,8 +383,8 @@ Inherits Beacon.DataSource
 		      End If
 		      If Results.RowCount = 1 Then
 		        // Update
-		        Var OriginalConfigKeyId As String = Results.Column("object_id").StringValue
-		        Values.Add(OriginalConfigKeyId)
+		        Var OriginalConfigOptionId As String = Results.Column("object_id").StringValue
+		        Values.Add(OriginalConfigOptionId)
 		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19, gsa_placeholder = ?20, uwp_changes = ?21 WHERE object_id = ?22;", Values)
 		      Else
 		        // Insert
@@ -491,7 +491,7 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub ImportCleanup(StatusData As Dictionary)
 		  // Do not invalidate mBlueprints, it uses timestamps
-		  Self.mConfigKeyCache = New Dictionary
+		  Self.mConfigOptionCache = New Dictionary
 		  Self.mSpawnLabelCacheDict = New Dictionary
 		  Self.mIconCache = New Dictionary
 		  Self.mContainerLabelCacheDict = New Dictionary
@@ -957,8 +957,8 @@ Inherits Beacon.DataSource
 		  If Self.mBlueprintCache Is Nil Then
 		    Self.mBlueprintCache = New Dictionary
 		  End If
-		  If Self.mConfigKeyCache Is Nil Then
-		    Self.mConfigKeyCache = New Dictionary
+		  If Self.mConfigOptionCache Is Nil Then
+		    Self.mConfigOptionCache = New Dictionary
 		  End If
 		  If Self.mSpawnLabelCacheDict Is Nil Then
 		    Self.mSpawnLabelCacheDict = New Dictionary
@@ -1256,17 +1256,17 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigKey(KeyUUID As String) As Ark.ConfigKey
-		  If Self.mConfigKeyCache.HasKey(KeyUUID) Then
-		    Return Self.mConfigKeyCache.Value(KeyUUID)
+		Function GetConfigOption(KeyUUID As String) As Ark.ConfigOption
+		  If Self.mConfigOptionCache.HasKey(KeyUUID) Then
+		    Return Self.mConfigOptionCache.Value(KeyUUID)
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect(Self.ConfigKeySelectSQL + " WHERE object_id = ?1;", KeyUUID)
+		  Var Rows As RowSet = Self.SQLSelect(Self.ConfigOptionSelectSQL + " WHERE object_id = ?1;", KeyUUID)
 		  If Rows.RowCount <> 1 Then
 		    Return Nil
 		  End If
 		  
-		  Var Results() As Ark.ConfigKey = Self.RowSetToConfigKeys(Rows)
+		  Var Results() As Ark.ConfigOption = Self.RowSetToConfigOptions(Rows)
 		  If Results.Count = 1 Then
 		    Return Results(0)
 		  End If
@@ -1274,8 +1274,8 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigKey(File As String, Header As String, Key As String) As Ark.ConfigKey
-		  Var Results() As Ark.ConfigKey = Self.GetConfigKeys(File, Header, Key, False)
+		Function GetConfigOption(File As String, Header As String, Key As String) As Ark.ConfigOption
+		  Var Results() As Ark.ConfigOption = Self.GetConfigOptions(File, Header, Key, False)
 		  If Results.Count = 1 Then
 		    Return Results(0)
 		  End If
@@ -1283,7 +1283,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigKeys(File As String, Header As String, Key As String, SortHuman As Boolean) As Ark.ConfigKey()
+		Function GetConfigOptions(File As String, Header As String, Key As String, SortHuman As Boolean) As Ark.ConfigOption()
 		  Var Clauses() As String
 		  Var Values As New Dictionary
 		  Var Idx As Integer = 1
@@ -1331,7 +1331,7 @@ Inherits Beacon.DataSource
 		    Idx = Idx + 1
 		  End If
 		  
-		  Var SQL As String = Self.ConfigKeySelectSQL
+		  Var SQL As String = Self.ConfigOptionSelectSQL
 		  If Clauses.Count > 0 Then
 		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
 		  End If
@@ -1341,9 +1341,9 @@ Inherits Beacon.DataSource
 		    SQL = SQL + " ORDER BY key"
 		  End If
 		  
-		  Var Results() As Ark.ConfigKey
+		  Var Results() As Ark.ConfigOption
 		  Try
-		    Results = Self.RowSetToConfigKeys(Self.SQLSelect(SQL, Values))
+		    Results = Self.RowSetToConfigOptions(Self.SQLSelect(SQL, Values))
 		  Catch Err As RuntimeException
 		    App.ReportException(Err)
 		  End Try
@@ -2154,11 +2154,11 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetUWPConfigKeys() As Ark.ConfigKey()
-		  Var SQL As String = Self.ConfigKeySelectSQL + " WHERE uwp_changes IS NOT NULL;"
-		  Var Results() As Ark.ConfigKey
+		Function GetUWPConfigOptions() As Ark.ConfigOption()
+		  Var SQL As String = Self.ConfigOptionSelectSQL + " WHERE uwp_changes IS NOT NULL;"
+		  Var Results() As Ark.ConfigOption
 		  Try
-		    Results = Self.RowSetToConfigKeys(Self.SQLSelect(SQL))
+		    Results = Self.RowSetToConfigOptions(Self.SQLSelect(SQL))
 		  Catch Err As RuntimeException
 		    App.ReportException(Err)
 		  End Try
@@ -2341,33 +2341,33 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RowSetToConfigKeys(Results As RowSet) As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
+		Private Function RowSetToConfigOptions(Results As RowSet) As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
 		  Try
 		    While Results.AfterLastRow = False
-		      Var ConfigKeyId As String = Results.Column("object_id").StringValue
-		      If Self.mConfigKeyCache.HasKey(ConfigKeyId) Then
+		      Var ConfigOptionId As String = Results.Column("object_id").StringValue
+		      If Self.mConfigOptionCache.HasKey(ConfigOptionId) Then
 		        Results.MoveToNextRow
-		        Keys.Add(Self.mConfigKeyCache.Value(ConfigKeyId))
+		        Keys.Add(Self.mConfigOptionCache.Value(ConfigOptionId))
 		        Continue
 		      End If
 		      
 		      Var Label As String = Results.Column("label").StringValue
 		      Var ConfigFile As String = Results.Column("file").StringValue
 		      Var ConfigHeader As String = Results.Column("header").StringValue
-		      Var ConfigKey As String = Results.Column("key").StringValue
-		      Var ValueType As Ark.ConfigKey.ValueTypes
+		      Var ConfigOption As String = Results.Column("key").StringValue
+		      Var ValueType As Ark.ConfigOption.ValueTypes
 		      Select Case Results.Column("value_type").StringValue
 		      Case "Numeric"
-		        ValueType = Ark.ConfigKey.ValueTypes.TypeNumeric
+		        ValueType = Ark.ConfigOption.ValueTypes.TypeNumeric
 		      Case "Array"
-		        ValueType = Ark.ConfigKey.ValueTypes.TypeArray
+		        ValueType = Ark.ConfigOption.ValueTypes.TypeArray
 		      Case "Structure"
-		        ValueType = Ark.ConfigKey.ValueTypes.TypeStructure
+		        ValueType = Ark.ConfigOption.ValueTypes.TypeStructure
 		      Case "Boolean"
-		        ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean
+		        ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean
 		      Case "Text"
-		        ValueType = Ark.ConfigKey.ValueTypes.TypeText
+		        ValueType = Ark.ConfigOption.ValueTypes.TypeText
 		      End Select
 		      Var MaxAllowed As NullableDouble
 		      If IsNull(Results.Column("max_allowed").Value) = False Then
@@ -2376,23 +2376,23 @@ Inherits Beacon.DataSource
 		      Var Description As String = Results.Column("description").StringValue
 		      Var DefaultValue As Variant = Results.Column("default_value").Value
 		      Var NitradoPath As NullableString
-		      Var NitradoFormat As Ark.ConfigKey.NitradoFormats = Ark.ConfigKey.NitradoFormats.Unsupported
-		      Var NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles = Ark.ConfigKey.NitradoDeployStyles.Unsupported
+		      Var NitradoFormat As Ark.ConfigOption.NitradoFormats = Ark.ConfigOption.NitradoFormats.Unsupported
+		      Var NitradoDeployStyle As Ark.ConfigOption.NitradoDeployStyles = Ark.ConfigOption.NitradoDeployStyles.Unsupported
 		      If IsNull(Results.Column("nitrado_format").Value) = False Then
 		        NitradoPath = Results.Column("nitrado_path").StringValue
 		        Select Case Results.Column("nitrado_format").StringValue
 		        Case "Line"
-		          NitradoFormat = Ark.ConfigKey.NitradoFormats.Line
+		          NitradoFormat = Ark.ConfigOption.NitradoFormats.Line
 		        Case "Value"
-		          NitradoFormat = Ark.ConfigKey.NitradoFormats.Value
+		          NitradoFormat = Ark.ConfigOption.NitradoFormats.Value
 		        End Select
 		        Select Case Results.Column("nitrado_deploy_style").StringValue
 		        Case "Guided"
-		          NitradoDeployStyle = Ark.ConfigKey.NitradoDeployStyles.Guided
+		          NitradoDeployStyle = Ark.ConfigOption.NitradoDeployStyles.Guided
 		        Case "Expert"
-		          NitradoDeployStyle = Ark.ConfigKey.NitradoDeployStyles.Expert
+		          NitradoDeployStyle = Ark.ConfigOption.NitradoDeployStyles.Expert
 		        Case "Both"
-		          NitradoDeployStyle = Ark.ConfigKey.NitradoDeployStyles.Both
+		          NitradoDeployStyle = Ark.ConfigOption.NitradoDeployStyles.Both
 		        End Select
 		      End If
 		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Results.Column("native_editor_version").Value)
@@ -2423,8 +2423,8 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		      
-		      Var Key As New Ark.ConfigKey(ConfigKeyId, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId, GSAPlaceholder, UWPChanges)
-		      Self.mConfigKeyCache.Value(ConfigKeyId) = Key
+		      Var Key As New Ark.ConfigOption(ConfigOptionId, Label, ConfigFile, ConfigHeader, ConfigOption, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackId, GSAPlaceholder, UWPChanges)
+		      Self.mConfigOptionCache.Value(ConfigOptionId) = Key
 		      Keys.Add(Key)
 		      Results.MoveToNextRow
 		    Wend
@@ -2975,7 +2975,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared mConfigKeyCache As Dictionary
+		Private Shared mConfigOptionCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -3011,7 +3011,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C gsa_placeholder\x2C content_pack_id\x2C uwp_changes FROM ini_options", Scope = Private
+	#tag Constant, Name = ConfigOptionSelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C gsa_placeholder\x2C content_pack_id\x2C uwp_changes FROM ini_options", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = CreatureColorSelectSQL, Type = String, Dynamic = False, Default = \"SELECT colors.color_id\x2C colors.label\x2C colors.hex_value FROM colors", Scope = Private

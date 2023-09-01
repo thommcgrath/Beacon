@@ -420,7 +420,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Configs() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys(CurrentFile, CurrentHeader, "", False)
+		  Var Configs() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions(CurrentFile, CurrentHeader, "", False)
 		  Self.mAutocompleteWords.ResizeTo(Configs.LastIndex)
 		  For Idx As Integer = Configs.FirstIndex To Configs.LastIndex
 		    Self.mAutocompleteWords(Idx) = Configs(Idx).Key
@@ -643,7 +643,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Key As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
+		  Var Key As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOption(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
 		  If Key Is Nil Or Key.Description.IsEmpty Then
 		    Me.CallTipCancel
 		    Return

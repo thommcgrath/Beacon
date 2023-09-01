@@ -3,7 +3,7 @@ Protected Class NitradoIntegrationEngine
 Inherits Ark.IntegrationEngine
 	#tag Event
 		Function ApplySettings(Organizer As Ark.ConfigOrganizer) As Boolean
-		  Var Keys() As Ark.ConfigKey = Organizer.DistinctKeys
+		  Var Keys() As Ark.ConfigOption = Organizer.DistinctKeys
 		  Var NewValues As New Dictionary
 		  Var KeysForPath As New Dictionary
 		  Var ExtraGameIniOrganizer As New Ark.ConfigOrganizer
@@ -12,33 +12,33 @@ Inherits Ark.IntegrationEngine
 		  // Nitrado values are limited to 65,535 characters and not all GameUserSettings.ini
 		  // configs are supported in guided mode.
 		  
-		  For Each ConfigKey As Ark.ConfigKey In Keys
-		    If Self.mDoGuidedDeploy And ConfigKey.File = Ark.ConfigFileGameUserSettings And ConfigKey.HasNitradoEquivalent = False Then
+		  For Each ConfigOption As Ark.ConfigOption In Keys
+		    If Self.mDoGuidedDeploy And ConfigOption.File = Ark.ConfigFileGameUserSettings And ConfigOption.HasNitradoEquivalent = False Then
 		      // Expert mode required because this config cannot be supported.
-		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		      Self.SwitchToExpertMode(ConfigKey.Key, 0)
+		      App.Log("Cannot use guided deploy because the key " + ConfigOption.SimplifiedKey + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
+		      Self.SwitchToExpertMode(ConfigOption.Key, 0)
 		      Return False
 		    End If
 		    
-		    If ConfigKey.HasNitradoEquivalent = False Then
-		      If Self.mDoGuidedDeploy And ConfigKey.File = Ark.ConfigFileGame Then
-		        ExtraGameIniOrganizer.Add(Organizer.FilteredValues(ConfigKey))
+		    If ConfigOption.HasNitradoEquivalent = False Then
+		      If Self.mDoGuidedDeploy And ConfigOption.File = Ark.ConfigFileGame Then
+		        ExtraGameIniOrganizer.Add(Organizer.FilteredValues(ConfigOption))
 		      End If
 		      Continue
 		    End If
 		    
-		    Var SendToNitrado As Boolean = ConfigKey.NitradoDeployStyle = Ark.ConfigKey.NitradoDeployStyles.Both Or ConfigKey.NitradoDeployStyle = If(Self.mDoGuidedDeploy, Ark.ConfigKey.NitradoDeployStyles.Guided, Ark.ConfigKey.NitradoDeployStyles.Expert)
+		    Var SendToNitrado As Boolean = ConfigOption.NitradoDeployStyle = Ark.ConfigOption.NitradoDeployStyles.Both Or ConfigOption.NitradoDeployStyle = If(Self.mDoGuidedDeploy, Ark.ConfigOption.NitradoDeployStyles.Guided, Ark.ConfigOption.NitradoDeployStyles.Expert)
 		    If SendToNitrado = False Then
 		      Continue
 		    End If
 		    
-		    Var NitradoPaths() As String = ConfigKey.NitradoPaths
-		    Var Values() As Ark.ConfigValue = Organizer.FilteredValues(ConfigKey)
+		    Var NitradoPaths() As String = ConfigOption.NitradoPaths
+		    Var Values() As Ark.ConfigValue = Organizer.FilteredValues(ConfigOption)
 		    For Each NitradoPath As String In NitradoPaths
-		      KeysForPath.Value(NitradoPath) = ConfigKey
+		      KeysForPath.Value(NitradoPath) = ConfigOption
 		      
-		      Select Case ConfigKey.NitradoFormat
-		      Case Ark.ConfigKey.NitradoFormats.Line
+		      Select Case ConfigOption.NitradoFormat
+		      Case Ark.ConfigOption.NitradoFormats.Line
 		        Var Lines() As String
 		        If NewValues.HasKey(NitradoPath) Then
 		          Lines = NewValues.Value(NitradoPath)
@@ -47,14 +47,14 @@ Inherits Ark.IntegrationEngine
 		          Lines.Add(Value.Command)
 		        Next
 		        NewValues.Value(NitradoPath) = Lines
-		      Case Ark.ConfigKey.NitradoFormats.Value
+		      Case Ark.ConfigOption.NitradoFormats.Value
 		        If Values.Count >= 1 Then
 		          Var Value As String = Values(Values.LastIndex).Value
 		          
-		          If ConfigKey.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean Then
+		          If ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
 		            Value = Value.Lowercase
 		            
-		            Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigKey.Constraint("nitrado.boolean.reversed"))
+		            Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigOption.Constraint("nitrado.boolean.reversed"))
 		            If (Reversed Is Nil) = False And Reversed.BooleanValue Then
 		              Value = If(Value = "true", "false", "true")
 		            End If
@@ -72,12 +72,12 @@ Inherits Ark.IntegrationEngine
 		  Var Changes As New Dictionary
 		  For Each Entry As DictionaryEntry In NewValues
 		    Var NitradoPath As String = Entry.Key
-		    Var ConfigKey As Ark.ConfigKey = KeysForPath.Value(NitradoPath)
+		    Var ConfigOption As Ark.ConfigOption = KeysForPath.Value(NitradoPath)
 		    Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, NitradoPath)
 		    Var FinishedValue As String
 		    If Entry.Value.Type = Variant.TypeString Then
 		      // Value comparison
-		      If ConfigKey.ValuesEqual(Entry.Value.StringValue, CurrentValue) Then
+		      If ConfigOption.ValuesEqual(Entry.Value.StringValue, CurrentValue) Then
 		        Continue
 		      End If
 		      FinishedValue = Entry.Value.StringValue
@@ -88,10 +88,10 @@ Inherits Ark.IntegrationEngine
 		      
 		      Var CurrentLines() As String = CurrentValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
 		      
-		      If NewLines.Count = 1 And CurrentLines.Count = 1 And (ConfigKey.ValueType = Ark.ConfigKey.ValueTypes.TypeNumeric Or ConfigKey.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean Or ConfigKey.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean) Then
+		      If NewLines.Count = 1 And CurrentLines.Count = 1 And (ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeNumeric Or ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Or ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean) Then
 		        Var NewValue As String = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
 		        CurrentValue = CurrentLines(0).Middle(CurrentLines(0).IndexOf("=") + 1)
-		        If ConfigKey.ValuesEqual(NewValue, CurrentValue) Then
+		        If ConfigOption.ValuesEqual(NewValue, CurrentValue) Then
 		          Continue
 		        End If
 		        FinishedValue = NewLines(0)
@@ -110,8 +110,8 @@ Inherits Ark.IntegrationEngine
 		    End If
 		    
 		    If Self.mDoGuidedDeploy And FinishedValue.Length > 65535 Then
-		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, "#,##0") + " characters, and Nitrado has a limit of 65,535 characters.")
-		      Self.SwitchToExpertMode(ConfigKey.Key, FinishedValue.Length)
+		      App.Log("Cannot use guided deploy because the key " + ConfigOption.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, "#,##0") + " characters, and Nitrado has a limit of 65,535 characters.")
+		      Self.SwitchToExpertMode(ConfigOption.Key, FinishedValue.Length)
 		      Return False
 		    End If
 		    
@@ -355,31 +355,31 @@ Inherits Ark.IntegrationEngine
 		      
 		      If GuidedModeSupportEnabled And General.Lookup("expertMode", False).BooleanValue = False Then
 		        // Build our own ini files from known keys
-		        Var AllConfigs() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys("", "", "", False) // To retrieve all
+		        Var AllConfigs() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("", "", "", False) // To retrieve all
 		        Var GuidedOrganizer As New Ark.ConfigOrganizer
-		        For Each ConfigKey As Ark.ConfigKey In AllConfigs
-		          If ConfigKey.HasNitradoEquivalent = False Then
+		        For Each ConfigOption As Ark.ConfigOption In AllConfigs
+		          If ConfigOption.HasNitradoEquivalent = False Then
 		            Continue
 		          End If
 		          
-		          Var Paths() As String = ConfigKey.NitradoPaths
+		          Var Paths() As String = ConfigOption.NitradoPaths
 		          Var Path As String = Paths(0)
 		          Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
-		          If ConfigKey.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean Then
+		          If ConfigOption.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
 		            Var IsTrue As Boolean = (Value = "True") Or (Value = "1")
-		            Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigKey.Constraint("nitrado.boolean.reversed"))
+		            Var Reversed As NullableBoolean = NullableBoolean.FromVariant(ConfigOption.Constraint("nitrado.boolean.reversed"))
 		            If (Reversed Is Nil) = False And Reversed.BooleanValue Then
 		              IsTrue = Not IsTrue
 		            End If
 		            Value = If(IsTrue, "True", "False")
 		          End If
-		          Select Case ConfigKey.NitradoFormat
-		          Case Ark.ConfigKey.NitradoFormats.Value
-		            GuidedOrganizer.Add(New Ark.ConfigValue(ConfigKey, ConfigKey.Key + "=" + Value))
-		          Case Ark.ConfigKey.NitradoFormats.Line
+		          Select Case ConfigOption.NitradoFormat
+		          Case Ark.ConfigOption.NitradoFormats.Value
+		            GuidedOrganizer.Add(New Ark.ConfigValue(ConfigOption, ConfigOption.Key + "=" + Value))
+		          Case Ark.ConfigOption.NitradoFormats.Line
 		            Var Lines() As String = Value.Split(EndOfLine.UNIX)
 		            For LineIdx As Integer = 0 To Lines.LastIndex
-		              GuidedOrganizer.Add(New Ark.ConfigValue(ConfigKey, Lines(LineIdx), LineIdx))
+		              GuidedOrganizer.Add(New Ark.ConfigValue(ConfigOption, Lines(LineIdx), LineIdx))
 		            Next
 		          End Select
 		        Next

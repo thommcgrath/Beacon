@@ -49,24 +49,24 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleGracePeriodMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleIntervalMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleLoseImprintQualitySpeedMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyFoodConsumptionSpeedMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyImprintAmountMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyImprintingStatScaleMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyMatureSpeedMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EggHatchSpeedMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "LayEggIntervalMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingIntervalMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingSpeedMultiplier"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleGracePeriodMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleIntervalMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleLoseImprintQualitySpeedMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyFoodConsumptionSpeedMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyImprintAmountMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyImprintingStatScaleMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyMatureSpeedMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EggHatchSpeedMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "LayEggIntervalMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingIntervalMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingSpeedMultiplier"))
 		  If (Self.mAllowAnyoneBabyImprintCuddle Is Nil) = False Then
-		    Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "AllowAnyoneBabyImprintCuddle"))
+		    Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "AllowAnyoneBabyImprintCuddle"))
 		  End If
 		  If (Self.mDisableImprintDinoBuff Is Nil) = False Then
-		    Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "DisableImprintDinoBuff"))
+		    Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "DisableImprintDinoBuff"))
 		  End If
 		  Return Keys
 		End Function

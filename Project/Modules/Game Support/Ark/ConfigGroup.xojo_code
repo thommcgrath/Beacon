@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ConfigGroup
 Inherits Beacon.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.ConfigGroup)
 		  Self.Constructor()
@@ -43,11 +43,11 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ManagedKeys() As Ark.ConfigKey()
+		Function ManagedKeys() As Ark.ConfigOption()
 		  // Returns all the keys that this group could provide
 		  
 		  If Self.mManagedKeys.Count = 0 Then
-		    Var Keys() As Ark.ConfigKey = RaiseEvent GetManagedKeys()
+		    Var Keys() As Ark.ConfigOption = RaiseEvent GetManagedKeys()
 		    If (Keys Is Nil) = False Then
 		      Self.mManagedKeys = Keys
 		    End If
@@ -72,7 +72,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event GetManagedKeys() As Ark.ConfigKey()
+		Event GetManagedKeys() As Ark.ConfigOption()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -81,7 +81,7 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Property, Flags = &h21
-		Private mManagedKeys() As Ark.ConfigKey
+		Private mManagedKeys() As Ark.ConfigOption
 	#tag EndProperty
 
 

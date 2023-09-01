@@ -43,11 +43,11 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigOverrideNPCSpawnEntriesContainer"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigAddNPCSpawnEntriesContainer"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigSubtractNPCSpawnEntriesContainer"))
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigOverrideNPCSpawnEntriesContainer"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigAddNPCSpawnEntriesContainer"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "ConfigSubtractNPCSpawnEntriesContainer"))
 		  Return Keys
 		End Function
 	#tag EndEvent
@@ -346,24 +346,24 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Sub HandleConfig(SpawnPoints As Ark.Configs.SpawnPoints, ParsedData As Dictionary, ConfigKey As String, ContentPacks As Beacon.StringList)
-		  If Not ParsedData.HasKey(ConfigKey) Then
+		Private Shared Sub HandleConfig(SpawnPoints As Ark.Configs.SpawnPoints, ParsedData As Dictionary, ConfigOption As String, ContentPacks As Beacon.StringList)
+		  If Not ParsedData.HasKey(ConfigOption) Then
 		    Return
 		  End If
 		  
 		  Var Dicts() As Variant
 		  #Pragma BreakOnExceptions False
 		  Try
-		    Dicts = ParsedData.Value(ConfigKey)
+		    Dicts = ParsedData.Value(ConfigOption)
 		  Catch Err As RuntimeException
-		    Dicts.Add(ParsedData.Value(ConfigKey))
+		    Dicts.Add(ParsedData.Value(ConfigOption))
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		  
 		  Var Mode As Integer
-		  If ConfigKey.BeginsWith("ConfigAdd") Then
+		  If ConfigOption.BeginsWith("ConfigAdd") Then
 		    Mode = Ark.SpawnPoint.ModeAppend
-		  ElseIf ConfigKey.BeginsWith("ConfigSubtract") Then
+		  ElseIf ConfigOption.BeginsWith("ConfigSubtract") Then
 		    Mode = Ark.SpawnPoint.ModeRemove
 		  Else
 		    Mode = Ark.SpawnPoint.ModeOverride

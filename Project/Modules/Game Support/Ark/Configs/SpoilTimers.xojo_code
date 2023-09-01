@@ -63,31 +63,31 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
 		  
-		  Keys.Add(New Ark.ConfigKey("CommandLineFlag", "-", "AutoDestroyStructures"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineFlag", "-", "AutoDestroyStructures"))
 		  
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "AutoDestroyDecayedDinos"))
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "AutoDestroyOldStructuresMultiplier"))
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "ClampItemSpoilingTimes"))
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "FastDecayUnsnappedCoreStructures"))
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "OnlyAutoDestroyCoreStructures"))
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "OnlyDecayUnsnappedCoreStructures"))
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "PvEDinoDecayPeriodMultiplier"))
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "PvPDinoDecay"))
-		  Keys.Add(New Ark.ConfigKey("CommandLineOption", "?", "PvPStructureDecay"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "AutoDestroyDecayedDinos"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "AutoDestroyOldStructuresMultiplier"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "ClampItemSpoilingTimes"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "FastDecayUnsnappedCoreStructures"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "OnlyAutoDestroyCoreStructures"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "OnlyDecayUnsnappedCoreStructures"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "PvEDinoDecayPeriodMultiplier"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "PvPDinoDecay"))
+		  Keys.Add(New Ark.ConfigOption("CommandLineOption", "?", "PvPStructureDecay"))
 		  
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "CropDecaySpeedMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "FastDecayInterval"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "GlobalSpoilingTimeMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "GlobalItemDecompositionTimeMultiplier"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "GlobalCorpseDecompositionTimeMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "CropDecaySpeedMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "FastDecayInterval"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "GlobalSpoilingTimeMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "GlobalItemDecompositionTimeMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "GlobalCorpseDecompositionTimeMultiplier"))
 		  
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DisableDinoDecayPvE"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DisableStructureDecayPvE"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "PvEStructureDecayDestructionPeriod"))
-		  Keys.Add(New Ark.ConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "PvEStructureDecayPeriodMultiplier"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DisableDinoDecayPvE"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DisableStructureDecayPvE"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "PvEStructureDecayDestructionPeriod"))
+		  Keys.Add(New Ark.ConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "PvEStructureDecayPeriodMultiplier"))
 		  
 		  Return Keys
 		End Function

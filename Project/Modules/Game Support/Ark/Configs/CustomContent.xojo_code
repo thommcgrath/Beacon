@@ -1,7 +1,7 @@
 #tag Class
 Protected Class CustomContent
 Inherits Ark.ConfigGroup
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub CopyFrom(Other As Ark.ConfigGroup)
 		  Var Source As Ark.Configs.CustomContent = Ark.Configs.CustomContent(Other)
@@ -39,15 +39,15 @@ Inherits Ark.ConfigGroup
 		  Var PotentialCommandLineValues() As Ark.ConfigValue = Organizer.FilteredValues(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings)
 		  
 		  For Each ParsedValue As Ark.ConfigValue In PotentialCommandLineValues
-		    Var Keys() As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKeys("CommandLine", "", ParsedValue.SimplifiedKey, False)
+		    Var Keys() As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOptions("CommandLine", "", ParsedValue.SimplifiedKey, False)
 		    If Keys.Count <> 1 Then
 		      Continue
 		    End If
 		    
-		    Var Key As Ark.ConfigKey = Keys(0)
+		    Var Key As Ark.ConfigOption = Keys(0)
 		    Var OverrideCommand As String = ParsedValue.Command
 		    Var Value As String = ParsedValue.Value
-		    If Key.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean Then
+		    If Key.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
 		      Value = Value.Trim
 		      Var IsTrue As Boolean = Value = "true" Or Value = "1"
 		      Value = If(IsTrue, "True", "False")

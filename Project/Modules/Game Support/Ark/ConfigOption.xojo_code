@@ -1,8 +1,8 @@
 #tag Class
-Protected Class ConfigKey
+Protected Class ConfigOption
 	#tag Method, Flags = &h0
-		Function ConfigKeyId() As String
-		  Return Self.mConfigKeyId
+		Function ConfigOptionId() As String
+		  Return Self.mConfigOptionId
 		End Function
 	#tag EndMethod
 
@@ -17,8 +17,8 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Ark.ConfigKey)
-		  Self.mConfigKeyId = Source.mConfigKeyId
+		Sub Constructor(Source As Ark.ConfigOption)
+		  Self.mConfigOptionId = Source.mConfigOptionId
 		  Self.mLabel = Source.mLabel
 		  Self.mFile = Source.mFile
 		  Self.mHeader = Source.mHeader
@@ -46,10 +46,10 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ConfigKeyId As String, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigKey.NitradoFormats, NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
+		Sub Constructor(ConfigOptionId As String, Label As String, File As String, Header As String, Key As String, ValueType As Ark.ConfigOption.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Ark.ConfigOption.NitradoFormats, NitradoDeployStyle As Ark.ConfigOption.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ContentPackId As String, GSAPlaceholder As NullableString, UWPChanges As Dictionary)
 		  Self.Constructor(File, Header, Key)
 		  
-		  Self.mConfigKeyId = ConfigKeyId
+		  Self.mConfigOptionId = ConfigOptionId
 		  Self.mLabel = Label
 		  Self.mValueType = ValueType
 		  Self.mMaxAllowed = MaxAllowed
@@ -115,7 +115,7 @@ Protected Class ConfigKey
 
 	#tag Method, Flags = &h0
 		Function HasNitradoEquivalent() As Boolean
-		  Return Self.mNitradoPaths.Count > 0 And Self.mNitradoFormat <> Ark.ConfigKey.NitradoFormats.Unsupported
+		  Return Self.mNitradoPaths.Count > 0 And Self.mNitradoFormat <> Ark.ConfigOption.NitradoFormats.Unsupported
 		End Function
 	#tag EndMethod
 
@@ -150,13 +150,13 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NitradoDeployStyle() As Ark.ConfigKey.NitradoDeployStyles
+		Function NitradoDeployStyle() As Ark.ConfigOption.NitradoDeployStyles
 		  Return Self.mNitradoDeployStyle
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NitradoFormat() As Ark.ConfigKey.NitradoFormats
+		Function NitradoFormat() As Ark.ConfigOption.NitradoFormats
 		  Return Self.mNitradoFormat
 		End Function
 	#tag EndMethod
@@ -173,18 +173,18 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "ConfigKeyId" )  Function ObjectId() As String
-		  Return Self.mConfigKeyId
+		Attributes( Deprecated = "ConfigOptionId" )  Function ObjectId() As String
+		  Return Self.mConfigOptionId
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Ark.ConfigKey) As Integer
+		Function Operator_Compare(Other As Ark.ConfigOption) As Integer
 		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  If Self.mConfigKeyId = Other.mConfigKeyId Then
+		  If Self.mConfigOptionId = Other.mConfigOptionId Then
 		    Return 0
 		  End If
 		  
@@ -209,13 +209,13 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UWPVersion() As Ark.ConfigKey
+		Function UWPVersion() As Ark.ConfigOption
 		  If Self.mUWPChanges Is Nil Or Self.mUWPChanges.KeyCount = 0 Then
 		    Return Self
 		  End If
 		  
-		  Var Copy As New Ark.ConfigKey(Self)
-		  Copy.mConfigKeyId = Beacon.UUID.v4
+		  Var Copy As New Ark.ConfigOption(Self)
+		  Copy.mConfigOptionId = Beacon.UUID.v4
 		  
 		  Var Changed As Boolean
 		  For Each Entry As DictionaryEntry In Self.mUWPChanges
@@ -273,14 +273,14 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ValueType() As Ark.ConfigKey.ValueTypes
+		Function ValueType() As Ark.ConfigOption.ValueTypes
 		  Return Self.mValueType
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mConfigKeyId As String
+		Private mConfigOptionId As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -332,11 +332,11 @@ Protected Class ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles
+		Private mNitradoDeployStyle As Ark.ConfigOption.NitradoDeployStyles
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNitradoFormat As Ark.ConfigKey.NitradoFormats
+		Private mNitradoFormat As Ark.ConfigOption.NitradoFormats
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -352,7 +352,7 @@ Protected Class ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mValueType As Ark.ConfigKey.ValueTypes
+		Private mValueType As Ark.ConfigOption.ValueTypes
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

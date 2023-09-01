@@ -329,7 +329,7 @@ Inherits Beacon.Thread
 		  Var CustomConfigOrganizer As New Ark.ConfigOrganizer(Ark.ConfigFileGame, Ark.HeaderShooterGame, Self.mData.GameIniContent)
 		  CustomConfigOrganizer.Add(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, Self.mData.GameUserSettingsIniContent)
 		  For Each Config As Ark.ConfigGroup In Configs
-		    Var ManagedKeys() As Ark.ConfigKey = Config.ManagedKeys()
+		    Var ManagedKeys() As Ark.ConfigOption = Config.ManagedKeys()
 		    CustomConfigOrganizer.Remove(ManagedKeys)
 		  Next
 		  CustomConfigOrganizer.Remove(Ark.ConfigFileGameUserSettings, "/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C")

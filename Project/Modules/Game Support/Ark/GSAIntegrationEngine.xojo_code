@@ -60,7 +60,7 @@ Inherits Ark.IntegrationEngine
 		  Next
 		  For Each Flag As Ark.ConfigValue In Flags
 		    Var Key As String = Flag.Header + Flag.AttributedKey
-		    If Flag.Details.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean Then
+		    If Flag.Details.ValueType = Ark.ConfigOption.ValueTypes.TypeBoolean Then
 		      If Flag.Value = "True" Then
 		        CommandLine.Value(Key) = Flag.AttributedKey
 		      ElseIf CommandLine.HasKey(Key) Then

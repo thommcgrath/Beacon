@@ -1759,24 +1759,24 @@ End
 		  If Self.mActiveEvent.IsEmpty = False Then
 		    Var ActiveEvent As Ark.GameEvent = Ark.DataSource.Pool.Get(False).GetGameEventByArkCode(Self.mActiveEvent)
 		    If (ActiveEvent Is Nil) = False Then
-		      Var MatingIntervalMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingIntervalMultiplier")
+		      Var MatingIntervalMultiplierKey As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "MatingIntervalMultiplier")
 		      If (MatingIntervalMultiplierKey Is Nil) = False Then
-		        MatingIntervalMultiplier = MatingIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(MatingIntervalMultiplierKey.ConfigKeyId)
+		        MatingIntervalMultiplier = MatingIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(MatingIntervalMultiplierKey.ConfigOptionId)
 		      End If
 		      
-		      Var EggHatchSpeedMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EggHatchSpeedMultiplier")
+		      Var EggHatchSpeedMultiplierKey As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EggHatchSpeedMultiplier")
 		      If (EggHatchSpeedMultiplierKey Is Nil) = False Then
-		        EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(EggHatchSpeedMultiplierKey.ConfigKeyId)
+		        EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(EggHatchSpeedMultiplierKey.ConfigOptionId)
 		      End If
 		      
-		      Var BabyMatureSpeedMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyMatureSpeedMultiplier")
+		      Var BabyMatureSpeedMultiplierKey As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyMatureSpeedMultiplier")
 		      If (BabyMatureSpeedMultiplierKey Is Nil) = False Then
-		        BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(BabyMatureSpeedMultiplierKey.ConfigKeyId)
+		        BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(BabyMatureSpeedMultiplierKey.ConfigOptionId)
 		      End If
 		      
-		      Var BabyCuddleIntervalMultiplierKey As Ark.ConfigKey = Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleIntervalMultiplier")
+		      Var BabyCuddleIntervalMultiplierKey As Ark.ConfigOption = Ark.DataSource.Pool.Get(False).GetConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "BabyCuddleIntervalMultiplier")
 		      If (BabyCuddleIntervalMultiplierKey Is Nil) = False Then
-		        BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(BabyCuddleIntervalMultiplierKey.ConfigKeyId)
+		        BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(BabyCuddleIntervalMultiplierKey.ConfigOptionId)
 		      End If
 		    End If
 		  End If

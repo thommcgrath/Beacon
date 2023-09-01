@@ -10,7 +10,7 @@ Inherits Thread
 		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
 		  Var DinoCountMultiplier As Double = 1.0
-		  Var DinoCountMultiplierKey As Ark.ConfigKey = Database.GetConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DinoCountMultiplier")
+		  Var DinoCountMultiplierKey As Ark.ConfigOption = Database.GetConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DinoCountMultiplier")
 		  If (DinoCountMultiplierKey Is Nil) = False Then
 		    Var GeneralSettings As Ark.ConfigGroup = Self.mProject.CombinedConfig(Ark.Configs.NameOtherSettings, Self.mProfile.ConfigSetStates)
 		    If (GeneralSettings Is Nil) = False Then

@@ -108,7 +108,7 @@ Inherits Beacon.Project
 		      End If
 		      
 		      Var Multiplier As Double = ConvertLootScale.Value("Multiplier")
-		      OtherSettings.Value(Ark.DataSource.Pool.Get(False).GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
+		      OtherSettings.Value(Ark.DataSource.Pool.Get(False).GetConfigOption(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
 		      
 		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) = False Then
 		        SetDict.Value(Ark.Configs.NameOtherSettings) = OtherSettings
@@ -547,7 +547,7 @@ Inherits Beacon.Project
 		        Continue
 		      End If
 		      
-		      Var ManagedKeys() As Ark.ConfigKey = Group.ManagedKeys
+		      Var ManagedKeys() As Ark.ConfigOption = Group.ManagedKeys
 		      Organizer.AddManagedKeys(ManagedKeys)
 		      Organizer.Remove(ManagedKeys) // Removes overlapping values found in custom config
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))

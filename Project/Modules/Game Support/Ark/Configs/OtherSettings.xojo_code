@@ -18,7 +18,7 @@ Inherits Ark.ConfigGroup
 		  For Each Entry As DictionaryEntry In Self.mSettings
 		    Try
 		      Var KeyUUID As String = Entry.Key
-		      Var Key As Ark.ConfigKey = DataSource.GetConfigKey(KeyUUID)
+		      Var Key As Ark.ConfigOption = DataSource.GetConfigOption(KeyUUID)
 		      Var Value As Variant = Entry.Value
 		      Var StringValue As String
 		      
@@ -40,7 +40,7 @@ Inherits Ark.ConfigGroup
 		        If Self.mSettings.HasKey(OtherKeyUUID) Then
 		          CurrentValue = Self.mSettings.Value(OtherKeyUUID)
 		        Else
-		          Var OtherKey As Ark.ConfigKey = DataSource.GetConfigKey(OtherKeyUUID)
+		          Var OtherKey As Ark.ConfigOption = DataSource.GetConfigOption(OtherKeyUUID)
 		          If (OtherKey Is Nil) = False Then
 		            CurrentValue = OtherKey.DefaultValue
 		          End If
@@ -50,7 +50,7 @@ Inherits Ark.ConfigGroup
 		        End If
 		      End If
 		      
-		      If Key.ValueType = Ark.ConfigKey.ValueTypes.TypeText Then
+		      If Key.ValueType = Ark.ConfigOption.ValueTypes.TypeText Then
 		        Var AllowedChars As Variant = Key.Constraint("allowed_chars")
 		        Var DisallowedChars As Variant = Key.Constraint("disallowed_chars")
 		        If IsNull(AllowedChars) = False Then
@@ -111,11 +111,11 @@ Inherits Ark.ConfigGroup
 		      End If
 		      
 		      Select Case Key.ValueType
-		      Case Ark.ConfigKey.ValueTypes.TypeBoolean
+		      Case Ark.ConfigOption.ValueTypes.TypeBoolean
 		        StringValue = If(Value.BooleanValue, "True", "False")
-		      Case Ark.ConfigKey.ValueTypes.TypeNumeric
+		      Case Ark.ConfigOption.ValueTypes.TypeNumeric
 		        StringValue = Value.DoubleValue.PrettyText
-		      Case Ark.ConfigKey.ValueTypes.TypeText
+		      Case Ark.ConfigOption.ValueTypes.TypeText
 		        StringValue = Value.StringValue
 		      Else
 		        Continue
@@ -131,12 +131,12 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Function GetManagedKeys() As Ark.ConfigKey()
-		  Var Keys() As Ark.ConfigKey
+		Function GetManagedKeys() As Ark.ConfigOption()
+		  Var Keys() As Ark.ConfigOption
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  For Each Entry As DictionaryEntry In Self.mSettings
 		    Var KeyUUID As String = Entry.Key
-		    Var Key As Ark.ConfigKey = DataSource.GetConfigKey(KeyUUID)
+		    Var Key As Ark.ConfigOption = DataSource.GetConfigOption(KeyUUID)
 		    If (Key Is Nil) = False Then
 		      Keys.Add(Key)
 		    End If
@@ -193,8 +193,8 @@ Inherits Ark.ConfigGroup
 		  Next Pack
 		  
 		  Var Config As New Ark.Configs.OtherSettings
-		  Var AllKeys() As Ark.ConfigKey = DataSource.GetConfigKeys("", "", "", False)
-		  For Each Key As Ark.ConfigKey In AllKeys
+		  Var AllKeys() As Ark.ConfigOption = DataSource.GetConfigOptions("", "", "", False)
+		  For Each Key As Ark.ConfigOption In AllKeys
 		    If KeySupported(Key, ContentPacks) = False Then
 		      Continue
 		    End If
@@ -217,11 +217,11 @@ Inherits Ark.ConfigGroup
 		    
 		    Var Value As Variant
 		    Select Case Key.ValueType
-		    Case Ark.ConfigKey.ValueTypes.TypeNumeric
+		    Case Ark.ConfigOption.ValueTypes.TypeNumeric
 		      Value = TargetDict.DoubleValue(LookupKey, Key.DefaultValue.DoubleValue, True)
-		    Case Ark.ConfigKey.ValueTypes.TypeBoolean
+		    Case Ark.ConfigOption.ValueTypes.TypeBoolean
 		      Value = TargetDict.BooleanValue(LookupKey, Key.DefaultValue.BooleanValue, True)
-		    Case Ark.ConfigKey.ValueTypes.TypeText
+		    Case Ark.ConfigOption.ValueTypes.TypeText
 		      Value = TargetDict.StringValue(LookupKey, Key.DefaultValue.StringValue, True)
 		    Else
 		      Continue
@@ -243,12 +243,12 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function KeySupported(Key As Ark.ConfigKey, ContentPacks As Beacon.StringList) As Boolean
+		Shared Function KeySupported(Key As Ark.ConfigOption, ContentPacks As Beacon.StringList) As Boolean
 		  If (Key.NativeEditorVersion Is Nil) = False And Key.NativeEditorVersion.IntegerValue <= App.BuildNumber Then
 		    // We have a native editor for this key
 		    Return False
 		  End If
-		  If Key.ValueType = Ark.ConfigKey.ValueTypes.TypeArray Or Key.ValueType = Ark.ConfigKey.ValueTypes.TypeStructure Then
+		  If Key.ValueType = Ark.ConfigOption.ValueTypes.TypeArray Or Key.ValueType = Ark.ConfigOption.ValueTypes.TypeStructure Then
 		    // Can't support these types
 		    Return False
 		  End If
@@ -272,34 +272,34 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value(Key As Ark.ConfigKey) As Variant
-		  If Self.mSettings.HasKey(Key.ConfigKeyId) = False Then
+		Function Value(Key As Ark.ConfigOption) As Variant
+		  If Self.mSettings.HasKey(Key.ConfigOptionId) = False Then
 		    Return Nil
 		  End If
 		  
-		  Return Self.mSettings.Value(Key.ConfigKeyId)
+		  Return Self.mSettings.Value(Key.ConfigOptionId)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Value(Key As Ark.ConfigKey, Assigns NewValue As Variant)
-		  Var ConfigKeyId As String = Key.ConfigKeyId
+		Sub Value(Key As Ark.ConfigOption, Assigns NewValue As Variant)
+		  Var ConfigOptionId As String = Key.ConfigOptionId
 		  If NewValue.IsNull Then
-		    If Self.mSettings.HasKey(ConfigKeyId) Then
-		      Self.mSettings.Remove(ConfigKeyId)
+		    If Self.mSettings.HasKey(ConfigOptionId) Then
+		      Self.mSettings.Remove(ConfigOptionId)
 		      Self.Modified = True
 		      Return
 		    End If
 		  End If
 		  
-		  If Self.mSettings.HasKey(ConfigKeyId) Then
-		    Var OldValue As Variant = Self.mSettings.Value(ConfigKeyId)
+		  If Self.mSettings.HasKey(ConfigOptionId) Then
+		    Var OldValue As Variant = Self.mSettings.Value(ConfigOptionId)
 		    If Key.ValuesEqual(OldValue, NewValue) = True Then
 		      Return
 		    End If
 		  End If
 		  
-		  Self.mSettings.Value(ConfigKeyId) = NewValue
+		  Self.mSettings.Value(ConfigOptionId) = NewValue
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

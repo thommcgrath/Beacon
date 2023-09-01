@@ -37,7 +37,7 @@ Protected Module Tests
 		    TestBlueprintSerialization()
 		    TestLimitCalculations()
 		    TestNamingThings()
-		    TestConfigKeys()
+		    TestConfigOptions()
 		    TestNumberFormatting()
 		    TestArkML()
 		    TestFilenames()
@@ -152,16 +152,16 @@ Protected Module Tests
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub TestConfigKeys()
+		Private Sub TestConfigOptions()
 		  Var Source As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  
-		  Var AllConfigKeys() As Ark.ConfigKey = Source.GetConfigKeys("", "", "", False)
-		  Call Assert(AllConfigKeys.Count > 0, "No config keys returned.")
+		  Var AllConfigOptions() As Ark.ConfigOption = Source.GetConfigOptions("", "", "", False)
+		  Call Assert(AllConfigOptions.Count > 0, "No config keys returned.")
 		  
-		  Var SpecificConfigKey As Ark.ConfigKey = Source.GetConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DayTimeSpeedScale")
-		  Call Assert((SpecificConfigKey Is Nil) = False, "Could not find DayTimeSpeedScale key.")
+		  Var SpecificConfigOption As Ark.ConfigOption = Source.GetConfigOption(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DayTimeSpeedScale")
+		  Call Assert((SpecificConfigOption Is Nil) = False, "Could not find DayTimeSpeedScale key.")
 		  
-		  Var SpeedScales() As Ark.ConfigKey = Source.GetConfigKeys(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "*SpeedScale", False)
+		  Var SpeedScales() As Ark.ConfigOption = Source.GetConfigOptions(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "*SpeedScale", False)
 		  Call Assert(SpeedScales.Count = 3, "Found incorrect number of *SpeedScale keys, expected 3, got " + SpeedScales.Count.ToString + ".")
 		End Sub
 	#tag EndMethod
