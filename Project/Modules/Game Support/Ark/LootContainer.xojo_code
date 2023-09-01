@@ -565,36 +565,38 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Var MinSets As Integer = Min(Self.MinItemSets, Self.MaxItemSets)
 		  Var MaxSets As Integer = Max(Self.MaxItemSets, Self.MinItemSets)
 		  
-		  Var SelectedSets() As Ark.LootItemSet
+		  // Assemble a pool first. Members of SelectedSets may be duplicates so that removing an entry for SelectedSets(0) will affect
+		  // SelectedSets(1) if they point to the same object.
+		  Var Pool() As Ark.MutableLootItemSet
+		  Pool.ResizeTo(Self.mItemSets.LastIndex)
+		  For Idx As Integer = 0 To Pool.LastIndex
+		    Pool(Idx) = New Ark.MutableLootItemSet(Self.mItemSets(Idx))
+		  Next
+		  
+		  Var SelectedSets() As Ark.MutableLootItemSet
 		  If NumSets = MinSets And MinSets = MaxSets And Self.PreventDuplicates Then
 		    // All
-		    For Each Set As Ark.LootItemSet In Self.mItemSets
-		      SelectedSets.Add(Set)
-		    Next
+		    SelectedSets = Pool
 		  Else
 		    Const WeightScale = 100000
-		    Var ItemSetPool() As Ark.LootItemSet
-		    For Each Set As Ark.LootItemSet In Self.mItemSets
-		      ItemSetPool.Add(Set)
-		    Next
 		    
 		    Var RecomputeFigures As Boolean = True
 		    Var ChooseSets As Integer = System.Random.InRange(MinSets, MaxSets)
 		    Var WeightSum, Weights() As Double
 		    Var WeightLookup As Dictionary
 		    For I As Integer = 1 To ChooseSets
-		      If ItemSetPool.LastIndex = -1 Then
+		      If Pool.Count = 0 Then
 		        Exit For I
 		      End If
 		      
 		      If RecomputeFigures Then
-		        Ark.LootSimulatorSelection.ComputeSimulatorFigures(ItemSetPool, WeightScale, WeightSum, Weights, WeightLookup)
+		        Ark.LootSimulatorSelection.ComputeSimulatorFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
 		        RecomputeFigures = False
 		      End If
 		      
 		      Do
 		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
-		        Var SelectedSet As Ark.LootItemSet
+		        Var SelectedSet As Ark.MutableLootItemSet
 		        
 		        For X As Integer = 0 To Weights.LastIndex
 		          If Weights(X) >= Decision Then
@@ -610,9 +612,9 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		        
 		        SelectedSets.Add(SelectedSet)
 		        If Self.PreventDuplicates Then
-		          For X As Integer = 0 To ItemSetPool.LastIndex
-		            If ItemSetPool(X) = SelectedSet Then
-		              ItemSetPool.RemoveAt(X)
+		          For X As Integer = 0 To Pool.LastIndex
+		            If Pool(X) = SelectedSet Then
+		              Pool.RemoveAt(X)
 		              Exit For X
 		            End If
 		          Next
@@ -624,13 +626,25 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    Next
 		  End If
 		  
-		  For Each Set As Ark.LootItemSet In SelectedSets
-		    Var SetSelections() As Ark.LootSimulatorSelection = Set.Simulate
-		    For Each Selection As Ark.LootSimulatorSelection In SetSelections
-		      Selections.Add(Selection)
+		  Var LootSelections() As Ark.LootSimulatorSelection
+		  For Each Set As Ark.MutableLootItemSet In SelectedSets
+		    If Set.Count = 0 Then
+		      Continue
+		    End
+		    
+		    Var Entries() As Ark.LootItemSetEntry = Set.Simulate
+		    For Each Entry As Ark.LootItemSetEntry In Entries
+		      If Set.ItemsRandomWithoutReplacement Then
+		        Set.Remove(Entry)
+		      End If
+		      
+		      Var EntryLootSelections() As Ark.LootSimulatorSelection = Entry.Simulate()
+		      For Each EntryLootSelection As Ark.LootSimulatorSelection In EntryLootSelections
+		        LootSelections.Add(EntryLootSelection)
+		      Next
 		    Next
 		  Next
-		  Return Selections
+		  Return LootSelections
 		End Function
 	#tag EndMethod
 

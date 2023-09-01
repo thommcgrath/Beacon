@@ -619,83 +619,77 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Simulate() As Ark.LootSimulatorSelection()
-		  Var Selections() As Ark.LootSimulatorSelection
-		  If Self.mEntries.LastIndex = -1 Then
-		    Return Selections
+		Function Simulate() As Ark.LootItemSetEntry()
+		  Var SelectedEntries() As Ark.LootItemSetEntry
+		  If Self.mEntries.Count = 0 Then
+		    Return SelectedEntries
 		  End If
 		  
 		  Var NumEntries As Integer = Self.Count
 		  Var MinEntries As Integer = Min(Self.MinNumItems, Self.MaxNumItems)
 		  Var MaxEntries As Integer = Max(Self.MaxNumItems, Self.MinNumItems)
 		  
-		  Var SelectedEntries() As Ark.LootItemSetEntry
 		  If NumEntries = MinEntries And MinEntries = MaxEntries And Self.ItemsRandomWithoutReplacement Then
 		    // All
 		    For Each Entry As Ark.LootItemSetEntry In Self.mEntries
 		      SelectedEntries.Add(Entry)
 		    Next
-		  Else
-		    Const WeightScale = 100000
-		    Var Pool() As Ark.LootItemSetEntry
-		    Pool.ResizeTo(Self.mEntries.LastIndex)
-		    For I As Integer = 0 To Self.mEntries.LastIndex
-		      Pool(I) = New Ark.LootItemSetEntry(Self.mEntries(I))
-		    Next
+		    Return SelectedEntries
+		  End If
+		  
+		  Const WeightScale = 100000
+		  Var Pool() As Ark.LootItemSetEntry
+		  Pool.ResizeTo(Self.mEntries.LastIndex)
+		  For I As Integer = 0 To Self.mEntries.LastIndex
+		    Pool(I) = New Ark.LootItemSetEntry(Self.mEntries(I))
+		  Next
+		  
+		  Var RecomputeFigures As Boolean = True
+		  Var ChooseEntries As Integer = System.Random.InRange(MinEntries, MaxEntries)
+		  Var WeightSum, Weights() As Double
+		  Var WeightLookup As Dictionary
+		  For I As Integer = 1 To ChooseEntries
+		    If Pool.Count = 0 Then
+		      Exit For I
+		    End If
 		    
-		    Var RecomputeFigures As Boolean = True
-		    Var ChooseEntries As Integer = System.Random.InRange(MinEntries, MaxEntries)
-		    Var WeightSum, Weights() As Double
-		    Var WeightLookup As Dictionary
-		    For I As Integer = 1 To ChooseEntries
-		      If Pool.LastIndex = -1 Then
-		        Exit For I
+		    If RecomputeFigures Then
+		      Ark.LootSimulatorSelection.ComputeSimulatorFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
+		      RecomputeFigures = False
+		    End If
+		    
+		    Do
+		      Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
+		      Var SelectedEntry As Ark.LootItemSetEntry
+		      
+		      For X As Integer = 0 To Weights.LastIndex
+		        If Weights(X) >= Decision Then
+		          Var SelectedWeight As Double = Weights(X)
+		          SelectedEntry = WeightLookup.Value(SelectedWeight)
+		          Exit For X
+		        End If
+		      Next
+		      
+		      If SelectedEntry = Nil Then
+		        Continue
 		      End If
 		      
-		      If RecomputeFigures Then
-		        Ark.LootSimulatorSelection.ComputeSimulatorFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
-		        RecomputeFigures = False
-		      End If
-		      
-		      Do
-		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
-		        Var SelectedEntry As Ark.LootItemSetEntry
-		        
-		        For X As Integer = 0 To Weights.LastIndex
-		          If Weights(X) >= Decision Then
-		            Var SelectedWeight As Double = Weights(X)
-		            SelectedEntry = WeightLookup.Value(SelectedWeight)
+		      SelectedEntries.Add(SelectedEntry)
+		      If Self.ItemsRandomWithoutReplacement Then
+		        For X As Integer = 0 To Pool.LastIndex
+		          If Pool(X) = SelectedEntry Then
+		            Pool.RemoveAt(X)
 		            Exit For X
 		          End If
 		        Next
-		        
-		        If SelectedEntry = Nil Then
-		          Continue
-		        End If
-		        
-		        SelectedEntries.Add(SelectedEntry)
-		        If Self.ItemsRandomWithoutReplacement Then
-		          For X As Integer = 0 To Pool.LastIndex
-		            If Pool(X) = SelectedEntry Then
-		              Pool.RemoveAt(X)
-		              Exit For X
-		            End If
-		          Next
-		          RecomputeFigures = True
-		        End If
-		        
-		        Exit
-		      Loop
-		    Next
-		  End If
-		  
-		  For Each Entry As Ark.LootItemSetEntry In SelectedEntries
-		    Var EntrySelections() As Ark.LootSimulatorSelection = Entry.Simulate()
-		    For Each Selection As Ark.LootSimulatorSelection In EntrySelections
-		      Selections.Add(Selection)
-		    Next
+		        RecomputeFigures = True
+		      End If
+		      
+		      Exit
+		    Loop
 		  Next
-		  Return Selections
+		  
+		  Return SelectedEntries
 		End Function
 	#tag EndMethod
 

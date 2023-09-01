@@ -80,6 +80,7 @@ Begin BeaconContainer ArkLootSimulatorView
       TabStop         =   True
       Tooltip         =   ""
       Top             =   42
+      TotalPages      =   -1
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -204,19 +205,11 @@ End
 		  
 		  Self.List.RemoveAllRows()
 		  
-		  If IsNull(Self.mTarget)Then
+		  If Self.mTarget Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Selections() As Ark.LootSimulatorSelection
-		  If Self.mTarget IsA Ark.LootContainer Then
-		    Selections = Ark.LootContainer(Self.mTarget).Simulate()
-		  ElseIf Self.mTarget IsA Ark.LootItemSet Then
-		    Selections = Ark.LootItemSet(Self.mTarget).Simulate()
-		  Else
-		    Return
-		  End If
-		  
+		  Var Selections() As Ark.LootSimulatorSelection = Self.mTarget.Simulate()
 		  Var GroupedItems As New Dictionary
 		  For Each Selection As Ark.LootSimulatorSelection In Selections
 		    If Selection Is Nil Then
@@ -249,13 +242,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Simulate(ItemSet As Ark.LootItemSet)
-		  Self.mTarget = ItemSet
-		  Self.Simulate()
-		End Sub
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event ResizeFinished()
@@ -275,7 +261,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mTarget As Variant
+		Private mTarget As Ark.LootContainer
 	#tag EndProperty
 
 

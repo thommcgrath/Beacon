@@ -63,14 +63,27 @@ Implements Beacon.NamedItem
 		  Select Case Version
 		  Case 1
 		    Self.mBlueprintId = SaveData.Value("UUID")
-		    Self.mClassString = SaveData.Value("Class")
+		    Self.mClassString = SaveData.FirstValue("ClassString", "Class", "")
 		    Self.mContentPackId = SaveData.Value("ModUUID")
-		    Self.mKind = SaveData.Value("Kind")
-		    Self.mLabel = SaveData.FirstValue("Class", "Path", "ObjectID")
+		    
+		    Self.mLabel = SaveData.FirstValue("ClassString", "Class", "Path", "ObjectID")
 		    Self.mPath = SaveData.Value("Path")
+		    
+		    Select Case SaveData.Value("Kind").StringValue
+		    Case "Engram"
+		      Self.mKind = Self.KindEngram
+		    Case "Creature"
+		      Self.mKind = Self.KindCreature
+		    Case "Spawn Point"
+		      Self.mKind = Self.KindSpawnPoint
+		    Case "Loot Container"
+		      Self.mKind = Self.KindLootContainer
+		    Else
+		      Self.mKind = SaveData.Value("Kind")
+		    End Select
 		  Case 2
 		    Self.mBlueprintId = SaveData.Value("blueprintId")
-		    Self.mClassString = SaveData.Value("class")
+		    Self.mClassString = SaveData.Value("classString")
 		    Self.mContentPackId = SaveData.Value("contentPackId")
 		    Self.mKind = SaveData.Value("kind")
 		    Self.mLabel = SaveData.Value("label")
@@ -301,7 +314,7 @@ Implements Beacon.NamedItem
 		  Dict.Value("label") = Self.mLabel
 		  Dict.Value("blueprintId") = Self.mBlueprintId
 		  Dict.Value("path") = Self.mPath
-		  Dict.Value("class") = Self.mClassString
+		  Dict.Value("classString") = Self.mClassString
 		  Dict.Value("contentPackId") = Self.mContentPackId
 		  Return Dict
 		End Function
