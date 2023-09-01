@@ -518,6 +518,8 @@ End
 #tag Events VersionMenu
 	#tag Event
 		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused Item
+		  
 		  If Self.SettingUp Then
 		    Return
 		  End If

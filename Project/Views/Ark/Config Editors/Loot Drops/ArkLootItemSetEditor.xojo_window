@@ -596,7 +596,6 @@ End
 		  If Contents.IsNull = False Then
 		    Try
 		      Var Dicts() As Variant = Contents
-		      Var NewItemSets() As Ark.LootItemSet
 		      For Each Dict As Dictionary In Dicts
 		        Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict, True)
 		        If (Entry Is Nil) = False Then

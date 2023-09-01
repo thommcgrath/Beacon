@@ -138,6 +138,8 @@ Protected Class ModDiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub mRCONTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
 		  If Self.mRCONSocket.IsConnected = False THen
 		    Self.mRCONSocket.Close
 		    Self.mRCONSocket.Address = "127.0.0.1"
@@ -157,6 +159,8 @@ Protected Class ModDiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub mShell_Completed(Sender As Shell)
+		  #Pragma Unused Sender
+		  
 		  #if DebugBuild
 		    System.DebugLog("Completed")
 		  #endif

@@ -63,6 +63,8 @@ Implements Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Sub Errored(Assigns Value As Boolean)
 		  // Do nothing
+		  
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 
@@ -79,6 +81,8 @@ Implements Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Sub ErrorMessage(Assigns Value As String)
 		  // Do nothing
+		  
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 

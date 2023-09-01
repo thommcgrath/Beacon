@@ -510,12 +510,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function DiscoveryCheckMod(WorkshopID As String) As Boolean
+		  #Pragma Unused WorkshopId
 		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub DiscoveryCompleted(DiscoveredMods() As Beacon.ContentPack)
+		  #Pragma Unused DiscoveredMods
 		  Self.UpdateList()
 		End Sub
 	#tag EndMethod
@@ -689,6 +691,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_WorkFinished(Sender As Ark.BlueprintController)
+		  #Pragma Unused Sender
 		  Self.Progress = Self.ProgressNone
 		  Self.UpdateUI
 		End Sub

@@ -1071,6 +1071,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DownloadDiscoveryResults(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Not Response.Success Then
 		    Self.ShowAlert("Failed to download discovery results.", "The process will continue as if discovery results were not found.")
 		    Self.GetSteamPage()
@@ -1128,6 +1130,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mSteamLookupSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused Url
+		  #Pragma Unused HttpStatus
+		  
 		  Var Extractor As New RegEx
 		  Extractor.SearchPattern = "<div class=""workshopItemTitle"">(.+)</div>"
 		  Extractor.Options.Greedy = False
@@ -1144,6 +1150,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mSteamLookupSocket_Error(Sender As URLConnection, Err As RuntimeException)
+		  #Pragma Unused Sender
+		  #Pragma Unused Err
+		  
 		  Self.IntroActionButton.Enabled = Self.mSteamId.IsEmpty = False
 		  Self.IntroSkipButton.Enabled = True
 		  Self.IntroIdField.Enabled = True

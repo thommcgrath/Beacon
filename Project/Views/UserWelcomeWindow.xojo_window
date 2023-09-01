@@ -390,6 +390,7 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin URLConnection OAuthStartSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -398,6 +399,7 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin URLConnection OAuthRedeemSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -406,6 +408,7 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin Thread RefreshAndCloseThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

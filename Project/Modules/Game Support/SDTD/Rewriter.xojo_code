@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Rewriter
 Inherits Global.Thread
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
@@ -157,6 +157,9 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h0
 		Shared Function Rewrite(Source As SDTD.Rewriter.Sources, Filename As String, InputContent As String, Organizer As SDTD.ConfigOrganizer, ProjectId As String, Nuke As Boolean, ByRef Err As RuntimeException) As String
+		  #Pragma Unused ProjectId
+		  #Pragma Unused Err
+		  
 		  Select Case Filename
 		  Case SDTD.ConfigFileServerConfigXml
 		    Var InitialOrganizer As New SDTD.ConfigOrganizer
