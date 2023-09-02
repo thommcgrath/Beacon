@@ -104,16 +104,20 @@ Protected Module Configs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary, EncryptedData As Dictionary) As SDTD.ConfigGroup
-		  If EncryptedData Is Nil Then
-		    If SaveData.HasAllKeys("Plain", "Encrypted") Then
-		      EncryptedData = SaveData.Value("Encrypted")
-		      SaveData = SaveData.Value("Plain")
-		    Else
-		      EncryptedData = New Dictionary
-		    End If
+		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary) As SDTD.ConfigGroup
+		  Var EncryptedData As Dictionary
+		  If SaveData.HasAllKeys("Plain", "Encrypted") Then
+		    EncryptedData = SaveData.Value("Encrypted")
+		    SaveData = SaveData.Value("Plain")
+		  Else
+		    EncryptedData = New Dictionary
 		  End If
-		  
+		  Return CreateInstance(InternalName, SaveData, EncryptedData)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary, EncryptedData As Dictionary) As SDTD.ConfigGroup
 		  Select Case InternalName
 		  Case NameGeneralSettings
 		    Return New SDTD.Configs.GeneralSettings(SaveData, EncryptedData)
@@ -272,7 +276,7 @@ Protected Module Configs
 	#tag Constant, Name = NameGeneralSettings, Type = String, Dynamic = False, Default = \"SDTD.GeneralSettings", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = NameProjectSettings, Type = String, Dynamic = False, Default = \"SDTD.Metadata", Scope = Protected
+	#tag Constant, Name = NameProjectSettings, Type = String, Dynamic = False, Default = \"SDTD.ProjectSettings", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = NameServers, Type = String, Dynamic = False, Default = \"SDTD.Servers", Scope = Protected

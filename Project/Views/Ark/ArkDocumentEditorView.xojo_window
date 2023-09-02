@@ -1388,6 +1388,7 @@ End
 		  Const RestoreTag = "b4d7f3d8-17f2-425f-8ab8-9032d558b29d"
 		  Const CopyTag = "a0b7a0ee-518a-4ee8-a33c-5c8e46ba570f"
 		  Const PasteTag = "31f1decc-7706-4baf-af11-f4d4fdde799d"
+		  Const HelpTag = "f3766fd7-7483-446f-8fa9-47dd0dd09209"
 		  
 		  Var ReadOnly As Boolean = Self.Project.ReadOnly
 		  Var Item As SourceListItem
@@ -1400,6 +1401,11 @@ End
 		  End If
 		  
 		  Var Base As New DesktopMenuItem
+		  Var HelpItem As New DesktopMenuItem(Item.Caption + " Help", HelpTag)
+		  HelpItem.Enabled = True
+		  Base.AddMenu(HelpItem)
+		  Base.AddMenu(New DesktopMenuItem(DesktopMenuItem.TextSeparator))
+		  
 		  Var CopyItem As New DesktopMenuItem("Copy", CopyTag)
 		  CopyItem.Enabled = ReadOnly = False And (ItemIndex > -1) And (Config Is Nil) = False And Config.IsImplicit = False
 		  Base.AddMenu(CopyItem)
@@ -1434,6 +1440,17 @@ End
 		  End If
 		  
 		  Select Case Choice.Tag
+		  Case HelpTag
+		    Var HelpPath As String = Beacon.ConfigHelpPath(ConfigName)
+		    Var HelpUrl As String = Beacon.HelpUrl(HelpPath)
+		    
+		    Var Component As HelpComponent = App.MainWindow.Help(False)
+		    If Component Is Nil Then
+		      System.GotoURL(HelpUrl)
+		      Return
+		    End If
+		    App.MainWindow.ShowHelp()
+		    Component.LoadURL(HelpUrl)
 		  Case RestoreTag
 		    Self.RestoreEditor(ConfigName)
 		  Case CopyTag

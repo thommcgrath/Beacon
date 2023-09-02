@@ -265,6 +265,43 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ConfigHelpPath(ConfigGroup As Beacon.ConfigGroup) As String
+		  Return ConfigHelpPath(ConfigGroup.InternalName)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ConfigHelpPath(ConfigName As String) As String
+		  Var GameId, Slug As String
+		  
+		  // Weird at the moment because we don't need to special-case anything
+		  Select Case ConfigName
+		  Else
+		    Var Parts() As String = ConfigName.Split(".")
+		    If Parts.Count < 2 Then
+		      Return "/"
+		    End If
+		    
+		    GameId = Parts(0)
+		    
+		    Var Replacer As New Regex
+		    Replacer.SearchPattern = "[A-Z0-9]+"
+		    Replacer.ReplacementPattern = " $0"
+		    Replacer.Options.ReplaceAllMatches = True
+		    Replacer.Options.CaseSensitive = True
+		    
+		    Slug = Replacer.Replace(Parts(1))
+		    
+		    Replacer.SearchPattern = "\s+"
+		    Replacer.ReplacementPattern = "_"
+		    Slug = Replacer.Replace(Slug.Trim)
+		  End Select
+		  
+		  Return "/configs/" + EncodeURLComponent(GameId.Lowercase) + "/" + EncodeURLComponent(Slug.Lowercase) + "/"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function Decompress(Data As String) As String
 		  If Not IsCompressed(Data) Then
 		    Return Data
