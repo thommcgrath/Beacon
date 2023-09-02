@@ -146,6 +146,22 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddProviderToken(Token As BeaconAPI.ProviderToken)
+		  If Token Is Nil Then
+		    Return
+		  End If
+		  
+		  If Token.IsEncrypted Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Provider token is still encrypted"
+		    Raise Err
+		  End If
+		  
+		  Self.ProviderTokenKey(Token.TokenId) = DecodeBase64(Token.EncryptionKey)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AddServerProfile(Profile As Beacon.ServerProfile)
 		  If Profile Is Nil Then
 		    Return
@@ -1378,6 +1394,16 @@ Implements ObservationKit.Observable
 		  
 		  Self.mObservers.Value(Key) = Refs
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveProviderToken(Token As BeaconAPI.ProviderToken)
+		  If Token Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RemoveProviderTokenKey(Token.TokenId)
 		End Sub
 	#tag EndMethod
 

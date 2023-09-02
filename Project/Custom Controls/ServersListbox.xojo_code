@@ -1,6 +1,7 @@
 #tag Class
 Protected Class ServersListbox
 Inherits BeaconListbox
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event
 		Sub PaintCellBackground(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused Column
@@ -96,9 +97,7 @@ Inherits BeaconListbox
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateList()
-		  // Updates the list, maintaining the current selection
-		  
+		Function SelectedProfiles() As Beacon.ServerProfile()
 		  Var Profiles() As Beacon.ServerProfile
 		  For Idx As Integer = 0 To Self.LastRowIndex
 		    If Self.RowSelectedAt(Idx) = False Then
@@ -107,7 +106,15 @@ Inherits BeaconListbox
 		    
 		    Profiles.Add(Self.RowTagAt(Idx))
 		  Next
-		  Self.UpdateList(Profiles, False)
+		  Return Profiles
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateList()
+		  // Updates the list, maintaining the current selection
+		  
+		  Self.UpdateList(Self.SelectedProfiles, False)
 		End Sub
 	#tag EndMethod
 
@@ -279,6 +286,14 @@ Inherits BeaconListbox
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="TotalPages"
+			Visible=true
+			Group="Behavior"
+			InitialValue="-1"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="PageSize"
 			Visible=true

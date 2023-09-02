@@ -219,7 +219,6 @@ Begin ArkConfigEditor ArkServersEditor
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -227,7 +226,7 @@ Begin ArkConfigEditor ArkServersEditor
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
 #tag EndDesktopWindow
@@ -339,8 +338,10 @@ End
 		      Continue
 		    End If
 		    
+		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(DiscoveredProfile.ProviderTokenId, True)
 		    Var ProjectProfile As Beacon.ServerProfile = Profiles.Value(ServiceId)
 		    ProjectProfile.UpdateDetailsFrom(DiscoveredProfile)
+		    Self.Project.AddProviderToken(Token)
 		  Next
 		  Self.Modified = Self.Project.Modified
 		  
@@ -370,9 +371,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FinishRefreshingDetails()
+		  Var Profiles() As Beacon.ServerProfile = Self.ServerList.SelectedProfiles
+		  Self.ServerList.SelectedRowIndex = -1
+		  
+		  Var ViewIds() As Variant = Self.mViews.Keys
+		  For Each ViewId As Variant In ViewIds
+		    Var Panel As ArkServerViewContainer = Self.mViews.Value(ViewId)
+		    Panel.Close
+		    Self.mViews.Remove(ViewId)
+		  Next
+		  
 		  Self.mRefreshing = False
 		  Self.UpdateRefreshButton()
-		  Self.ServerList.UpdateList()
+		  Self.ServerList.UpdateList(Profiles, True)
 		  
 		  Var Explanation As String = "The information shown in the list is the most up-to-date Beacon has available."
 		  If Self.Modified Then
@@ -487,7 +498,7 @@ End
 			    Return
 			  End If
 			  
-			  If Self.mCurrentProfileID <> "" Then
+			  If Self.mCurrentProfileID.IsEmpty = False Then
 			    Var View As ArkServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
 			    View.Visible = False
 			    View.SwitchedFrom()

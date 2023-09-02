@@ -317,7 +317,7 @@ End
 		          Var NewLink As BeaconAPI.ProviderToken = ArkLinkAccountDialog.Present(Self, Tokens)
 		          If (NewLink Is Nil) = False Then
 		            If NewLink.IsEncrypted = False Then
-		              Self.Project.ProviderTokenKey(NewLink.TokenId) = DecodeBase64(NewLink.EncryptionKey)
+		              Self.Project.AddProviderToken(NewLink)
 		              Self.mTokens.Value(NewLink.TokenId) = NewLink
 		              Self.Modified = True
 		              Self.SetupUI()

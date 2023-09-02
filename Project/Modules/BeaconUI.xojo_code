@@ -436,7 +436,7 @@ Protected Module BeaconUI
 		    Dialog.Explanation = Explanation
 		    
 		    Try
-		      If Win = Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
+		      If Win Is Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
 		        Call Dialog.ShowModal()
 		      Else
 		        Var FocusControl As DesktopUIControl = Win.Focus
@@ -491,11 +491,13 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As DesktopWindow = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateAction As String) As BeaconUI.ConfirmResponses
-		  Try
-		    Win = Win.TrueWindow
-		  Catch Err As RuntimeException
-		    Win = Nil
-		  End Try
+		  If (Win Is Nil) = False Then
+		    Try
+		      Win = Win.TrueWindow
+		    Catch Err As RuntimeException
+		      Win = Nil
+		    End Try
+		  End If
 		  
 		  #if TargetWindows
 		    Var Dialog As New TaskDialogMBS
@@ -554,7 +556,7 @@ Protected Module BeaconUI
 		    
 		    Var Result As MessageDialogButton
 		    Try
-		      If Win = Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
+		      If Win Is Nil Or Win.Type = DesktopWindow.Types.Sheet Or TargetWindows Then
 		        Result = Dialog.ShowModal()
 		      Else
 		        Var FocusControl As DesktopUIControl = Win.Focus

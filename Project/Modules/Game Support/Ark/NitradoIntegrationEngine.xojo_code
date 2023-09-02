@@ -1,6 +1,7 @@
 #tag Class
 Protected Class NitradoIntegrationEngine
 Inherits Ark.IntegrationEngine
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Function ApplySettings(Organizer As Ark.ConfigOrganizer) As Boolean
 		  Var Keys() As Ark.ConfigOption = Organizer.DistinctKeys
@@ -609,7 +610,15 @@ Inherits Ark.IntegrationEngine
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = Self.mProviderToken.AuthHeaderValue
 		  Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers")
-		  If Self.Finished Or Self.CheckError(Sock) Then
+		  If Self.Finished Then
+		    Return
+		  ElseIf Sock.HTTPStatusCode <> 200 Then
+		    Self.mStatusCheckFailureCount = Self.mStatusCheckFailureCount + 1
+		    
+		    // 6 consecutive failures or an authentication error will report as an error
+		    If Self.mStatusCheckFailureCount >= 6 Or Sock.HTTPStatusCode = 401 Or Sock.HTTPStatusCode = 403 Then
+		      Call Self.CheckError(Sock)
+		    End
 		    Return
 		  End If
 		  Var Content As String = Sock.LastString
@@ -682,9 +691,13 @@ Inherits Ark.IntegrationEngine
 		      Ark.NitradoServerProfile(Self.Profile).ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		      Ark.NitradoServerProfile(Self.Profile).Address = GameServer.Value("ip") + ":" + GameServer.Value("port")
 		    End If
+		    
+		    Self.mStatusCheckFailureCount = 0
 		  Catch Err As RuntimeException
 		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
-		    Self.SetError(Err)
+		    If Self.mStatusCheckFailureCount > 0 Then
+		      Self.SetError(Err)
+		    End If
 		    Return
 		  End Try
 		End Sub
@@ -850,6 +863,9 @@ Inherits Ark.IntegrationEngine
 	#tag Method, Flags = &h0
 		Shared Function CheckResponseForError(URL As String, HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException, ByRef Message As String) As Boolean
 		  Select Case HTTPStatus
+		  Case 200, 201
+		    Message = ""
+		    Return False
 		  Case 401
 		    Message = "Error: Authorization failed."
 		  Case 429
@@ -891,8 +907,7 @@ Inherits Ark.IntegrationEngine
 		    
 		    Message = Message + " Check the Nitrado API status at https://status.usebeacon.app/ for more information."
 		  Else
-		    Message = ""
-		    Return False
+		    Message = "Unexpected HTTP status " + HTTPStatus.ToString(Locale.Raw, "0")
 		  End Select
 		  
 		  Return True
@@ -1130,6 +1145,10 @@ Inherits Ark.IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mServiceID As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStatusCheckFailureCount As Integer
 	#tag EndProperty
 
 

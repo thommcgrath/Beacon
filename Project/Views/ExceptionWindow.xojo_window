@@ -725,7 +725,7 @@ Begin DesktopWindow ExceptionWindow
       LockTop         =   False
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True

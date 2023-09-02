@@ -75,38 +75,53 @@ Inherits Beacon.Project
 		    Try
 		      Var InternalName As String = Entry.Key
 		      Var GroupData As Dictionary = Entry.Value
+		      
+		      // Convert old names into new ones
 		      Select Case InternalName
-		      Case "LootScale"
-		        ConvertLootScale = GroupData
-		      Case "Metadata", "metadata", Ark.Configs.NameProjectSettings
-		      Case "accounts"
+		      Case "Accounts", "accounts"
 		        InternalName = Ark.Configs.NameAccounts
 		      Case "BreedingMultipliers"
 		        InternalName = Ark.Configs.NameBreedingMultipliers
 		      Case "CraftingCosts"
 		        InternalName = Ark.Configs.NameCraftingCosts
-		      Case "DinoAdjustments"
-		        InternalName = Ark.Configs.NameCreatureAdjustments
-		      Case "SpawnPoints"
-		        InternalName = Ark.Configs.NameCreatureSpawns
 		      Case "CustomContent"
 		        InternalName = Ark.Configs.NameCustomConfig
 		      Case "DayCycle"
 		        InternalName = Ark.Configs.NameDayCycle
-		      Case "SpoilTimers"
-		        InternalName = Ark.Configs.NameDecayAndSpoil
+		      Case "Deployments", "deployments"
+		        InternalName = Ark.Configs.NameServers
 		      Case "Difficulty"
 		        InternalName = Ark.Configs.NameDifficulty
+		      Case "DinoAdjustments"
+		        InternalName = Ark.Configs.NameCreatureAdjustments
 		      Case "EngramControl"
 		        InternalName = Ark.Configs.NameEngramControl
+		      Case "ExperienceCurves"
+		        InternalName = Ark.Configs.NameLevelsAndXP
+		      Case "HarvestRates"
+		        InternalName = Ark.Configs.NameHarvestRates
 		      Case "LootDrops"
 		        InternalName = Ark.Configs.NameLootDrops
-		      Case "deployments"
-		        InternalName = Ark.Configs.NameServers
+		      Case "Metadata", "metadata"
+		        InternalName = Ark.Configs.NameProjectSettings
+		      Case "OtherSettings"
+		        InternalName = Ark.Configs.NameGeneralSettings
+		      Case "SpawnPoints"
+		        InternalName = Ark.Configs.NameCreatureSpawns
+		      Case "SpoilTimers"
+		        InternalName = Ark.Configs.NameDecayAndSpoil
 		      Case "StackSizes"
 		        InternalName = Ark.Configs.NameStackSizes
+		      Case "StatLimits"
+		        InternalName = Ark.Configs.NameStatLimits
 		      Case "StatMultipliers"
 		        InternalName = Ark.Configs.NameStatMultipliers
+		      End Select
+		      
+		      Select Case InternalName
+		      Case "LootScale"
+		        ConvertLootScale = GroupData
+		      Case Ark.Configs.NameProjectSettings
 		      Else
 		        Var EncryptedGroupData As Dictionary
 		        If EncryptedData.HasKey(InternalName) Then
