@@ -11,10 +11,15 @@ BeaconTemplate::SetBodyClass('purple');
 BeaconTemplate::AddHeaderLine('<link rel="canonical" href="' . BeaconCommon::AbsoluteUrl('/account/login') . '">');
 
 $flowId = $_GET['flow_id'] ?? null;
+$deviceId = $_GET['device_id'] ?? null;
 $email = $_GET['email'] ?? null;
 $returnUrl = $_GET['return'] ?? BeaconCommon::AbsoluteURL('/account/');
 $verificationCode = $_GET['code'] ?? null;
 $verificationKey = $_GET['key'] ?? null;
+
+if (empty($deviceId) === false) {
+	BeaconCommon::SetDeviceId($deviceId);
+}
 
 if (is_null($email) === false && (is_null($verificationCode) === false || is_null($verificationKey) === false)) {
 	// May not exit here

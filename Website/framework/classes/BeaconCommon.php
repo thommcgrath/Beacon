@@ -866,18 +866,20 @@ abstract class BeaconCommon {
 			return $_COOKIE['beacon_device_id'];
 		}
 		
-		$device_id = static::GenerateUUID();
-		
-		setcookie('beacon_device_id', $device_id, [
+		$deviceId = BeaconUUID::v4();
+		static::SetDeviceId($deviceId);
+		return $deviceId;
+	}
+	
+	public static Function SetDeviceId(string $deviceId): void {
+		setcookie('beacon_device_id', $deviceId, [
 			'path' => '/account',
 			'expires' => 2147483647,
 			'secure' => true,
 			'httponly' => true,
 			'samesite' => 'Lax'
 		]);
-		$_COOKIE['beacon_device_id'] = $device_id;
-		
-		return $device_id;
+		$_COOKIE['beacon_device_id'] = $deviceId;
 	}
 	
 	public static function SanitizeFilename(string $filename, int $maxLength = 0): string {

@@ -19,6 +19,7 @@ function handleRequest(array $context): Response {
 		$userId = $_GET['user_id'] ?? '';
 		$signature = $_GET['signature'] ?? '';
 		$expiration = $_GET['expiration'] ?? '';
+		$deviceId = $_GET['device_id'] ?? '';
 		$application = null;
 		
 		if (empty($clientId) || empty($scopes)) {
@@ -65,7 +66,13 @@ function handleRequest(array $context): Response {
 			return Response::NewJsonError('Invalid scope or redirect_uri', null, 400);
 		}
 		
-		$loginUrl = BeaconCommon::AbsoluteUrl('/account/login?flow_id=' . urlencode($flow->FlowId()));
+		$query = [
+			'flow_id' => $flow->FlowId(),
+		];
+		if (empty($deviceId) === false) {
+			$query['device_id'] = $deviceId;
+		}
+		$loginUrl = BeaconCommon::AbsoluteUrl('/account/login?' . http_build_query($query));
 		if (isset($_GET['no_redirect']) && filter_var($_GET['no_redirect'], FILTER_VALIDATE_BOOLEAN) === true) {
 			return Response::NewJson([
 				'login_url' => $loginUrl

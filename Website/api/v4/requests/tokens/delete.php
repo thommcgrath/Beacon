@@ -10,13 +10,13 @@ function handleRequest(array $context): Response {
 		return Response::NewJsonError('Token not found', $tokenId, 404);
 	}
 	if ($token->UserId() !== Core::UserId()) {
-		return Response::NewJsonError('Forbidden.', 403);
+		return Response::NewJsonError('Forbidden.', $tokenId, 403);
 	}
 	
 	if ($token->Delete()) {
 		return Response::NewNoContent();
 	} else {
-		return Response::NewJsonError('Token was not deleted.', 500);
+		return Response::NewJsonError('Token was not deleted.', $tokenId, 500);
 	}
 }
 
