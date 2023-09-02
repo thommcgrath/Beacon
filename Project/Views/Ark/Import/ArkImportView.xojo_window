@@ -66,7 +66,7 @@ Begin DocumentImportView ArkImportView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   4
+      Value           =   5
       Visible         =   True
       Width           =   720
       Begin ArkNitradoDiscoveryView NitradoDiscoveryView1
@@ -244,7 +244,7 @@ Begin DocumentImportView ArkImportView
          TabIndex        =   0
          TabPanelIndex   =   6
          TabStop         =   True
-         Text            =   "Import from Other Documents"
+         Text            =   "Import from Other Projects"
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -603,7 +603,7 @@ End
 		  
 		  Var ArkProjects() As Ark.Project
 		  For Idx As Integer = 0 To Projects.LastIndex
-		    If Projects(Idx) IsA Ark.Project And Projects(Idx).ProjectId <> DestinationProjectId Then
+		    If  Projects(Idx) IsA Ark.Project And Projects(Idx).ReadOnly = False And Projects(Idx).ProjectId <> DestinationProjectId Then
 		      ArkProjects.Add(Ark.Project(Projects(Idx)))
 		    End If
 		  Next
@@ -853,7 +853,7 @@ End
 		    End If
 		    
 		    Var Project As Ark.Project = Ark.Project(OtherDocsList.RowTagAt(I)).Clone(App.IdentityManager.CurrentIdentity)
-		    If (Project Is Nil) = False Then
+		    If (Project Is Nil) = False And Project.ReadOnly = False Then
 		      Projects.Add(Project)
 		    End If
 		  Next

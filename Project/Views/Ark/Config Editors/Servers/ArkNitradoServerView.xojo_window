@@ -349,21 +349,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function StatusFromHTTPCode(HTTPStatus As Integer) As String
+		Private Shared Function StatusFromHTTPCode(HTTPStatus As Integer) As String
 		  Select Case HTTPStatus
 		  Case 401, 403
-		    Self.mServerState = Self.StatusUnauthorized
+		    Return StatusUnauthorized
 		  Case 429
-		    Self.mServerState = Self.StatusRateLimited
+		    Return StatusRateLimited
 		  Case 502
-		    Self.mServerState = Self.StatusBadGateway
+		    Return StatusBadGateway
 		  Case 503
-		    Self.mServerState = Self.StatusMaintenance
+		    Return StatusMaintenance
 		  Else
 		    #if DebugBuild
 		      System.DebugLog("Nitrado status " + HTTPStatus.ToString)
 		    #endif
-		    Self.mServerState = Self.StatusNitradoOther
+		    Return StatusNitradoOther
 		  End Select
 		End Function
 	#tag EndMethod

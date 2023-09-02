@@ -1,30 +1,48 @@
 #tag DesktopWindow
 Begin ArkDiscoveryView ArkNitradoDiscoveryView
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
+   AllowAutoDeactivate=   "True"
+   AllowFocus      =   "False"
+   AllowFocusRing  =   "False"
+   AllowTabs       =   "True"
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composited      =   False
+   Composite       =   False
+   Composited      =   "False"
+   DefaultLocation =   2
    DoubleBuffer    =   "False"
-   Enabled         =   True
+   Enabled         =   "True"
    EraseBackground =   "True"
+   FullScreen      =   False
    HasBackgroundColor=   False
+   HasCloseButton  =   True
+   HasFullScreenButton=   False
+   HasMaximizeButton=   True
+   HasMinimizeButton=   True
    Height          =   480
-   Index           =   -2147483648
+   ImplicitInstance=   True
+   Index           =   "-2147483648"
    InitialParent   =   ""
-   Left            =   0
-   LockBottom      =   True
-   LockLeft        =   True
-   LockRight       =   True
-   LockTop         =   True
-   TabIndex        =   0
-   TabPanelIndex   =   0
-   TabStop         =   True
+   Left            =   "0"
+   LockBottom      =   "True"
+   LockLeft        =   "True"
+   LockRight       =   "True"
+   LockTop         =   "True"
+   MacProcID       =   0
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
+   MenuBar         =   0
+   MenuBarVisible  =   False
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Resizeable      =   True
+   TabIndex        =   "0"
+   TabPanelIndex   =   "0"
+   TabStop         =   "True"
+   Title           =   "Untitled"
    Tooltip         =   ""
-   Top             =   0
-   Transparent     =   True
+   Top             =   "0"
+   Transparent     =   "True"
+   Type            =   0
    Visible         =   True
    Width           =   720
    Begin Thread TokenLookupThread
@@ -543,7 +561,7 @@ End
 		    End If
 		    
 		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.GetProviderToken(TokenId)
-		    If Token.Provider = BeaconAPI.ProviderToken.ProviderNitrado And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
+		    If (Token Is Nil) = False And Token.Provider = BeaconAPI.ProviderToken.ProviderNitrado And Token.Decrypt(Self.Project.ProviderTokenKey(TokenId)) Then
 		      Tokens.Add(Token)
 		      Cache.Value(Token.TokenId) = Token
 		      Self.ListServers(Token)
