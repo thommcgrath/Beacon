@@ -202,11 +202,7 @@ Inherits Beacon.Project
 		  #Pragma Unused SaveDataVersion
 		  #Pragma Unused SavedWithVersion
 		  
-		  If SaveDataVersion < 2 Then
-		    Var Err As New Beacon.ProjectLoadException
-		    Err.Message = "This project is too old to be opened with this version of Beacon."
-		    Raise Err
-		  ElseIf SaveDataVersion = 2 And PlainData.HasAllKeys("DifficultyValue", "LootSources") Then
+		  If SaveDataVersion = 2 And PlainData.HasAllKeys("DifficultyValue", "LootSources") Then
 		    Var DifficultyValue As Double = PlainData.Value("DifficultyValue")
 		    Var LootSources() As Variant = PlainData.Value("LootSources")
 		    

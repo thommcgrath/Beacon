@@ -509,6 +509,12 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(SaveData As Dictionary, Identity As Beacon.Identity, AdditionalProperties As Dictionary) As Beacon.Project
 		  Var Version As Integer = SaveData.FirstValue("version", "Version", 0).IntegerValue
+		  If Version < 2 Then
+		    Var Err As New Beacon.ProjectLoadException
+		    Err.Message = "This project is too old to be opened with this version of Beacon."
+		    Raise Err
+		  End If
+		  
 		  Var MinVersion As Integer = SaveData.FirstValue("minVersion", "MinVersion", Beacon.Project.SaveDataVersion).IntegerValue
 		  Var SavedWithVersion As Integer = SaveData.FirstValue("savedWith", "SavedWith", 10501399).IntegerValue // Max possible version before the value should exist
 		  Var GameId As String = SaveData.FirstValue("gameId", "Game", Ark.Identifier).StringValue
@@ -534,6 +540,41 @@ Implements ObservationKit.Observable
 		    Var Err As New Beacon.ProjectLoadException
 		    Err.Message = "Unknown game " + GameId + "."
 		    Raise Err
+		  End Select
+		  
+		  Select Case Version
+		  Case 2
+		    // It's ok for Ark-specific stuff to be here
+		    Var DifficultyValue As Double = SaveData.Value("DifficultyValue")
+		    Var LootSources() As Variant = SaveData.Value("LootSources")
+		    
+		    Var Loot As New Ark.Configs.LootDrops
+		    For Each Source As Variant In LootSources
+		      Try
+		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dictionary(Source))
+		        If (Container Is Nil) = False Then
+		          Loot.Add(Container)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    
+		    Var ConfigSet As New Dictionary
+		    ConfigSet.Value(Ark.Configs.NameDifficulty) = New Ark.Configs.Difficulty(DifficultyValue)
+		    ConfigSet.Value(Ark.Configs.NameLootDrops) = Loot
+		    
+		    Project.ConfigSetData(Beacon.ConfigSet.BaseConfigSet) = ConfigSet
+		  Case 3, 4
+		    Var ConfigsDict As Dictionary = SaveData.Value("Configs")
+		    Var MetadataDict As Dictionary = ConfigsDict.Value("Metadata")
+		    SaveData.Value("description") = MetadataDict.Value("Description")
+		    SaveData.Value("name") = MetadataDict.Value("Title")
+		  Case 5
+		    Var ConfigSetsDict As Dictionary = SaveData.Value("Config Sets")
+		    Var BaseDict As Dictionary = ConfigSetsDict.Value("Base")
+		    Var MetadataDict As Dictionary = BaseDict.Value("Metadata")
+		    SaveData.Value("description") = MetadataDict.Value("Description")
+		    SaveData.Value("name") = MetadataDict.Value("Title")
 		  End Select
 		  
 		  Project.mProjectId = ProjectId

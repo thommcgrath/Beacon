@@ -119,7 +119,11 @@ Implements Beacon.NamedItem
 		  If Reference Is Nil Then
 		    Var BlueprintId As String = Dict.FirstValue("engramId", "EngramID", "Engram", "")
 		    If BlueprintId.IsEmpty = False Then
-		      Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindEngram, BlueprintId, "", "", "", "")
+		      If Beacon.UUID.Validate(BlueprintId) Then
+		        Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindEngram, BlueprintId, "", "", "", "")
+		      Else
+		        Reference = New Ark.BlueprintReference(Ark.BlueprintReference.KindEngram, "", "", BlueprintId, "", "")
+		      End If
 		    Else
 		      Return Nil
 		    End If
