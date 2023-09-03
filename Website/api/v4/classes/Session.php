@@ -240,6 +240,10 @@ class Session extends DatabaseObject implements JsonSerializable {
 			// raw token
 			$hash = static::PrepareHash($token);
 			break;
+		case 36:
+			// legacy token
+			$hash = hash('sha512', $token);
+			break;
 		case 86:
 		case 128:
 			// token hash
