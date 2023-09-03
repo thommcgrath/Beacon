@@ -480,6 +480,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
+		  #if DebugBuild
+		    Const UsePreviewAppSupport = False
+		  #else
+		    Const UsePreviewAppSupport = True
+		  #endif
+		  
 		  If (Self.mDataFolder Is Nil) = False Then
 		    Return Self.mDataFolder
 		  End If
@@ -496,11 +502,27 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #if DebugBuild
 		    FolderName = "Beacon Dev"
 		  #endif
+		  Var PreviewFolderName As String = FolderName + " Preview"
 		  
 		  Var AppSupport As FolderItem = SpecialFolder.ApplicationData
 		  Call AppSupport.CheckIsFolder
 		  Var CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
 		  Call CompanyFolder.CheckIsFolder
+		  
+		  If UsePreviewAppSupport Then
+		    Var StableFolderName As String = FolderName
+		    FolderName = PreviewFolderName
+		    
+		    If CompanyFolder.Child(StableFolderName).Exists = True And CompanyFolder.Child(FolderName).Exists = False Then
+		      CompanyFolder.Child(StableFolderName).CopyTo(CompanyFolder.Child(FolderName))
+		    End If
+		  ElseIf CompanyFolder.Child(PreviewFolderName).Exists Then
+		    If CompanyFolder.Child(FolderName).Exists Then
+		      Call CompanyFolder.Child(FolderName).DeepDelete(False)
+		    End If
+		    CompanyFolder.Child(PreviewFolderName).MoveTo(CompanyFolder.Child(FolderName))
+		  End If
+		  
 		  Var AppFolder As FolderItem = CompanyFolder.Child(FolderName)
 		  Call AppFolder.CheckIsFolder
 		  Self.mDataFolder = AppFolder
