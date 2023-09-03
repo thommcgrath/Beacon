@@ -1,0 +1,42 @@
+env:
+  browser: true
+  es6: true
+extends:
+  - eslint:recommended
+parser: "@babel/eslint-parser"
+parserOptions:
+  ecmaVersion: "latest"
+  sourceType: "module"
+  ecmaFeatures:
+    classes: true
+rules:
+  brace-style:
+    - warn
+    - 1tbs
+  camelcase: warn
+  comma-dangle:
+    - warn
+    - always-multiline
+  comma-style:
+    - error
+    - last
+  curly: warn
+  eol-last:
+    - error
+    - always
+  no-duplicate-imports: error
+  eqeqeq:
+    - warn
+    - smart
+  no-eval: error
+  no-implied-eval: error
+  no-invalid-this: error
+  no-undefined: error
+  no-unused-expressions: warn
+  no-unused-vars: warn
+  no-use-before-define: error
+  no-const-assign: error
+  semi: error
+  no-empty-function: warn
+  no-empty: warn
+  

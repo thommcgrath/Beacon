@@ -8,7 +8,7 @@ class Project extends \BeaconAPI\Ark\Project {
 			'project_id' => $this->project_id,
 			'game_id' => $this->game_id,
 			'user_id' => $this->user_id,
-			'owner_id' => $this->owner_id,
+			'owner_id' => ($this->role === 'Owner' ? $this->user_id : '00000000-0000-0000-0000-000000000000'),
 			'name' => $this->title,
 			'description' => $this->description,
 			'revision' => $this->revision,

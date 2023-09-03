@@ -2,6 +2,8 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Ark Breeding Chart');
 
+use BeaconAPI\v4\Ark\{ContentPack, Creature};
+
 $msm = isset($_GET['msm']) ? floatval($_GET['msm']) : 1.0;
 $ipm = isset($_GET['ipm']) ? floatval($_GET['ipm']) : 1.0;
 $ism = isset($_GET['ism']) ? floatval($_GET['ism']) : 1.0;
@@ -76,23 +78,12 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 			$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM updates;');
 			$min_version = $results->Field('newest_build');
 			
-			$mods = \Ark\Mod::GetOfficial();
-			$modIds = [];
-			$showModNames = false;
-			foreach ($mods as $mod) {
-				$modIds[] = $mod->ModId();
-			}
-			foreach ($steamIds as $steamId) {
-				$mod = \Ark\Mod::GetByConfirmedWorkshopID($steamId);
-				if (count($mod) === 1) {
-					$modIds[] = $mod[0]->ModId();
-					$showModNames = true;
-				}
-			}
-			
-			$creatures = \Ark\Creature::GetAll($min_version);
+			$officialPacks = ContentPack::Search(['minVersion' => $min_version, 'isOfficial' => true], true);
+			$showModNames = count($steamIds) > 0;
+			$combinedPacks = array_merge($officialPacks, $steamIds);
+			$creatures = Creature::Search(['minVersion' => $min_version, 'contentPackId' => $combinedPacks], true);
 			foreach ($creatures as $creature) {
-				if (in_array($creature->ModId(), $modIds) === false || is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
+				if (is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
 					continue;
 				}
 				
@@ -117,7 +108,7 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 				
 				$label = htmlentities($creature->Label());
 				if ($showModNames) {
-					$label .= '<span class="beacon-engram-mod-name"><br>' . htmlentities($creature->ModName()) . '</span>';
+					$label .= '<span class="beacon-engram-mod-name"><br>' . htmlentities($creature->ContentPackName()) . '</span>';
 				}
 				
 				$incubation_text = BeaconCommon::SecondsToEnglish(round($incubation_seconds), true);

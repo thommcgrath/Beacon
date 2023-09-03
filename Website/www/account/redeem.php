@@ -2,6 +2,8 @@
 	
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+use BeaconAPI\v4\Session;
+
 if (isset($_REQUEST['code'])) {
 	$code = substr($_REQUEST['code'], 0, 9);
 } else {
@@ -9,8 +11,9 @@ if (isset($_REQUEST['code'])) {
 }
 
 BeaconCommon::StartSession();
-$session = BeaconSession::GetFromCookie();
-$user = is_null($session) ? null : $session->User();
+$session = BeaconCommon::GetSession();
+$is_logged_in = is_null($session) === false;
+$user = $is_logged_in ? $session->User() : null;
 
 header('Cache-Control: no-cache');
 
@@ -166,7 +169,7 @@ case 'redeem-confirm':
 		$return = BeaconCommon::AbsoluteURL('/account/redeem/' . urlencode($code) . '?process=redeem-confirm');
 		BeaconCommon::Redirect('/account/login/?return=' . urlencode($return));
 	}
-	$user = BeaconUser::GetByUserID($session->UserID());
+	$user = $session->User();
 	
 	$results = $database->Query('SELECT redemption_date FROM public.gift_codes WHERE code = $1;', $code);
 	if ($results->RecordCount() === 0 || is_null($results->Field('redemption_date')) === false) {
@@ -180,7 +183,6 @@ case 'redeem-confirm':
 		BeaconCommon::Redirect('https://www.youtube.com/watch?v=sKbP-M8vVtw', false);
 	}
 	
-	$user = BeaconUser::GetByUserID($session->UserID());
 	if ($process_step === 'redeem-final') {
 		$email_id = $user->EmailID();
 		$product_id = $results->Field('product_id');

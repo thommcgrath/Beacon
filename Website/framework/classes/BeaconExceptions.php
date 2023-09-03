@@ -223,11 +223,11 @@ abstract class BeaconExceptions {
 				];
 				
 				if (!is_null($user_id)) {
-					$user = BeaconUser::GetByUserID($user_id);
+					$user = BeaconAPI\v4\User::Fetch($user_id);
 					if (!is_null($user)) {
 						$arr['attachments'][0]['fields'][] = [
 							'title' => 'User',
-							'value' => $user->Username() . '#' . $user->Suffix(),
+							'value' => $user->Username(true),
 							'short' => false
 						];
 					}

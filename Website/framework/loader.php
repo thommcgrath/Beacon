@@ -8,6 +8,7 @@ mb_http_output('UTF-8');
 mb_internal_encoding('UTF-8');
 ini_set('serialize_precision', -1);
 
+// Keep version set to v3, v4 is accessed explicitly
 global $api_version;
 if (isset($_SERVER['API_VERSION'])) {
 	$api_version = $_SERVER['API_VERSION'];
@@ -18,20 +19,56 @@ if (is_int($api_version) === false || isset($api_version) === false || empty($ap
 $_SERVER['API_VERSION'] = $api_version;
 
 spl_autoload_register(function($class_name) {
-	$filename = str_replace('\\', '/', $class_name) . '.php';
-	$paths = [dirname(__FILE__) . '/classes/' . $filename];
-	$path_parts = explode('\\', $class_name, 2);
+	$original_class_name = $class_name;
 	
-	if (count($path_parts) === 2 && $path_parts[0] === 'BeaconAPI') {
-		$paths[] = dirname(__FILE__, 2) . '/api/common/' . str_replace('\\', '/', $path_parts[1]) . '.php';
-	} elseif (count($path_parts) === 2) {
-		$paths[] = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/' . strtolower($path_parts[0]) . '/classes/' . str_replace('\\', '/', $path_parts[1]) . '.php';
+	$apiVersion = $_SERVER['API_VERSION'];
+	$apiRoot = dirname(__FILE__, 2) . '/api';
+	$paths = [
+		dirname(__FILE__) . '/classes'
+	];
+	
+	/*
+	Modern:
+		BeaconAPI\v4\Project = v4/classes/Project.php
+		BeaconAPI\v4\Ark\Project = v4/classes/Ark/Project.php
+		BeaconAPI\v4\User = v4/classes/User.php
+		
+	Legacy:
+		BeaconAPI\Project = common/classes/Project.php
+		BeaconAPI\Ark\Project = common/Ark/classes/Project.php
+		Ark\Project = v3/ark/classes/Project.php
+		BeaconUser = v3/classes/BeaconUser.php
+	*/
+	
+	if (str_starts_with($class_name, 'BeaconAPI\\')) {
+		$class_name = substr($class_name, 10);
+		if (preg_match('/^(v\d+)\\\/', $class_name, $matches) === 1) {
+			// Explicit version
+			$version = $matches[1];
+			$class_name = substr($class_name, strlen($version) + 1);
+			$paths[] = "{$apiRoot}/{$version}/classes";
+		} else {
+			// Old messy style
+			if (str_starts_with($class_name, 'Ark\\')) {
+				$class_name = substr($class_name, 4);
+				$paths[] = "{$apiRoot}/common/Ark";
+			} else {
+				$paths[] = "{$apiRoot}/common";
+			}
+		}
+	} else if (str_starts_with($class_name, 'Ark\\')) {
+		$apiRoot = dirname(__FILE__, 2) . '/api';
+		$class_name = substr($class_name, 4);
+		$paths[] = "{$apiRoot}/v{$apiVersion}/ark/classes";
 	}
-	$paths[] = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/classes/' . $filename;
 	
+	// Search the v3 classes last
+	$paths[] = "{$apiRoot}/v{$apiVersion}/classes";
+	
+	$filename = str_replace('\\', '/', $class_name) . '.php';
 	foreach ($paths as $path) {
-		if (file_exists($path)) {
-			include($path);
+		if (file_exists("{$path}/{$filename}")) {
+			include("{$path}/{$filename}");
 			return;
 		}
 	}
@@ -125,9 +162,9 @@ BeaconErrors::StartWatching();
 	}
 	$policy = implode(' ', $groups);
 	
-	header('Content-Security-Policy: ' . $policy);
-	header('Cache-Control: public, max-age=3600, must-revalidate');
-	header('X-Endpoint-Server: ' . gethostname());
+	//header('Content-Security-Policy: ' . $policy);
+	//header('Cache-Control: public, max-age=3600, must-revalidate');
+	//header('X-Endpoint-Server: ' . gethostname());
 })();
 
 BeaconTemplate::Start();

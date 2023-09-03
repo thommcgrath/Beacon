@@ -141,7 +141,7 @@ case 'POST':
 		$comments = trim($_POST['comments']);
 		$user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
 		if (!is_null($user_id)) {
-			$user = BeaconUser::GetByUserID($user_id);
+			$user = BeaconAPI\v4\User::Fetch($user_id);
 			if (is_null($user)) {
 				$user_id = null;
 			}

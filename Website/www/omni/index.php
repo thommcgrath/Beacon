@@ -76,23 +76,27 @@ foreach ($supported_payment_methods as $payment_method) {
 	];
 }
 
-BeaconTemplate::LoadGlobalize();
-
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 BeaconTemplate::StartScript();
 ?>
 <script>
-BeaconCurrency.currencyCode = <?php echo json_encode($currency); ?>;
-const Currencies = <?php echo json_encode($_SESSION['store_currency_options']); ?>;
-const PaymentMethods = <?php echo json_encode($payment_method_info); ?>;
-const Products = <?php echo json_encode($product_details); ?>;
-const ProductIds = <?php echo json_encode($product_ids); ?>;
+
+document.addEventListener('DOMContentLoaded', () => {
+	const event = new Event('beaconRunCheckout');
+	event.checkoutProperties = <?php echo json_encode([
+		'currencyCode' => $currency,
+		'currencies' => $_SESSION['store_currency_options'],
+		'paymentMethods' => $payment_method_info,
+		'products' => $product_details,
+		'productIds' => $product_ids,
+	]); ?>;
+	document.dispatchEvent(event);
+});
 </script>
 <?php
 BeaconTemplate::FinishScript();
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 
 ?>
 <div id="storefront">
@@ -249,7 +253,10 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 					<div class="bold">Total</div><div id="storefront-cart-total" class="formatted-price"></div>
 				</div>
 			</div>
-			<div class="double-group">
+			<div class="storefront-refund-notice">
+				<label class="checkbox"><input type="checkbox" id="storefront-refund-checkbox"><span></span>By checking this box, you agree to Beacon's <a href="/policies/refund">refund policy</a>. Refunds are offered if requested within 14 days of purchase, or until personalized content has been generated with the export and/or deploy features, whichever comes first.</label>
+			</div>
+			<div class="storefront-button-row double-group">
 				<div>
 					<div class="select"><span></span>
 						<select id="storefront-cart-currency-menu">
@@ -284,7 +291,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout.js'));
 				?>
 			</div>
 			<div class="storefront-cart-notice">
-				<a href="/help/refund_policy">Beacon Refund Policy</a>
+				<a href="/policies/refund">Beacon Refund Policy</a>
 			</div>
 		</div>
 	</div>

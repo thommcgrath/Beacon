@@ -3,15 +3,16 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
-$session = BeaconSession::GetFromCookie();
+use BeaconAPI\v4\Session;
+
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	BeaconCommon::Redirect('/account/login/?return=/account/repair_blueprints');
 	exit;
 }
-$session->Renew();
 
-$user = BeaconUser::GetByUserID($session->UserID());
-$user_id = $user->UserID();
+$user = $session->User();
+$user_id = $user->UserId();
 $legacy_path = '/' . $user_id . '/Blueprints.json';
 
 $versions = BeaconCloudStorage::VersionsForFile($legacy_path);

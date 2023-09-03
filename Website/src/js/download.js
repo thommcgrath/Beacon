@@ -7,7 +7,6 @@ const updateScreenNotice = () => {
 	const screenWidthPixels = screenWidthPoints * window.devicePixelRatio;
 	const screenHeightPixels = screenHeightPoints * window.devicePixelRatio;
 	
-	const isMac = navigator.platform.indexOf('Mac') > -1;
 	const isWindows = navigator.platform.indexOf('Win') > -1;
 	
 	let notice = null;
@@ -30,7 +29,7 @@ const updateScreenNotice = () => {
 	}
 };
 
-const buildDownloadsTable = async () => {
+const buildDownloadsTable = async (downloadData) => {
 	const downloadMac = 'macOS';
 	const downloadWinUniversal = 'windows-universal';
 	const downloadWinIntel64 = 'windows-x64';
@@ -45,14 +44,14 @@ const buildDownloadsTable = async () => {
 		// Try to use client hints to determine the best version, but this isn't supported in Firefox
 		if ('userAgentData' in navigator) {
 			await navigator.userAgentData.getHighEntropyValues(['architecture', 'bitness']).then((ua) => {
-				if (ua.bitness == 32) {
+				if (ua.bitness === 32) {
 					priorities = [downloadWinIntel, downloadWinIntel64, downloadWinARM64, downloadMac];
 					hasRecommendation = true;
-				} else if (ua.bitness == 64) {
-					if (ua.architecture == 'arm') {
+				} else if (ua.bitness === 64) {
+					if (ua.architecture === 'arm') {
 						priorities = [downloadWinARM64, downloadWinIntel, downloadWinIntel64, downloadMac];
 						hasRecommendation = true;
-					} else if (ua.architecture == 'x86') {
+					} else if (ua.architecture === 'x86') {
 						priorities = [downloadWinIntel64, downloadWinIntel, downloadWinARM64, downloadMac];
 						hasRecommendation = true;
 					}
@@ -99,7 +98,7 @@ const buildDownloadsTable = async () => {
 			warningLabel.classList.add('full');
 			warningLabel.classList.add('text-red');
 			warningLabel.innerText = 'Sorry, this version of Beacon is not compatible with your device. But just in case a mistake was made, here are the download links.';
-			warningRow.appendChild(warningLabel)
+			warningRow.appendChild(warningLabel);
 			table.appendChild(warningRow);
 		}
 		
@@ -109,31 +108,31 @@ const buildDownloadsTable = async () => {
 			
 			switch (downloadKey) {
 			case downloadMac:
-				if (data.hasOwnProperty('mac_url')) {
+				if (Object.prototype.hasOwnProperty.call(data, 'mac_url')) {
 					addChildRow(table, `Mac${recommendedTag}<br><span class="mini text-lighter">For macOS ${data.mac_display_versions}</span>`, data.mac_url);
 					first = false;
 				}
 				break;
 			case downloadWinIntel:
-				if (data.hasOwnProperty('win_32_url')) {
+				if (Object.prototype.hasOwnProperty.call(data, 'win_32_url')) {
 					addChildRow(table, `Windows x86 32-bit${recommendedTag}<br><span class="mini text-lighter">For 32-bit versions of ${data.win_display_versions}</span>`, data.win_32_url);
 					first = false;
 				}
 				break;
 			case downloadWinIntel64:
-				if (data.hasOwnProperty('win_64_url')) {
+				if (Object.prototype.hasOwnProperty.call(data, 'win_64_url')) {
 					addChildRow(table, `Windows x86 64-bit${recommendedTag}<br><span class="mini text-lighter">For 64-bit versions of ${data.win_display_versions}</span>`, data.win_64_url);
 					first = false;
 				}
 				break;
 			case downloadWinARM64:
-				if (data.hasOwnProperty('win_arm64_url')) {
+				if (Object.prototype.hasOwnProperty.call(data, 'win_arm64_url')) {
 					addChildRow(table, `Windows ARM 64-bit${recommendedTag}<br><span class="mini text-lighter">For 64-bit versions of ${data.win_arm_display_versions}</span>`, data.win_arm64_url);
 					first = false;
 				}
 				break;
 			case downloadWinUniversal:
-				if (data.hasOwnProperty('win_combo_url')) {
+				if (Object.prototype.hasOwnProperty.call(data, 'win_combo_url')) {
 					addChildRow(table, `Windows Universal${recommendedTag}<br><span class="mini text-lighter">For all versions of ${data.win_display_versions}</span>`, data.win_combo_url);
 					first = false;
 				}
@@ -196,7 +195,7 @@ const buildDownloadsTable = async () => {
 	document.getElementById('win_version_requirements').innerText = current.win_display_versions;
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('beaconRunDownloads', ({ downloadData }) => {
 	updateScreenNotice();
-	buildDownloadsTable();
+	buildDownloadsTable(downloadData);
 });

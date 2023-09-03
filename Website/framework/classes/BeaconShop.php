@@ -119,6 +119,12 @@ abstract class BeaconShop {
 		
 		$database->Query('UPDATE purchases SET issued = TRUE WHERE purchase_id = $1;', $purchaseId);
 		$database->Commit();
+		
+		// Notify the user
+		$user = BeaconAPI\v4\User::Fetch($emailId);
+		if (is_null($user)) {
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+		}
 	}
 	
 	public static function RevokePurchases(string $purchaseId, bool $isDisputed = false): bool {
@@ -159,6 +165,12 @@ abstract class BeaconShop {
 			$database->Query('DELETE FROM stw_purchases WHERE original_purchase_id = $1 AND generated_purchase_id IS NULL;', $purchaseId);
 		}
 		$database->Commit();
+		
+		// Notify the user
+		$user = BeaconAPI\v4\User::Fetch($emailId);
+		if (is_null($user)) {
+			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+		}
 		
 		return true;
 	}
@@ -224,7 +236,7 @@ abstract class BeaconShop {
 				'domain' => '',
 				'secure' => true,
 				'httponly' => true,
-				'samesite' => 'Strict'
+				'samesite' => 'Lax'
 			]);
 		}
 		
@@ -384,6 +396,12 @@ abstract class BeaconShop {
 			$_SESSION['store_currency'] = $_SESSION['store_default_currency'];
 		}
 		return $_SESSION['store_currency'];
+	}
+	
+	public static function EmailOwns(string $email, string $productId): bool {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query("SELECT COUNT(license_id) AS license_count FROM public.licenses WHERE product_id = $1 AND purchase_id IN (SELECT purchase_id FROM public.purchases WHERE purchaser_email = uuid_for_email($2) AND refunded != TRUE);", $productId, $email);
+		return intval($rows->Field('license_count')) > 0;
 	}
 }
 

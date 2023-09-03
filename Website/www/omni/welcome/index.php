@@ -4,7 +4,7 @@ require(dirname(__FILE__, 4) . '/framework/loader.php');
 
 BeaconTemplate::SetTitle('Thanks for purchasing!');
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('omni.css'));
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkout-welcome.js'));
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('checkoutWelcome.js'));
 
 ?><h1 class="text-center">Thanks for purchasing Beacon Omni!</h1>
 <div id="checking_container" class="welcome_content">

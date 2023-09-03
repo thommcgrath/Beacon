@@ -10,8 +10,11 @@ if (array_key_exists('delta_version', $options) === false) {
 	echo "Delta version should be an integer.\n";
 	exit;
 }
-$delta_version = intval($options['delta_version']);
+$delta_version = filter_var($options['delta_version'], FILTER_VALIDATE_INT);
 switch ($delta_version) {
+case 7:
+	// Don't change $api_version, it affects how the Ark namespace behaves in v3 and lower.
+	break;
 case 6:
 	$api_version = 3;
 	break;
@@ -34,6 +37,8 @@ while (ob_get_level() > 0) {
 	ob_end_clean();
 }
 
+$apiRoot = dirname(__FILE__, 2) . '/api';
+
 $database = BeaconCommon::Database();
 $sem = sem_get(crc32($database->DatabaseName() . $delta_version), 1);
 if (sem_acquire($sem) === false) {
@@ -44,19 +49,19 @@ if (sem_acquire($sem) === false) {
 define('MIN_VERSION', 99999999);
 
 $database->BeginTransaction();
-$rows = $database->Query('UPDATE ark.mods SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM ark.objects WHERE objects.mod_id = mods.mod_id) > 0 RETURNING mod_id;');
+$rows = $database->Query('UPDATE public.content_packs SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM ark.objects WHERE objects.mod_id = content_packs.content_pack_id) > 0 RETURNING content_pack_id;');
 if ($rows->RecordCount() > 0) {
 	$database->Commit();
 } else {
 	$database->Rollback();
 }
 
-$last_database_update = BeaconCommon::NewestUpdateTimestamp();
+$lastDatabaseUpdate = BeaconCommon::NewestUpdateTimestamp();
 $cutoff = new DateTime();
 $cutoff->sub(new DateInterval('PT15M'));
 
-if ($force == false && $last_database_update >= $cutoff) {
-	$ready = clone $last_database_update;
+if ($force == false && $lastDatabaseUpdate >= $cutoff) {
+	$ready = clone $lastDatabaseUpdate;
 	$ready->add(new DateInterval('PT15M'));
 	echo "Database has changes that will be ready at " . $ready->format('Y-m-d H:i:s') . " UTC if nothing else changes.\n";
 	sem_release($sem);
@@ -64,7 +69,7 @@ if ($force == false && $last_database_update >= $cutoff) {
 }
 
 $required_versions = [$delta_version];
-$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d H:i:sO'));
+$results = $database->Query("SELECT file_id, version FROM update_files WHERE created = $1 AND type = 'Delta';", $lastDatabaseUpdate->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
 		$version = $results->Field('version');
@@ -72,7 +77,7 @@ if ($results->RecordCount() > 0) {
 			if (($key = array_search($version, $required_versions)) !== false) {
 				unset($required_versions[$key]);
 			}
-			echo "Version " . $version . " already prepared.\n";
+			echo "Version {$version} already prepared.\n";
 		}
 		$results->MoveNext();
 	}
@@ -83,78 +88,91 @@ if (count($required_versions) == 0) {
 	exit;
 }
 
+$cdn = BeaconCDN::DeltasZone();
 foreach ($required_versions as $version) {
-	echo "Building delta for version $version...\n";
+	echo "Building delta for version {$version}...\n";
 	
-	$full_data = DataForVersion($version, null);
-	if ($version === 5) {
-		$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
-	} else {
-		$full_data['timestamp'] = $last_database_update->getTimestamp();
-	}
-	
-	$results = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1 AND type = \'Delta\';', $version);
-	if (is_null($results->Field('since')) == false) {
-		$since = new DateTime($results->Field('since'));
-		
-		$delta_data = DataForVersion($version, $since);
+	switch ($version) {
+	case 7:
+		include("{$apiRoot}/v4/includes/builddeltas.php");
+		break;
+	default:
+		$completeData = DataForVersion($version, null);
 		if ($version === 5) {
-			$delta_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+			$completeData['timestamp'] = $lastDatabaseUpdate->format('Y-m-d H:i:s');
 		} else {
-			$delta_data['timestamp'] = $last_database_update->getTimestamp();
+			$completeData['timestamp'] = $lastDatabaseUpdate->getTimestamp();
 		}
-	} else {
-		$delta_data = null;
-	}
-	
-	$prefix = '/v' . $version;
-	$timestamp = $last_database_update->format('U');
-	if (BeaconCommon::InProduction() == false) {
-		$prefix .= '/' . BeaconCommon::EnvironmentName();
-		$timestamp += rand(-1800,1800);
+		
+		$results = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1 AND type = \'Delta\';', $version);
+		if (is_null($results->Field('since')) == false) {
+			$since = new DateTime($results->Field('since'));
+			
+			$deltaData = DataForVersion($version, $since);
+			if ($version === 5) {
+				$deltaData['timestamp'] = $lastDatabaseUpdate->format('Y-m-d H:i:s');
+			} else {
+				$deltaData['timestamp'] = $lastDatabaseUpdate->getTimestamp();
+			}
+		} else {
+			$deltaData = null;
+		}
+		
+		$prefix = '/v' . $version;
+		$timestamp = $lastDatabaseUpdate->format('U');
+		if (BeaconCommon::InProduction() == false) {
+			$prefix .= '/' . BeaconCommon::EnvironmentName();
+			$timestamp += rand(-1800,1800);
+		}
+		
+		$completeUrl = $prefix . '/Complete.beacondata?t=' . $timestamp . '&bcdn_filename=Complete.beacondata';
+		$completeContent = gzencode(json_encode($completeData));
+		$completeSize = strlen($completeContent);
+		try {
+			$cdn->PutFile($completeUrl, $completeContent);
+		} catch (Exception $err) {
+			$database->Rollback();
+			echo "Unable to upload {$completeUrl}\n";
+			echo $err->getMessage() . "\n";
+			continue 2;
+		}
+		
+		if (is_null($deltaData) == false) {
+			$deltaUrl = $prefix . '/' . $lastDatabaseUpdate->format('YmdHis') . '.beacondata?bcdn_filename=' . $lastDatabaseUpdate->format('YmdHis') . '.beacondata';
+			$deltaContent = gzencode(json_encode($deltaData));
+			$deltaSize = strlen($deltaContent);
+			try {
+				$cdn->PutFile($deltaUrl, $deltaContent);
+			} catch (Exception $err) {
+				$database->Rollback();
+				echo "Unable to upload {$deltaUrl}\n";
+				echo $err->getMessage() . "\n";
+				continue 2;
+			}
+		} else {
+			$deltaUrl = $compelteUrl;
+			$deltaSize = $completeSize;
+		}
+		break;
 	}
 	
 	$database->BeginTransaction();
-	
-	$full_path = $prefix . '/Complete.beacondata?t=' . $timestamp . '&bcdn_filename=Complete.beacondata';
-	$full_prepared = gzencode(json_encode($full_data));
-	$full_size = strlen($full_prepared);
-	if (UploadFile($full_path, $full_prepared) === false) {
-		echo "Unable to upload $full_path\n";
-		$database->Rollback();
-		continue;
-	}
-	
-	if (is_null($delta_data) == false) {
-		$delta_path = $prefix . '/' . $last_database_update->format('YmdHis') . '.beacondata?bcdn_filename=' . $last_database_update->format('YmdHis') . '.beacondata';
-		$delta_prepared = gzencode(json_encode($delta_data));
-		$delta_size = strlen($delta_prepared);
-		if (UploadFile($delta_path, $delta_prepared) === false) {
-			echo "Unable to upload $delta_path\n";
-			$database->Rollback();
-			continue;
-		}
+	$rows = $database->Query("SELECT file_id FROM public.update_files WHERE version = $1 AND type = 'Complete';", $version);
+	if ($rows->RecordCount() == 1) {
+		$database->Query("UPDATE public.update_files SET created = $2, path = $3, size = $4 WHERE file_id = $1;", $rows->Field('file_id'), $lastDatabaseUpdate->format('Y-m-d H:i:sO'), $completeUrl, $completeSize);
 	} else {
-		$delta_path = $full_path;
-		$delta_size = strlen($full_prepared);
+		$database->Query("INSERT INTO public.update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, 'Complete');", $lastDatabaseUpdate->format('Y-m-d H:i:sO'), $version, $completeUrl, $completeSize);
 	}
-	
-	$results = $database->Query('SELECT file_id FROM update_files WHERE version = $1 AND type = \'Complete\';', $version);
-	if ($results->RecordCount() == 1) {
-		$database->Query('UPDATE update_files SET created = $2, path = $3, size = $4 WHERE file_id = $1;', $results->Field('file_id'), $last_database_update->format('Y-m-d H:i:sO'), $full_path, $full_size);
-	} else {
-		$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Complete\');', $last_database_update->format('Y-m-d H:i:sO'), $version, $full_path, $full_size);
-	}
-	$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Delta\');', $last_database_update->format('Y-m-d H:i:sO'), $version, $delta_path, $delta_size);
+	$database->Query("INSERT INTO public.update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, 'Delta');", $lastDatabaseUpdate->format('Y-m-d H:i:sO'), $version, $deltaUrl, $deltaSize);
 	$database->Commit();
 	
-	echo "Delta for version $version uploaded to $delta_path\n";
+	echo "Delta for version {$version} uploaded to {$deltaUrl}\n";
 }
 
 sem_release($sem);
 exit;
 
-function DataForVersion(int $version, $since) {
+function DataForVersion(int $version, $since): array {
 	$arr = null;
 	switch ($version) {
 	case 6:
@@ -210,32 +228,6 @@ function DataForVersion(int $version, $since) {
 		break;
 	}
 	return $arr;
-}
-
-function UploadFile(string $path, string $data) {
-	if (substr($path, 0, 1) === '/') {
-		$path = substr($path, 1);
-	}
-	$url = 'https://ny.storage.bunnycdn.com/beacon-updates/' . $path;
-	
-	$headers = [
-		'AccessKey: ' . BeaconCommon::GetGlobal('BunnyCDN_Deltas_Password'),
-		'Content-Type: application/octet-stream'
-	];
-	
-	$curl = curl_init($url);
-	curl_setopt($curl, CURLOPT_HEADER, true);
-	curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
-	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
-	
-	$response = curl_exec($curl);
-	$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
-	
-	return $status === 201;
 }
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
-BeaconTemplate::SetPageDescription('Beacon is Ark\'s easiest server manager that can update and control your Xbox, PS4, and PC Ark servers with a couple clicks.');
+BeaconTemplate::SetPageDescription('Beacon is Ark\'s easiest server manager that can update and control your Xbox, PS4, PC, and Switch Ark servers with a few clicks.');
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('index.css'));
 
@@ -66,7 +66,7 @@ while (!$results->EOF()) {
 				<h2>Takes user privacy seriously</h2>
 				<div class="subtitle text-purple">No analytics, heavy encryption, true anonymity, and fully open source</div>
 			</div>
-			<p>Config files contain server passwords. So Beacon encrypts those with your own 2048-bit RSA private key. FTP credentials or Nitrado access tokens? Yep, those too. That private key enables Beacon's cloud features too, yet you don't even need to setup an account! For users who choose to create an account, even your email address is stored as a one-way hash! Beacon and the Beacon API take special care to enable true privacy and user data protection.</p>
+			<p>Config files contain server passwords. So Beacon encrypts those with your own 4096-bit RSA private key. FTP credentials or Nitrado access tokens? Yep, those too. That private key enables Beacon's cloud features too, yet you don't even need to setup an account! For users who choose to create an account, even your email address is stored as a one-way hash! Beacon and the Beacon API take special care to enable true privacy and user data protection.</p>
 		</div>
 		<div class="feature">
 			<div class="header-with-subtitle">

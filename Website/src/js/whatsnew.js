@@ -1,109 +1,109 @@
-document.addEventListener('DOMContentLoaded', function() {
-	var main_wrapper = document.getElementById('main_wrapper');
-	var navigator = document.getElementById('navigator');
-	var pages = main_wrapper.getElementsByClassName('page');
-	var pips = navigator.getElementsByClassName('pip');
-	var current_page_index = 0;
-	var back_button = document.getElementById('previous_button');
-	var next_button = document.getElementById('next_button');
-	var switch_pages = function(new_idx) {
-		if (current_page_index === new_idx || new_idx < 0 || new_idx >= pages.length) {
+document.addEventListener('DOMContentLoaded', () => {
+	const mainWrapper = document.getElementById('main_wrapper');
+	const navigator = document.getElementById('navigator');
+	const pages = mainWrapper.getElementsByClassName('page');
+	const pips = navigator.getElementsByClassName('pip');
+	let currentPageIndex = 0;
+	const backButton = document.getElementById('previous_button');
+	const nextButton = document.getElementById('next_button');
+	const switchPages = (newIdx) => {
+		if (currentPageIndex === newIdx || newIdx < 0 || newIdx >= pages.length) {
 			return;
 		}
 		
-		var current_page = pages[current_page_index];
-		var next_page = pages[new_idx];
-		if (new_idx > current_page_index) {
-			current_page.classList.add('left');
+		const currentPage = pages[currentPageIndex];
+		const nextPage = pages[newIdx];
+		if (newIdx > currentPageIndex) {
+			currentPage.classList.add('left');
 		} else {
-			current_page.classList.add('right');
+			currentPage.classList.add('right');
 		}
-		next_page.classList.add('noanimation');
-		if (new_idx > current_page_index) {
-			next_page.classList.add('right');
-			next_page.classList.remove('left');
+		nextPage.classList.add('noanimation');
+		if (newIdx > currentPageIndex) {
+			nextPage.classList.add('right');
+			nextPage.classList.remove('left');
 		} else {
-			next_page.classList.add('left');
-			next_page.classList.remove('right');
+			nextPage.classList.add('left');
+			nextPage.classList.remove('right');
 		}
 		setTimeout(function() {
-			next_page.classList.remove('noanimation');
-			next_page.classList.remove('left');
-			next_page.classList.remove('right');
+			nextPage.classList.remove('noanimation');
+			nextPage.classList.remove('left');
+			nextPage.classList.remove('right');
 		}, 1);
-		document.title = next_page.getAttribute('beacon-title');
+		document.title = nextPage.getAttribute('beacon-title');
 		
-		var is_first_page = (new_idx === 0);
-		var is_last_page = (new_idx === pages.length - 1);
-		back_button.disabled = is_first_page;
-		next_button.innerText = (is_last_page ? 'Finished' : 'Next');
+		const isFirstPage = (newIdx === 0);
+		const isLastPage = (newIdx === pages.length - 1);
+		backButton.disabled = isFirstPage;
+		nextButton.innerText = (isLastPage ? 'Finished' : 'Next');
 		
-		for (var pipidx = 0; pipidx < pips.length; pipidx++) {
-			pips[pipidx].className = (pipidx === new_idx) ? 'pip active' : 'pip';	
+		for (let pipidx = 0; pipidx < pips.length; pipidx++) {
+			pips[pipidx].className = (pipidx === newIdx) ? 'pip active' : 'pip';	
 		}
 		
-		current_page_index = new_idx;
+		currentPageIndex = newIdx;
 	};
-	var next_page = function() {
-		if (current_page_index >= pages.length - 1) {
+	const nextPage = () => {
+		if (currentPageIndex >= pages.length - 1) {
 			window.location = 'beacon://finished';
 		} else {
-			switch_pages(current_page_index + 1);
+			switchPages(currentPageIndex + 1);
 		}
 	};
-	var previous_page = function() {
-		if (current_page_index === 0) {
+	const previousPage = () => {
+		if (currentPageIndex === 0) {
 			return;
 		}
 		
-		switch_pages(current_page_index - 1);
-	}
-	next_button.addEventListener('click', function(event) {
+		switchPages(currentPageIndex - 1);
+	};
+	nextButton.addEventListener('click', (event) => {
 		event.preventDefault();
-		next_page();
+		nextPage();
 	});
-	back_button.addEventListener('click', function(event) {
+	backButton.addEventListener('click', (event) => {
 		event.preventDefault();
-		previous_page();
+		previousPage();
 	});
 	
-	for (var pageidx = 0; pageidx < pages.length; pageidx++) {
-		var page = pages[pageidx];
-		var pip = pips[pageidx];
+	for (let pageidx = 0; pageidx < pages.length; pageidx++) {
+		const page = pages[pageidx];
+		const pip = pips[pageidx];
 		if (pageidx === 0) {
 			document.title = page.getAttribute('beacon-title');
-			if (pip != null) {
+			if (pip !== null) {
 				pip.className = 'pip active';
 			}
 		} else {
 			page.classList.add('right');
 		}
 		
-		if (pip != null) {
+		if (pip !== null) {
 			(function() {
 				var pidx = pageidx;
 				pip.addEventListener('click', function() {
-					switch_pages(pidx);
+					switchPages(pidx);
 				});
 			}());
 		}
 	}
 	
-	var has_multiple_pages = pages.length > 1;
-	var skip_button = document.getElementById('skip_button');
-	if (has_multiple_pages) {
-		skip_button.addEventListener('click', function(event) {
+	const hasMultiplePages = pages.length > 1;
+	const skipButton = document.getElementById('skip_button');
+	if (hasMultiplePages) {
+		skipButton.addEventListener('click', (event) => {
 			event.preventDefault();
 			window.location = 'beacon://finished';
 		});
 	} else {
-		skip_button.style.display = 'none';
-		back_button.style.display = 'none';
+		skipButton.style.display = 'none';
+		backButton.style.display = 'none';
 	}
 	
 	if (pages.length === 1) {
-		next_button.innerText = 'Finished';
+		nextButton.innerText = 'Finished';
 	}
 	
-	main_wrapper.classList.add('animated');
+	mainWrapper.classList.add('animated');
 });

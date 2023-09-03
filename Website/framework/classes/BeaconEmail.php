@@ -1,5 +1,7 @@
 <?php
 
+use BeaconAPI\v4\User;
+
 abstract class BeaconEmail {
 	public static function SendMail(string $recipient, string $subject, string $body_plain, string $body_html = null): bool {
 		if (is_null($body_html)) {
@@ -53,10 +55,12 @@ abstract class BeaconEmail {
 	}
 	
 	// Checks with CleanTalk if the address is valid
-	public static function QuickVerify(string $email): bool {
-		$user = \BeaconUser::GetByEmail($email);
-		if (is_null($user) === false) {
-			return true;
+	public static function QuickVerify(string $email, bool $whitelistRegisteredUsers = true): bool {
+		if ($whitelistRegisteredUsers) {
+			$user = User::Fetch($email);
+			if (is_null($user) === false) {
+				return true;
+			}
 		}
 		
 		$cache_key = sha1('CleanTalk Result ' . strtolower($email));

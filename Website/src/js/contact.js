@@ -1,5 +1,8 @@
 "use strict";
 
+import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
+import { BeaconDialog } from "./classes/BeaconDialog.js";
+
 document.addEventListener('DOMContentLoaded', () => {
 	const contactForm = document.getElementById('contactForm');
 	const contactErrorNotice = document.getElementById('contactErrorNotice');
@@ -24,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (contactActionButton) {
 			contactActionButton.disabled = false;
 		}
-	}
+	};
 	
 	contactForm.addEventListener('submit', (ev) => {
 		ev.preventDefault();
@@ -79,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		params.append('timestamp', contactTimestamp);
 		params.append('hash', contactHash);
 		
-		BeaconWebRequest.post('/help/ticket', params).then((response) => {
+		BeaconWebRequest.post('/help/ticket', params).then(() => {
 			contactBodyField.value = '';
 			contactActionButton.disabled = false;
 			

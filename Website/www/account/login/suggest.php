@@ -6,6 +6,6 @@ header('Cache-Control: no-cache');
 $username = BeaconLogin::GenerateUsername();
 
 header('Content-Type: application/json');
-echo json_encode(array('username' => $username), JSON_PRETTY_PRINT);
+echo json_encode(['username' => $username], JSON_PRETTY_PRINT);
 
 ?>

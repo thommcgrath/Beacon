@@ -20,7 +20,7 @@ function handle_request(array $context): void {
 	} catch (Exception $err) {
 	}
 	
-	BeaconAPI::ReplySuccess($body = [
+	BeaconAPI::ReplySuccess([
 		'readConnected' => $readConnected,
 		'writeConnected' => $writeConnected,
 	], ($readConnected && $writeConnected) ? 200 : 500);
