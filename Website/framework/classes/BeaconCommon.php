@@ -1074,8 +1074,21 @@ abstract class BeaconCommon {
 		switch (strtolower(trim($gameId))) {
 		case 'ark':
 			return 'Ark';
+		case 'sdtd':
+			return '7DaysToDie';
 		}
 		return '';
+	}
+	
+	public static function ShowBeacon2Features(?BeaconAPI\v4\User $user = null): bool {
+		$newestVersion = static::NewestVersionForStage(3);
+		if ($newestVersion > 20000000) {
+			return true;
+		} elseif (is_null($user) === false) {
+			$sessions = BeaconAPI\v4\Session::Search(['userId' => $user->UserId(), 'applicationId' => '9f823fcf-eb7a-41c0-9e4b-db8ed4396f80'], true);
+			return count($sessions) > 0;
+		}
+		return false;
 	}
 }
 

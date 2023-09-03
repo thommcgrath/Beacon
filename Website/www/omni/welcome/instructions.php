@@ -1,15 +1,10 @@
 <?php
 
-$newInstructions = false;
-$newestVersion = \BeaconCommon::NewestVersionForStage(3);
-if ($newestVersion > 20000000) {
-	$newInstructions = true;
-} elseif (isset($user)) {
-	$sessions = BeaconAPI\v4\Session::Search(['userId' => $user->UserId(), 'applicationId' => '9f823fcf-eb7a-41c0-9e4b-db8ed4396f80'], true);
-	$newInstructions = count($sessions) > 0;
+if (isset($showNewOmniInstructions) === false) {
+	$showNewOmniInstructions = BeaconCommon::ShowBeacon2Features($user ?? null);
 }
-	
-if ($newInstructions) {
+
+if ($showNewOmniInstructions) {
 	?><div class="signin_step separator-color">
 		<div class="signin_flex">
 			<div class="signin_flex-images">

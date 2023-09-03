@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
 BeaconTemplate::FinishScript();
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
+$showConnections = BeaconCommon::ShowBeacon2Features($user);
+$showNewOmniInstructions = $showConnections;
 
 ?><div id="account-user-header" class="header-with-subtitle" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>">
 	<h1><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span></h1>
@@ -50,7 +52,7 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<li><a href="#security" page="security">Security</a></li>
 			<li><a href="#sessions" page="sessions">Sessions</a></li>
 			<?php } ?>
-			<li><a href="#services" page="services">Connections</a></li>
+			<?php if ($showConnections) { ?><li><a href="#services" page="services">Connections</a></li><?php } ?>
 		</ul>
 	</div>
 	<div class="page-panel-pages">
@@ -76,10 +78,10 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<?php include('includes/sessions.php'); ?>
 		</div>
 		<?php } ?>
-		<div class="page-panel-page" page="services">
+		<?php if ($showConnections) { ?><div class="page-panel-page" page="services">
 			<h1>Connected Services</h1>
 			<?php include('includes/services.php'); ?>
-		</div>
+		</div><?php } ?>
 	</div>
 	<div class="page-panel-footer">&nbsp;</div>
 </div>
