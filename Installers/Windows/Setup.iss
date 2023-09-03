@@ -90,6 +90,7 @@ Source: "..\..\Artwork\BeaconAuth.ico"; DestDir: "{app}\{#MyAppResources}"; Flag
 Source: "..\..\Artwork\BeaconData.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 
 [InstallDelete]
+Type: filesandordirs; Name: "{app}\Beacon.exe"
 Type: filesandordirs; Name: "{app}\Beacon Libs"
 Type: filesandordirs; Name: "{app}\Beacon Resources"
 Type: filesandordirs; Name: "{app}\Beacon.pdb"
