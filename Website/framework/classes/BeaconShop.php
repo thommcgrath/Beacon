@@ -122,7 +122,7 @@ abstract class BeaconShop {
 		
 		// Notify the user
 		$user = BeaconAPI\v4\User::Fetch($emailId);
-		if (is_null($user)) {
+		if (is_null($user) === false) {
 			BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
 		}
 	}
