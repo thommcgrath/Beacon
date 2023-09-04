@@ -19,22 +19,13 @@ $email = $_POST['email'];
 $key = isset($_POST['key']) ? $_POST['key'] : null;
 
 $user = User::Fetch($email);
-if (is_null($user) === false) {
-	if ($user->IsChildAccount()) {
-		http_response_code(400);
-		echo json_encode([
-			'error' => true,
-			'message' => 'Child accounts cannot reset their own passwords. Contact the parent account owner to begin the password reset.'
-		], JSON_PRETTY_PRINT);
-		return;
-	} elseif ($user->IsEnabled() === false) {
-		http_response_code(400);
-		echo json_encode([
-			'error' => true,
-			'message' => 'Account is disabled.'
-		], JSON_PRETTY_PRINT);
-		return;
-	}
+if (is_null($user) === false && $user->IsEnabled() === false) {
+	http_response_code(400);
+	echo json_encode([
+		'error' => true,
+		'message' => 'Account is disabled.'
+	], JSON_PRETTY_PRINT);
+	return;
 }
 
 $code = EmailVerificationCode::Create($email, ['key' => $key]);
