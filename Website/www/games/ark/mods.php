@@ -75,9 +75,9 @@ echo $breadcrumbs->Render();
 			<td class="w-0 p-1 nowrap text-center"><span class="tag blue">Mod Author</span></td>
 			<td class="w-100 p-1">Data is maintained by the mod author using Beacon's mod tools.</td>
 		</tr>
-		<tr>
+		<?php if (BeaconCommon::ShowBeacon2Features(null)) { ?><tr>
 			<td class="w-0 p-1 nowrap text-center"><span class="tag grey">Community</span></td>
 			<td class="w-100 p-1">Data comes from Beacon's <a href="/help/adding_blueprints_to_beacon#using-mod-discovery">Mod Discovery</a> tool.</td>
-		</tr>
+		</tr><?php } ?>
 	</tbody>
 </table>

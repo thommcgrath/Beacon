@@ -236,16 +236,16 @@ function CreateSpawnCode(Blueprint $blueprint): string {
 	case 'engrams':
 		$gfi = $gfiCodes[$blueprint->UUID()] ?? null;
 		if (is_null($gfi) === false) {
-			return "cheat gfi {$gfi} 1 0 0";
+			return "c gfi {$gfi} 1 0 0";
 		}
 		
-		return "cheat giveitem {$classString} 1 0 0";
+		return "c giveitem {$classString} 1 0 0";
 		break;
 	case 'creatures':
-		return "cheat spawndino {$classString} 1 1 1 30";
+		return "c spawndino {$classString} 1 1 1 30";
 		break;
 	case 'lootDrops':
-		return "cheat summon {$classString}";
+		return "c summon {$classString}";
 		break;
 	}
 }
