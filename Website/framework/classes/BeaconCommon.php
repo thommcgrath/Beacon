@@ -1081,6 +1081,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function ShowBeacon2Features(?BeaconAPI\v4\User $user = null): bool {
+		return false;
 		$newestVersion = static::NewestVersionForStage(3);
 		if ($newestVersion > 20000000) {
 			return true;

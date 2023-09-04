@@ -7,6 +7,8 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
+use BeaconAPI\v4\{EmailVerificationCode, User};
+
 if (empty($_POST['email']) || BeaconUser::ValidateEmail($_POST['email']) == false) {
 	http_response_code(400);
 	echo json_encode(array(), JSON_PRETTY_PRINT);
@@ -16,7 +18,7 @@ if (empty($_POST['email']) || BeaconUser::ValidateEmail($_POST['email']) == fals
 $email = $_POST['email'];
 $key = isset($_POST['key']) ? $_POST['key'] : null;
 
-$user = BeaconUser::GetByEmail($email);
+$user = User::Fetch($email);
 if (is_null($user) === false) {
 	if ($user->IsChildAccount()) {
 		http_response_code(400);
@@ -35,7 +37,8 @@ if (is_null($user) === false) {
 	}
 }
 
-if (BeaconLogin::SendVerification($email, $key)) {
+$code = EmailVerificationCode::Create($email, ['key' => $key]);
+if (is_null($code) === false) {
 	http_response_code(200);
 	echo json_encode($response = array(
 		'email' => $email,
