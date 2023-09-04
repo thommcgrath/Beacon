@@ -336,7 +336,7 @@ abstract class Project implements \JsonSerializable {
 		
 		$database = \BeaconCommon::Database();
 		if ($count_only) {
-			$sql = 'SELECT COUNT(project_id) AS project_count FROM ' . static::FromClause() . ' WHERE ' . implode(' AND ', $clauses) . ';';
+			$sql = 'SELECT COUNT(project.project_id) AS project_count FROM ' . static::FromClause() . ' WHERE ' . implode(' AND ', $clauses) . ';';
 			$results = $database->Query($sql, $values);
 			return $results->Field('project_count');
 		} else {

@@ -127,9 +127,9 @@ case 'GET':
 				foreach ($results as $result) {
 					$ids[] = $database->EscapeLiteral($result['objectID']);
 				}
-				$clauses[] = 'project_id IN (' . implode(', ', $ids) . ')';
+				$clauses[] = 'projects.project_id IN (' . implode(', ', $ids) . ')';
 			} else {
-				$clauses[] = "project_id = '00000000-0000-0000-0000-000000000000'";
+				$clauses[] = "projects.project_id = '00000000-0000-0000-0000-000000000000'";
 			}
 		}
 		$sql = 'SELECT ' . implode(', ', $class_name::SQLColumns()) . ' FROM ' . $class_name::FromClause() . ' WHERE ' . implode(' AND ', $clauses);
