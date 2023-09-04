@@ -2,7 +2,8 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Ark Breeding Chart');
 
-use BeaconAPI\v4\Ark\{ContentPack, Creature};
+use BeaconAPI\v4\Ark\Creature;
+use BeaconAPI\v4\ContentPack;
 
 $msm = isset($_GET['msm']) ? floatval($_GET['msm']) : 1.0;
 $ipm = isset($_GET['ipm']) ? floatval($_GET['ipm']) : 1.0;
@@ -31,7 +32,7 @@ if ($results->RecordCount() != 1) {
 	exit;
 }
 $official_cuddle_period = $results->Field('value');
-$computed_cuddle_period = $official_cuddle_period * $ipm;
+$computed_cuddle_period = round($official_cuddle_period * $ipm);
 
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 
@@ -79,9 +80,20 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('breeding.css'));
 			$min_version = $results->Field('newest_build');
 			
 			$officialPacks = ContentPack::Search(['minVersion' => $min_version, 'isOfficial' => true], true);
+			$officialPackIds = [];
+			foreach ($officialPacks as $officialPack) {
+				$officialPackIds[] = $officialPack->ContentPackId();
+			}
+			
+			$marketplacePacks = ContentPack::Search(['minVersion' => $min_version, 'marketplace' => 'Steam Workshop', 'marketplaceId' => implode(',', $steamIds)], true);
+			$marketplacePackIds = [];
+			foreach ($marketplacePacks as $marketplacePack) {
+				$marketplacePackIds[] = $marketplacePack->ContentPackId();
+			}
+			
 			$showModNames = count($steamIds) > 0;
-			$combinedPacks = array_merge($officialPacks, $steamIds);
-			$creatures = Creature::Search(['minVersion' => $min_version, 'contentPackId' => $combinedPacks], true);
+			$combinedPackIds = array_merge($officialPackIds, $marketplacePackIds);
+			$creatures = Creature::Search(['minVersion' => $min_version, 'contentPackId' => $combinedPackIds], true);
 			foreach ($creatures as $creature) {
 				if (is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
 					continue;
