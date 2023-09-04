@@ -210,7 +210,7 @@ function DataForVersion(int $version, $since): array {
 			'presets' => Ark\Preset::GetAll(MIN_VERSION, $since, true),
 			'preset_modifiers' => Ark\PresetModifier::GetAll(MIN_VERSION, $since, true),
 			'creatures' => Ark\Creature::GetAll(MIN_VERSION, $since, true),
-			'diets' => Ark\Diet::GetAll(MIN_VERSION, $since, true),
+			'diets' => [],
 			'help_topics' => BeaconHelpTopic::GetAll($since),
 			'game_variables' => Ark\GameVariable::GetAll($since),
 			'mods' => Ark\Mod::GetLive($since),

@@ -60,6 +60,7 @@ spl_autoload_register(function($class_name) {
 		$apiRoot = dirname(__FILE__, 2) . '/api';
 		$class_name = substr($class_name, 4);
 		$paths[] = "{$apiRoot}/v{$apiVersion}/ark/classes";
+		$paths[] = "{$apiRoot}/v{$apiVersion}/classes/Ark";
 	}
 	
 	// Search the v3 classes last
