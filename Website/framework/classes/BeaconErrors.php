@@ -28,7 +28,12 @@ abstract class BeaconErrors {
 	}
 	
 	public static function HandleException(Throwable $err): void {
-		static::LogTrace(get_class($err), html_entity_decode($err->getMessage(), ENT_COMPAT, 'UTF-8'), $err->getFile(), $err->getLine());
+		$message = html_entity_decode($err->getMessage(), ENT_COMPAT, 'UTF-8');
+		if ($err instanceof BeaconQueryException) {
+			$message .= "\n" . $err->getSQL();
+		}
+		
+		static::LogTrace(get_class($err), $message, $err->getFile(), $err->getLine());
 	}
 	
 	public static function HandleError(int $errno, string $errstr, string $errfile, int $errline): bool {

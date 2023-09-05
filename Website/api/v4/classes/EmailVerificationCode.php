@@ -2,9 +2,9 @@
 
 namespace BeaconAPI\v4;
 use BeaconAPI\v4\Core;
-use BeaconCommon, BeaconEmail, BeaconEncryption, Exception;
+use BeaconCommon, BeaconEmail, BeaconEncryption, Exception, JsonSerializable;
 
-class EmailVerificationCode implements \JsonSerializable {
+class EmailVerificationCode implements JsonSerializable {
 	const kTemplateNewAccount = 'new-account';
 	const kTemplateConfirmChange = 'confirm-change';
 	
@@ -18,7 +18,7 @@ class EmailVerificationCode implements \JsonSerializable {
 	protected function __construct() {	
 	}
 	
-	public static function Fetch(string $email): ?EmailVerificationCode {
+	public static function Fetch(string $email, string $code): ?EmailVerificationCode {
 		if (BeaconEmail::IsEmailValid($email) === false) {
 			return null;
 		}
@@ -29,28 +29,53 @@ class EmailVerificationCode implements \JsonSerializable {
 			return null;
 		}
 		$emailId = $rows->Field('email_id');
+		$codeHashed = static::PrepareHash($emailId, $code);
 		
-		$rows = $database->Query('SELECT code_hash, code_encrypted, verified FROM public.email_verification_codes WHERE email_id = $1 AND expiration > CURRENT_TIMESTAMP;', $emailId);
+		$rows = $database->Query('SELECT code_encrypted, verified FROM public.email_verification_codes WHERE code_hash = $1 AND expiration > CURRENT_TIMESTAMP;', $codeHashed);
 		if ($rows->RecordCount() !== 1) {
 			return null;
 		}
 		
-		$code = new static();
-		$code->email = $email;
-		$code->emailId = $emailId;
-		$code->codeHashed = $rows->Field('code_hash');
-		$code->codeEncrypted = $rows->Field('code_encrypted');
-		$code->verified = $rows->Field('verified');
-		return $code;
+		$verifier = new static();
+		$verifier->email = $email;
+		$verifier->emailId = $emailId;
+		$verifier->code = $code;
+		$verifier->codeHashed = $codeHashed;
+		$verifier->codeEncrypted = $rows->Field('code_encrypted');
+		$verifier->verified = $rows->Field('verified');
+		return $verifier;
+	}
+	
+	public static function Search(string $email): array {
+		if (BeaconEmail::IsEmailValid($email) === false) {
+			return null;
+		}
+		
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT email_id, code_hash, code_encrypted, verified FROM public.email_verification_codes WHERE email_id = uuid_for_email($1) AND expiration > CURRENT_TIMESTAMP;', $email);
+		$codes = [];
+		while (!$rows->EOF()) {
+			$code = new static();
+			$code->email = $email;
+			$code->emailId = $rows->Field('email_id');
+			$code->codeHashed = $rows->Field('code_hash');
+			$code->codeEncrypted = $rows->Field('code_encrypted');
+			$code->verified = $rows->Field('verified');
+			$codes[] = $code;
+			$rows->MoveNext();
+		}
+		return $codes;
 	}
 	
 	public static function Create(string $email, array $params = [], string $template = self::kTemplateNewAccount): ?EmailVerificationCode {
 		$database = BeaconCommon::Database();
 		$key = $params['key'] ?? null;
 		if (is_null($key) === false) {
-			$current_code = static::Fetch($email);
-			if (is_null($current_code) === false && $current_code->verified === false && $current_code->DecryptCode($key)) {
-				return $current_code;
+			$currentCodes = static::Search($email);
+			foreach ($currentCodes as $currentCode) {
+				if ($currentCode->verified === false && $currentCode->DecryptCode($key)) {
+					return $currentCode;
+				}
 			}
 		}
 			
@@ -68,7 +93,7 @@ class EmailVerificationCode implements \JsonSerializable {
 		}
 		ksort($params);
 		
-		$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = $1 OR expiration < CURRENT_TIMESTAMP;', $emailId);
+		$database->Query('DELETE FROM public.email_verification_codes WHERE expiration < CURRENT_TIMESTAMP;');
 		$database->Query('INSERT INTO public.email_verification_codes (email_id, code_hash, code_encrypted) VALUES ($1, $2, $3);', $emailId, $codeHashed, $codeEncrypted);
 		
 		switch ($template) {
@@ -115,44 +140,37 @@ class EmailVerificationCode implements \JsonSerializable {
 		return $obj;
 	}
 	
-	public static function IsEmailVerified(string $email, string $code): bool {
-		$database = BeaconCommon::Database();
-		$rows = $database->Query("SELECT uuid_for_email($1) AS email_id;", $email);
-		$emailId = $rows->Field('email_id');
-		if (is_null($emailId)) {
-			return false;
-		}
-		
-		$codeHashed = static::PrepareHash($emailId, $code);
-		$rows = $database->Query('SELECT email_id FROM public.email_verification_codes WHERE email_id = $1 AND code_hash = $2 AND expiration > CURRENT_TIMESTAMP;', $emailId, $codeHashed);
-		if ($rows->RecordCount() === 0) {
-			return false;
-		}
-		
-		$database->BeginTransaction();
-		$database->Query('UPDATE public.email_verification_codes SET verified = TRUE WHERE email_id = $1;', $emailId);
-		$database->Commit();
-		return true;
+	public function IsVerified(): bool {
+		return $this->verified;
 	}
 	
-	public function CheckCode(string $code): bool {
-		if (is_null($this->code) === false) {
-			return $code === $this->code;
+	public function Code(): ?string {
+		return $this->code;
+	}
+	
+	public function Email(): string {
+		return $this->email;
+	}
+	
+	public function EmailId(): string {
+		return $this->emailId;
+	}
+	
+	public function Verify(): void {
+		if ($this->verified) {
+			return;
 		}
 		
-		if ($this->codeHashed === static::PrepareHash($this->emailId, $code)) {
-			$this->code = $code;
-			if ($this->verified === false) {
-				$database = BeaconCommon::Database();
-				$database->BeginTransaction();
-				$database->Query('UPDATE public.email_verification_codes SET verified = TRUE WHERE email_id = $1;', $this->emailId);
-				$database->Commit();
-				$this->verified = true;
-			}
-			return true;
-		}
-		
-		return false;
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('UPDATE public.email_verification_codes SET verified = TRUE WHERE code_hash = $1 AND verified = FALSE;', $this->codeHashed);
+		$database->Commit();
+		$this->verified = true;	
+	}
+	
+	public function Matches(string $code): bool {
+		$hashed = static::PrepareHash($this->emailId, $code);
+		return $this->codeHashed = $hashed;
 	}
 	
 	public function DecryptCode(string $key): bool {
@@ -199,10 +217,6 @@ class EmailVerificationCode implements \JsonSerializable {
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = $1;', $this->emailId);
 		$database->Commit();
-	}
-	
-	public function Code(): ?string {
-		return $this->code;
 	}
 	
 	public static function PrepareHash(string $emailId, string $code): string {

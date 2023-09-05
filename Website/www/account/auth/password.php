@@ -27,8 +27,8 @@ $code = $_POST['code'];
 $username = trim($_POST['username'] ?? ''); // only used for new accounts
 $allow_vulnerable = filter_var($_POST['allow_vulnerable'] ?? false, FILTER_VALIDATE_BOOLEAN);
 	
-$verification = EmailVerificationCode::Fetch($email);
-if (is_null($verification) || $verification->CheckCode($code) === false) {
+$verification = EmailVerificationCode::Fetch($email, $code);
+if (is_null($verification)) {
 	Response::NewJsonError('Email not verified.', null, ERR_EMAIL_NOT_VERIFIED)->Flush();
 	exit;
 }
@@ -100,8 +100,8 @@ try {
 		UserGenerator::ReplacePassword($user, $password);
 	}
 	
-	// Remove the verification code
-	$verification->Delete();
+	// Remove the verification codes for this user
+	EmailVerificationCode::Clear($email);
 	
 	$database->Commit();
 	
@@ -121,54 +121,5 @@ try {
 	Response::NewJsonError($err->getMessage(), ['code' => '2FA_ENABLED'], 400)->Flush();
 	exit;
 }
-
-/*$database = BeaconCommon::Database();
-$database->BeginTransaction();
-
-$public_key = null;
-$private_key = null;
-BeaconEncryption::GenerateKeyPair($public_key, $private_key);
-
-if ($user->AddAuthentication($username, $email, $password, $private_key) === false && $user->ReplacePassword($password, $private_key, User::GenerateUsercloudKey()) === false) {
-	$database->Rollback();
-	http_response_code(500);
-	echo json_encode(['message' => 'There was an error updating authentication parameters.'], JSON_PRETTY_PRINT);
-	exit;
-}
-if ($user->Commit() === false) {
-	$database->Rollback();
-	http_response_code(500);
-	echo json_encode(['message' => 'There was an error saving the user.'], JSON_PRETTY_PRINT);
-	exit;
-}
-
-// delete all sessions
-$sessions = Session::Search(['userId' => $user->UserId()], true);
-foreach ($sessions as $session) {
-	$session->Delete();
-}
-
-$no_session = filter_var($_POST['no_session'], FILTER_VALIDATE_INT);
-$response = [
-	'user_id' => $user->UserId()
-];
-
-if ($no_session === false) {
-	// get a new session
-	$session = Session::Create($user, BeaconCommon::BeaconWebsiteAppId);
-	$response['session_id'] = $session->SessionId();
-}
-
-$verification->Delete();
-$database->Commit();
-
-if ($new_user) {
-	$subject = 'Welcome to Beacon';
-	$body = "You just created a Beacon Account, which means you can easily share your documents with multiple devices. You can manage your account at <" . BeaconCommon::AbsoluteURL("/account/") . "> to change your password, manage documents, and see your Beacon Omni purchase status.\n\nFor reference, you can view Beacon's privacy policy at <" . BeaconCommon::AbsoluteURL("/privacy") . ">. The summary of it is simple: your data is yours and won't be sold or monetized in any way.\n\nHave fun and happy looting!\nThom McGrath, developer of Beacon.";
-	BeaconEmail::SendMail($email, $subject, $body);
-}
-
-http_response_code(200);
-echo json_encode($response, JSON_PRETTY_PRINT);*/
 
 ?>

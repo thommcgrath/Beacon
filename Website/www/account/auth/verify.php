@@ -18,29 +18,39 @@ if (empty($_POST['email']) || BeaconEmail::IsEmailValid($_POST['email']) == fals
 $email = $_POST['email'];
 $key = isset($_POST['key']) ? $_POST['key'] : null;
 $code = isset($_POST['code']) ? $_POST['code'] : null;
-$verification = EmailVerificationCode::Fetch($email);
+$verification = null;
+if (is_null($code) === false) {
+	$verification = EmailVerificationCode::Fetch($email, $code);
+	if (is_null($verification) === false) {
+		$verification->Verify();
+	}
+} elseif (is_null($key) === false) {
+	$potentialCodes = EmailVerificationCode::Search($email);
+	foreach ($potentialCodes as $potentialCode) {
+		if ($potentialCode->DecryptCode($key)) {
+			$verification = $potentialCode;
+			break;
+		}
+	}
+}
+	
 if (is_null($verification)) {
 	http_response_code(400);
 	echo json_encode([], JSON_PRETTY_PRINT);
 	exit;
 }
 
-if (is_null($key) === false && $verification->DecryptCode($key)) {
-	$code = $verification->Code();
-}
-
-$verified = $verification->CheckCode($code);
 $response = [
 	'email' => $email,
-	'verified' => $verified,
-	'code' => $code,
+	'verified' => $verification->IsVerified(),
+	'code' => $verification->IsVerified() ? $verification->Code() : null,
 	'username' => null
 ];
 
-if ($verified) {
+if ($verification->IsVerified()) {
 	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT username FROM users WHERE email_id = uuid_for_email($1);', $email);
-	if ($results->RecordCount() == 1) {
+	$results = $database->Query('SELECT username FROM users WHERE email_id = $1;', $verification->EmailId());
+	if ($results->RecordCount() === 1) {
 		$response['username'] = $results->Field('username');
 	}
 }

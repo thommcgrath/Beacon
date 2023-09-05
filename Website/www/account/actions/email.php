@@ -74,8 +74,8 @@ case 'GET':
 		return;
 	}
 	
-	$verifier = EmailVerificationCode::Fetch($newEmail);
-	if (is_null($verifier) || $verifier->CheckCode($verificationCode) === false) {
+	$verifier = EmailVerificationCode::Fetch($newEmail, $verificationCode);
+	if (is_null($verifier)) {
 		header('Location: /account?message=' . urlencode('Email Change Error') . '&explanation=' . urlencode('Incorrect verification code.') . '#profile', true, 301);
 		return;
 	}
@@ -111,7 +111,7 @@ case 'GET':
 		$rows->MoveNext();
 	}
 	
-	$verifier->Delete();
+	EmailVerificationCode::Clear($newEmail);
 	$database->Commit();
 	
 	header('Location: /account?message=' . urlencode('Email Has Been Changed') . '&explanation=' . urlencode('You have not been signed out of any devices.') . '#profile', true, 301);

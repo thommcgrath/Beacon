@@ -25,16 +25,14 @@ function handleRequest(array $context): Response {
 				return Response::NewJsonError('Missing verification code', $body, 400);
 			}
 			
-			$emailVerification = EmailVerificationCode::Fetch($email);
-			if (is_null($emailVerification) || $emailVerification->CheckCode($verificationCode) === false) {
+			$emailVerification = EmailVerificationCode::Fetch($email, $verificationCode);
+			if (is_null($emailVerification)) {
 				return Response::NewJsonError('Incorrect verification code', $body, 400);
 			}
 		}
 		
 		$user->Edit($body);
-		if (empty($emailVerification) === false) {
-			$emailVerification->Delete();
-		}
+		EmailVerificationCode::Clear($email);
 		return Response::NewJson($user, 200);
 	} catch (Exception $err) {
 		return Response::NewJsonError($err->getMessage(), $body, 400);

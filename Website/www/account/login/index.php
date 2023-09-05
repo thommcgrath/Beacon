@@ -56,22 +56,29 @@ function ExitWithMessage(string $message, string $explanation, string $backUrl =
 }
 
 function RunEmailVerification(string $email, ?string $verificationCode, ?string $verificationKey): void {
-	$verification = EmailVerificationCode::Fetch($email);
+	$verification = null;
+	if (is_null($verificationCode) === false) {
+		$verification = EmailVerificationCode::Fetch($email, $verificationCode);
+		if (is_null($verification) === false) {
+			$verification->Verify();
+		}
+	} elseif (is_null($verificationKey) === false) {
+		$codes = EmailVerificationCode::Search($email);
+		foreach ($codes as $code) {
+			if ($code->DecryptCode($verificationKey)) {
+				$verification = $code;
+				$verification->Verify();
+				break;
+			}
+		}
+	}
+	
 	if (is_null($verification)) {
 		ExitWithMessage('Address Not Verified', 'No verification code was found for email ' . $email . '. Return to the login page and request a new code.', '/account/login?email=' . urlencode($email) . '#create');
 	}
-	
-	$continueLogin = true;
-	if (is_null($verificationKey) === false && $verification->DecryptCode($verificationKey)) {
-		$verificationCode = $verification->Code();
-		$continueLogin = false;
-	}
-	
-	if (is_null($verificationCode) || $verification->CheckCode($verificationCode) === false) {
-		ExitWithMessage('Address Not Verified', 'The verification code is not correct. If you requested a code more than once, only the newest code will be valid. Wait for the email to arrive, and try again.', '/account/login?email=' . urlencode($email) . '#create');
-	}
-	
-	if ($continueLogin === false) {
+	if ($verification->IsVerified() === false) {
+		ExitWithMessage('Address Not Verified', 'The verification code is not correct.', '/account/login?email=' . urlencode($email) . '#create');
+	} else {
 		ExitWithMessage('Address Confirmed', 'You can now close this window and continue following the instructions inside Beacon.');
 	}
 }
