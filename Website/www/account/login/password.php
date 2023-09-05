@@ -59,7 +59,6 @@ if ($allowVulnerable == false) {
 		$hash = strtolower(substr($hash, 0, 35));
 		if ($hash == $suffix && $count > 0) {
 			// vulnerable
-			$database->Rollback();
 			http_response_code(500);
 			echo json_encode(['message' => 'There was an error updating authentication parameters.'], JSON_PRETTY_PRINT);
 			exit;
