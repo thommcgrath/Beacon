@@ -3,46 +3,56 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
-$session = BeaconSession::GetFromCookie();
+use BeaconAPI\v4\{Session, User};
+
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	BeaconTemplate::StartScript();
 	?><script>
-	window.location = `/account/login/?return=${encodeURIComponent(window.location.href)}`;
+	window.location = `/account/login?return=${encodeURIComponent(window.location.href)}`;
 	</script><?php
 	BeaconTemplate::FinishScript();
 	exit;
 }
-$session->Renew();
 
-$user = BeaconUser::GetByUserID($session->UserID());
+$user = $session->User();
 BeaconTemplate::SetTitle('Account: ' . $user->Username());
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('account.css'));
 
+BeaconTemplate::AddScript(BeaconCommon::AssetUri('account.js'));
 BeaconTemplate::StartScript(); ?>
 <script>
-const deviceId = <?php echo json_encode(BeaconCommon::DeviceID()); ?>;
-const sessionId = <?php echo json_encode($session->SessionID()); ?>;
-const apiDomain = <?php echo json_encode(BeaconCommon::APIDomain()); ?>;
+document.addEventListener('DOMContentLoaded', () => {
+	const event = new Event('beaconRunAccountPanel');
+	event.accountProperties = <?php echo json_encode([
+		'deviceId' => BeaconCommon::DeviceId(),
+		'sessionId' => $session->AccessToken(),
+		'apiDomain' => BeaconCommon::APIDomain()
+	]); ?>;
+	document.dispatchEvent(event);
+});
 </script><?php
 BeaconTemplate::FinishScript();
-	
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('account.js'));
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
 
 $teams_enabled = BeaconCommon::TeamsEnabled();
+$showConnections = BeaconCommon::ShowBeacon2Features($user);
+$showNewOmniInstructions = $showConnections;
 
 ?><div id="account-user-header" class="header-with-subtitle" beacon-user-id="<?php echo htmlentities($user->UserID()); ?>" beacon-user-name="<?php echo htmlentities($user->Username()); ?>" beacon-user-suffix="<?php echo htmlentities($user->Suffix()); ?>">
 	<h1><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span></h1>
-	<span class="subtitle"><a href="/account/auth?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span>
+	<span class="subtitle"><a href="/account/auth/redeem?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span>
 </div>
 <div class="page-panel" id="panel-account">
 	<div class="page-panel-nav">
 		<ul>
 			<li class="page-panel-active"><a href="#projects" page="projects">Projects</a></li>
+			<?php if ($user->IsAnonymous() === false) { ?>
 			<li><a href="#omni" page="omni">Omni</a></li>
 			<li><a href="#profile" page="profile">Profile</a></li>
 			<li><a href="#security" page="security">Security</a></li>
 			<li><a href="#sessions" page="sessions">Sessions</a></li>
+			<?php } ?>
+			<?php if ($showConnections) { ?><li><a href="#services" page="services">Connections</a></li><?php } ?>
 		</ul>
 	</div>
 	<div class="page-panel-pages">
@@ -50,6 +60,7 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<h1>Projects</h1>
 			<?php include('includes/projects.php'); ?>
 		</div>
+		<?php if ($user->IsAnonymous() === false) { ?>
 		<div class="page-panel-page" page="omni">
 			<h1>Beacon Omni</h1>
 			<?php include('includes/omni.php'); ?>
@@ -66,6 +77,11 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 			<h1>Sessions</h1>
 			<?php include('includes/sessions.php'); ?>
 		</div>
+		<?php } ?>
+		<?php if ($showConnections) { ?><div class="page-panel-page" page="services">
+			<h1>Connected Services</h1>
+			<?php include('includes/services.php'); ?>
+		</div><?php } ?>
 	</div>
 	<div class="page-panel-footer">&nbsp;</div>
 </div>

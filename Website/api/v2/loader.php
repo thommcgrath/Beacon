@@ -39,4 +39,6 @@ if (BeaconAPI::Method() == 'OPTIONS') {
 	exit;
 }
 
+BeaconAPI::HandleRateLimiting();
+
 ?>

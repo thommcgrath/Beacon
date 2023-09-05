@@ -10,7 +10,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-$session = BeaconSession::GetFromCookie();
+$session = BeaconCommon::GetSession();
 if (is_null($session)) {
 	http_response_code(400);
 	echo json_encode(array('message' => 'Unauthorized.'), JSON_PRETTY_PRINT);
@@ -25,14 +25,17 @@ if (empty($_POST['username'])) {
 
 $user = $session->User();
 $old_username = $user->Username();
-$user->SetUsername($_POST['username']);
 
-if ($user->Commit()) {
+try {
+	$user->Edit(['username' => $_POST['username']]);
+	
 	http_response_code(200);
 	echo json_encode(array('username' => $user->Username(), 'old_username' => $old_username, 'message' => ''), JSON_PRETTY_PRINT);
-} else {
+	
+	BeaconPusher::SharedInstance()->TriggerEvent($user->PusherChannelName(), 'user-updated', '');
+} catch (Exception $err) {
 	http_response_code(ERR_USERNAME_TAKEN);
-	echo json_encode(array('username' => $user->Username(), 'old_username' => $old_username, 'message' => 'Username is already taken'), JSON_PRETTY_PRINT);
+	echo json_encode(array('username' => $user->Username(), 'old_username' => $old_username, 'message' => $err->getMessage()), JSON_PRETTY_PRINT);
 }
 
 ?>

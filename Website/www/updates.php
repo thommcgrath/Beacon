@@ -142,7 +142,7 @@ foreach ($updates as $update) {
 $parser = new Parsedown();
 $body = $parser->text($markdown);
 
-$css_url = BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('default.scss'));
+$css_url = BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('default.css'));
 $html = <<<HTML
 <!DOCTYPE html>
 <html>

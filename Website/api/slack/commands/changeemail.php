@@ -1,6 +1,8 @@
 <?php
 	
 // /changeemail from@address.com to@address.com
+
+use BeaconAPI\v4\EmailVerificationCode;
 	
 if (strpos($text, ' ') === false) {
 	PostReply("Incorrect number of parameters. Use `/changeemail from@address.com to@address.com`.");
@@ -66,7 +68,7 @@ try {
 	
 	$user = BeaconUser::GetByEmail($to_address);
 	if (is_null($user)) {
-		BeaconLogin::SendVerification($to_address);
+		EmailVerificationCode::Create($to_address);
 	}
 } catch (Exception $e) {
 	PostReply("I can't do that: {$e->getMessage()}");

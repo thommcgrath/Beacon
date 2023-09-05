@@ -4,6 +4,8 @@ require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Content-Type: text/plain');
 http_response_code(400);
 
+use BeaconAPI\v4\{EmailVerificationCode, User};
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	http_response_code(405);
 	echo 'Method not allowed';
@@ -112,9 +114,9 @@ case 'checkout.session.completed':
 	$billing_locality = $api->GetBillingLocality($intent_id);
 	$purchase_currency = strtoupper($obj['currency']);
 	
-	$user = BeaconUser::GetByEmail($email);
+	$user = User::Fetch($email);
 	if (is_null($user)) {
-		BeaconLogin::SendVerification($email);
+		EmailVerificationCode::Create($email);
 	}
 	
 	$metadata = $obj['metadata'];

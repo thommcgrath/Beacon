@@ -2,6 +2,8 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 //header('Accept-CH: UA-Mobile, UA-Arch, UA-Platform, UA-Bitness');
+BeaconTemplate::SetTitle('Download');
+BeaconTemplate::SetPageDescription('Download Beacon for Windows and macOS');
 
 $forceBuild = null;
 if (isset($_GET['build']) && isset($_GET['token']) && isset($_GET['expires'])) {
@@ -60,12 +62,16 @@ if ($legacy) {
 	$download_links['legacy'] = BuildLinks($legacy);
 }
 
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('download.js'));
 BeaconTemplate::StartScript();
 ?><script>
-const downloadData = <?php echo json_encode($download_links, JSON_PRETTY_PRINT); ?>;
+document.addEventListener('DOMContentLoaded', () => {
+	const event = new Event('beaconRunDownloads');
+	event.downloadData = <?php echo json_encode($download_links); ?>;
+	document.dispatchEvent(event);
+});
 </script><?php
 BeaconTemplate::FinishScript();
-BeaconTemplate::AddScript(BeaconCommon::AssetURI('download.js'));
 
 function BuildLinks(array $update): array {
 	$build = $update['build_number'];

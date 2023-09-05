@@ -66,22 +66,22 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 #if defined(x64)
-Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: InstallX64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallX64;
 Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: InstallX64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: InstallX64; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallX64;
+Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: InstallX64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 #endif
 #if defined(x86)
-Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.exe"; DestDir: "{app}"; Check: InstallX86; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallX86;
 Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.dll"; DestDir: "{app}"; Check: InstallX86; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: InstallX86; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallX86;
+Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.exe"; DestDir: "{app}"; Check: InstallX86; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 #endif
 #if defined(arm64)
-Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: InstallARM64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "Files\VC_redist.arm64.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallARM64;
 Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: InstallARM64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: InstallARM64; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Files\VC_redist.arm64.exe"; DestDir: "{tmp}"; Check: IsAdminInstallMode And InstallARM64;
+Source: "..\..\Project\Builds - Beacon\Windows ARM 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: InstallARM64; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 #endif
 Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
@@ -90,6 +90,7 @@ Source: "..\..\Artwork\BeaconAuth.ico"; DestDir: "{app}\{#MyAppResources}"; Flag
 Source: "..\..\Artwork\BeaconData.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 
 [InstallDelete]
+Type: filesandordirs; Name: "{app}\Beacon.exe"
 Type: filesandordirs; Name: "{app}\Beacon Libs"
 Type: filesandordirs; Name: "{app}\Beacon Resources"
 Type: filesandordirs; Name: "{app}\Beacon.pdb"

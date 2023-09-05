@@ -1,10 +1,18 @@
 "use strict";
 
-document.addEventListener('DOMContentLoaded', (event) => {
-	let known_vulnerable_password = '';
+import { BeaconPagePanel } from "./classes/BeaconPagePanel.js";
+import { BeaconDialog } from "./classes/BeaconDialog.js";
+import { BeaconWebRequest } from "./classes/BeaconWebRequest.js";
+import { formatDates, randomUUID } from "./common.js";
+import totp from "totp-generator";
+
+document.addEventListener('beaconRunAccountPanel', ({accountProperties}) => {
+	let knownVulnerablePassword = '';
+	
+	const sessionId = accountProperties.sessionId;
+	const apiDomain = accountProperties.apiDomain;
 	
 	const userHeader = document.getElementById('account-user-header');
-	const userId = userHeader.getAttribute('beacon-user-id');
 	const userName = userHeader.getAttribute('beacon-user-name');
 	const userSuffix = userHeader.getAttribute('beacon-user-suffix');
 	const userFullName = `${userName}#${userSuffix}`;
@@ -21,11 +29,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		}
 	};
 	
-	const pagePanel = PagePanel.pagePanels['panel-account'];
+	BeaconPagePanel.init();
+	const pagePanel = BeaconPagePanel.pagePanels['panel-account'];
 	if (pagePanel) {
 		pagePanel.switchPage(getFragment());
 		
-		window.addEventListener('popstate', (ev) => {
+		window.addEventListener('popstate', () => {
 			pagePanel.switchPage(getFragment());
 		});
 	}
@@ -44,12 +53,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		button.addEventListener('click', (event) => {
 			event.preventDefault();
 			
-			const resource_url = event.target.getAttribute('beacon-resource-url');
-			const resource_name = event.target.getAttribute('beacon-resource-name');
+			const resourceUrl = event.target.getAttribute('beacon-resource-url');
+			const resourceName = event.target.getAttribute('beacon-resource-name');
 			
-			BeaconDialog.confirm('Are you sure you want to delete the project "' + resource_name + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete').then((reason) => {
-				BeaconWebRequest.delete(resource_url, { Authorization: `Session ${sessionId}` }).then((response) => {
-					BeaconDialog.show('Project deleted', '"' + resource_name + '" has been deleted.').then(() => {
+			BeaconDialog.confirm('Are you sure you want to delete the project "' + resourceName + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete').then(() => {
+				BeaconWebRequest.delete(resourceUrl, { Authorization: `Bearer ${sessionId}` }).then(() => {
+					BeaconDialog.show('Project deleted', '"' + resourceName + '" has been deleted.').then(() => {
 						window.location.reload(true);
 					});
 				}).catch((error) => {
@@ -62,7 +71,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 						break;
 					}
 				});
-			}).catch((reason) => {
+			}).catch(() => {
 				// Do nothing
 			});
 			
@@ -70,289 +79,259 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		});
 	}
 	
-	/*! Omni */
+	/* ! Profile */
 	
-	const showOmniInternetInstructionsButton = document.getElementById('omni_show_instructions_internet');
-	if (showOmniInternetInstructionsButton) {
-		showOmniInternetInstructionsButton.addEventListener('click', (ev) => {
+	const usernameActionButton = document.getElementById('username_action_button');
+	const usernameField = document.getElementById('username_field');
+	const suggestedUsernameLink = document.getElementById('suggested-username-link');
+	const newSuggestionLink = document.getElementById('new-suggestion-link');
+	
+	if (usernameActionButton && usernameField) {
+		usernameField.addEventListener('input', (ev) => {
+			usernameActionButton.disabled = ev.target.value.trim() === '';
+		});
+		
+		usernameActionButton.addEventListener('click', (ev) => {
 			ev.preventDefault();
 			
-			const instructions = document.getElementById('omni_instructions_internet');
-			if (instructions) {
-				if (instructions.classList.contains('hidden')) {
-					instructions.classList.remove('hidden');
-				} else {
-					instructions.classList.add('hidden');
-				}
+			const username = usernameField.value.trim();
+			if (username === '') {
+				BeaconDialog.show('Username can not be empty', 'How did you press the button anyway?');
+				return false;
 			}
-		});
-	}
-	
-	const showOmniOfflineInstructionsButton = document.getElementById('omni_show_instructions_no_internet');
-	if (showOmniOfflineInstructionsButton) {
-		showOmniOfflineInstructionsButton.addEventListener('click', (ev) => {
-			ev.preventDefault();
 			
-			const instructions = document.getElementById('omni_instructions_no_internet');
-			if (instructions) {
-				if (instructions.classList.contains('hidden')) {
-					instructions.classList.remove('hidden');
-				} else {
-					instructions.classList.add('hidden');
-				}
-			}
-		});
-	}
-	
-	const dragAndDropSupported = self.fetch && window.FileReader && ('classList' in document.createElement('a'));
-	if (dragAndDropSupported) {
-		const upload_file = (file) => {
-			const formData = new FormData();
-			formData.append('file', file);
+			const params = new URLSearchParams();
+			params.append('username', username);
 			
-			fetch(document.getElementById('upload_activation_form').getAttribute('action'), { method: 'POST', body: formData, credentials: 'same-origin', headers: {'Accept': 'application/json'} }).then(function(response) {
-				if (!response.ok) {
-					const obj = response.json().then((obj) => {
-						const alert = {
-							message: 'Unable to create authorization file',
-							explanation: 'Sorry, there was an error creating the authorization file.'
-						};
-						if (obj.message) {
-							alert.explanation += ' ' + obj.message.trim();
-						}
-						if (!alert.explanation.endsWith('.')) {
-							alert.explanation += '.';
-						}
-						BeaconDialog.show(alert.message, alert.explanation);
-					});
-					return;
+			BeaconWebRequest.post('/account/actions/username', params).then((response) => {
+				const message = {
+					message: 'Username changed',
+					explanation: 'Your username has been changed.',
+				};
+				
+				try {
+					const obj = JSON.parse(response.body);
+					message.explanation = `Your username has been changed to "${obj.username}."`;
+				} catch (e) {
 				}
-				
-				const disposition = response.headers.get('content-disposition');
-				const matches = /"([^"]*)"/.exec(disposition);
-				const filename = (matches != null && matches[1] ? matches[1] : 'Default.beaconidentity');
-				
-				response.blob().then((blob) => {
-					const link = document.createElement('a');
-					link.href = window.URL.createObjectURL(blob);
-					link.download = filename;
-					
-					document.body.appendChild(link);
-					link.click();
-					document.body.removeChild(link);
+				BeaconDialog.show(message.message, message.explanation).then(() => {
+					window.location.reload(true);
 				});
 			}).catch((error) => {
-				BeaconDialog.show('Unable to create authorization file', 'There was a network error: ' + error);
+				switch (error.status) {
+				case 401:
+				case 403:
+					BeaconDialog.show('Username not changed', 'There was an authentication error.');
+					break;
+				default:
+					BeaconDialog.show('Username not changed', `Sorry, there was a ${error.status} error.`);
+					break;
+				}
+			});
+		});
+		
+		if (suggestedUsernameLink) {
+			suggestedUsernameLink.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				
+				usernameField.value = ev.currentTarget.getAttribute('beacon-username');
+				usernameActionButton.disabled = usernameField.value.trim() === '';
+				
+				return false;
+			});
+			
+			if (newSuggestionLink) {
+				newSuggestionLink.addEventListener('click', (ev) => {
+					BeaconWebRequest.get('/account/login/suggest').then((response) => {
+						try {
+							const obj = JSON.parse(response.body);
+							if (suggestedUsernameLink) {
+								suggestedUsernameLink.innerText = obj.username;
+								suggestedUsernameLink.setAttribute('beacon-username', obj.username);
+							}
+						} catch (e) {
+						}
+					}).catch(() => {});
+					
+					ev.preventDefault();
+					return false;
+				});
+			}
+		}
+	}
+	
+	const changeEmailField = document.getElementById('email_field');
+	const changeEmailButton = document.getElementById('email_action_button');
+	const changeEmailNeeds2fa = document.getElementById('email_need_2fa');
+	const changeEmail2faVerifyButton = document.getElementById('email_2fa_action_button');
+	const changeEmail2faCancelButton = document.getElementById('email_2fa_cancel_button');
+	const changeEmail2faCodeField = document.getElementById('email_2fa_code_field');
+	if (changeEmailField && changeEmailButton && changeEmailNeeds2fa) {
+		changeEmailField.addEventListener('input', (ev) => {
+			changeEmailButton.disabled = ev.target.value.trim() === '';
+		});
+		
+		const submitEmailChange = () => {
+			const params = new URLSearchParams();
+			params.append('email', changeEmailField.value.trim());
+			params.append('verify', changeEmail2faCodeField ? changeEmail2faCodeField.value.trim() : '');
+			
+			BeaconWebRequest.post('/account/actions/email', params).then(() => {
+				BeaconDialog.show('Email Change Started', 'The new address has been emailed a link. Please click the link to complete the change.').then(() => {
+					window.location.reload(true);
+				});
+			}).catch((error) => {
+				try {
+					const body = JSON.parse(error.body);
+					if (!body.message) {
+						throw new Error();
+					}
+					const errorReason = body.message;
+					BeaconDialog.show('Email Change Error', errorReason);
+				} catch {
+					switch (error.status) {
+					case 401:
+					case 403:
+						BeaconDialog.show('Email Change Error', 'There was an authentication error.');
+						break;
+					default:
+						BeaconDialog.show('Email Change Error', `Sorry, there was a ${error.status} error.`);
+						break;
+					}
+				}
 			});
 		};
 		
-		const uploadContainer = document.getElementById('upload_container');
-		if (uploadContainer) {
-			uploadContainer.classList.add('live-supported');
-		}
+		changeEmailButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			
+			if (changeEmailNeeds2fa.value === 'true') {
+				changeEmail2faCodeField.value = '';
+				BeaconDialog.showModal('change_email_2fa_form');
+				changeEmail2faCodeField.focus();
+			} else {
+				submitEmailChange();
+			}
+		});
 		
-		const dropArea = document.getElementById('drop_area');
-		if (dropArea) {
-			['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-				dropArea.addEventListener(eventName, (ev) => {
-					ev.preventDefault();
-					ev.stopPropagation();
-				}, false);
-			});
-			
-			['dragenter', 'dragover'].forEach(eventName => {
-				dropArea.addEventListener(eventName, (ev) => {
-					ev.target.classList.add('highlight');
-				}, false);
-			});
-			
-			['dragleave', 'drop'].forEach(eventName => {
-				dropArea.addEventListener(eventName, (ev) => {
-					ev.target.classList.remove('highlight');
-				}, false);
-			});
-			
-			dropArea.addEventListener('drop', (ev) => {
-				upload_file(ev.dataTransfer.files[0]);
-			}, false);
-		}
-		
-		const chooseFileButton = document.getElementById('choose_file_button');
-		if (chooseFileButton) {
-			chooseFileButton.addEventListener('click', (ev) => {
+		if (changeEmail2faVerifyButton) {
+			changeEmail2faVerifyButton.addEventListener('click', (ev) => {
 				ev.preventDefault();
-				
-				const chooser = document.getElementById('file_chooser');
-				if (chooser) {
-					chooser.addEventListener('change', (ev) => {
-						upload_file(ev.target.files[0]);
-					});
-					
-					chooser.click();
-				}
+				BeaconDialog.hideModal().then(() => {
+					submitEmailChange();
+				});
+			});
+		}
+		
+		if (changeEmail2faCancelButton) {
+			changeEmail2faCancelButton.addEventListener('click', (ev) => {
+				ev.preventDefault();
+				BeaconDialog.hideModal();
+			});
+		}
+		
+		if (changeEmail2faCodeField) {
+			changeEmail2faCodeField.addEventListener('input', (ev) => {
+				changeEmail2faVerifyButton.disabled = ev.target.value.trim() === '';
 			});
 		}
 	}
 	
-	/* ! Profile */
-	
-	document.getElementById('username_action_button').addEventListener('click', (ev) => {
-		ev.preventDefault();
-		
-		const username = document.getElementById('username_field').value.trim();
-		if (username === '') {
-			BeaconDialog.show('Username can not be empty', 'How did you press the button anyway?');
-			return false;
-		}
-		
-		const params = new URLSearchParams();
-		params.append('username', username);
-		
-		BeaconWebRequest.post('/account/actions/username', params).then((response) => {
-			const message = {
-				message: 'Username changed',
-				explanation: 'Your username has been changed.'
-			};
-			
-			try {
-				const obj = JSON.parse(response.body);
-				message.explanation = `Your username has been changed to "${obj.username}."`;
-			} catch (e) {
-			}
-			BeaconDialog.show(message.message, message.explanation).then(() => {
-				window.location.reload(true);
-			});
-		}).catch((error) => {
-			switch (error.status) {
-			case 401:
-				BeaconDialog.show('Username not changed', 'There was an authentication error.');
-				break;
-			default:
-				BeaconDialog.show('Username not changed', `Sorry, there was a ${error.status} error.`);
-				break;
-			}
-		});
-	});
-	
-	document.getElementById('suggested-username-link').addEventListener('click', (ev) => {
-		ev.preventDefault();
-		
-		const field = document.getElementById('username_field');
-		field.value = ev.target.getAttribute('beacon-username');
-		document.getElementById('username_action_button').disabled = field.value.trim() == '';
-		
-		return false;
-	});
-	
-	document.getElementById('new-suggestion-link').addEventListener('click', (ev) => {
-		BeaconWebRequest.get('/account/login/suggest').then((response) => {
-			try {
-				const obj = JSON.parse(response.body);
-				const usernameLink = document.getElementById('suggested-username-link');
-				usernameLink.innerText = obj.username;
-				usernameLink.setAttribute('beacon-username', obj.username);
-			} catch (e) {
-			}
-		}).catch(() => {});
-		
-		ev.preventDefault();
-		return false;
-	});
-	
-	document.getElementById('username_field').addEventListener('input', (ev) => {
-		document.getElementById('username_action_button').disabled = ev.target.value.trim() == '';
-	});
-	
 	/* ! Security */
 	
-	document.getElementById('password_action_button').addEventListener('click', (event) => {
-		event.preventDefault();
-		
-		const currentPassword = (currentPasswordField) ? currentPasswordField.value : '';
-		const password = (newPasswordField) ? newPasswordField.value : '';
-		const passwordConfirm = (confirmPasswordField) ? confirmPasswordField.value : '';
-		const allowVulnerable = password === known_vulnerable_password;
-		const regenerateKey = document.getElementById('password_regenerate_check').checked;
-		const terminateSessions = regenerateKey;
-		
-		if (password.length < 8) {
-			BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.');
-			return false;
-		}
-		if (password !== passwordConfirm) {
-			BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.');
-			return false;
-		}
-		
-		const body = new URLSearchParams();
-		body.append('current_password', currentPassword);
-		body.append('password', password);
-		body.append('allow_vulnerable', allowVulnerable);
-		if (terminateSessions) {
-			body.append('terminate_sessions', true);
-		}
-		if (regenerateKey) {
-			body.append('regenerate_key', true);
-		}
-		
-		BeaconWebRequest.post('/account/actions/password', body).then((response) => {
-			document.getElementById('change_password_form').reset();
-			
-			try {
-				const obj = JSON.parse(response.body);
-				const msg = {};
-				if (regenerateKey) {
-					msg.message = 'Your password and private key have been changed.';
-				} else {
-					msg.message = 'Your password has been changed.';
-				}
-				if (terminateSessions) {
-					msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
-				} else {
-					msg.explanation = 'Changing your password does not sign you out of other devices.';
-				}
-				BeaconDialog.show(msg.message, msg.explanation);
-			} catch (e) {
-				console.log(e)
-				BeaconDialog.show('There was an error. Your password may or may not have been changed.');
-			}
-		}).catch((error) => {
-			switch (error.status) {
-			case 403:
-				BeaconDialog.show('Incorrect Two Step Verification Code', 'Please get a new code from your authenticator app.');
-				break;
-			case 436:
-			case 437:
-			case 439:
-				try {
-					const obj = JSON.parse(error.body);
-					BeaconDialog.show('Unable to change password', obj.message);
-				} catch (e) {
-					BeaconDialog.show('Unable to change password', e.message);
-				}
-				break;
-			case 438:
-				known_vulnerable_password = password;
-				BeaconDialog.show('Your password is vulnerable.', 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.');
-				break;
-			case 500:
-				BeaconDialog.show('Password not changed.', 'Your password has not been changed because your current password is not correct.');
-				break;
-			default:
-				BeaconDialog.show('Unable to change password', `There was a ${error.status} error while trying to create your account.`);
-				break;
-			}
-		});
-		
-		return false;
-	});
-	
+	const passwordActionButton = document.getElementById('password_action_button');
+	const passwordRegenerateCheck = document.getElementById('password_regenerate_check');
+	const changePasswordForm = document.getElementById('change_password_form');
 	const currentPasswordField = document.getElementById('password_current_field');
 	const newPasswordField = document.getElementById('password_initial_field');
 	const confirmPasswordField = document.getElementById('password_confirm_field');
-	const passwordActionButton = document.getElementById('password_action_button');
+	const addAuthenticatorButton = document.getElementById('add-authenticator-button');
+	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
+	const addAuthenticatorNicknameField = document.getElementById('add-authenticator-nickname-field');
+	const addAuthenticatorActionButton = document.getElementById('add-authenticator-action-button');
+	const addAuthenticatorCancelButton = document.getElementById('add-authenticator-cancel-button');
+	const addAuthenticatorQRCode = document.getElementById('add-authenticator-qrcode');
+	const timeZoneName = document.getElementById('authenticators_time_zone_name');
+	const replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
 	
-	const passwordConfirmCheck = (ev) => {
+	if (passwordActionButton && passwordRegenerateCheck && changePasswordForm) {
+		passwordActionButton.addEventListener('click', (event) => {
+			event.preventDefault();
+			
+			const currentPassword = (currentPasswordField) ? currentPasswordField.value : '';
+			const password = (newPasswordField) ? newPasswordField.value : '';
+			const passwordConfirm = (confirmPasswordField) ? confirmPasswordField.value : '';
+			const allowVulnerable = password === knownVulnerablePassword;
+			const regenerateKey = passwordRegenerateCheck.checked;
+			const terminateSessions = regenerateKey;
+			
+			if (password.length < 8) {
+				BeaconDialog.show('Password too short', 'Your password must be at least 8 characters long.');
+				return false;
+			}
+			if (password !== passwordConfirm) {
+				BeaconDialog.show('Passwords do not match', 'Please make sure the two passwords match.');
+				return false;
+			}
+			
+			const body = new URLSearchParams();
+			body.append('current_password', currentPassword);
+			body.append('password', password);
+			body.append('allow_vulnerable', allowVulnerable);
+			if (terminateSessions) {
+				body.append('terminate_sessions', true);
+			}
+			if (regenerateKey) {
+				body.append('regenerate_key', true);
+			}
+			
+			BeaconWebRequest.post('/account/actions/password', body).then(() => {
+				changePasswordForm.reset();
+				
+				try {
+					const msg = {};
+					if (regenerateKey) {
+						msg.message = 'Your password and private key have been changed.';
+					} else {
+						msg.message = 'Your password has been changed.';
+					}
+					msg.explanation = 'All sessions have been revoked and your devices will need to sign in again.';
+					BeaconDialog.show(msg.message, msg.explanation);
+				} catch (e) {
+					console.log(e);
+					BeaconDialog.show('There was an error. Your password may or may not have been changed.');
+				}
+			}).catch((error) => {
+				let errorMessage = 'Unable to change password';
+				let errorExplanation = `There was a ${error.status} error while trying to change your password.`;
+				try {
+					const obj = JSON.parse(error.body);
+					if (obj.message) {
+						errorExplanation = obj.message;
+					}
+				} catch (e) {
+				}
+				
+				switch (error.status) {
+				case 403:
+					errorMessage = 'Incorrect Two Step Verification Code';
+					errorExplanation = 'Please get a new code from your authenticator app.';
+					break;
+				case 438:
+					knownVulnerablePassword = password;
+					errorMessage = 'Your password is vulnerable.';
+					errorExplanation = 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.';
+					break;
+				}
+				
+				BeaconDialog.show(errorMessage, errorExplanation);
+			});
+			
+			return false;
+		});
+	}
+	
+	const passwordConfirmCheck = () => {
 		if (!passwordActionButton) {
 			return;
 		}
@@ -376,11 +355,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		confirmPasswordField.addEventListener('input', passwordConfirmCheck);
 	}
 	
-	const addAuthenticatorButton = document.getElementById('add-authenticator-button');
-	const addAuthenticatorCodeField = document.getElementById('add-authenticator-code-field');
-	const addAuthenticatorNicknameField = document.getElementById('add-authenticator-nickname-field');
-	const addAuthenticatorActionButton = document.getElementById('add-authenticator-action-button');
-	const addAuthenticatorCancelButton = document.getElementById('add-authenticator-cancel-button');
 	if (addAuthenticatorButton && addAuthenticatorCodeField && addAuthenticatorNicknameField && addAuthenticatorActionButton && addAuthenticatorCancelButton) {
 		try {
 			const generateSecret = () => {
@@ -396,24 +370,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			};
 			
 			const authenticator = {
-				authenticator_id: self.crypto.randomUUID(),
+				authenticatorId: randomUUID(),
 				type: 'TOTP',
 				nickname: 'Google Authenticator',
 				metadata: {
 					secret: null,
-					setup: null
-				}
+					setup: null,
+				},
 			};
 			
 			addAuthenticatorCodeField.addEventListener('input', (ev) => {
 				addAuthenticatorActionButton.disabled = ev.target.value.trim() === '';
 			});
 			
-			addAuthenticatorButton.addEventListener('click', (ev) => {
+			addAuthenticatorButton.addEventListener('click', () => {
 				authenticator.metadata.secret = generateSecret();
-				authenticator.metadata.setup = `otpauth://totp/${encodeURIComponent('Beacon:' + userFullName + ' (' + authenticator.authenticator_id + ')')}?secret=${authenticator.metadata.secret}&issuer=Beacon`;
+				authenticator.metadata.setup = `otpauth://totp/${encodeURIComponent('Beacon:' + userFullName + ' (' + authenticator.authenticatorId + ')')}?secret=${authenticator.metadata.secret}&issuer=Beacon`;
 				
-				const addAuthenticatorQRCode = document.getElementById('add-authenticator-qrcode');
 				if (addAuthenticatorQRCode) {
 					addAuthenticatorQRCode.src = `/account/assets/qr.php?content=${btoa(authenticator.metadata.setup)}`;
 					addAuthenticatorQRCode.setAttribute('alt', authenticator.metadata.setup);
@@ -424,15 +397,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				BeaconDialog.showModal('add-authenticator-modal');
 			});
 			
-			addAuthenticatorCancelButton.addEventListener('click', (ev) => {
+			addAuthenticatorCancelButton.addEventListener('click', () => {
 				BeaconDialog.hideModal();
 			});
 			
-			addAuthenticatorActionButton.addEventListener('click', (ev) => {
-				const otp = new jsOTP.totp();
+			addAuthenticatorActionButton.addEventListener('click', () => {
 				const userCode = addAuthenticatorCodeField.value.trim();
 				authenticator.nickname = addAuthenticatorNicknameField.value.trim();
-				if (userCode !== otp.getOtp(authenticator.metadata.secret)) {
+				authenticator.verificationCode = userCode;
+				if (userCode !== totp(authenticator.metadata.secret)) {
 					addAuthenticatorCodeField.classList.add('invalid');
 					
 					const label = document.querySelector(`label[for="${addAuthenticatorCodeField.id}"]`);
@@ -455,14 +428,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
 					return;
 				}
 				
-				BeaconWebRequest.post(`https://${apiDomain}/v3/authenticator`, authenticator, { Authorization: `Session ${sessionId}` }).then((response) => {
+				BeaconWebRequest.post(`https://${apiDomain}/v4/authenticators`, authenticator, { Authorization: `Bearer ${sessionId}` }).then(() => {
 					window.location.reload(true);
 				}).catch((error) => {
 					console.log(JSON.stringify(error));
 				});
 			});
 		} catch (e) {
-			addAuthenticatorButton.addEventListener('click', (ev) => {
+			addAuthenticatorButton.addEventListener('click', () => {
 				BeaconDialog.show('Sorry, this browser is not supported', 'There was an error generating the authenticator, which means your browser does not support modern cryptography features. Try again with an updated browser.');
 			});
 		}
@@ -471,22 +444,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const authenticatorRows = document.querySelectorAll('#authenticators-table tbody tr');
 	let numAuthenticators = authenticatorRows.length;
 	if (numAuthenticators > 0) {
-		if (moment) {
-			const timeElements = document.querySelectorAll('time');
-			for (const timeElement of timeElements) {
-				if (timeElement.classList.contains('no-localize')) {
-					continue;
-				}
-				
-				const dateTime = timeElement.getAttribute('datetime');
-				if (dateTime) {
-					const time = moment(dateTime);
-					timeElement.innerText = time.format('MMM Do, YYYY') + ' at ' + time.format('h:mm A');
-				}
-			}
-		}
+		formatDates(true, false);
 		
-		const timeZoneName = document.getElementById('authenticators_time_zone_name');
 		if (timeZoneName) {
 			timeZoneName.innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		}
@@ -498,7 +457,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				const nickname = event.target.getAttribute('beacon-authenticator-name');
 				
 				const confirm = {
-					message: `Are you sure you want to delete the authenticator ${nickname}?`
+					message: `Are you sure you want to delete the authenticator ${nickname}?`,
 				};
 				if (numAuthenticators > 1) {
 					const remainingAuthenticators = numAuthenticators - 1;
@@ -509,7 +468,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 				}
 				
 				BeaconDialog.confirm(confirm.message, confirm.explanation).then(() => {
-					BeaconWebRequest.delete(`https://${apiDomain}/v3/authenticator/${authenticatorId}`, {Authorization: `Session ${sessionId}`}).then((response) => {
+					BeaconWebRequest.delete(`https://${apiDomain}/v4/authenticators/${authenticatorId}`, {Authorization: `Bearer ${sessionId}`}).then(() => {
 						const row = document.getElementById(`authenticator-${authenticatorId}`);
 						if (row && numAuthenticators > 1) {
 							row.remove();
@@ -520,7 +479,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 					}).catch((error) => {
 						const reason = {
 							message: 'The authenticator was not deleted',
-							explanation: `There was a ${error.status} error.`
+							explanation: `There was a ${error.status} error.`,
 						};
 						try {
 							const obj = JSON.parse(error.body);
@@ -538,11 +497,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		}
 	}
 	
-	const replaceBackupCodesButton = document.getElementById('replace-backup-codes-button');
 	if (replaceBackupCodesButton) {
-		replaceBackupCodesButton.addEventListener('click', (ev) => {
+		replaceBackupCodesButton.addEventListener('click', () => {
 			BeaconDialog.confirm('Replace backup codes?', 'This will replace all of your backup codes with new ones.').then(() => {
-				BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {Authorization: `Session ${sessionId}`}).then((response) => {
+				BeaconWebRequest.post('/account/actions/replace_backup_codes', {}, {Authorization: `Bearer ${sessionId}`}).then((response) => {
 					try {
 						const backupCodesTable = document.getElementById('backup-codes');
 						const obj = JSON.parse(response.body);
@@ -561,7 +519,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 					console.log(JSON.stringify(error));
 					const reason = {
 						message: 'Backup codes not replaced',
-						explanation: `There was a ${error.status} error.`
+						explanation: `There was a ${error.status} error.`,
 					};
 					try {
 						const obj = JSON.parse(error.body);
@@ -583,7 +541,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const revokeAction = (event) => {
 		event.preventDefault();
 		
-		BeaconWebRequest.delete(`http://${apiDomain}/v3/session/${event.target.getAttribute('sessionHash')}`, { Authorization: `Session ${sessionId}` }).then((response) => {
+		BeaconWebRequest.delete(`https://${apiDomain}/v4/sessions/${encodeURIComponent(event.target.getAttribute('sessionHash'))}`, { Authorization: `Bearer ${sessionId}` }).then(() => {
 			BeaconDialog.show('Session revoked', 'Be aware that any enabled user with a copy of your account\'s private key can start a new session.').then(() => {
 				window.location.reload(true);
 			});
@@ -604,5 +562,160 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	const revokeLinks = document.querySelectorAll('#panel-account div[page="sessions"] a.revokeLink');
 	for (const link of revokeLinks) {
 		link.addEventListener('click', revokeAction);
+	}
+	
+	/* ! Apps */
+	
+	const editAppAction = (event) => {
+		event.preventDefault();
+		
+		const applicationId = event.currentTarget.getAttribute('beacon-app-id');
+		BeaconWebRequest.get(`https://${apiDomain}/v4/applications/${encodeURIComponent(applicationId)}`, { Authorization: `Bearer ${sessionId}` }).then((response) => {
+			const parsed = JSON.parse(response.body);
+			
+		}).catch(() => {
+			BeaconDialog.show('Could not retrieve application info');
+		});
+	};
+	
+	const editAppButtons = document.querySelectorAll('#panel-account div[page="apps"] button.apps-edit-button');
+	for (const button of editAppButtons) {
+		button.addEventListener('click', editAppAction);	
+	}
+	
+	/* ! Services */
+	const staticTokenModal = document.getElementById('static-token-modal');
+	const staticTokenNameField = document.getElementById('static-token-name-field');
+	const staticTokenTokenField = document.getElementById('static-token-token-field');
+	const staticTokenCancelButton = document.getElementById('static-token-cancel-button');
+	const staticTokenActionButton = document.getElementById('static-token-action-button');
+	const staticTokenProviderField = document.getElementById('static-token-provider-field');
+	const staticTokenGenerateLink = document.getElementById('static-token-generate-link');
+	const staticTokenHelpField = document.getElementById('static-token-help-field');
+	const staticTokenErrorField = document.getElementById('static-token-error-field');
+	
+	const connectedServiceButtonAction = (event) => {
+		event.preventDefault();
+		
+		const provider = event.currentTarget.getAttribute('beacon-provider');
+		const type = event.currentTarget.getAttribute('beacon-provider-type');
+		const tokenId = event.currentTarget.getAttribute('beacon-token-id');
+		const tokenName = event.currentTarget.getAttribute('beacon-token-name');
+		
+		if (tokenId === '') {
+			switch (type) {
+			case 'oauth':
+				window.location = `/account/oauth/v4/begin/${provider}`;
+				break;
+			case 'static':
+				if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenProviderField && staticTokenGenerateLink && staticTokenHelpField) {
+					staticTokenNameField.value = '';
+					staticTokenTokenField.value = '';
+					staticTokenProviderField.value = provider;
+					staticTokenErrorField.classList.add('hidden');
+					switch (provider) {
+					case 'nitrado':
+						staticTokenGenerateLink.href = 'https://server.nitrado.net/usa/developer/tokens';
+						staticTokenHelpField.innerText = 'Beacon requires long life tokens from Nitrado to have the "service" scope enabled.';
+						staticTokenHelpField.classList.remove('hidden');
+						break;
+					case 'gameserverapp':
+						staticTokenGenerateLink.href = 'https://dash.gameserverapp.com/configure/api';
+						staticTokenHelpField.innerText = 'On your GameServerApp.com dashboard, you will find an "API / Integrate" option where you can issue a token for Beacon. Copy the token into the field below to continue. Remember to keep your token in a safe place in case you need it again.';
+						staticTokenHelpField.classList.remove('hidden');
+						break;
+					}
+					BeaconDialog.showModal('static-token-modal');
+				}
+				break;
+			}
+		} else {
+			BeaconDialog.confirm(`Are you sure you want to remove the service ${tokenName}?`, 'You will be able to connect the service again if you choose to.', 'Delete', 'Cancel').then(() => {
+				BeaconWebRequest.delete(`https://${apiDomain}/v4/tokens/${tokenId}`, { Authorization: `Bearer ${sessionId}` }).then(() => {
+					window.location.reload(true);
+				}).catch(() => {
+					BeaconDialog.show('The service was not deleted.');
+				});
+			});
+		}
+	};
+	
+	const connectedServiceActionButtons = document.querySelectorAll('#panel-account div[page="services"] .service-action button');
+	for (const button of connectedServiceActionButtons) {
+		button.addEventListener('click', connectedServiceButtonAction);
+	}
+	
+	if (staticTokenModal && staticTokenNameField && staticTokenTokenField && staticTokenCancelButton && staticTokenActionButton && staticTokenProviderField && staticTokenErrorField) {
+		const checkStaticTokenActionButton = () => {
+			staticTokenActionButton.disabled = staticTokenNameField.value.trim() === '' || staticTokenTokenField.value.trim() === '';
+		};
+		
+		staticTokenNameField.addEventListener('input', () => {
+			checkStaticTokenActionButton();
+		});
+		
+		staticTokenTokenField.addEventListener('input', () => {
+			checkStaticTokenActionButton();
+		});
+		
+		staticTokenCancelButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			BeaconDialog.hideModal();
+		});
+		
+		staticTokenActionButton.addEventListener('click', (ev) => {
+			ev.preventDefault();
+			staticTokenActionButton.disabled = true;
+			staticTokenErrorField.classList.add('hidden');
+			
+			const tokenInfo = {
+				provider: staticTokenProviderField.value,
+				type: 'Static',
+				accessToken: staticTokenTokenField.value.trim(),
+				providerSpecific: {
+					tokenName: staticTokenNameField.value.trim(),
+				},
+			};
+			
+			const submitFunction = () => {
+				BeaconWebRequest.post(`https://${apiDomain}/v4/user/tokens`, tokenInfo, { Authorization: `Bearer ${sessionId}` }).then(() => {
+					window.location.reload(true);
+				}).catch(() => {
+					staticTokenErrorField.innerText = 'Could not save token.';
+					staticTokenErrorField.classList.remove('hidden');
+					staticTokenActionButton.disabled = false;
+				});
+			};
+			
+			if (tokenInfo.provider === 'nitrado') {
+				BeaconWebRequest.get('https://api.nitrado.net/token', { Authorization: `Bearer ${tokenInfo.accessToken}` }).then((response) => {
+					const parsed = JSON.parse(response.body);
+					if (parsed.data.token.scopes.includes('service') === false) {
+						staticTokenErrorField.innerText = 'The long life token is valid, but is missing the "service" scope that Beacon requires.';
+						staticTokenErrorField.classList.remove('hidden');
+						staticTokenActionButton.disabled = false;
+						return;
+					}
+					tokenInfo.providerSpecific.user = parsed.data.token.user;
+					submitFunction();
+				}).catch(() => {
+					staticTokenErrorField.innerText = 'The long life token is not valid. Double check the Nitrado website, as the beginning of the token can wrap to another line.';
+					staticTokenErrorField.classList.remove('hidden');
+					staticTokenActionButton.disabled = false;
+				});
+			} else {
+				submitFunction();
+			}
+		});
+	}
+	
+	const urlParams = new URLSearchParams(window.location.search);
+	if (urlParams.get('message') && urlParams.get('explanation')) {
+		BeaconDialog.show(urlParams.get('message'), urlParams.get('explanation'));
+		
+		const urlConstructor = window.URL || window.webkitURL || window.mozURL || window.msURL || window.oURL;
+		const url = new urlConstructor(window.location);
+		url.search = '';
+		window.history.replaceState(null, document.title, url.toString());
 	}
 });

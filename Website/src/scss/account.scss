@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 #session_table {
 	max-width: 100%;
 	
@@ -88,4 +90,108 @@ h1 span.tag {
 
 #drop_hover_instructions {
 	pointer-events: none;
+}
+
+.session-app-card {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	
+	.session-app-icon {
+		img {
+			box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
+		}
+		
+		flex: 0 0 40px;
+	}
+	
+	.session-app-name {
+		
+	}
+	
+	&+.session-app-agent {
+		margin-top: 10px;
+	}
+}
+
+.services-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	
+	.service {
+		width: 250px;
+		border-radius: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem;
+		box-sizing: border-box;
+		background-color: white;
+		position: relative;
+		margin-left: auto;
+		margin-right: auto;
+		
+		@media (min-width: calc(500px + 1rem + 80px)) {
+			margin-left: 0;
+			margin-right: 0;
+		}
+		
+		.service-logo {
+			img {
+				width: 100%;
+				height: auto;
+				display: block;
+				max-height: 75px;
+			}
+			
+			flex: 1 1 auto;
+		}
+		
+		.service-name {
+			font-weight: bold;
+			word-break: break-all;
+			text-align: center;
+		}
+		
+		.service-uid {
+			word-break: keep-all;
+		}
+		
+		.service-action {
+			
+		}
+	}
+	
+	.service-nitrado {
+		background-color: black;
+		color: white;
+		
+		&.inactive {
+			background-color: white;
+			color: black;
+			
+			.service-logo img {
+				filter: brightness(0%);
+			}
+		}
+	}
+	
+	.service-gameserverapp {
+		background: rgb(12,38,76);
+		background: linear-gradient(0deg, rgba(3,3,4,1) 0%, rgba(12,38,76,1) 100%);
+		color: white;
+		
+		&.inactive {
+			background: none;
+			background-color: white;
+			color: black;
+		}
+	}	
+}
+
+#static-token-token-field {
+	height: 100px;
+	resize: none;
 }

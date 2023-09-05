@@ -1,6 +1,17 @@
 {
+  "apexskier.eslint.config.eslintConfigPath" : ".eslintrc.yml",
+  "apexskier.eslint.config.eslintPath" : "node_modules\/.bin\/eslint",
+  "apexskier.eslint.config.eslintRulesDirs" : [
+
+  ],
   "index.enabled" : true,
+  "index.ignored_file_patterns" : [
+    "www\/assets\/scripts",
+    "www\/assets\/css",
+    "node_modules"
+  ],
   "index.symbolicate" : true,
+  "index.use_scm_ignored_files" : true,
   "php.interpreter" : "\/opt\/homebrew\/bin\/php",
   "php.validate" : "onChange",
   "VineCode.Sass.cssStyle" : "Compressed",

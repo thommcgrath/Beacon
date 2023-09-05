@@ -1,11 +1,13 @@
 <?php
 
+use BeaconAPI\v4\Project;
+
 echo '<div class="visual-group"><h3>Your Projects</h3>';
 
-$keys = array(
-	'user_id' => $user->UserID()
-);
-$projects = \Ark\Project::Search($keys);
+$keys = [
+	'userId' => $user->UserId()
+];
+$projects = Project::Search($keys, true);
 if (count($projects) > 0) {
 	echo '<table class="generic">';
 	echo '<thead><tr><th>Name</th><th class="low-priority">Downloads</th><th class="low-priority">Revision</th><th class="text-center low-priority">Published</th><th class="low-priority">Delete</th></tr></thead>';
@@ -25,7 +27,9 @@ if (count($projects) > 0) {
 			break;
 		}
 		
-		$delete_link = '<a href="delete/' . htmlentities($project->ProjectID()) . '" beacon-action="delete" beacon-resource-name="' . htmlentities($project->Title()) .'" beacon-resource-url="' . htmlentities($project->ResourceURL()) . '">Delete</a>';
+		$projectUrl = 'https://' . BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->ProjectId());
+		
+		$delete_link = '<a href="delete/' . htmlentities($project->ProjectId()) . '" beacon-action="delete" beacon-resource-name="' . htmlentities($project->Title()) .'" beacon-resource-url="' . htmlentities($projectUrl) . '">Delete</a>';
 		$details = array(
 			'Downloads: ' . number_format($project->DownloadCount()),
 			'Revision: ' . number_format($project->Revision()),
@@ -33,7 +37,7 @@ if (count($projects) > 0) {
 		);
 		
 		echo '<tr>';
-		echo '<td><a href="' . htmlentities($project->ResourceURL()) . '">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . htmlentities($project->Description()) . '</span><div class="row-details"><span class="detail">' . implode('</span><span class="detail">', $details) . '</span></div></td>';
+		echo '<td><a href="' . htmlentities($projectUrl) . '">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . htmlentities($project->Description()) . '</span><div class="row-details"><span class="detail">' . implode('</span><span class="detail">', $details) . '</span></div></td>';
 		echo '<td class="low-priority text-right nowrap">' . number_format($project->DownloadCount()) . '</td>';
 		echo '<td class="low-priority text-right nowrap">' . number_format($project->Revision()) . '</td>';
 		echo '<td class="low-priority text-center nowrap">' . nl2br(htmlentities($status)) . '</td>';

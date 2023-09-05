@@ -1,19 +1,25 @@
 <?php
 
+use BeaconAPI\v4\Session;
+
 abstract class BeaconCommon {
 	const DBKEY_READONLY = 'reader';
 	const DBKEY_WRITABLE = 'writer';
+	
+	const BeaconAppId = '9f823fcf-eb7a-41c0-9e4b-db8ed4396f80';
+	const BeaconWebsiteAppId = '12877547-7ad0-466f-a001-77815043c96b';
+	
+	const AuthCookieName = 'beacon_auth';
 	
 	protected static ?BeaconDatabase $database = null;
 	protected static array $globals = [];
 	protected static int $min_version = -1;
 	protected static array $versions = [];
+	protected static ?Session $session = null;
 	
+	// deprecated
 	public static function GenerateUUID(): string {
-		$data = random_bytes(16);
-		$data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
-		$data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
-		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+		return BeaconUUID::v4();
 	}
 	
 	public static function StartSession(): bool {
@@ -94,7 +100,7 @@ abstract class BeaconCommon {
 	
 	public static function NewestUpdateTimestamp(int $build = 99999999): DateTime {
 		$database = static::Database();
-		$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM ark.objects INNER JOIN ark.mods ON (objects.mod_id = mods.mod_id) WHERE GREATEST(objects.min_version, mods.min_version) <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM ark.deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM ark.game_variables) UNION (SELECT MAX(last_update) AS stamp FROM ark.mods WHERE min_version <= $1 AND confirmed = TRUE AND include_in_deltas = TRUE) UNION (SELECT MAX(maps.last_update) AS stamp FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(last_update) AS stamp FROM ark.events) UNION (SELECT MAX(last_update) AS stamp FROM ark.colors) UNION (SELECT MAX(last_update) AS stamp FROM ark.color_sets)) AS merged;', $build);
+		$results = $database->Query('SELECT MAX(last_update) AS stamp FROM public.content_update_times WHERE min_version <= $1;', $build);
 		return new DateTime($results->Field('stamp'));
 	}
 	
@@ -165,21 +171,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function IsUUID(&$input): bool {
-		if (!is_string($input)) {
-			return false;
-		}
-		
-		$cleaned = preg_replace('/\s+/', '', $input);
-		if ($cleaned === '00000000-0000-0000-0000-000000000000') {
-			return true;
-		}
-		
-		if (preg_match('/^([0-9A-F]{8})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{12})$/i', $cleaned, $matches) === 1) {
-			$input = strtolower($matches[1] . '-' . $matches[2] . '-' . $matches[3] . '-' . $matches[4] . '-' . $matches[5]);
-			return true;
-		} else {
-			return false;
-		}
+		return BeaconUUID::Validate($input);
 	}
 	
 	public static function IsAssoc(array $arr): bool {
@@ -296,15 +288,15 @@ abstract class BeaconCommon {
 	}
 	
 	public static function ArrayToEnglish(array $items, string $conjunction = 'and'): string {
-		if (count($items) == 0) {
+		if (count($items) === 0) {
 			return '';
-		} elseif (count($items) == 1) {
-			return $items[0];
-		} elseif (count($items) == 2) {
-			return $items[0] . ' ' . $conjunction . ' ' . $items[1];
+		} elseif (count($items) === 1) {
+			return $items[array_key_first($items)];
+		} elseif (count($items) === 2) {
+			return implode(" {$conjunction} ", $items);
 		} else {
 			$last = array_pop($items);
-			return implode(', ', $items) . ', ' . $conjunction . ' ' . $last;
+			return implode(', ', $items) . ", {$conjunction} {$last}";
 		}
 	}
 	
@@ -347,28 +339,25 @@ abstract class BeaconCommon {
 			$tablename = $results->Field('tablename');
 			switch ($tablename) {
 			case 'ark.creatures':
-				$obj = \Ark\Creature::GetByObjectID($id, $build_number);
-				break;
-			case 'ark.diets':
-				$obj = \Ark\Diet::GetByObjectID($id, $build_number);
+				$obj = BeaconAPI\v4\Ark\Creature::Fetch($id);
 				break;
 			case 'ark.engrams':
-				$obj = \Ark\Engram::GetByObjectID($id, $build_number);
+				$obj = BeaconAPI\v4\Ark\Engram::Fetch($id);
 				break;
 			case 'ark.loot_sources':
-				$obj = \Ark\LootSource::GetByObjectID($id, $build_number);
+				$obj = BeaconAPI\v4\Ark\LootDrop::Fetch($id);
 				break;
 			case 'ark.presets':
-				$obj = \Ark\Preset::GetByObjectID($id, $build_number);
+				$obj = BaeconAPI\v4\Ark\Template::Fetch($id);
 				break;
 			case 'ark.spawn_points':
-				$obj = \Ark\SpawnPoint::GetByObjectID($id, $build_number);
+				$obj = BeaconAPI\v4\Ark\SpawnPoint::Fetch($id);
 				break;
 			default:
 				$obj = null;
 				break;
 			}
-			if (!is_null($obj)) {
+			if (is_null($obj) === false && $obj->MinVersion() <= $build_number) {
 				$objects[] = $obj;
 			}
 			$results->MoveNext();
@@ -381,8 +370,8 @@ abstract class BeaconCommon {
 			return $objects[0];
 		} else {
 			foreach ($objects as $obj) {
-				if ($obj instanceof \Ark\Blueprint) {
-					BeaconCache::Set($obj->ModWorkshopID() . '|' . $obj->ClassString(), $obj, 3600);
+				if ($obj instanceof BeaconAPI\v4\Ark\Blueprint) {
+					BeaconCache::Set($obj->ContentPackSteamId() . '|' . $obj->ClassString(), $obj, 3600);
 				}
 			}
 			BeaconCache::Set($cache_key, $objects, 3600);
@@ -646,8 +635,8 @@ abstract class BeaconCommon {
 		return number_format($num, $i);
 	}
 	
-	public static function IsHex($content): bool {
-		if (!is_string($content)) {
+	public static function IsHex(mixed $content): bool {
+		if (is_string($content) === false || strlen($content) % 2 != 0) {
 			return false;
 		}
 		
@@ -872,23 +861,79 @@ abstract class BeaconCommon {
 		return rtrim($binary, "\0");
 	}
 	
-	public static function DeviceID(): string {
+	public static function DeviceId(): string {
 		if (isset($_COOKIE['beacon_device_id'])) {
 			return $_COOKIE['beacon_device_id'];
 		}
 		
-		$device_id = static::GenerateUUID();
-		
-		setcookie('beacon_device_id', $device_id, [
+		$deviceId = BeaconUUID::v4();
+		static::SetDeviceId($deviceId);
+		return $deviceId;
+	}
+	
+	public static Function SetDeviceId(string $deviceId): void {
+		setcookie('beacon_device_id', $deviceId, [
 			'path' => '/account',
 			'expires' => 2147483647,
 			'secure' => true,
 			'httponly' => true,
-			'samesite' => 'Strict'
+			'samesite' => 'Lax'
 		]);
-		$_COOKIE['beacon_device_id'] = $device_id;
+		$_COOKIE['beacon_device_id'] = $deviceId;
+	}
+	
+	public static function SanitizeFilename(string $filename, int $maxLength = 0): string {
+		// Yes, this could be done a little "nicer" with arrays, but the hyphens and double spaces need to happen in the correct order
 		
-		return $device_id;
+		$filename = preg_replace([
+			'/[\/\\:]/u',
+			'/[<>""|?*\x00-\x1F]+/u',
+			'/(\s+-+)|(-+\s+)/u',
+			'/\s{2,}/u'
+		], [
+			'-',
+			'',
+			' ',
+			' '
+		], $filename);
+		
+		$filename = trim($filename, ". \n\r\t\v\x00");
+		
+		if ($maxLength > 0 && strlen($filename) > $maxLength) {
+			$filename = str_replace('-', '', $filename);
+			$parts = explode('.', $filename);
+			if (count($parts) >= 2 && strlen($parts[array_key_last($parts)]) + 1 < $maxLength && str_contains($parts[array_key_last($parts)], ' ') === false) {
+				$extension = '.' . $parts[array_key_last($parts)];
+				unset($parts[array_key_last($parts)]);
+				$basename = implode('.', $parts);
+				$maxLength = $maxLength - strlen($extension);
+			} else {
+				$basename = $filename;
+			}
+			
+			if ($maxLength > 1) {
+				$maxLength = $maxLength - 1;
+			}
+			$prefixLength = ceil($maxLength / 2);
+			$suffixLength = $maxLength - $prefixLength;
+			$prefix = trim(substr($basename, 0, $prefixLength));
+			$suffix = trim(substr($basename, $suffixLength * -1));
+			$filename = $prefix . ($prefixLength + $suffixLength > 1 ? '…' : '') . $suffix;
+		}
+		
+		return $filename;
+		
+		// Remove path separators
+		/*$filename = preg_replace('/[/\\:]/u', '-', $filename);
+		
+		// Remove control characters
+		$filename = preg_replace('/[<>""|?*\x00-\x1F]+/u', '', $filename);
+		
+		// Remove lone hypens
+		$filename = preg_replace('/(\s+-+)|(-+\s+)/u', ' ', $filename);
+		
+		// Simplify double spaces
+		$filename = preg_replace('/\s{2,}/u', ' ', $filename);*/
 	}
 	
 	public static function Base64UrlEncode(string $value): string {
@@ -902,6 +947,89 @@ abstract class BeaconCommon {
 	public static function Base64UrlDecode(string $value): string {
 		$value = str_replace(['-', '_'], ['+', '/'], $value);
 		return base64_decode($value);
+	}
+	
+	public static function GetSession(): ?Session {
+		if (is_null(self::$session) === false) {
+			return self::$session;
+		}
+		
+		if (isset($_COOKIE[self::AuthCookieName]) === false) {
+			return null;
+		}
+		
+		$cookieValue = $_COOKIE[self::AuthCookieName];
+		if (static::IsUUID($cookieValue)) {
+			// Legacy value
+			$session = Session::Fetch($cookieValue);
+			if (is_null($session)) {
+				return null;
+			}
+			self::$session = $session;
+			return $session;
+		}
+		
+		$cookieData = json_decode(static::Base64UrlDecode($cookieValue), true);
+		if ($cookieData === false || is_null($cookieData)) {
+			return null;
+		}
+		
+		$params = $cookieData['params'];
+		$signature = $cookieData['signature'];
+		$computedSignature = static::Base64UrlEncode(BeaconEncryption::RSASign(static::GetGlobal('Beacon_Private_Key'), json_encode($params)));
+		if ($signature !== $computedSignature) {
+			return null;
+		}
+		
+		$accessToken = $params['access_token'];
+		$session = Session::Fetch($accessToken);
+		if (is_null($session)) {
+			return null;
+		}
+		
+		if ($session->ShouldRenew()) {
+			$newSession = $session->Renew();
+			static::SetSession($newSession, $params['remember']);
+			return $newSession;
+		} else {
+			self::$session = $session;
+			return $session;
+		}
+	}
+	
+	public static function SetSession(?Session $session, bool $remember): void {
+		if (is_null($session)) {
+			setcookie(self::AuthCookieName, '', [
+				'expires' => 0,
+				'path' => '/account',
+				'domain' => '',
+				'secure' => true,
+				'httponly' =>true,
+				'samesite' => 'Lax'
+			]);
+			self::$session = null;
+			return;
+		}
+		
+		$params = [
+			'access_token' => $session->AccessToken(),
+			'access_token_expiration' => $session->AccessTokenExpiration(),
+			'refresh_token' => $session->RefreshToken(),
+			'refresh_token_expiration' => $session->RefreshTokenExpiration(),
+			'remember' => $remember
+		];
+		$signature = static::Base64UrlEncode(BeaconEncryption::RSASign(static::GetGlobal('Beacon_Private_Key'), json_encode($params)));
+		
+		setcookie(self::AuthCookieName, static::Base64UrlEncode(json_encode(['params' => $params, 'signature' => $signature])), [
+			'expires' => ($remember ? $session->RefreshTokenExpiration() : 0),
+			'path' => '/account',
+			'domain' =>'',
+			'secure' => true,
+			'httponly' =>true,
+			'samesite' => 'Lax'
+		]);
+		
+		self::$session = $session;
 	}
 	
 	public static function NewestBuildForLicense(string $licenseId, bool $onlyPublished = false): int {
@@ -940,6 +1068,28 @@ abstract class BeaconCommon {
 		
 		$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM public.updates WHERE build_number <= $1;', $allowedBuild);
 		return $results->Field('newest_build');
+	}
+	
+	public static function StandardizeGameId(string $gameId): string {
+		switch (strtolower(trim($gameId))) {
+		case 'ark':
+			return 'Ark';
+		case 'sdtd':
+			return '7DaysToDie';
+		}
+		return '';
+	}
+	
+	public static function ShowBeacon2Features(?BeaconAPI\v4\User $user = null): bool {
+		return false;
+		$newestVersion = static::NewestVersionForStage(3);
+		if ($newestVersion > 20000000) {
+			return true;
+		} elseif (is_null($user) === false) {
+			$sessions = BeaconAPI\v4\Session::Search(['userId' => $user->UserId(), 'applicationId' => '9f823fcf-eb7a-41c0-9e4b-db8ed4396f80'], true);
+			return count($sessions) > 0;
+		}
+		return false;
 	}
 }
 

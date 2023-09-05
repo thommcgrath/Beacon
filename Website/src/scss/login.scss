@@ -58,3 +58,17 @@ a.username-suggestion {
 		display: initial;
 	}
 }
+
+.app_id {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	
+	.app_id_avatar {
+		flex: 0 0 74px;
+	}
+	
+	.api_id_namecard {
+		flex: 1 1 auto;
+	}
+}

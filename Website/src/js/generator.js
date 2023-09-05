@@ -1,56 +1,46 @@
-if (Number.parseInt === undefined) {
-    Number.parseInt = window.parseInt;
-}
+"use strict";
 
-var difficulty = {
-	init: function() {
-		var dino_level_field = document.getElementById('dino_level_field');
-		if (dino_level_field) {
-			dino_level_field.addEventListener('input', function(event) {
-				difficulty.updateUI();
-			});
+document.addEventListener('DOMContentLoaded', () => {
+	const updateUI = () => {
+		let desiredDinoLevel = 120;
+		const dinoLevelField = document.getElementById('dinoLevelField');
+		if (dinoLevelField) {
+			desiredDinoLevel = Number.parseInt(dinoLevelField.value);
 		}
 		
-		this.updateUI();
-	},
-	updateUI: function() {
-		var desired_dino_level = 120;
-		var dino_level_field = document.getElementById('dino_level_field');
-		if (dino_level_field) {
-			desired_dino_level = Number.parseInt(dino_level_field.value);
-		}
-		
-		var override = desired_dino_level / 30;
-		var reference = document.getElementById('difficulty_reference');
+		const override = desiredDinoLevel / 30;
+		const reference = document.getElementById('difficulty_reference');
 		if (reference) {
-			var lines = [];
+			const lines = [];
 			lines.push('DifficultyOffset=1.0');
 			lines.push('OverrideOfficialDifficulty=' + override.toFixed(4));
 			reference.value = lines.join("\n");
 		}
 		
-		var value_create = document.getElementById('create_difficulty_value');
-		if (value_create) {
-			value_create.value = override.toFixed(1);
+		const valueCreate = document.getElementById('create_difficulty_value');
+		if (valueCreate) {
+			valueCreate.value = override.toFixed(1);
 		}
 		
-		var value_paste = document.getElementById('paste_difficulty_value');
-		if (value_paste) {
-			value_paste.value = override.toFixed(1);
+		const valuePaste = document.getElementById('paste_difficulty_value');
+		if (valuePaste) {
+			valuePaste.value = override.toFixed(1);
 		}
 		
-		var value_upload = document.getElementById('upload_difficulty_value');
-		if (value_upload) {
-			value_upload.value = override.toFixed(1);
+		const valueUpload = document.getElementById('upload_difficulty_value');
+		if (valueUpload) {
+			valueUpload.value = override.toFixed(1);
 		}
+	};
+	
+	const dinoLevelField = document.getElementById('dino_level_field');
+	if (dinoLevelField) {
+		dinoLevelField.addEventListener('input', updateUI);
 	}
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-	difficulty.init();
+	updateUI();
 	
 	if (document.getElementById('mode_tabs') !== null) {
-		document.getElementById('mode_tabs_new').addEventListener('click', function(event) {
+		document.getElementById('mode_tabs_new').addEventListener('click', () => {
 			document.getElementById('mode_view_new').style.display = 'block';
 			document.getElementById('mode_view_paste').style.display = 'none';
 			document.getElementById('mode_view_upload').style.display = 'none';
@@ -58,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			document.getElementById('mode_tabs_paste').className = '';
 			document.getElementById('mode_tabs_upload').className = '';
 		});
-		document.getElementById('mode_tabs_paste').addEventListener('click', function(event) {
+		document.getElementById('mode_tabs_paste').addEventListener('click', () => {
 			document.getElementById('mode_view_new').style.display = 'none';
 			document.getElementById('mode_view_paste').style.display = 'block';
 			document.getElementById('mode_view_upload').style.display = 'none';
@@ -66,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			document.getElementById('mode_tabs_paste').className = 'selected';
 			document.getElementById('mode_tabs_upload').className = '';
 		});
-		document.getElementById('mode_tabs_upload').addEventListener('click', function(event) {
+		document.getElementById('mode_tabs_upload').addEventListener('click', () => {
 			document.getElementById('mode_view_new').style.display = 'none';
 			document.getElementById('mode_view_paste').style.display = 'none';
 			document.getElementById('mode_view_upload').style.display = 'block';
@@ -76,18 +66,18 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 	
-	var button = document.getElementById('copy_button');
-	if (button !== null) {
-		button.addEventListener('click', function(event) {
-			var cell = document.getElementById('content_output');
+	const copyButton = document.getElementById('copy_button');
+	if (copyButton) {
+		copyButton.addEventListener('click', (event) => {
+			const cell = document.getElementById('content_output');
 			if (cell) {
 				try {
-					clipboard.writeText(cell.value);
-					event.target.innerText = 'Copied!';
-					event.target.disabled = true;
-					setTimeout(function() {
-						event.target.innerText = 'Copy';
-						event.target.disabled = false;
+					navigator.clipboard.writeText(cell.value);
+					event.currentTarget.innerText = 'Copied!';
+					event.currentTarget.disabled = true;
+					setTimeout(() => {
+						event.currentTarget.innerText = 'Copy';
+						event.currentTarget.disabled = false;
 					}, 3000);
 				} catch (err) {
 					alert('Looks like this browser does not support automatic copy. You will need to do it yourself.');
@@ -96,19 +86,19 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 	
-	var choose_field = document.getElementById('upload_file_selector');
-	var choose_button = document.getElementById('upload_file_selector_button');
-	if (choose_field && choose_button) {
-		choose_button.addEventListener('click', function(event) {
-			choose_field.click();
+	const chooseField = document.getElementById('upload_file_selector');
+	const chooseButton = document.getElementById('upload_file_selector_button');
+	if (chooseField && chooseButton) {
+		chooseButton.addEventListener('click', (event) => {
+			chooseField.click();
 			if (event.preventDefault) {
 				event.preventDefault();
 			}
 			return false;
 		});
-		choose_field.addEventListener('change', function(event) {
-			if (this.value !== '') {
-				this.form.submit();
+		chooseField.addEventListener('change', (event) => {
+			if (event.currentTarget.value !== '') {
+				event.currentTarget.form.submit();
 			}
 		});
 	}

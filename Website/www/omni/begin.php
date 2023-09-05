@@ -8,6 +8,8 @@ http_response_code(500);
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+use BeaconAPI\v4\User;
+
 BeaconCommon::StartSession();
 
 if (strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
@@ -30,12 +32,17 @@ if ($cart === false) {
 }
 
 $email = strtolower(trim($cart['email']));
+$refundAgreed = filter_var($cart['refundPolicyAgreed'], FILTER_VALIDATE_BOOLEAN);
 $bundles = $cart['items'];
 $currency = BeaconShop::GetCurrency();
 
 if (count($bundles) === 0) {
 	http_response_code(400);
 	echo json_encode(['error' => true, 'message' => 'The cart is empty.'], JSON_PRETTY_PRINT);
+	exit;
+} elseif ($refundAgreed === false) {
+	http_response_code(400);
+	echo json_encode(['error' => true, 'message' => 'The refund policy was not agreed to.'], JSON_PRETTY_PRINT);
 	exit;
 }
 
@@ -84,7 +91,7 @@ $payment = [
 $user = null;
 $licenses = [];
 try {
-	$user = BeaconUser::GetByEmail($email);
+	$user = User::Fetch($email);
 	if (is_null($user) === false) {
 		$payment['metadata']['Beacon User UUID'] = $user->UserID();
 		$licenses = $user->Licenses();

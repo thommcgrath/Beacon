@@ -60,7 +60,7 @@ case 'HEAD':
 	header('Content-Type: application/json');
 	
 	if ($project_id !== null) {
-		$results = $database->Query('SELECT project_id, user_id FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' WHERE project_id = $1 AND deleted = FALSE;', $project_id);
+		$results = $database->Query('SELECT project_id, user_id FROM ' . Ark\Project::FromClause() . ' WHERE project_id = $1 AND deleted = FALSE;', $project_id);
 		if ($results->RecordCount() == 1) {
 			http_response_code(200);
 		} else {
@@ -91,7 +91,7 @@ case 'GET':
 		} else {
 			$clauses[] = 'published = \'Approved\' AND role = \'Owner\'';
 		}
-		$sql = 'SELECT ' . implode(', ', \Ark\Project::SQLColumns()) . ' FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' WHERE ' . implode(' AND ', $clauses);
+		$sql = 'SELECT ' . implode(', ', \Ark\Project::SQLColumns()) . ' FROM ' . Ark\Project::FromClause() . ' WHERE ' . implode(' AND ', $clauses);
 		
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';
@@ -236,27 +236,35 @@ case 'DELETE':
 	$paths = array();
 	$user_id = BeaconAPI::UserID();
 	$success = false;
-	$results = $database->Query('SELECT project_id, role FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' WHERE project_id = ANY($1) AND user_id = $2;', '{' . $project_id . '}', $user_id);
+	$results = $database->Query('SELECT project_id, role FROM public.project_members WHERE project_id = ANY($1) AND user_id = $2;', '{' . $project_id . '}', $user_id);
 	while (!$results->EOF()) {
 		try {
 			$project_id = $results->Field('project_id');
 			$role = $results->Field('role');
 			
-			// When a file is deleted, if it is shared with another user, ownership transfers to another user. Which user
-			// is not particularly important.
-			if ($role === 'Owner' || $role === 'Team') {
-				$database->BeginTransaction();
-				$guest_results = $database->Query('SELECT user_id FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::GuestTableName() . ' WHERE project_id = $1 AND user_id != $2;', $project_id, $user_id);
-				if ($guest_results->RecordCount() == 0) {
-					$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::TableName() . ' SET deleted = TRUE WHERE project_id = $1;', $project_id);
+			if ($role === 'Owner') {
+				$rows = $database->Query('SELECT user_id FROM public.project_members WHERE project_id = $1 AND user_id != $2 ORDER BY public.project_role_permissions(role) DESC LIMIT 1;', $project_id, $user_id);
+				if ($rows->RecordCount() === 1) {
+					// Move ownership
+					$newUserId = $rows->Field('user_id');
+					$database->BeginTransaction();
+					$database->Query('DELETE FROM public.project_members WHERE project_id = $1 AND user_id = $2;', $project_id, $user_id);
+					$database->Query('UPDATE public.project_members SET role = $3 WHERE project_id = $1 AND user_id = $2;', $project_id, $newUserId, 'Owner');
+					$database->Commit();
 				} else {
-					$guest_user_id = $guest_results->Field('user_id');
-					$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::TableName() . ' SET user_id = $1 WHERE project_id = $2;', $guest_user_id, $project_id);
-					$database->Query('DELETE FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::GuestTableName() . ' WHERE project_id = $2 AND user_id = $1;', $guest_user_id, $project_id);
+					// The project has no other members, so delete it. Do no remove the project member row in case it has to be restored.
+					$database->BeginTransaction();
+					$database->Query('UPDATE public.projects SET deleted = TRUE WHERE project_id = $1;', $project_id);
+					$database->Commit();
 				}
+			} else {
+				// Remove the user from the project
+				$database->BeginTransaction();
+				$database->Query('DELETE FROM public.project_members WHERE project_id = $1 AND user_id = $2;', $project_id, $user_id);
 				$database->Commit();
-				$success = true;
 			}
+			
+			$success = true;
 		} catch (Exception $e) {
 		}
 		
