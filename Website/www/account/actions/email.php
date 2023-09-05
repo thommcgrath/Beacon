@@ -111,6 +111,8 @@ case 'GET':
 		$rows->MoveNext();
 	}
 	
+	$database->Query('DELETE FROM public.email_addresses WHERE email_id = $1;', $oldEmailId);
+	
 	EmailVerificationCode::Clear($newEmail);
 	$database->Commit();
 	
