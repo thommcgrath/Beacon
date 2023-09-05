@@ -1081,13 +1081,23 @@ abstract class BeaconCommon {
 	}
 	
 	public static function ShowBeacon2Features(?BeaconAPI\v4\User $user = null): bool {
-		return false;
 		$newestVersion = static::NewestVersionForStage(3);
 		if ($newestVersion > 20000000) {
 			return true;
 		} elseif (is_null($user) === false) {
 			$sessions = BeaconAPI\v4\Session::Search(['userId' => $user->UserId(), 'applicationId' => '9f823fcf-eb7a-41c0-9e4b-db8ed4396f80'], true);
-			return count($sessions) > 0;
+			foreach ($sessions as $session) {
+				$agent = $session->RemoteAgent();
+				if (str_starts_with($agent, 'Beacon/') === false) {
+					continue;
+				}
+				
+				$version = substr($agent, 7, strpos($agent, ' ') - 7);
+				$build = static::VersionToBuildNumber($version);
+				if ($build > 20000000) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
