@@ -380,28 +380,6 @@ class Session extends DatabaseObject implements JsonSerializable {
 		$database->Query("DELETE FROM {$table} WHERE {$column} = {$setter};", $this->AccessTokenHash());
 		$database->Commit();
 	}
-	
-	/* ! Deprecated Methods */
-	
-	public static function GetBySessionId(string $session_id): ?static {
-		return static::Fetch($session_id);
-	}
-	
-	public static function GetBySessionHash(string $session_hash): ?static {
-		return static::Fetch($session_hash);
-	}
-	
-	public static function GetForUserID(string $user_id): array {
-		return static::Search(['userId' => $user_id], true);
-	}
-	
-	public static function GetForUser(User $user): array {
-		if (is_null($user)) {
-			return [];
-		}
-		
-		return static::Search(['userId' => $user->UserId()], true);
-	}
 }
 
 ?>

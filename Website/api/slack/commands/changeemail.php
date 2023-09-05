@@ -49,7 +49,7 @@ try {
 		exit;
 	}
 	$database->Query('UPDATE purchases SET purchaser_email = $1 WHERE purchaser_email = $2;', $new_email_id, $old_email_id);
-	$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $old_email_id);
+	$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = $1;', $old_email_id);
 	$results = $database->Query('SELECT applicant_id, generated_purchase_id FROM stw_applicants WHERE email_id = $1;', $new_email_id);
 	if ($results->RecordCount() == 0) {
 		if (is_null($results->Field('generated_purchase_id'))) {
