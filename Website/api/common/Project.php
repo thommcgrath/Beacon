@@ -580,16 +580,22 @@ abstract class Project implements \JsonSerializable {
 			$allowed_users = array_keys($encryption_keys);
 			
 			$desired_guests = [];
-			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $user_id);
+			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1);', '{' . implode(',', $allowed_users) . '}');
 			while (!$results->EOF()) {
 				$desired_guests[] = $results->Field('user_id');
 				$results->MoveNext();
 			}
 			
 			$current_guests = [];
-			$results = $database->Query('SELECT user_id FROM project_members WHERE project_id = $1 AND role != \'Owner\';', $project_id);
+			$results = $database->Query('SELECT user_id, role FROM project_members WHERE project_id = $1;', $project_id);
 			while (!$results->EOF()) {
-				$current_guests[] = $results->Field('user_id');
+				if ($results->Field('role') === 'Owner') {
+					if (($key = array_search($results->Field('user_id'), $desired_guests)) !== false) {
+						unset($desired_guests[$key]);
+					}
+				} else {
+					$current_guests[] = $results->Field('user_id');
+				}
 				$results->MoveNext();
 			}
 			
@@ -597,7 +603,7 @@ abstract class Project implements \JsonSerializable {
 			$guests_to_remove = array_diff($current_guests, $desired_guests);
 			
 			if ($permissions < 80 && (count($guests_to_add) > 0 || count($guests_to_remove) > 0)) {
-				$reason = 'Only the owner or admins may add or remove users.';
+				$reason = 'Only the owner may add or remove users.';
 				return false;
 			}
 		}
