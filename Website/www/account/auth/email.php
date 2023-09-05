@@ -17,11 +17,11 @@ if (empty($_POST['email']) || BeaconEmail::IsEmailValid($_POST['email']) == fals
 
 $email = $_POST['email'];
 $params = [];
-if (isset($_POST['key'])) {
-	$params['key'] = $_POST['key'];
-}
 if (isset($_POST['flowId'])) {
 	$params['flow_id'] = $_POST['flowId'];
+}
+if (isset($_POST['return'])) {
+	$params['return'] = $_POST['return'];
 }
 $verification = EmailVerificationCode::Create($email, $params); // Email sent here
 	

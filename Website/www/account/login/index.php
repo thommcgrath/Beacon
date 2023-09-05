@@ -12,18 +12,28 @@ BeaconTemplate::AddHeaderLine('<link rel="canonical" href="' . BeaconCommon::Abs
 
 $flowId = $_GET['flow_id'] ?? null;
 $deviceId = $_GET['device_id'] ?? null;
-$email = $_GET['email'] ?? null;
-$returnUrl = $_GET['return'] ?? BeaconCommon::AbsoluteURL('/account/');
+$email = isset($_GET['email']) ? BeaconCommon::Base64UrlDecode($_GET['email']) : null;
+$returnUrl = $_GET['return'] ?? '';
 $verificationCode = $_GET['code'] ?? null;
-$verificationKey = $_GET['key'] ?? null;
+$isApp = filter_var($_GET['app'] ?? 'false', FILTER_VALIDATE_BOOL);
+
+if (empty($returnUrl) === false && str_starts_with($returnUrl, 'https://') === false) {
+	$returnUrl = BeaconCommon::Base64UrlDecode($returnUrl);
+}
 
 if (empty($deviceId) === false) {
 	BeaconCommon::SetDeviceId($deviceId);
 }
 
-if (is_null($email) === false && (is_null($verificationCode) === false || is_null($verificationKey) === false)) {
-	// May not exit here
-	RunEmailVerification($email, $verificationCode, $verificationKey);
+if (is_null($email) === false && is_null($verificationCode) === false) {
+	// Exits if this is an app
+	$verification = RunEmailVerification($email, $verificationCode, $isApp);
+	if (empty($returnUrl)) {
+		$returnUrl = $verification->ReturnUri();
+	}
+}
+if (empty($returnUrl)) {
+	$returnUrl = BeaconCommon::AbsoluteUrl('/account/');
 }
 
 $loginParams = [
@@ -55,31 +65,18 @@ function ExitWithMessage(string $message, string $explanation, string $backUrl =
 	exit;
 }
 
-function RunEmailVerification(string $email, ?string $verificationCode, ?string $verificationKey): void {
-	$verification = null;
-	if (is_null($verificationCode) === false) {
-		$verification = EmailVerificationCode::Fetch($email, $verificationCode);
-		if (is_null($verification) === false) {
-			$verification->Verify();
-		}
-	} elseif (is_null($verificationKey) === false) {
-		$codes = EmailVerificationCode::Search($email);
-		foreach ($codes as $code) {
-			if ($code->DecryptCode($verificationKey)) {
-				$verification = $code;
-				$verification->Verify();
-				break;
-			}
-		}
-	}
-	
+function RunEmailVerification(string $email, string $verificationCode, bool $shouldExit): ?EmailVerificationCode {
+	$verification = EmailVerificationCode::Fetch($email, $verificationCode);
 	if (is_null($verification)) {
 		ExitWithMessage('Address Not Verified', 'No verification code was found for email ' . $email . '. Return to the login page and request a new code.', '/account/login?email=' . urlencode($email) . '#create');
 	}
-	if ($verification->IsVerified() === false) {
-		ExitWithMessage('Address Not Verified', 'The verification code is not correct.', '/account/login?email=' . urlencode($email) . '#create');
-	} else {
+	
+	$verification->Verify();
+	
+	if ($shouldExit) {
 		ExitWithMessage('Address Confirmed', 'You can now close this window and continue following the instructions inside Beacon.');
+	} else {
+		return $verification;
 	}
 }
 

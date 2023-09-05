@@ -311,6 +311,10 @@ document.addEventListener('beaconRunLoginPage', ({ loginParams }) => {
 			if (loginParams.loginId) {
 				params.append('flowId', loginParams.loginId);
 			}
+			const query = new URLSearchParams(window.location.search);
+			if (query.has('return')) {
+				params.append('return', query.get('return'));
+			}
 			
 			BeaconWebRequest.post('/account/auth/email', params).then((response) => {
 				try {

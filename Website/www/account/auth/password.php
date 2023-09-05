@@ -9,7 +9,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-use BeaconAPI\v4\{Response, EmailVerificationCode, Session, User, UserGenerator};
+use BeaconAPI\v4\{Response, EmailVerificationCode, User, UserGenerator};
 
 define('ERR_EMAIL_NOT_VERIFIED', 436);
 define('ERR_PASSWORD_VIOLATES_RULES', 437);
@@ -107,7 +107,7 @@ try {
 	
 	if ($sendWelcomeEmail) {
 		$subject = 'Welcome to Beacon';
-		$body = "You just created a Beacon Account, which means you can easily share your documents with multiple devices. You can manage your account at <" . BeaconCommon::AbsoluteURL("/account/") . "> to change your password, manage documents, and see your Beacon Omni purchase status.\n\nFor reference, you can view Beacon's privacy policy at <" . BeaconCommon::AbsoluteURL("/privacy") . ">. The summary of it is simple: your data is yours and won't be sold or monetized in any way.\n\nHave fun and happy looting!\nThom McGrath, developer of Beacon.";
+		$body = "You just created a Beacon Account, which means you can easily share your projects with multiple devices. You can manage your account at <" . BeaconCommon::AbsoluteURL("/account/") . "> to change your password, manage projects, and see your Beacon Omni purchase status.\n\nFor reference, you can view Beacon's privacy policy at <" . BeaconCommon::AbsoluteURL("/privacy") . ">. The summary of it is simple: your data is yours and won't be sold or monetized in any way.\n\nHave fun and happy looting!\nThom McGrath, developer of Beacon.";
 		BeaconEmail::SendMail($email, $subject, $body);
 	}
 	

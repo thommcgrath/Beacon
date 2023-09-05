@@ -8,12 +8,13 @@ class EmailVerificationCode implements JsonSerializable {
 	const kTemplateNewAccount = 'new-account';
 	const kTemplateConfirmChange = 'confirm-change';
 	
-	protected $email = null;
-	protected $emailId = null;
-	protected $code = null;
-	protected $codeHashed = null;
-	protected $codeEncrypted = null;
-	protected $verified = false;
+	protected string $email;
+	protected string $emailId;
+	protected ?string $code;
+	protected ?string $codeHashed;
+	protected ?string $codeEncrypted;
+	protected bool $verified;
+	protected ?string $returnUri;
 	
 	protected function __construct() {	
 	}
@@ -31,7 +32,7 @@ class EmailVerificationCode implements JsonSerializable {
 		$emailId = $rows->Field('email_id');
 		$codeHashed = static::PrepareHash($emailId, $code);
 		
-		$rows = $database->Query('SELECT code_encrypted, verified FROM public.email_verification_codes WHERE code_hash = $1 AND expiration > CURRENT_TIMESTAMP;', $codeHashed);
+		$rows = $database->Query('SELECT code_encrypted, verified, return_uri FROM public.email_verification_codes WHERE code_hash = $1 AND expiration > CURRENT_TIMESTAMP;', $codeHashed);
 		if ($rows->RecordCount() !== 1) {
 			return null;
 		}
@@ -43,24 +44,33 @@ class EmailVerificationCode implements JsonSerializable {
 		$verifier->codeHashed = $codeHashed;
 		$verifier->codeEncrypted = $rows->Field('code_encrypted');
 		$verifier->verified = $rows->Field('verified');
+		$verifier->returnUri = $rows->Field('return_uri');
 		return $verifier;
 	}
 	
 	public static function Search(string $email): array {
 		if (BeaconEmail::IsEmailValid($email) === false) {
-			return null;
+			return [];
 		}
 		
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT email_id, code_hash, code_encrypted, verified FROM public.email_verification_codes WHERE email_id = uuid_for_email($1) AND expiration > CURRENT_TIMESTAMP;', $email);
+		$rows = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
+		$emailId = $rows->Field('email_id');
+		if (is_null($emailId)) {
+			return [];
+		}
+		
 		$codes = [];
+		$rows = $database->Query('SELECT email_id, code_hash, code_encrypted, verified, return_uri FROM public.email_verification_codes WHERE email_id = $1 AND expiration > CURRENT_TIMESTAMP;', $emailId);
 		while (!$rows->EOF()) {
 			$code = new static();
 			$code->email = $email;
 			$code->emailId = $rows->Field('email_id');
+			$code->code = null;
 			$code->codeHashed = $rows->Field('code_hash');
 			$code->codeEncrypted = $rows->Field('code_encrypted');
 			$code->verified = $rows->Field('verified');
+			$code->returnUri = $rows->Field('return_uri');
 			$codes[] = $code;
 			$rows->MoveNext();
 		}
@@ -77,6 +87,12 @@ class EmailVerificationCode implements JsonSerializable {
 					return $currentCode;
 				}
 			}
+			unset($params['key']);
+		}
+		
+		$returnUri = $params['return'] ?? null;
+		if (is_null($returnUri) === false) {
+			unset($params['return']);
 		}
 			
 		$database->BeginTransaction();
@@ -88,22 +104,21 @@ class EmailVerificationCode implements JsonSerializable {
 		$codeEncrypted = null;
 		if (is_null($key) === false) {
 			$codeEncrypted = base64_encode((BeaconEncryption::SymmetricEncrypt($emailId . $key, $code)));	
-		} else {
-			$params['code'] = $code;
 		}
-		ksort($params);
+		$params['code'] = $code;
 		
 		$database->Query('DELETE FROM public.email_verification_codes WHERE expiration < CURRENT_TIMESTAMP;');
-		$database->Query('INSERT INTO public.email_verification_codes (email_id, code_hash, code_encrypted) VALUES ($1, $2, $3);', $emailId, $codeHashed, $codeEncrypted);
+		$database->Query('INSERT INTO public.email_verification_codes (email_id, code_hash, code_encrypted, return_uri) VALUES ($1, $2, $3, $4);', $emailId, $codeHashed, $codeEncrypted, $returnUri);
 		
 		switch ($template) {
 		case static::kTemplateNewAccount:
 			$subject = 'Enter code ' . $code . ' in Beacon to verify your email address';
 			$code_spaced = implode(' ', str_split($code));
-			$relativeUrl = '/account/login?email=' . urlencode($email);
-			if (count($params) > 0) {
-				$relativeUrl .= '&' . http_build_query($params);	
-			}
+			
+			$params['email'] = BeaconCommon::Base64UrlEncode($email);
+			ksort($params);
+			$relativeUrl = '/account/login?' . http_build_query($params);
+			
 			$url = BeaconCommon::AbsoluteURL($relativeUrl);
 			$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, reply to this email." . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to ' . BeaconCommon::RemoteAddr() : '');
 			$html = '<center>You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.<br /><br /><span style="font-weight:bold;font-size: x-large">' . $code_spaced . '</span><br /><br />Alternatively, you may use the following link to continue the process automatically:<br /><br /><a href="' . $url . '">' . $url . '</a><br /><br />If you need help, reply to this email.' . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device with an ip address similar to <span style="font-weight:bold">' . htmlentities(BeaconCommon::RemoteAddr()) . '</span>' : '') . '</center>';
@@ -113,6 +128,7 @@ class EmailVerificationCode implements JsonSerializable {
 			ksort($params);
 			$params['hash'] = BeaconCommon::Base64UrlEncode(hash('sha3-256', http_build_query($params), true));
 			$params['email'] = BeaconCommon::Base64UrlEncode($email);
+			ksort($params);
 			
 			$subject = 'Please confirm your Beacon email address change';
 			$relativeUrl = '/account/actions/email?' . http_build_query($params);
@@ -137,6 +153,7 @@ class EmailVerificationCode implements JsonSerializable {
 		$obj->codeHashed = $codeHashed;
 		$obj->codeEncrypted = $codeEncrypted;
 		$obj->verified = false;
+		$obj->returnUri = $returnUri;
 		return $obj;
 	}
 	
@@ -154,6 +171,10 @@ class EmailVerificationCode implements JsonSerializable {
 	
 	public function EmailId(): string {
 		return $this->emailId;
+	}
+	
+	public function ReturnUri(): string {
+		return $this->returnUri;
 	}
 	
 	public function Verify(): void {
@@ -207,8 +228,15 @@ class EmailVerificationCode implements JsonSerializable {
 	
 	public static function Clear(string $email): void {
 		$database = BeaconCommon::Database();
+			
+		$rows = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
+		$emailId = $rows->Field('email_id');
+		if (is_null($emailId)) {
+			return;
+		}
+		
 		$database->BeginTransaction();
-		$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = uuid_for_email($1);', $email);
+		$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = $1;', $emailId);
 		$database->Commit();
 	}
 	

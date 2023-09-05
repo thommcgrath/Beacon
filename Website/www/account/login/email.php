@@ -28,7 +28,7 @@ if (is_null($user) === false && $user->IsEnabled() === false) {
 	return;
 }
 
-$code = EmailVerificationCode::Create($email, ['key' => $key]);
+$code = EmailVerificationCode::Create($email, ['key' => $key, 'app' => true]);
 if (is_null($code) === false) {
 	http_response_code(200);
 	echo json_encode($response = array(
