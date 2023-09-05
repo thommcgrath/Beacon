@@ -27,9 +27,13 @@ if (isset($_GET['session_id'])) {
 			}
 		}
 		
-		$websiteSession = Session::Create($session->User(), '12877547-7ad0-466f-a001-77815043c96b', ['common']);
-		if (is_null($websiteSession) === false) {
-			BeaconCommon::SetSession($websiteSession, !$temporary);
+		if ($session->ApplicationId() === '12877547-7ad0-466f-a001-77815043c96b') {
+			BeaconCommon::SetSession($session, !$temporary);
+		} else {
+			$websiteSession = Session::Create($session->User(), '12877547-7ad0-466f-a001-77815043c96b', ['common']);
+			if (is_null($websiteSession) === false) {
+				BeaconCommon::SetSession($websiteSession, !$temporary);
+			}
 		}
 	}
 } else {
