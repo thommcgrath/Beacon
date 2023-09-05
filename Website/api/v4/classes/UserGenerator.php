@@ -1,7 +1,7 @@
 <?php
 
 namespace BeaconAPI\v4;
-use BeaconCloudStorage, BeaconCommon, BeaconEncryption, Exception;
+use BeaconCloudStorage, BeaconCommon, BeaconEncryption, BeaconPusher, Exception;
 
 abstract class UserGenerator {
 	public static function CreateAnonymous(string $publicKeyPem, string $cloudKey): User {
