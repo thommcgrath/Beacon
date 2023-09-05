@@ -94,7 +94,7 @@ case 'GET':
 	$database->Query('UPDATE public.purchases SET purchaser_email = $1 WHERE purchaser_email = $2;', $newEmailId, $oldEmailId);
 	$database->Query('UPDATE public.users SET email_id = $1 WHERE email_id = $2;', $newEmailId, $oldEmailId);
 	
-	$rows = $database->Query('SELECT merchant_reference FROM purchases WHERE purchaser_email = $1;', $oldEmailId);
+	$rows = $database->Query('SELECT merchant_reference FROM purchases WHERE purchaser_email = $1;', $newEmailId);
 	$stripeApi = null;
 	while (!$rows->EOF()) {
 		$merchantReference = $rows->Field('merchant_reference');
