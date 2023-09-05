@@ -173,7 +173,7 @@ class EmailVerificationCode implements JsonSerializable {
 		return $this->emailId;
 	}
 	
-	public function ReturnUri(): string {
+	public function ReturnUri(): ?string {
 		return $this->returnUri;
 	}
 	
