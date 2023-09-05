@@ -206,6 +206,7 @@ class EmailVerificationCode implements \JsonSerializable {
 	}
 	
 	public static function PrepareHash(string $emailId, string $code): string {
+		$code = preg_replace('/[^0-9]/', '', $code);
 		return base64_encode(hash('sha3-512', $emailId . $code, true));
 	}
 }
