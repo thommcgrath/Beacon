@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.8 (Ubuntu 14.8-1.pgdg22.04+1)
--- Dumped by pg_dump version 14.8 (Ubuntu 14.8-0ubuntu0.22.04.1)
+-- Dumped from database version 14.9 (Ubuntu 14.9-0ubuntu0.22.04.1)
+-- Dumped by pg_dump version 14.9 (Ubuntu 14.9-0ubuntu0.22.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -24,6 +24,29 @@ CREATE SCHEMA ark;
 
 
 ALTER SCHEMA ark OWNER TO thommcgrath;
+
+--
+-- Name: sdtd; Type: SCHEMA; Schema: -; Owner: thommcgrath
+--
+
+CREATE SCHEMA sdtd;
+
+
+ALTER SCHEMA sdtd OWNER TO thommcgrath;
+
+--
+-- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS btree_gist WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION btree_gist; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiST';
+
 
 --
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
@@ -165,7 +188,8 @@ ALTER DOMAIN public.email OWNER TO thommcgrath;
 --
 
 CREATE TYPE public.game_identifier AS ENUM (
-    'Ark'
+    'Ark',
+    '7DaysToDie'
 );
 
 
@@ -225,6 +249,18 @@ CREATE TYPE public.loot_source_kind AS ENUM (
 ALTER TYPE public.loot_source_kind OWNER TO thommcgrath;
 
 --
+-- Name: marketplace; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.marketplace AS ENUM (
+    'Steam',
+    'Steam Workshop'
+);
+
+
+ALTER TYPE public.marketplace OWNER TO thommcgrath;
+
+--
 -- Name: nitrado_deploy_style; Type: TYPE; Schema: public; Owner: thommcgrath
 --
 
@@ -273,6 +309,20 @@ CREATE TYPE public.point3d AS (
 ALTER TYPE public.point3d OWNER TO thommcgrath;
 
 --
+-- Name: project_role; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.project_role AS ENUM (
+    'Owner',
+    'Admin',
+    'Editor',
+    'Guest'
+);
+
+
+ALTER TYPE public.project_role OWNER TO thommcgrath;
+
+--
 -- Name: publish_status; Type: TYPE; Schema: public; Owner: thommcgrath
 --
 
@@ -300,6 +350,30 @@ CREATE TYPE public.taming_methods AS ENUM (
 
 
 ALTER TYPE public.taming_methods OWNER TO thommcgrath;
+
+--
+-- Name: token_provider; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.token_provider AS ENUM (
+    'Nitrado',
+    'GameServerApp'
+);
+
+
+ALTER TYPE public.token_provider OWNER TO thommcgrath;
+
+--
+-- Name: token_type; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.token_type AS ENUM (
+    'OAuth',
+    'Static'
+);
+
+
+ALTER TYPE public.token_type OWNER TO thommcgrath;
 
 --
 -- Name: update_file_type; Type: TYPE; Schema: public; Owner: thommcgrath
@@ -338,6 +412,19 @@ CREATE TYPE public.video_host AS ENUM (
 
 
 ALTER TYPE public.video_host OWNER TO thommcgrath;
+
+--
+-- Name: config_option_value_type; Type: TYPE; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE TYPE sdtd.config_option_value_type AS ENUM (
+    'Numeric',
+    'Boolean',
+    'Text'
+);
+
+
+ALTER TYPE sdtd.config_option_value_type OWNER TO thommcgrath;
 
 --
 -- Name: break_mod_relationships(uuid[]); Type: FUNCTION; Schema: ark; Owner: thommcgrath
@@ -403,31 +490,36 @@ $$;
 ALTER FUNCTION ark.create_mod_relationships(p_uuids uuid[]) OWNER TO thommcgrath;
 
 --
--- Name: enforce_mod_owner(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
+-- Name: deletions_delete(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
 --
 
-CREATE FUNCTION ark.enforce_mod_owner() RETURNS trigger
+CREATE FUNCTION ark.deletions_delete() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
-DECLARE
-	confirmed_count INTEGER := 0;
 BEGIN
-	IF (TG_OP = 'INSERT') OR (TG_OP = 'UPDATE' AND NEW.confirmed = TRUE AND OLD.confirmed = FALSE) THEN
-		SELECT INTO confirmed_count COUNT(mod_id) FROM ark.mods WHERE confirmed = TRUE AND workshop_id = NEW.workshop_id;
-		IF confirmed_count > 0 THEN
-			RAISE EXCEPTION 'Mod is already confirmed by another user.';
-		END IF;
-		IF NEW.confirmed THEN
-			DELETE FROM ark.mods WHERE workshop_id = NEW.workshop_id AND mod_id != NEW.mod_id;
-		END IF;
-	END IF;
-	
+	DELETE FROM public.deletions WHERE object_id = OLD.object_id;
+	RETURN OLD;
+END;
+$$;
+
+
+ALTER FUNCTION ark.deletions_delete() OWNER TO thommcgrath;
+
+--
+-- Name: deletions_insert(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
+--
+
+CREATE FUNCTION ark.deletions_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO public.deletions (object_id, game_id, from_table, label, min_version, action_time, tag) VALUES (NEW.object_id, 'Ark', NEW.from_table, NEW.label, NEW.min_version, NEW.action_time, NEW.tag);
 	RETURN NEW;
 END;
 $$;
 
 
-ALTER FUNCTION ark.enforce_mod_owner() OWNER TO thommcgrath;
+ALTER FUNCTION ark.deletions_insert() OWNER TO thommcgrath;
 
 --
 -- Name: engram_delete_trigger(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
@@ -462,64 +554,52 @@ $$;
 ALTER FUNCTION ark.generic_update_trigger() OWNER TO thommcgrath;
 
 --
--- Name: mods_delete_trigger(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
+-- Name: legacy_mod_delete(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
 --
 
-CREATE FUNCTION ark.mods_delete_trigger() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $_$
-BEGIN
-	IF OLD.confirmed = TRUE THEN
-		EXECUTE 'INSERT INTO ark.deletions (object_id, from_table, label, min_version) VALUES ($1, $2, $3, $4);' USING OLD.mod_id, TG_TABLE_NAME, OLD.name, 10500000;
-	END IF;
-	RETURN OLD;
-END;
-$_$;
-
-
-ALTER FUNCTION ark.mods_delete_trigger() OWNER TO thommcgrath;
-
---
--- Name: mods_search_sync(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
---
-
-CREATE FUNCTION ark.mods_search_sync() RETURNS trigger
+CREATE FUNCTION ark.legacy_mod_delete() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-	IF TG_OP = 'DELETE' THEN
-		IF OLD.confirmed = TRUE THEN
-			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.mod_id, TG_TABLE_NAME, 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-		END IF;
-		RETURN OLD;
-	ELSIF TG_OP = 'INSERT' THEN
-		IF NEW.confirmed = TRUE THEN
-			INSERT INTO search_sync (object_id, table_name, action) VALUES (NEW.mod_id, TG_TABLE_NAME, 'Save') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-		END IF;
-		RETURN NEW;
-	ELSIF TG_OP = 'UPDATE' THEN
-		IF NEW.confirmed = TRUE THEN
-			IF OLD.confirmed = FALSE THEN
-				INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'creatures', 'Save' FROM ark.creatures WHERE mod_id = OLD.mod_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-				INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'engrams', 'Save' FROM ark.engrams WHERE mod_id = OLD.mod_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-				INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'loot_sources', 'Save' FROM ark.loot_sources WHERE mod_id = OLD.mod_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-				INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'spawn_points', 'Save' FROM ark.spawn_points WHERE mod_id = OLD.mod_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-			END IF;
-			INSERT INTO search_sync (object_id, table_name, action) VALUES (NEW.mod_id, TG_TABLE_NAME, 'Save') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-		ELSIF OLD.confirmed = TRUE THEN
-			INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'creatures', 'Delete' FROM ark.creatures WHERE mod_id = OLD.mod_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-			INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'engrams', 'Delete' FROM ark.engrams WHERE mod_id = OLD.mod_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-			INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'loot_sources', 'Delete' FROM ark.loot_sources WHERE mod_id = OLD.mod_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-			INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'spawn_points', 'Delete' FROM ark.spawn_points WHERE mod_id = OLD.mod_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-			INSERT INTO search_sync (object_id, table_name, action) VALUES (NEW.mod_id, TG_TABLE_NAME, 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
-		END IF;
-		RETURN NEW;
-	END IF;
+	DELETE FROM public.content_packs WHERE content_pack_id = OLD.mod_id;
+	RETURN OLD;
 END;
 $$;
 
 
-ALTER FUNCTION ark.mods_search_sync() OWNER TO thommcgrath;
+ALTER FUNCTION ark.legacy_mod_delete() OWNER TO thommcgrath;
+
+--
+-- Name: legacy_mod_insert(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
+--
+
+CREATE FUNCTION ark.legacy_mod_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO public.content_packs (content_pack_id, game_id, marketplace, marketplace_id, user_id, name, confirmed, confirmation_code, default_enabled, last_update, min_version, include_in_deltas, game_specific) VALUES (NEW.mod_id, 'Ark', (CASE WHEN NEW.is_app = TRUE THEN 'Steam' ELSE 'Steam Workshop' END), NEW.workshop_id, NEW.user_id, NEW.name, NEW.confirmed, NEW.confirmation_code, NEW.console_safe, NEW.default_enabled, NEW.last_update, NEW.min_version, NEW.include_in_deltas, NEW.is_official, jsonb_strip_nulls(jsonb_build_object('tag', NEW.tag, 'prefix', NEW.prefix, 'map_folder', NEW.map_folder)));
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION ark.legacy_mod_insert() OWNER TO thommcgrath;
+
+--
+-- Name: legacy_mod_update(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
+--
+
+CREATE FUNCTION ark.legacy_mod_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE public.content_packs SET user_id = NEW.user_id, name = NEW.name, confirmed = NEW.confirmed, confirmation_code = NEW.confirmation_code, console_safe = NEW.console_safe, default_enabled = NEW.default_enabled, last_update = NEW.last_update, min_version = NEW.min_version, include_in_deltas = NEW.include_in_deltas, is_official = NEW.is_official, game_specific = jsonb_strip_nulls(jsonb_build_object('tag', NEW.tag, 'prefix', NEW.prefix, 'map_folder', NEW.map_folder)) WHERE content_pack_id = NEW.mod_id;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION ark.legacy_mod_update() OWNER TO thommcgrath;
 
 --
 -- Name: object_delete_trigger(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
@@ -607,6 +687,34 @@ $$;
 
 
 ALTER FUNCTION ark.presets_json_sync_function() OWNER TO thommcgrath;
+
+--
+-- Name: table_to_group(text); Type: FUNCTION; Schema: ark; Owner: thommcgrath
+--
+
+CREATE FUNCTION ark.table_to_group(p_table_name text) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	CASE p_table_name
+	WHEN 'ini_options' THEN
+		RETURN 'configOptions';
+	WHEN 'loot_source_icons' THEN
+		RETURN 'lootDropIcons';
+	WHEN 'loot_sources' THEN
+		RETURN 'lootDrops';
+	WHEN 'mods' THEN
+		RETURN 'contentPacks';
+	WHEN 'spawn_points' THEN
+		RETURN 'spawnPoints';
+	ELSE
+		RETURN p_table_name;
+	END CASE;
+END
+$$;
+
+
+ALTER FUNCTION ark.table_to_group(p_table_name text) OWNER TO thommcgrath;
 
 --
 -- Name: update_color_last_update(); Type: FUNCTION; Schema: ark; Owner: thommcgrath
@@ -943,6 +1051,66 @@ $$;
 ALTER FUNCTION ark.update_support_article_timestamp() OWNER TO thommcgrath;
 
 --
+-- Name: content_packs_delete_trigger(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.content_packs_delete_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	IF OLD.confirmed = TRUE THEN
+		EXECUTE 'INSERT INTO public.deletions (object_id, game_id, from_table, label, min_version) VALUES ($1, $2, $3, $4, $5);' USING OLD.content_pack_id, OLD.game_id, 'mods', OLD.name, 10500000;
+	END IF;
+	RETURN OLD;
+END;
+$_$;
+
+
+ALTER FUNCTION public.content_packs_delete_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: content_packs_search_sync(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.content_packs_search_sync() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'DELETE' THEN
+		IF OLD.confirmed = TRUE THEN
+			INSERT INTO search_sync (object_id, table_name, action) VALUES (OLD.content_pack_id, 'mods', 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		END IF;
+		RETURN OLD;
+	ELSIF TG_OP = 'INSERT' THEN
+		IF NEW.confirmed = TRUE THEN
+			INSERT INTO search_sync (object_id, table_name, action) VALUES (NEW.content_pack_id, 'mods', 'Save') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		END IF;
+		RETURN NEW;
+	ELSIF TG_OP = 'UPDATE' THEN
+		IF NEW.confirmed = TRUE THEN
+			IF OLD.confirmed = FALSE THEN
+				INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'creatures', 'Save' FROM ark.creatures WHERE mod_id = OLD.content_pack_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+				INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'engrams', 'Save' FROM ark.engrams WHERE mod_id = OLD.content_pack_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+				INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'loot_sources', 'Save' FROM ark.loot_sources WHERE mod_id = OLD.content_pack_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+				INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'spawn_points', 'Save' FROM ark.spawn_points WHERE mod_id = OLD.content_pack_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+			END IF;
+			INSERT INTO search_sync (object_id, table_name, action) VALUES (NEW.content_pack_id, 'mods', 'Save') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		ELSIF OLD.confirmed = TRUE THEN
+			INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'creatures', 'Delete' FROM ark.creatures WHERE mod_id = OLD.content_pack_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+			INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'engrams', 'Delete' FROM ark.engrams WHERE mod_id = OLD.content_pack_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+			INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'loot_sources', 'Delete' FROM ark.loot_sources WHERE mod_id = OLD.content_pack_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+			INSERT INTO search_sync (object_id, table_name, action) SELECT object_id, 'spawn_points', 'Delete' FROM ark.spawn_points WHERE mod_id = OLD.content_pack_id ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+			INSERT INTO search_sync (object_id, table_name, action) VALUES (NEW.content_pack_id, 'mods', 'Delete') ON CONFLICT (object_id) DO UPDATE SET action = EXCLUDED.action, moment = CURRENT_TIMESTAMP;
+		END IF;
+		RETURN NEW;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.content_packs_search_sync() OWNER TO thommcgrath;
+
+--
 -- Name: email_needs_update(uuid); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -981,6 +1149,33 @@ $$;
 
 
 ALTER FUNCTION public.email_needs_update(p_address public.email) OWNER TO thommcgrath;
+
+--
+-- Name: enforce_content_pack_owner(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.enforce_content_pack_owner() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	confirmed_count INTEGER := 0;
+BEGIN
+	IF (TG_OP = 'INSERT') OR (TG_OP = 'UPDATE' AND NEW.confirmed = TRUE AND OLD.confirmed = FALSE) THEN
+		SELECT INTO confirmed_count COUNT(content_pack_id) FROM public.content_packs WHERE confirmed = TRUE AND marketplace = NEW.marketplace AND marketplace_id = NEW.marketplace_id;
+		IF confirmed_count > 0 THEN
+			RAISE EXCEPTION 'Content pack is already confirmed by another user.';
+		END IF;
+		IF NEW.confirmed THEN
+			DELETE FROM public.content_packs WHERE marketplace = NEW.marketplace AND marketplace_id = NEW.marketplace_id AND content_pack_id != NEW.content_pack_id;
+		END IF;
+	END IF;
+	
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.enforce_content_pack_owner() OWNER TO thommcgrath;
 
 --
 -- Name: generate_username(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -1042,19 +1237,29 @@ ALTER FUNCTION public.generate_username() OWNER TO thommcgrath;
 CREATE FUNCTION public.generate_uuid_from_text(p_input text) RETURNS uuid
     LANGUAGE plpgsql
     AS $$
-DECLARE
-	v_md5_raw BYTEA;
-	v_uuid UUID;
 BEGIN
-	v_md5_raw := DECODE(MD5(p_input), 'hex');
-	v_md5_raw := SET_BYTE(v_md5_raw, 6, ((GET_BYTE(v_md5_raw, 6)::bit(8) & B'00001111') | B'01000000')::integer);
-	v_md5_raw := SET_BYTE(v_md5_raw, 8, ((GET_BYTE(v_md5_raw, 8)::bit(8) & B'00111111') | B'10000000')::integer);
-	RETURN ENCODE(v_md5_raw, 'hex');
+	RETURN uuid_generate_v5('82aa4465-85f9-4b9e-8d36-f66164cef0a6', p_input);
 END;
 $$;
 
 
 ALTER FUNCTION public.generate_uuid_from_text(p_input text) OWNER TO thommcgrath;
+
+--
+-- Name: generic_update_trigger(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.generic_update_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.last_update = CURRENT_TIMESTAMP(0);
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.generic_update_trigger() OWNER TO thommcgrath;
 
 --
 -- Name: group_key_for_email(public.email, integer, text); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -1089,6 +1294,54 @@ $_$;
 ALTER FUNCTION public.group_key_for_email(p_address public.email, p_precision integer, p_alg text) OWNER TO thommcgrath;
 
 --
+-- Name: legacy_session_delete(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.legacy_session_delete() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM public.access_tokens WHERE access_token_hash = OLD.session_id;
+	RETURN OLD;
+END;
+$$;
+
+
+ALTER FUNCTION public.legacy_session_delete() OWNER TO thommcgrath;
+
+--
+-- Name: legacy_session_insert(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.legacy_session_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO public.access_tokens (access_token_hash, refresh_token_hash, access_token_encrypted, refresh_token_encrypted, access_token_expiration, refresh_token_expiration, user_id, application_id, remote_ip, remote_country, remote_agent, scopes) VALUES (NEW.session_id, NEW.session_id, NEW.session_id, NEW.session_id, NEW.valid_until, NEW.valid_until, NEW.user_id, (CASE WHEN NEW.remote_agent LIKE 'Beacon/%' THEN '9f823fcf-eb7a-41c0-9e4b-db8ed4396f80' ELSE '12877547-7ad0-466f-a001-77815043c96b' END)::UUID, NEW.remote_ip, NEW.remote_country, NEW.remote_agent, (CASE WHEN NEW.remote_agent LIKE 'Beacon/%' THEN 'common users.private_key:read users:read' ELSE 'apps:create apps:delete apps:read apps:update common users:create users:delete users:read users:update' END));
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.legacy_session_insert() OWNER TO thommcgrath;
+
+--
+-- Name: legacy_session_update(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.legacy_session_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE public.access_tokens SET access_token_expiration = NEW.valid_until, refresh_token_expiration = NEW.valid_until, remote_ip = NEW.remote_ip, remote_country = NEW.remote_country, remote_agent = NEW.remote_agent WHERE access_token_hash = NEW.session_id;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.legacy_session_update() OWNER TO thommcgrath;
+
+--
 -- Name: os_version_as_integer(public.os_version); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -1112,6 +1365,29 @@ END; $_$;
 
 
 ALTER FUNCTION public.os_version_as_integer(p_version public.os_version) OWNER TO thommcgrath;
+
+--
+-- Name: project_role_permissions(public.project_role); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.project_role_permissions(p_role public.project_role) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF p_role = 'Owner' THEN
+		RETURN 90;
+	ELSIF p_role = 'Admin' THEN
+		RETURN 80;
+	ELSIF p_role = 'Editor' THEN
+		RETURN 70;
+	ELSE
+		RETURN 10;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.project_role_permissions(p_role public.project_role) OWNER TO thommcgrath;
 
 --
 -- Name: projects_search_sync(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -1379,6 +1655,70 @@ $$;
 
 ALTER FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) OWNER TO thommcgrath;
 
+--
+-- Name: object_delete_trigger(); Type: FUNCTION; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE FUNCTION sdtd.object_delete_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	EXECUTE 'INSERT INTO public.deletions (object_id, from_table, label, min_version, game_id) VALUES ($1, $2, $3, $4, $5);' USING OLD.object_id, TG_TABLE_NAME, OLD.label, OLD.min_version, '7DaysToDie';
+	RETURN OLD;
+END;
+$_$;
+
+
+ALTER FUNCTION sdtd.object_delete_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: object_insert_trigger(); Type: FUNCTION; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE FUNCTION sdtd.object_insert_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+	EXECUTE 'DELETE FROM public.deletions WHERE object_id = $1;' USING NEW.object_id;
+	NEW.last_update = CURRENT_TIMESTAMP;
+	RETURN NEW;
+END;
+$_$;
+
+
+ALTER FUNCTION sdtd.object_insert_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: object_update_trigger(); Type: FUNCTION; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE FUNCTION sdtd.object_update_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.last_update = CURRENT_TIMESTAMP;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION sdtd.object_update_trigger() OWNER TO thommcgrath;
+
+--
+-- Name: version_to_int(integer, integer, integer, integer); Type: FUNCTION; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE FUNCTION sdtd.version_to_int(p_major integer, p_minor integer, p_bug integer, p_build integer) RETURNS integer
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	RETURN p_build + (p_bug * 1000) + (p_minor * 100000) + (p_major * 10000000);
+END;
+$$;
+
+
+ALTER FUNCTION sdtd.version_to_int(p_major integer, p_minor integer, p_bug integer, p_build integer) OWNER TO thommcgrath;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -1643,17 +1983,35 @@ CREATE TABLE ark.creature_stats (
 ALTER TABLE ark.creature_stats OWNER TO thommcgrath;
 
 --
--- Name: deletions; Type: TABLE; Schema: ark; Owner: thommcgrath
+-- Name: deletions; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
-CREATE TABLE ark.deletions (
+CREATE TABLE public.deletions (
     object_id uuid NOT NULL,
+    game_id public.game_identifier NOT NULL,
     from_table public.citext NOT NULL,
     label public.citext NOT NULL,
     min_version integer NOT NULL,
     action_time timestamp with time zone DEFAULT ('now'::text)::timestamp(0) with time zone NOT NULL,
     tag text
 );
+
+
+ALTER TABLE public.deletions OWNER TO thommcgrath;
+
+--
+-- Name: deletions; Type: VIEW; Schema: ark; Owner: thommcgrath
+--
+
+CREATE VIEW ark.deletions AS
+ SELECT deletions.object_id,
+    deletions.from_table,
+    deletions.label,
+    deletions.min_version,
+    deletions.action_time,
+    deletions.tag
+   FROM public.deletions
+  WHERE (deletions.game_id = 'Ark'::public.game_identifier);
 
 
 ALTER TABLE ark.deletions OWNER TO thommcgrath;
@@ -1879,10 +2237,64 @@ CREATE TABLE ark.mod_relationships (
 ALTER TABLE ark.mod_relationships OWNER TO thommcgrath;
 
 --
--- Name: mods; Type: TABLE; Schema: ark; Owner: thommcgrath
+-- Name: content_packs; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
-CREATE TABLE ark.mods (
+CREATE TABLE public.content_packs (
+    content_pack_id uuid NOT NULL,
+    game_id public.game_identifier NOT NULL,
+    marketplace public.marketplace NOT NULL,
+    marketplace_id text NOT NULL,
+    user_id uuid NOT NULL,
+    name public.citext NOT NULL,
+    confirmed boolean DEFAULT false NOT NULL,
+    confirmation_code text DEFAULT gen_random_uuid() NOT NULL,
+    console_safe boolean DEFAULT false NOT NULL,
+    default_enabled boolean DEFAULT false NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
+    min_version integer DEFAULT 10500000 NOT NULL,
+    include_in_deltas boolean DEFAULT false NOT NULL,
+    is_official boolean DEFAULT false NOT NULL,
+    game_specific jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+ALTER TABLE public.content_packs OWNER TO thommcgrath;
+
+--
+-- Name: mods; Type: VIEW; Schema: ark; Owner: thommcgrath
+--
+
+CREATE VIEW ark.mods AS
+ SELECT content_packs.content_pack_id AS mod_id,
+    (content_packs.marketplace_id)::bigint AS workshop_id,
+    content_packs.user_id,
+    content_packs.name,
+    content_packs.confirmed,
+    content_packs.confirmation_code,
+    NULL::text AS pull_url,
+    NULL::text AS last_pull_hash,
+    content_packs.console_safe,
+    content_packs.default_enabled,
+    content_packs.last_update,
+    content_packs.min_version,
+    content_packs.include_in_deltas,
+    (content_packs.game_specific ->> 'tag'::text) AS tag,
+    (content_packs.game_specific ->> 'prefix'::text) AS prefix,
+    (content_packs.game_specific ->> 'map_folder'::text) AS map_folder,
+    content_packs.is_official,
+    (content_packs.marketplace = 'Steam'::public.marketplace) AS is_app
+   FROM public.content_packs
+  WHERE (content_packs.game_id = 'Ark'::public.game_identifier);
+
+
+ALTER TABLE ark.mods OWNER TO thommcgrath;
+
+--
+-- Name: mods_legacy; Type: TABLE; Schema: ark; Owner: thommcgrath
+--
+
+CREATE TABLE ark.mods_legacy (
     mod_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     workshop_id bigint NOT NULL,
     user_id uuid NOT NULL,
@@ -1904,7 +2316,7 @@ CREATE TABLE ark.mods (
 );
 
 
-ALTER TABLE ark.mods OWNER TO thommcgrath;
+ALTER TABLE ark.mods_legacy OWNER TO thommcgrath;
 
 --
 -- Name: preset_modifiers; Type: TABLE; Schema: ark; Owner: thommcgrath
@@ -2032,6 +2444,29 @@ CREATE TABLE ark.spawn_point_sets (
 ALTER TABLE ark.spawn_point_sets OWNER TO thommcgrath;
 
 --
+-- Name: access_tokens; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.access_tokens (
+    access_token_hash text NOT NULL,
+    refresh_token_hash text NOT NULL,
+    access_token_encrypted text NOT NULL,
+    refresh_token_encrypted text NOT NULL,
+    access_token_expiration timestamp with time zone NOT NULL,
+    refresh_token_expiration timestamp with time zone NOT NULL,
+    user_id uuid NOT NULL,
+    application_id uuid NOT NULL,
+    remote_ip inet NOT NULL,
+    remote_country text NOT NULL,
+    remote_agent text NOT NULL,
+    scopes text NOT NULL,
+    private_key_encrypted jsonb
+);
+
+
+ALTER TABLE public.access_tokens OWNER TO thommcgrath;
+
+--
 -- Name: affiliate_links; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -2059,82 +2494,60 @@ CREATE TABLE public.affiliate_tracking (
 ALTER TABLE public.affiliate_tracking OWNER TO thommcgrath;
 
 --
--- Name: guest_projects; Type: TABLE; Schema: public; Owner: thommcgrath
+-- Name: application_auth_flows; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
-CREATE TABLE public.guest_projects (
-    project_id uuid NOT NULL,
-    user_id uuid NOT NULL
+CREATE TABLE public.application_auth_flows (
+    flow_id uuid NOT NULL,
+    application_id uuid NOT NULL,
+    scopes text NOT NULL,
+    callback text NOT NULL,
+    state text NOT NULL,
+    code_hash text,
+    verifier_hash text NOT NULL,
+    verifier_hash_algorithm text NOT NULL,
+    user_id uuid,
+    expiration timestamp with time zone DEFAULT (CURRENT_TIMESTAMP(0) + '00:30:00'::interval) NOT NULL,
+    public_key text,
+    private_key_encrypted jsonb,
+    CONSTRAINT application_auth_flows_check CHECK ((((public_key IS NULL) AND (private_key_encrypted IS NULL)) OR ((public_key IS NOT NULL) AND (private_key_encrypted IS NULL)) OR ((public_key IS NOT NULL) AND (private_key_encrypted IS NOT NULL)))),
+    CONSTRAINT application_auth_flows_check1 CHECK ((((code_hash IS NULL) AND (user_id IS NULL)) OR ((code_hash IS NOT NULL) AND (user_id IS NOT NULL))))
 );
 
 
-ALTER TABLE public.guest_projects OWNER TO thommcgrath;
+ALTER TABLE public.application_auth_flows OWNER TO thommcgrath;
 
 --
--- Name: projects; Type: TABLE; Schema: public; Owner: thommcgrath
+-- Name: application_callbacks; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
-CREATE TABLE public.projects (
-    project_id uuid NOT NULL,
-    game_id public.game_identifier NOT NULL,
+CREATE TABLE public.application_callbacks (
+    application_id uuid NOT NULL,
+    url text NOT NULL
+);
+
+
+ALTER TABLE public.application_callbacks OWNER TO thommcgrath;
+
+--
+-- Name: applications; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.applications (
+    application_id uuid DEFAULT gen_random_uuid() NOT NULL,
     user_id uuid NOT NULL,
-    title public.citext NOT NULL,
-    description public.citext NOT NULL,
-    console_safe boolean NOT NULL,
-    last_update timestamp with time zone NOT NULL,
-    revision integer DEFAULT 1 NOT NULL,
-    download_count integer DEFAULT 0 NOT NULL,
-    published public.publish_status DEFAULT 'Private'::public.publish_status NOT NULL,
-    deleted boolean DEFAULT false NOT NULL,
-    game_specific jsonb DEFAULT '{}'::jsonb NOT NULL,
-    storage_path text
+    secret text,
+    name public.citext NOT NULL,
+    website text NOT NULL,
+    icon_filename text DEFAULT 'default/{{size}}.png'::text NOT NULL,
+    scopes text NOT NULL,
+    rate_limit integer DEFAULT 50 NOT NULL,
+    is_official boolean NOT NULL,
+    experience integer DEFAULT 0 NOT NULL
 );
 
 
-ALTER TABLE public.projects OWNER TO thommcgrath;
-
---
--- Name: allowed_projects; Type: VIEW; Schema: public; Owner: thommcgrath
---
-
-CREATE VIEW public.allowed_projects AS
- SELECT projects.project_id,
-    projects.game_id,
-    projects.user_id,
-    projects.user_id AS owner_id,
-    projects.title,
-    projects.description,
-    projects.console_safe,
-    projects.last_update,
-    projects.revision,
-    projects.download_count,
-    projects.published,
-    projects.game_specific,
-    projects.storage_path,
-    'Owner'::text AS role
-   FROM public.projects
-  WHERE (projects.deleted = false)
-UNION
- SELECT projects.project_id,
-    projects.game_id,
-    guest_projects.user_id,
-    projects.user_id AS owner_id,
-    projects.title,
-    projects.description,
-    projects.console_safe,
-    projects.last_update,
-    projects.revision,
-    projects.download_count,
-    projects.published,
-    projects.game_specific,
-    projects.storage_path,
-    'Guest'::text AS role
-   FROM (public.guest_projects
-     JOIN public.projects ON ((guest_projects.project_id = projects.project_id)))
-  WHERE (projects.deleted = false);
-
-
-ALTER TABLE public.allowed_projects OWNER TO thommcgrath;
+ALTER TABLE public.applications OWNER TO thommcgrath;
 
 --
 -- Name: blog_articles; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -2173,6 +2586,145 @@ CREATE TABLE public.client_notices (
 ALTER TABLE public.client_notices OWNER TO thommcgrath;
 
 --
+-- Name: content_pack_discovery_results; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.content_pack_discovery_results (
+    content_pack_id uuid NOT NULL,
+    game_id public.game_identifier NOT NULL,
+    marketplace public.marketplace NOT NULL,
+    marketplace_id text NOT NULL,
+    name text NOT NULL,
+    last_update timestamp with time zone NOT NULL,
+    min_version integer NOT NULL,
+    storage_path text NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    CONSTRAINT content_pack_discovery_results_check CHECK ((content_pack_id = public.generate_uuid_from_text(((('Local '::text || (marketplace)::text) || ': '::text) || marketplace_id))))
+);
+
+
+ALTER TABLE public.content_pack_discovery_results OWNER TO thommcgrath;
+
+--
+-- Name: content_packs_combined; Type: VIEW; Schema: public; Owner: thommcgrath
+--
+
+CREATE VIEW public.content_packs_combined AS
+ WITH combined_packs AS (
+         SELECT content_packs.content_pack_id,
+            content_packs.game_id,
+            content_packs.marketplace,
+            content_packs.marketplace_id,
+            content_packs.name,
+            content_packs.last_update,
+                CASE
+                    WHEN ((content_packs.game_id = 'Ark'::public.game_identifier) AND ((content_packs.game_specific ->> 'prefix'::text) IS NOT NULL)) THEN 0
+                    ELSE 1
+                END AS type
+           FROM public.content_packs
+          WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true))
+        UNION
+         SELECT content_pack_discovery_results.content_pack_id,
+            content_pack_discovery_results.game_id,
+            content_pack_discovery_results.marketplace,
+            content_pack_discovery_results.marketplace_id,
+            content_pack_discovery_results.name,
+            content_pack_discovery_results.last_update,
+            2 AS type
+           FROM public.content_pack_discovery_results
+          WHERE (content_pack_discovery_results.deleted = false)
+        )
+ SELECT DISTINCT ON ((combined_packs.marketplace || combined_packs.marketplace_id)) combined_packs.content_pack_id,
+    combined_packs.game_id,
+    combined_packs.marketplace,
+    combined_packs.marketplace_id,
+    combined_packs.name,
+    combined_packs.last_update,
+    combined_packs.type
+   FROM combined_packs
+  ORDER BY (combined_packs.marketplace || combined_packs.marketplace_id), combined_packs.type;
+
+
+ALTER TABLE public.content_packs_combined OWNER TO thommcgrath;
+
+--
+-- Name: objects; Type: TABLE; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE TABLE sdtd.objects (
+    object_id uuid NOT NULL,
+    label public.citext NOT NULL,
+    min_version integer DEFAULT 10700000 NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    content_pack_id uuid NOT NULL,
+    tags public.citext[] DEFAULT '{}'::public.citext[] NOT NULL,
+    alternate_label public.citext
+);
+
+
+ALTER TABLE sdtd.objects OWNER TO thommcgrath;
+
+--
+-- Name: content_update_times; Type: VIEW; Schema: public; Owner: thommcgrath
+--
+
+CREATE VIEW public.content_update_times AS
+ SELECT objects.last_update,
+    objects.mod_id AS content_pack_id,
+    GREATEST(objects.min_version, content_packs.min_version) AS min_version
+   FROM (ark.objects
+     JOIN public.content_packs ON ((objects.mod_id = content_packs.content_pack_id)))
+  WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true))
+UNION
+ SELECT deletions.action_time AS last_update,
+    NULL::uuid AS content_pack_id,
+    deletions.min_version
+   FROM public.deletions
+UNION
+ SELECT game_variables.last_update,
+    NULL::uuid AS content_pack_id,
+    0 AS min_version
+   FROM ark.game_variables
+UNION
+ SELECT content_packs.last_update,
+    content_packs.content_pack_id,
+    content_packs.min_version
+   FROM public.content_packs
+  WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true))
+UNION
+ SELECT maps.last_update,
+    maps.mod_id AS content_pack_id,
+    content_packs.min_version
+   FROM (ark.maps
+     JOIN public.content_packs ON ((maps.mod_id = content_packs.content_pack_id)))
+  WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true))
+UNION
+ SELECT events.last_update,
+    NULL::uuid AS content_pack_id,
+    0 AS min_version
+   FROM ark.events
+UNION
+ SELECT colors.last_update,
+    NULL::uuid AS content_pack_id,
+    0 AS min_version
+   FROM ark.colors
+UNION
+ SELECT color_sets.last_update,
+    NULL::uuid AS content_pack_id,
+    0 AS min_version
+   FROM ark.color_sets
+UNION
+ SELECT objects.last_update,
+    objects.content_pack_id,
+    GREATEST(objects.min_version, content_packs.min_version) AS min_version
+   FROM (sdtd.objects
+     JOIN public.content_packs ON ((objects.content_pack_id = content_packs.content_pack_id)))
+  WHERE ((content_packs.confirmed = true) AND (content_packs.include_in_deltas = true));
+
+
+ALTER TABLE public.content_update_times OWNER TO thommcgrath;
+
+--
 -- Name: corrupt_files; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -2199,23 +2751,6 @@ CREATE TABLE public.currencies (
 
 
 ALTER TABLE public.currencies OWNER TO thommcgrath;
-
---
--- Name: deletions; Type: VIEW; Schema: public; Owner: thommcgrath
---
-
-CREATE VIEW public.deletions AS
- SELECT deletions.object_id,
-    'Ark'::text AS game_id,
-    deletions.from_table,
-    deletions.label,
-    GREATEST(deletions.min_version, 10600000) AS min_version,
-    deletions.action_time,
-    deletions.tag
-   FROM ark.deletions;
-
-
-ALTER TABLE public.deletions OWNER TO thommcgrath;
 
 --
 -- Name: download_signatures; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -2273,6 +2808,22 @@ CREATE TABLE public.email_verification (
 
 
 ALTER TABLE public.email_verification OWNER TO thommcgrath;
+
+--
+-- Name: email_verification_codes; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.email_verification_codes (
+    email_id uuid NOT NULL,
+    code_hash text NOT NULL,
+    code_encrypted text,
+    expiration timestamp with time zone DEFAULT (CURRENT_TIMESTAMP + '04:00:00'::interval) NOT NULL,
+    verified boolean DEFAULT false NOT NULL,
+    return_uri text
+);
+
+
+ALTER TABLE public.email_verification_codes OWNER TO thommcgrath;
 
 --
 -- Name: endpoint_git_hashes; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -2421,6 +2972,23 @@ CREATE TABLE public.imported_obelisk_files (
 ALTER TABLE public.imported_obelisk_files OWNER TO thommcgrath;
 
 --
+-- Name: legacy_sessions; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.legacy_sessions (
+    session_id public.citext NOT NULL,
+    user_id uuid NOT NULL,
+    valid_until timestamp with time zone,
+    remote_ip inet,
+    remote_country text,
+    remote_agent text,
+    CONSTRAINT sessions_check CHECK ((((remote_ip IS NULL) AND (remote_country IS NULL) AND (remote_agent IS NULL)) OR ((remote_ip IS NOT NULL) AND (remote_country IS NOT NULL) AND (remote_agent IS NOT NULL))))
+);
+
+
+ALTER TABLE public.legacy_sessions OWNER TO thommcgrath;
+
+--
 -- Name: licenses; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -2567,6 +3135,44 @@ CREATE TABLE public.products (
 ALTER TABLE public.products OWNER TO thommcgrath;
 
 --
+-- Name: project_members; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.project_members (
+    project_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    role public.project_role NOT NULL,
+    encrypted_password text,
+    fingerprint text,
+    CONSTRAINT project_members_check CHECK ((((encrypted_password IS NULL) AND (fingerprint IS NULL)) OR ((encrypted_password IS NOT NULL) AND (fingerprint IS NOT NULL))))
+);
+
+
+ALTER TABLE public.project_members OWNER TO thommcgrath;
+
+--
+-- Name: projects; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.projects (
+    project_id uuid NOT NULL,
+    game_id public.game_identifier NOT NULL,
+    title public.citext NOT NULL,
+    description public.citext NOT NULL,
+    console_safe boolean NOT NULL,
+    last_update timestamp with time zone NOT NULL,
+    revision integer DEFAULT 1 NOT NULL,
+    download_count integer DEFAULT 0 NOT NULL,
+    published public.publish_status DEFAULT 'Private'::public.publish_status NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    game_specific jsonb DEFAULT '{}'::jsonb NOT NULL,
+    storage_path text
+);
+
+
+ALTER TABLE public.projects OWNER TO thommcgrath;
+
+--
 -- Name: purchase_codes_archive; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -2643,6 +3249,7 @@ CREATE TABLE public.purchases (
     currency public.citext NOT NULL,
     issued boolean DEFAULT false NOT NULL,
     notes text,
+    first_used timestamp with time zone,
     CONSTRAINT purchases_currency_check CHECK ((length((currency)::text) = 3))
 );
 
@@ -2763,19 +3370,19 @@ UNION
     blueprints.mod_id
    FROM ark.blueprints
 UNION
- SELECT mods.mod_id AS id,
-    mods.name AS title,
+ SELECT mods_legacy.mod_id AS id,
+    mods_legacy.name AS title,
     ''::text AS body,
     ''::text AS preview,
     ''::text AS meta_content,
     'Mod'::text AS type,
     ''::text AS subtype,
-    ('/mods/'::text || mods.mod_id) AS uri,
+    ('/mods/'::text || mods_legacy.mod_id) AS uri,
     0 AS min_version,
     99999999 AS max_version,
-    mods.mod_id
-   FROM ark.mods
-  WHERE (mods.confirmed = true)
+    mods_legacy.mod_id
+   FROM ark.mods_legacy
+  WHERE (mods_legacy.confirmed = true)
 UNION
  SELECT projects.project_id AS id,
     projects.title,
@@ -2809,18 +3416,38 @@ CREATE TABLE public.search_sync (
 ALTER TABLE public.search_sync OWNER TO thommcgrath;
 
 --
--- Name: sessions; Type: TABLE; Schema: public; Owner: thommcgrath
+-- Name: service_tokens; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
-CREATE TABLE public.sessions (
-    session_id public.citext NOT NULL,
+CREATE TABLE public.service_tokens (
+    token_id uuid NOT NULL,
     user_id uuid NOT NULL,
-    valid_until timestamp with time zone,
-    remote_ip inet,
-    remote_country text,
-    remote_agent text,
-    CONSTRAINT sessions_check CHECK ((((remote_ip IS NULL) AND (remote_country IS NULL) AND (remote_agent IS NULL)) OR ((remote_ip IS NOT NULL) AND (remote_country IS NOT NULL) AND (remote_agent IS NOT NULL))))
+    provider public.token_provider NOT NULL,
+    type public.token_type NOT NULL,
+    access_token text NOT NULL,
+    refresh_token text,
+    access_token_expiration timestamp with time zone,
+    refresh_token_expiration timestamp with time zone,
+    provider_specific jsonb DEFAULT '{}'::jsonb NOT NULL,
+    encryption_key text NOT NULL,
+    CONSTRAINT service_tokens_check CHECK ((((type = 'OAuth'::public.token_type) AND (refresh_token IS NOT NULL) AND (access_token_expiration IS NOT NULL) AND (refresh_token_expiration IS NOT NULL)) OR ((type = 'Static'::public.token_type) AND (refresh_token IS NULL) AND (access_token_expiration IS NULL) AND (refresh_token_expiration IS NULL))))
 );
+
+
+ALTER TABLE public.service_tokens OWNER TO thommcgrath;
+
+--
+-- Name: sessions; Type: VIEW; Schema: public; Owner: thommcgrath
+--
+
+CREATE VIEW public.sessions AS
+ SELECT access_tokens.access_token_hash AS session_id,
+    access_tokens.user_id,
+    access_tokens.access_token_expiration AS valid_until,
+    access_tokens.remote_ip,
+    access_tokens.remote_country,
+    access_tokens.remote_agent
+   FROM public.access_tokens;
 
 
 ALTER TABLE public.sessions OWNER TO thommcgrath;
@@ -3082,7 +3709,8 @@ CREATE TABLE public.users (
     enabled boolean DEFAULT true NOT NULL,
     require_password_change boolean DEFAULT false NOT NULL,
     two_factor_key text,
-    CONSTRAINT users_check CHECK ((((email_id IS NULL) AND (username IS NULL) AND (private_key_iterations IS NULL) AND (private_key_salt IS NULL) AND (private_key IS NULL)) OR ((email_id IS NOT NULL) AND (username IS NOT NULL) AND (private_key_iterations IS NOT NULL) AND (private_key_salt IS NOT NULL) AND (private_key IS NOT NULL))))
+    CONSTRAINT users_check CHECK ((((email_id IS NULL) AND (username IS NULL) AND (private_key_iterations IS NULL) AND (private_key_salt IS NULL) AND (private_key IS NULL)) OR ((email_id IS NOT NULL) AND (username IS NOT NULL) AND (private_key_iterations IS NOT NULL) AND (private_key_salt IS NOT NULL) AND (private_key IS NOT NULL)))),
+    CONSTRAINT users_username_check CHECK ((public.strpos(username, '#'::public.citext) = 0))
 );
 
 
@@ -3101,6 +3729,29 @@ CREATE TABLE public.wordlist (
 
 
 ALTER TABLE public.wordlist OWNER TO thommcgrath;
+
+--
+-- Name: config_options; Type: TABLE; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE TABLE sdtd.config_options (
+    file text DEFAULT 'serverconfig.xml'::text NOT NULL,
+    key text NOT NULL,
+    value_type sdtd.config_option_value_type NOT NULL,
+    max_allowed integer DEFAULT 1,
+    description text NOT NULL,
+    default_value text NOT NULL,
+    native_editor_version integer,
+    ui_group public.citext,
+    constraints jsonb,
+    custom_sort public.citext,
+    supported_versions int4range DEFAULT '(,)'::int4range NOT NULL,
+    CONSTRAINT config_options_max_allowed_check CHECK (((max_allowed IS NULL) OR (max_allowed >= 1)))
+)
+INHERITS (sdtd.objects);
+
+
+ALTER TABLE sdtd.config_options OWNER TO thommcgrath;
 
 --
 -- Name: creatures object_id; Type: DEFAULT; Schema: ark; Owner: thommcgrath
@@ -3135,6 +3786,13 @@ ALTER TABLE ONLY ark.creatures ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f
 --
 
 ALTER TABLE ONLY ark.creatures ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
+-- Name: deletions action_time; Type: DEFAULT; Schema: ark; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY ark.deletions ALTER COLUMN action_time SET DEFAULT CURRENT_TIMESTAMP(0);
 
 
 --
@@ -3418,6 +4076,27 @@ ALTER TABLE ONLY ark.spawn_points ALTER COLUMN tags SET DEFAULT '{}'::public.cit
 
 
 --
+-- Name: config_options min_version; Type: DEFAULT; Schema: sdtd; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sdtd.config_options ALTER COLUMN min_version SET DEFAULT 10700000;
+
+
+--
+-- Name: config_options last_update; Type: DEFAULT; Schema: sdtd; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sdtd.config_options ALTER COLUMN last_update SET DEFAULT CURRENT_TIMESTAMP;
+
+
+--
+-- Name: config_options tags; Type: DEFAULT; Schema: sdtd; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sdtd.config_options ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: color_sets color_sets_class_string_key; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
 --
 
@@ -3479,14 +4158,6 @@ ALTER TABLE ONLY ark.creature_stats
 
 ALTER TABLE ONLY ark.creatures
     ADD CONSTRAINT creatures_pkey PRIMARY KEY (object_id);
-
-
---
--- Name: deletions deletions_pkey; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
---
-
-ALTER TABLE ONLY ark.deletions
-    ADD CONSTRAINT deletions_pkey PRIMARY KEY (object_id, from_table);
 
 
 --
@@ -3682,26 +4353,26 @@ ALTER TABLE ONLY ark.mod_relationships
 
 
 --
--- Name: mods mods_pkey; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
+-- Name: mods_legacy mods_pkey; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY ark.mods
+ALTER TABLE ONLY ark.mods_legacy
     ADD CONSTRAINT mods_pkey PRIMARY KEY (mod_id);
 
 
 --
--- Name: mods mods_prefix_key; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
+-- Name: mods_legacy mods_prefix_key; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY ark.mods
+ALTER TABLE ONLY ark.mods_legacy
     ADD CONSTRAINT mods_prefix_key UNIQUE (prefix);
 
 
 --
--- Name: mods mods_tag_key; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
+-- Name: mods_legacy mods_tag_key; Type: CONSTRAINT; Schema: ark; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY ark.mods
+ALTER TABLE ONLY ark.mods_legacy
     ADD CONSTRAINT mods_tag_key UNIQUE (tag);
 
 
@@ -3794,6 +4465,22 @@ ALTER TABLE ONLY ark.spawn_points
 
 
 --
+-- Name: access_tokens access_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.access_tokens
+    ADD CONSTRAINT access_tokens_pkey PRIMARY KEY (access_token_hash);
+
+
+--
+-- Name: access_tokens access_tokens_refresh_token_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.access_tokens
+    ADD CONSTRAINT access_tokens_refresh_token_hash_key UNIQUE (refresh_token_hash);
+
+
+--
 -- Name: affiliate_links affiliate_links_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -3815,6 +4502,54 @@ ALTER TABLE ONLY public.affiliate_tracking
 
 ALTER TABLE ONLY public.affiliate_tracking
     ADD CONSTRAINT affiliate_tracking_pkey PRIMARY KEY (track_id);
+
+
+--
+-- Name: application_auth_flows application_auth_flows_code_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.application_auth_flows
+    ADD CONSTRAINT application_auth_flows_code_hash_key UNIQUE (code_hash);
+
+
+--
+-- Name: application_auth_flows application_auth_flows_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.application_auth_flows
+    ADD CONSTRAINT application_auth_flows_pkey PRIMARY KEY (flow_id);
+
+
+--
+-- Name: application_auth_flows application_auth_flows_verifier_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.application_auth_flows
+    ADD CONSTRAINT application_auth_flows_verifier_hash_key UNIQUE (verifier_hash);
+
+
+--
+-- Name: application_callbacks application_callbacks_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.application_callbacks
+    ADD CONSTRAINT application_callbacks_pkey PRIMARY KEY (application_id, url);
+
+
+--
+-- Name: application_callbacks application_callbacks_url_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.application_callbacks
+    ADD CONSTRAINT application_callbacks_url_key UNIQUE (url);
+
+
+--
+-- Name: applications applications_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.applications
+    ADD CONSTRAINT applications_pkey PRIMARY KEY (application_id);
 
 
 --
@@ -3847,6 +4582,22 @@ ALTER TABLE ONLY public.blog_articles
 
 ALTER TABLE ONLY public.client_notices
     ADD CONSTRAINT client_notices_pkey PRIMARY KEY (notice_id);
+
+
+--
+-- Name: content_pack_discovery_results content_pack_discovery_results_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.content_pack_discovery_results
+    ADD CONSTRAINT content_pack_discovery_results_pkey PRIMARY KEY (content_pack_id);
+
+
+--
+-- Name: content_packs content_packs_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.content_packs
+    ADD CONSTRAINT content_packs_pkey PRIMARY KEY (content_pack_id);
 
 
 --
@@ -3895,6 +4646,14 @@ ALTER TABLE ONLY public.download_urls
 
 ALTER TABLE ONLY public.email_addresses
     ADD CONSTRAINT email_addresses_pkey PRIMARY KEY (email_id);
+
+
+--
+-- Name: email_verification_codes email_verification_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.email_verification_codes
+    ADD CONSTRAINT email_verification_codes_pkey PRIMARY KEY (code_hash);
 
 
 --
@@ -3954,14 +4713,6 @@ ALTER TABLE ONLY public.gift_codes
 
 
 --
--- Name: guest_projects guest_projects_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
---
-
-ALTER TABLE ONLY public.guest_projects
-    ADD CONSTRAINT guest_projects_pkey PRIMARY KEY (project_id, user_id);
-
-
---
 -- Name: help_topics help_topics_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -4015,6 +4766,14 @@ ALTER TABLE ONLY public.product_prices
 
 ALTER TABLE ONLY public.products
     ADD CONSTRAINT products_pkey PRIMARY KEY (product_id);
+
+
+--
+-- Name: project_members project_members_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.project_members
+    ADD CONSTRAINT project_members_pkey PRIMARY KEY (project_id, user_id);
 
 
 --
@@ -4090,10 +4849,18 @@ ALTER TABLE ONLY public.search_sync
 
 
 --
--- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: service_tokens service_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY public.sessions
+ALTER TABLE ONLY public.service_tokens
+    ADD CONSTRAINT service_tokens_pkey PRIMARY KEY (token_id);
+
+
+--
+-- Name: legacy_sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.legacy_sessions
     ADD CONSTRAINT sessions_pkey PRIMARY KEY (session_id);
 
 
@@ -4306,6 +5073,30 @@ ALTER TABLE ONLY public.wordlist
 
 
 --
+-- Name: config_options config_options_file_key_supported_versions_excl; Type: CONSTRAINT; Schema: sdtd; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sdtd.config_options
+    ADD CONSTRAINT config_options_file_key_supported_versions_excl EXCLUDE USING gist (file WITH =, key WITH =, supported_versions WITH &&);
+
+
+--
+-- Name: config_options config_options_pkey; Type: CONSTRAINT; Schema: sdtd; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sdtd.config_options
+    ADD CONSTRAINT config_options_pkey PRIMARY KEY (object_id);
+
+
+--
+-- Name: objects objects_pkey; Type: CONSTRAINT; Schema: sdtd; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sdtd.objects
+    ADD CONSTRAINT objects_pkey PRIMARY KEY (object_id);
+
+
+--
 -- Name: ark_mod_relationships_first_mod_id_idx; Type: INDEX; Schema: ark; Owner: thommcgrath
 --
 
@@ -4477,14 +5268,14 @@ CREATE UNIQUE INDEX loot_sources_sort_idx ON ark.loot_sources USING btree (sort)
 -- Name: mods_workshop_id_confirmed_uidx; Type: INDEX; Schema: ark; Owner: thommcgrath
 --
 
-CREATE UNIQUE INDEX mods_workshop_id_confirmed_uidx ON ark.mods USING btree (abs(workshop_id), confirmed) WHERE (confirmed = true);
+CREATE UNIQUE INDEX mods_workshop_id_confirmed_uidx ON ark.mods_legacy USING btree (abs(workshop_id), confirmed) WHERE (confirmed = true);
 
 
 --
 -- Name: mods_workshop_id_user_id_uidx; Type: INDEX; Schema: ark; Owner: thommcgrath
 --
 
-CREATE UNIQUE INDEX mods_workshop_id_user_id_uidx ON ark.mods USING btree (abs(workshop_id), user_id);
+CREATE UNIQUE INDEX mods_workshop_id_user_id_uidx ON ark.mods_legacy USING btree (abs(workshop_id), user_id);
 
 
 --
@@ -4544,6 +5335,34 @@ CREATE UNIQUE INDEX spawn_points_path_legacy_uidx ON ark.spawn_points USING btre
 
 
 --
+-- Name: access_tokens_application_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX access_tokens_application_id_idx ON public.access_tokens USING btree (application_id);
+
+
+--
+-- Name: content_pack_discovery_results_marketplace_marketplace_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX content_pack_discovery_results_marketplace_marketplace_id_idx ON public.content_pack_discovery_results USING btree (marketplace, marketplace_id);
+
+
+--
+-- Name: content_packs_marketplace_marketplace_id_confirmed_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX content_packs_marketplace_marketplace_id_confirmed_idx ON public.content_packs USING btree (marketplace, marketplace_id, confirmed) WHERE (confirmed = true);
+
+
+--
+-- Name: content_packs_marketplace_marketplace_id_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX content_packs_marketplace_marketplace_id_user_id_idx ON public.content_packs USING btree (marketplace, marketplace_id, user_id);
+
+
+--
 -- Name: download_signatures_download_id_format_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -4593,10 +5412,17 @@ CREATE UNIQUE INDEX product_prices_product_id_currency_idx ON public.product_pri
 
 
 --
--- Name: projects_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+-- Name: project_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
-CREATE INDEX projects_user_id_idx ON public.projects USING btree (user_id);
+CREATE INDEX project_id_idx ON public.project_members USING btree (project_id);
+
+
+--
+-- Name: project_id_user_id_role_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX project_id_user_id_role_idx ON public.project_members USING btree (project_id, user_id, role) WHERE (role = 'Owner'::public.project_role);
 
 
 --
@@ -4611,6 +5437,13 @@ CREATE UNIQUE INDEX public_game_id_tag_idx ON public.products USING btree (game_
 --
 
 CREATE INDEX purchases_purchaser_email_idx ON public.purchases USING btree (purchaser_email);
+
+
+--
+-- Name: service_tokens_user_id_provider_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX service_tokens_user_id_provider_idx ON public.service_tokens USING btree (user_id, provider);
 
 
 --
@@ -4635,6 +5468,13 @@ CREATE INDEX trusted_devices_user_id_idx ON public.trusted_devices USING btree (
 
 
 --
+-- Name: update_files_created_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX update_files_created_idx ON public.update_files USING btree (created);
+
+
+--
 -- Name: update_files_unique_completes_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -4646,6 +5486,13 @@ CREATE UNIQUE INDEX update_files_unique_completes_idx ON public.update_files USI
 --
 
 CREATE UNIQUE INDEX update_files_unique_deltas_idx ON public.update_files USING btree (created, version) WHERE (type = 'Delta'::public.update_file_type);
+
+
+--
+-- Name: update_files_version_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX update_files_version_idx ON public.update_files USING btree (version);
 
 
 --
@@ -4663,10 +5510,31 @@ CREATE INDEX user_backup_codes_user_id_idx ON public.user_backup_codes USING btr
 
 
 --
+-- Name: user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX user_id_idx ON public.project_members USING btree (user_id);
+
+
+--
 -- Name: usercloud_cache_remote_path_hostname_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
 CREATE UNIQUE INDEX usercloud_cache_remote_path_hostname_idx ON public.usercloud_cache USING btree (remote_path, hostname);
+
+
+--
+-- Name: deletions ark_deletions_delete_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
+--
+
+CREATE TRIGGER ark_deletions_delete_trigger INSTEAD OF DELETE ON ark.deletions FOR EACH ROW EXECUTE FUNCTION ark.deletions_delete();
+
+
+--
+-- Name: deletions ark_deletions_insert_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
+--
+
+CREATE TRIGGER ark_deletions_insert_trigger INSTEAD OF INSERT ON ark.deletions FOR EACH ROW EXECUTE FUNCTION ark.deletions_insert();
 
 
 --
@@ -4768,13 +5636,6 @@ CREATE TRIGGER diets_before_update_trigger BEFORE UPDATE ON ark.diets FOR EACH R
 
 
 --
--- Name: mods enforce_mod_owner; Type: TRIGGER; Schema: ark; Owner: thommcgrath
---
-
-CREATE TRIGGER enforce_mod_owner BEFORE INSERT OR UPDATE ON ark.mods FOR EACH ROW EXECUTE FUNCTION ark.enforce_mod_owner();
-
-
---
 -- Name: engrams engrams_after_delete_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
 --
 
@@ -4873,6 +5734,27 @@ CREATE TRIGGER ini_options_before_update_trigger BEFORE UPDATE ON ark.ini_option
 
 
 --
+-- Name: mods legacy_mod_delete_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
+--
+
+CREATE TRIGGER legacy_mod_delete_trigger INSTEAD OF DELETE ON ark.mods FOR EACH ROW EXECUTE FUNCTION ark.legacy_mod_delete();
+
+
+--
+-- Name: mods legacy_mod_insert_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
+--
+
+CREATE TRIGGER legacy_mod_insert_trigger INSTEAD OF INSERT ON ark.mods FOR EACH ROW EXECUTE FUNCTION ark.legacy_mod_insert();
+
+
+--
+-- Name: mods legacy_mod_update_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
+--
+
+CREATE TRIGGER legacy_mod_update_trigger INSTEAD OF UPDATE ON ark.mods FOR EACH ROW EXECUTE FUNCTION ark.legacy_mod_update();
+
+
+--
 -- Name: loot_item_set_entries loot_item_set_entries_update_timestamp_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
 --
 
@@ -4961,34 +5843,6 @@ CREATE TRIGGER loot_sources_search_sync_update_trigger BEFORE UPDATE ON ark.loot
 --
 
 CREATE TRIGGER maps_before_update_trigger BEFORE INSERT OR UPDATE ON ark.maps FOR EACH ROW EXECUTE FUNCTION ark.update_last_update_column();
-
-
---
--- Name: mods mods_after_delete_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
---
-
-CREATE TRIGGER mods_after_delete_trigger AFTER DELETE ON ark.mods FOR EACH ROW EXECUTE FUNCTION ark.mods_delete_trigger();
-
-
---
--- Name: mods mods_before_update_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
---
-
-CREATE TRIGGER mods_before_update_trigger BEFORE INSERT OR UPDATE ON ark.mods FOR EACH ROW EXECUTE FUNCTION ark.generic_update_trigger();
-
-
---
--- Name: mods mods_search_sync_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
---
-
-CREATE TRIGGER mods_search_sync_trigger BEFORE INSERT OR DELETE ON ark.mods FOR EACH ROW EXECUTE FUNCTION ark.mods_search_sync();
-
-
---
--- Name: mods mods_search_sync_update_trigger; Type: TRIGGER; Schema: ark; Owner: thommcgrath
---
-
-CREATE TRIGGER mods_search_sync_update_trigger BEFORE UPDATE ON ark.mods FOR EACH ROW WHEN (((old.name IS DISTINCT FROM new.name) OR (old.confirmed IS DISTINCT FROM new.confirmed))) EXECUTE FUNCTION ark.mods_search_sync();
 
 
 --
@@ -5125,6 +5979,34 @@ CREATE TRIGGER client_notices_before_update_trigger BEFORE INSERT OR UPDATE ON p
 
 
 --
+-- Name: content_packs content_packs_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER content_packs_after_delete_trigger AFTER DELETE ON public.content_packs FOR EACH ROW EXECUTE FUNCTION public.content_packs_delete_trigger();
+
+
+--
+-- Name: content_packs content_packs_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER content_packs_before_update_trigger BEFORE INSERT OR UPDATE ON public.content_packs FOR EACH ROW EXECUTE FUNCTION public.generic_update_trigger();
+
+
+--
+-- Name: content_packs content_packs_search_sync_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER content_packs_search_sync_trigger BEFORE INSERT OR DELETE ON public.content_packs FOR EACH ROW EXECUTE FUNCTION public.content_packs_search_sync();
+
+
+--
+-- Name: content_packs content_packs_search_sync_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER content_packs_search_sync_update_trigger BEFORE UPDATE ON public.content_packs FOR EACH ROW WHEN (((old.name IS DISTINCT FROM new.name) OR (old.confirmed IS DISTINCT FROM new.confirmed))) EXECUTE FUNCTION public.content_packs_search_sync();
+
+
+--
 -- Name: blog_articles create_slug_from_article_subject_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -5146,6 +6028,13 @@ CREATE TRIGGER create_slug_from_video_title_trigger BEFORE INSERT ON public.supp
 
 
 --
+-- Name: content_packs enforce_content_pack_owner; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER enforce_content_pack_owner BEFORE INSERT OR UPDATE ON public.content_packs FOR EACH ROW EXECUTE FUNCTION public.enforce_content_pack_owner();
+
+
+--
 -- Name: help_topics help_topics_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -5157,6 +6046,27 @@ CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON publ
 --
 
 CREATE TRIGGER insert_blog_article_timestamp_trigger BEFORE INSERT ON public.blog_articles FOR EACH ROW EXECUTE FUNCTION public.update_blog_article_timestamp();
+
+
+--
+-- Name: sessions legacy_session_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER legacy_session_delete_trigger INSTEAD OF DELETE ON public.sessions FOR EACH ROW EXECUTE FUNCTION public.legacy_session_delete();
+
+
+--
+-- Name: sessions legacy_session_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER legacy_session_insert_trigger INSTEAD OF INSERT ON public.sessions FOR EACH ROW EXECUTE FUNCTION public.legacy_session_insert();
+
+
+--
+-- Name: sessions legacy_session_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER legacy_session_update_trigger INSTEAD OF UPDATE ON public.sessions FOR EACH ROW EXECUTE FUNCTION public.legacy_session_update();
 
 
 --
@@ -5237,6 +6147,27 @@ CREATE TRIGGER update_support_image_associations_trigger BEFORE INSERT OR UPDATE
 
 
 --
+-- Name: config_options after_delete_trigger; Type: TRIGGER; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE TRIGGER after_delete_trigger AFTER DELETE ON sdtd.config_options FOR EACH ROW EXECUTE FUNCTION sdtd.object_delete_trigger();
+
+
+--
+-- Name: config_options before_insert_trigger; Type: TRIGGER; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE TRIGGER before_insert_trigger BEFORE INSERT ON sdtd.config_options FOR EACH ROW EXECUTE FUNCTION sdtd.object_insert_trigger();
+
+
+--
+-- Name: config_options before_update_trigger; Type: TRIGGER; Schema: sdtd; Owner: thommcgrath
+--
+
+CREATE TRIGGER before_update_trigger BEFORE UPDATE ON sdtd.config_options FOR EACH ROW EXECUTE FUNCTION sdtd.object_update_trigger();
+
+
+--
 -- Name: crafting_costs crafting_costs_engram_id_fkey; Type: FK CONSTRAINT; Schema: ark; Owner: thommcgrath
 --
 
@@ -5281,7 +6212,7 @@ ALTER TABLE ONLY ark.creature_stats
 --
 
 ALTER TABLE ONLY ark.creatures
-    ADD CONSTRAINT creatures_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT creatures_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5321,7 +6252,7 @@ ALTER TABLE ONLY ark.diet_contents
 --
 
 ALTER TABLE ONLY ark.diets
-    ADD CONSTRAINT diets_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT diets_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5329,7 +6260,7 @@ ALTER TABLE ONLY ark.diets
 --
 
 ALTER TABLE ONLY ark.engrams
-    ADD CONSTRAINT engrams_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT engrams_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5385,7 +6316,7 @@ ALTER TABLE ONLY ark.event_rates
 --
 
 ALTER TABLE ONLY ark.ini_options
-    ADD CONSTRAINT ini_options_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT ini_options_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5425,7 +6356,7 @@ ALTER TABLE ONLY ark.loot_item_sets
 --
 
 ALTER TABLE ONLY ark.loot_source_icons
-    ADD CONSTRAINT loot_source_icons_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT loot_source_icons_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5437,11 +6368,11 @@ ALTER TABLE ONLY ark.loot_sources
 
 
 --
--- Name: loot_sources loot_sources_mod_id_fkey1; Type: FK CONSTRAINT; Schema: ark; Owner: thommcgrath
+-- Name: loot_sources loot_sources_mod_id_fkey; Type: FK CONSTRAINT; Schema: ark; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY ark.loot_sources
-    ADD CONSTRAINT loot_sources_mod_id_fkey1 FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT loot_sources_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5449,7 +6380,7 @@ ALTER TABLE ONLY ark.loot_sources
 --
 
 ALTER TABLE ONLY ark.maps
-    ADD CONSTRAINT maps_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT maps_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5457,7 +6388,7 @@ ALTER TABLE ONLY ark.maps
 --
 
 ALTER TABLE ONLY ark.mod_relationships
-    ADD CONSTRAINT mod_relationships_first_mod_id_fkey FOREIGN KEY (first_mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT mod_relationships_first_mod_id_fkey FOREIGN KEY (first_mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5465,14 +6396,14 @@ ALTER TABLE ONLY ark.mod_relationships
 --
 
 ALTER TABLE ONLY ark.mod_relationships
-    ADD CONSTRAINT mod_relationships_second_mod_id_fkey FOREIGN KEY (second_mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT mod_relationships_second_mod_id_fkey FOREIGN KEY (second_mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
--- Name: mods mods_user_id_fkey; Type: FK CONSTRAINT; Schema: ark; Owner: thommcgrath
+-- Name: mods_legacy mods_user_id_fkey; Type: FK CONSTRAINT; Schema: ark; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY ark.mods
+ALTER TABLE ONLY ark.mods_legacy
     ADD CONSTRAINT mods_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
@@ -5481,7 +6412,7 @@ ALTER TABLE ONLY ark.mods
 --
 
 ALTER TABLE ONLY ark.objects
-    ADD CONSTRAINT objects_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT objects_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5489,7 +6420,7 @@ ALTER TABLE ONLY ark.objects
 --
 
 ALTER TABLE ONLY ark.preset_modifiers
-    ADD CONSTRAINT preset_modifiers_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT preset_modifiers_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5497,7 +6428,7 @@ ALTER TABLE ONLY ark.preset_modifiers
 --
 
 ALTER TABLE ONLY ark.presets
-    ADD CONSTRAINT presets_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT presets_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5593,7 +6524,15 @@ ALTER TABLE ONLY ark.spawn_point_sets
 --
 
 ALTER TABLE ONLY ark.spawn_points
-    ADD CONSTRAINT spawn_points_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES ark.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT spawn_points_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: access_tokens access_tokens_application_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.access_tokens
+    ADD CONSTRAINT access_tokens_application_id_fkey FOREIGN KEY (application_id) REFERENCES public.applications(application_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -5621,6 +6560,46 @@ ALTER TABLE ONLY public.affiliate_tracking
 
 
 --
+-- Name: application_auth_flows application_auth_flows_application_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.application_auth_flows
+    ADD CONSTRAINT application_auth_flows_application_id_fkey FOREIGN KEY (application_id) REFERENCES public.applications(application_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: application_auth_flows application_auth_flows_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.application_auth_flows
+    ADD CONSTRAINT application_auth_flows_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: application_callbacks application_callbacks_application_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.application_callbacks
+    ADD CONSTRAINT application_callbacks_application_id_fkey FOREIGN KEY (application_id) REFERENCES public.applications(application_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: applications applications_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.applications
+    ADD CONSTRAINT applications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: content_packs content_packs_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.content_packs
+    ADD CONSTRAINT content_packs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE;
+
+
+--
 -- Name: download_signatures download_signatures_download_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -5634,6 +6613,14 @@ ALTER TABLE ONLY public.download_signatures
 
 ALTER TABLE ONLY public.download_urls
     ADD CONSTRAINT download_urls_update_id_fkey FOREIGN KEY (update_id) REFERENCES public.updates(update_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: email_verification_codes email_verification_codes_email_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.email_verification_codes
+    ADD CONSTRAINT email_verification_codes_email_id_fkey FOREIGN KEY (email_id) REFERENCES public.email_addresses(email_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -5717,22 +6704,6 @@ ALTER TABLE ONLY public.gift_codes
 
 
 --
--- Name: guest_projects guest_projects_project_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
---
-
-ALTER TABLE ONLY public.guest_projects
-    ADD CONSTRAINT guest_projects_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(project_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: guest_projects guest_projects_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
---
-
-ALTER TABLE ONLY public.guest_projects
-    ADD CONSTRAINT guest_projects_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: licenses licenses_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -5765,19 +6736,27 @@ ALTER TABLE ONLY public.product_prices
 
 
 --
+-- Name: project_members project_members_project_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.project_members
+    ADD CONSTRAINT project_members_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(project_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: project_members project_members_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.project_members
+    ADD CONSTRAINT project_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: projects projects_storage_path_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.projects
     ADD CONSTRAINT projects_storage_path_fkey FOREIGN KEY (storage_path) REFERENCES public.usercloud(remote_path) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: projects projects_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
---
-
-ALTER TABLE ONLY public.projects
-    ADD CONSTRAINT projects_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -5845,10 +6824,18 @@ ALTER TABLE ONLY public.purchases
 
 
 --
--- Name: sessions sessions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: service_tokens service_tokens_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY public.sessions
+ALTER TABLE ONLY public.service_tokens
+    ADD CONSTRAINT service_tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: legacy_sessions sessions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.legacy_sessions
     ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
@@ -5965,12 +6952,29 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: objects objects_content_pack_id_fkey; Type: FK CONSTRAINT; Schema: sdtd; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY sdtd.objects
+    ADD CONSTRAINT objects_content_pack_id_fkey FOREIGN KEY (content_pack_id) REFERENCES public.content_packs(content_pack_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: SCHEMA ark; Type: ACL; Schema: -; Owner: thommcgrath
 --
 
 GRANT USAGE ON SCHEMA ark TO thezaz_website;
 GRANT USAGE ON SCHEMA ark TO beacon_updater;
 GRANT USAGE ON SCHEMA ark TO beacon_readonly;
+
+
+--
+-- Name: SCHEMA sdtd; Type: ACL; Schema: -; Owner: thommcgrath
+--
+
+GRANT USAGE ON SCHEMA sdtd TO thezaz_website;
+GRANT USAGE ON SCHEMA sdtd TO beacon_updater;
+GRANT USAGE ON SCHEMA sdtd TO beacon_readonly;
 
 
 --
@@ -6070,12 +7074,19 @@ GRANT SELECT ON TABLE ark.creature_stats TO beacon_readonly;
 
 
 --
+-- Name: TABLE deletions; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.deletions TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.deletions TO thezaz_website;
+
+
+--
 -- Name: TABLE deletions; Type: ACL; Schema: ark; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.deletions TO thezaz_website;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.deletions TO beacon_updater;
 GRANT SELECT ON TABLE ark.deletions TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE ON TABLE ark.deletions TO thezaz_website;
 
 
 --
@@ -6196,12 +7207,28 @@ GRANT SELECT ON TABLE ark.mod_relationships TO beacon_readonly;
 
 
 --
+-- Name: TABLE content_packs; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.content_packs TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.content_packs TO thezaz_website;
+
+
+--
 -- Name: TABLE mods; Type: ACL; Schema: ark; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods TO thezaz_website;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods TO beacon_updater;
 GRANT SELECT ON TABLE ark.mods TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods TO thezaz_website;
+
+
+--
+-- Name: TABLE mods_legacy; Type: ACL; Schema: ark; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods_legacy TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ark.mods_legacy TO beacon_updater;
+GRANT SELECT ON TABLE ark.mods_legacy TO beacon_readonly;
 
 
 --
@@ -6275,6 +7302,14 @@ GRANT SELECT ON TABLE ark.spawn_point_sets TO beacon_readonly;
 
 
 --
+-- Name: TABLE access_tokens; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.access_tokens TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.access_tokens TO thezaz_website;
+
+
+--
 -- Name: TABLE affiliate_links; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -6291,27 +7326,27 @@ GRANT SELECT ON TABLE public.affiliate_tracking TO beacon_readonly;
 
 
 --
--- Name: TABLE guest_projects; Type: ACL; Schema: public; Owner: thommcgrath
+-- Name: TABLE application_auth_flows; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.guest_projects TO thezaz_website;
-GRANT SELECT ON TABLE public.guest_projects TO beacon_readonly;
-
-
---
--- Name: TABLE projects; Type: ACL; Schema: public; Owner: thommcgrath
---
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.projects TO thezaz_website;
-GRANT SELECT ON TABLE public.projects TO beacon_readonly;
+GRANT SELECT ON TABLE public.application_auth_flows TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.application_auth_flows TO thezaz_website;
 
 
 --
--- Name: TABLE allowed_projects; Type: ACL; Schema: public; Owner: thommcgrath
+-- Name: TABLE application_callbacks; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT ON TABLE public.allowed_projects TO thezaz_website;
-GRANT SELECT ON TABLE public.allowed_projects TO beacon_readonly;
+GRANT SELECT ON TABLE public.application_callbacks TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE ON TABLE public.application_callbacks TO thezaz_website;
+
+
+--
+-- Name: TABLE applications; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.applications TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.applications TO thezaz_website;
 
 
 --
@@ -6331,6 +7366,38 @@ GRANT SELECT ON TABLE public.client_notices TO beacon_readonly;
 
 
 --
+-- Name: TABLE content_pack_discovery_results; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.content_pack_discovery_results TO beacon_readonly;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.content_pack_discovery_results TO thezaz_website;
+
+
+--
+-- Name: TABLE content_packs_combined; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.content_packs_combined TO beacon_readonly;
+GRANT SELECT ON TABLE public.content_packs_combined TO thezaz_website;
+
+
+--
+-- Name: TABLE objects; Type: ACL; Schema: sdtd; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sdtd.objects TO beacon_readonly;
+GRANT SELECT ON TABLE sdtd.objects TO thezaz_website;
+
+
+--
+-- Name: TABLE content_update_times; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.content_update_times TO beacon_readonly;
+GRANT SELECT ON TABLE public.content_update_times TO thezaz_website;
+
+
+--
 -- Name: TABLE corrupt_files; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -6344,14 +7411,6 @@ GRANT SELECT ON TABLE public.corrupt_files TO beacon_readonly;
 
 GRANT SELECT ON TABLE public.currencies TO beacon_readonly;
 GRANT SELECT,UPDATE ON TABLE public.currencies TO thezaz_website;
-
-
---
--- Name: TABLE deletions; Type: ACL; Schema: public; Owner: thommcgrath
---
-
-GRANT SELECT ON TABLE public.deletions TO thezaz_website;
-GRANT SELECT ON TABLE public.deletions TO beacon_readonly;
 
 
 --
@@ -6384,6 +7443,14 @@ GRANT SELECT ON TABLE public.email_addresses TO beacon_readonly;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_verification TO thezaz_website;
 GRANT SELECT ON TABLE public.email_verification TO beacon_readonly;
+
+
+--
+-- Name: TABLE email_verification_codes; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.email_verification_codes TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_verification_codes TO thezaz_website;
 
 
 --
@@ -6466,6 +7533,14 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.imported_obelisk_files TO beac
 
 
 --
+-- Name: TABLE legacy_sessions; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.legacy_sessions TO thezaz_website;
+GRANT SELECT ON TABLE public.legacy_sessions TO beacon_readonly;
+
+
+--
 -- Name: TABLE licenses; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -6519,6 +7594,22 @@ GRANT SELECT ON TABLE public.product_prices TO beacon_readonly;
 
 GRANT SELECT ON TABLE public.products TO thezaz_website;
 GRANT SELECT ON TABLE public.products TO beacon_readonly;
+
+
+--
+-- Name: TABLE project_members; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.project_members TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.project_members TO thezaz_website;
+
+
+--
+-- Name: TABLE projects; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.projects TO thezaz_website;
+GRANT SELECT ON TABLE public.projects TO beacon_readonly;
 
 
 --
@@ -6587,11 +7678,19 @@ GRANT SELECT ON TABLE public.search_sync TO beacon_readonly;
 
 
 --
+-- Name: TABLE service_tokens; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.service_tokens TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.service_tokens TO thezaz_website;
+
+
+--
 -- Name: TABLE sessions; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.sessions TO thezaz_website;
 GRANT SELECT ON TABLE public.sessions TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.sessions TO thezaz_website;
 
 
 --
@@ -6736,6 +7835,14 @@ GRANT SELECT ON TABLE public.users TO beacon_readonly;
 
 GRANT SELECT ON TABLE public.wordlist TO thezaz_website;
 GRANT SELECT ON TABLE public.wordlist TO beacon_readonly;
+
+
+--
+-- Name: TABLE config_options; Type: ACL; Schema: sdtd; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE sdtd.config_options TO beacon_readonly;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sdtd.config_options TO thezaz_website;
 
 
 --
