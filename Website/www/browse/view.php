@@ -34,6 +34,8 @@ $authorName = $author->IsAnonymous() ? 'Anonymous' : $author->Username();
 $maps = Map::Search(['mask' => $project->MapMask()], true);
 $baseUrl = BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->ProjectId());
 
+BeaconTemplate::SetCanonicalPath('/browse/' . urlencode($project->ProjectId()), false);
+
 ?><h1><?php echo htmlentities($project->Title()); ?><br><span class="subtitle">By <?php echo htmlentities($authorName); ?><span class="user-suffix">#<?php echo htmlentities($author->Suffix()); ?></span></span></h1>
 <h3>Description</h3>
 <div class="indent">
@@ -72,49 +74,66 @@ $baseUrl = BeaconCommon::APIDomain() . '/v4/projects/' . urlencode($project->Pro
 	$editorNames = array();
 	foreach ($editors as $name) {
 		switch ($name) {
+		case 'Ark.BreedingMultipliers':
 		case 'BreedingMultipliers':
 			$editorNames[] = 'Breeding Multipliers';
 			break;
+		case 'Ark.CraftingCosts':
 		case 'CraftingCosts':
 			$editorNames[] = 'Crafting Costs';
 			break;
+		case 'Ark.CustomConfig':
+		case 'SDTD.CustomConfig':
 		case 'CustomContent':
 			$editorNames[] = 'Custom Config';
 			break;
+		case 'Ark.DayCycle':
 		case 'DayCycle':
 			$editorNames[] = 'Day and Night Cycle';
 			break;
+		case 'Ark.CreatureAdjustments':
 		case 'DinoAdjustments':
 			$editorNames[] = 'Creature Adjustments';
 			break;
+		case 'Ark.EngramControl':
 		case 'EngramControl':
 			$editorNames[] = 'Engram Control';
 			break;
+		case 'Ark.LevelsAndXP':
 		case 'ExperienceCurves':
 			$editorNames[] = 'Levels and XP';
 			break;
+		case 'Ark.HarvestRates':
 		case 'HarvestRates':
 			$editorNames[] = 'Harvest Rates';
 			break;
+		case 'Ark.LootDrops':
 		case 'LootDrops':
 			$editorNames[] = 'Loot Drops';
 			break;
+		case 'Ark.GeneralSettings':
+		case 'SDTD.GeneralSettings':
 		case 'LootScale':
 		case 'OtherSettings':
 			$editorNames[] = 'General Settings';
 			break;
+		case 'Ark.CreatureSpawns':
 		case 'SpawnPoints':
 			$editorNames[] = 'Creature Spawns';
 			break;
+		case 'Ark.DecayAndSpoil':
 		case 'SpoilTimers':
 			$editorNames[] = 'Decay and Spoil';
 			break;
+		case 'Ark.StackSizes':
 		case 'StackSizes':
 			$editorNames[] = 'Stack Sizes';
 			break;
+		case 'Ark.StatLimits':
 		case 'StatLimits':
 			$editorNames[] = 'Item Stat Limits';
 			break;
+		case 'Ark.StatMultipliers':
 		case 'StatMultipliers':
 			$editorNames[] = 'Stat Multipliers';
 			break;
