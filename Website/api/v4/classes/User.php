@@ -204,7 +204,7 @@ class User extends DatabaseObject implements JsonSerializable {
 		return 'user-' . strtolower(str_replace('-', '', $this->userId));
 	}
 	
-	public function EmailId(): string {
+	public function EmailId(): ?string {
 		return $this->emailId;
 	}
 	
