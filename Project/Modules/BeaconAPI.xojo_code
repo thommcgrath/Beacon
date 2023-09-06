@@ -28,7 +28,7 @@ Protected Module BeaconAPI
 		  
 		  Try
 		    Var Token As BeaconAPI.ProviderToken = BeaconAPI.ProviderToken.Load(Parsed)
-		    Beacon.Cache.Store(Token.TokenId, Token, 3600)
+		    Beacon.Cache.Store(Token.TokenId, Token, 10)
 		    Return Token
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Building ProviderToken from response")
@@ -57,7 +57,7 @@ Protected Module BeaconAPI
 		    Try
 		      Var Token As BeaconAPI.ProviderToken = BeaconAPI.ProviderToken.Load(Dictionary(Member.ObjectValue))
 		      If (Token Is Nil) = False Then
-		        Beacon.Cache.Store(Token.TokenId, Token, 3600)
+		        Beacon.Cache.Store(Token.TokenId, Token, 10)
 		        Tokens.Add(Token)
 		      End If
 		    Catch Err As RuntimeException
