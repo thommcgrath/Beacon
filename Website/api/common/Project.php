@@ -8,7 +8,7 @@ abstract class Project implements \JsonSerializable {
 	const PUBLISH_STATUS_APPROVED = 'Approved';
 	const PUBLISH_STATUS_APPROVED_PRIVATE = 'Approved But Private';
 	const PUBLISH_STATUS_DENIED = 'Denied';
-	
+
 	protected $project_id = '';
 	protected $game_id = '';
 	protected $game_specific = [];
@@ -24,19 +24,19 @@ abstract class Project implements \JsonSerializable {
 	protected $published = self::PUBLISH_STATUS_PRIVATE;
 	protected $content = [];
 	protected $storage_path = null;
-	
+
 	public static function SchemaName() {
 		return 'public';
 	}
-		
+
 	public static function TableName() {
 		return 'projects';
 	}
-	
+
 	public static function FromClause(): string {
 		return static::SchemaName() . '.' . static::TableName() . ' INNER JOIN public.project_members ON (' . static::TableName() . '.project_id = project_members.project_id)';
 	}
-	
+
 	public static function SQLColumns() {
 		return [
 			'projects.project_id',
@@ -55,83 +55,83 @@ abstract class Project implements \JsonSerializable {
 			'projects.storage_path'
 		];
 	}
-	
+
 	public function jsonSerialize(): mixed {
 		throw new \Exception('Subclasses need to override.');
 	}
-		
+
 	public function ProjectID() {
 		return $this->project_id;
 	}
-	
+
 	public function DocumentID() {
 		// Legacy compatibility alias
 		return $this->project_id;
 	}
-	
+
 	public function GameID() {
 		return $this->game_id;
 	}
-	
+
 	public function GameURLComponent() {
 		switch ($this->game_id) {
 		case 'Ark':
 			return 'ark';
 		}
 	}
-	
+
 	public function UserID() {
 		return $this->user_id;
 	}
-	
+
 	public function Role() {
 		return $this->role;
 	}
-	
+
 	public function Permissions() {
 		return $this->permissions;
 	}
-	
+
 	public function Title() {
 		return $this->title;
 	}
-	
+
 	public function Name() {
 		// Legacy compatibility alias
 		return $this->title;
 	}
-	
+
 	public function Description() {
 		return $this->description;
 	}
-	
+
 	public function ConsoleSafe() {
 		return $this->console_safe;
 	}
-	
+
 	public function LastUpdated() {
 		return $this->last_update;
 	}
-	
+
 	public function Revision() {
 		return $this->revision;
 	}
-	
+
 	public function DownloadCount() {
 		return $this->download_count;
 	}
-	
+
 	public function IsPublic() {
 		return $this->published == self::PUBLISH_STATUS_APPROVED;
 	}
-	
+
 	public function PublishStatus() {
 		return $this->published;
 	}
-	
+
 	public function SetPublishStatus(string $desired_status) {
 		$database = \BeaconCommon::Database();
-		
+
 		$results = $database->Query('SELECT published FROM ' . static::FromClause() . ' WHERE projects.project_id = $1;', $this->project_id);
 		$current_status = $results->Field('published');
 		$new_status = $current_status;
@@ -172,7 +172,7 @@ abstract class Project implements \JsonSerializable {
 						),
 						'fields' => array()
 					);
-					
+
 					$user = \BeaconUser::GetByUserID($this->user_id);
 					if (is_null($user) === false) {
 						if ($user->IsAnonymous()) {
@@ -185,7 +185,7 @@ abstract class Project implements \JsonSerializable {
 							'value' => $username
 						);
 					}
-					
+
 					$obj = array(
 						'text' => 'Request to publish project',
 						'attachments' => array($attachment)
@@ -207,24 +207,24 @@ abstract class Project implements \JsonSerializable {
 		}
 		$this->published = $new_status;
 	}
-	
+
 	public function PreloadContent($version_id = null) {
 		$content_key = (is_null($version_id) === true ? '' : $version_id);
 		if (array_key_exists($content_key, $this->content) === true) {
 			return $content_key;
 		}
-		
+
 		$this->content[$content_key] = \BeaconCloudStorage::GetFile($this->CloudStoragePath(), true, $version_id);
 		return $content_key;
-	}	
-	
+	}
+
 	public function Content(bool $compressed = false, bool $parsed = true, $version_id = null) {
 		try {
 			$content_key = $this->PreloadContent($version_id);
 		} catch (\Exception $err) {
 			return '';
 		}
-		
+
 		$content = $this->content[$content_key];
 		$compressed = $compressed && ($parsed == false);
 		$is_compressed = \BeaconCommon::IsCompressed($content);
@@ -239,33 +239,33 @@ abstract class Project implements \JsonSerializable {
 			return $content;
 		}
 	}
-	
+
 	public function ResourceURL() {
 		return \BeaconAPI::URL('document/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
 	}
-	
+
 	public static function GetAll() {
 		$database = \BeaconCommon::Database();
 		$results = $database->Query(static::BuildSQL('role = \'Owner\' AND projects.deleted = FALSE'));
 		return self::GetFromResults($results);
 	}
-	
+
 	public static function GetByDocumentID(string $project_id) {
 		$database = \BeaconCommon::Database();
 		$results = $database->Query(static::BuildSQL('projects.project_id = ANY($1) AND project_members.role = \'Owner\' AND projects.deleted = FALSE'), '{' . $project_id . '}');
 		return self::GetFromResults($results);
 	}
-	
+
 	public static function GetDocumentByID(string $project_id) {
 		// Just an alias for GetByDocumentID to make sense with GetSharedDocumentByID
 		return self::GetByDocumentID($project_id);
 	}
-	
+
 	public static function GetSharedDocumentByID(string $project_id, $user_id) {
 		if (is_null($user_id)) {
 			return self::GetByDocumentID($project_id);
 		}
-		
+
 		$database = \BeaconCommon::Database();
 		$results = $database->Query(static::BuildSQL('projects.project_id = ANY($1) AND project_members.user_id = $2 AND projects.deleted = FALSE'), '{' . $project_id . '}', $user_id);
 		$projects = self::GetFromResults($results);
@@ -274,16 +274,16 @@ abstract class Project implements \JsonSerializable {
 		}
 		return $projects;
 	}
-	
+
 	protected static function HookHandleSearchKey(string $column, $value, array &$clauses, array &$values, int &$next_placeholder) {
-		
+
 	}
-	
+
 	public static function Search(array $params, string $order_by = 'projects.last_update DESC', int $count = 0, int $offset = 0, bool $count_only = false) {
 		$next_placeholder = 1;
 		$values = array();
 		$clauses = array();
-		
+
 		foreach ($params as $column => $value) {
 			switch ($column) {
 			case 'project_id':
@@ -329,11 +329,11 @@ abstract class Project implements \JsonSerializable {
 				break;
 			}
 		}
-		
+
 		// We want to list only "original" projects, not shared projects.
 		$clauses[] = 'project_members.user_id = \'Owner\'';
 		$clauses[] = 'projects.deleted = FALSE';
-		
+
 		$database = \BeaconCommon::Database();
 		if ($count_only) {
 			$sql = 'SELECT COUNT(project.project_id) AS project_count FROM ' . static::FromClause() . ' WHERE ' . implode(' AND ', $clauses) . ';';
@@ -345,12 +345,12 @@ abstract class Project implements \JsonSerializable {
 			return self::GetFromResults($results);
 		}
 	}
-	
+
 	public static function GetFromResults(\BeaconRecordSet $results) {
 		if ($results === null || $results->RecordCount() === 0) {
 			return array();
 		}
-		
+
 		$projects = array();
 		while (!$results->EOF()) {
 			$project = static::GetFromResult($results);
@@ -361,10 +361,10 @@ abstract class Project implements \JsonSerializable {
 		}
 		return $projects;
 	}
-	
+
 	protected static function GetFromResult(\BeaconRecordSet $results) {
 		// This is a factory method. Not my favorite, but it'll do.
-		
+
 		$game_id = $results->Field('game_id');
 		$project = null;
 		switch ($game_id) {
@@ -390,7 +390,7 @@ abstract class Project implements \JsonSerializable {
 		$project->storage_path = $results->Field('storage_path');
 		return $project;
 	}
-	
+
 	protected static function BuildSQL(string $clause = '', string $order_by = 'projects.last_update DESC', int $count = 0, int $offset = 0) {
 		$sql = 'SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::FromClause();
 		if ($clause !== '') {
@@ -408,26 +408,26 @@ abstract class Project implements \JsonSerializable {
 		$sql .= ';';
 		return $sql;
 	}
-	
+
 	public function CloudStoragePath() {
 		if (is_null($this->storage_path)) {
 			$this->storage_path = static::GenerateCloudStoragePath($this->project_id);
 		}
 		return $this->storage_path;
 	}
-	
+
 	protected static function GenerateCloudStoragePath(string $project_id) {
 		return '/Projects/' . strtolower($project_id) . '.beacon';
 	}
-	
+
 	protected static function HookValidateMultipart(array &$required_vars, string &$reason) {
 		return true;
 	}
-	
+
 	protected static function HookMultipartAddProjectValues(array &$project, string &$reason) {
 		return true;
 	}
-	
+
 	public static function SaveFromMultipart(\BeaconUser $user, string &$reason) {
 		$required_vars = ['keys', 'title', 'uuid', 'version'];
 		if (static::HookValidateMultipart($required_vars, $reason) === false) {
@@ -451,7 +451,7 @@ abstract class Project implements \JsonSerializable {
 			$reason = 'The following parameters are missing: `' . implode('`, `', $missing_vars) . '`';
 			return false;
 		}
-		
+
 		$upload_status = $_FILES['contents']['error'];
 		switch ($upload_status) {
 		case UPLOAD_ERR_OK:
@@ -467,7 +467,7 @@ abstract class Project implements \JsonSerializable {
 			$reason = 'Other error ' . $upload_status . '.';
 			break;
 		}
-		
+
 		if (\BeaconCommon::IsCompressed($_FILES['contents']['tmp_name'], true) === false) {
 			$source = $_FILES['contents']['tmp_name'];
 			$destination = $source . '.gz';
@@ -490,7 +490,7 @@ abstract class Project implements \JsonSerializable {
 			unlink($source);
 			rename($destination, $source);
 		}
-		
+
 		$project = [
 			'Version' => intval($_POST['version']),
 			'Identifier' => $_POST['uuid'],
@@ -514,27 +514,27 @@ abstract class Project implements \JsonSerializable {
 			$keys[$key] = $value;
 		}
 		$project['EncryptionKeys'] = $keys;
-		
+
 		if (static::HookMultipartAddProjectValues($project, $reason) === false) {
 			return false;
 		}
-		
+
 		return self::SaveFromArray($project, $user, $_FILES['contents'], $reason);
 	}
-	
+
 	public static function SaveFromContent(string $project_id, \BeaconUser $user, $file_content, string &$reason) {
 	}
-	
+
 	protected static function HookRowSaveData(array $project, array &$row_values) {
 	}
-	
+
 	protected static function SaveFromArray(array $project, \BeaconUser $user, $contents, string &$reason) {
 		$project_version = intval($project['Version']);
 		if ($project_version < 2) {
 			$reason = 'Version 1 projects are no longer not accepted.';
 			return false;
 		}
-		
+
 		$database = \BeaconCommon::Database();
 		$project_id = $project['Identifier'];
 		if (\BeaconCommon::IsUUID($project_id) === false) {
@@ -544,16 +544,16 @@ abstract class Project implements \JsonSerializable {
 		$title = isset($project['Title']) ? $project['Title'] : '';
 		$description = isset($project['Description']) ? $project['Description'] : '';
 		$game_id = isset($project['GameID']) ? $project['GameID'] : 'Ark';
-		
+
 		// check if the project already exists
 		$results = $database->Query('SELECT project_id, storage_path FROM ' . static::SchemaName() . '.' . static::TableName() . ' WHERE projects.project_id = $1;', $project_id);
 		$new_project = $results->RecordCount() == 0;
 		$storage_path = null;
-		
+
 		// confirm write permission of the project
 		if ($new_project == false) {
 			$storage_path = $results->Field('storage_path');
-			
+
 			$results = $database->Query('SELECT role, public.project_role_permissions(role) AS permissions, user_id FROM project_members WHERE project_id = $1 AND user_id = $2;', $project_id, $user->UserID());
 			if ($results->RecordCount() == 0) {
 				$reason = 'Access denied for project ' . $project_id . '.';
@@ -572,41 +572,51 @@ abstract class Project implements \JsonSerializable {
 			$permissions = 90;
 			$user_id = $user->UserID();
 		}
-		
+
 		$guests_to_add = [];
 		$guests_to_remove = [];
 		if (isset($project['EncryptionKeys']) && is_array($project['EncryptionKeys']) && \BeaconCommon::IsAssoc($project['EncryptionKeys'])) {
 			$encryption_keys = $project['EncryptionKeys'];
 			$allowed_users = array_keys($encryption_keys);
-			
+
 			$desired_guests = [];
-			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $user_id);
+			if ($role === 'Owner') {
+				$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $user_id);
+			} else {
+				$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1);', '{' . implode(',', $allowed_users) . '}');
+			}
 			while (!$results->EOF()) {
 				$desired_guests[] = $results->Field('user_id');
 				$results->MoveNext();
 			}
-			
+
 			$current_guests = [];
-			$results = $database->Query('SELECT user_id FROM project_members WHERE project_id = $1 AND role != \'Owner\';', $project_id);
+			$results = $database->Query('SELECT user_id, role FROM project_members WHERE project_id = $1;', $project_id);
 			while (!$results->EOF()) {
-				$current_guests[] = $results->Field('user_id');
+				if ($results->Field('role') === 'Owner') {
+					if (($key = array_search($results->Field('user_id'), $desired_guests)) !== false) {
+						unset($desired_guests[$key]);
+					}
+				} else {
+					$current_guests[] = $results->Field('user_id');
+				}
 				$results->MoveNext();
 			}
-			
+
 			$guests_to_add = array_diff($desired_guests, $current_guests);
 			$guests_to_remove = array_diff($current_guests, $desired_guests);
-			
+
 			if ($permissions < 80 && (count($guests_to_add) > 0 || count($guests_to_remove) > 0)) {
-				$reason = 'Only the owner or admins may add or remove users.';
+				$reason = 'Only the owner may add or remove users.';
 				return false;
 			}
 		}
-		
+
 		if (\BeaconCloudStorage::PutFile($storage_path, $contents) === false) {
 			$reason = 'Unable to upload project to cloud storage platform.';
 			return false;
 		}
-		
+
 		try {
 			$row_values = [
 				'title' => $title,
@@ -616,10 +626,10 @@ abstract class Project implements \JsonSerializable {
 				'game_id' => $game_id
 			];
 			static::HookRowSaveData($project, $row_values);
-			
+
 			$placeholder = 2;
 			$values = [$project_id];
-			
+
 			$database->BeginTransaction();
 			if ($new_project) {
 				$columns = ['project_id', 'last_update', 'storage_path'];
@@ -632,7 +642,7 @@ abstract class Project implements \JsonSerializable {
 					$placeholders[] = '$' . strval($placeholder);
 					$placeholder++;
 				}
-				
+
 				$database->Query('INSERT INTO ' . static::SchemaName() . '.' . static::TableName() . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
 				$database->Query('INSERT INTO public.project_members (project_id, user_id, role) VALUES ($1, $2, $3);', $project_id, $user_id, 'Owner');
 			} else {
@@ -642,7 +652,7 @@ abstract class Project implements \JsonSerializable {
 					$values[] = $value;
 					$placeholder++;
 				}
-				
+
 				$database->Query('UPDATE ' . static::SchemaName() . '.' . static::TableName() . ' SET ' . implode(', ', $assignments) . ' WHERE projects.project_id = $1;', $values);
 			}
 			foreach ($guests_to_add as $guest_id) {
@@ -656,10 +666,10 @@ abstract class Project implements \JsonSerializable {
 			$reason = 'Database error: ' . $err->getMessage();
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public function Versions(): array {
 		$versions = \BeaconCloudStorage::VersionsForFile($this->storage_path);
 		if ($versions === false) {
@@ -682,5 +692,5 @@ abstract class Project implements \JsonSerializable {
 		return $versions;
 	}
 }
-	
+
 ?>

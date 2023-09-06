@@ -714,7 +714,7 @@ class User implements \JsonSerializable {
 				if (count($changes) > 0) {
 					$database->Update('users', $changes, ['user_id' => $this->user_id]);
 					if (array_key_exists('private_key', $changes)) {
-						$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $this->email_id);
+						$database->Query('DELETE FROM public.email_verification_codes WHERE email_id = $1;', $this->email_id);
 					}
 					
 					if ($this->IsChildAccount() === false && array_key_exists('usercloud_key', $changes) && $this->usercloud_delete_files === true) {

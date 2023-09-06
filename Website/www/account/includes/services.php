@@ -5,10 +5,14 @@ use BeaconAPI\v4\ServiceToken;
 $connectedServices = ServiceToken::Lookup($user->UserId());
 if (count($connectedServices) > 0) {
 	echo '<div class="visual-group"><h3>Connected Services</h3><div class="services-grid">';
-	
+
 	foreach ($connectedServices as $service) {
 		$provider = $service->Provider();
 		$providerLower = strtolower($provider);
+		$providerSimplified = $providerLower;
+		if ($providerSimplified === 'gameserverapp.com') {
+			$providerSimplified = 'gameserverapp';
+		}
 		$type = $service->Type();
 		$username = $provider;
 		$buttonClass = 'red';
@@ -19,7 +23,7 @@ if (count($connectedServices) > 0) {
 			$details = $service->ProviderSpecific();
 			$username = htmlentities($details['user']['username']) . ' <span class="service-uid">(' . htmlentities($details['user']['id']) . ')</span>';
 			$serviceName = $details['user']['username'];
-			
+
 			if (array_key_exists('tokenName', $details)) {
 				$serviceName = $details['tokenName'];
 				$username = htmlentities($serviceName) . '<br>' . $username;
@@ -31,14 +35,14 @@ if (count($connectedServices) > 0) {
 			$serviceName = $details['tokenName'];
 			break;
 		}
-		
-		echo '<div class="service service-' . $providerLower . '">';
-		echo '<div class="service-logo"><img src="' . BeaconCommon::AssetURI($providerLower . '-color.svg') . '" alt="' . $provider . '"></div>';
+
+		echo '<div class="service service-' . $providerSimplified . '">';
+		echo '<div class="service-logo"><img src="' . BeaconCommon::AssetURI($providerSimplified . '-color.svg') . '" alt="' . $provider . '"></div>';
 		echo '<div class="service-name">' . $username . '</div>';
 		echo '<div class="service-action"><div class="button-group"><button class="' . $buttonClass . '" beacon-provider="' . $providerLower . '" beacon-provider-type="' . strtolower($service->Type()) . '" beacon-token-id="' . htmlentities($service->TokenId()) . '" beacon-token-name="' . htmlentities($serviceName) . '">' . htmlentities($buttonCaption) . '</button></div></div>';
 		echo '</div>';
 	}
-	
+
 	echo '</div></div>';
 }
 
@@ -53,7 +57,7 @@ if (count($connectedServices) > 0) {
 		<div class="service service-gameserverapp inactive">
 			<div class="service-logo"><img src="<?php echo BeaconCommon::AssetURI('gameserverapp-black.svg'); ?>" alt="GameServerApp"></div>
 			<div class="service-name">GameServerApp.com</div>
-			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="gameserverapp" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
+			<div class="service-action"><div class="button-group"><button class="blue" beacon-provider="gameserverapp.com" beacon-provider-type="static" beacon-token-id="">Add Token</button></div></div>
 		</div>
 	</div>
 </div>
