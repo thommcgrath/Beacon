@@ -825,6 +825,48 @@ Implements ObservationKit.Observable
 		    Project.mConfigSetData.Value(Beacon.ConfigSet.BaseConfigSetId) = Project.LoadConfigSet(SaveData.Value("Configs"), Nil)
 		  End If
 		  
+		  Var LegacyAccountIdMap As New Dictionary
+		  If SecureDict.HasKey("providerTokenKeys") Then
+		    Var KeysDict As Dictionary = SecureDict.Value("providerTokenKeys")
+		    For Each Entry As DictionaryEntry In KeysDict
+		      Project.mProviderTokenKeys.Value(Entry.Key) = DecodeBase64(Entry.Value)
+		    Next
+		  ElseIf SecureDict.HasKey("ExternalAccounts") And Project.mRole = "Owner" Then
+		    Var Accounts() As Variant = Dictionary(SecureDict.Value("ExternalAccounts").ObjectValue).Value("Accounts")
+		    For Each AccountDict As Dictionary In Accounts
+		      Var AccountId As String = AccountDict.Value("UUID")
+		      Var AccessToken As String = AccountDict.Value("AccessToken")
+		      Var RefreshToken As String = AccountDict.Value("RefreshToken")
+		      Var Provider As String = AccountDict.Value("Provider")
+		      Var AccountLabel As String = AccountDict.Value("Label")
+		      
+		      Var RequestBody As New Dictionary
+		      RequestBody.Value("provider") = Provider
+		      RequestBody.Value("accessToken") = AccessToken
+		      Select Case Provider
+		      Case "Nitrado"
+		        RequestBody.Value("type") = "OAuth"
+		        RequestBody.Value("refreshToken") = RefreshToken
+		      Case "GameServerApp.com"
+		        RequestBody.Value("type") = "Static"
+		        RequestBody.Value("providerSpecific") = New Dictionary("tokenName": AccountLabel)
+		      End Select
+		      
+		      Var ImportRequest As New BeaconApi.Request("/user/tokens", "POST", Beacon.GenerateJson(RequestBody, False), "application/json")
+		      Var ImportResponse As BeaconApi.Response = BeaconApi.SendSync(ImportRequest)
+		      If ImportResponse.HttpStatus = 200 And (ImportResponse.Content Is Nil) = False Then
+		        Try
+		          Var Token As BeaconApi.ProviderToken = BeaconApi.ProviderToken.Load(Dictionary(ImportResponse.Json.ObjectValue))
+		          If (Token Is Nil) = False Then
+		            LegacyAccountIdMap.Value(AccountId) = Token
+		            Project.AddProviderToken(Token)
+		          End If
+		        Catch Err As RuntimeException
+		        End Try
+		      End If
+		    Next
+		  End If
+		  
 		  Var ServerDicts() As Variant
 		  If SecureDict.HasKey("servers") And SecureDict.Value("servers").IsArray Then
 		    ServerDicts = SecureDict.Value("servers")
@@ -839,19 +881,15 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      // Something about migrating the nitrado account?
+		      If LegacyAccountIdMap.HasKey(Profile.ExternalAccountId) Then
+		        Var Token As BeaconApi.ProviderToken = LegacyAccountIdMap.Value(Profile.ExternalAccountId)
+		        Profile.ProviderTokenId = Token.TokenId
+		      End If
 		      
 		      Project.mServerProfiles.Add(Profile)
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
-		  
-		  If SecureDict.HasKey("providerTokenKeys") Then
-		    Var KeysDict As Dictionary = SecureDict.Value("providerTokenKeys")
-		    For Each Entry As DictionaryEntry In KeysDict
-		      Project.mProviderTokenKeys.Value(Entry.Key) = DecodeBase64(Entry.Value)
-		    Next
-		  End If
 		  
 		  Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion)
 		  

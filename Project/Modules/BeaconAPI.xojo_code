@@ -105,19 +105,22 @@ Protected Module BeaconAPI
 		          Var RefreshSocket As New SimpleHTTP.SynchronousHTTPSocket
 		          RefreshSocket.SetRequestContent(SimpleHTTP.BuildFormData(Params), "application/x-www-form-urlencoded")
 		          
-		          Var LoginUrl As String = BeaconAPI.URL("/login")
-		          #if DebugBuild
-		            System.DebugLog("POST " + LoginUrl)
-		          #endif
-		          RefreshSocket.Send("POST", LoginUrl)
-		          #if DebugBuild
-		            System.DebugLog("POST " + LoginUrl + ": " + RefreshSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
-		          #endif
-		          Var RefreshResponse As String = RefreshSocket.LastContent
-		          If RefreshSocket.LastHTTPStatus = 201 Then
-		            Token = BeaconAPI.OAuthToken.Load(RefreshResponse)
-		            Preferences.BeaconAuth = Token
-		          End If
+		          Try
+		            Var LoginUrl As String = BeaconAPI.URL("/login")
+		            #if DebugBuild
+		              System.DebugLog("POST " + LoginUrl)
+		            #endif
+		            RefreshSocket.Send("POST", LoginUrl)
+		            #if DebugBuild
+		              System.DebugLog("POST " + LoginUrl + ": " + RefreshSocket.LastHTTPStatus.ToString(Locale.Raw, "0"))
+		            #endif
+		            Var RefreshResponse As String = RefreshSocket.LastContent
+		            If RefreshSocket.LastHTTPStatus = 201 Then
+		              Token = BeaconAPI.OAuthToken.Load(RefreshResponse)
+		              Preferences.BeaconAuth = Token
+		            End If
+		          Catch Err As RuntimeException
+		          End Try
 		        End If
 		        
 		        AuthHeader = Token.AuthHeaderValue

@@ -227,7 +227,7 @@ Protected Class ProviderToken
 	#tag Constant, Name = DetailNormal, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ProviderGameServerApp, Type = String, Dynamic = False, Default = \"GameServerApp", Scope = Public
+	#tag Constant, Name = ProviderGameServerApp, Type = String, Dynamic = False, Default = \"GameServerApp.com", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ProviderNitrado, Type = String, Dynamic = False, Default = \"Nitrado", Scope = Public
