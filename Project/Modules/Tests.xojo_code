@@ -611,7 +611,7 @@ Protected Module Tests
 		    UUID = Beacon.UUID.Null
 		    Call Assert(UUID = "00000000-0000-0000-0000-000000000000", "Null UUID is not correct")
 		    Call Assert(UUID = Nil, "Null UUID does not compare against Nil correctly")
-		  Catch Err As UnsupportedFormatException
+		  Catch Err As RuntimeException
 		    System.DebugLog("Validator will not accept null UUID")
 		  End Try
 		  
@@ -619,7 +619,7 @@ Protected Module Tests
 		    UUID = "ffc93232-2484-4947-8c9a-a691cf938d75"
 		    Call Assert(UUID.IsNull = False, "UUID is listed as null when it should not be")
 		    Call Assert(UUID <> Nil, "Valid UUID is successfully matching against Nil")
-		  Catch Err As UnsupportedFormatException
+		  Catch Err As RuntimeException
 		    System.DebugLog("Validator will not accept valid UUID")
 		  End Try
 		  
@@ -646,7 +646,7 @@ Protected Module Tests
 		  Try
 		    UUID = Beacon.UUID.v5("Frog Blast The Vent Core")
 		    Call Assert(UUID = "99fac599-25d2-595a-aea3-12f756d2961b", "Incorrect v5 UUID, computed " + UUID.StringValue)
-		  Catch Err As UnsupportedFormatException
+		  Catch Err As RuntimeException
 		    System.DebugLog("Incorrect v5 UUID, computed " + UUID.StringValue)
 		  End Try
 		End Sub

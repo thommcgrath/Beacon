@@ -14,7 +14,7 @@ Protected Module PasswordStorage
 		      End If
 		      Call System.KeyChain.FindPassword(Item)
 		      Item.Remove
-		    Catch Err As KeychainException
+		    Catch Err As RuntimeException
 		      // Not found
 		    End Try
 		  #else
@@ -64,7 +64,7 @@ Protected Module PasswordStorage
 		      If (IsAccountId And Item.AccountName = EmailOrUserId) Or (IsAccountId = False And Item.Label = EmailOrUserId) Then
 		        Return Password
 		      End If
-		    Catch Err As KeychainException
+		    Catch Err As RuntimeException
 		      Return ""
 		    End Try
 		  #else
@@ -96,7 +96,7 @@ Protected Module PasswordStorage
 		    Try
 		      Var Email As String = PasswordData.Lookup("email", "")
 		      Return BeaconEncryption.SlowDecrypt(Email.Lowercase + " " + UserId.Lowercase + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, PasswordData.Lookup("password", ""))
-		    Catch Err As CryptoException
+		    Catch Err As RuntimeException
 		      Return ""
 		    End Try
 		  #endif
@@ -116,7 +116,7 @@ Protected Module PasswordStorage
 		    Try
 		      System.KeyChain.AddPassword(Item, Password)
 		      Return True
-		    Catch Err As KeyChainException
+		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Saving keychain item")
 		      Return False
 		    End Try

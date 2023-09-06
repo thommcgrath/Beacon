@@ -291,7 +291,7 @@ Protected Module UserCloud
 		      mIndex.ExecuteSQL("DELETE FROM usercloud WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Unable to remove cloud file from local index: " + Err.Message)
 		    End Try
 		  End If
@@ -324,7 +324,7 @@ Protected Module UserCloud
 		      End If
 		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Unable to add cloud file to local index: " + Err.Message)
 		    End Try
 		  End If
@@ -382,7 +382,7 @@ Protected Module UserCloud
 		        mIndex.CommitTransaction
 		      End If
 		    End If
-		  Catch Err As DatabaseException
+		  Catch Err As RuntimeException
 		    App.Log("Unable to add " + Action + " action to cloud index: " + Err.Message)
 		  End Try
 		End Sub
@@ -412,12 +412,12 @@ Protected Module UserCloud
 		  If Index.DatabaseFile.Exists Then
 		    Try
 		      Index.Connect
-		    Catch DBErr As DatabaseException
+		    Catch DBErr As RuntimeException
 		      App.Log("Unable to connect to database at " + Index.DatabaseFile.NativePath + ": " + DBErr.Message)
 		      Try
 		        Index.DatabaseFile.Remove
-		      Catch IOErr As IOException
-		        App.Log("Unable to remove bad database at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		      Catch DelErr As RuntimeException
+		        App.Log("Unable to remove bad database at " + Index.DatabaseFile.NativePath + ": " + DelErr.Message)
 		        Return False
 		      End Try
 		      Try
@@ -452,13 +452,13 @@ Protected Module UserCloud
 		      Index.ExecuteSQL("INSERT INTO actions (user_id, remote_path, action) SELECT ?1 AS user_id, remote_path, action FROM actions_old;", UserID)
 		      Index.ExecuteSQL("DROP TABLE usercloud_old;")
 		      Index.ExecuteSQL("DROP TABLE actions_old;")
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Could not update database schema: " + Err.Message)
 		      Index.Close
 		      Try
 		        Index.DatabaseFile.Remove
-		      Catch IOErr As IOException
-		        App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		      Catch DelErr As RuntimeException
+		        App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + DelErr.Message)
 		      End Try
 		      Return False
 		    End Try
@@ -484,13 +484,13 @@ Protected Module UserCloud
 		    Index.ExecuteSQL("PRAGMA journal_mode = WAL;")
 		    Index.UserVersion = 2
 		    Return True
-		  Catch Err As DatabaseException
+		  Catch Err As RuntimeException
 		    App.Log("Could not create database schema: " + Err.Message)
 		    Index.Close
 		    Try
 		      Index.DatabaseFile.Remove
-		    Catch IOErr As IOException
-		      App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		    Catch DelErr As RuntimeException
+		      App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + DelErr.Message)
 		    End Try
 		    Return False
 		  End Try
@@ -567,7 +567,7 @@ Protected Module UserCloud
 		      End If
 		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Unable to add cloud file to local index: " + Err.Message)
 		    End Try
 		  End If

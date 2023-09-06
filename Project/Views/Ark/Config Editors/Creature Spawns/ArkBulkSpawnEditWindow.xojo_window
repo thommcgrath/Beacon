@@ -799,11 +799,11 @@ End
 		    
 		    Try
 		      MinLevel = Integer.FromString(Self.MinLevelField.Text, Locale.Current)
-		    Catch Err As InvalidArgumentException
+		    Catch Err As RuntimeException
 		    End Try
 		    Try
 		      MaxLevel = Integer.FromString(Self.MaxLevelField.Text, Locale.Current)
-		    Catch Err As InvalidArgumentException
+		    Catch Err As RuntimeException
 		    End Try
 		    
 		    If MinLevel <= 0 Or MaxLevel < MinLevel Then

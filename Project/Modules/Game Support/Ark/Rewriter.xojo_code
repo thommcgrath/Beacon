@@ -135,7 +135,7 @@ Inherits Global.Thread
 		    Reg.Options.ReplaceAllMatches = True
 		    Try
 		      Content = Reg.Replace(Content)
-		    Catch Err As RegExSearchPatternException
+		    Catch Err As RuntimeException
 		      Return Content.ConvertEncoding(Encodings.ASCII)
 		    End Try
 		    

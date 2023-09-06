@@ -263,6 +263,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Thread RefreshThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -274,6 +275,7 @@ Begin ArkServerViewContainer ArkNitradoServerView
    End
    Begin Beacon.Thread ToggleThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -608,7 +610,7 @@ End
 		  Try
 		    Socket.Send("GET", "https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers")
 		    Response = Socket.LastContent
-		  Catch Err As NetworkException
+		  Catch Err As RuntimeException
 		    Self.mServerState = Self.StatusNetworkError
 		  End Try
 		  
@@ -695,7 +697,7 @@ End
 		      Else
 		        Self.mServerState = Self.StatusFromHTTPCode(Socket.LastHTTPStatus)
 		      End If
-		    Catch Err As NetworkException
+		    Catch Err As RuntimeException
 		      Self.mServerState = Self.StatusNetworkError
 		    End Try
 		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))
@@ -717,7 +719,7 @@ End
 		      Else
 		        Self.mServerState = Self.StatusFromHTTPCode(Socket.LastHTTPStatus)
 		      End If
-		    Catch Err As NetworkException
+		    Catch Err As RuntimeException
 		      Self.mServerState = Self.StatusNetworkError
 		    End Try
 		    Me.AddUserInterfaceUpdate(New Dictionary("RefreshStatus": True))

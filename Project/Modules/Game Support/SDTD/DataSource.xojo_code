@@ -331,7 +331,7 @@ Inherits Beacon.DataSource
 		      If IsNull(Parsed) = False And Parsed IsA Dictionary Then
 		        Constraints = Parsed
 		      End If
-		    Catch JSONErr As JSONException
+		    Catch JSONErr As RuntimeException
 		    End Try
 		  End If
 		  

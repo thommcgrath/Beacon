@@ -681,7 +681,7 @@ Implements NotificationKit.Receiver
 		      For I As Integer = 1 To Dict.KeyCount
 		        FinalValues.Add(Dict.Value(I))
 		      Next
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		      FinalValues.ResizeTo(-1)
 		    End Try
 		  ElseIf Values.LastIndex = 0 And Values(0).IsArray Then

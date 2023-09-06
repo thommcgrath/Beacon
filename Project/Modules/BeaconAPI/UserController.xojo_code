@@ -7,7 +7,7 @@ Protected Class UserController
 		  Var Parsed As Dictionary
 		  Try
 		    Parsed = Beacon.ParseJSON(Response.Content)
-		  Catch Err as RuntimeException
+		  Catch Err As RuntimeException
 		    Return
 		  End Try
 		  

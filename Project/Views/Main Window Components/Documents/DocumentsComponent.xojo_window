@@ -685,7 +685,7 @@ End
 		      
 		      Try
 		        File.Remove
-		      Catch Err As IOException
+		      Catch Err As RuntimeException
 		      End Try
 		    Next
 		  End If

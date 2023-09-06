@@ -951,11 +951,11 @@ End
 		  Var MinQuantity, MaxQuantity As Integer
 		  Try
 		    MinQuantity = Integer.FromString(MinQuantityField.Text.Trim, Locale.Current)
-		  Catch Err As InvalidArgumentException
+		  Catch Err As RuntimeException
 		  End Try
 		  Try
 		    MaxQuantity = Integer.FromString(MaxQuantityField.Text.Trim, Locale.Current)
-		  Catch Err As InvalidArgumentException
+		  Catch Err As RuntimeException
 		  End Try
 		  If MinQuantity > MaxQuantity Then
 		    Var Temp As Integer = MaxQuantity
@@ -1165,7 +1165,7 @@ End
 		    Var MyValue As Integer
 		    Try
 		      MyValue = Integer.FromString(Me.Text.Trim, Locale.Current)
-		    Catch Err As InvalidArgumentException
+		    Catch Err As RuntimeException
 		    End Try
 		    Self.ChanceSlider.Value = Max(Min(MyValue, ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
 		  End If

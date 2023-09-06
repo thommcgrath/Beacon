@@ -26,6 +26,7 @@ Begin DesktopWindow SDTDExportWindow
    Width           =   848
    Begin SDTD.Rewriter SharedRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -688,7 +689,7 @@ End
 		    Var InStream As TextInputStream = TextInputStream.Open(File)
 		    Content = InStream.ReadAll()
 		    InStream.Close
-		  Catch Err As IOException
+		  Catch Err As RuntimeException
 		    Self.ShowAlert("Unable to open " + File.DisplayName, "Beacon was unable to read the current content of the file to rewriting. The file has not been changed.")
 		    Return
 		  End Try

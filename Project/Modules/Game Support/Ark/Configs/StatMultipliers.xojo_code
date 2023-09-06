@@ -251,14 +251,14 @@ Inherits Ark.ConfigGroup
 		    Var Members() As Variant
 		    Try
 		      Members = Value
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		    
 		    Values.ResizeTo(Members.LastIndex)
 		    For Idx As Integer = 0 To Members.LastIndex
 		      Try
 		        Values(Idx) = Members(Idx)
-		      Catch Err As TypeMismatchException
+		      Catch Err As RuntimeException
 		      End Try
 		    Next Idx
 		  End If

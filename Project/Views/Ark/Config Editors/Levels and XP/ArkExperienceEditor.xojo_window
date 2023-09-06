@@ -151,7 +151,7 @@ End
 		  Var Level As Integer
 		  Try
 		    Level = Integer.FromString(Parts(1))
-		  Catch Err As InvalidArgumentException
+		  Catch Err As RuntimeException
 		    Return
 		  End Try
 		  Var Levels(0) As Integer

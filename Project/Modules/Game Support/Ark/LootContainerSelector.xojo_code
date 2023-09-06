@@ -93,7 +93,7 @@ Protected Class LootContainerSelector
 		      Reg.SearchPattern = Self.mCode
 		      
 		      Return Reg.Search(Source.ClassString) <> Nil
-		    Catch Err As RegExException
+		    Catch Err As RuntimeException
 		      Return False
 		    End Try
 		    #Pragma BreakOnExceptions Default
@@ -114,7 +114,7 @@ Protected Class LootContainerSelector
 		      Call Reg.Search("Testing")
 		      Message = ""
 		      Return True
-		    Catch Err As RegexException
+		    Catch Err As RuntimeException
 		      Message = Err.Message
 		      Return False
 		    End Try
