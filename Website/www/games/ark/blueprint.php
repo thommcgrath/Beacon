@@ -30,7 +30,7 @@ if (isset($_GET['objectId'])) {
 			}
 			$useModUrl = true;
 		}
-		
+
 		$objects = Blueprint::Search($filters, true);
 	} catch (Exception $err) {
 	}
@@ -117,7 +117,7 @@ foreach ($objects as $object) {
 	default:
 		continue;
 	}
-	
+
 	$properties = [
 		'Mod' => '[' . $obj->ContentPackName() . '](/Games/Ark/Mods/' . urlencode($obj->ContentPackMarketplaceId()) . '/' . urlencode($objectGroup) . ')'
 	];
@@ -130,7 +130,7 @@ foreach ($objects as $object) {
 		}
 		$properties['Tags'] = implode(', ', $links);
 	}
-	
+
 	if ($obj instanceof Blueprint) {
 		PrepareBlueprintTable($obj, $properties);
 	}
@@ -146,7 +146,7 @@ foreach ($objects as $object) {
 	if ($obj instanceof SpawnPoint) {
 		PrepareSpawnPointTable($obj, $properties);
 	}
-	
+
 	echo '<' . $titleClass . '><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . (is_null($obj->AlternateLabel()) ? '' : '<br><span class="subtitle">AKA ' . htmlentities($obj->AlternateLabel()) . '</span>') . '</' . $titleClass . '>';
 	if ($obj instanceof LootDrop && $obj->Experimental()) {
 		echo '<p class="notice-block notice-warning">This loot drop is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
@@ -159,11 +159,12 @@ foreach ($objects as $object) {
 }
 
 function PrepareBlueprintTable(Blueprint $blueprint, array &$properties) {
+	$properties['Path'] = $blueprint->Path();
 	$properties['Class'] = $blueprint->ClassString();
-	
+
 	$maps = Map::Search(['mask' => $blueprint->Availability()], true);
 	$properties['Map Availability'] = Map::Names($maps);
-	
+
 	$relatedIds = $blueprint->RelatedObjectIDs();
 	$relatedItems = [];
 	foreach ($relatedIds as $id) {
@@ -197,7 +198,7 @@ function PrepareCreatureTable(Creature $creature, array &$properties) {
 	if (is_null($minMatingInterval) == false && is_null($maxMatingInterval) == false) {
 		$properties['Mating Cooldown'] = BeaconCommon::SecondsToEnglish($minMatingInterval, false, 3600) . ' to ' . BeaconCommon::SecondsToEnglish($maxMatingInterval, false, 3600);
 	}
-	
+
 	$properties['Spawn Code'] = '`' . $creature->SpawnCode() . '`';
 }
 
@@ -205,33 +206,33 @@ function PrepareEngramTable(Engram $engram, array &$properties) {
 	if (is_null($engram->ItemID()) == false) {
 		$properties['Item ID'] = $engram->ItemID();
 	}
-	
+
 	$properties['Spawn Code'] = '`' . $engram->SpawnCode() . '`';
-	
+
 	if (is_null($engram->StackSize()) == false) {
 		$properties['Stack Size'] = $engram->StackSize();
 	}
-	
+
 	$properties['Blueprintable'] = $engram->IsTagged('blueprintable') ? 'Yes' : 'No';
 	$properties['Harvestable'] = $engram->IsTagged('harvestable') ? 'Yes' : 'No';
-	
+
 	if (is_null($engram->EntryString()) == false) {
 		$properties['Unlock Code'] = '`cheat unlockengram "Blueprint\'' . $engram->Path() . '\'"`';
 		$properties['Engram Specifier'] = $engram->EntryString();
-		
+
 		if (is_null($engram->RequiredPoints())) {
 			$properties['Required Points'] = 'Tek';
 		} else {
 			$properties['Required Points'] = $engram->RequiredPoints();
 		}
-		
+
 		if (is_null($engram->RequiredLevel())) {
 			$properties['Required Level'] = 'Tek';
 		} else {
 			$properties['Required Level'] = $engram->RequiredLevel();
 		}
 	}
-	
+
 	$recipe = ExpandRecipe($engram);
 	if (is_null($recipe) == false) {
 		$properties['Crafting'] = $recipe;
@@ -256,11 +257,11 @@ function PrepareSpawnPointTable(SpawnPoint $spawnPoint, array &$properties) {
 		$limits = $temp;
 		unset($temp);
 	}
-	
+
 	if (is_null($spawns)) {
 		return;
 	}
-	
+
 	$uniqueCreatures = [];
 	foreach ($spawns as $set) {
 		$entries = $set['entries'];
@@ -272,7 +273,7 @@ function PrepareSpawnPointTable(SpawnPoint $spawnPoint, array &$properties) {
 			$uniqueCreatures[] = $creatureId;
 		}
 	}
-	
+
 	$creatures = [];
 	foreach ($uniqueCreatures as $creatureId) {
 		$creature = Creature::Fetch($creatureId);
@@ -282,10 +283,10 @@ function PrepareSpawnPointTable(SpawnPoint $spawnPoint, array &$properties) {
 		}
 		$creatures[] = $label;
 	}
-	
+
 	sort($creatures);
 	$properties['Spawns'] = implode(', ', $creatures);
-	
+
 	$populationData = $spawnPoint->Populations();
 	if (count($populationData) > 0) {
 		$populations = ['<table class="generic auto-width"><thead class="smaller"><tr><th class="min-width">Map</th><th class="text-right min-width low-priority">Num Nodes</th><th class="text-right min-width low-priority">Pop Per Node</th><th class="text-right min-width low-priority">Target Pop</th></thead>', '<tbody>'];
@@ -303,7 +304,7 @@ function PrepareSpawnPointTable(SpawnPoint $spawnPoint, array &$properties) {
 		$populations[] = '</table>';
 		$properties['Populations'] = implode("\n", $populations);
 	}
-	
+
 	unset($properties['Spawn Code']);
 }
 
@@ -312,17 +313,17 @@ function ExpandRecipe(Engram $engram, bool $asArray = false, int $level = 1, int
 	if (is_null($recipe) || is_array($recipe) == false || $level > 6) {
 		return null;
 	}
-	
+
 	$lines = [];
 	foreach ($recipe as $ingredient) {
 		$engramId = $ingredient['engramId'];
 		$quantity = $ingredient['quantity'] * $multiplier;
 		$exact = $ingredient['exact'];
-		
+
 		$object = Engram::Fetch($engramId);
 		$lines[] = '- <span class="crafting_quantity">' . number_format($quantity) . 'x</span> ' . MarkdownLinkToObject($object);
 	}
-	
+
 	if ($asArray) {
 		return $lines;
 	}
