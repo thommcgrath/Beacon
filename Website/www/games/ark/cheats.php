@@ -18,7 +18,7 @@ if (is_null($contentPackId) === false) {
 			$pack = $packs[0];
 		}
 	}
-	
+
 	if (is_null($pack) || $pack->GameId() !== 'Ark') {
 		http_response_code(404);
 		echo '<h1>Mod is not registered with Beacon.</h1>';
@@ -116,9 +116,9 @@ echo '</p>';
 	</thead>
 	<tbody>
 	<?php
-		
+
 	uasort($blueprints, 'CompareBlueprints');
-	
+
 	// get gfi codes
 	$engramIds = [];
 	$gfiCodes = [];
@@ -134,21 +134,21 @@ echo '</p>';
 			$gfiRows->MoveNext();
 		}
 	}
-	
+
 	foreach ($blueprints as $blueprint) {
 		$id = $blueprint->UUID();
 		$class = $blueprint->ClassString();
 		$label = $blueprint->Label();
 		$spawn = CreateSpawnCode($blueprint);
 		$packName = $blueprint->ContentPackName();
-		
+
 		echo '<tr id="spawn_' . htmlentities($id) . '" class="beacon-engram" beacon-label="' . htmlentities(strtolower($label)) . '" beacon-spawn-code="' . htmlentities($spawn) . '" beacon-uuid="' . $id . '">';
 		echo '<td>' . htmlentities($label) . ($includeModNames ? '<span class="beacon-engram-mod-name"><br>' . htmlentities($packName) . '</span>' : '') . '<div class="beacon-spawn-code-small source-code-font">' . htmlentities($spawn) . '</div></td>';
 		echo '<td class="source-code-font">' . htmlentities($spawn) . '</td>';
 		echo '<td><button class="beacon-engram-copy" beacon-uuid="' . htmlentities($id) . '">Copy</button></td>';
 		echo '</tr>';
 	}
-	
+
 	?>
 	</tbody>
 </table><?php
@@ -165,13 +165,13 @@ if ($pageCount > 1) {
 		$pagesAfter = $pagesBefore;
 		$lowestPage = $pageNum - $pagesBefore;
 		$highestPage = $pageNum + $pagesAfter;
-		
+
 		if ($lowestPage < 1) {
 			$overflow = abs($lowestPage - 1);
 			$pagesAfter += $overflow;
 			$pagesBefore -= $overflow;
 			$lowestPage = 1;
-			$highestPage = $pageNum + $pagesAfter;	
+			$highestPage = $pageNum + $pagesAfter;
 		} else if ($highestPage > $pageCount) {
 			$overflow = $highestPage - $pageCount;
 			$pagesBefore += $overflow;
@@ -180,7 +180,7 @@ if ($pageCount > 1) {
 			$highestPage = $pageCount;
 		}
 	}
-	
+
 	$pageLinks = [];
 	if ($lowestPage > 1) {
 		$pageLinks[] = '<a href="' . htmlentities(BuildPaginationLink(1)) . '" class="pagination-button pagination-text">&laquo; First</a>';
@@ -213,7 +213,7 @@ if ($pageCount > 1) {
 	} else {
 		$pageLinks[] = '<span class="pagination-placeholder">&nbsp;</span>';
 	}
-	
+
 	echo '<div class="pagination-controls"><div class="pagination-cell">' . implode('</div><div class="pagination-cell">', $pageLinks) . '</div></div>';
 }
 BeaconTemplate::SetTitle($title);
@@ -224,13 +224,13 @@ function CompareBlueprints($left, $right) {
 	if ($left_label === $right_label) {
 		return 0;
 	}
-	
+
 	return ($left_label < $right_label) ? -1 : 1;
 }
 
 function CreateSpawnCode(Blueprint $blueprint): string {
 	global $gfiCodes;
-	
+
 	$classString = $blueprint->ClassString();
 	switch ($blueprint->ObjectGroup()) {
 	case 'engrams':
@@ -238,8 +238,9 @@ function CreateSpawnCode(Blueprint $blueprint): string {
 		if (is_null($gfi) === false) {
 			return "cheat gfi {$gfi} 1 0 0";
 		}
-		
-		return "cheat giveitem {$classString} 1 0 0";
+
+		$classString = substr($classString, 0, -2);
+		return "cheat gfi {$classString} 1 0 0";
 		break;
 	case 'creatures':
 		return "cheat summon {$classString}";
@@ -252,20 +253,20 @@ function CreateSpawnCode(Blueprint $blueprint): string {
 
 function BuildPaginationLink(int $pageNum, bool $absolute = true): string {
 	global $baseUrl, $urlParams;
-	
+
 	$params = array_filter($_GET, function($value, $key) {
 		if (empty($value)) {
 			return false;
 		}
-		
+
 		switch ($key) {
 		case 'search':
 			return true;
 		}
-		
+
 		return false;
 	}, ARRAY_FILTER_USE_BOTH);
-	
+
 	$url = ($absolute ? BeaconCommon::AbsoluteUrl($baseUrl) : $baseUrl);
 	if ($pageNum > 1) {
 		$url .= '/' . $pageNum;
@@ -274,7 +275,7 @@ function BuildPaginationLink(int $pageNum, bool $absolute = true): string {
 		ksort($params);
 		$url .= '?' . http_build_query($params);
 	}
-	
+
 	return $url;
 }
 
