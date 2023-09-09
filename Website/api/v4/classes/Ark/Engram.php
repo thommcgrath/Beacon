@@ -12,20 +12,20 @@ class Engram extends MutableBlueprint {
 	protected ?int $stackSize;
 	protected ?int $itemId;
 	protected ?string $gfi;
-	
+
 	protected function __construct(BeaconRecordSet $row) {
 		parent::__construct($row);
-			
+
 		$this->entryString = $row->Field('entry_string');
 		$this->requiredPoints = filter_var($row->Field('required_points'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->requiredLevel = filter_var($row->Field('required_level'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->stackSize = filter_var($row->Field('stack_size'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->itemId = filter_var($row->Field('item_id'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$this->gfi = $row->Field('gfi');
-		
+
 		$recipe = is_null($row->Field('recipe')) ? null : json_decode($row->Field('recipe'), true);
 		if (is_null($recipe)) {
-			$this->recipe = null;	
+			$this->recipe = null;
 		} else {
 			$this->recipe = [];
 			foreach ($recipe as $ingredient) {
@@ -37,11 +37,11 @@ class Engram extends MutableBlueprint {
 			}
 		}
 	}
-	
+
 	protected static function CustomVariablePrefix(): string {
 		return 'engram';
 	}
-	
+
 	public static function BuildDatabaseSchema(): DatabaseSchema {
 		$schema = parent::BuildDatabaseSchema();
 		$schema->SetTable('engrams');
@@ -54,51 +54,51 @@ class Engram extends MutableBlueprint {
 		$schema->AddColumn(new DatabaseObjectProperty('gfi', ['required' => false, 'editable' => DatabaseObjectProperty::kEditableAlways]));
 		return $schema;
 	}
-	
+
 	public function Recipe(): ?array {
 		return $this->recipe;
 	}
-	
+
 	public function SpawnCode(): string {
 		if (is_null($this->gfi)) {
-			return 'cheat giveitem ' . $this->classString . ' 1 1 0';
+			return 'cheat gfi ' . substr($this->classString, 0, -2) . ' 1 1 0';
 		} else {
 			return 'cheat gfi ' . $this->gfi . ' 1 1 0';
 		}
 	}
-	
+
 	public function EntryString(): ?string {
 		return $this->entryString;
 	}
-	
+
 	public function RequiredPoints(): ?int {
 		return $this->requiredPoints;
 	}
-	
+
 	public function RequiredLevel(): ?int {
 		return $this->requiredLevel;
 	}
-	
+
 	public function StackSize(): ?int {
 		return $this->stackSize;
 	}
-	
+
 	public function ItemId(): ?int {
 		return $this->itemId;
 	}
-	
+
 	/*protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
 		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, ingredients.class_string, ingredients.mod_id, quantity, exact FROM ark.crafting_costs INNER JOIN ark.engrams AS ingredients ON (ark.crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = ark.engrams.object_id) AS recipe_template) AS recipe';
 		return $columns;
 	}
-	
+
 	protected static function FromRow(BeaconRecordSet $row) {
 		$obj = parent::FromRow($row);
 		if ($obj === null) {
 			return null;
 		}
-		
+
 		if (is_null($obj->recipe) === false) {
 			$recipe = [];
 			foreach ($obj->recipe as $ingredient) {
@@ -118,10 +118,10 @@ class Engram extends MutableBlueprint {
 			}
 			$obj->recipe = $recipe;
 		}
-		
+
 		return $obj;
 	}*/
-	
+
 	public function jsonSerialize(): mixed {
 		$json = parent::jsonSerialize();
 		unset($json['engramGroup']);
@@ -139,30 +139,30 @@ class Engram extends MutableBlueprint {
 		}
 		return $json;
 	}
-	
+
 	/*protected function SaveChildrenHook(BeaconDatabase $database) {
 		parent::SaveChildrenHook($database);
 		$object_id = $this->ObjectID();
-		
+
 		if (is_null($this->recipe)) {
 			$database->Query('DELETE FROM ark.crafting_costs WHERE engram_id = $1;', $object_id);
 			return;
 		}
-		
+
 		$keep_ingredients = [];
 		foreach ($this->recipe as $ingredient) {
 			$ingredient_id = $ingredient['engram']['UUID'];
 			$quantity = intval($ingredient['quantity']);
 			$require_exact = boolval($ingredient['exact']);
-			
+
 			if (BeaconCommon::IsUUID($ingredient_id) === false) {
 				throw new Exception('Recipe ingredient should be a v4 UUID.');
 			}
 			$keep_ingredients[] = $ingredient_id;
-			
+
 			$database->Query('INSERT INTO ark.crafting_costs (engram_id, ingredient_id, quantity, exact) VALUES ($1, $2, $3, $4) ON CONFLICT (engram_id, ingredient_id) DO UPDATE SET quantity = $3, exact = $4 WHERE crafting_costs.quantity IS DISTINCT FROM $3 OR crafting_costs.exact IS DISTINCT FROM $4;', $object_id, $ingredient_id, $quantity, $require_exact);
 		}
-		
+
 		$database->Query('DELETE FROM ark.crafting_costs WHERE engram_id = $1 AND ingredient_id NOT IN (\'' . implode('\',\'', $keep_ingredients) . '\');', $object_id);
 	}*/
 }
