@@ -1993,6 +1993,7 @@ End
 		  Var Fields As New Dictionary
 		  Fields.Value("email") = Self.ConfirmAddressField.Text.Trim
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
+		  Self.CheckForConfirmationSocket.ClearRequestHeaders
 		  Self.CheckForConfirmationSocket.SetFormData(Fields)
 		  Self.CheckForConfirmationSocket.Send("POST", Beacon.WebURL("/account/login/verify"))
 		End Sub
@@ -2107,6 +2108,7 @@ End
 		  
 		  Body.Value("device_id") = Beacon.HardwareID
 		  
+		  Self.LoginSocket.ClearRequestHeaders
 		  Self.LoginSocket.SetRequestContent(Beacon.GenerateJSON(Body, False), "application/json")
 		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Text.Trim + ":" + Self.LoginPasswordField.Text, 0)
 		  Self.LoginSocket.RequestHeader("User-Agent") = App.UserAgent
@@ -2290,6 +2292,7 @@ End
 		  Fields.Value("password") = Self.IdentityPasswordField.Text
 		  Fields.Value("allow_vulnerable") = AllowInsecurePassword
 		  
+		  Self.SubmitIdentitySocket.ClearRequestHeaders
 		  Self.SubmitIdentitySocket.RequestHeader("X-BEACON-UPGRADE-ENCRYPTION") = "True"
 		  Self.SubmitIdentitySocket.SetFormData(Fields)
 		  Self.SubmitIdentitySocket.Send("POST", Beacon.WebURL("/account/login/password"))
@@ -2475,6 +2478,7 @@ End
 		    Var Fields As New Dictionary
 		    Fields.Value("email") = Self.ConfirmAddressField.Text.Trim
 		    Fields.Value("key") = Self.mConfirmEncryptionKey
+		    Self.ConfirmCodeCreationSocket.ClearRequestHeaders
 		    Self.ConfirmCodeCreationSocket.SetFormData(Fields)
 		    Self.ConfirmCodeCreationSocket.Send("POST", Beacon.WebURL("/account/login/email"))
 		    
@@ -2505,6 +2509,7 @@ End
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
 		  Fields.Value("email") = Self.ConfirmAddressField.Text.Trim
 		  
+		  Self.VerifyConfirmationCodeSocket.ClearRequestHeaders
 		  Self.VerifyConfirmationCodeSocket.SetFormData(Fields)
 		  Self.VerifyConfirmationCodeSocket.Send("POST", Beacon.WebURL("/account/login/verify"))
 		End Sub
@@ -2549,6 +2554,7 @@ End
 #tag Events IdentityRandomNameButton
 	#tag Event
 		Sub Pressed()
+		  Self.IdentitySuggestionSocket.ClearRequestHeaders
 		  Self.IdentitySuggestionSocket.Send("GET", Beacon.WebURL("/account/login/suggest"))
 		  Me.Enabled = False
 		End Sub
