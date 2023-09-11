@@ -31,69 +31,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    Transparent     =   True
    UseFocusRing    =   "False"
    Visible         =   True
-   Width           =   1100
-   Begin DesktopGroupBox ExplanationGroup
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "About This Data"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   370
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   710
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   70
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   370
-      Begin DesktopLabel ExplanationLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   314
-         Index           =   -2147483648
-         InitialParent   =   "ExplanationGroup"
-         Italic          =   False
-         Left            =   730
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "This is how you are identified to the Beacon server. Your projects and registered mods are bound to this key pair and cannot be replaced if lost. So if you use these features, you are strongly recommended to backup this identity. You can also use the backup and restore buttons to move this identity to another computer. But keep it private like a password.\n\nThese keys are also used for API authentication. See the API Guide for more information about the Beacon API."
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   106
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   330
-      End
-   End
+   Width           =   500
    Begin DesktopTextArea PrivateKeyArea
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
@@ -126,7 +64,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Multiline       =   True
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -139,7 +77,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       UnicodeMode     =   0
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   586
+      Width           =   368
    End
    Begin DesktopLabel PrivateKeyLabel
       AllowAutoDeactivate=   True
@@ -161,7 +99,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Private Key:"
@@ -190,7 +128,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       HasBorder       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      Height          =   166
+      Height          =   132
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
@@ -206,20 +144,20 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Multiline       =   True
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   104
+      Top             =   138
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   0
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   586
+      Width           =   368
    End
    Begin DesktopLabel PublicKeyLabel
       AllowAutoDeactivate=   True
@@ -241,26 +179,20 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Public Key:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   104
+      Top             =   138
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin BeaconAPI.Socket Socket
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin UITweaks.ResizedTextField UserIDField
+   Begin UITweaks.ResizedTextField UserIdField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
@@ -299,9 +231,9 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   350
+      Width           =   368
    End
-   Begin UITweaks.ResizedLabel UserIDLabel
+   Begin UITweaks.ResizedLabel UserIdLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -324,7 +256,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "User ID:"
+      Text            =   "User Id:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -352,21 +284,94 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   9
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   1100
+      Width           =   500
+   End
+   Begin UITweaks.ResizedTextField DeviceIdField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   112
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   104
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   368
+   End
+   Begin UITweaks.ResizedLabel DeviceIdLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Device Id:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   104
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
    End
 End
 #tag EndDesktopWindow
@@ -381,7 +386,8 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.ViewTitle = "Identity"
-		  Self.UpdateUI(App.IdentityManager.CurrentIdentity)
+		  Self.mIdentity = App.IdentityManager.CurrentIdentity
+		  Self.UpdateUI()
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
@@ -404,8 +410,8 @@ End
 		  
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged
-		    Var Identity As Beacon.Identity = Notification.UserData
-		    Self.UpdateUI(Identity)
+		    Self.mIdentity = Notification.UserData
+		    Self.UpdateUI()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -471,32 +477,74 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowImportIdentity()
-		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.BeaconIdentity
-		  
-		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  App.ImportIdentityFile(File, Self)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateUI(Identity As Beacon.Identity)
-		  If (Identity Is Nil) = False Then
-		    Self.UserIDField.Text = Identity.UserID
-		    Self.PublicKeyArea.Text = BeaconEncryption.PEMEncodePublicKey(Identity.PublicKey)
-		    Self.PrivateKeyArea.Text = BeaconEncryption.PEMEncodePrivateKey(Identity.PrivateKey)
+		Private Sub UpdateUI()
+		  If (Self.mIdentity Is Nil) = False Then
+		    Self.UserIdField.Text = Self.mIdentity.UserId
+		    Self.PublicKeyArea.Text = Self.mIdentity.PublicKey
+		    Self.PrivateKeyArea.Text = If(Self.mPrivateKeyVisible, Self.mIdentity.PrivateKey, "")
 		  Else
-		    Self.UserIDField.Text = ""
+		    Self.UserIdField.Text = ""
 		    Self.PublicKeyArea.Text = ""
 		    Self.PrivateKeyArea.Text = ""
 		  End If
+		  Self.DeviceIdField.Text = Beacon.HardwareId
+		  
+		  BeaconUI.SizeToFit(Self.UserIdLabel, Self.DeviceIdLabel, Self.PublicKeyLabel, Self.PrivateKeyLabel)
+		  Var FieldsLeft As Integer = Self.UserIdLabel.Right + 12
+		  Var FieldsWidth As Integer = Self.Width - (20 + FieldsLeft)
+		  Var MaxFieldsWidth As Integer = 500 - (20 + FieldsLeft)
+		  Self.UserIdField.Left = FieldsLeft
+		  Self.DeviceIdField.Left = FieldsLeft
+		  Self.PublicKeyArea.Left = FieldsLeft
+		  Self.PrivateKeyArea.Left = FieldsLeft
+		  Self.UserIdField.Width = Min(FieldsWidth, MaxFieldsWidth)
+		  Self.DeviceIdField.Width = Min(FieldsWidth, MaxFieldsWidth)
+		  Self.PublicKeyArea.Width = FieldsWidth
+		  Self.PrivateKeyArea.Width = FieldsWidth
+		  
+		  Var PrivateKeyButton As OmniBarItem = Self.IdentityToolbar.Item("ShowPrivateKey")
+		  If (PrivateKeyButton Is Nil) = False Then
+		    PrivateKeyButton.Toggled = Self.mPrivateKeyVisible
+		  End If
 		End Sub
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mIdentity As Beacon.Identity
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPrivateKeyVisible As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mShownPrivateKeyNotice As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.mPrivateKeyVisible
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = Self.mPrivateKeyVisible Then
+			    Return
+			  End If
+			  
+			  If Value And Self.mShownPrivateKeyNotice = False Then
+			    Value = Self.ShowConfirm("Do you really need to see your private key?", "Your private key should be kept absolutely secret. You probably don't need to see it. Are you sure you want to show your private key?", "Show My Key", "Cancel")
+			    Self.mShownPrivateKeyNotice = True
+			  End If
+			  
+			  Self.mPrivateKeyVisible = Value
+			  Self.UpdateUI()
+			End Set
+		#tag EndSetter
+		Private PrivateKeyVisible As Boolean
+	#tag EndComputedProperty
 
 
 #tag EndWindowCode
@@ -507,8 +555,8 @@ End
 		  #Pragma Unused ItemRect
 		  
 		  Select Case Item.Name
-		  Case "ImportIdentity"
-		    Self.ShowImportIdentity()
+		  Case "ShowPrivateKey"
+		    Self.PrivateKeyVisible = Not Self.PrivateKeyVisible
 		  Case "DecryptFile"
 		    Self.ShowDecrypt()
 		  End Select
@@ -516,9 +564,11 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.Append(OmniBarItem.CreateButton("ImportIdentity", "Import", IconToolbarImport, "Restore an identity file backup."))
-		  Me.Append(OmniBarItem.CreateSpace)
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
 		  Me.Append(OmniBarItem.CreateButton("DecryptFile", "Decrypt File", IconToolbarUnlock, "Decrypt a file that was encrypted with your active identity."))
+		  Me.Append(OmniBarItem.CreateSpace)
+		  Me.Append(OmniBarItem.CreateButton("ShowPrivateKey", "Show Private Key", IconToolbarView, "Reveal your private key."))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

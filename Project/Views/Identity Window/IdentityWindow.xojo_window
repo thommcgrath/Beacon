@@ -18,12 +18,12 @@ Begin BeaconAutopositionWindow IdentityWindow
    MenuBar         =   0
    MenuBarVisible  =   True
    MinimumHeight   =   500
-   MinimumWidth    =   864
+   MinimumWidth    =   500
    Resizeable      =   True
    Title           =   "User Info"
    Type            =   0
    Visible         =   True
-   Width           =   864
+   Width           =   500
    Begin IdentityView IdentityView1
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -58,7 +58,7 @@ Begin BeaconAutopositionWindow IdentityWindow
       ViewIcon        =   0
       ViewTitle       =   "Untitled"
       Visible         =   True
-      Width           =   864
+      Width           =   500
    End
 End
 #tag EndDesktopWindow
