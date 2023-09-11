@@ -102,6 +102,11 @@ Protected Module Preferences
 		      mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(PublicKey), 0)
 		      mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, DecodeHex(PrivateKey))
 		    End If
+		    
+		    Var NewestUsedBuild As Integer = NewestUsedBuild
+		    If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
+		      HardwareIdVersion = 4
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -647,6 +652,22 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected EntryEditorSize As Size
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Hardware Id Version", 5)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Hardware Id Version") = Value
+			End Set
+		#tag EndSetter
+		Protected HardwareIdVersion As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

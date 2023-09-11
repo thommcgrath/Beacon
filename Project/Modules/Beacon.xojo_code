@@ -486,7 +486,7 @@ Protected Module Beacon
 		  Static GameList() As Beacon.Game
 		  If GameList.Count = 0 Then
 		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName, Ark.OmniFlag))
-		    GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag))
+		    //GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag))
 		  End If
 		  Return GameList
 		End Function
@@ -636,13 +636,19 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function HardwareId() As String
+		Protected Function HardwareId(ForceModern As Boolean = False) As String
 		  #if TargetMacOS
+		    #Pragma Unused ForceModern
 		    Return SystemInformationMBS.MacUUID.Lowercase
 		  #elseif TargetWindows Or TargetLinux
 		    Var Source As String = SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey
-		    Return Beacon.UUID.v5(Source)
+		    If ForceModern = False And Preferences.HardwareIdVersion = 4 Then
+		      Return Beacon.UUID.v4(Crypto.HashAlgorithms.MD5, Source)
+		    Else
+		      Return Beacon.UUID.v5(Source)
+		    End If
 		  #elseif TargetiOS
+		    #Pragma Unused ForceModern
 		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 		    
 		    Const UIKitFramework = "UIKit.framework"
@@ -662,6 +668,7 @@ Protected Module Beacon
 		    
 		    Return Identifier.DefineEncoding(Encodings.UTF8).Lowercase
 		  #else
+		    #Pragma Unused ForceModern
 		    #Pragma Error "HardwareID not implemented for this platform"
 		  #endif
 		End Function
