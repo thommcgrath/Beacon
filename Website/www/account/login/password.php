@@ -32,7 +32,7 @@ if (empty($email) || empty($password) || empty($code)) {
 $username = trim($_POST['username'] ?? ''); // only used for new accounts
 $allowVulnerable = filter_var($_POST['allow_vulnerable'] ?? false, FILTER_VALIDATE_BOOLEAN);
 $secondFactorCode = trim($_POST['verification_code'] ?? '');
-	
+
 $verification = EmailVerificationCode::Fetch($email, $code);
 if (is_null($verification) || $verification->IsVerified() === false) {
 	http_response_code(ERR_EMAIL_NOT_VERIFIED);
@@ -59,8 +59,8 @@ if ($allowVulnerable == false) {
 		$hash = strtolower(substr($hash, 0, 35));
 		if ($hash == $suffix && $count > 0) {
 			// vulnerable
-			http_response_code(500);
-			echo json_encode(['message' => 'There was an error updating authentication parameters.'], JSON_PRETTY_PRINT);
+			http_response_code(ERR_PASSWORD_COMPROMISED);
+			echo json_encode(['message' => 'Password is listed as vulnerable according to haveibeenpwned.com'], JSON_PRETTY_PRINT);
 			exit;
 		}
 	}
@@ -69,7 +69,7 @@ if ($allowVulnerable == false) {
 $publicKeyPem = null;
 $privateKeyPem = null;
 BeaconEncryption::GenerateKeyPair($publicKeyPem, $privateKeyPem);
-	
+
 $privateKeySalt = BeaconEncryption::GenerateSalt();
 $privateKeyIterations = 100000;
 $privateKeySecret = BeaconEncryption::HashFromPassword($password, $privateKeySalt, $privateKeyIterations);
@@ -94,7 +94,7 @@ try {
 	if (is_null($user)) {
 		$userProperties['email'] = $email;
 		$userProperties['username'] = $username;
-		
+
 		$user = UserGenerator::CreateNamed($email, $username, $password);
 		$sendWelcomeEmail = true;
 	} else {
@@ -104,13 +104,13 @@ try {
 			echo json_encode(['message' => 'Verification code required.', 'details' => [ 'code' => '2FA_ENABLED' ]], JSON_PRETTY_PRINT);
 			exit;
 		}
-		
+
 		UserGenerator::ReplacePassword($user, $password);
 	}
-	
+
 	// Remove the verification codes for this user
 	EmailVerificationCode::Clear($email);
-	
+
 	// Make sure to use the v3 user class here
 	$session = Session::Create(\BeaconAPI\User::GetByUserID($user->UserId()), $secondFactorCode);
 	if (is_null($session)) {
@@ -119,15 +119,15 @@ try {
 		echo json_encode(['message' => 'Verification code required.', 'details' => [ 'code' => '2FA_ENABLED' ]], JSON_PRETTY_PRINT);
 		exit;
 	}
-	
+
 	$database->Commit();
-	
+
 	if ($sendWelcomeEmail) {
 		$subject = 'Welcome to Beacon';
 		$body = "You just created a Beacon Account, which means you can easily share your projects with multiple devices. You can manage your account at <" . BeaconCommon::AbsoluteURL("/account/") . "> to change your password, manage projects, and see your Beacon Omni purchase status.\n\nFor reference, you can view Beacon's privacy policy at <" . BeaconCommon::AbsoluteURL("/privacy") . ">. The summary of it is simple: your data is yours and won't be sold or monetized in any way.\n\nHave fun and happy looting!\nThom McGrath, developer of Beacon.";
 		BeaconEmail::SendMail($email, $subject, $body);
 	}
-	
+
 	http_response_code(200);
 	echo json_encode([
 		'session_id' => $session->SessionID()
