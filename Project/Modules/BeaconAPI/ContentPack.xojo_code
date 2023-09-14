@@ -68,6 +68,24 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Source As JsonItem)
+		  // For mod info from the API
+		  
+		  Self.mMarketplace = Source.Lookup("marketplace", "")
+		  Self.mMarketplaceId = Source.Lookup("marketplaceId", "")
+		  Self.mConfirmationCode = Source.Lookup("confirmationCode", "")
+		  Self.mConfirmed = Source.Lookup("isConfirmed", "")
+		  Self.mGameId = Source.Lookup("gameId", Ark.Identifier)
+		  Self.mIsLocal = False
+		  Self.mLastUpdate = Source.Lookup("lastUpdate", 0)
+		  Self.mMinVersion = Source.Lookup("minVersion", 0)
+		  Self.mContentPackId = Source.Value("contentPackId")
+		  Self.mName = Source.Value("name")
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ContentPackId() As String
 		  Return Self.mContentPackId
 		End Function

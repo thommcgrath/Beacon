@@ -253,11 +253,21 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RefreshMods()
+		Sub JobsFinished()
+		  If Self.mRefreshWhenFinished Then
+		    Self.RefreshMods()
+		    Self.mRefreshWhenFinished = False
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub RefreshMods(SelectedModIds() As String)
 		  If Self.List Is Nil Then
 		    Return
 		  End If
 		  
+		  Self.mSelectedModIds = SelectedModIds
 		  Self.List.ReloadAllPages()
 		End Sub
 	#tag EndEvent
@@ -286,9 +296,45 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DeleteMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  Self.FinishJob
+		  If Self.List Is Nil Then
+		    // This view already closed
+		    Return
+		  End If
 		  
-		  Break
+		  Var ModId As String = Request.Tag
+		  
+		  If Response.Success Then
+		    Self.mRefreshWhenFinished = True
+		  Else
+		    Var ModName As String = ModId
+		    For Idx As Integer = 0 To Self.List.LastRowIndex
+		      Var ContentPack As BeaconAPI.ContentPack = Self.List.RowTagAt(Idx)
+		      If ContentPack.ContentPackId = ModId Then
+		        ModName = ContentPack.Name
+		        Exit
+		      End If
+		    Next
+		    
+		    Var Explanation As String = Response.Message
+		    If Explanation.IsEmpty Then
+		      Select Case Response.HTTPStatus
+		      Case 401, 403
+		        Explanation = "You are not authorized to delete this mod."
+		      Case 429
+		        Explanation = "You have performed too many actions too quickly. Wait a minute and try again."
+		      Case 500
+		        Explanation = "Internal server error. Please report this to help@usebeacon.app."
+		      Case 503
+		        Explanation = "Gateway error. This could be a temporary issue. Try again in a minute."
+		      Else
+		        Explanation = "The server returned an HTTP " + Response.HTTPStatus.ToString(Locale.Raw, "0") + " status."
+		      End Select
+		    End If 
+		    
+		    Self.ShowAlert("Mod """ + ModName + """ was not deleted", Explanation)
+		  End If
+		  
+		  Self.FinishJob
 		End Sub
 	#tag EndMethod
 
@@ -318,6 +364,7 @@ End
 		    End Try
 		    
 		    Var StartIdx As Integer = Self.List.RowIndexOfPage(Page)
+		    Self.List.SelectionChangeBlocked = True
 		    For Idx As Integer = 0 To Results.LastIndex
 		      Var Dict As Dictionary = Results(Idx)
 		      Var RowIdx As Integer = StartIdx + Idx
@@ -332,7 +379,9 @@ End
 		      Self.List.CellTextAt(RowIdx, 1) = GameName
 		      Self.List.CellTextAt(RowIdx, 2) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		      Self.List.CellTextAt(RowIdx, 3) = Status
+		      Self.List.RowSelectedAt(RowIdx) = Self.mSelectedModIds.IndexOf(ModInfo.ContentPackId) > -1
 		    Next
+		    Self.List.SelectionChangeBlocked(False) = False
 		  End If
 		  
 		  Self.List.CompleteRowLoadRequest(Request.Tag)
@@ -344,6 +393,39 @@ End
 		Sub Constructor()
 		  Self.ViewID = "RemoteModsListView"
 		  Super.Constructor()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SelectedModIds() As String()
+		  If Self.Working Then
+		    Return Self.mSelectedModIds
+		  End If
+		  
+		  Var Ids() As String
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    If Self.List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Ids.Add(BeaconAPI.ContentPack(Self.List.RowTagAt(Idx)).ContentPackId)
+		  Next
+		  Return Ids
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SelectedModIds(Assigns ModIds() As String)
+		  Self.mSelectedModIds = ModIds
+		  
+		  Var List As BeaconListbox = Self.List
+		  Var Bound As Integer = List.LastRowIndex
+		  List.SelectionChangeBlocked = True
+		  For Idx As Integer = 0 To Bound
+		    Var Pack As BeaconAPI.ContentPack = List.RowTagAt(Idx)
+		    List.RowSelectedAt(Idx) = ModIds.IndexOf(Pack.ContentPackId) > -1
+		  Next
+		  List.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 
@@ -379,6 +461,15 @@ End
 	#tag Hook, Flags = &h0
 		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mRefreshWhenFinished As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedModIds() As String
+	#tag EndProperty
 
 
 #tag EndWindowCode
@@ -476,6 +567,7 @@ End
 		    
 		    Self.StartJob
 		    Var Request As New BeaconAPI.Request("contentPacks/" + ModIds(Idx), "DELETE", WeakAddressOf APICallback_DeleteMod)
+		    Request.Tag = ModIds(Idx)
 		    BeaconAPI.Send(Request)
 		  Next
 		End Sub
@@ -497,7 +589,8 @@ End
 		  Case "RegisterMod"
 		    Var ModId As String =  ArkRegisterModDialog.Present(Self, ArkRegisterModDialog.ModeRemote)
 		    If ModId.IsEmpty = False Then
-		      Self.RefreshMods()
+		      Self.RefreshMods(Array(ModId))
+		      Self.List.SetFocus()
 		    End If
 		  Case "EditModBlueprints"
 		    Self.List.DoEdit()

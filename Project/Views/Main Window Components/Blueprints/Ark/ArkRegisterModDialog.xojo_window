@@ -49,7 +49,7 @@ Begin BeaconDialog ArkRegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   520
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -320,7 +320,7 @@ Begin BeaconDialog ArkRegisterModDialog
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   True
-         Caption         =   "Cancel"
+         Caption         =   "Later"
          Default         =   False
          Enabled         =   True
          FontName        =   "System"
@@ -893,14 +893,12 @@ Begin BeaconDialog ArkRegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -908,7 +906,6 @@ Begin BeaconDialog ArkRegisterModDialog
    End
    Begin Thread RegisterModThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1194,6 +1191,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowConfirmation()
 		  If Self.mModInfo Is Nil Then
+		    Self.Hide
 		    Return
 		  End If
 		  
@@ -1208,6 +1206,12 @@ End
 		Private Sub ShowNamePage(PrefilledName As String = "")
 		  Self.NameInputField.Text = PrefilledName
 		  Self.Pages.SelectedPanelIndex = Self.PageName
+		  
+		  If Self.mMode = Self.ModeLocal Then
+		    Self.NameActionButton.Caption = "OK"
+		  Else
+		    Self.NameActionButton.Caption = "Next"
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1508,13 +1512,17 @@ End
 #tag Events RegisterModThread
 	#tag Event
 		Sub Run()
+		  Var ModId As String
+		  Var ModInfo As BeaconAPI.ContentPack
 		  If Self.mMode = Self.ModeLocal Then
 		    Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mSteamId)
-		    Self.mModId = ContentPack.ContentPackId
+		    ModId = ContentPack.ContentPackId
+		    ModInfo = New BeaconAPI.ContentPack(ContentPack)
 		  Else
+		    ModId = Beacon.UUID.v4
 		    Var PackData As New Dictionary
-		    PackData.Value("contentPackId") = Beacon.UUID.v4.StringValue
+		    PackData.Value("contentPackId") = ModId
 		    PackData.Value("name") = Self.mModName
 		    PackData.Value("marketplace") = Beacon.ContentPack.MarketplaceSteamWorkshop
 		    PackData.Value("marketplaceId") = Self.mSteamId
@@ -1530,9 +1538,37 @@ End
 		      Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Success": False, "Reason": Response.Message))
 		      Return
 		    End If
+		    
+		    Try
+		      Var Parsed As New JSONItem(Response.Content)
+		      Var Lists() As JsonItem
+		      If Parsed.HasKey("created") Then
+		        Lists.Add(Parsed.Child("created"))
+		      End If
+		      If Parsed.HasKey("updated") Then
+		        Lists.Add(Parsed.Child("updated"))
+		      End If
+		      
+		      For Each List As JsonItem In Lists
+		        If List.IsArray = False Then
+		          Continue
+		        End If
+		        
+		        Var Bound As Integer = List.LastRowIndex
+		        For Idx As Integer = 0 To Bound
+		          Var Child As JsonItem = List.ChildAt(Idx)
+		          If Child.Lookup("contentPackId", "") = ModId Then
+		            ModInfo = New BeaconAPI.ContentPack(Child)
+		            Exit For List
+		          End If
+		        Next
+		      Next
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Handling mod creation response")
+		    End Try
 		  End If
 		  
-		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Success": True))
+		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Success": True, "ModId": ModId, "ModInfo": ModInfo))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1546,7 +1582,13 @@ End
 		          System.GotoURL(Beacon.WebURL("/help/adding_blueprints_to_beacon"))
 		        End If
 		        
-		        Self.Hide
+		        Self.mModId = Dict.Lookup("ModId", "")
+		        Self.mModInfo = Dict.Lookup("ModInfo", Nil)
+		        If Self.mMode = Self.ModeLocal Then
+		          Self.Hide
+		        Else
+		          Self.ShowConfirmation
+		        End If
 		      Else
 		        Var ErrorReason As String = Dict.Lookup("Reason", "Unknown error")
 		        Self.ShowAlert("There was an error adding the mod.", ErrorReason)

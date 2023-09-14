@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ModsListView
 Inherits BeaconSubview
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  Self.HasBeenShown = True
@@ -79,7 +79,27 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Sub RefreshMods()
-		  RaiseEvent RefreshMods()
+		  Var SelectedModIds() As String = Self.SelectedModIds()
+		  RaiseEvent RefreshMods(SelectedModIds)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshMods(SelectedModIds() As String)
+		  RaiseEvent RefreshMods(SelectedModIds)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SelectedModIds() As String()
+		  // Subclasses need to fill in
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SelectedModIds(Assigns ModIds() As String)
+		  // Subclasses need to fill in
+		  #Pragma Unused ModIds
 		End Sub
 	#tag EndMethod
 
@@ -165,7 +185,7 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event RefreshMods()
+		Event RefreshMods(SelectedModIds() As String)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

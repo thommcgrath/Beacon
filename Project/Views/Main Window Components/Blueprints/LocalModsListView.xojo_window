@@ -119,7 +119,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -257,7 +256,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine DiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -274,17 +272,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RefreshMods()
-		  Var SelectedModIds() As String
+		Sub RefreshMods(SelectedModIds() As String)
 		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
-		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
-		    If Self.ModsList.RowSelectedAt(Idx) = False Then
-		      Continue
-		    End If
-		    
-		    SelectedModIds.Add(BeaconAPI.ContentPack(Self.ModsList.RowTagAt(Idx)).ContentPackId)
-		  Next
-		  
 		  Var Filter As String = Self.FilterField.Text.Trim
 		  
 		  Self.ModsList.RemoveAllRows
@@ -490,6 +479,33 @@ End
 		  Catch Err As RuntimeException
 		    Self.ShowAlert("Beacon could not start mod discovery", Err.Message)
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SelectedModIds() As String()
+		  Var Ids() As String
+		  For Idx As Integer = 0 To Self.ModsList.LastRowIndex
+		    If Self.ModsList.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Ids.Add(BeaconAPI.ContentPack(Self.ModsList.RowTagAt(Idx)).ContentPackId)
+		  Next
+		  Return Ids
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SelectedModIds(Assigns ModIds() As String)
+		  Var List As BeaconListbox = Self.ModsList
+		  Var Bound As Integer = List.LastRowIndex
+		  List.SelectionChangeBlocked = True
+		  For Idx As Integer = 0 To Bound
+		    Var Pack As BeaconAPI.ContentPack = List.RowTagAt(Idx)
+		    List.RowSelectedAt(Idx) = ModIds.IndexOf(Pack.ContentPackId) > -1
+		  Next
+		  List.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 

@@ -269,11 +269,12 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RefreshMods()
+		Sub RefreshMods(SelectedModIds() As String)
 		  If Self.List Is Nil Then
 		    Return
 		  End If
 		  
+		  Self.mSelectedModIds = SelectedModIds
 		  Self.List.ReloadAllPages()
 		End Sub
 	#tag EndEvent
@@ -370,6 +371,7 @@ End
 		      Self.List.CellTextAt(RowIdx, 1) = GameName
 		      Self.List.CellTextAt(RowIdx, 2) = LastUpdate.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		      Self.List.CellTextAt(RowIdx, 3) = Status
+		      Self.List.RowSelectedAt(RowIdx) = Self.mSelectedModIds.IndexOf(ModInfo.ContentPackId) > -1
 		    Next
 		  End If
 		  
@@ -410,6 +412,39 @@ End
 		      Self.RefreshMods()
 		    End If
 		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SelectedModIds() As String()
+		  If Self.Working Then
+		    Return Self.mSelectedModIds
+		  End If
+		  
+		  Var Ids() As String
+		  For Idx As Integer = 0 To Self.List.LastRowIndex
+		    If Self.List.RowSelectedAt(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Ids.Add(BeaconAPI.ContentPack(Self.List.RowTagAt(Idx)).ContentPackId)
+		  Next
+		  Return Ids
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SelectedModIds(Assigns ModIds() As String)
+		  Self.mSelectedModIds = ModIds
+		  
+		  Var List As BeaconListbox = Self.List
+		  Var Bound As Integer = List.LastRowIndex
+		  List.SelectionChangeBlocked = True
+		  For Idx As Integer = 0 To Bound
+		    Var Pack As BeaconAPI.ContentPack = List.RowTagAt(Idx)
+		    List.RowSelectedAt(Idx) = ModIds.IndexOf(Pack.ContentPackId) > -1
+		  Next
+		  List.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 
@@ -461,6 +496,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mPendingDownloads() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedModIds() As String
 	#tag EndProperty
 
 
