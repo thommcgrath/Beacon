@@ -390,7 +390,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin URLConnection OAuthStartSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -399,7 +398,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin URLConnection OAuthRedeemSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -408,7 +406,6 @@ Begin DesktopWindow UserWelcomeWindow
    End
    Begin Thread RefreshAndCloseThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -667,6 +664,46 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ShowAPIError(HTTPStatus As Integer)
+		  Var Explanation As String
+		  Select Case HTTPStatus
+		  Case 500
+		    Explanation = "The server encountered an internal error."
+		  Case 401, 403
+		    Explanation = "The server rejected the request due to an authentication problem."
+		  Case 429
+		    Explanation = "You have sent too many requests to the server. Wait a minute and try again."
+		  Else
+		    Explanation = "The server returned an HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " status."
+		  End Select
+		  Explanation = Explanation + " You should contact support using help@usebeacon.app with this information."
+		  
+		  If Self.ShowConfirm("Beacon could not complete the request", Explanation, "System Status", "Cancel") Then
+		    System.GotoURL("https://status.usebeacon.app/")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowConnectionError(Err As RuntimeException)
+		  Var Explanation As String
+		  If Err.Message.Contains("likely a bad url") Then
+		    Explanation = "Beacon experienced a DNS error while trying to connect to its server. This is often an issue with your internet service provider. Choose ""More Info"" for possible solutions."
+		  Else
+		    Explanation = "There are a large number of possible reasons, including an internet outage, antivirus trouble, and more. Choose ""More Info"" for possible solutions."
+		  End If
+		  
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Beacon could not connect to its server", Explanation, "More Info", "Cancel", "Beacon Status")
+		  Select Case Choice
+		  Case BeaconUI.ConfirmResponses.Action
+		    System.GotoURL(Beacon.WebURL("redirect?destination=connectionhelp"))
+		  Case BeaconUI.ConfirmResponses.Alternate
+		    System.GotoURL("https://status.usebeacon.app/")
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowError(Message As String, HTTPStatus As Integer)
 		  App.Log(Message + " HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " error.")
 		  
@@ -889,6 +926,18 @@ End
 		  Me.UserAgent = App.UserAgent
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Error(error As RuntimeException)
+		  Self.ShowConnectionError(Error)
+		  
+		  If Self.mLoginOnly Then
+		    Self.Close
+		  Else
+		    Self.Collapse
+		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		  End If
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events SidebarCanvas
 	#tag Event
@@ -940,13 +989,20 @@ End
 		    Self.SaveOAuthResponse(Content)
 		  Else
 		    // Something else
-		    Break
+		    App.Log("OAuthStartSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
+		    Self.ShowAPIError(HTTPStatus)
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Error(e As RuntimeException)
-		  Break
+		  Self.ContinueAnonymousButton.Enabled = True
+		  Self.ContinueAuthenticatedButton.Enabled = True
+		  Self.DisableOnlineButton.Enabled = True
+		  Self.WelcomePageSpinner.Visible = False
+		  
+		  App.Log(e, CurrentMethodName, "Trying to start an OAuth request")
+		  Self.ShowConnectionError(e)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -956,13 +1012,29 @@ End
 		  If HTTPStatus = 201 Then
 		    Self.SaveOAuthResponse(Content)
 		  Else
-		    Break
+		    App.Log("OAuthRedeemSocket.Error HTTP: " + HTTPStatus.ToString(Locale.Raw, "0") + " Url: " + Url + " Data: " + EncodeBase64MBS(Content))
+		    Self.ShowAPIError(HTTPStatus)
+		    
+		    If Self.mLoginOnly Then
+		      Self.Close
+		    Else
+		      Self.Collapse
+		      Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Error(e As RuntimeException)
-		  Break
+		  App.Log(e, CurrentMethodName, "Trying to redeem an OAuth code")
+		  Self.ShowConnectionError(e)
+		  
+		  If Self.mLoginOnly Then
+		    Self.Close
+		  Else
+		    Self.Collapse
+		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
