@@ -45,6 +45,23 @@ Protected Class ModDiscoveryEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Cleanup(HostDir As FolderItem)
+		  #if Not DebugBuild
+		    Try
+		      If HostDir Is Nil Or HostDir.Exists = False Or HostDir.DeepDelete(False) Then
+		        Return
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Cleaning up host directory")
+		    End Try
+		    App.Log("Host folder " + HostDir.NativePath + " was not deleted")
+		  #else
+		    #Pragma Unused HostDir
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function GetModIdForTag(Tag As String) As String
 		  If (Self.mModsByTag Is Nil) = False Then
@@ -130,9 +147,16 @@ Protected Class ModDiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub mRCONSocket_Error(Sender As TCPSocket, Err As RuntimeException)
+		  #Pragma Unused Sender
+		  
 		  #if DebugBuild
 		    System.DebugLog("Socket error: " + Err.Message)
 		  #endif
+		  
+		  Self.mRCONTimer.RunMode = Timer.RunModes.Off
+		  Self.StatusMessage = "RCON error: " + Err.Message
+		  Self.mShell.Close
+		  Self.mThread.Resume
 		End Sub
 	#tag EndMethod
 
@@ -232,11 +256,13 @@ Protected Class ModDiscoveryEngine
 		  #endif
 		  
 		  If Ark.DedicatedServer.Configure(Project, Profile, Self.mArkRoot, HostDir) = False Then
+		    Self.Cleanup(HostDir)
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Could not build server directory."))
 		    Return
 		  End If
 		  
 		  If Self.mCancelled Then
+		    Self.Cleanup(HostDir)
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		    Return
 		  End If
@@ -248,12 +274,14 @@ Protected Class ModDiscoveryEngine
 		  Try
 		    ModsFolder = ServerFolder.Child("ShooterGame").Child("Content").Child("Mods")
 		    If ModsFolder.CheckIsFolder(True) = False Then
+		      Self.Cleanup(HostDir)
 		      App.Log("Mods folder could not be created.")
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Mods folder could not be created."))
 		      Return
 		    End If
 		    App.Log("Mods Root: " + ModsFolder.NativePath)
 		  Catch Err As RuntimeException
+		    Self.Cleanup(HostDir)
 		    App.Log(Err, CurrentMethodName, "Getting Ark mods folder")
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Could not find ShooterGame/Content/Mods folder.", "Exception": Err))
 		    Return
@@ -263,12 +291,14 @@ Protected Class ModDiscoveryEngine
 		  Try
 		    SteamCMD = Ark.DedicatedServer.SteamCMD(ServerFolder)
 		    If SteamCMD Is Nil Or SteamCMD.Exists = False Then
+		      Self.Cleanup(HostDir)
 		      App.Log("SteamCMD is not installed.")
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "SteamCMD is not installed."))
 		      Return
 		    End If
 		    App.Log("SteamCMD: " + SteamCMD.NativePath)
 		  Catch Err As RuntimeException
+		    Self.Cleanup(HostDir)
 		    App.Log(Err, CurrentMethodName, "Getting steamcmd path")
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Could not find path to SteamCMD.", "Exception": Err))
 		    Return
@@ -280,6 +310,7 @@ Protected Class ModDiscoveryEngine
 		  Next
 		  
 		  If Self.mCancelled Then
+		    Self.Cleanup(HostDir)
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		    Return
 		  End If
@@ -296,6 +327,7 @@ Protected Class ModDiscoveryEngine
 		  
 		  While SteamShell.IsRunning
 		    If Self.mCancelled Then
+		      Self.Cleanup(HostDir)
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		      Return
 		    End If
@@ -312,6 +344,7 @@ Protected Class ModDiscoveryEngine
 		  Try
 		    WorkshopFolder = SteamCMD.Parent.Child("steamapps").Child("workshop").Child("content").Child("346110")
 		  Catch Err As RuntimeException
+		    Self.Cleanup(HostDir)
 		    App.Log(Err, CurrentMethodName, "Getting workshop data path")
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Could not find path to SteamCMD downloaded content.", "Exception": Err))
 		    Return
@@ -319,6 +352,7 @@ Protected Class ModDiscoveryEngine
 		  
 		  For Each ModId As String In Self.mModIds
 		    If Self.mCancelled Then
+		      Self.Cleanup(HostDir)
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		      Return
 		    End If
@@ -326,6 +360,7 @@ Protected Class ModDiscoveryEngine
 		    Try
 		      Ark.DedicatedServer.InstallMod(ModId, WorkshopFolder, ModsFolder)
 		    Catch Err As RuntimeException
+		      Self.Cleanup(HostDir)
 		      App.Log(Err, CurrentMethodName, "Attempting to install mod " + ModId)
 		      Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Mod " + ModId + " did not install.", "Exception": Err))
 		      Return
@@ -356,6 +391,7 @@ Protected Class ModDiscoveryEngine
 		  Sender.Pause
 		  
 		  If Self.mCancelled Then
+		    Self.Cleanup(HostDir)
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		    Return
 		  End If
@@ -367,6 +403,7 @@ Protected Class ModDiscoveryEngine
 		    
 		    For Each ModId As String In Self.mModIds
 		      If Self.mCancelled Then
+		        Self.Cleanup(HostDir)
 		        Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		        Return
 		      End If
@@ -394,6 +431,7 @@ Protected Class ModDiscoveryEngine
 		  Catch Err As RuntimeException
 		  End Try
 		  If LogFile Is Nil Or LogFile.Exists = False Then
+		    Self.Cleanup(HostDir)
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Could not find ShooterGame.log file."))
 		    Return
 		  End If
@@ -415,6 +453,7 @@ Protected Class ModDiscoveryEngine
 		  End If
 		  
 		  If Self.mCancelled Then
+		    Self.Cleanup(HostDir)
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		    Return
 		  End If
@@ -423,20 +462,18 @@ Protected Class ModDiscoveryEngine
 		  RaiseEvent Import(LogContents)
 		  
 		  If Self.mCancelled Then
+		    Self.Cleanup(HostDir)
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		    Return
 		  End If
 		  
-		  #if Not DebugBuild
-		    If HostDir.DeepDelete(False) = False Then
-		      App.Log("Host folder " + HostDir.NativePath + " was not deleted")
-		    End If
-		  #endif
+		  Self.Cleanup(HostDir)
 		  
 		  Self.mSuccess = True
 		  Sender.AddUserInterfaceUpdate(New Dictionary("Finished" : True))
 		  
 		  Exception TopLevelException As RuntimeException
+		    Self.Cleanup(HostDir)
 		    App.Log(TopLevelException, CurrentMethodName, "Running the discovery thread")
 		    Sender.AddUserInterfaceUpdate(New Dictionary("Error": True, "Message": "Unhandled exception in discover thread.", "Exception": TopLevelException))
 		End Sub
