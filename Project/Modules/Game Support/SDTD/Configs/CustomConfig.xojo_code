@@ -60,6 +60,10 @@ Inherits SDTD.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function DecodeContent(Input As String, Rainbow As Dictionary) As String
+		  #if Not SDTD.Enabled
+		    #Pragma Unused Rainbow
+		  #endif
+		  
 		  Return Input
 		End Function
 	#tag EndMethod
@@ -72,13 +76,20 @@ Inherits SDTD.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function EncodeContent(Input As String, Rainbow As Dictionary) As String
+		  #if Not SDTD.Enabled
+		    #Pragma Unused Rainbow
+		  #endif
+		  
 		  Return Input
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Dictionary, ContentPacks As Beacon.StringList) As SDTD.Configs.CustomConfig
-		  
+		  #if Not SDTD.Enabled
+		    #Pragma Unused ParsedData
+		    #Pragma Unused ContentPacks
+		  #endif
 		End Function
 	#tag EndMethod
 

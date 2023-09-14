@@ -298,11 +298,11 @@ Begin BeaconWindow PreferencesWindow
          LockTop         =   True
          Scope           =   2
          SelectedRowIndex=   0
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   328
+         Top             =   296
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -328,14 +328,14 @@ Begin BeaconWindow PreferencesWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Channel:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   328
+         Top             =   296
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -344,7 +344,7 @@ Begin BeaconWindow PreferencesWindow
       Begin DesktopCheckBox AutoupdateCheckbox
          AllowAutoDeactivate=   True
          Bold            =   False
-         Caption         =   "Automatically Download Updates"
+         Caption         =   "Automatically Update"
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -353,24 +353,24 @@ Begin BeaconWindow PreferencesWindow
          Index           =   -2147483648
          InitialParent   =   "UpdatesGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   122
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   296
+         Top             =   328
          Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
          VisualState     =   1
-         Width           =   280
+         Width           =   198
       End
    End
    Begin DesktopGroupBox AppearanceGroup
@@ -553,6 +553,7 @@ Begin BeaconWindow PreferencesWindow
          Top             =   208
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   198
@@ -663,33 +664,54 @@ End
 
 	#tag Event
 		Sub Opening()
-		  BeaconUI.SizeToFit(Self.ChannelLabel, Self.DarkModeLabel, Self.NewProjectGameLabel, Self.ProfileIconLabel)
+		  Var DarkModeSupported As Boolean = BeaconUI.DarkModeSupported
+		  Var MultiGameSupported As Boolean = Beacon.Games.Count > 1
+		  
+		  Var Labels() As DesktopLabel
+		  Labels.Add(Self.ChannelLabel)
+		  Labels.Add(Self.ProfileIconLabel)
+		  If MultiGameSupported Then
+		    Labels.Add(Self.NewProjectGameLabel)
+		  End If
+		  If DarkModeSupported Then
+		    Labels.Add(Self.DarkModeLabel)
+		  End If
+		  BeaconUI.SizeToFit(Labels)
 		  
 		  Var LeftMenusLeft As Integer = Self.ChannelLabel.Right + 12
 		  Var LeftMenusWidth As Integer = Self.ChannelMenu.Right - LeftMenusLeft
 		  Self.ChannelMenu.Left = LeftMenusLeft
 		  Self.ChannelMenu.Width = LeftMenusWidth
-		  Self.DarkModeMenu.Left = LeftMenusLeft
-		  Self.DarkModeMenu.Width = LeftMenusWidth
-		  Self.NewProjectGameMenu.Left = LeftMenusLeft
-		  Self.NewProjectGameMenu.Width = LeftMenusWidth
+		  If DarkModeSupported Then
+		    Self.DarkModeMenu.Left = LeftMenusLeft
+		    Self.DarkModeMenu.Width = LeftMenusWidth
+		  End If
+		  If MultiGameSupported Then
+		    Self.NewProjectGameMenu.Left = LeftMenusLeft
+		    Self.NewProjectGameMenu.Width = LeftMenusWidth
+		  End If
 		  Self.ProfileIconMenu.Left = LeftMenusLeft
 		  Self.ProfileIconMenu.Width = LeftMenusWidth
 		  Self.SwitchesShowCaptionsCheck.Left = LeftMenusLeft
 		  Self.SwitchesShowCaptionsCheck.Width = LeftMenusWidth
+		  Self.AutoupdateCheckbox.Left = LeftMenusLeft
+		  Self.AutoupdateCheckbox.Width = LeftMenusWidth
 		  
 		  Var Delta As Integer
-		  Var Groups() As DesktopGroupBox = Array(Self.AppearanceGroup, Self.ConnectionsGroup, Self.NewProjectGroup, Self.SoundsGroup, Self.UpdatesGroup)
+		  Var LeftGroups() As DesktopGroupBox = Array(Self.AppearanceGroup, Self.UpdatesGroup)
+		  Var RightGroups() As DesktopGroupBox = Array(Self.SoundsGroup, Self.ConnectionsGroup)
+		  If MultiGameSupported Then
+		    LeftGroups.AddAt(0, Self.NewProjectGroup)
+		  Else
+		    Self.NewProjectGroup.Visible = False
+		  End If
 		  
 		  #if UpdatesKit.UseSparkle
 		    Self.UpdateSoundCheck.Visible = False
-		    
-		    Delta = Self.UpdateSoundCheck.Height + 12
-		    Self.SoundsGroup.Height = Self.SoundsGroup.Height - Delta
-		    Self.ConnectionsGroup.Top = Self.ConnectionsGroup.Top - Delta
+		    Self.SoundsGroup.Height = Self.SoundsGroup.Height - (Self.UpdateSoundCheck.Height + 12)
 		  #endif
 		  
-		  If BeaconUI.DarkModeSupported = False Then
+		  If DarkModeSupported = False Then
 		    Self.DarkModeLabel.Visible = False
 		    Self.DarkModeMenu.Visible = False
 		    
@@ -698,15 +720,19 @@ End
 		    Self.ProfileIconMenu.Top = Self.ProfileIconMenu.Top - Delta
 		    Self.SwitchesShowCaptionsCheck.Top = Self.SwitchesShowCaptionsCheck.Top - Delta
 		    Self.AppearanceGroup.Height = Self.AppearanceGroup.Height - Delta
-		    Self.UpdatesGroup.Top = Self.UpdatesGroup.Top - Delta
 		  End If
 		  
 		  Var TargetHeight As Integer
-		  For Each Group As DesktopGroupBox In Groups
-		    If Group.Visible = False Then
-		      Continue
-		    End If
-		    
+		  Var NextTop As Integer = 20
+		  For Each Group As DesktopGroupBox In LeftGroups
+		    Group.Top = NextTop
+		    NextTop = Group.Bottom + 12
+		    TargetHeight = Max(TargetHeight, Group.Bottom + 20)
+		  Next
+		  NextTop = 20
+		  For Each Group As DesktopGroupBox In RightGroups
+		    Group.Top = NextTop
+		    NextTop = Group.Bottom + 12
 		    TargetHeight = Max(TargetHeight, Group.Bottom + 20)
 		  Next
 		  If Self.Height <> TargetHeight Then

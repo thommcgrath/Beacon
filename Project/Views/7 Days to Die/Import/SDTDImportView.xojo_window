@@ -281,6 +281,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub ImportFile(File As FolderItem)
+		  #if Not SDTD.Enabled
+		    #Pragma Unused File
+		  #endif
+		  
 		  Self.QuickCancel = True
 		End Sub
 	#tag EndEvent

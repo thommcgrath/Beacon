@@ -140,7 +140,14 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h0
 		Shared Function Rewrite(Source As SDTD.Rewriter.Sources, InputFiles As Dictionary, Organizer As SDTD.ConfigOrganizer, ProjectId As String, Nuke As Boolean, ByRef Error As RuntimeException) As String
-		  
+		  #if Not SDTD.Enabled
+		    #Pragma Unused Source
+		    #Pragma Unused InputFiles
+		    #Pragma Unused Organizer
+		    #Pragma Unused ProjectId
+		    #Pragma Unused Nuke
+		    #Pragma Unused Error
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -157,6 +164,7 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h0
 		Shared Function Rewrite(Source As SDTD.Rewriter.Sources, Filename As String, InputContent As String, Organizer As SDTD.ConfigOrganizer, ProjectId As String, Nuke As Boolean, ByRef Err As RuntimeException) As String
+		  #Pragma Unused Source
 		  #Pragma Unused ProjectId
 		  #Pragma Unused Err
 		  

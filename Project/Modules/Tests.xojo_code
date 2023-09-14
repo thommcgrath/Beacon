@@ -654,10 +654,12 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestXmlParsing()
-		  Const TestXml = "<?xml version=""1.0""?><ServerSettings><property name=""ServerName"" value=""3bc0f2f0"" /><property name=""Region"" value=""NorthAmericaEast"" /></ServerSettings>"
-		  
-		  Var ServerSettings As SDTD.ServerConfigXml = SDTD.ServerConfigXml.Create(TestXml)
-		  Var Regenerated As String = ServerSettings.BuildString
+		  #if SDTD.Enabled
+		    Const TestXml = "<?xml version=""1.0""?><ServerSettings><property name=""ServerName"" value=""3bc0f2f0"" /><property name=""Region"" value=""NorthAmericaEast"" /></ServerSettings>"
+		    
+		    Var ServerSettings As SDTD.ServerConfigXml = SDTD.ServerConfigXml.Create(TestXml)
+		    Var Regenerated As String = ServerSettings.BuildString
+		  #endif
 		End Sub
 	#tag EndMethod
 

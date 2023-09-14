@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ImportThread
 Inherits Beacon.Thread
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Run()
 		  Var Files As New Dictionary
@@ -72,7 +72,9 @@ Inherits Beacon.Thread
 		  
 		  // Now split the content into values and remove the ones controlled by the imported groups
 		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(SDTD.Configs.NameCustomConfig) + ")"
-		  #Pragma Warning "Does not parse custom config"
+		  #if SDTD.Enabled
+		    #Pragma Warning "Does not parse custom config"
+		  #endif
 		  
 		  Return Project
 		End Function

@@ -104,6 +104,9 @@ Protected Module SDTD
 	#tag Constant, Name = ConfigFileWebPermissionsXml, Type = String, Dynamic = False, Default = \"webpermissions.xml", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = Enabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = FullName, Type = String, Dynamic = False, Default = \"7 Days to Die", Scope = Protected
 	#tag EndConstant
 

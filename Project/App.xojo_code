@@ -1118,12 +1118,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Sub LaunchQueue_SetupNewProjectMenuItems()
 		  Var Base As DesktopMenuItem = FileNewProjectForGame
 		  Var Games() As Beacon.Game = Beacon.Games
-		  For Each Game As Beacon.Game In Games
-		    Var Item As New DesktopMenuItem(Game.Name, Game.Identifier)
-		    Item.AutoEnabled = False
-		    AddHandler Item.MenuItemSelected, AddressOf mGameMenu_MenuItemSelected
-		    Base.AddMenu(Item)
-		  Next
+		  If Games.Count = 1 Then
+		    Base.Visible = False
+		  Else
+		    For Each Game As Beacon.Game In Games
+		      Var Item As New DesktopMenuItem(Game.Name, Game.Identifier)
+		      Item.AutoEnabled = False
+		      AddHandler Item.MenuItemSelected, AddressOf mGameMenu_MenuItemSelected
+		      Base.AddMenu(Item)
+		    Next
+		  End If
 		  Self.NextLaunchQueueTask
 		End Sub
 	#tag EndMethod

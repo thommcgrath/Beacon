@@ -317,6 +317,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy(Settings As Beacon.DeploySettings)
+		  #if Not SDTD.Enabled
+		    #Pragma Unused Settings
+		  #endif
+		  
 		  #if false
 		    If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
 		      DeployManager(Self.mDeployWindow.Value).BringToFront()

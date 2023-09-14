@@ -275,7 +275,6 @@ Protected Class ProjectController
 		  
 		  Controller.mProjectURL = Destination
 		  If Destination.Autosave Then
-		    #Pragma Warning "This may be wrong, shouldn't this come before assigning mProjectUrl?"
 		    Controller.mOriginalUrl = Self.mProjectURL
 		  End If
 		  

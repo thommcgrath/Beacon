@@ -38,74 +38,91 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h21
 		Private Sub Init()
-		  If mManager Is Nil Then
-		    mManager = New PreferencesManager(App.ApplicationSupport.Child("Preferences.json"))
-		    mManager.ClearValue("Last Used Config")
-		    
-		    // Cleanup project states
-		    Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
-		    Var Timestamps() As Double
-		    Var Map As New Dictionary
-		    For Each Entry As DictionaryEntry In Dict
-		      Try
-		        Var ProjectId As String = Entry.Key.StringValue
-		        Var State As Dictionary = Entry.Value
-		        Var Timestamp as Double = State.Value("Timestamp").DoubleValue
-		        
-		        Timestamps.Add(Timestamp)
-		        Map.Value(Timestamp) = ProjectId
-		      Catch Err As RuntimeException
-		      End Try
-		    Next Entry
-		    
-		    Var Changed As Boolean
-		    Timestamps.Sort
-		    Var Cutoff As DateTime = DateTime.Now - New DateInterval(0, 6)
-		    Var CutoffSeconds As Double = Cutoff.SecondsFrom1970
-		    For Idx As Integer = Timestamps.LastIndex DownTo Timestamps.FirstIndex
-		      If Timestamps(Idx) < CutoffSeconds Then
-		        Timestamps.RemoveAt(Idx)
-		        Changed = True
-		      End If
-		    Next Idx
-		    While Timestamps.Count > 20
-		      Timestamps.RemoveAt(Timestamps.LastIndex)
+		  If (mManager Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  mManager = New PreferencesManager(App.ApplicationSupport.Child("Preferences.json"))
+		  mManager.ClearValue("Last Used Config")
+		  
+		  // Cleanup project states
+		  Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
+		  Var Timestamps() As Double
+		  Var Map As New Dictionary
+		  For Each Entry As DictionaryEntry In Dict
+		    Try
+		      Var ProjectId As String = Entry.Key.StringValue
+		      Var State As Dictionary = Entry.Value
+		      Var Timestamp as Double = State.Value("Timestamp").DoubleValue
+		      
+		      Timestamps.Add(Timestamp)
+		      Map.Value(Timestamp) = ProjectId
+		    Catch Err As RuntimeException
+		    End Try
+		  Next Entry
+		  
+		  Var Changed As Boolean
+		  Timestamps.Sort
+		  Var Cutoff As DateTime = DateTime.Now - New DateInterval(0, 6)
+		  Var CutoffSeconds As Double = Cutoff.SecondsFrom1970
+		  For Idx As Integer = Timestamps.LastIndex DownTo Timestamps.FirstIndex
+		    If Timestamps(Idx) < CutoffSeconds Then
+		      Timestamps.RemoveAt(Idx)
 		      Changed = True
-		    Wend
-		    
-		    If Changed Then
-		      Var Replacement As New Dictionary
-		      For Each Timestamp As Double In Timestamps
-		        Var ProjectId As String = Map.Value(Timestamp)
-		        Replacement.Value(ProjectId) = Dict.Value(ProjectId)
-		      Next Timestamp
-		      mManager.DictionaryValue("Project State") = Replacement
 		    End If
-		    
-		    If mManager.StringValue("Device Private Key").IsEmpty = False Then
-		      Try
-		        Var PrivateKey As String = EncodeHex(BeaconEncryption.SlowDecrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, mManager.StringValue("Device Private Key")))
-		        Var PublicKey As String = EncodeHex(DecodeBase64(mManager.StringValue("Device Public Key", "")))
-		        If Crypto.RSAVerifyKey(PublicKey) And Crypto.RSAVerifyKey(PrivateKey) Then
-		          mDevicePublicKey = PublicKey
-		          mDevicePrivateKey = PrivateKey
-		        End If
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
-		    
-		    If mDevicePrivateKey.IsEmpty Then
-		      Var PublicKey, PrivateKey As String
-		      Call Crypto.RSAGenerateKeyPair(4096, PrivateKey, PublicKey)
-		      mDevicePublicKey = PublicKey
-		      mDevicePrivateKey = PrivateKey
-		      mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(PublicKey), 0)
-		      mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, DecodeHex(PrivateKey))
-		    End If
-		    
-		    Var NewestUsedBuild As Integer = NewestUsedBuild
-		    If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
-		      HardwareIdVersion = 4
+		  Next Idx
+		  While Timestamps.Count > 20
+		    Timestamps.RemoveAt(Timestamps.LastIndex)
+		    Changed = True
+		  Wend
+		  
+		  If Changed Then
+		    Var Replacement As New Dictionary
+		    For Each Timestamp As Double In Timestamps
+		      Var ProjectId As String = Map.Value(Timestamp)
+		      Replacement.Value(ProjectId) = Dict.Value(ProjectId)
+		    Next Timestamp
+		    mManager.DictionaryValue("Project State") = Replacement
+		  End If
+		  
+		  If mManager.StringValue("Device Private Key").IsEmpty = False Then
+		    Try
+		      Var PrivateKey As String = EncodeHex(BeaconEncryption.SlowDecrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, mManager.StringValue("Device Private Key")))
+		      Var PublicKey As String = EncodeHex(DecodeBase64(mManager.StringValue("Device Public Key", "")))
+		      If Crypto.RSAVerifyKey(PublicKey) And Crypto.RSAVerifyKey(PrivateKey) Then
+		        mDevicePublicKey = PublicKey
+		        mDevicePrivateKey = PrivateKey
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If mDevicePrivateKey.IsEmpty Then
+		    Var PublicKey, PrivateKey As String
+		    Call Crypto.RSAGenerateKeyPair(4096, PrivateKey, PublicKey)
+		    mDevicePublicKey = PublicKey
+		    mDevicePrivateKey = PrivateKey
+		    mManager.StringValue("Device Public Key") = EncodeBase64(DecodeHex(PublicKey), 0)
+		    mManager.StringValue("Device Private Key") = BeaconEncryption.SlowEncrypt("2f5dda1e-458c-4945-82cd-884f59c12f9b" + " " + Beacon.SystemAccountName + " " + Beacon.HardwareId, DecodeHex(PrivateKey))
+		  End If
+		  
+		  Var NewestUsedBuild As Integer = NewestUsedBuild
+		  If NewestUsedBuild < 10604000 And NewestUsedBuild > 0 Then
+		    HardwareIdVersion = 4
+		  End If
+		  
+		  Var DefaultGameId As String = NewProjectGameId
+		  If DefaultGameID.IsEmpty = False Then
+		    Var Found As Boolean
+		    Var Games() As Beacon.Game = Beacon.Games
+		    For Each Game As Beacon.Game In Games
+		      If Game.Identifier = DefaultGameId Then
+		        Found = True
+		        Exit
+		      End If
+		    Next
+		    If Not Found Then
+		      NewProjectGameId = ""
 		    End If
 		  End If
 		End Sub

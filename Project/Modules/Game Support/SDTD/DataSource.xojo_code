@@ -28,6 +28,10 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
+		  #if Not SDTD.Enabled
+		    #Pragma Unused StatusData
+		  #endif
+		  
 		  Var BuildNumber As Integer = App.BuildNumber
 		  Var Now As Double = DateTime.Now.SecondsFrom1970
 		  
@@ -151,10 +155,12 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function AllVersions() As Integer()
-		  #if DebugBuild
-		    #Pragma Warning "Look up actual game versions"
-		  #else
-		    #Pragma Error "Look up actual game versions"
+		  #if SDTD.Enabled Then
+		    #if DebugBuild
+		      #Pragma Warning "Look up actual game versions"
+		    #else
+		      #Pragma Error "Look up actual game versions"
+		    #endif
 		  #endif
 		  
 		  Var Versions() As Integer = Array(2101016, 2100324, 2007001, 2006009)
@@ -280,10 +286,12 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function NewestGameVersion() As Integer
-		  #if DebugBuild
-		    #Pragma Warning "Look up actual newest game version"
-		  #else
-		    #Pragma Error "Look up actual newest game version"
+		  #if SDTD.Enabled Then
+		    #if DebugBuild
+		      #Pragma Warning "Look up actual newest game version"
+		    #else
+		      #Pragma Error "Look up actual newest game version"
+		    #endif
 		  #endif
 		  
 		  Return 2101016

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Project
 Inherits Beacon.Project
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub AddSaveData(ManifestData As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
 		  #Pragma Unused PlainData
@@ -224,7 +224,9 @@ Inherits Beacon.Project
 		    Values.Add(New SDTD.ConfigValue(SDTD.ConfigFileServerConfigXml, "ServerName", Profile.Name))
 		  End If
 		  
-		  #Pragma Warning "Not fully implemented"
+		  #if SDTD.Enabled
+		    #Pragma Warning "Not fully implemented"
+		  #endif
 		  
 		  Return Values
 		End Function

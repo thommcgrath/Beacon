@@ -486,7 +486,9 @@ Protected Module Beacon
 		  Static GameList() As Beacon.Game
 		  If GameList.Count = 0 Then
 		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName, Ark.OmniFlag))
-		    //GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag))
+		    #if SDTD.Enabled
+		      GameList.Add(New Beacon.Game(SDTD.Identifier, SDTD.FullName, SDTD.OmniFlag))
+		    #endif
 		  End If
 		  Return GameList
 		End Function

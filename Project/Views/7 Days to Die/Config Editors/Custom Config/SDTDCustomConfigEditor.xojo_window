@@ -153,10 +153,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectionIsCommented() As Boolean
-		  #if DebugBuild
-		    #Pragma Warning "These comments are wrong"
-		  #else
-		    #Pragma Error "These comments are wrong"
+		  #if SDTD.Enabled
+		    #if DebugBuild
+		      #Pragma Warning "These comments are wrong"
+		    #else
+		      #Pragma Error "These comments are wrong"
+		    #endif
 		  #endif
 		  
 		  Var FirstLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionStart)
