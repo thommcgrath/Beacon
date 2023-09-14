@@ -63,7 +63,7 @@ Begin ModEditorView ArkModEditorView
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   900
       Begin OmniBarSeparator FilterSeparator
@@ -1062,7 +1062,7 @@ End
 		      If Cancelled = False Then
 		        If Self.mImporter Is Nil Or Self.mImporter.BlueprintCount = 0 Then
 		          Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
-		        ElseIf Self.mImporter.ModCount = 1 Then
+		        ElseIf Self.mImporter.ModCount < 2 Then
 		          // Just import what was found
 		          Var FoundBlueprints() As Ark.Blueprint = Self.mImporter.Blueprints
 		          Try

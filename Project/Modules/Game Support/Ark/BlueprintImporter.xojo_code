@@ -100,7 +100,11 @@ Protected Class BlueprintImporter
 
 	#tag Method, Flags = &h0
 		Shared Function ImportAsBinary(Contents As String, Progress As ProgressWindow = Nil) As Ark.BlueprintImporter
-		  Var Archive As Beacon.Archive = Beacon.Archive.Open(Contents)
+		  Var Archive As Beacon.Archive
+		  Try
+		    Archive = Beacon.Archive.Open(Contents)
+		  Catch Err As RuntimeException
+		  End Try
 		  If Archive Is Nil Then
 		    // Not a .beacondata file
 		    Return Nil
