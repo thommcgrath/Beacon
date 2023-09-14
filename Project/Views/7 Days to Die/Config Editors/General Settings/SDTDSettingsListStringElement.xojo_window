@@ -348,7 +348,7 @@ End
 		  Case Self.PlainMode
 		    StringValue = Self.mValueField.Text
 		  Case Self.MenuMode
-		    StringValue = Self.mChoiceMenu.SelectedRowValue
+		    StringValue = Self.mChoiceMenu.SelectedRowText
 		  Case Self.ComboMode
 		    StringValue = Self.mInputMenu.Text
 		  End Select

@@ -222,6 +222,7 @@ Begin BeaconWindow ArkSpawnSimulatorWindow
          TabStop         =   True
          Tooltip         =   ""
          Top             =   63
+         TotalPages      =   -1
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -534,7 +535,7 @@ End
 		  If (Self.mSelectedPoint Is Nil) = False Then
 		    Var Figures() As Ark.PopulationFigures = Ark.DataSource.Pool.Get(False).GetPopulationFigures(Self.mSelectedPoint)
 		    For Idx As Integer = Figures.FirstIndex To Figures.LastIndex
-		      If Figures(Idx).MapName = Self.MapMenu.SelectedRowValue Then
+		      If Figures(Idx).MapName = Self.MapMenu.SelectedRowText Then
 		        PopFigures = Figures(Idx)
 		        Exit
 		      End If

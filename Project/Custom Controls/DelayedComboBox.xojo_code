@@ -62,7 +62,7 @@ Inherits DesktopComboBox
 		Sub SetImmediately(Value As String)
 		  #Pragma BreakOnExceptions Off
 		  Try
-		    Self.SelectRowWithValue(Value)
+		    Self.SelectRowWithText(Value)
 		    Return
 		  Catch Err As RuntimeException
 		  End Try

@@ -312,7 +312,7 @@ End
 		  End If
 		  
 		  UserIdentifier = Win.ValueField.Text.Trim
-		  Role = Win.RoleMenu.SelectedRowValue
+		  Role = Win.RoleMenu.SelectedRowText
 		  Win.Close
 		  Return True
 		End Function
