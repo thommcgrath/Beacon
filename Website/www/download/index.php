@@ -1,7 +1,7 @@
 <?php
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Cache-Control: no-cache');
-//header('Accept-CH: UA-Mobile, UA-Arch, UA-Platform, UA-Bitness');
+header('Accept-CH: UA-Mobile, UA-Arch, UA-Platform, UA-Bitness');
 BeaconTemplate::SetTitle('Download');
 BeaconTemplate::SetPageDescription('Download Beacon for Windows and macOS');
 
@@ -11,7 +11,7 @@ if (isset($_GET['build']) && isset($_GET['token']) && isset($_GET['expires'])) {
 	$token = $_GET['token'];
 	$tokenExpires = $_GET['expires'];
 	$tokenSecret = BeaconCommon::GetGlobal('Legacy Download Secret');
-	
+
 	$expectedToken = BeaconCommon::Base64UrlEncode(hash('sha3-512', "{$build}:{$tokenExpires}:{$tokenSecret}", true));
 	if ($token === $expectedToken && $tokenExpires > time()) {
 		// Show a legacy version
@@ -77,14 +77,14 @@ function BuildLinks(array $update): array {
 	$build = $update['build_number'];
 	$delta_version = $update['delta_version'];
 	$stage = $update['stage'];
-	
+
 	$data = [
 		'build_display' => $update['build_display'],
 		'build_number' => $build,
 		'stage' => $stage,
 		'mac_url' => BeaconCommon::SignDownloadURL(array_key_first($update['files'][BeaconUpdates::PLATFORM_MACOS]), 300)
 	];
-		
+
 	foreach ($update['files'][BeaconUpdates::PLATFORM_WINDOWS] as $url => $architectures) {
 		switch ($architectures) {
 		case BeaconUpdates::ARCH_INTEL32:
@@ -102,11 +102,14 @@ function BuildLinks(array $update): array {
 			break;
 		}
 	}
-	
+
 	$min_mac_version = $update['min_mac_version'];
 	list($mac_major, $mac_minor, $mac_bug) = explode('.', $min_mac_version, 3);
 	$min_mac_version = ($mac_major * 10000) + ($mac_minor * 100) + $mac_bug;
 	$mac_versions = [];
+	if ($min_mac_version <= 101900) {
+		$mac_versions[] = '14 Sonoma';
+	}
 	if ($min_mac_version <= 101800 && $build >= 10602000) {
 		$mac_versions[] = '13 Ventura';
 	}
@@ -132,7 +135,7 @@ function BuildLinks(array $update): array {
 		$mac_versions[] = '10.11 El Capitan';
 	}
 	$data['mac_display_versions'] = BeaconCommon::ArrayToEnglish($mac_versions, 'or');
-	
+
 	$min_win_version = $update['min_win_version'];
 	list($win_major, $win_minor, $win_build) = explode('.', $min_win_version, 3);
 	$min_win_version = ($win_major * 100000000) + ($win_minor * 1000000) + $win_build;
@@ -163,7 +166,7 @@ function BuildLinks(array $update): array {
 	if (array_key_exists('win_arm64_url', $data)) {
 		$data['win_arm_display_versions'] = BeaconCommon::ArrayToEnglish($win_arm_versions, 'or');
 	}
-	
+
 	if ($delta_version >= 5) {
 		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT path, created FROM update_files WHERE version = $1 AND type = \'Complete\';', $delta_version);
@@ -175,9 +178,9 @@ function BuildLinks(array $update): array {
 	}
 	$data['engrams_date'] = $last_database_update->format('c');
 	$data['engrams_date_display'] = $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC';
-	
+
 	$data['history_url'] = BeaconCommon::AbsoluteURL('/history?stage=' . $stage . '#build' . $build);
-	
+
 	return $data;
 }
 
