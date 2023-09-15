@@ -193,9 +193,9 @@ class ServiceToken implements JsonSerializable {
 	public static function Lookup(string $userId, ?string $provider = null): array {
 		$database = BeaconCommon::Database();
 		if (is_null($provider)) {
-			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE user_id = $1;', $userId);
+			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE user_id = $1 ORDER BY token_id;', $userId);
 		} else {
-			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE user_id = $1 AND provider = $2;', $userId, $provider);
+			$rows = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE user_id = $1 AND provider = $2 ORDER BY token_id;', $userId, $provider);
 		}
 		$tokens = [];
 		while (!$rows->EOF()) {
@@ -236,8 +236,10 @@ class ServiceToken implements JsonSerializable {
 	}
 
 	public static function RefreshExpiring(): void {
+		// Refreshes tokens that are near their refresh token expiration
+
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE access_token_expiration IS NOT NULL AND access_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
+		$results = $database->Query('SELECT ' . self::SelectColumns . ' FROM public.service_tokens WHERE refresh_token_expiration IS NOT NULL AND refresh_token_expiration < CURRENT_TIMESTAMP + $1::INTERVAL;', self::ExpirationBuffer . ' seconds');
 
 		while (!$results->EOF()) {
 			try {
@@ -246,6 +248,13 @@ class ServiceToken implements JsonSerializable {
 			} catch (Exception $err) {
 			}
 			$results->MoveNext();
+		}
+
+		$rows = $database->Query('SELECT EXISTS (SELECT FROM public.service_tokens WHERE refresh_token_expiration <= CURRENT_TIMESTAMP);');
+		if ($rows->Field('exists')) {
+			$database->BeginTransaction();
+			$database->Query('DELETE FROM public.service_tokens WHERE refresh_token_expiration <= CURRENT_TIMESTAMP;');
+			$database->Commit();
 		}
 	}
 
@@ -385,7 +394,7 @@ class ServiceToken implements JsonSerializable {
 			$status = 200;
 		}
 
-		if ($status === 200 || $status === 204) {
+		if ($status === 200 || $status === 204 || $status = 401) {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
 			$database->Query('DELETE FROM public.service_tokens WHERE token_id = $1;', $this->tokenId);
@@ -442,7 +451,7 @@ class ServiceToken implements JsonSerializable {
 			$response = json_decode($response, true);
 			$providerSpecific['user'] = $response['data']['token']['user'];
 			$accessTokenExpiration = $response['data']['token']['expires_at'];
-			$refreshTokenExpiration = $accessTokenExpiration + 2592000; // This is a guess
+			$refreshTokenExpiration = $accessTokenExpiration + 5184000; // This is a guess, 60 days
 			return true;
 		}
 

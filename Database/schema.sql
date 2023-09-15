@@ -577,7 +577,7 @@ CREATE FUNCTION ark.legacy_mod_insert() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-	INSERT INTO public.content_packs (content_pack_id, game_id, marketplace, marketplace_id, user_id, name, confirmed, confirmation_code, default_enabled, last_update, min_version, include_in_deltas, game_specific) VALUES (NEW.mod_id, 'Ark', (CASE WHEN NEW.is_app = TRUE THEN 'Steam' ELSE 'Steam Workshop' END), NEW.workshop_id, NEW.user_id, NEW.name, NEW.confirmed, NEW.confirmation_code, NEW.console_safe, NEW.default_enabled, NEW.last_update, NEW.min_version, NEW.include_in_deltas, NEW.is_official, jsonb_strip_nulls(jsonb_build_object('tag', NEW.tag, 'prefix', NEW.prefix, 'map_folder', NEW.map_folder)));
+	INSERT INTO public.content_packs (content_pack_id, game_id, marketplace, marketplace_id, user_id, name, confirmed, confirmation_code, console_safe, default_enabled, last_update, min_version, include_in_deltas, is_official, game_specific) VALUES (COALESCE(NEW.mod_id, gen_random_uuid()), 'Ark', (CASE WHEN NEW.workshop_id < 0 THEN 'Steam' ELSE 'Steam Workshop' END)::marketplace, ABS(NEW.workshop_id), NEW.user_id, NEW.name, COALESCE(NEW.confirmed, FALSE), COALESCE(NEW.confirmation_code::UUID, gen_random_uuid()), COALESCE(NEW.console_safe, FALSE), COALESCE(NEW.default_enabled, FALSE), COALESCE(NEW.last_update, CURRENT_TIMESTAMP), COALESCE(NEW.min_version, 10500000), COALESCE(NEW.include_in_deltas, FALSE), COALESCE(NEW.is_official, FALSE), jsonb_strip_nulls(jsonb_build_object('tag', NEW.tag, 'prefix', NEW.prefix, 'map_folder', NEW.map_folder)));
 	RETURN NEW;
 END;
 $$;

@@ -6,9 +6,9 @@ const updateScreenNotice = () => {
 	const screenHeightPoints = screen.height;
 	const screenWidthPixels = screenWidthPoints * window.devicePixelRatio;
 	const screenHeightPixels = screenHeightPoints * window.devicePixelRatio;
-	
+
 	const isWindows = navigator.platform.indexOf('Win') > -1;
-	
+
 	let notice = null;
 	if (screenWidthPoints < 1280 || screenHeightPoints < 720) {
 		notice = 'This screen may not be supported. A resolution of at least 1280x720 points is required.';
@@ -19,7 +19,7 @@ const updateScreenNotice = () => {
 			}
 		}
 	}
-	
+
 	if (notice) {
 		const screenNotice = document.getElementById('screenCompatibilityNotice');
 		if (screenNotice) {
@@ -35,19 +35,19 @@ const buildDownloadsTable = async (downloadData) => {
 	const downloadWinIntel64 = 'windows-x64';
 	const downloadWinIntel = 'windows-x86';
 	const downloadWinARM64 = 'windows-arm64';
-	
+
 	let priorities = [downloadWinIntel64, downloadMac, downloadWinIntel, downloadWinARM64];
 	let hasRecommendation = false;
-	
+
 	switch (navigator.platform) {
 	case 'Win32':
 		// Try to use client hints to determine the best version, but this isn't supported in Firefox
 		if ('userAgentData' in navigator) {
 			await navigator.userAgentData.getHighEntropyValues(['architecture', 'bitness']).then((ua) => {
-				if (ua.bitness === 32) {
+				if (ua.bitness === '32' || ua.bitness === 32) {
 					priorities = [downloadWinIntel, downloadWinIntel64, downloadWinARM64, downloadMac];
 					hasRecommendation = true;
-				} else if (ua.bitness === 64) {
+				} else if (ua.bitness === '64' || ua.bitness === 64) {
 					if (ua.architecture === 'arm') {
 						priorities = [downloadWinARM64, downloadWinIntel, downloadWinIntel64, downloadMac];
 						hasRecommendation = true;
@@ -56,11 +56,13 @@ const buildDownloadsTable = async (downloadData) => {
 						hasRecommendation = true;
 					}
 				}
-			}).catch(() => {});
+			}).catch(() => {
+				//
+			});
 		}
 		if (hasRecommendation === false) {
 			priorities = [downloadWinUniversal, downloadWinIntel64, downloadWinIntel, downloadWinARM64, downloadMac];
-			hasRecommendation = true;	
+			hasRecommendation = true;
 		}
 		break;
 	case 'MacIntel':
@@ -69,7 +71,7 @@ const buildDownloadsTable = async (downloadData) => {
 		hasRecommendation = true;
 		break;
 	}
-	
+
 	const addChildRow = (table, label, url, buttonCaption = 'Download') => {
 		let childRow = document.createElement('div');
 		childRow.classList.add('row');
@@ -89,7 +91,7 @@ const buildDownloadsTable = async (downloadData) => {
 		childRow.appendChild(childDownload);
 		table.appendChild(childRow);
 	};
-	
+
 	const addChildRows = (table, data, recommend) => {
 		if (hasRecommendation === false) {
 			let warningRow = document.createElement('div');
@@ -101,11 +103,11 @@ const buildDownloadsTable = async (downloadData) => {
 			warningRow.appendChild(warningLabel);
 			table.appendChild(warningRow);
 		}
-		
+
 		let first = true; // Set first only after a row is added, in case one gets skipped
 		for (const downloadKey of priorities) {
 			let recommendedTag = (recommend === true && hasRecommendation === true && first === true) ? '<span class="tag blue left-space">Recommended</span>' : '';
-			
+
 			switch (downloadKey) {
 			case downloadMac:
 				if (Object.prototype.hasOwnProperty.call(data, 'mac_url')) {
@@ -139,15 +141,15 @@ const buildDownloadsTable = async (downloadData) => {
 				break;
 			}
 		}
-		
+
 		addChildRow(table, 'Engrams Database, updated <time datetime="' + data.engrams_date + '">' + data.engrams_date_display + '</time>', data.engrams_url);
 		addChildRow(table, 'Release Notes', data.history_url, 'View');
 	};
-	
+
 	const stableTable = document.getElementById('stable-table');
 	const prereleaseTable = document.getElementById('prerelease-table');
 	const legacyTable = document.getElementById('legacy-table');
-	
+
 	const current = downloadData.current;
 	if (current) {
 		const headerRow = document.createElement('div');
@@ -157,10 +159,10 @@ const buildDownloadsTable = async (downloadData) => {
 		headerBody.innerText = 'Stable Version: Beacon ' + current.build_display;
 		headerRow.appendChild(headerBody);
 		stableTable.appendChild(headerRow);
-		
+
 		addChildRows(stableTable, current, true);
 	}
-	
+
 	const prerelease = downloadData.preview;
 	if (prerelease) {
 		const headerRow = document.createElement('div');
@@ -170,12 +172,12 @@ const buildDownloadsTable = async (downloadData) => {
 		headerBody.innerText = 'Preview Version: Beacon ' + prerelease.build_display;
 		headerRow.appendChild(headerBody);
 		prereleaseTable.appendChild(headerRow);
-		
+
 		addChildRows(prereleaseTable, prerelease, false);
 	} else {
 		prereleaseTable.classList.add('hidden');
 	}
-	
+
 	const legacy = downloadData.legacy;
 	if (legacy) {
 		const headerRow = document.createElement('div');
@@ -185,12 +187,12 @@ const buildDownloadsTable = async (downloadData) => {
 		headerBody.innerText = 'Legacy Version: Beacon ' + legacy.build_display;
 		headerRow.appendChild(headerBody);
 		legacyTable.appendChild(headerRow);
-		
+
 		addChildRows(legacyTable, legacy, false);
 	} else {
 		legacyTable.classList.add('hidden');
 	}
-	
+
 	document.getElementById('mac_version_requirements').innerText = 'macOS ' + current.mac_display_versions;
 	document.getElementById('win_version_requirements').innerText = current.win_display_versions;
 };

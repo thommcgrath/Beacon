@@ -683,6 +683,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Finish()
+		  Const Beacon20 = 20000000
+		  Const Beacon16 = 10600000
+		  Const Beacon15 = 10500000
+		  
 		  If Self.mUploadQueue <> Nil And Self.mUploadQueue.KeyCount > 0 Then
 		    Return
 		  End If
@@ -693,9 +697,11 @@ End
 		  End If
 		  
 		  Var DeltaVersion As Integer = 4
-		  If Self.mBuildNumber >= 10600000 Then
+		  If Self.mBuildNumber >= Beacon20 Then
+		    DeltaVersion = 7
+		  ElseIf Self.mBuildNumber >= Beacon16 Then
 		    DeltaVersion = 6
-		  ElseIf Self.mBuildNumber >= 10500000 Then
+		  ElseIf Self.mBuildNumber >= Beacon15 Then
 		    DeltaVersion = 5
 		  End If
 		  
@@ -710,8 +716,13 @@ End
 		  InsertData.Value("notes") = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
 		  InsertData.Value("stage") = Self.mStageCode.ToString(Locale.Raw, "0")
 		  InsertData.Value("preview") = "'" + Self.mBannerText.ReplaceAll("'", "''") + "'"
-		  InsertData.Value("min_mac_version") = "'10.12.0'"
-		  InsertData.Value("min_win_version") = "'6.3.9200'"
+		  If Self.mBuildNumber >= Beacon20 Then
+		    InsertData.Value("min_mac_version") = "'10.14.0'"
+		    InsertData.Value("min_win_version") = "'10.0.10240'"
+		  Else
+		    InsertData.Value("min_mac_version") = "'10.12.0'"
+		    InsertData.Value("min_win_version") = "'6.3.9200'"
+		  End If
 		  InsertData.Value("delta_version") = DeltaVersion
 		  InsertData.Value("published") = "'" + DateTime.Now.SQLDateTime + "'"
 		  Statements.Add(Self.DictionaryToInsertSQL("updates", InsertData))
@@ -1085,8 +1096,7 @@ End
 			"6 - Rounded Window"
 			"7 - Global Floating Window"
 			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
+			"9 - Modeless Dialog"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

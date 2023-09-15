@@ -16,7 +16,7 @@ function handleRequest(array $context): Response {
 	switch ($type) {
 	case ServiceToken::TypeStatic:
 		$providerSpecific = $tokenData['providerSpecific'];
-		$token = ServiceToken::StoreStatic($userId, $provider, $accessToken, $providerSpecific);
+		$token = ServiceToken::StoreStatic($userId, $provider, $accessToken, $providerSpecific, false);
 		if (is_null($token)) {
 			return Response::NewJsonError('Static token was not saved.', null, 500);
 		}

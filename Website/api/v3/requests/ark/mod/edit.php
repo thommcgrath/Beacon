@@ -1,14 +1,14 @@
 <?php
 
 BeaconAPI::Authorize();
-	
+
 function handle_request(array $context): void {
 	$user_id = BeaconAPI::UserID();
-		
+
 	if (BeaconAPI::ContentType() !== 'application/json') {
 		BeaconAPI::ReplyError('Send a JSON payload');
 	}
-	
+
 	$payload = BeaconAPI::JSONPayload();
 	if (BeaconCommon::IsAssoc($payload)) {
 		// single
@@ -17,7 +17,7 @@ function handle_request(array $context): void {
 		// multiple
 		$items = $payload;
 	}
-	
+
 	$mods = [];
 	$database = \BeaconCommon::Database();
 	$database->BeginTransaction();
@@ -44,7 +44,7 @@ function handle_request(array $context): void {
 				BeaconAPI::ReplyError('Must use http or https urls.', $item['pull_url']);
 			}
 		}
-	
+
 		$results = $database->Query('SELECT mod_id, user_id, confirmed FROM ark.mods WHERE ABS(workshop_id) = $1;', $workshop_id);
 		if ($results->RecordCount() === 1) {
 			$mod_user_id = $results->Field('user_id');
@@ -54,10 +54,11 @@ function handle_request(array $context): void {
 				$database->Rollback();
 				BeaconAPI::ReplyError('Mod belongs to another user.');
 			}
-			
+
 			try {
 				$database->Query('UPDATE ark.mods SET pull_url = $2 WHERE mod_id = $1;', $mod_uuid, $pull_url);
 			} catch (\BeaconQueryException $e) {
+				$database->Rollback();
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not updated: ' . $e->getMessage());
 			}
 		} else {
@@ -66,19 +67,20 @@ function handle_request(array $context): void {
 				$database->Rollback();
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not found on Ark Workshop.');
 			}
-			
+
 			try {
-				$results = $database->Query('INSERT INTO ark.mods (workshop_id, name, user_id, pull_url, min_version) VALUES ($1, $2, $3, $4, 10500000) RETURNING mod_id;', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
-				$mod_uuid = $results->Field('mod_id');
+				$results = $database->Query('INSERT INTO public.content_packs (content_pack_id, game_id, marketplace, marketplace_id, name, user_id) VALUES (gen_random_uuid(), $1, $2, $3, $4, $5) RETURNING content_pack_id;', 'Ark', 'Steam', $workshop_id, $workshop_item->Name(), $user_id);
+				$mod_uuid = $results->Field('content_pack_id');
 			} catch (BeaconQueryException $e) {
-				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
+				$database->Rollback();
+				BeaconAPI::ReplyError('Mod "' . $workshop_id . '" was not registered: ' . $e->getMessage());
 			}
 		}
-		
+
 		$mods[] = Ark\Mod::GetByModID($mod_uuid);
 	}
 	$database->Commit();
-		
+
 	BeaconAPI::ReplySuccess($mods);
 }
 
