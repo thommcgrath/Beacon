@@ -175,7 +175,19 @@ End
 		    End If
 		  Next
 		  
+		  Var AddButton As OmniBarItem = Self.ConfigToolbar.Item("NewAccount")
+		  If (AddButton Is Nil) = False Then
+		    AddButton.Enabled = Not IsRefreshing
+		  End If
+		  
+		  Var RefreshButton As OmniBarItem = Self.ConfigToolbar.Item("Refresh")
+		  If (RefreshButton Is Nil) = False Then
+		    RefreshButton.Enabled = Not IsRefreshing
+		  End If
+		  
 		  Self.List.Sort
+		  
+		  Self.Progress = If(IsRefreshing, BeaconSubview.ProgressIndeterminate, BeaconSubview.ProgressNone)
 		End Sub
 	#tag EndEvent
 
@@ -200,6 +212,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FetchToken(TokenId As String)
+		  Self.StartTask()
+		  
 		  Var FetchThread As New Beacon.Thread
 		  AddHandler FetchThread.Run, AddressOf Thread_FetchToken
 		  AddHandler FetchThread.UserInterfaceUpdate, AddressOf Thread_UserInterfaceUpdate
@@ -212,6 +226,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FetchUserTokens(Silent As Boolean)
+		  Self.StartTask()
+		  
 		  Var FetchThread As New Beacon.Thread
 		  AddHandler FetchThread.Run, AddressOf Thread_FetchTokens
 		  AddHandler FetchThread.UserInterfaceUpdate, AddressOf Thread_UserInterfaceUpdate
@@ -219,6 +235,15 @@ End
 		  FetchThread.Start
 		  Self.mThreads.Add(FetchThread)
 		  Self.RefreshWatchTimer.RunMode = Timer.RunModes.Multiple
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub FinishTask()
+		  Self.mTaskCount = Self.mTaskCount - 1
+		  If Self.mTaskCount = 0 Then
+		    Self.SetupUI
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -230,11 +255,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function IsRefreshing() As Boolean
-		  For Idx As Integer = 0 To Self.mThreads.LastIndex
-		    If Self.mThreads(Idx).ThreadState = Thread.ThreadStates.Running Then
-		      Return True
-		    End If
-		  Next
+		  Return Self.mTaskCount > 0
 		End Function
 	#tag EndMethod
 
@@ -245,6 +266,21 @@ End
 		    Self.FetchToken(TokenId)
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartTask()
+		  Self.mTaskCount = Self.mTaskCount + 1
+		  If Self.mTaskCount = 1 Then
+		    Self.SetupUI
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TaskCount() As Integer
+		  Return Self.mTaskCount
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -327,7 +363,11 @@ End
 		          End If
 		        End If
 		      End If
-		      
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Handling tokens update data")
+		    End Try
+		    
+		    Try
 		      If Update.HasKey("token") Then
 		        Var Token As BeaconAPI.ProviderToken = Update.Value("token")
 		        If Token.IsEncrypted Then
@@ -337,7 +377,11 @@ End
 		        Self.mTokens.Value(Token.TokenId) = Token
 		        Self.SetupUI()
 		      End If
-		      
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Handling token update data")
+		    End Try
+		    
+		    Try
 		      If Update.Lookup("finished", False) = True Then
 		        For Idx As Integer = Self.mThreads.LastIndex DownTo 0
 		          If Self.mThreads(Idx) = Sender Then
@@ -345,9 +389,10 @@ End
 		            Exit For Idx
 		          End If
 		        Next
+		        Self.FinishTask()
 		      End If
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Handling token fetch response")
+		      App.Log(Err, CurrentMethodName, "Handling token finished key")
 		    End Try
 		  Next
 		End Sub
@@ -356,6 +401,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mNextRefresh As DateTime
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTaskCount As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
