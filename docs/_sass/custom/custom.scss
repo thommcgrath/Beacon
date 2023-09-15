@@ -1,17 +1,136 @@
-$keyword-color: #2E4CB8;
+@function pow($number, $exponent) {
+	$value: 1;
+	@if $exponent > 0 {
+		@for $i from 1 through $exponent {
+		$value: $value * $number;
+		}
+	}
+	@return $value;
+}
+
+@function luminance($color) {
+	$red: red($color) / 255;
+	$green: green($color) / 255;
+	$blue: blue($color) / 255;
+	@return pow(0.299 * $red, 2) + pow(0.587 * $green, 2) + pow(0.114 * $blue, 2);
+}
+
+@function contrast-against($backcolor, $forecolor) {
+	$backlum: luminance($backcolor);
+	$forelum: luminance($forecolor);
+	@if $backlum > $forelum {
+		@return ($backlum + 0.05) / ($forelum + 0.05);
+	} @else {
+		@return ($forelum + 0.05) / ($backlum + 0.05);
+	}
+}
+
+@function contrasting-color($backcolor, $forecolor) {
+	@for $percent from 0 through 20 {
+		$darker: adjust-color($forecolor, $lightness: -($percent * 5%));
+		$lighter: adjust-color($forecolor, $lightness: $percent * 5%);
+		@if contrast-against($backcolor, $darker) >= 4.5 {
+			@return $darker;
+		} @else if contrast-against($backcolor, $lighter) >= 4.5 {
+			@return $lighter;
+		}
+	}
+	
+	@if contrast-against($backcolor, #ffffff) > contrast-against($backcolor, #000000) {
+		@return #ffffff;
+	} @else {
+		@return #000000;
+	}
+}
+
+$callout-background-color: mix($body-background-color, $body-text-color, 95%);
+$callout-background-lightness: lightness($callout-background-color);
+$callout-text-color: mix($body-background-color, $body-text-color, 5%);
+$callout-text-lightness: lightness($callout-text-color);
+$callout-border-color: mix($body-background-color, $body-text-color, 85%);
+$callout-border-lightness: lightness($callout-border-color);
+$caption-text-color: contrasting-color($body-background-color, mix($body-background-color, $body-text-color, 40%));
+
+@mixin colorize-callout($tint-color) {
+	$tint-hue: hue($tint-color);
+	$tint-saturation: saturation($tint-color);
+	$tinted-background-color: hsl($tint-hue, $tint-saturation, $callout-background-lightness);
+	$tinted-text-color: contrasting-color($tinted-background-color, hsl($tint-hue, $tint-saturation, $callout-text-lightness));
+	$tinted-border-color: hsl($tint-hue, $tint-saturation, $callout-border-lightness);
+
+	color: $tinted-text-color;
+	border-color: $tinted-border-color $tinted-border-color $tinted-border-color $tinted-text-color;
+	background-color: $tinted-background-color;
+
+	a {
+		$callout-link-color: contrasting-color($tinted-background-color, $link-color);
+		color: $callout-link-color !important;
+		text-decoration-color: rgba($callout-link-color, 30%) !important;
+
+		&:hover {
+			text-decoration-color: $callout-link-color !important;
+		}
+	}
+
+	.ui-keyword {
+		color: contrasting-color($tinted-background-color, $keyword-color);
+	}
+
+	code {
+		border-color: $tinted-border-color;
+		background-color: hsl($tint-hue, $tint-saturation, lightness(mix($body-background-color, $body-text-color, 99%)));
+	}
+}
 
 blockquote {
-	background-color: mix($body-background-color, $body-text-color, 97%);
-	color: $body-text-color;
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin-top: 2rem !important;
+	margin-bottom: 2rem !important;
 	margin-left: 5%;
 	margin-right: 5%;
-	padding-left: 15px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-right: 15px;
-	border-left: 3px solid mix($body-background-color, $body-text-color, 50%);
+	padding: 1rem;
+	border-width: 1px 1px 1px 4px;
+	border-style: solid;
+	border-radius: 4px;
+	text-shadow: 0px 1px 0px $callout-text-shadow-color;
+	font-size: 0.9rem;
+	line-height: 1.3rem;
+	@include colorize-callout($body-background-color);
+
+	&.titled {
+		& > *:first-child {
+			margin-bottom: 0px;
+			font-weight: bold;
+			text-transform: uppercase;
+		}
+
+		& > *:nth-child(2) {
+			margin-top: 0px;
+		}
+	}
+
+	&.blue, &.primary {
+		@include colorize-callout($tint-blue);
+	}
+
+	&.green, &.success, &.tip {
+		@include colorize-callout($tint-green);
+	}
+
+	&.red, &.warning {
+		@include colorize-callout($tint-red);
+	}
+
+	&.yellow, &.caution, &.omni {
+		@include colorize-callout($tint-yellow);
+	}
+
+	&.cyan, &.info, &.glossary {
+		@include colorize-callout($tint-cyan);
+	}
+
+	&.purple {
+		@include colorize-callout($tint-purple);
+	}
 	
 	a {
 		word-wrap: break-word;
@@ -42,10 +161,46 @@ div.affected_ini_keys {
 	font-weight: 300;
 }
 
-p.screenshot {
+div.screenshot {
 	text-align: center;
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	
+	a {
+		display: inline-block;
+	}
+	
+	img {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	div.screenshot-caption {
+		font-size: 0.75rem;
+		text-align: center;
+		padding-top: 0.25rem;
+		color: $caption-text-color;
+	}
 }
 
 .ui-keyword {
 	font-weight: 500;
+	color: $keyword-color;
+}
+
+h1.editor-title {
+	margin-bottom: 0;
+}
+
+.supported-games {
+	font-size: 0.8rem;
+	color: $caption-text-color;
+	margin-top: 0;
+	margin-bottom: 0.25em;
+}
+
+.omni-notice {
+	color: contrasting-color($body-background-color, $beacon-purple);
+	font-weight: bold;
 }

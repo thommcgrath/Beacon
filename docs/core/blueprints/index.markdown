@@ -1,7 +1,7 @@
 ---
 title: Adding Unsupported Engrams, Creatures, Loot Drops, or Spawn Points to Beacon
 parent: Core Features
-nav_order: 1
+nav_order: 3
 ---
 # {{page.title}}
 

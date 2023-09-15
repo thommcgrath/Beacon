@@ -2,6 +2,7 @@
 
 $body-background-color: #222831;
 $body-text-color: mix($body-background-color, #ffffff, 10%);
+$keyword-color: #a6b1e8;
 
 $sidebar-color: $body-background-color;
 $border-color: mix($body-background-color, $body-text-color, 80%);
@@ -19,10 +20,8 @@ $search-background-color: $grey-dk-250;
 $table-background-color: $grey-dk-250;
 $feedback-color: darken($sidebar-color, 3%);
 
+$callout-text-shadow-color: none;
+
 .site-logo {
 	filter: brightness(0) invert(1);
-}
-
-.ui-keyword {
-	color: #A6B1E8;
 }

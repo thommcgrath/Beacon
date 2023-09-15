@@ -37,6 +37,25 @@ Referencing specific on-screen elements should be done using the `{% raw %}{:.ui
 #### Colors
 To better support dark mode users, avoid adding additional colors to pages. If absolutely necessary, use the color classes from the [Just the Docs Documentation](https://just-the-docs.github.io/just-the-docs/docs/utilities/color/).
 
+#### Callouts
+Callouts are the colored blocks such as the tips, warning, or glossary blocks. They come with and without titles.
+
+To create a callout with a title, use:
+```
+{:.tip .titled}
+> Title
+> 
+> This is the callout body
+```
+
+To create a callout without a title, use:
+```
+{:.tip}
+> This is the callout body
+```
+
+The following callout themes are supported: `blue`, `primary`, `green`, `success`, `tip`, `red`, `warning`, `yellow`, `caution`, `omni`, `cyan`, `info`, `glossary`. These are the values immediately after the `:.` at the beginning of the callout. Avoid using the named colors unless a better option does not exist. For example, a tip should use the `tip` theme, not `green`, because it allows restylying all tips in the future without affecting something that specifically should be green.
+
 ## Beacon Application
 
 TBD
