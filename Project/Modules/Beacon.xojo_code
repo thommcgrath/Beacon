@@ -701,10 +701,6 @@ Protected Module Beacon
 		Protected Function HelpURL(Path As String = "/") As String
 		  Const NewHelpSystem = True
 		  
-		  #if NewHelpSystem And Not DebugBuild
-		    #Pragma Error "Are you sure about this?"
-		  #endif
-		  
 		  If Path.IsEmpty Or Path.BeginsWith("/") = False Then
 		    Path = "/" + Path
 		  End If
