@@ -743,8 +743,12 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub Optimize()
 		  If Self.mAllowWriting Then
-		    Self.SQLExecute("ANALYZE;")
-		    Self.SQLExecute("VACUUM;")
+		    Try
+		      Self.SQLExecute("ANALYZE;")
+		      Self.SQLExecute("VACUUM;")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to optimize database")
+		    End Try
 		  End If
 		End Sub
 	#tag EndMethod
