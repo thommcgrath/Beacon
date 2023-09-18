@@ -1402,6 +1402,9 @@ Protected Module Beacon
 	#tag Constant, Name = FileExtensionXml, Type = String, Dynamic = False, Default = \".xml", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = FixedTimestamp, Type = Double, Dynamic = False, Default = \"1695052800", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = FTPModeExplicitTLS, Type = String, Dynamic = False, Default = \"ftp+tls", Scope = Protected
 	#tag EndConstant
 

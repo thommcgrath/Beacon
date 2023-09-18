@@ -93,8 +93,8 @@ Protected Class ContentPack
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function GameId() As String
+	#tag Method, Flags = &h0
+		Function GameId() As String
 		  Return Self.mGameId
 		End Function
 	#tag EndMethod

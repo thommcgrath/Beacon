@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
@@ -30,16 +30,17 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub CloudSyncFinished(Actions() As Dictionary)
+		  Var PossibleFilenames() As String = Self.PossibleBlueprintFilenames()
 		  For Each Dict As Dictionary In Actions
 		    Var Action As String = Dict.Value("Action")
 		    Var Path As String = Dict.Value("Path")
 		    Var Remote As Boolean = Dict.Value("Remote")
 		    
-		    If Remote And Path = "/Ark/Blueprints.json" And (Action = "GET" Or Action = "DELETE") Then
+		    If Remote And PossibleFilenames.IndexOf(Path) > -1 And (Action = "GET" Or Action = "DELETE") Then
 		      Self.ImportCloudFiles()
 		      Return
 		    End If
-		  Next Dict
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -116,7 +117,6 @@ Inherits Beacon.DataSource
 	#tag Event
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
-		  Var Now As Double = DateTime.Now.SecondsFrom1970
 		  
 		  Var EngramsChanged As Boolean
 		  If ChangeDict.HasKey("deletions") Then
@@ -144,7 +144,7 @@ Inherits Beacon.DataSource
 		    For Each IconID As String In DeleteIcons
 		      Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id = ?1;", IconID)
 		    Next
-		    If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False, Now) Then
+		    If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False) Then
 		      EngramsChanged = True
 		    End If
 		    BlueprintsToDelete.ResizeTo(-1)
@@ -166,20 +166,23 @@ Inherits Beacon.DataSource
 		      Var MarketplaceId As String = Dict.Lookup("marketplaceId", "")
 		      Var IsLocal As Boolean = MarketplaceId.IsEmpty Or Dict.Lookup("isConfirmed", False).BooleanValue = False
 		      Var GameId As String = Dict.Value("gameId")
+		      Var LastUpdate As Double = Dict.Value("lastUpdate")
 		      
 		      Var Rows As RowSet
 		      If MarketplaceId.IsEmpty Then
-		        Rows = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
+		        Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
 		      Else
-		        Rows = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", ContentPackId, Marketplace, MarketplaceId)
+		        Rows = Self.SQLSelect("SELECT content_pack_id, last_update FROM content_packs WHERE content_pack_id = ?1 OR (marketplace = ?2 AND marketplace_id = ?3);", ContentPackId, Marketplace, MarketplaceId)
 		      End If
 		      If Rows.RowCount > 1 Then
 		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id IS DISTINCT FROM ?1 AND marketplace = ?2 AND marketplace_id = ?3;", ContentPackId, Marketplace, MarketplaceId)
 		      End If
 		      If Rows.RowCount > 0 Then
-		        Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, Now, GameId)
+		        If LastUpdate > Rows.Column("last_update").DoubleValue Then
+		          Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, LastUpdate, GameId)
+		        End If
 		      Else
-		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, Now, GameId)
+		        Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ContentPackId, Name, ConsoleSafe, DefaultEnabled, Marketplace, MarketplaceId, IsLocal, LastUpdate, GameId)
 		      End If
 		    Next
 		  End If
@@ -224,7 +227,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Engram)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, Now) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -242,7 +245,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Creature)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, Now) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -260,7 +263,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Container)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, Now) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -300,7 +303,7 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, Now) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -515,7 +518,7 @@ Inherits Beacon.DataSource
 		  Const ModeNone = 0
 		  
 		  Var Mode As Integer = ModeNone
-		  Var PossibleFilenames() As String = Array("/Ark/Blueprints" + Beacon.FileExtensionDelta, "/Ark/Blueprints.json", "/Blueprints.json", "/Engrams.json")
+		  Var PossibleFilenames() As String = Self.PossibleBlueprintFilenames()
 		  Var EngramsContent As MemoryBlock
 		  Var MatchedFilename As String
 		  For Each Filename As String In PossibleFilenames
@@ -541,8 +544,9 @@ Inherits Beacon.DataSource
 		  Case ModeBinary
 		    Self.BeginTransaction()
 		    Var ContentPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.Types.Custom)
+		    Var PacksToRemove As New Dictionary
 		    For Each ContentPack As Beacon.ContentPack In ContentPacks
-		      Call Self.DeleteContentPack(ContentPack)
+		      PacksToRemove.Value(ContentPack.ContentPackId) = ContentPack
 		    Next
 		    
 		    Try
@@ -556,16 +560,22 @@ Inherits Beacon.DataSource
 		      ContentPacks = Importer.ContentPacks
 		      For Each ContentPack As Beacon.ContentPack In ContentPacks
 		        Self.SaveContentPack(ContentPack)
+		        If PacksToRemove.HasKey(ContentPack.ContentPackId) Then
+		          PacksToRemove.Remove(ContentPack.ContentPackId)
+		        End If
 		      Next
 		      
 		      Var Blueprints() As Ark.Blueprint = Importer.Blueprints
 		      Var BlueprintsToDelete() As String
-		      Var Now As Double = DateTime.Now.SecondsFrom1970
-		      If Self.SaveBlueprints(Blueprints, BlueprintsToDelete, Nil, True, Now) = False Then
+		      If Self.SaveBlueprints(Blueprints, BlueprintsToDelete, Nil, True) = False Then
 		        App.Log("There was an error saving blueprints to database.")
 		        Self.RollbackTransaction()
 		        Return
 		      End If
+		      
+		      For Each Entry As DictionaryEntry In PacksToRemove
+		        Call Self.DeleteContentPack(Entry.Key.StringValue)
+		      Next
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Importing Ark user blueprints")
 		      Self.RollbackTransaction()
@@ -701,8 +711,8 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub Open()
-		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackId)
-		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Then
+		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local, console_safe, default_enabled, last_update FROM content_packs WHERE content_pack_id = ?1;", Ark.UserContentPackId)
+		  If (Rows Is Nil) Or Rows.RowCount = 0 Or Rows.Column("is_local").BooleanValue = False Or Rows.Column("console_safe").BooleanValue = False Or Rows.Column("default_enabled").BooleanValue = False Or Rows.Column("last_update").DoubleValue <> Beacon.FixedTimestamp Then
 		    Self.ReplaceUserBlueprints()
 		  End If
 		End Sub
@@ -2320,13 +2330,19 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function PossibleBlueprintFilenames() As String()
+		  Return Array("/Ark/Blueprints" + Beacon.FileExtensionDelta, "/Ark/Blueprints.json", "/Blueprints.json", "/Engrams.json")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ReplaceUserBlueprints()
 		  If Self.Writeable = False Then
 		    Return
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local, last_update, marketplace, marketplace_id, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, '', '', ?7);", Ark.UserContentPackId, Ark.UserContentPackName, True, True, True, DateTime.Now.SecondsFrom1970, Ark.Identifier)
+		  Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local, last_update, marketplace, marketplace_id, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, '', '', ?7);", Ark.UserContentPackId, Ark.UserContentPackName, True, True, True, Beacon.FixedTimestamp, Ark.Identifier)
 		  Self.CommitTransaction()
 		End Sub
 	#tag EndMethod
@@ -2652,21 +2668,24 @@ Inherits Beacon.DataSource
 		    Next Blueprint
 		  End If
 		  
-		  Return Self.SaveBlueprints(BlueprintsToSave, DeleteUUIDs, ErrorDict, True, DateTime.Now.SecondsFrom1970)
+		  Return Self.SaveBlueprints(BlueprintsToSave, DeleteUUIDs, ErrorDict, True)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary) As Boolean
-		  Return Self.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True, DateTime.Now.SecondsFrom1970)
+		  Return Self.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary, LocalModsOnly As Boolean, Now As Double) As Boolean
-		  Var CountSuccess, CountErrors As Integer
+		Private Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary, LocalModsOnly As Boolean) As Boolean
+		  If (BlueprintsToDelete Is Nil Or BlueprintsToDelete.Count = 0) And (BlueprintsToSave Is Nil Or BlueprintsToSave.Count = 0) Then
+		    // Nothing to do
+		    Return True
+		  End If
 		  
-		  Var UpdateModTimestamps As New Dictionary
+		  Var CountSuccess, CountErrors As Integer
 		  
 		  Self.BeginTransaction()
 		  If (BlueprintsToDelete Is Nil) = False Then
@@ -2690,11 +2709,6 @@ Inherits Beacon.DataSource
 		        End If
 		        If Rows.RowCount = 0 Then
 		          Continue
-		        End If
-		        
-		        Var ContentPackId As String = Rows.Column("content_pack_id").StringValue
-		        If UpdateModTimestamps.HasKey(ContentPackId) = False Then
-		          UpdateModTimestamps.Value(ContentPackId) = True
 		        End If
 		        
 		        Self.BeginTransaction()
@@ -2725,9 +2739,9 @@ Inherits Beacon.DataSource
 		        Var UpdateBlueprintId, CurrentTagString As String
 		        Var Results As RowSet
 		        If LocalModsOnly Then
-		          Results = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
+		          Results = Self.SQLSelect("SELECT object_id, last_update, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
 		        Else
-		          Results = Self.SQLSelect("SELECT object_id, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
+		          Results = Self.SQLSelect("SELECT object_id, last_update, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
 		        End If
 		        If Results.RowCount = 1 Then
 		          If LocalModsOnly And Results.Column("is_user_blueprint").BooleanValue = False Then
@@ -2736,6 +2750,11 @@ Inherits Beacon.DataSource
 		              UnsupportedErr.Message = "Cannot update built-in blueprint."
 		              ErrorDict.Value(Blueprint.BlueprintId) = UnsupportedErr
 		            End If
+		            Continue
+		          End If
+		          If Blueprint.LastUpdate <= Results.Column("last_update").DoubleValue Then
+		            // The version in the database is newer or unchanged
+		            CountSuccess = CountSuccess + 1
 		            Continue
 		          End If
 		          UpdateBlueprintId = Results.Column("object_id").StringValue
@@ -2892,10 +2911,6 @@ Inherits Beacon.DataSource
 		          Next Tag
 		        End If
 		        
-		        If UpdateModTimestamps.HasKey(Blueprint.ContentPackId) = False Then
-		          UpdateModTimestamps.Value(Blueprint.ContentPackId) = True
-		        End If
-		        
 		        Self.CommitTransaction()
 		        TransactionStarted = False
 		        
@@ -2921,11 +2936,6 @@ Inherits Beacon.DataSource
 		    Next Blueprint
 		  End If
 		  If CountErrors = 0 And CountSuccess > 0 Then
-		    For Each Entry As DictionaryEntry In UpdateModTimestamps
-		      Var ContentPackId As String = Entry.Key.StringValue
-		      Self.SQLExecute("UPDATE content_packs SET last_update = ?2 WHERE content_pack_id = ?1;", ContentPackId, Now)
-		    Next
-		    
 		    Self.CommitTransaction()
 		    
 		    Self.ExportCloudFiles()
@@ -2942,7 +2952,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub SaveContentPack(Pack As Beacon.ContentPack)
-		  If Pack Is Nil Then
+		  If Pack Is Nil Or Pack.GameId <> Self.Identifier Then
 		    Return
 		  End If
 		  
@@ -2957,10 +2967,10 @@ Inherits Beacon.DataSource
 		  End If
 		  If Rows.RowCount > 0 Then
 		    If Rows.Column("last_update").DoubleValue < Pack.LastUpdate Then
-		      Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate)
+		      Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, marketplace = ?5, marketplace_id = ?6, is_local = ?7, last_update = ?8, game_id = ?9 WHERE content_pack_id = ?1;", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
 		    End If
 		  Else
-		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate)
+		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
 		  End If
 		End Sub
 	#tag EndMethod

@@ -109,7 +109,9 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function Main() As Beacon.DataSource
 		  If Self.mInstances.HasKey(MainThreadId) = False Then
-		    Self.mInstances.Value(MainThreadId) = RaiseEvent NewInstance(False)
+		    Var Instance As Beacon.DataSource = RaiseEvent NewInstance(False)
+		    NotificationKit.Watch(Instance, UserCloud.Notification_SyncFinished)
+		    Self.mInstances.Value(MainThreadId) = Instance
 		  End If
 		  Return Self.mInstances.Value(MainThreadId)
 		End Function
