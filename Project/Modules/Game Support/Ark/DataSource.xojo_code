@@ -114,9 +114,41 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
 		  Var Now As Double = DateTime.Now.SecondsFrom1970
+		  
+		  Var EngramsChanged As Boolean
+		  If ChangeDict.HasKey("deletions") Then
+		    Var Deletions() As Variant = ChangeDict.Value("deletions")
+		    // When deleting, loot_icons must be done after loot_sources
+		    Var DeleteIcons() As String
+		    Var BlueprintsToDelete() As String
+		    For Each Deletion As Dictionary In Deletions
+		      Var ObjectId As String = Deletion.Value("object_id").StringValue
+		      Select Case Deletion.Value("group")
+		      Case Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers, "loot_sources", "spawnPoints", "lootDrops", "loot_drops"
+		        BlueprintsToDelete.Add(ObjectId)
+		      Case "loot_icons"
+		        DeleteIcons.Add(ObjectID)
+		      Case "mods"
+		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectId)
+		      Case "maps"
+		        Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectId)
+		      Case "colors"
+		        Self.SQLExecute("DELETE FROM colors WHERE color_uuid = ?1;", ObjectId)
+		      Case "events"
+		        Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectId)
+		      End Select
+		    Next Deletion
+		    For Each IconID As String In DeleteIcons
+		      Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id = ?1;", IconID)
+		    Next
+		    If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False, Now) Then
+		      EngramsChanged = True
+		    End If
+		    BlueprintsToDelete.ResizeTo(-1)
+		  End If
 		  
 		  If ChangeDict.HasKey("contentPacks") Then
 		    Var ContentPacks() As Variant = ChangeDict.Value("contentPacks")
@@ -151,36 +183,6 @@ Inherits Beacon.DataSource
 		      End If
 		    Next
 		  End If
-		  
-		  Var EngramsChanged As Boolean
-		  
-		  // When deleting, loot_icons must be done after loot_sources
-		  Var DeleteIcons() As String
-		  Var BlueprintsToDelete() As String
-		  For Each Deletion As Dictionary In Deletions
-		    Var ObjectId As String = Deletion.Value("object_id").StringValue
-		    Select Case Deletion.Value("group")
-		    Case Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers, "loot_sources"
-		      BlueprintsToDelete.Add(ObjectId)
-		    Case "loot_icons"
-		      DeleteIcons.Add(ObjectID)
-		    Case "mods"
-		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectId)
-		    Case "maps"
-		      Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectId)
-		    Case "colors"
-		      Self.SQLExecute("DELETE FROM colors WHERE color_uuid = ?1;", ObjectId)
-		    Case "events"
-		      Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectId)
-		    End Select
-		  Next Deletion
-		  For Each IconID As String In DeleteIcons
-		    Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id = ?1;", IconID)
-		  Next
-		  If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False, Now) Then
-		    EngramsChanged = True
-		  End If
-		  BlueprintsToDelete.ResizeTo(-1)
 		  
 		  // Blueprints must be saved after each chunk, otherwise they can't find each other.
 		  

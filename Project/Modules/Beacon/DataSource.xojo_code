@@ -514,36 +514,32 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  For Each Parsed As Dictionary In Payloads
-		    Var Deletions() As Dictionary
-		    If Parsed.HasKey("deletions") Then
-		      Var Temp() As Variant = Parsed.Value("deletions")
-		      For Each Member As Variant In Temp
-		        Try
-		          Deletions.Add(Member)
-		        Catch MemberErr As RuntimeException
-		        End Try
-		      Next
-		    End If
-		    
-		    If Parsed.HasKey(Self.Identifier) = False Then
+		    If Parsed.HasKey("payloads") = False Then
 		      Continue
 		    End If
 		    
-		    Try
-		      Var ChangeDict As Dictionary = Parsed.Value(Self.Identifier)
-		      If Import(ChangeDict, StatusData, Deletions) = False Then
-		        Self.RollbackTransaction
+		    Var ChildPayloads() As Variant = Parsed.Value("payloads")
+		    For Each ChildPayload As Dictionary In ChildPayloads
+		      Var GameId As String = ChildPayload.Lookup("gameId", "")
+		      If GameId <> Self.Identifier Then
+		        Continue
+		      End If
+		      
+		      Try
+		        If Import(ChildPayload, StatusData) = False Then
+		          Self.RollbackTransaction
+		          Self.mImporting = False
+		          Return False
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Importing")
+		        While Self.TransactionDepth > OriginalDepth
+		          Self.RollbackTransaction
+		        Wend
 		        Self.mImporting = False
 		        Return False
-		      End If
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Importing")
-		      While Self.TransactionDepth > OriginalDepth
-		        Self.RollbackTransaction
-		      Wend
-		      Self.mImporting = False
-		      Return False
-		    End Try
+		      End Try
+		    Next
 		  Next
 		  
 		  If (Timestamp Is Nil) = False Then
@@ -946,7 +942,7 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
+		Event Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

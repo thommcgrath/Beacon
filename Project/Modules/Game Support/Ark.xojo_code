@@ -34,6 +34,62 @@ Protected Module Ark
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function AddToArchive(Archive As Beacon.Archive, ContentPack As Beacon.ContentPack, Blueprints() As Ark.Blueprint) As String
+		  Var Packs(0) As Dictionary
+		  Packs(0) = ContentPack.SaveData
+		  
+		  Var Payloads(0) As Dictionary
+		  Payloads(0) = New Dictionary("gameId": Ark.Identifier, "contentPacks": Packs)
+		  
+		  Var Engrams(), Creatures(), SpawnPoints(), LootDrops() As Dictionary
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    Var Packed As Dictionary = Blueprint.Pack
+		    If Packed Is Nil Then
+		      Continue
+		    End If
+		    
+		    Select Case Blueprint
+		    Case IsA Ark.Engram
+		      Engrams.Add(Packed)
+		    Case IsA Ark.Creature
+		      Creatures.Add(Packed)
+		    Case IsA Ark.SpawnPoint
+		      SpawnPoints.Add(Packed)
+		    Case IsA Ark.LootContainer
+		      LootDrops.Add(Packed)
+		    End Select
+		  Next
+		  
+		  If Engrams.Count = 0 And Creatures.Count = 0 And SpawnPoints.Count = 0 And LootDrops.Count = 0 Then
+		    Return ""
+		  End If
+		  
+		  Var Payload As New Dictionary
+		  Payload.Value("gameId") = Ark.Identifier
+		  If Creatures.Count > 0 Then
+		    Payload.Value("creatures") = Creatures
+		  End If
+		  If Engrams.Count > 0 Then
+		    Payload.Value("engrams") = Engrams
+		  End If
+		  If LootDrops.Count > 0 Then
+		    Payload.Value("lootDrops") = LootDrops
+		  End If
+		  If SpawnPoints.Count > 0 Then
+		    Payload.Value("spawnPoints") = SpawnPoints
+		  End If
+		  Payloads.Add(Payload)
+		  
+		  Var Filename As String = ContentPack.ContentPackId + ".json"
+		  Var FileContent As String = Beacon.GenerateJson(New Dictionary("payloads": Payloads), False)
+		  
+		  Archive.AddFile(Filename, FileContent)
+		  
+		  Return Filename
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function BlueprintPath(Extends Matches As RegExMatch) As String
 		  Var Path As String
@@ -66,12 +122,6 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function BuildExport(ParamArray Blueprints() As Ark.Blueprint) As MemoryBlock
-		  Return BuildExport(Blueprints)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function BuildExport(Blueprints() As Ark.Blueprint) As MemoryBlock
 		  If Blueprints Is Nil Or Blueprints.Count = 0 Then
 		    App.Log("Could not export blueprints because there are no blueprints to export.")
@@ -84,43 +134,42 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function BuildExport(ParamArray Blueprints() As Ark.Blueprint) As MemoryBlock
+		  Return BuildExport(Blueprints)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub BuildExport(Blueprints() As Ark.Blueprint, Archive As Beacon.Archive)
-		  Var DataSource As Ark.DataSource
-		  Var ContentPackMap As New Dictionary
-		  Var Engrams(), Creatures(), LootDrops(), SpawnPoints() As Dictionary
-		  Var PackedContentPacks() As Dictionary
-		  
+		  Var OrganizedBlueprints As New Dictionary
 		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Select Case Blueprint
-		    Case IsA Ark.Engram
-		      Engrams.Add(Blueprint.Pack)
-		    Case IsA Ark.Creature
-		      Creatures.Add(Blueprint.Pack)
-		    Case IsA Ark.SpawnPoint
-		      SpawnPoints.Add(Blueprint.Pack)
-		    Case IsA Ark.LootContainer
-		      LootDrops.Add(Blueprint.Pack)
+		    Var ContentPackId As String = Blueprint.ContentPackId
+		    Var Siblings() As Ark.Blueprint
+		    If OrganizedBlueprints.HasKey(ContentPackId) Then
+		      Siblings = OrganizedBlueprints.Value(ContentPackId)
+		      Siblings.Add(Blueprint)
 		    Else
-		      Continue
-		    End Select
-		    
-		    If ContentPackMap.HasKey(Blueprint.ContentPackId) = False Then
-		      If DataSource Is Nil Then
-		        DataSource = Ark.DataSource.Pool.Get(False)
-		      End If
-		      
-		      Var ContentPack As Beacon.ContentPack = DataSource.GetContentPackWithId(Blueprint.ContentPackId)
-		      If (ContentPack Is Nil) = False Then
-		        PackedContentPacks.Add(ContentPack.SaveData)
-		        ContentPackMap.Value(ContentPack.ContentPackId) = True
-		      End If
+		      Siblings.Add(Blueprint)
+		      OrganizedBlueprints.Value(ContentPackId) = Siblings
 		    End If
 		  Next
 		  
-		  Var Filenames(1) As String
-		  Filenames(0) = "Main.json"
-		  Filenames(1) = "Blueprints.json"
+		  Var Filenames() As String
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
+		  For Each Entry As DictionaryEntry In OrganizedBlueprints
+		    Var ContentPack As Beacon.ContentPack = DataSource.GetContentPackWithId(Entry.Key.StringValue)
+		    If ContentPack Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var PackBlueprints() As Ark.Blueprint = Entry.Value
+		    Var Filename As String = AddToArchive(Archive, ContentPack, PackBlueprints)
+		    If Filename.IsEmpty = False Then
+		      Filenames.Add(Filename)
+		    End If
+		  Next
+		  Filenames.Sort
 		  
 		  Var Manifest As New Dictionary
 		  Manifest.Value("version") = 7
@@ -128,33 +177,7 @@ Protected Module Ark
 		  Manifest.Value("generatedWith") = App.BuildNumber
 		  Manifest.Value("isFull") = False
 		  Manifest.Value("files") = Filenames
-		  
-		  Var MainArkData As New Dictionary
-		  MainArkData.Value("contentPacks") = PackedContentPacks
-		  
-		  Var MainData As New Dictionary
-		  MainData.Value("ark") = MainArkData
-		  
-		  Var BlueprintArkData As New Dictionary
-		  If Creatures.Count > 0 Then
-		    BlueprintArkData.Value("creatures") = Creatures
-		  End If
-		  If Engrams.Count > 0 Then
-		    BlueprintArkData.Value("engrams") = Engrams
-		  End If
-		  If LootDrops.Count > 0 Then
-		    BlueprintArkData.Value("lootDrops") = LootDrops
-		  End If
-		  If SpawnPoints.Count > 0 Then
-		    BlueprintArkData.Value("spawnPoints") = SpawnPoints
-		  End If
-		  
-		  Var BlueprintData As New Dictionary
-		  BlueprintData.Value("ark") = BlueprintArkData
-		  
-		  Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, False))
-		  Archive.AddFile("Main.json", Beacon.GenerateJSON(MainData, False))
-		  Archive.AddFile("Blueprints.json", Beacon.GenerateJSON(BlueprintData, False))
+		  Archive.AddFile("Manifest.json", Beacon.GenerateJson(Manifest, False))
 		End Sub
 	#tag EndMethod
 
@@ -194,18 +217,16 @@ Protected Module Ark
 
 	#tag Method, Flags = &h21
 		Private Sub BuildExport(ContentPacks() As Beacon.ContentPack, Archive As Beacon.Archive)
-		  Var Packs() As Dictionary
-		  Var Filter As New Beacon.StringList(-1)
+		  Var Filenames() As String
+		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  For Each ContentPack As Beacon.ContentPack In ContentPacks
-		    Filter.Append(ContentPack.ContentPackId)
-		    Packs.Add(ContentPack.SaveData)
+		    Var Blueprints() As Ark.Blueprint = DataSource.GetBlueprints("", New Beacon.StringList(ContentPack.ContentPackId), "")
+		    Var Filename As String = AddToArchive(Archive, ContentPack, Blueprints)
+		    If Filename.IsEmpty = False Then
+		      Filenames.Add(Filename)
+		    End If
 		  Next
-		  
-		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.Pool.Get(False).GetBlueprints("", Filter, "")
-		  
-		  Var Filenames(1) As String
-		  Filenames(0) = "Main.json"
-		  Filenames(1) = "Blueprints.json"
+		  Filenames.Sort
 		  
 		  Var Manifest As New Dictionary
 		  Manifest.Value("version") = 7
@@ -213,52 +234,7 @@ Protected Module Ark
 		  Manifest.Value("generatedWith") = App.BuildNumber
 		  Manifest.Value("isFull") = False
 		  Manifest.Value("files") = Filenames
-		  
-		  Var MainArkData As New Dictionary
-		  MainArkData.Value("contentPacks") = Packs
-		  
-		  Var MainData As New Dictionary
-		  MainData.Value("ark") = MainArkData
-		  
-		  Var Engrams(), Creatures(), SpawnPoints(), LootDrops() As Dictionary
-		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    Var Packed As Dictionary = Blueprint.Pack
-		    If Packed Is Nil Then
-		      Continue
-		    End If
-		    
-		    Select Case Blueprint
-		    Case IsA Ark.Engram
-		      Engrams.Add(Packed)
-		    Case IsA Ark.Creature
-		      Creatures.Add(Packed)
-		    Case IsA Ark.SpawnPoint
-		      SpawnPoints.Add(Packed)
-		    Case IsA Ark.LootContainer
-		      LootDrops.Add(Packed)
-		    End Select
-		  Next
-		  
-		  Var BlueprintArkData As New Dictionary
-		  If Creatures.Count > 0 Then
-		    BlueprintArkData.Value("creatures") = Creatures
-		  End If
-		  If Engrams.Count > 0 Then
-		    BlueprintArkData.Value("engrams") = Engrams
-		  End If
-		  If LootDrops.Count > 0 Then
-		    BlueprintArkData.Value("lootDrops") = LootDrops
-		  End If
-		  If SpawnPoints.Count > 0 Then
-		    BlueprintArkData.Value("spawnPoints") = SpawnPoints
-		  End If
-		  
-		  Var BlueprintData As New Dictionary
-		  BlueprintData.Value("ark") = BlueprintArkData
-		  
-		  Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, False))
-		  Archive.AddFile("Main.json", Beacon.GenerateJSON(MainData, False))
-		  Archive.AddFile("Blueprints.json", Beacon.GenerateJSON(BlueprintData, False))
+		  Archive.AddFile("Manifest.json", Beacon.GenerateJson(Manifest, False))
 		End Sub
 	#tag EndMethod
 

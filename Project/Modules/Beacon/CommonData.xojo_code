@@ -93,33 +93,36 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
 		  
-		  For Each Dict As Dictionary In Deletions
-		    Try
-		      If Dict.HasKey("minVersion") Then
-		        Var MinVersion As Integer = Dict.Value("minVersion").IntegerValue
-		        If MinVersion > BuildNumber Then
-		          Continue
+		  If ChangeDict.HasKey("deletions") Then
+		    Var Deletions() As Variant = ChangeDict.Value("deletions")
+		    For Each Dict As Dictionary In Deletions
+		      Try
+		        If Dict.HasKey("minVersion") Then
+		          Var MinVersion As Integer = Dict.Value("minVersion").IntegerValue
+		          If MinVersion > BuildNumber Then
+		            Continue
+		          End If
 		        End If
-		      End If
-		      
-		      Var ObjectId As String = Dict.Value("object_id").StringValue
-		      Var GameId As String = Dict.Value("game").StringValue
-		      Var TableName As String = Dict.Value("group").StringValue
-		      If GameId = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
-		        Select Case TableName
-		        Case "presets"
-		          Self.SQLExecute("DELETE FROM official_templates WHERE object_id = :object_id;", ObjectId)
-		        Case "preset_modifiers"
-		          Self.SQLExecute("DELETE FROM official_template_selectors WHERE object_id = :object_id;", ObjectId)
-		        End Select
-		      End If
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Handling delete records")
-		    End Try
-		  Next Dict
+		        
+		        Var ObjectId As String = Dict.Value("object_id").StringValue
+		        Var GameId As String = Dict.Value("game").StringValue
+		        Var TableName As String = Dict.Value("group").StringValue
+		        If GameId = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
+		          Select Case TableName
+		          Case "presets"
+		            Self.SQLExecute("DELETE FROM official_templates WHERE object_id = :object_id;", ObjectId)
+		          Case "preset_modifiers"
+		            Self.SQLExecute("DELETE FROM official_template_selectors WHERE object_id = :object_id;", ObjectId)
+		          End Select
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Handling delete records")
+		      End Try
+		    Next
+		  End If
 		  
 		  If ChangeDict.HasKey("templates") Then
 		    Var Templates() As Variant = ChangeDict.Value("templates")

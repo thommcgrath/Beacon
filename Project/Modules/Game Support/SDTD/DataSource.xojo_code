@@ -27,13 +27,28 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
 		  #if Not SDTD.Enabled
 		    #Pragma Unused StatusData
 		  #endif
 		  
 		  Var BuildNumber As Integer = App.BuildNumber
 		  Var Now As Double = DateTime.Now.SecondsFrom1970
+		  
+		  If ChangeDict.HasKey("deletions") Then
+		    Var Deletions() As Variant = ChangeDict.Value("deletions")
+		    For Each Deletion As Dictionary In Deletions
+		      Var ObjectId As String = Deletion.Value("object_id").StringValue
+		      Var ObjectGroup As String = Deletion.Value("group").StringValue
+		      
+		      Select Case ObjectGroup
+		      Case "config_options"
+		        Self.SQLExecute("DELETE FROM " + ObjectGroup + " WHERE object_id = ?1;", ObjectId)
+		      Case "content_packs"
+		        Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectId)
+		      End Select
+		    Next
+		  End If
 		  
 		  If ChangeDict.HasKey("contentPacks") Then
 		    Var ContentPacks() As Variant = ChangeDict.Value("contentPacks")
@@ -68,18 +83,6 @@ Inherits Beacon.DataSource
 		      End If
 		    Next
 		  End If
-		  
-		  For Each Deletion As Dictionary In Deletions
-		    Var ObjectId As String = Deletion.Value("object_id").StringValue
-		    Var ObjectGroup As String = Deletion.Value("group").StringValue
-		    
-		    Select Case ObjectGroup
-		    Case "config_options"
-		      Self.SQLExecute("DELETE FROM " + ObjectGroup + " WHERE object_id = ?1;", ObjectId)
-		    Case "content_packs"
-		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectId)
-		    End Select
-		  Next
 		  
 		  If ChangeDict.HasKey("configOptions") Then
 		    Var Options() As Variant = ChangeDict.Value("configOptions")
