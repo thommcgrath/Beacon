@@ -107,8 +107,8 @@ Inherits Beacon.DataSource
 		          End If
 		        End If
 		        
-		        Var ObjectId As String = Dict.Value("object_id").StringValue
-		        Var GameId As String = Dict.Value("game").StringValue
+		        Var ObjectId As String = Dict.Value("objectId").StringValue
+		        Var GameId As String = Dict.Value("gameId").StringValue
 		        Var TableName As String = Dict.Value("group").StringValue
 		        If GameId = Ark.Identifier And (TableName = "presets" Or TableName = "preset_modifiers") Then
 		          Select Case TableName

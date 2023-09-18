@@ -149,85 +149,90 @@ Protected Class BlueprintImporter
 		    Try
 		      Var FileContents As String = Archive.GetFile(Filename.StringValue)
 		      Var Parsed As Dictionary = Beacon.ParseJSON(FileContents)
-		      Var ArkData As Dictionary = Parsed.Value("ark")
-		      
-		      Var TotalObjects As Integer
-		      Var ObjectsProcessed As Integer
-		      Var ContentPackDicts() As Variant
-		      
-		      If ArkData.HasKey("contentPacks") Then
-		        ContentPackDicts = ArkData.Value("contentPacks")
-		        TotalObjects = TotalObjects + ContentPackDicts.Count
-		      End If
-		      
-		      Var BlueprintArrays() As Variant
-		      Var Keys() As String = Array("engrams", "creatures", "lootDrops", "spawnPoints")
-		      For Each Key As String In Keys
-		        If ArkData.HasKey(Key) Then
-		          Var BlueprintDicts() As Variant = ArkData.Value(Key)
-		          TotalObjects = TotalObjects + BlueprintDicts.Count
-		          BlueprintArrays.Add(BlueprintDicts)
-		        End If
-		      Next
-		      
-		      If (Progress Is Nil) = False Then
-		        Progress.SubProgress = ObjectsProcessed / TotalObjects
-		      End If
-		      
-		      For Each ContentPackDict As Dictionary In ContentPackDicts
-		        If (Progress Is Nil) = False And Progress.CancelPressed Then
-		          Return Nil
+		      Var Payloads() As Variant = Parsed.Value("payloads")
+		      For Each Payload As Dictionary In Payloads
+		        If Payload.Value("gameId") <> Ark.Identifier Then
+		          Continue
 		        End If
 		        
-		        Var ContentPack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(ContentPackDict)
-		        If (ContentPack Is Nil) = False Then
-		          Importer.mContentPacks.Add(ContentPack)
-		          If (Progress Is Nil) = False Then
-		            Progress.SubDetail = "Found mod " + ContentPack.Name + "…"
+		        Var TotalObjects As Integer
+		        Var ObjectsProcessed As Integer
+		        Var ContentPackDicts() As Variant
+		        
+		        If Payload.HasKey("contentPacks") Then
+		          ContentPackDicts = Payload.Value("contentPacks")
+		          TotalObjects = TotalObjects + ContentPackDicts.Count
+		        End If
+		        
+		        Var BlueprintArrays() As Variant
+		        Var Keys() As String = Array("engrams", "creatures", "lootDrops", "spawnPoints")
+		        For Each Key As String In Keys
+		          If Payload.HasKey(Key) Then
+		            Var BlueprintDicts() As Variant = Payload.Value(Key)
+		            TotalObjects = TotalObjects + BlueprintDicts.Count
+		            BlueprintArrays.Add(BlueprintDicts)
 		          End If
-		        End If
-		        
-		        ObjectsProcessed = ObjectsProcessed + 1
+		        Next
 		        
 		        If (Progress Is Nil) = False Then
 		          Progress.SubProgress = ObjectsProcessed / TotalObjects
 		        End If
-		      Next
-		      
-		      For Each BlueprintArray As Variant In BlueprintArrays
-		        If (Progress Is Nil) = False And Progress.CancelPressed Then
-		          Return Nil
-		        End If
 		        
-		        Var BlueprintDicts() As Variant = BlueprintArray
-		        For Each BlueprintDict As Dictionary In BlueprintDicts
+		        For Each ContentPackDict As Dictionary In ContentPackDicts
 		          If (Progress Is Nil) = False And Progress.CancelPressed Then
 		            Return Nil
 		          End If
 		          
-		          Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(BlueprintDict)
-		          If (Blueprint Is Nil) = False Then
-		            Importer.mBlueprints.Add(Blueprint)
+		          Var ContentPack As Beacon.ContentPack = Beacon.ContentPack.FromSaveData(ContentPackDict)
+		          If (ContentPack Is Nil) = False Then
+		            Importer.mContentPacks.Add(ContentPack)
 		            If (Progress Is Nil) = False Then
-		              Progress.SubDetail = "Found blueprint " + Blueprint.Label + "…"
-		            End If
-		            
-		            If Blueprint.Path.BeginsWith("/Game/Mods/") Then
-		              Var Tag As String = Blueprint.Path.NthField("/", 4)
-		              If Importer.mMods.HasKey(Tag) = False Then
-		                Var ContentPackName As String = Tag
-		                If Blueprint.ContentPackName.IsEmpty = False Then
-		                  ContentPackName = Blueprint.ContentPackName + " (" + Tag + ")"
-		                End If
-		                Importer.mMods.Value(Tag) = ContentPackName
-		              End If
+		              Progress.SubDetail = "Found mod " + ContentPack.Name + "…"
 		            End If
 		          End If
 		          
 		          ObjectsProcessed = ObjectsProcessed + 1
+		          
 		          If (Progress Is Nil) = False Then
 		            Progress.SubProgress = ObjectsProcessed / TotalObjects
 		          End If
+		        Next
+		        
+		        For Each BlueprintArray As Variant In BlueprintArrays
+		          If (Progress Is Nil) = False And Progress.CancelPressed Then
+		            Return Nil
+		          End If
+		          
+		          Var BlueprintDicts() As Variant = BlueprintArray
+		          For Each BlueprintDict As Dictionary In BlueprintDicts
+		            If (Progress Is Nil) = False And Progress.CancelPressed Then
+		              Return Nil
+		            End If
+		            
+		            Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(BlueprintDict)
+		            If (Blueprint Is Nil) = False Then
+		              Importer.mBlueprints.Add(Blueprint)
+		              If (Progress Is Nil) = False Then
+		                Progress.SubDetail = "Found blueprint " + Blueprint.Label + "…"
+		              End If
+		              
+		              If Blueprint.Path.BeginsWith("/Game/Mods/") Then
+		                Var Tag As String = Blueprint.Path.NthField("/", 4)
+		                If Importer.mMods.HasKey(Tag) = False Then
+		                  Var ContentPackName As String = Tag
+		                  If Blueprint.ContentPackName.IsEmpty = False Then
+		                    ContentPackName = Blueprint.ContentPackName + " (" + Tag + ")"
+		                  End If
+		                  Importer.mMods.Value(Tag) = ContentPackName
+		                End If
+		              End If
+		            End If
+		            
+		            ObjectsProcessed = ObjectsProcessed + 1
+		            If (Progress Is Nil) = False Then
+		              Progress.SubProgress = ObjectsProcessed / TotalObjects
+		            End If
+		          Next
 		        Next
 		      Next
 		    Catch Err As RuntimeException

@@ -125,7 +125,7 @@ Inherits Beacon.DataSource
 		    Var DeleteIcons() As String
 		    Var BlueprintsToDelete() As String
 		    For Each Deletion As Dictionary In Deletions
-		      Var ObjectId As String = Deletion.Value("object_id").StringValue
+		      Var ObjectId As String = Deletion.Value("objectId").StringValue
 		      Select Case Deletion.Value("group")
 		      Case Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers, "loot_sources", "spawnPoints", "lootDrops", "loot_drops"
 		        BlueprintsToDelete.Add(ObjectId)
