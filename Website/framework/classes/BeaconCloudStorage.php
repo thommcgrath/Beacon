@@ -546,7 +546,7 @@ abstract class BeaconCloudStorage {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		$database->Query('UPDATE usercloud SET modified = CURRENT_TIMESTAMP, deleted = TRUE WHERE remote_path = $1;', $remote_path);
-		$database->Query('DELETE FROM usercloud_queue WHERE remote_path = $1;', $hostname);
+		$database->Query('DELETE FROM usercloud_queue WHERE remote_path = $1;', $remote_path);
 		$database->Query('DELETE FROM usercloud_cache WHERE hostname = $1 AND remote_path = $2;', $hostname, $remote_path);
 		$database->Query('INSERT INTO usercloud_queue (hostname, remote_path, request_method) VALUES ($1, $2, $3);', $hostname, $remote_path, 'DELETE');
 		$database->Commit();
