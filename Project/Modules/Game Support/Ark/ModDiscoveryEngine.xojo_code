@@ -152,11 +152,6 @@ Protected Class ModDiscoveryEngine
 		  #if DebugBuild
 		    System.DebugLog("Socket error: " + Err.Message)
 		  #endif
-		  
-		  Self.mRCONTimer.RunMode = Timer.RunModes.Off
-		  Self.StatusMessage = "RCON error: " + Err.Message
-		  Self.mShell.Close
-		  Self.mThread.Resume
 		End Sub
 	#tag EndMethod
 

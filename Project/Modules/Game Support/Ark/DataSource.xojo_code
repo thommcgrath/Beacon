@@ -981,7 +981,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function CreateLocalContentPack(PackName As String, MarketplaceId As String) As Beacon.ContentPack
-		  Return Self.CreateLocalContentPack(PackName, Beacon.MarketplaceSteam, MarketplaceId)
+		  Return Self.CreateLocalContentPack(PackName, Beacon.MarketplaceSteamWorkshop, MarketplaceId)
 		End Function
 	#tag EndMethod
 

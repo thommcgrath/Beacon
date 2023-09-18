@@ -318,6 +318,116 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CopyFrom(Extends Destination As Ark.MutableBlueprint, Source As Ark.Blueprint) As Boolean
+		  If Source Is Nil Then
+		    Return False
+		  End If
+		  
+		  Var Packed As Dictionary = Source.Pack
+		  Return Destination.CopyFrom(Packed)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CopyFrom(Extends Destination As Ark.MutableBlueprint, Source As Dictionary) As Boolean
+		  If Source Is Nil Then
+		    Return False
+		  End If
+		  
+		  Var IdProperty, Category As String
+		  Var LegacyMode As Boolean
+		  If Source.HasKey("engramId") Then
+		    Category = Ark.CategoryEngrams
+		    IdProperty = "engramId"
+		  ElseIf Source.HasKey("creatureId") Then
+		    Category = Ark.CategoryCreatures
+		    IdProperty = "creatureId"
+		  ElseIf Source.HasKey("spawnPointId") Then
+		    Category = Ark.CategorySpawnPoints
+		    IdProperty = "spawnPointId"
+		  ElseIf Source.HasKey("lootDropId") Then
+		    Category = Ark.CategoryLootContainers
+		    IdProperty = "lootDropId"
+		  ElseIf Source.HasKey("group") Then
+		    Category = Source.Value("group")
+		    Select Case Category
+		    Case "spawnPoints"
+		      Category = Ark.CategorySpawnPoints
+		    Case "loot_sources", "lootDrops"
+		      Category = Ark.CategoryLootContainers
+		    End Select
+		    IdProperty = "id"
+		    LegacyMode = True
+		  End If
+		  
+		  If Category.IsEmpty Or Destination.Category <> Category Then
+		    Return False
+		  End If
+		  
+		  Var BlueprintId As String
+		  Var AlternateLabel As NullableString
+		  Var ContentPackId, ContentPackName As String
+		  Var LastUpdate As Double
+		  If LegacyMode Then
+		    BlueprintId = Source.Value("id")
+		    AlternateLabel = NullableString.FromVariant(Source.Value("alternate_label"))
+		    Var ContentPackInfo As Dictionary = Source.Value("mod")
+		    ContentPackId = ContentPackInfo.Value("id")
+		    ContentPackName = ContentPackInfo.Value("name")
+		  ElseIf Source.HasAllKeys(IdProperty, "label", "alternateLabel", "path", "tags", "availability", "contentPackId", "contentPackName", "lastUpdate") Then
+		    BlueprintId = Source.Value(IdProperty)
+		    AlternateLabel = NullableString.FromVariant(Source.Value("alternateLabel"))
+		    ContentPackId = Source.Value("contentPackId")
+		    ContentPackName = Source.Value("contentPackName")
+		    LastUpdate = Source.Value("lastUpdate")
+		  Else
+		    Return False
+		  End If
+		  
+		  Var Label As String = Source.Value("label")
+		  Var Path As String = Source.Value("path")
+		  
+		  If Path.IsEmpty Or BlueprintId.IsEmpty Or Label.IsEmpty Then
+		    Return False
+		  End If
+		  
+		  Var Tags() As String
+		  If Source.Value("tags").IsArray Then
+		    If Source.Value("tags").ArrayElementType = Variant.TypeString Then
+		      Tags = Source.Value("tags")
+		    ElseIf Source.Value("tags").ArrayElementType = Variant.TypeObject Then
+		      Var Temp() As Variant = Source.Value("tags")
+		      For Each Tag As Variant In Temp
+		        If Tag.Type = Variant.TypeString Then
+		          Tags.Add(Tag.StringValue)
+		        End If
+		      Next
+		    End If
+		  End If
+		  
+		  Destination.Path = Path
+		  Destination.BlueprintId = BlueprintId
+		  Destination.AlternateLabel = AlternateLabel
+		  Destination.Availability = Source.Value("availability").UInt64Value
+		  Destination.Label = Label
+		  If ContentPackId.IsEmpty = False And ContentPackName.IsEmpty = False Then
+		    Destination.ContentPackId = ContentPackId
+		    Destination.ContentPackName = ContentPackName
+		  End If
+		  Destination.Tags = Tags
+		  Destination.LastUpdate = LastUpdate
+		  
+		  // Let the blueprint grab whatever additional data it needs
+		  Destination.Unpack(Source)
+		  
+		  Return True
+		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Copying blueprint data from dictionary")
+		    Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Disambiguate(Extends Creatures() As Ark.Creature, EnabledMaps As UInt64) As Dictionary
 		  Return Disambiguate(CategoryCreatures, Creatures, EnabledMaps)
 		End Function
@@ -1220,99 +1330,41 @@ Protected Module Ark
 
 	#tag Method, Flags = &h1
 		Protected Function UnpackBlueprint(Dict As Dictionary) As Ark.MutableBlueprint
-		  Var IdProperty, Group As String
-		  Var LegacyMode As Boolean
+		  Var Group As String
 		  If Dict.HasKey("engramId") Then
-		    Group = "engrams"
-		    IdProperty = "engramId"
+		    Group = Ark.CategoryEngrams
 		  ElseIf Dict.HasKey("creatureId") Then
-		    Group = "creatures"
-		    IdProperty = "creatureId"
+		    Group = Ark.CategoryCreatures
 		  ElseIf Dict.HasKey("spawnPointId") Then
-		    Group = "spawnPoints"
-		    IdProperty = "spawnPointId"
+		    Group = Ark.CategorySpawnPoints
 		  ElseIf Dict.HasKey("lootDropId") Then
-		    Group = "lootDrops"
-		    IdProperty = "lootDropId"
+		    Group = Ark.CategoryLootContainers
 		  ElseIf Dict.HasKey("group") Then
 		    Group = Dict.Value("group")
-		    IdProperty = "id"
-		    LegacyMode = True
 		  End If
 		  
-		  If Group.IsEmpty Then
-		    Return Nil
-		  End If
-		  
-		  Var BlueprintId As String
-		  Var AlternateLabel As NullableString
-		  Var ContentPackId, ContentPackName As String
-		  Var LastUpdate As Double
-		  If LegacyMode Then
-		    BlueprintId = Dict.Value("id")
-		    AlternateLabel = NullableString.FromVariant(Dict.Value("alternate_label"))
-		    Var ContentPackInfo As Dictionary = Dict.Value("mod")
-		    ContentPackId = ContentPackInfo.Value("id")
-		    ContentPackName = ContentPackInfo.Value("name")
-		  ElseIf Dict.HasAllKeys(IdProperty, "label", "alternateLabel", "path", "tags", "availability", "contentPackId", "contentPackName", "lastUpdate") Then
-		    BlueprintId = Dict.Value(IdProperty)
-		    AlternateLabel = NullableString.FromVariant(Dict.Value("alternateLabel"))
-		    ContentPackId = Dict.Value("contentPackId")
-		    ContentPackName = Dict.Value("contentPackName")
-		    LastUpdate = Dict.Value("lastUpdate")
-		  Else
-		    Return Nil
-		  End If
-		  
-		  Var Label As String = Dict.Value("label")
-		  Var Path As String = Dict.Value("path")
-		  
-		  If Path.IsEmpty Or BlueprintId.IsEmpty Or Label.IsEmpty Then
-		    Return Nil
-		  End If
-		  
-		  Var Blueprint As Ark.MutableBlueprint
+		  Var Destination As Ark.MutableBlueprint
 		  Select Case Group
-		  Case "engrams"
-		    Blueprint = New Ark.MutableEngram(Path, BlueprintId)
-		  Case "creatures"
-		    Blueprint = New Ark.MutableCreature(Path, BlueprintId)
-		  Case "spawn_points", "spawnPoints"
-		    Blueprint = New Ark.MutableSpawnPoint(Path, BlueprintId)
-		  Case "loot_containers", "loot_sources", "lootDrops"
-		    Blueprint = New Ark.MutableLootContainer(Path, BlueprintId)
+		  Case Ark.CategoryEngrams
+		    Destination = New Ark.MutableEngram
+		  Case Ark.CategoryCreatures
+		    Destination = New Ark.MutableCreature
+		  Case Ark.CategorySpawnPoints, "spawnPoints"
+		    Destination = New Ark.MutableSpawnPoint
+		  Case Ark.CategoryLootContainers, "loot_sources", "lootDrops"
+		    Destination = New Ark.MutableLootContainer
 		  Else
 		    Return Nil
 		  End Select
 		  
-		  Var Tags() As String
-		  If Dict.Value("tags").IsArray Then
-		    If Dict.Value("tags").ArrayElementType = Variant.TypeString Then
-		      Tags = Dict.Value("tags")
-		    ElseIf Dict.Value("tags").ArrayElementType = Variant.TypeObject Then
-		      Var Temp() As Variant = Dict.Value("tags")
-		      For Each Tag As Variant In Temp
-		        If Tag.Type = Variant.TypeString Then
-		          Tags.Add(Tag.StringValue)
-		        End If
-		      Next
-		    End If
+		  If Destination.CopyFrom(Dict) Then
+		    Return Destination
+		  Else
+		    Return Nil
 		  End If
 		  
-		  Blueprint.AlternateLabel = AlternateLabel
-		  Blueprint.Availability = Dict.Value("availability").UInt64Value
-		  Blueprint.Label = Dict.Value("label").StringValue
-		  Blueprint.ContentPackId = ContentPackId
-		  Blueprint.ContentPackName = ContentPackName
-		  Blueprint.Tags = Tags
-		  Blueprint.LastUpdate = LastUpdate
-		  
-		  // Let the blueprint grab whatever additional data it needs
-		  Blueprint.Unpack(Dict)
-		  
-		  Return Blueprint
-		  
 		  Exception Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Unpacking blueprint")
 		    Return Nil
 		End Function
 	#tag EndMethod

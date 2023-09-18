@@ -733,7 +733,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Message As String = "Added " + Language.NounWithQuantity(Self.mNumAddedMods, "new mod", "new mods") + ", " + Language.NounWithQuantity(Self.mNumAddedBlueprints, "new blueprint", "new blueprints") + ", and removed " + Language.NounWithQuantity(Self.mNumRemovedBlueprints, "blueprint", "blueprints") + "."
+		  Var Message As String = "Added " + Language.NounWithQuantity(Self.mNumAddedMods, "new mod", "new mods") + ", " + Language.NounWithQuantity(Self.mNumAddedBlueprints, "new or updated blueprint", "new or updated blueprints") + ", and removed " + Language.NounWithQuantity(Self.mNumRemovedBlueprints, "blueprint", "blueprints") + "."
 		  If Self.mNumErrorBlueprints > 0 Then
 		    Message = Message + " " + Language.NounWithQuantity(Self.mNumErrorBlueprints, "blueprint", "blueprints") + " had errors and could not be imported."
 		  End If
@@ -822,8 +822,12 @@ End
 		      Var Mutable As Ark.MutableBlueprint
 		      If (OriginalBlueprint Is Nil) = False Then
 		        Mutable = OriginalBlueprint.MutableVersion
-		        Mutable.Label = Blueprint.Label
-		        #Pragma Warning "Import more than just the name"
+		        If Mutable.CopyFrom(Blueprint) = False Then
+		          Continue
+		        End If
+		        Mutable.BlueprintId = OriginalBlueprint.BlueprintId
+		        Mutable.ContentPackName = Pack.Name
+		        Mutable.ContentPackId = Pack.ContentPackId
 		      Else
 		        Mutable = Blueprint.MutableVersion
 		        Mutable.ContentPackName = Pack.Name

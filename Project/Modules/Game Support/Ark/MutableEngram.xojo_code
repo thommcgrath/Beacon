@@ -2,6 +2,7 @@
 Protected Class MutableEngram
 Inherits Ark.Engram
 Implements Ark.MutableBlueprint
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0
 		Sub AlternateLabel(Assigns Value As NullableString)
 		  // Part of the Ark.MutableBlueprint interface.
@@ -33,6 +34,13 @@ Implements Ark.MutableBlueprint
 		Function Clone() As Ark.MutableEngram
 		  Return New Ark.MutableEngram(Self)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  // Making it public
+		  Super.Constructor
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

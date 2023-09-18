@@ -1115,6 +1115,7 @@ End
 	#tag Event
 		Sub Finished()
 		  Self.Pages.SelectedPanelIndex = 0
+		  Self.Reload
 		  Self.UpdateUI
 		End Sub
 	#tag EndEvent
@@ -1136,7 +1137,6 @@ End
 		    CurrentBlueprintMap.Value(Blueprint.Path) = Blueprint
 		  Next
 		  
-		  Var Pack As Beacon.ContentPack = Ark.DataSource.Pool.Get(False).GetContentPackWithId(Self.mController.ContentPackId)
 		  Var PathPrefix As String = "/Game/Mods/" + Me.GetTagForModId(Self.mController.MarketplaceId) + "/"
 		  Var Blueprints() As Ark.Blueprint = Importer.Blueprints
 		  Var NewBlueprints() As Ark.Blueprint
@@ -1156,12 +1156,16 @@ End
 		      Var Mutable As Ark.MutableBlueprint
 		      If (OriginalBlueprint Is Nil) = False Then
 		        Mutable = OriginalBlueprint.MutableVersion
-		        Mutable.Label = Blueprint.Label
-		        #Pragma Warning "Import more than just the name"
+		        If Mutable.CopyFrom(Blueprint) = False Then
+		          Continue
+		        End If
+		        Mutable.BlueprintId = OriginalBlueprint.BlueprintId
+		        Mutable.ContentPackName = Self.mController.ContentPackId
+		        Mutable.ContentPackId = Self.mController.ContentPackName
 		      Else
 		        Mutable = Blueprint.MutableVersion
-		        Mutable.ContentPackName = Pack.Name
-		        Mutable.ContentPackId = Pack.ContentPackId
+		        Mutable.ContentPackName = Self.mController.ContentPackId
+		        Mutable.ContentPackId = Self.mController.ContentPackName
 		        Mutable.RegenerateBlueprintId()
 		      End If
 		      NewBlueprints.Add(Mutable)
