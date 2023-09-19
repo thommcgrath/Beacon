@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
@@ -80,13 +80,21 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ExportCloudFiles()
+		  #if DebugBuild
+		    Const CleanupLegacyFiles = True
+		  #else
+		    Const CleanupLegacyFiles = Not App.UsePreviewMode
+		  #endif
+		  
 		  // Clean up legacy stuff
-		  Var LegacyFiles() As String = Array("/Blueprints.json", "/Engrams.json", "/Ark/Blueprints.json")
-		  For Each LegacyFile As String In LegacyFiles
-		    If UserCloud.FileExists(LegacyFile) Then
-		      Call UserCloud.Delete(LegacyFile)
-		    End If
-		  Next
+		  #if CleanupLegacyFiles
+		    Var LegacyFiles() As String = Array("/Blueprints.json", "/Engrams.json", "/Ark/Blueprints.json")
+		    For Each LegacyFile As String In LegacyFiles
+		      If UserCloud.FileExists(LegacyFile) Then
+		        Call UserCloud.Delete(LegacyFile)
+		      End If
+		    Next
+		  #endif
 		  
 		  Const Filename = "/Ark/Blueprints" + Beacon.FileExtensionDelta
 		  Var UserPacks() As Beacon.ContentPack = Self.GetContentPacks(Beacon.ContentPack.Types.Custom)
@@ -604,6 +612,7 @@ Inherits Beacon.DataSource
 		      End If
 		    Next
 		    
+		    Var Now As DateTime = DateTime.Now
 		    Var Unpacked() As Ark.Blueprint
 		    For Each Dict As Dictionary In Blueprints
 		      Try
@@ -617,7 +626,7 @@ Inherits Beacon.DataSource
 		          KeepPacks.Append(ContentPackId)
 		          RemovePacks.Remove(ContentPackId)
 		          If ContentPackId <> Ark.UserContentPackId Then
-		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, is_local, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Beacon.ContentPack.MarketplaceSteamWorkshop, Dict.Value("workshop_id"), True, False, True, Self.Identifier)
+		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, is_local, game_id, last_update) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Beacon.ContentPack.MarketplaceSteamWorkshop, Dict.Value("workshop_id"), True, False, True, Self.Identifier, Now.SecondsFrom1970)
 		          End If
 		        End If
 		      Catch Err As RuntimeException

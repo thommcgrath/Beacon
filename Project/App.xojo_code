@@ -483,7 +483,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #if DebugBuild
 		    Const UsePreviewAppSupport = False
 		  #else
-		    Const UsePreviewAppSupport = True
+		    Const UsePreviewAppSupport = Self.UsePreviewMode
 		  #endif
 		  
 		  If (Self.mDataFolder Is Nil) = False Then
@@ -1810,6 +1810,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = String, Dynamic = False, Default = \"Appearance Changed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = UsePreviewMode, Type = Boolean, Dynamic = False, Default = \"True", Scope = Public
 	#tag EndConstant
 
 
