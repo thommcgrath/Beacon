@@ -214,6 +214,9 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		    
 		    X = Floor(Localized.X)
 		    Y = Floor(View.Bounds.Height - Localized.Y)
+		  #else
+		    #Pragma Unused X
+		    #Pragma Unused Y
 		  #endif
 		End Sub
 	#tag EndMethod

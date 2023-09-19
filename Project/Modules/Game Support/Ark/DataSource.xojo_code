@@ -617,7 +617,7 @@ Inherits Beacon.DataSource
 		          KeepPacks.Append(ContentPackId)
 		          RemovePacks.Remove(ContentPackId)
 		          If ContentPackId <> Ark.UserContentPackId Then
-		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Beacon.ContentPack.MarketplaceSteamWorkshop, Dict.Value("workshop_id"), True, False, True)
+		            Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, marketplace, marketplace_id, console_safe, default_enabled, is_local, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Beacon.ContentPack.MarketplaceSteamWorkshop, Dict.Value("workshop_id"), True, False, True, Self.Identifier)
 		          End If
 		        End If
 		      Catch Err As RuntimeException

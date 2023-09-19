@@ -98,7 +98,7 @@ Type: filesandordirs; Name: "{app}\XojoGUIFramework64.dll"
 Type: filesandordirs; Name: "{app}\XojoGUIFrameworkARM.dll"
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autoprograms}\{#MyAppName} (Alpha)"; Filename: "{app}\{#MyAppExeName}"
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\.beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletekey; ValueType: string; ValueName: ""

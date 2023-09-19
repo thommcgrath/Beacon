@@ -46,7 +46,7 @@ Protected Class ProjectURL
 		    Raise Err
 		  End Select
 		  
-		  Pos = Url.IndexOf("?")
+		  Pos = Self.mPath.IndexOf("?")
 		  If Pos > -1 Then
 		    Var QueryString As String = Self.mPath.Middle(Pos + 1)
 		    Self.mPath = Self.mPath.Left(Pos)
