@@ -790,10 +790,9 @@ End
 		      
 		      Pack = Database.CreateLocalContentPack(PackName, WorkshopId, True)
 		      Self.mNumAddedMods = Self.mNumAddedMods + 1
-		    Else
-		      ModsFilter.Append(Pack.ContentPackId)
 		    End If
 		    
+		    ModsFilter.Append(Pack.ContentPackId)
 		    Packs.Value(WorkshopId) = Pack
 		  Next
 		  
