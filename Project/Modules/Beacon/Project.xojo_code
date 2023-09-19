@@ -1653,7 +1653,7 @@ Implements ObservationKit.Observable
 		      AdditionalFiles.Add(Filename)
 		      Archive.AddFile(Filename, Contents)
 		    Next
-		    Manifest.Value("AdditionalFiles") = AdditionalFiles
+		    Manifest.Value("additionalFiles") = AdditionalFiles
 		    Archive.AddFile("Manifest.json", Beacon.GenerateJSON(Manifest, True))
 		    Archive.AddFile("v" + Beacon.Project.SaveDataVersion.ToString(Locale.Raw, "0") + ".json", Beacon.GenerateJSON(ProjectData, False))
 		    Var ArchiveData As MemoryBlock = Archive.Finalize
