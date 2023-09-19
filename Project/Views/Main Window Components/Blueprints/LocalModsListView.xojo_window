@@ -514,7 +514,7 @@ End
 	#tag Method, Flags = &h0
 		Sub ShowImportDialog()
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.BeaconData
+		  Dialog.Filter = BeaconFileTypes.BeaconData // This isn't a mistake, it only supports archive files because it's the only format to reliably contain mod info
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File Is Nil Then
