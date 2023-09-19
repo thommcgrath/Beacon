@@ -1,5 +1,21 @@
 #tag Class
 Protected Class ProjectURL
+	#tag Method, Flags = &h21
+		Private Sub CleanupPath()
+		  Var BaseUrl As String = BeaconAPI.URL("/", False)
+		  If Self.mPath.BeginsWith(BaseUrl) = False Or Self.mPath.BeginsWith(BaseUrl + "v4") = True Then
+		    Return
+		  End If
+		  
+		  Var ApiPath As String = Self.mPath.Middle(BaseUrl.Length)
+		  Var Reg As New RegEx
+		  Reg.SearchPattern = "^v(\d)/(project|document)/"
+		  
+		  Var Matches AS RegExMatch = Reg.Search(ApiPath)
+		  Self.mPath = Self.mPath.Replace(Matches.SubExpressionString(0), "v4/projects/")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Dict As Dictionary)
 		  Self.mGameId = Dict.Value("GameId")
@@ -8,6 +24,8 @@ Protected Class ProjectURL
 		  Self.mProjectId = Dict.Value("ProjectId")
 		  Self.mSaveInfo = Dict.Value("SaveInfo")
 		  Self.mType = Dict.Value("Type")
+		  
+		  Self.CleanupPath()
 		End Sub
 	#tag EndMethod
 
@@ -75,6 +93,7 @@ Protected Class ProjectURL
 		    End If
 		  End If
 		  
+		  Self.CleanupPath()
 		End Sub
 	#tag EndMethod
 
@@ -86,6 +105,8 @@ Protected Class ProjectURL
 		  Self.mProjectId = ProjectId
 		  Self.mSaveInfo = SaveInfo
 		  Self.mType = Type
+		  
+		  Self.CleanupPath()
 		End Sub
 	#tag EndMethod
 
