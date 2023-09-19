@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DataSource
 Inherits Beacon.DataSource
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub BuildSchema()
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, game_id TEXT COLLATE NOCASE NOT NULL, marketplace TEXT COLLATE NOCASE NOT NULL, marketplace_id TEXT NOT NULL, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, is_local BOOLEAN NOT NULL, last_update INTEGER NOT NULL);")
@@ -2758,9 +2758,9 @@ Inherits Beacon.DataSource
 		        Var UpdateBlueprintId, CurrentTagString As String
 		        Var Results As RowSet
 		        If LocalModsOnly Then
-		          Results = Self.SQLSelect("SELECT object_id, last_update, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
+		          Results = Self.SQLSelect("SELECT object_id, last_update, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1 OR (content_pack_id = ?2 AND path = ?3);", Blueprint.BlueprintId, Blueprint.ContentPackId, Blueprint.Path)
 		        Else
-		          Results = Self.SQLSelect("SELECT object_id, last_update, tags FROM blueprints WHERE object_id = ?1;", Blueprint.BlueprintId)
+		          Results = Self.SQLSelect("SELECT object_id, last_update, tags FROM blueprints WHERE object_id = ?1 OR (content_pack_id = ?2 AND path = ?3);", Blueprint.BlueprintId, Blueprint.ContentPackId, Blueprint.Path)
 		        End If
 		        If Results.RowCount = 1 Then
 		          If LocalModsOnly And Results.Column("is_user_blueprint").BooleanValue = False Then
@@ -2883,11 +2883,18 @@ Inherits Beacon.DataSource
 		          Var NextPlaceholder As Integer = 1
 		          Var WhereClause As String
 		          For Each Entry As DictionaryEntry In Columns
+		            Var MakeAssignment As Boolean
 		            If Entry.Key = "object_id" Then
 		              WhereClause = "object_id = ?" + NextPlaceholder.ToString
+		              MakeAssignment = Entry.Value.StringValue <> Blueprint.BlueprintId
 		            Else
+		              MakeAssignment = True
+		            End If
+		            
+		            If MakeAssignment Then
 		              Assignments.Add(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
 		            End If
+		            
 		            Values.Add(Entry.Value)
 		            NextPlaceholder = NextPlaceholder + 1
 		          Next
