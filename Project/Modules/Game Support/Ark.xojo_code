@@ -715,7 +715,7 @@ Protected Module Ark
 		  Dict.Value("tags") = Blueprint.Tags
 		  Dict.Value("availability") = Blueprint.Availability
 		  Dict.Value("path") = Blueprint.Path
-		  Dict.Value("minVersion") = 10700000
+		  Dict.Value("minVersion") = 20000000
 		  Dict.Value("lastUpdate") = Blueprint.LastUpdate
 		  Dict.Value("contentPackId") = Blueprint.ContentPackId
 		  Dict.Value("contentPackName") = Blueprint.ContentPackName

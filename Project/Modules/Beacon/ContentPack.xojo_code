@@ -175,7 +175,7 @@ Protected Class ContentPack
 		  SaveData.Value("name") = Self.mName
 		  SaveData.Value("isConsoleSafe") = Self.mIsConsoleSafe
 		  SaveData.Value("isDefaultEnabled") = Self.mIsDefaultEnabled
-		  SaveData.Value("minVersion") = 10700000
+		  SaveData.Value("minVersion") = 20000000
 		  SaveData.Value("lastUpdate") = Self.mLastUpdate
 		  Return SaveData
 		End Function
