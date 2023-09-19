@@ -583,6 +583,7 @@ Implements NotificationKit.Receiver
 		Sub ImportCloudFiles()
 		  If Self.mAllowWriting Then
 		    RaiseEvent ImportCloudFiles()
+		    NotificationKit.Post(Self.Notification_ImportCloudFilesFinished, Self.Identifier)
 		    Return
 		  End If
 		  
@@ -1026,6 +1027,9 @@ Implements NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = FlagUseWeakRef, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_ImportCloudFilesFinished, Type = String, Dynamic = False, Default = \"DataSource:ImportCloudFiles:Finished", Scope = Public
 	#tag EndConstant
 
 

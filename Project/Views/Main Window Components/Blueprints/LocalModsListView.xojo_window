@@ -119,7 +119,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -257,7 +256,6 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine DiscoveryEngine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -269,7 +267,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Hidden()
-		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportStopped)
+		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportStopped, Beacon.DataSource.Notification_ImportCloudFilesFinished)
+		  RaiseEvent Hidden
 		End Sub
 	#tag EndEvent
 
@@ -307,7 +306,7 @@ End
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  RaiseEvent Shown(UserData)
-		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportStopped)
+		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportStopped, Beacon.DataSource.Notification_ImportCloudFilesFinished)
 		End Sub
 	#tag EndEvent
 
@@ -403,7 +402,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case DataUpdater.Notification_ImportStopped
+		  Case DataUpdater.Notification_ImportStopped, Beacon.DataSource.Notification_ImportCloudFilesFinished
 		    Self.RefreshMods()
 		  End Select
 		End Sub
@@ -525,6 +524,10 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event Hidden()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Shown(UserData As Variant = Nil)
