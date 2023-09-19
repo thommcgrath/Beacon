@@ -93,7 +93,7 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
 		  
 		  If ChangeDict.HasKey("deletions") Then
@@ -142,7 +142,7 @@ Inherits Beacon.DataSource
 		          Continue
 		        End If
 		        
-		        Self.SaveTemplate(Template, True)
+		        Self.SaveTemplate(Template, True, IsUserData)
 		        StatusData.Value("Imported Template") = True
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Importing template")
@@ -167,7 +167,7 @@ Inherits Beacon.DataSource
 		        Var Code As String = Dict.Value("code").StringValue
 		        
 		        Var TemplateSelector As New Beacon.TemplateSelector(SelectorUUID, Label, GameId, Language, Code)
-		        Self.SaveTemplateSelector(TemplateSelector, True)
+		        Self.SaveTemplateSelector(TemplateSelector, True, IsUserData)
 		        StatusData.Value("Imported Template Selector") = True
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Importing template selector")
@@ -217,7 +217,7 @@ Inherits Beacon.DataSource
 		        Var Parsed As Dictionary = Beacon.ParseJSON(StringValue.DefineEncoding(Encodings.UTF8))
 		        Var Template As Beacon.Template = Beacon.Template.FromSaveData(Parsed)
 		        If (Template Is Nil) = False Then
-		          Self.SaveTemplate(Template, False)
+		          Self.SaveTemplate(Template, False, False)
 		          RemoveTemplateUUIDs.Remove(Template.UUID)
 		        End If
 		      Catch Err As RuntimeException
@@ -228,7 +228,7 @@ Inherits Beacon.DataSource
 		    Exit For FolderName
 		  Next FolderName
 		  For Each TemplateUUID As String In RemoveTemplateUUIDs
-		    Self.DeleteTemplate(TemplateUUID)
+		    Self.DeleteTemplate(TemplateUUID, False)
 		  Next TemplateUUID
 		  
 		  
@@ -250,7 +250,7 @@ Inherits Beacon.DataSource
 		      For Each Dict As Dictionary In Parsed
 		        Var TemplateSelector As Beacon.TemplateSelector = Beacon.TemplateSelector.FromSaveData(Dict)
 		        If (TemplateSelector Is Nil) = False Then
-		          Self.SaveTemplateSelector(TemplateSelector, False)
+		          Self.SaveTemplateSelector(TemplateSelector, False, False)
 		          RemoveSelectorUUIDs.Remove(TemplateSelector.UUID)
 		        End If
 		      Next Dict
@@ -261,7 +261,7 @@ Inherits Beacon.DataSource
 		    End Try
 		  Next FileName
 		  For Each SelectorUUID As String In RemoveSelectorUUIDs
-		    Self.DeleteTemplateSelector(SelectorUUID)
+		    Self.DeleteTemplateSelector(SelectorUUID, False)
 		  Next SelectorUUID
 		  
 		  Self.CommitTransaction()
@@ -314,54 +314,56 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplate(Template As Beacon.Template)
+		Sub DeleteTemplate(Template As Beacon.Template, DoCloudExport As Boolean)
 		  If Template Is Nil Then
 		    Return
 		  End If
 		  
-		  Self.DeleteTemplate(Template.UUID)
+		  Self.DeleteTemplate(Template.UUID, DoCloudExport)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplate(TemplateUUID As String)
+		Sub DeleteTemplate(TemplateId As String, DoCloudExport As Boolean)
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateUUID) Then
-		    Self.mTemplateCache.Remove(UserID + ":" + TemplateUUID)
+		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateId) Then
+		    Self.mTemplateCache.Remove(UserID + ":" + TemplateId)
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM custom_templates WHERE object_id = ?1 AND user_id = ?2;", TemplateUUID, UserID)
+		  Self.SQLExecute("DELETE FROM custom_templates WHERE object_id = ?1 AND user_id = ?2;", TemplateId, UserID)
 		  Self.CommitTransaction()
 		  
-		  Self.ExportCloudFiles()
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(ParamArray TemplateSelectors() As Beacon.TemplateSelector)
-		  Self.DeleteTemplateSelector(TemplateSelectors)
+		Sub DeleteTemplateSelector(TemplateSelector As Beacon.TemplateSelector, DoCloudExport As Boolean)
+		  Self.DeleteTemplateSelectors(Array(TemplateSelector.UUID), DoCloudExport)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector)
+		Sub DeleteTemplateSelector(TemplateSelectorId As String, DoCloudExport As Boolean)
+		  Self.DeleteTemplateSelectors(Array(TemplateSelectorId), DoCloudExport)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteTemplateSelectors(TemplateSelectors() As Beacon.TemplateSelector, DoCloudExport As Boolean)
 		  Var SelectorUUIDs() As String
 		  For Idx As Integer = TemplateSelectors.FirstIndex To TemplateSelectors.LastIndex
 		    SelectorUUIDs.Add(TemplateSelectors(Idx).UUID)
 		  Next Idx
-		  Self.DeleteTemplateSelector(SelectorUUIDs)
+		  Self.DeleteTemplateSelectors(SelectorUUIDs, DoCloudExport)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(ParamArray SelectorUUIDs() As String)
-		  Self.DeleteTemplateSelector(SelectorUUIDs)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(SelectorUUIDs() As String)
+		Sub DeleteTemplateSelectors(SelectorUUIDs() As String, DoCloudExport As Boolean)
 		  Var UserID As String = App.IdentityManager.CurrentUserID
 		  
 		  Self.BeginTransaction()
@@ -373,7 +375,9 @@ Inherits Beacon.DataSource
 		  Next Idx
 		  Self.CommitTransaction()
 		  
-		  Self.ExportCloudFiles()
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -642,13 +646,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveTemplate(Template As Beacon.Template)
-		  Self.SaveTemplate(Template, False)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub SaveTemplate(Template As Beacon.Template, Official As Boolean)
+		Sub SaveTemplate(Template As Beacon.Template, Official As Boolean, DoCloudExport As Boolean)
 		  If Template Is Nil Then
 		    Return
 		  End If
@@ -668,20 +666,26 @@ Inherits Beacon.DataSource
 		  
 		  Self.mTemplateCache.Value(CacheKey) = Template
 		  
-		  If Official = False Then
+		  If Official = False And DoCloudExport Then
 		    Self.ExportCloudFiles() 
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector)
-		  Self.SaveTemplateSelector(TemplateSelectors, False)
+		Sub SaveTemplateSelector(TemplateSelector As Beacon.TemplateSelector, Official As Boolean, DoCloudExport As Boolean)
+		  If TemplateSelector Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Arr(0) As Beacon.TemplateSelector
+		  Arr(0) = TemplateSelector
+		  Self.SaveTemplateSelectors(Arr, Official, DoCloudExport)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub SaveTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector, Official As Boolean)
+	#tag Method, Flags = &h0
+		Sub SaveTemplateSelectors(TemplateSelectors() As Beacon.TemplateSelector, Official As Boolean, DoCloudExport As Boolean)
 		  Self.BeginTransaction()
 		  For Each TemplateSelector As Beacon.TemplateSelector In TemplateSelectors
 		    If TemplateSelector Is Nil Then
@@ -701,27 +705,9 @@ Inherits Beacon.DataSource
 		  Next TemplateSelector
 		  Self.CommitTransaction()
 		  
-		  If Official = False Then
+		  If Official = False And DoCloudExport Then
 		    Self.ExportCloudFiles()
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SaveTemplateSelector(TemplateSelector As Beacon.TemplateSelector)
-		  Self.SaveTemplateSelector(TemplateSelector, False)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub SaveTemplateSelector(TemplateSelector As Beacon.TemplateSelector, Official As Boolean)
-		  If TemplateSelector Is Nil Then
-		    Return
-		  End If
-		  
-		  Var Arr(0) As Beacon.TemplateSelector
-		  Arr(0) = TemplateSelector
-		  Self.SaveTemplateSelector(Arr, Official)
 		End Sub
 	#tag EndMethod
 

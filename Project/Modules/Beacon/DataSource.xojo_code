@@ -236,15 +236,15 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateLocalContentPack(PackName As String) As Beacon.ContentPack
+		Function CreateLocalContentPack(PackName As String, DoCloudExport As Boolean) As Beacon.ContentPack
 		  #Pragma Unused PackName
 		  
-		  Return Self.CreateLocalContentPack(PackName, "", "")
+		  Return Self.CreateLocalContentPack(PackName, "", "", DoCloudExport)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateLocalContentPack(PackName As String, Marketplace As String, MarketplaceId As String) As Beacon.ContentPack
+		Function CreateLocalContentPack(PackName As String, Marketplace As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
 		  Var ContentPackId As String
 		  If MarketplaceId.IsEmpty Then
 		    ContentPackId = Beacon.UUID.v4
@@ -258,7 +258,9 @@ Implements NotificationKit.Receiver
 		    Return Nil
 		  End If
 		  Self.CommitTransaction()
-		  Self.ExportCloudFiles()
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
 		  Var Packs() As Beacon.ContentPack = Beacon.ContentPack.FromDatabase(Rows)
 		  Return Packs(0)
 		End Function
@@ -490,7 +492,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Import(ShouldTruncate As Boolean, Payloads() As Dictionary, Timestamp As NullableDouble) As Boolean
+		Function Import(ShouldTruncate As Boolean, Payloads() As Dictionary, Timestamp As NullableDouble, IsUserData As Boolean) As Boolean
 		  // The DataUpdater module will call this method inside a thread with its own database connection
 		  
 		  Var StatusData As New Dictionary
@@ -526,7 +528,7 @@ Implements NotificationKit.Receiver
 		      End If
 		      
 		      Try
-		        If Import(ChildPayload, StatusData) = False Then
+		        If Import(ChildPayload, StatusData, IsUserData) = False Then
 		          Self.RollbackTransaction
 		          Self.mImporting = False
 		          Return False
@@ -942,7 +944,7 @@ Implements NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
+		Event Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

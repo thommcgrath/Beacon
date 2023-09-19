@@ -100,7 +100,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  If Ark.BuildExport(UserPacks, Writer.LocalFile) = False Then
+		  If Ark.BuildExport(UserPacks, Writer.LocalFile, False) = False Then
 		    Return
 		  End If
 		  
@@ -115,7 +115,7 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
 		  
 		  Var EngramsChanged As Boolean
@@ -144,7 +144,7 @@ Inherits Beacon.DataSource
 		    For Each IconID As String In DeleteIcons
 		      Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id = ?1;", IconID)
 		    Next
-		    If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False) Then
+		    If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False, IsUserData) Then
 		      EngramsChanged = True
 		    End If
 		    BlueprintsToDelete.ResizeTo(-1)
@@ -227,7 +227,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Engram)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, IsUserData) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -245,7 +245,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Creature)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, IsUserData) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -263,7 +263,7 @@ Inherits Beacon.DataSource
 		        Blueprints.Add(Container)
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, IsUserData) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -303,7 +303,7 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		    Next Dict
-		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
+		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False, IsUserData) Then
 		      EngramsChanged = True
 		    End If
 		  End If
@@ -559,7 +559,7 @@ Inherits Beacon.DataSource
 		      
 		      ContentPacks = Importer.ContentPacks
 		      For Each ContentPack As Beacon.ContentPack In ContentPacks
-		        Self.SaveContentPack(ContentPack)
+		        Self.SaveContentPack(ContentPack, False)
 		        If PacksToRemove.HasKey(ContentPack.ContentPackId) Then
 		          PacksToRemove.Remove(ContentPack.ContentPackId)
 		        End If
@@ -567,14 +567,14 @@ Inherits Beacon.DataSource
 		      
 		      Var Blueprints() As Ark.Blueprint = Importer.Blueprints
 		      Var BlueprintsToDelete() As String
-		      If Self.SaveBlueprints(Blueprints, BlueprintsToDelete, Nil, True) = False Then
+		      If Self.SaveBlueprints(Blueprints, BlueprintsToDelete, Nil, True, False) = False Then
 		        App.Log("There was an error saving blueprints to database.")
 		        Self.RollbackTransaction()
 		        Return
 		      End If
 		      
 		      For Each Entry As DictionaryEntry In PacksToRemove
-		        Call Self.DeleteContentPack(Entry.Key.StringValue)
+		        Call Self.DeleteContentPack(Entry.Key.StringValue, False)
 		      Next
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Importing Ark user blueprints")
@@ -626,9 +626,9 @@ Inherits Beacon.DataSource
 		    Next
 		    
 		    // Yes, delete the stuff from the packs we want to **keep** because that happens first. It clears out the mods.
-		    Call Self.SaveBlueprints(Unpacked, Self.GetBlueprints("", KeepPacks, ""), Nil)
+		    Call Self.SaveBlueprints(Unpacked, Self.GetBlueprints("", KeepPacks, ""), Nil, False)
 		    For Each ContentPackId As String In RemovePacks
-		      Call Self.DeleteContentPack(ContentPackId)
+		      Call Self.DeleteContentPack(ContentPackId, False)
 		    Next ContentPackId
 		    Self.CommitTransaction()
 		  Case ModeLegacy
@@ -992,22 +992,24 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateLocalContentPack(PackName As String, MarketplaceId As String) As Beacon.ContentPack
-		  Return Self.CreateLocalContentPack(PackName, Beacon.MarketplaceSteamWorkshop, MarketplaceId)
+		Function CreateLocalContentPack(PackName As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
+		  Return Self.CreateLocalContentPack(PackName, Beacon.MarketplaceSteamWorkshop, MarketplaceId, DoCloudExport)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DeleteContentPack(Pack As Beacon.ContentPack) As Boolean
-		  Return Self.DeleteContentPack(Pack.ContentPackId)
+		Function DeleteContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean) As Boolean
+		  Return Self.DeleteContentPack(Pack.ContentPackId, DoCloudExport)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DeleteContentPack(ContentPackId As String) As Boolean
+		Function DeleteContentPack(ContentPackId As String, DoCloudExport As Boolean) As Boolean
 		  If ContentPackId = Ark.UserContentPackId Then
 		    Self.DeleteDataForContentPack(ContentPackId)
-		    Self.ExportCloudFiles()
+		    If DoCloudExport Then
+		      Self.ExportCloudFiles()
+		    End If
 		    Return True
 		  End If
 		  
@@ -1022,7 +1024,9 @@ Inherits Beacon.DataSource
 		  Self.DeleteDataForContentPack(ContentPackId)
 		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ContentPackId)
 		  Self.CommitTransaction()
-		  Self.ExportCloudFiles()
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
+		  End If
 		  
 		  Return True
 		End Function
@@ -2660,7 +2664,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint, ErrorDict As Dictionary) As Boolean
+		Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint, ErrorDict As Dictionary, DoCloudExport As Boolean) As Boolean
 		  Var DeleteUUIDs() As String
 		  If (BlueprintsToDelete Is Nil) = False Then
 		    For Each Blueprint As Ark.Blueprint In BlueprintsToDelete
@@ -2668,18 +2672,18 @@ Inherits Beacon.DataSource
 		    Next Blueprint
 		  End If
 		  
-		  Return Self.SaveBlueprints(BlueprintsToSave, DeleteUUIDs, ErrorDict, True)
+		  Return Self.SaveBlueprints(BlueprintsToSave, DeleteUUIDs, ErrorDict, True, DoCloudExport)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary) As Boolean
-		  Return Self.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True)
+		Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary, DoCloudExport As Boolean) As Boolean
+		  Return Self.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True, DoCloudExport)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary, LocalModsOnly As Boolean) As Boolean
+		Private Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary, LocalModsOnly As Boolean, DoCloudExport As Boolean) As Boolean
 		  If (BlueprintsToDelete Is Nil Or BlueprintsToDelete.Count = 0) And (BlueprintsToSave Is Nil Or BlueprintsToSave.Count = 0) Then
 		    // Nothing to do
 		    Return True
@@ -2938,7 +2942,9 @@ Inherits Beacon.DataSource
 		  If CountErrors = 0 And CountSuccess > 0 Then
 		    Self.CommitTransaction()
 		    
-		    Self.ExportCloudFiles()
+		    If DoCloudExport Then
+		      Self.ExportCloudFiles()
+		    End If
 		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		    
 		    Return True
@@ -2951,7 +2957,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveContentPack(Pack As Beacon.ContentPack)
+		Sub SaveContentPack(Pack As Beacon.ContentPack, DoCloudExport As Boolean)
 		  If Pack Is Nil Or Pack.GameId <> Self.Identifier Then
 		    Return
 		  End If
@@ -2971,6 +2977,10 @@ Inherits Beacon.DataSource
 		    End If
 		  Else
 		    Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, marketplace, marketplace_id, is_local, last_update, game_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", Pack.ContentPackId, Pack.Name, Pack.IsConsoleSafe, Pack.IsDefaultEnabled, Pack.Marketplace, Pack.MarketplaceId, Pack.IsLocal, Pack.LastUpdate, Pack.GameId)
+		  End If
+		  
+		  If DoCloudExport Then
+		    Self.ExportCloudFiles()
 		  End If
 		End Sub
 	#tag EndMethod

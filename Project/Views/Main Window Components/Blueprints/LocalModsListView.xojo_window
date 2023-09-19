@@ -119,6 +119,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
    End
    Begin Thread ModDeleterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -256,6 +257,7 @@ Begin ModsListView LocalModsListView Implements NotificationKit.Receiver
       Width           =   270
    End
    Begin Ark.ModDiscoveryEngine DiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -382,7 +384,7 @@ End
 		    Return
 		  End If
 		  
-		  If Ark.BuildExport(Packs, File) = False Then
+		  If Ark.BuildExport(Packs, File, True) = False Then
 		    Self.ShowAlert("Export failed", "The selected " + If(Self.ModsList.SelectedRowCount = 1, "mod was", "mods were") + " not exported. Beacon's log files may have more information.")
 		  End If
 		End Sub
@@ -681,7 +683,7 @@ End
 		Sub Run()
 		  Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  For Each ModUUID As String In Self.mModUUIDsToDelete
-		    If Database.DeleteContentPack(ModUUID) Then
+		    If Database.DeleteContentPack(ModUUID, True) Then
 		      Me.AddUserInterfaceUpdate(New Dictionary("Action": "Mod Deleted", "Mod UUID": ModUUID))
 		    End If
 		  Next
@@ -783,7 +785,7 @@ End
 		        End If
 		      End If
 		      
-		      Pack = Database.CreateLocalContentPack(PackName, WorkshopId)
+		      Pack = Database.CreateLocalContentPack(PackName, WorkshopId, True)
 		      Self.mNumAddedMods = Self.mNumAddedMods + 1
 		    Else
 		      ModsFilter.Append(Pack.ContentPackId)
@@ -851,7 +853,7 @@ End
 		  End If
 		  
 		  Var Errors As New Dictionary
-		  Call Database.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
+		  Call Database.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors, True)
 		  Self.mNumErrorBlueprints = Errors.KeyCount
 		  Self.mNumAddedBlueprints = BlueprintsToSave.Count
 		  Self.mNumRemovedBlueprints = BlueprintsToDelete.Count
@@ -882,7 +884,7 @@ End
 		    End If
 		    
 		    Try
-		      Var Exported As MemoryBlock = Ark.BuildExport(Pack)
+		      Var Exported As MemoryBlock = Ark.BuildExport(True, Pack)
 		      If Exported Is Nil Then
 		        Continue
 		      End If

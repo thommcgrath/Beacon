@@ -8,7 +8,7 @@ Inherits Thread
 		  
 		  Var Database As Beacon.CommonData = Beacon.CommonData.Pool.Get(True)
 		  For Each Template As Beacon.Template In Self.mTemplates
-		    Database.SaveTemplate(Template)
+		    Database.SaveTemplate(Template, False, True)
 		  Next
 		  Self.AddUserInterfaceUpdate(New Dictionary("State": "Finished"))
 		End Sub

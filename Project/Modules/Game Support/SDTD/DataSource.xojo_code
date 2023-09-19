@@ -27,9 +27,10 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, IsUserData As Boolean) As Boolean
 		  #if Not SDTD.Enabled
 		    #Pragma Unused StatusData
+		    #Pragma Unused IsUserData
 		  #endif
 		  
 		  Var BuildNumber As Integer = App.BuildNumber

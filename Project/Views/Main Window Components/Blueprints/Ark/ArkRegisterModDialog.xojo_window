@@ -893,12 +893,14 @@ Begin BeaconDialog ArkRegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -906,6 +908,7 @@ Begin BeaconDialog ArkRegisterModDialog
    End
    Begin Thread RegisterModThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1516,7 +1519,7 @@ End
 		  Var ModInfo As BeaconAPI.ContentPack
 		  If Self.mMode = Self.ModeLocal Then
 		    Var Database As Ark.DataSource = Ark.DataSource.Pool.Get(True)
-		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mSteamId)
+		    Var ContentPack As Beacon.ContentPack = Database.CreateLocalContentPack(Self.mModName, Self.mSteamId, True)
 		    ModId = ContentPack.ContentPackId
 		    ModInfo = New BeaconAPI.ContentPack(ContentPack)
 		  Else

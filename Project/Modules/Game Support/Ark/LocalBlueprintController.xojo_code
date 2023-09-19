@@ -1,7 +1,7 @@
 #tag Class
 Protected Class LocalBlueprintController
 Inherits Ark.BlueprintController
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub FetchBlueprints(Task As Ark.BlueprintControllerFetchTask)
 		  Var FetchThread As New Beacon.Thread
@@ -77,7 +77,7 @@ Inherits Ark.BlueprintController
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  Var Blueprints() As Ark.Blueprint
 		  Var Errors As New Dictionary
-		  Call DataSource.SaveBlueprints(Blueprints, Task.DeleteIds, Errors)
+		  Call DataSource.SaveBlueprints(Blueprints, Task.DeleteIds, Errors, True)
 		  
 		  If Errors.KeyCount > 0 Then
 		    Var Reasons() As String
@@ -108,7 +108,7 @@ Inherits Ark.BlueprintController
 		  Var Blueprints() As Ark.Blueprint = Task.Blueprints
 		  Var DeleteIds() As String
 		  Var Errors As New Dictionary
-		  Call DataSource.SaveBlueprints(Blueprints, DeleteIds, Errors)
+		  Call DataSource.SaveBlueprints(Blueprints, DeleteIds, Errors, True)
 		  
 		  If Errors.KeyCount > 0 Then
 		    Var BlueprintMap As New Dictionary

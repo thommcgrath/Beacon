@@ -237,7 +237,6 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
    End
    Begin Thread SaveThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -245,7 +244,7 @@ Begin BeaconDialog ArkSaveBlueprintsDialog
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
 #tag EndDesktopWindow
@@ -436,10 +435,10 @@ End
 		Sub Run()
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(True)
 		  For Each Pack As Beacon.ContentPack In Self.mContentPacks
-		    DataSource.SaveContentPack(Pack)
+		    DataSource.SaveContentPack(Pack, True)
 		  Next
 		  Var Delete() As Ark.Blueprint
-		  Call DataSource.SaveBlueprints(Self.mBlueprints, Delete, Nil)
+		  Call DataSource.SaveBlueprints(Self.mBlueprints, Delete, Nil, True)
 		  Self.mProject.ProcessEmbeddedContent()
 		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True))
 		End Sub

@@ -27,6 +27,7 @@ Begin ModEditorView ArkModEditorView
    Width           =   900
    Begin Thread ImporterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -37,6 +38,7 @@ Begin ModEditorView ArkModEditorView
       ThreadState     =   0
    End
    Begin Ark.ModDiscoveryEngine DiscoveryEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -544,7 +546,7 @@ End
 		    Blueprints.Add(Blueprint)
 		  Next
 		  
-		  If Ark.BuildExport(Blueprints, File) = False Then
+		  If Ark.BuildExport(Blueprints, File, True) = False Then
 		    Self.ShowAlert("Export failed", "The selected " + If(SelectAll = False And Self.BlueprintList.SelectedRowCount = 1, "blueprint was", "blueprints were") + " not exported. Beacon's log files may have more information.")
 		  End If
 		End Sub

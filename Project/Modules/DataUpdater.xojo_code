@@ -226,11 +226,13 @@ Protected Module DataUpdater
 		    Var IsFull As Boolean
 		    Var Version As Integer
 		    Var Timestamp As NullableDouble
+		    Var IsUserData As Boolean
 		    Try
 		      FileList = Manifest.Value("files")
 		      IsFull = Manifest.Value("isFull")
 		      Version = Manifest.Value("version")
 		      Timestamp = NullableDouble.FromVariant(Manifest.Lookup("timestamp", Nil))
+		      IsUserData = Manifest.Lookup("isUserData", False).BooleanValue
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Loading values from manifest")
 		      Continue
@@ -263,7 +265,7 @@ Protected Module DataUpdater
 		      Var Imported As Boolean
 		      Var OriginalChangeCount As Integer = Source.TotalChanges()
 		      Try
-		        Imported = Source.Import(IsFull, Payloads, Timestamp)
+		        Imported = Source.Import(IsFull, Payloads, Timestamp, IsUserData)
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Trying to import delta updates for " + Source.Identifier)
 		      End Try
