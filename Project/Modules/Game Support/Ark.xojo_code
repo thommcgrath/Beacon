@@ -36,6 +36,10 @@ Protected Module Ark
 
 	#tag Method, Flags = &h21
 		Private Function AddToArchive(Archive As Beacon.Archive, ContentPack As Beacon.ContentPack, Blueprints() As Ark.Blueprint) As String
+		  If Archive Is Nil Or ContentPack Is Nil Or Blueprints Is Nil Or Blueprints.Count = 0 Then
+		    Return ""
+		  End If
+		  
 		  Var Packs(0) As Dictionary
 		  Packs(0) = ContentPack.SaveData
 		  
@@ -122,7 +126,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub BuildExport(Blueprints() As Ark.Blueprint, Archive As Beacon.Archive, IsUserData As Boolean)
+		Private Function BuildExport(Blueprints() As Ark.Blueprint, Archive As Beacon.Archive, IsUserData As Boolean) As Boolean
 		  Var OrganizedBlueprints As New Dictionary
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Var ContentPackId As String = Blueprint.ContentPackId
@@ -150,6 +154,9 @@ Protected Module Ark
 		      Filenames.Add(Filename)
 		    End If
 		  Next
+		  If Filenames.Count = 0 Then
+		    Return False
+		  End If
 		  Filenames.Sort
 		  
 		  Var Manifest As New Dictionary
@@ -160,7 +167,8 @@ Protected Module Ark
 		  Manifest.Value("files") = Filenames
 		  Manifest.Value("isUserData") = IsUserData
 		  Archive.AddFile("Manifest.json", Beacon.GenerateJson(Manifest, False))
-		End Sub
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -171,8 +179,13 @@ Protected Module Ark
 		  End If
 		  
 		  Var Archive As Beacon.Archive = Beacon.Archive.Create()
-		  BuildExport(Blueprints, Archive, IsUserData)
-		  Return Archive.Finalize
+		  Var Success As Boolean = BuildExport(Blueprints, Archive, IsUserData)
+		  Var Mem As MemoryBlock = Archive.Finalize
+		  If Success Then
+		    Return Mem
+		  Else
+		    Return Nil
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -183,16 +196,33 @@ Protected Module Ark
 		    Return False
 		  End If
 		  
-		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Destination)
-		  BuildExport(Blueprints, Archive, IsUserData)
+		  Var Temp As FolderItem = FolderItem.TemporaryFile
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Temp)
+		  Var Success As Boolean = BuildExport(Blueprints, Archive, IsUserData)
 		  Call Archive.Finalize
 		  
-		  Return True
+		  If Success Then
+		    Try
+		      If Destination.Exists Then
+		        Destination.Remove
+		      End If
+		      Temp.MoveTo(Destination)
+		      Return True
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		  End If
+		  
+		  Try
+		    Temp.Remove
+		  Catch Err As RuntimeException
+		  End Try
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub BuildExport(ContentPacks() As Beacon.ContentPack, Archive As Beacon.Archive, IsUserData As Boolean)
+		Private Function BuildExport(ContentPacks() As Beacon.ContentPack, Archive As Beacon.Archive, IsUserData As Boolean) As Boolean
 		  Var Filenames() As String
 		  Var DataSource As Ark.DataSource = Ark.DataSource.Pool.Get(False)
 		  For Each ContentPack As Beacon.ContentPack In ContentPacks
@@ -202,6 +232,9 @@ Protected Module Ark
 		      Filenames.Add(Filename)
 		    End If
 		  Next
+		  If Filenames.Count = 0 Then
+		    Return False
+		  End If
 		  Filenames.Sort
 		  
 		  Var Manifest As New Dictionary
@@ -212,7 +245,8 @@ Protected Module Ark
 		  Manifest.Value("files") = Filenames
 		  Manifest.Value("isUserData") = IsUserData
 		  Archive.AddFile("Manifest.json", Beacon.GenerateJson(Manifest, False))
-		End Sub
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -223,8 +257,13 @@ Protected Module Ark
 		  End If
 		  
 		  Var Archive As Beacon.Archive = Beacon.Archive.Create()
-		  BuildExport(ContentPacks, Archive, IsUserData)
-		  Return Archive.Finalize
+		  Var Success As Boolean = BuildExport(ContentPacks, Archive, IsUserData)
+		  Var Mem As MemoryBlock = Archive.Finalize
+		  If Success Then
+		    Return Mem
+		  Else
+		    Return Nil
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -235,11 +274,28 @@ Protected Module Ark
 		    Return False
 		  End If
 		  
-		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Destination)
-		  BuildExport(ContentPacks, Archive, IsUserData)
+		  Var Temp As FolderItem = FolderItem.TemporaryFile
+		  Var Archive As Beacon.Archive = Beacon.Archive.Create(Temp)
+		  Var Success As Boolean = BuildExport(ContentPacks, Archive, IsUserData)
 		  Call Archive.Finalize
 		  
-		  Return True
+		  If Success Then
+		    Try
+		      If Destination.Exists Then
+		        Destination.Remove
+		      End If
+		      Temp.MoveTo(Destination)
+		      Return True
+		    Catch Err As RuntimeException
+		      Return False
+		    End Try
+		  End If
+		  
+		  Try
+		    Temp.Remove
+		  Catch Err As RuntimeException
+		  End Try
+		  Return False
 		End Function
 	#tag EndMethod
 

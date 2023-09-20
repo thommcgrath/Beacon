@@ -49,7 +49,7 @@ Begin BeaconDialog ArkRegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   520
       Begin UITweaks.ResizedPushButton IntroActionButton
@@ -893,14 +893,12 @@ Begin BeaconDialog ArkRegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -908,7 +906,6 @@ Begin BeaconDialog ArkRegisterModDialog
    End
    Begin Thread RegisterModThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -917,66 +914,6 @@ Begin BeaconDialog ArkRegisterModDialog
       TabPanelIndex   =   0
       ThreadID        =   0
       ThreadState     =   0
-   End
-   Begin DesktopRadioButton IntroAuthorRadio
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "I am a mod author who wants to add my mod to Beacon."
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   -130
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   480
-   End
-   Begin DesktopRadioButton IntroUserRadio
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "I am a server admin who wants to add mod items to Beacon."
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   -98
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   480
    End
 End
 #tag EndDesktopWindow
@@ -1462,6 +1399,13 @@ End
 		  Self.IntroIdField.Enabled = True
 		  Self.IntroActionButton.Enabled = (Self.mSteamId.IsEmpty = False)
 		  Self.IntroSkipButton.Enabled = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IntroSkipButton
+	#tag Event
+		Sub Pressed()
+		  Self.ShowNamePage("")
 		End Sub
 	#tag EndEvent
 #tag EndEvents

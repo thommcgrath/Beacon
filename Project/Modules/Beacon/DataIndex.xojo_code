@@ -8,20 +8,28 @@ Protected Class DataIndex
 
 	#tag Method, Flags = &h0
 		Sub Constructor(TableName As String, Unique As Boolean, ParamArray Columns() As String)
-		  Var IndexName As String = TableName.Lowercase
+		  Var WhereClause As String
+		  Var IndexName As String = TableName.Lowercase + "_" + EncodeHex(Crypto.MD5(String.FromArray(Columns, ";").Lowercase)).Lowercase + If(Unique, "_uidx", "_idx")
 		  Var EscapedColumns() As String
 		  EscapedColumns.ResizeTo(Columns.LastIndex)
+		  For Idx As Integer = Columns.LastIndex DownTo 0
+		    If Columns(Idx).BeginsWith("Where") = False Then
+		      Continue
+		    End If
+		    WhereClause = Columns(Idx)
+		    Columns.RemoveAt(Idx)
+		    EscapedColumns.RemoveAt(Idx)
+		    Continue
+		  Next
 		  For Idx As Integer = 0 To Columns.LastIndex
-		    IndexName = IndexName + "_" + Columns(Idx).Lowercase
 		    EscapedColumns(Idx) = Beacon.DataSource.EscapeIdentifier(Columns(Idx))
-		  Next Idx
-		  If Unique Then
-		    IndexName = IndexName + "_uidx"
-		  Else
-		    IndexName = IndexName + "_idx"
-		  End If
+		  Next
 		  
-		  Self.mCreateStatement = "CREATE " + If(Unique, "UNIQUE ", "") + "INDEX IF NOT EXISTS " + Beacon.DataSource.EscapeIdentifier(IndexName) + " ON " + Beacon.DataSource.EscapeIdentifier(TableName) + "(" + String.FromArray(EscapedColumns, ", ") + ");"
+		  Self.mCreateStatement = "CREATE " + If(Unique, "UNIQUE ", "") + "INDEX IF NOT EXISTS " + Beacon.DataSource.EscapeIdentifier(IndexName) + " ON " + Beacon.DataSource.EscapeIdentifier(TableName) + "(" + String.FromArray(EscapedColumns, ", ") + ")"
+		  If WhereClause.IsEmpty = False Then
+		    Self.mCreateStatement = Self.mCreateStatement + " " + WhereClause
+		  End If
+		  Self.mCreateStatement = Self.mCreateStatement + ";"
 		  Self.mDropStatement = "DROP INDEX IF EXISTS " + Beacon.DataSource.EscapeIdentifier(IndexName) + ";"
 		End Sub
 	#tag EndMethod

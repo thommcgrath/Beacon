@@ -375,7 +375,11 @@ End
 		  End If
 		  
 		  Var Dialog As New SaveFileDialog
-		  Dialog.SuggestedFileName = "Exported Mods.beacondata"
+		  If Packs.Count = 1 Then
+		    Dialog.SuggestedFileName = Beacon.SanitizeFilename(Packs(0).Name + Beacon.FileExtensionDelta)
+		  Else
+		    Dialog.SuggestedFileName = "Exported Mods" + Beacon.FileExtensionDelta
+		  End If
 		  Dialog.Filter = BeaconFileTypes.BeaconData
 		  
 		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
@@ -384,7 +388,7 @@ End
 		  End If
 		  
 		  If Ark.BuildExport(Packs, File, True) = False Then
-		    Self.ShowAlert("Export failed", "The selected " + If(Self.ModsList.SelectedRowCount = 1, "mod was", "mods were") + " not exported. Beacon's log files may have more information.")
+		    Self.ShowAlert("Export failed", "The selected " + If(Self.ModsList.SelectedRowCount = 1, "mod was", "mods were") + " not exported. Mods must have at least one blueprint to be exported.")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -766,30 +770,46 @@ End
 		  Var Packs As New Dictionary
 		  Var ModIds() As String = Me.ModIds
 		  Var ModsFilter As New Beacon.StringList()
+		  Var Now As Double = DateTime.Now.SecondsFrom1970
 		  For Each WorkshopId As String In ModIds
 		    If WorkshopId = "2171967557" Then
 		      Continue
 		    End If
 		    
+		    Var PackName As String
+		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		    Socket.RequestHeader("User-Agent") = App.UserAgent
+		    Socket.Send("GET", "https://steamcommunity.com/sharedfiles/filedetails/?id=" + WorkshopId)
+		    If Socket.LastHTTPStatus = 200 Then
+		      Var TitleMatch As RegexMatch = TitleFinder.Search(Socket.LastContent)
+		      If (TitleMatch Is Nil) = False Then
+		        PackName = DecodingFromHTMLMBS(TitleMatch.SubExpressionString(1))
+		      End If
+		    End If
+		    
 		    Var Pack As Beacon.ContentPack = Database.GetContentPackWithSteamId(WorkshopId, Beacon.ContentPack.Types.Custom)
 		    If Pack Is Nil Then
-		      Var PackName As String = Me.GetTagForModId(WorkshopId)
 		      If PackName.IsEmpty Then
-		        PackName = WorkshopId
-		      End If
-		      
-		      Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		      Socket.RequestHeader("User-Agent") = App.UserAgent
-		      Socket.Send("GET", "https://steamcommunity.com/sharedfiles/filedetails/?id=" + WorkshopId)
-		      If Socket.LastHTTPStatus = 200 Then
-		        Var TitleMatch As RegexMatch = TitleFinder.Search(Socket.LastContent)
-		        If (TitleMatch Is Nil) = False Then
-		          PackName = DecodingFromHTMLMBS(TitleMatch.SubExpressionString(1))
+		        Var Tag As String = Me.GetTagForModId(WorkshopId)
+		        If Tag.IsEmpty = False Then
+		          PackName = Tag
+		        Else
+		          PackName = WorkshopId
 		        End If
 		      End If
 		      
 		      Pack = Database.CreateLocalContentPack(PackName, WorkshopId, True)
 		      Self.mNumAddedMods = Self.mNumAddedMods + 1
+		    Else
+		      If PackName.IsEmpty Then
+		        PackName = Pack.Name
+		      End If
+		      
+		      Var Mutable As New Beacon.MutableContentPack(Pack)
+		      Mutable.Name = PackName
+		      Mutable.LastUpdate = Now
+		      Pack = New Beacon.ContentPack(Mutable)
+		      Database.SaveContentPack(Pack, True)
 		    End If
 		    
 		    ModsFilter.Append(Pack.ContentPackId)
@@ -888,6 +908,8 @@ End
 		    Try
 		      Var Exported As MemoryBlock = Ark.BuildExport(True, Pack)
 		      If Exported Is Nil Then
+		        Call Database.DeleteContentPack(Pack, True)
+		        Self.mNumAddedMods = Max(Self.mNumAddedMods - 1, 0)
 		        Continue
 		      End If
 		      

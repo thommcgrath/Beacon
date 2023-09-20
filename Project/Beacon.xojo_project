@@ -632,6 +632,7 @@ Class=Rewriter;Modules/Game Support/SDTD/Rewriter.xojo_code;&h0000000036861FFF;&
 Class=ConfigOrganizer;Modules/Game Support/SDTD/ConfigOrganizer.xojo_code;&h0000000075D0E7FF;&h00000000646827FF;false
 DesktopWindow=SDTDExportWindow;Views/7 Days to Die/General Dialogs/SDTDExportWindow.xojo_window;&h0000000032FD67FF;&h00000000762C07FF;false
 Class=GenericServerProfile;Modules/Game Support/SDTD/GenericServerProfile.xojo_code;&h00000000174CCFFF;&h00000000646827FF;false
+Class=MutableContentPack;Modules/Beacon/MutableContentPack.xojo_code;&h000000004E59A7FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=2
 MinorVersion=0

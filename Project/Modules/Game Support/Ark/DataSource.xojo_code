@@ -58,7 +58,8 @@ Inherits Beacon.DataSource
 		    Indexes.Add(New Beacon.DataIndex("tags_" + Category, False, "tag"))
 		  Next
 		  
-		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "is_local", "marketplace_id"))
+		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "marketplace", "marketplace_id", "WHERE is_local = 0"))
+		  Indexes.Add(New Beacon.DataIndex("content_packs", True, "marketplace", "marketplace_id", "WHERE is_local = 1 AND (marketplace != '' OR marketplace_id != '')"))
 		  Indexes.Add(New Beacon.DataIndex("maps", False, "content_pack_id"))
 		  Indexes.Add(New Beacon.DataIndex("loot_containers", False, "sort_order"))
 		  
@@ -118,7 +119,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function GetSchemaVersion() As Integer
-		  Return 200
+		  Return 201
 		End Function
 	#tag EndEvent
 

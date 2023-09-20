@@ -7,6 +7,20 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Source As Beacon.ContentPack)
+		  Self.mContentPackId = Source.mContentPackId
+		  Self.mGameId = Source.mGameId
+		  Self.mIsConsoleSafe = Source.mIsConsoleSafe
+		  Self.mIsDefaultEnabled = Source.mIsDefaultEnabled
+		  Self.mIsLocal = Source.mIsLocal
+		  Self.mLastUpdate = Source.mLastUpdate
+		  Self.mMarketplace = Source.mMarketplace
+		  Self.mMarketplaceId = Source.mMarketplaceId
+		  Self.mName = Source.mName
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(GameId As String, Name As String, ContentPackId As String = "")
 		  If ContentPackId.IsEmpty Then
 		    ContentPackId = Beacon.UUID.v4
@@ -106,6 +120,18 @@ Protected Class ContentPack
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImmutableCopy() As Beacon.ContentPack
+		  Return New Beacon.ContentPack(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.ContentPack
+		  Return Self
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsConsoleSafe() As Boolean
 		  Return Self.mIsConsoleSafe
 		End Function
@@ -138,6 +164,18 @@ Protected Class ContentPack
 	#tag Method, Flags = &h0
 		Function MarketplaceId() As String
 		  Return Self.mMarketplaceId
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableCopy() As Beacon.MutableContentPack
+		  Return New Beacon.MutableContentPack(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableContentPack
+		  Return Self.MutableCopy()
 		End Function
 	#tag EndMethod
 
@@ -194,40 +232,40 @@ Protected Class ContentPack
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
-		Private mContentPackId As String
+	#tag Property, Flags = &h1
+		Protected mContentPackId As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mGameId As String
+	#tag Property, Flags = &h1
+		Protected mGameId As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mIsConsoleSafe As Boolean
+	#tag Property, Flags = &h1
+		Protected mIsConsoleSafe As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mIsDefaultEnabled As Boolean
+	#tag Property, Flags = &h1
+		Protected mIsDefaultEnabled As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mIsLocal As Boolean
+	#tag Property, Flags = &h1
+		Protected mIsLocal As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mLastUpdate As Double
+	#tag Property, Flags = &h1
+		Protected mLastUpdate As Double
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mMarketplace As String
+	#tag Property, Flags = &h1
+		Protected mMarketplace As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mMarketplaceId As String
+	#tag Property, Flags = &h1
+		Protected mMarketplaceId As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mName As String
+	#tag Property, Flags = &h1
+		Protected mName As String
 	#tag EndProperty
 
 

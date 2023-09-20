@@ -237,8 +237,6 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function CreateLocalContentPack(PackName As String, DoCloudExport As Boolean) As Beacon.ContentPack
-		  #Pragma Unused PackName
-		  
 		  Return Self.CreateLocalContentPack(PackName, "", "", DoCloudExport)
 		End Function
 	#tag EndMethod
@@ -246,8 +244,10 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function CreateLocalContentPack(PackName As String, Marketplace As String, MarketplaceId As String, DoCloudExport As Boolean) As Beacon.ContentPack
 		  Var ContentPackId As String
-		  If MarketplaceId.IsEmpty Then
+		  If MarketplaceId.IsEmpty Or Marketplace.IsEmpty Then
 		    ContentPackId = Beacon.UUID.v4
+		    Marketplace = ""
+		    MarketplaceId = ""
 		  Else
 		    ContentPackId = Beacon.ContentPack.GenerateLocalContentPackId(Marketplace, MarketplaceId)
 		  End If

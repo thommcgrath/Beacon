@@ -546,6 +546,11 @@ End
 		    Blueprints.Add(Blueprint)
 		  Next
 		  
+		  If Blueprints.Count = 0 Then
+		    Self.ShowAlert("Export failed", "There are no blueprints to export.")
+		    Return
+		  End If
+		  
 		  If Ark.BuildExport(Blueprints, File, True) = False Then
 		    Self.ShowAlert("Export failed", "The selected " + If(SelectAll = False And Self.BlueprintList.SelectedRowCount = 1, "blueprint was", "blueprints were") + " not exported. Beacon's log files may have more information.")
 		  End If

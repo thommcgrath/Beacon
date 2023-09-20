@@ -359,7 +359,7 @@ End
 		      
 		      Var Pack As Beacon.ContentPack = DataSource.GetContentPackWithId(ModInfo.ContentPackId)
 		      If (Pack Is Nil) = False Then
-		        If Pack.LastUpdate < ModInfo.LastUpdate Then
+		        If Floor(Pack.LastUpdate) < Floor(ModInfo.LastUpdate) Then
 		          Status = "Update Available"
 		        Else
 		          Status = "Downloaded"
