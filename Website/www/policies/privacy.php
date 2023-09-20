@@ -28,4 +28,5 @@ BeaconTemplate::SetTitle('Privacy and Security');
 	<li><a href="https://haveibeenpwned.com/privacy">Have I Been Pwned</a>: During signup, passwords are anonymously checked against the world’s largest database of leaked passwords.</li>
 	<li><a href="https://postmarkapp.com/privacy-policy">Postmark</a>: Emails sent by Beacon are routed through Postmark to reduce the chances of messages going to spam boxes.</li>
 	<li><a href="https://wasabi.com/legal/privacy-policy/">Wasabi</a>: Used for long-term storage of user cloud files. Projects use their standard encryption techniques, everything else is end-to-end encrypted.</li>
+	<li><a href="https://messagebird.com/en/legal/privacy">Pusher</a>: Used in Beacon 2 and later to synchronize user interactions.</li>
 </ul>
