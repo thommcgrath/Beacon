@@ -58,14 +58,14 @@ function handleRequest(array $context): Response {
 			}
 
 			$database->BeginTransaction();
-			$ContentPackDiscoveryResult = ContentPackDiscoveryResult::Save($contentPackInfo, $gameId);
-			if (is_null($ContentPackDiscoveryResult)) {
+			$contentPackDiscoveryResult = ContentPackDiscoveryResult::Save($contentPackInfo, $gameId);
+			if (is_null($contentPackDiscoveryResult)) {
 				$database->Rollback();
 				unlink($archivePath);
 				return Response::NewJsonError('Could not save mod info to database. Newer data may already be saved.', null, 400);
 			}
 
-			if (BeaconCloudStorage::PutFile($ContentPackDiscoveryResult->StoragePath(), file_get_contents($archivePath)) === false) {
+			if (BeaconCloudStorage::PutFile($contentPackDiscoveryResult->StoragePath(), file_get_contents($archivePath)) === false) {
 				$database->Rollback();
 				unlink($archivePath);
 				return Response::NewJsonError('Could not upload mod data to cold storage.', null, 500);
@@ -73,11 +73,11 @@ function handleRequest(array $context): Response {
 
 			$database->Commit();
 			unlink($archivePath);
-			return Response::NewJson($ContentPackDiscoveryResult, 200);
+			return Response::NewJson($contentPackDiscoveryResult, 200);
 		}
 	} catch (Exception $err) {
 		if ($database->InTransaction()) {
-			$database->ResetTransactions();
+			$database->Rollback();
 		}
 		if (file_exists($archivePath)) {
 			unlink($archivePath);
