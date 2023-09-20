@@ -365,7 +365,7 @@ End
 
 	#tag Event
 		Sub Closing()
-		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged)
+		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged, Beacon.PusherSocket.Notification_StateChanged)
 		  #if TargetMacOS
 		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
 		  #endif
@@ -456,7 +456,7 @@ End
 		  #endif
 		  
 		  UpdatesKit.Init()
-		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged)
+		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, Preferences.Notification_ProfileIconChanged, Beacon.PusherSocket.Notification_StateChanged)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
@@ -688,6 +688,8 @@ End
 		    If (ProfileButton Is Nil) = False Then
 		      ProfileButton.Icon = Self.ProfileIcon()
 		    End If
+		  Case Beacon.PusherSocket.Notification_StateChanged
+		    Self.UpdatePusherStatus()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -750,7 +752,7 @@ End
 		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
 		      UpdateItem.Caption = "Update Ready"
 		      
-		      Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
+		      Var Idx As Integer = Max(Self.NavBar.IndexOf("NavUser"), Self.NavBar.IndexOf("NavPusher"))
 		      If Idx > -1 Then
 		        Self.NavBar.Insert(Idx, UpdateItem)
 		      Else
@@ -939,6 +941,49 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdatePusherStatus()
+		  Var State As Beacon.PusherSocket.States
+		  If (App.Pusher Is Nil) = False Then
+		    State = App.Pusher.State
+		  Else
+		    State = Beacon.PusherSocket.States.Disabled
+		  End If
+		  Var ShouldHaveButton As Boolean = State <> Beacon.PusherSocket.States.Disabled
+		  Var Button As OmniBarItem = Self.NavBar.Item("NavPusher")
+		  If ShouldHaveButton = False And (Button Is Nil) = False Then
+		    Self.NavBar.Remove(Button)
+		    Return
+		  ElseIf ShouldHaveButton = True And Button Is Nil Then
+		    Button = OmniBarItem.CreateButton("NavPusher", "", IconToolbarCloudDisconnected, "")
+		    Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
+		    If Idx > -1 Then
+		      Self.NavBar.Insert(Idx, Button)
+		    Else
+		      Self.NavBar.Append(Button)
+		    End If
+		  End If
+		  
+		  Select Case State
+		  Case Beacon.PusherSocket.States.Connected
+		    Button.AlwaysUseActiveColor = False
+		    Button.ActiveColor = OmniBarItem.ActiveColors.Green
+		    Button.HelpTag = "Beacon is connected. Status updates happen in real time."
+		    Button.Icon = IconToolbarCloud
+		  Case Beacon.PusherSocket.States.Disconnected
+		    Button.AlwaysUseActiveColor = False
+		    Button.ActiveColor = OmniBarItem.ActiveColors.Orange
+		    Button.HelpTag = "Beacon is disconnected. Most features will continue to work, but Beacon will not receive live status updates. Click to attempt to connect."
+		    Button.Icon = IconToolbarCloudDisconnected
+		  Case Beacon.PusherSocket.States.Errored
+		    Button.AlwaysUseActiveColor = True
+		    Button.ActiveColor = OmniBarItem.ActiveColors.Red
+		    Button.HelpTag = "Beacon is disconnected due to an error. Most features will continue to work, but Beacon will not receive live status updates. Click to attempt to connect."
+		    Button.Icon = IconToolbarCloudError
+		  End Select
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mBusyWatcher As Timer
@@ -1008,6 +1053,8 @@ End
 		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", Self.ProfileIcon, "Access user settings")
 		  
 		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace, User)
+		  
+		  Self.UpdatePusherStatus
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1030,6 +1077,10 @@ End
 		  Case "NavUser"
 		    Self.ShowUserMenu(Self.Left + Me.Left + ItemRect.Left, Self.Top + Me.Top + ItemRect.Bottom)
 		    Return
+		  Case "NavPusher"
+		    If (App.Pusher Is Nil) = False And App.Pusher.State <> Beacon.PusherSocket.States.Connected Then
+		      App.Pusher.Start(App.IdentityManager.CurrentIdentity)
+		    End If
 		  Else
 		    Return
 		  End Select

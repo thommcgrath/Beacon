@@ -3,6 +3,7 @@ Protected Class PusherSocket
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mCallbacks = New Dictionary
+		  Self.mState = Beacon.PusherSocket.States.Disconnected
 		End Sub
 	#tag EndMethod
 
@@ -44,10 +45,12 @@ Protected Class PusherSocket
 	#tag Method, Flags = &h21
 		Private Sub mRunThread_Run(Sender As Global.Thread)
 		  If Preferences.OnlineEnabled = False Then
+		    Self.State = Beacon.PusherSocket.States.Disabled
 		    Return
 		  End If
 		  
 		  #if DebugBuild
+		    Self.State = Beacon.PusherSocket.States.Disabled
 		    Return
 		  #endif
 		  
@@ -59,6 +62,7 @@ Protected Class PusherSocket
 		    Var Response As BeaconAPI.Response = BeaconAPI.SendSync(Request)
 		    If Not Response.Success Then
 		      App.Log("Could not fetch pusher credentials")
+		      Self.State = Beacon.PusherSocket.States.Errored
 		      Return
 		    End If
 		    
@@ -66,12 +70,14 @@ Protected Class PusherSocket
 		    Var Enabled As Boolean = Dict.Lookup("enabled", False)
 		    If Not Enabled Then
 		      App.Log("Realtime communication is disabled")
+		      Self.State = Beacon.PusherSocket.States.Disabled
 		      Return
 		    End If
 		    ClusterId = Dict.Value("cluster")
 		    AppKey = Dict.Value("key")
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Getting pusher credentials")
+		    Self.State = Beacon.PusherSocket.States.Errored
 		    Return
 		  End Try
 		  
@@ -105,6 +111,7 @@ Protected Class PusherSocket
 		  If ErrCode <> 0 Then
 		    // Error
 		    App.Log("Pusher socket error: " + Curl.LastErrorMessage)
+		    Self.State = Beacon.PusherSocket.States.Errored
 		    Return
 		  End If
 		  
@@ -114,7 +121,9 @@ Protected Class PusherSocket
 		  Var SentPing As Boolean
 		  Var ActivityTimeout As Integer = 120
 		  Var PongWaitTime As Integer = 30
+		  Self.State = Beacon.PusherSocket.States.Connected
 		  While Self.mStopped = False
+		    
 		    If Self.mPendingMessages.Count > 0 Then
 		      Var Dict As Dictionary = Self.mPendingMessages(0)
 		      Self.mPendingMessages.RemoveAt(0)
@@ -183,6 +192,7 @@ Protected Class PusherSocket
 		      App.Log(Err, CurrentMethodName, "Receiving event from pusher")
 		    End Try
 		  Wend
+		  Self.State = Beacon.PusherSocket.States.Disconnected
 		  
 		  Self.mCurl = Nil
 		End Sub
@@ -261,6 +271,23 @@ Protected Class PusherSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function State() As Beacon.PusherSocket.States
+		  Return Self.mState
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub State(Assigns Value As Beacon.PusherSocket.States)
+		  If Self.mState = Value Then
+		    Return
+		  End If
+		  
+		  Self.mState = Value
+		  NotificationKit.Post(Self.Notification_StateChanged, Value)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Stop()
 		  Self.mStopped = True
 		  Self.mSocketId = ""
@@ -319,8 +346,24 @@ Protected Class PusherSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mState As Beacon.PusherSocket.States
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mStopped As Boolean
 	#tag EndProperty
+
+
+	#tag Constant, Name = Notification_StateChanged, Type = String, Dynamic = False, Default = \"Pusher:StateChanged", Scope = Public
+	#tag EndConstant
+
+
+	#tag Enum, Name = States, Type = Integer, Flags = &h0
+		Connected
+		  Disconnected
+		  Disabled
+		Errored
+	#tag EndEnum
 
 
 	#tag ViewBehavior

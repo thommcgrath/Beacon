@@ -179,7 +179,10 @@ class BeaconLogin {
 						'Influence the passage of time.',
 						'Simply walk into Mordor.',
 						'Juggle buffalo.',
-						'Reach singularity.'
+						'Reach singularity.',
+						'Find the droids you\'re looking for.',
+						'Levitate raccoons with iPads',
+						'Defy gravity',
 					];
 					$index = array_rand($jokePermissions, 1);
 					echo htmlentities($jokePermissions[$index]);
