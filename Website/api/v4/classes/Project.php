@@ -573,7 +573,7 @@ abstract class Project extends DatabaseObject implements JsonSerializable {
 				}
 
 				$mod = ContentPack::Fetch($modId);
-				if (is_null($mod) || $mod->ConsoleSafe() === true) {
+				if (is_null($mod) || $mod->IsConsoleSafe() === true) {
 					continue;
 				}
 
