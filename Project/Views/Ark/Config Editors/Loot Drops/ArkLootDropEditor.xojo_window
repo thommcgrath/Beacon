@@ -658,6 +658,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mSimulatorTask_Completed(Sender As AnimationKit.Task)
+		  If Sender = Self.mSimulatorTask Then
+		    Self.mSimulatorTask = Nil
+		  End If
+		  
+		  Self.Refresh()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function Project() As Ark.Project
 		  Return RaiseEvent GetProject
 		End Function
@@ -754,6 +764,7 @@ End
 		  End If
 		  
 		  Self.mSimulatorTask = New AnimationKit.ValueTask(Self, "simulator position", Self.SimulatorPosition, NewPosition)
+		  AddHandler mSimulatorTask.Completed, AddressOf mSimulatorTask_Completed
 		  Self.mSimulatorTask.DurationInSeconds = Duration
 		  Self.mSimulatorTask.Curve = Curve
 		  Self.mSimulatorTask.Run

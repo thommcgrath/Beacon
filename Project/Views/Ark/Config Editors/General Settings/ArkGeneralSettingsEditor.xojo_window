@@ -162,13 +162,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
-		  RaiseEvent Opening
-		  Self.Composited = True
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Self.List.ForceReload
 		End Sub
@@ -196,13 +189,8 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub SettingChangeDelegate(Key As Ark.ConfigOption, Value As Variant)
+		Delegate Sub SettingChangeDelegate(Key As Ark . ConfigOption, Value As Variant)
 	#tag EndDelegateDeclaration
-
-
-	#tag Hook, Flags = &h0
-		Event Opening()
-	#tag EndHook
 
 
 	#tag Property, Flags = &h21

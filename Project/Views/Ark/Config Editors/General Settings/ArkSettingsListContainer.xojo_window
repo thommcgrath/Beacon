@@ -368,6 +368,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetVisibilities(Force As Boolean = False)
 		  If Force = False And Self.Scroller.Value = Self.mLastScrollPosition And Self.Height = Self.mLastViewHeight Then
+		    #if TargetWindows
+		      Self.Refresh(False)
+		    #endif
 		    Return
 		  End If
 		  
@@ -392,6 +395,9 @@ End
 		    If Not Self.FillCanvas.Visible Then
 		      Self.FillCanvas.Visible = True
 		    End If
+		    #if TargetWindows
+		      Self.Refresh(False)
+		    #endif
 		    Return
 		  End If
 		  
