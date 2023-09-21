@@ -341,9 +341,8 @@ End
 		  Self.List.Sort
 		  Self.UpdateUI()
 		  
-		  If Self.Busy = False Then
-		    App.FrontmostMBS = True
-		    Self.TrueWindow.ActivateWindowMBS
+		  If Self.Busy = False And Self.TrueWindow IsA BeaconWindow Then
+		    BeaconWindow(Self.TrueWindow).BringToFront()
 		  End If
 		End Sub
 	#tag EndMethod
