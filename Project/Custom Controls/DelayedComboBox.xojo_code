@@ -64,7 +64,7 @@ Inherits DesktopComboBox
 		  Try
 		    Self.SelectRowWithValue(Value)
 		    Return
-		  Catch Err As InvalidArgumentException
+		  Catch Err As RuntimeException
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		  

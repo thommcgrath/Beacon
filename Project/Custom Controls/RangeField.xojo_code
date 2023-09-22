@@ -80,7 +80,7 @@ Inherits UITweaks.ResizedTextField
 		  Var Value As Double
 		  Try
 		    Value = Double.FromString(Self.Text.Trim, Locale.Current)
-		  Catch Err As InvalidArgumentException
+		  Catch Err As RuntimeException
 		  End Try
 		  Var Formatted As String
 		  Var Valid As Boolean

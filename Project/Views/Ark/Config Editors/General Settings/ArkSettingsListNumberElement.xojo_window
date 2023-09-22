@@ -217,7 +217,7 @@ End
 		  Var DoubleValue As Double
 		  Try
 		    DoubleValue = Double.FromString(Self.mValueField.Text, Locale.Current)
-		  Catch Err As InvalidArgumentException
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		  
